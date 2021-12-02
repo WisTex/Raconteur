@@ -14,8 +14,8 @@ function run() {
   \"v\" text NOT NULL DEFAULT '',
   PRIMARY_KEY(\"id\")
 ) ");
-$r2 = q("create index \"iconfig_iid\" on iconfig (\"iid\") ");;
-$r3 = q("create index \"iconfig_cat\" on iconfig (\"cat\") ");
+$r2 = q("create index \"iconfig_iid\" on iconfig (\"iid\") ");
+        $r3 = q("create index \"iconfig_cat\" on iconfig (\"cat\") ");
 $r4 = q("create index \"iconfig_k\" on iconfig (\"k\") ");
 	$r = $r1 && $r2 && $r3 && $r4;
 	}

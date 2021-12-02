@@ -1,13 +1,16 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Web\Controller;
 
 require_once('include/channel.php');
 require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
-class Card_edit extends \Zotlabs\Web\Controller {
+class Card_edit extends Controller {
 
 
 	function get() {
@@ -39,7 +42,7 @@ class Card_edit extends \Zotlabs\Web\Controller {
 		$owner = $itm[0]['uid'];
 		$uid = local_channel();
 
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
 		$channel = channelx_by_n($owner);
 		if(! $channel) {
@@ -106,7 +109,7 @@ class Card_edit extends \Zotlabs\Web\Controller {
 			'hide_location' => false,
 			'hide_expire' => false,
 			'showacl' => true,
-			'acl' => populate_acl($itm[0],false,\Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_pages')),
+			'acl' => populate_acl($itm[0],false, PermissionDescription::fromGlobalPermission('view_pages')),
 			'permissions' => $itm[0],
 			'lockstate' => (($itm[0]['allow_cid'] || $itm[0]['allow_gid'] || $itm[0]['deny_cid'] || $itm[0]['deny_gid']) ? 'lock' : 'unlock'),
 			'ptyp' => $itm[0]['type'],

@@ -14,6 +14,7 @@ use Zotlabs\Web\HTTPSig;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Widget\Pinned;
 
 require_once('include/items.php');
 require_once('include/security.php');
@@ -299,7 +300,7 @@ class Channel extends Controller {
 			}
 
 			if (! $mid && ! $search) {
-				$obj = new \Zotlabs\Widget\Pinned;
+				$obj = new Pinned;
 				$o .= $obj->widget([]);
 			}
 		}

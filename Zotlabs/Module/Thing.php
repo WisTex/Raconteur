@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 
 use App;
+use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Libsync;
@@ -25,7 +26,7 @@ class Thing extends Controller {
 		if(! local_channel())
 			return;
 
-		$channel    = \App::get_channel();
+		$channel    = App::get_channel();
 
 		if($_SERVER['REQUEST_METHOD'] === 'GET' && argc() < 2) {
 			Libprofile::load($channel['channel_address']);
@@ -81,7 +82,7 @@ class Thing extends Controller {
 		if((! $name) || (! $translated_verb))
 			return;
 
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		$acl = new AccessControl($channel);
 
 		if(array_key_exists('contact_allow',$_REQUEST)
 			|| array_key_exists('group_allow',$_REQUEST)
@@ -293,14 +294,14 @@ class Thing extends Controller {
 			}
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		if(! (local_channel() && $channel)) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
 
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		$acl = new AccessControl($channel);
 		$channel_acl = $acl->get();
 
 		$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');

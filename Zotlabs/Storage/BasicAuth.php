@@ -2,8 +2,11 @@
 
 namespace Zotlabs\Storage;
 
+use;
 use App;
 use Sabre\DAV;
+use Sabre\DAV\Browser\Plugin;
+use Sabre\HTTP\Auth\Basic;
 use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
@@ -13,7 +16,7 @@ use Sabre\HTTP\ResponseInterface;
  * This class also contains some data which is not necessary for authentication
  * like timezone settings.
  *
- * @extends \\Sabre\\DAV\\Auth\\Backend\\AbstractBasic
+ * @extends \Sabre\\DAV\\Auth\\Backend\\AbstractBasic
  *
  * @link http://github.com/friendica/red
  * @license http://opensource.org/unlicense.org
@@ -49,7 +52,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 	/**
 	 *
 	 * @see Browser::set_writeable()
-	 * @var \\Sabre\\DAV\\Browser\\Plugin $browser
+	 * @var \Sabre\\DAV\\Browser\\Plugin $browser
 	 */
 	public $browser;
 	/**
@@ -176,14 +179,14 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
     function check(RequestInterface $request, ResponseInterface $response) {
 
 		if (local_channel()) {
-			$this->setAuthenticated(\App::get_channel());
+			$this->setAuthenticated(App::get_channel());
 			return [ true, $this->principalPrefix . $this->channel_name ];
 		}
 		elseif (remote_channel()) {
 			return [ true, $this->principalPrefix . $this->observer ];
 		}
 
-        $auth = new \Sabre\HTTP\Auth\Basic(
+        $auth = new Basic(
             $this->realm,
             $request,
             $response
@@ -201,7 +204,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
     }
 
 	protected function check_module_access($channel_id) {
-		if($channel_id && in_array(\App::$module,[ 'dav', 'cdav', 'snap'] )) {
+		if($channel_id && in_array(App::$module,[ 'dav', 'cdav', 'snap'] )) {
 			return true;
 		}
 		$this->module_disabled = true;
@@ -255,7 +258,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 	 * @brief Set browser plugin for SabreDAV.
 	 *
 	 * @see RedBrowser::set_writeable()
-	 * @param \Sabre\DAV\Browser\Plugin $browser
+	 * @param Plugin $browser
 	 */
 	public function setBrowserPlugin($browser) {
 		$this->browser = $browser;

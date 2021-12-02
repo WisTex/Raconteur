@@ -850,8 +850,8 @@ class Item extends Controller {
 			$coord             = ((isset($_REQUEST['coord'])) ? notags(trim($_REQUEST['coord'])) : EMPTY_STR);
 			$verb              = ((isset($_REQUEST['verb'])) ? notags(trim($_REQUEST['verb'])) : EMPTY_STR);
 			$title             = ((isset($_REQUEST['title'])) ? escape_tags(trim($_REQUEST['title'])) : EMPTY_STR);
-			$summary           = ((isset($_REQUEST['summary'])) ? trim($_REQUEST['summary']) : EMPTY_STR);;
-			$body              = ((isset($_REQUEST['body'])) ? trim($_REQUEST['body']) : EMPTY_STR);
+			$summary           = ((isset($_REQUEST['summary'])) ? trim($_REQUEST['summary']) : EMPTY_STR);
+            $body              = ((isset($_REQUEST['body'])) ? trim($_REQUEST['body']) : EMPTY_STR);
 			$body              .= ((isset($_REQUEST['attachment'])) ? trim($_REQUEST['attachment']) : EMPTY_STR);
 			$postopts          = '';
 

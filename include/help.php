@@ -106,7 +106,7 @@ function determine_help_language() {
 		$lang = argv(1);
 		$from_url = true;
 	} else {
-		$lang = \App::$language;
+		$lang = App::$language;
 		if(! isset($lang))
 			$lang = 'en';
 
@@ -141,7 +141,7 @@ function search_doc_files($s) {
 
 
 	App::set_pager_itemspage(60);
-	$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+	$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
 	$regexop = db_getfunc('REGEXP');
 

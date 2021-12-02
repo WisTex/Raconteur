@@ -3,8 +3,9 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Web\Controller;
 
-class Sites extends \Zotlabs\Web\Controller {
+class Sites extends Controller {
 
 	function get() {
 		

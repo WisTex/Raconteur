@@ -1,12 +1,17 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module; use App;
+use URLify;
+use Zotlabs\Lib\IConfig;
+use Zotlabs\Web\Controller;
+
+/** @file */
 
 // import page design element
 
 require_once('include/menu.php');
 
 
-class Impel extends \Zotlabs\Web\Controller {
+class Impel extends Controller {
 
 	function init() {
 	
@@ -28,7 +33,7 @@ class Impel extends \Zotlabs\Web\Controller {
 	
 		// logger('element: ' . print_r($j,true));
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$arr = [];
 		$is_menu = false;
@@ -143,7 +148,7 @@ class Impel extends \Zotlabs\Web\Controller {
 	
 	
 			if($j['pagetitle']) {
-				$pagetitle = strtolower(\URLify::transliterate($j['pagetitle']));
+				$pagetitle = strtolower(URLify::transliterate($j['pagetitle']));
 			}
 		
 			// Verify ability to use html or php!!!
@@ -155,7 +160,7 @@ class Impel extends \Zotlabs\Web\Controller {
 				intval(local_channel())
 			);
 
-			\Zotlabs\Lib\IConfig::Set($arr,'system',$namespace,(($pagetitle) ? $pagetitle : substr($arr['mid'],0,16)),true);
+			IConfig::Set($arr,'system',$namespace,(($pagetitle) ? $pagetitle : substr($arr['mid'],0,16)),true);
 	
 			if($i) {
 				$arr['id'] = $i[0]['id'];

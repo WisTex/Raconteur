@@ -33,10 +33,10 @@ class Invite extends Controller {
 		if($current_invites > $max_invites) {
 			notice( t('Total invitation limit exceeded.') . EOL);
 			return;
-		};
-	
-	
-		$recips  = ((x($_POST,'recipients')) ? explode("\n",$_POST['recipients']) : []);
+		}
+
+
+        $recips  = ((x($_POST,'recipients')) ? explode("\n",$_POST['recipients']) : []);
 		$message = ((x($_POST,'message'))    ? notags(trim($_POST['message']))    : '');
 	
 		$total = 0;

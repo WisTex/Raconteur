@@ -2,13 +2,14 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
 require_once('include/attach.php');
 require_once('include/channel.php');
 require_once('include/photos.php');
 
 
-class File_upload extends \Zotlabs\Web\Controller {
+class File_upload extends Controller {
 
 	function post() {
 

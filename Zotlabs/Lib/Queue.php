@@ -6,6 +6,8 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Zot6\Receiver;
+use Zotlabs\Zot6\Zot6Handler;
 
 class Queue {
 
@@ -420,7 +422,7 @@ class Queue {
 
 		if($outq['outq_posturl'] === z_root() . '/zot') {
 			// local delivery
-			$zot = new \Zotlabs\Zot6\Receiver(new \Zotlabs\Zot6\Zot6Handler(),$outq['outq_notify']);
+			$zot = new Receiver(new Zot6Handler(),$outq['outq_notify']);
 			$result = $zot->run();
 			logger('returned_json: ' . json_encode($result,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOGGER_DATA);
 			logger('deliver: local zot delivery succeeded to ' . $outq['outq_posturl']);

@@ -1098,7 +1098,7 @@ class Apps {
 		}
 
 
-		$darray['app_id']       = ((x($arr,'guid'))     ? $arr['guid'] : random_string(). '.' . \App::get_hostname());
+		$darray['app_id']       = ((x($arr,'guid'))     ? $arr['guid'] : random_string(). '.' . App::get_hostname());
 		$darray['app_sig']      = ((x($arr,'sig'))      ? $arr['sig'] : '');
 		$darray['app_author']   = ((x($arr,'author'))   ? $arr['author'] : get_observer_hash());
 		$darray['app_name']     = ((x($arr,'name'))     ? escape_tags($arr['name']) : t('Unknown'));

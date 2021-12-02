@@ -4,7 +4,26 @@ namespace Zotlabs\Module;
 use App;
 use DBA;
 use DateTime;
+use Sabre\CalDAV\CalendarRoot;
+use Sabre\CalDAV\ICSExportPlugin;
+use Sabre\CalDAV\Principal\Collection;
+use Sabre\CalDAV\SharingPlugin;
+use Sabre\CardDAV\AddressBookRoot;
+use Sabre\CardDAV\Backend\PDO;
+use Sabre\CardDAV\Plugin;
+use Sabre\CardDAV\VCFExportPlugin;
+use Sabre\DAV\PropPatch;
+use Sabre\DAV\Server;
+use Sabre\DAV\Xml\Element\Sharee;
+use Sabre\VObject\Component\VCalendar;
+use Sabre\VObject\Document;
+use Sabre\VObject\Node;
+use Sabre\VObject\Reader;
+use Sabre\VObject\Splitter\ICalendar;
+use Sabre\VObject\Splitter\VCard;
+use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Storage\BasicAuth;
@@ -163,7 +182,7 @@ class Cdav extends Controller {
 
 
 			$principalBackend = new \Sabre\DAVACL\PrincipalBackend\PDO($pdo);
-			$carddavBackend   = new \Sabre\CardDAV\Backend\PDO($pdo);
+			$carddavBackend   = new PDO($pdo);
 			$caldavBackend    = new \Sabre\CalDAV\Backend\PDO($pdo);
 
 			/**
@@ -175,19 +194,19 @@ class Cdav extends Controller {
 
 			$nodes = [
 				// /principals
-				new \Sabre\CalDAV\Principal\Collection($principalBackend),
+				new Collection($principalBackend),
 
 				// /calendars
-				new \Sabre\CalDAV\CalendarRoot($principalBackend, $caldavBackend),
+				new CalendarRoot($principalBackend, $caldavBackend),
 
 				// /addressbook
-				new \Sabre\CardDAV\AddressBookRoot($principalBackend, $carddavBackend)
+				new AddressBookRoot($principalBackend, $carddavBackend)
 			];
 
 
 			// The object tree needs in turn to be passed to the server class
 
-			$server = new \Sabre\DAV\Server($nodes);
+			$server = new Server($nodes);
 
 			if (isset($baseUri)) {
 				$server->setBaseUri($baseUri);
@@ -202,13 +221,13 @@ class Cdav extends Controller {
 
 			// CalDAV plugins
 			$server->addPlugin(new \Sabre\CalDAV\Plugin());
-			$server->addPlugin(new \Sabre\CalDAV\SharingPlugin());
+			$server->addPlugin(new SharingPlugin());
 			//$server->addPlugin(new \Sabre\CalDAV\Schedule\Plugin());
-			$server->addPlugin(new \Sabre\CalDAV\ICSExportPlugin());
+			$server->addPlugin(new ICSExportPlugin());
 
 			// CardDAV plugins
-			$server->addPlugin(new \Sabre\CardDAV\Plugin());
-			$server->addPlugin(new \Sabre\CardDAV\VCFExportPlugin());
+			$server->addPlugin(new Plugin());
+			$server->addPlugin(new VCFExportPlugin());
 
 			// And off we go!
 			$server->exec();
@@ -303,7 +322,7 @@ class Cdav extends Controller {
 				} while ($duplicate == true);
 
 
-				$vcalendar = new \Sabre\VObject\Component\VCalendar([
+				$vcalendar = new VCalendar([
 				    'VEVENT' => [
 					'SUMMARY' => $title,
 					'DTSTART' => $dtstart
@@ -341,7 +360,7 @@ class Cdav extends Controller {
 					'{http://apple.com/ns/ical/}calendar-color' => $_REQUEST['color']
 				];
 
-				$patch = new \Sabre\DAV\PropPatch($mutations);
+				$patch = new PropPatch($mutations);
 
 				$caldavBackend->updateCalendar($id, $patch);
 
@@ -369,7 +388,7 @@ class Cdav extends Controller {
 
 				$object = $caldavBackend->getCalendarObject($id, $uri);
 
-				$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
+				$vcalendar = Reader::read($object['calendardata']);
 
 				if ($title) {
 					$vcalendar->VEVENT->SUMMARY = $title;
@@ -430,7 +449,7 @@ class Cdav extends Controller {
 
 				$object = $caldavBackend->getCalendarObject($id, $uri);
 
-				$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
+				$vcalendar = Reader::read($object['calendardata']);
 
 				if ($dtstart) {
 					$vcalendar->VEVENT->DTSTART = $dtstart;
@@ -462,7 +481,7 @@ class Cdav extends Controller {
 
 				$sharee_arr = channelx_by_hash($hash);
 
-				$sharee = new \Sabre\DAV\Xml\Element\Sharee();
+				$sharee = new Sharee();
 
 				$sharee->href = 'mailto:' . $sharee_arr['xchan_addr'];
 				$sharee->principal = 'principals/' . $sharee_arr['channel_address'];
@@ -475,7 +494,7 @@ class Cdav extends Controller {
 
 		if (argc() >= 2 && argv(1) === 'addressbook') {
 
-			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
+			$carddavBackend = new PDO($pdo);
 			$addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
 
 			// create new addressbook
@@ -512,7 +531,7 @@ class Cdav extends Controller {
 					'{DAV:}displayname' => $_REQUEST['{DAV:}displayname']
 				];
 
-				$patch = new \Sabre\DAV\PropPatch($mutations);
+				$patch = new PropPatch($mutations);
 
 				$carddavBackend->updateAddressBook($id, $patch);
 
@@ -640,7 +659,7 @@ class Cdav extends Controller {
 				$uri = $_REQUEST['uri'];
 
 				$object = $carddavBackend->getCard($id, $uri);
-				$vcard = \Sabre\VObject\Reader::read($object['carddata']);
+				$vcard = Reader::read($object['carddata']);
 
 				$fn = $_REQUEST['fn'];
 				if ($fn) {
@@ -797,8 +816,8 @@ class Cdav extends Controller {
 					$ext = 'ics';
 					$table = 'calendarobjects';
 					$column = 'calendarid';
-					$objects = new \Sabre\VObject\Splitter\ICalendar(@file_get_contents($src));
-					$profile = \Sabre\VObject\Node::PROFILE_CALDAV;
+					$objects = new ICalendar(@file_get_contents($src));
+					$profile = Node::PROFILE_CALDAV;
 					$backend = new \Sabre\CalDAV\Backend\PDO($pdo);
 				}
 
@@ -807,18 +826,18 @@ class Cdav extends Controller {
 					$ext = 'vcf';
 					$table = 'cards';
 					$column = 'addressbookid';
-					$objects = new \Sabre\VObject\Splitter\VCard(@file_get_contents($src));
-					$profile = \Sabre\VObject\Node::PROFILE_CARDDAV;
-					$backend = new \Sabre\CardDAV\Backend\PDO($pdo);
+					$objects = new VCard(@file_get_contents($src));
+					$profile = Node::PROFILE_CARDDAV;
+					$backend = new PDO($pdo);
 				}
 
 				while ($object = $objects->getNext()) {
 
 					if ($_REQUEST['a_upload']) {
-						$object = $object->convert(\Sabre\VObject\Document::VCARD40);
+						$object = $object->convert(Document::VCARD40);
 					}
 
-					$ret = $object->validate($profile & \Sabre\VObject\Node::REPAIR);
+					$ret = $object->validate($profile & Node::REPAIR);
 
 					// level 3 Means that the document is invalid,
 					// level 2 means a warning. A warning means it's valid but it could cause interopability issues,
@@ -1016,10 +1035,10 @@ class Cdav extends Controller {
 
 			require_once('include/acl_selectors.php');
 	
-			$accesslist = new \Zotlabs\Access\AccessControl($channel);
+			$accesslist = new AccessControl($channel);
 			$perm_defaults = $accesslist->get();
 
-			$acl = populate_acl($perm_defaults, false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'));
+			$acl = populate_acl($perm_defaults, false, PermissionDescription::fromGlobalPermission('view_stream'));
 
 			$permissions = $perm_defaults;
 
@@ -1084,10 +1103,10 @@ class Cdav extends Controller {
 			}
 
 			if (x($_GET,'start')) {
-				$start = new \DateTime($_GET['start']);
+				$start = new DateTime($_GET['start']);
 			}
 			if (x($_GET,'end')) {
-				$end = new \DateTime($_GET['end']);
+				$end = new DateTime($_GET['end']);
 			}
 
 			$filters['name'] = 'VCALENDAR';
@@ -1102,7 +1121,7 @@ class Cdav extends Controller {
 				$objects = $caldavBackend->getMultipleCalendarObjects($id, $uris);
 				foreach ($objects as $object) {
 
-					$vcalendar = \Sabre\VObject\Reader::read($object['calendardata']);
+					$vcalendar = Reader::read($object['calendardata']);
 
 					if (isset($vcalendar->VEVENT->RRULE)) {
 						// expanding recurrent events seems to loose timezone info
@@ -1192,7 +1211,7 @@ class Cdav extends Controller {
 
 			$sharee_arr = channelx_by_hash($hash);
 
-			$sharee = new \Sabre\DAV\Xml\Element\Sharee();
+			$sharee = new Sharee();
 
 			$sharee->href = 'mailto:' . $sharee_arr['xchan_addr'];
 			$sharee->principal = 'principals/' . $sharee_arr['channel_address'];
@@ -1205,7 +1224,7 @@ class Cdav extends Controller {
 
 		if (argv(1) === 'addressbook') {
 			nav_set_selected('CardDAV');
-			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
+			$carddavBackend = new PDO($pdo);
 			$addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
 		}
 
@@ -1233,7 +1252,7 @@ class Cdav extends Controller {
 				$objects = $carddavBackend->getMultipleCards($id, $uris);
 
 				foreach ($objects as $object) {
-					$vcard = \Sabre\VObject\Reader::read($object['carddata']);
+					$vcard = Reader::read($object['carddata']);
 
 					$photo = '';
 					if ($vcard->PHOTO) {
@@ -1430,7 +1449,7 @@ class Cdav extends Controller {
 			set_pconfig(local_channel(), 'cdav_calendar' , 'calendar', 1);
 
 			// create default addressbook
-			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
+			$carddavBackend = new PDO($pdo);
 			$properties = ['{DAV:}displayname' => t('Default Addressbook')];
 			$carddavBackend->createAddressBook($uri, 'default', $properties);
 

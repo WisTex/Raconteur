@@ -1,11 +1,13 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Web\Controller;
 
 require_once('include/conversation.php');
 
-class Block extends \Zotlabs\Web\Controller {
+class Block extends Controller {
 
 	function init() {
 	
@@ -13,15 +15,15 @@ class Block extends \Zotlabs\Web\Controller {
 		$profile = 0;
 		Libprofile::load($which,$profile);
 	
-		if(\App::$profile['profile_uid'])
-			head_set_icon(\App::$profile['thumb']);
+		if(App::$profile['profile_uid'])
+			head_set_icon(App::$profile['thumb']);
 	
 	}
 	
 	
 		function get() {
 	
-		if(! perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(),'view_pages')) {
+		if(! perm_is_allowed(App::$profile['profile_uid'],get_observer_hash(),'view_pages')) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}

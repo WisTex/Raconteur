@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+
 require_once('include/import.php');
 
 /**
@@ -8,7 +11,7 @@ require_once('include/import.php');
  *
  * Import existing posts and content from an export file.
  */
-class Import_items extends \Zotlabs\Web\Controller {
+class Import_items extends Controller {
 
 	function post() {
 
@@ -102,7 +105,7 @@ class Import_items extends \Zotlabs\Web\Controller {
 			return;
 		}
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		if(array_key_exists('item',$data) && $data['item']) {
 			import_items($channel,$data['item'],false,((array_key_exists('relocate',$data)) ? $data['relocate'] : null));

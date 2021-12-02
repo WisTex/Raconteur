@@ -324,9 +324,9 @@ class Profile_photo {
 			if (argc() < 4) {
 				notice( t('Permission denied.') . EOL );
 				return;
-			};
-				        
-			$resource_id = argv(3);
+			}
+
+            $resource_id = argv(3);
 	
 			$pf = (($_REQUEST['pf']) ? intval($_REQUEST['pf']) : 0);
 

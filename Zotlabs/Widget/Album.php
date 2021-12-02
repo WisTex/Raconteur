@@ -72,7 +72,7 @@ class Album {
 				$imgalt_e = $rr['filename'];
 				$desc_e = $rr['description'];
 
-				$imagelink = (z_root() . '/photos/' . \App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
+				$imagelink = (z_root() . '/photos/' . App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
 
 
 				$photos[] = array(

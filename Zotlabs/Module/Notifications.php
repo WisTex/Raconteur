@@ -1,9 +1,11 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+
 require_once('include/bbcode.php');
 
-class Notifications extends \Zotlabs\Web\Controller {
+class Notifications extends Controller {
 
 	function get() {
 	

@@ -7,6 +7,8 @@
  * database class DBA and some functions for working with databases.
  */
 
+use Zotlabs\Lib\System;
+
 /**
  * @brief Database classs with database factory method.
  *
@@ -148,23 +150,23 @@ abstract class dba_driver {
 	}
 
 	function get_null_date() {
-		return \DBA::$null_date;
+		return DBA::$null_date;
 	}
 
 	function get_install_script() {
-		$platform_name = \Zotlabs\Lib\System::get_platform_name();
-		if(file_exists('install/' . $platform_name . '/' . \DBA::$install_script))
-			 return 'install/' . $platform_name . '/' . \DBA::$install_script;
+		$platform_name = System::get_platform_name();
+		if(file_exists('install/' . $platform_name . '/' . DBA::$install_script))
+			 return 'install/' . $platform_name . '/' . DBA::$install_script;
 
-		return 'install/' . \DBA::$install_script;
+		return 'install/' . DBA::$install_script;
 	}
 
 	function get_table_quote() {
-		return \DBA::$tquot;
+		return DBA::$tquot;
 	}
 
 	function utcnow() {
-		return \DBA::$utc_now;
+		return DBA::$utc_now;
 	}
 
 	function install($server,$scheme,$port,$user,$pass,$db) {
@@ -246,8 +248,8 @@ function printable($s, $escape = true) {
 function dbg($state) {
 	global $db;
 
-	if(\DBA::$dba)
-		\DBA::$dba->dbg($state);
+	if(DBA::$dba)
+		DBA::$dba->dbg($state);
 }
 
 /**
@@ -265,48 +267,48 @@ function dbesc($str) {
 	if(is_null_date($str))
 		$str = NULL_DATE;
 
-	if(\DBA::$dba && \DBA::$dba->connected)
-		return(\DBA::$dba->escape($str));
+	if(DBA::$dba && DBA::$dba->connected)
+		return(DBA::$dba->escape($str));
 	else
 		return(str_replace("'", "\\'", $str));
 }
 function dbescbin($str) {
-	return \DBA::$dba->escapebin($str);
+	return DBA::$dba->escapebin($str);
 }
 
 function dbunescbin($str) {
-	return \DBA::$dba->unescapebin($str);
+	return DBA::$dba->unescapebin($str);
 }
 
 function dbescdate($date) {
 	if(is_null_date($date))
-		return \DBA::$dba->escape(NULL_DATE);
+		return DBA::$dba->escape(NULL_DATE);
 
-	return \DBA::$dba->escape($date);
+	return DBA::$dba->escape($date);
 }
 
 function db_quoteinterval($txt) {
-	return \DBA::$dba->quote_interval($txt);
+	return DBA::$dba->quote_interval($txt);
 }
 
 function dbesc_identifier($str) {
-	return \DBA::$dba->escape_identifier($str);
+	return DBA::$dba->escape_identifier($str);
 }
 
 function db_utcnow() {
-	return \DBA::$dba->utcnow();
+	return DBA::$dba->utcnow();
 }
 
 function db_optimizetable($table) {
-	\DBA::$dba->optimize_table($table);
+	DBA::$dba->optimize_table($table);
 }
 
 function db_concat($fld, $sep) {
-	return \DBA::$dba->concat($fld, $sep);
+	return DBA::$dba->concat($fld, $sep);
 }
 
 function db_use_index($str) {
-	return \DBA::$dba->use_index($str);
+	return DBA::$dba->use_index($str);
 }
 
 /**
@@ -330,16 +332,16 @@ function q($sql) {
 	$args = func_get_args();
 	array_shift($args);
 
-	if(\DBA::$dba && \DBA::$dba->connected) {
+	if(DBA::$dba && DBA::$dba->connected) {
 		$stmt = vsprintf($sql, $args);
 		if($stmt === false) {
 			db_logger('dba: vsprintf error: ' .
 				print_r(debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 1), true),LOGGER_NORMAL,LOG_CRIT);
 		}
-		if(\DBA::$dba->debug)
+		if(DBA::$dba->debug)
 			db_logger('Sql: ' . $stmt, LOGGER_DEBUG, LOG_INFO);
 
-		return \DBA::$dba->q($stmt);
+		return DBA::$dba->q($stmt);
 	}
 
 	/*
@@ -361,8 +363,8 @@ function q($sql) {
  */
 function dbq($sql) {
 
-	if(\DBA::$dba && \DBA::$dba->connected)
-		$ret = \DBA::$dba->q($sql);
+	if(DBA::$dba && DBA::$dba->connected)
+		$ret = DBA::$dba->q($sql);
 	else
 		$ret = false;
 
@@ -452,15 +454,15 @@ function db_load_file($f) {
 
 function db_logger($s,$level = LOGGER_NORMAL,$syslog = LOG_INFO) {
 
-	if(\DBA::$logging || ! \DBA::$dba)
+	if(DBA::$logging || ! DBA::$dba)
 		return;
 
-	$saved = \DBA::$dba->debug;
-	\DBA::$dba->debug = false;
-	\DBA::$logging = true;
+	$saved = DBA::$dba->debug;
+	DBA::$dba->debug = false;
+	DBA::$logging = true;
 	logger($s,$level,$syslog);
-	\DBA::$logging = false;
-	\DBA::$dba->debug = $saved;
+	DBA::$logging = false;
+	DBA::$dba->debug = $saved;
 }
 
 

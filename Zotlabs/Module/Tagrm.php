@@ -1,10 +1,12 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+
 require_once('include/bbcode.php');
 
 
-class Tagrm extends \Zotlabs\Web\Controller {
+class Tagrm extends Controller {
 
 	function post() {
 	

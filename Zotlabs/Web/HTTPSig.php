@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Web;
 
+use DateTime;
+use DateTimeZone;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Webfinger;
@@ -165,8 +167,8 @@ class HTTPSig {
 				$signed_data .= '(expires): ' . $sig_block['(expires)'] . "\n";
 			}
 			if ($h === 'date') {
-				$d = new \DateTime($headers[$h]);
-				$d->setTimeZone(new \DateTimeZone('UTC'));
+				$d = new DateTime($headers[$h]);
+				$d->setTimeZone(new DateTimeZone('UTC'));
 				$dplus = datetime_convert('UTC','UTC','now + 1 day');
 				$dminus = datetime_convert('UTC','UTC','now - 1 day');
 				$c = $d->format('Y-m-d H:i:s');

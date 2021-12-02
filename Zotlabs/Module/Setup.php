@@ -12,6 +12,7 @@ namespace Zotlabs\Module;
 
 use App;
 use DBA;
+use PDO;
 use Zotlabs\Lib\System;
 use Zotlabs\Web\Controller;
 
@@ -571,7 +572,7 @@ class Setup extends Controller {
 			$ck_funcs[2]['help'] = t('Error: openssl PHP module required but not installed.');
 		}
 		if (class_exists('\\PDO')) {
-			$x = \PDO::getAvailableDrivers();
+			$x = PDO::getAvailableDrivers();
 			if ((! in_array('mysql',$x)) && (! in_array('pgsql',$x))) {
 				$ck_funcs[3]['status'] = false;
 				$ck_funcs[3]['help'] = t('Error: PDO database PHP module missing a driver for either mysql or pgsql.');

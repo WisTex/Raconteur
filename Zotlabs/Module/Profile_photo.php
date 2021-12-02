@@ -357,9 +357,9 @@ class Profile_photo extends Controller {
 			if (argc() < 3) {
 				notice( t('Permission denied.') . EOL );
 				return;
-			};
-				        
-			$resource_id = argv(2);
+			}
+
+            $resource_id = argv(2);
 	
 			$pf = (($_REQUEST['pf']) ? intval($_REQUEST['pf']) : 0);
 

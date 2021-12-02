@@ -2,11 +2,13 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Bookmarkedchats {
 
 	function widget($arr) {
 
-		if(! feature_enabled(\App::$profile['profile_uid'],'ajaxchat'))
+		if(! feature_enabled(App::$profile['profile_uid'],'ajaxchat'))
 			return '';
 
 		$h = get_observer_hash();

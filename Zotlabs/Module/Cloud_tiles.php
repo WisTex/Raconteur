@@ -2,7 +2,9 @@
 
 namespace Zotlabs\Module;
 
-class Cloud_tiles extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Cloud_tiles extends Controller {
 
 	function init() {
 

@@ -17,7 +17,8 @@ require_once('include/acl_selectors.php');
 
 
 
-class Profile extends \Zotlabs\Web\Controller {
+class Profile extends Controller
+{
 
 	function init() {
 	
@@ -66,7 +67,7 @@ class Profile extends \Zotlabs\Web\Controller {
 				dbesc(argv(1))
 			);
 			if($x) {
-				\App::$profile = $x[0];
+				App::$profile = $x[0];
 			}
 		}
 	
@@ -100,7 +101,7 @@ class Profile extends \Zotlabs\Web\Controller {
 		$tab = 'profile';
 		$o = '';
 	
-		if(! (perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(), 'view_profile'))) {
+		if(! (perm_is_allowed(App::$profile['profile_uid'],get_observer_hash(), 'view_profile'))) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
@@ -110,13 +111,13 @@ class Profile extends \Zotlabs\Web\Controller {
 		if(argc() > 2 && argv(2) === 'vcard') {
 			header('Content-type: text/vcard');
 			header('Content-Disposition: attachment; filename="' . t('vcard') . '-' . $profile['channel_address'] . '.vcf"' );
-			echo \App::$profile['profile_vcard'];
+			echo App::$profile['profile_vcard'];
 			killme();
 		}
 	
-		$is_owner = ((local_channel()) && (local_channel() == \App::$profile['profile_uid']) ? true : false);
+		$is_owner = ((local_channel()) && (local_channel() == App::$profile['profile_uid']) ? true : false);
 	
-		if(\App::$profile['hidewall'] && (! $is_owner) && (! remote_channel())) {
+		if(App::$profile['hidewall'] && (! $is_owner) && (! remote_channel())) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
@@ -124,7 +125,7 @@ class Profile extends \Zotlabs\Web\Controller {
 		head_add_link([ 
 			'rel'   => 'alternate',
 			'type'  => 'application/json+oembed',
-			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
 			'title' => 'oembed'
 		]);
 

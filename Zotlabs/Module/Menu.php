@@ -16,7 +16,7 @@ class Menu extends Controller {
 		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
-				\App::$is_sys = true;
+				App::$is_sys = true;
 			}
 		}
 
@@ -32,19 +32,19 @@ class Menu extends Controller {
 	
 	function post() {
 	
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			return;
 		}
 
 		$which = argv(1);
 
 
-		$uid = \App::$profile['channel_id'];
+		$uid = App::$profile['channel_id'];
 	
 		if(array_key_exists('sys', $_REQUEST) && $_REQUEST['sys'] && is_site_admin()) {
 			$sys = get_sys_channel();
 			$uid = intval($sys['channel_id']);
-			\App::$is_sys = true;
+			App::$is_sys = true;
 		}
 	
 		if(! $uid)
@@ -64,7 +64,7 @@ class Menu extends Controller {
 			if($r) {
 				menu_sync_packet($uid,get_observer_hash(),$menu_id);
 				//info( t('Menu updated.') . EOL);
-				goaway(z_root() . '/mitem/' . $which . '/' . $menu_id . ((\App::$is_sys) ? '?f=&sys=1' : '')); 
+				goaway(z_root() . '/mitem/' . $which . '/' . $menu_id . ((App::$is_sys) ? '?f=&sys=1' : ''));
 			}
 			else
 				notice( t('Unable to update menu.'). EOL);
@@ -75,7 +75,7 @@ class Menu extends Controller {
 				menu_sync_packet($uid,get_observer_hash(),$r);
 	
 				//info( t('Menu created.') . EOL);
-				goaway(z_root() . '/mitem/' . $which . '/' . $r . ((\App::$is_sys) ? '?f=&sys=1' : '')); 
+				goaway(z_root() . '/mitem/' . $which . '/' . $r . ((App::$is_sys) ? '?f=&sys=1' : ''));
 			}
 			else
 				notice( t('Unable to create menu.'). EOL);
@@ -90,24 +90,24 @@ class Menu extends Controller {
 	
 
 
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 
 		$which = argv(1);
 
-		$_SESSION['return_url'] = \App::$query_string;
+		$_SESSION['return_url'] = App::$query_string;
 
 		$uid = local_channel();
 		$owner = 0;
 		$channel = null;
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		if(\App::$is_sys && is_site_admin()) {
+		if(App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
 				$uid = $owner = intval($sys['channel_id']);
@@ -164,7 +164,7 @@ class Menu extends Controller {
 				'$menu_desc' => array('menu_desc', t('Menu Title'), '', t('Visible on webpage - leave empty for no title'), ''),
 				'$menu_bookmark' => array('menu_bookmark', t('Allow Bookmarks'), 0 , t('Menu may be used to store saved bookmarks'), array(t('No'), t('Yes'))),
 				'$submit' => t('Submit and proceed'),
-				'$sys' => \App::$is_sys,
+				'$sys' => App::$is_sys,
 				'$nick' => $which,
 				'$display' => 'none'
 			));
@@ -186,7 +186,7 @@ class Menu extends Controller {
 				'$hintcontent' => t('Edit menu contents'),
 				'$hintedit' => t('Edit this menu'),
 				'$nick' => $which,
-				'$sys' => \App::$is_sys
+				'$sys' => App::$is_sys
 			));
 	
 			return $o;
@@ -202,7 +202,7 @@ class Menu extends Controller {
 					if(!$r)
 						notice( t('Menu could not be deleted.'). EOL);
 	
-					goaway(z_root() . '/menu/' . $which . ((\App::$is_sys) ? '?f=&sys=1' : ''));
+					goaway(z_root() . '/menu/' . $which . ((App::$is_sys) ? '?f=&sys=1' : ''));
 				}
 	
 				$m = menu_fetch_id(intval(argv(2)),$owner);
@@ -214,9 +214,9 @@ class Menu extends Controller {
 	
 				$o = replace_macros(get_markup_template('menuedit.tpl'), array(
 					'$header' => t('Edit Menu'),
-					'$sys' => \App::$is_sys,
+					'$sys' => App::$is_sys,
 					'$menu_id' => intval(argv(2)),
-					'$menu_edit_link' => 'mitem/' . $which . '/' . intval(argv(1)) . ((\App::$is_sys) ? '?f=&sys=1' : ''),
+					'$menu_edit_link' => 'mitem/' . $which . '/' . intval(argv(1)) . ((App::$is_sys) ? '?f=&sys=1' : ''),
 					'$hintedit' => t('Add or remove entries to this menu'),
 					'$editcontents' => t('Edit menu contents'),
 					'$menu_name' => array('menu_name', t('Menu name'), $m['menu_name'], t('Must be unique, only seen by you'), '*'),

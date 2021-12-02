@@ -3,7 +3,9 @@
 namespace Zotlabs\Identity;
 
 
-class OAuth2Storage extends \OAuth2\Storage\Pdo {
+use OAuth2\Storage\Pdo;
+
+class OAuth2Storage extends Pdo {
 
     /**
      * @param string $username

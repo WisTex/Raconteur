@@ -25,7 +25,7 @@ class MockApp {
 	function get_baseurl() {
 		return "baseurl"; 
 	}
-}; 
+}
 
 /**
  * the test should not rely on a database, 

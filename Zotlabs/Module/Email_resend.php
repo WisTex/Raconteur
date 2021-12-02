@@ -3,7 +3,9 @@
 namespace Zotlabs\Module;
 
 
-class Email_resend extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Email_resend extends Controller {
 
 	function post() {
 

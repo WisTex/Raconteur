@@ -2,6 +2,8 @@
 namespace Zotlabs\Module;
 
 use App;
+use Zotlabs\Lib\MarkdownSoap;
+use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 
@@ -17,7 +19,7 @@ class Editwebpage extends Controller {
 		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
-				\App::$is_sys = true;
+				App::$is_sys = true;
 			}
 		}
 
@@ -32,9 +34,9 @@ class Editwebpage extends Controller {
 
 	function get() {
 
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 
@@ -43,11 +45,11 @@ class Editwebpage extends Controller {
 		$uid = local_channel();
 		$owner = 0;
 		$channel = null;
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		if(\App::$is_sys && is_site_admin()) {
+		if(App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
 				$uid = $owner = intval($sys['channel_id']);
@@ -131,7 +133,7 @@ class Editwebpage extends Controller {
 
 		$content = $itm[0]['body'];
 		if($itm[0]['mimetype'] === 'text/markdown')
-			$content = \Zotlabs\Lib\MarkdownSoap::unescape($itm[0]['body']);
+			$content = MarkdownSoap::unescape($itm[0]['body']);
 	
 		$rp = 'webpages/' . $which;
 
@@ -151,7 +153,7 @@ class Editwebpage extends Controller {
 			'body' => undo_post_tagging($content),
 			'post_id' => $post_id,
 			'visitor' => ($is_owner) ? true : false,
-			'acl' => populate_acl($itm[0],false,\Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_pages')),
+			'acl' => populate_acl($itm[0],false, PermissionDescription::fromGlobalPermission('view_pages')),
 			'permissions' => $itm[0],
 			'showacl' => ($is_owner) ? true : false,
 			'mimetype' => $mimetype,

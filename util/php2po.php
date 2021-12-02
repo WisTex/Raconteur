@@ -44,7 +44,7 @@
                                         if (isset(App::$strings[$k])) {
                                                 $v = App::$strings[$k];
                                                 $c = "";
-                                        };
+                                        }
                                 }
                                 if (!empty($v)) {
                                         if (is_array($v)) {

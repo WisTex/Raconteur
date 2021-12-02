@@ -1,6 +1,8 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+
 require_once('include/security.php');
 
 // oembed provider
@@ -8,7 +10,7 @@ require_once('include/security.php');
 
 
 
-class Oep extends \Zotlabs\Web\Controller {
+class Oep extends Controller {
 
 	function init() {
 	

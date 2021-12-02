@@ -26,8 +26,8 @@ class Theme {
 	 */
 	static public function current(){
 
-		self::$system_theme = ((isset(\App::$config['system']['theme']))
-			? \App::$config['system']['theme'] : '');
+		self::$system_theme = ((isset(App::$config['system']['theme']))
+			? App::$config['system']['theme'] : '');
 		self::$session_theme = ((isset($_SESSION) && x($_SESSION, 'theme'))
 			? $_SESSION['theme'] : self::$system_theme);
 
@@ -35,9 +35,9 @@ class Theme {
 
 		// Find the theme that belongs to the channel whose stuff we are looking at
 
-		if(\App::$profile_uid) {
+		if(App::$profile_uid) {
 			$r = q("select channel_theme from channel where channel_id = %d limit 1",
-				intval(\App::$profile_uid)
+				intval(App::$profile_uid)
 			);
 			if($r) {
 				$page_theme = $r[0]['channel_theme'];
@@ -46,8 +46,8 @@ class Theme {
 
 		// Themes from Comanche layouts over-ride the channel theme
 
-		if(array_key_exists('theme', \App::$layout) && \App::$layout['theme'])
-			$page_theme = \App::$layout['theme'];
+		if(array_key_exists('theme', App::$layout) && App::$layout['theme'])
+			$page_theme = App::$layout['theme'];
 
 		$chosen_theme = self::$session_theme;
 
@@ -109,9 +109,9 @@ class Theme {
 		$s = ((count($theme) > 1) ? $theme[1] : '');
 
 		$opts = '';
-		$opts = ((\App::$profile_uid) ? '?f=&puid=' . \App::$profile_uid : '');
+		$opts = ((App::$profile_uid) ? '?f=&puid=' . App::$profile_uid : '');
 
-		$schema_str = ((x(\App::$layout,'schema')) ? '&schema=' . App::$layout['schema'] : '');
+		$schema_str = ((x(App::$layout,'schema')) ? '&schema=' . App::$layout['schema'] : '');
 		if(($s) && (! $schema_str))
 			$schema_str = '&schema=' . $s;
 

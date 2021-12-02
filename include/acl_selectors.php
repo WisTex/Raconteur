@@ -6,6 +6,7 @@
  */
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\PermissionDescription;
 
 function fixacl(&$item) {
 	$item = str_replace( [ '<', '>' ], [ '', '' ], $item);
@@ -16,7 +17,7 @@ function fixacl(&$item) {
 *
 * @param array   $defaults Optional access control list for the initial state of the dialog.
 * @param boolean $show_jotnets Whether plugins for federated networks should be included in the permissions dialog
-* @param \Zotlabs\Lib\PermissionDescription $emptyACL_description - An optional description for the permission implied by selecting an empty ACL. Preferably an instance of PermissionDescription.
+* @param PermissionDescription $emptyACL_description - An optional description for the permission implied by selecting an empty ACL. Preferably an instance of PermissionDescription.
 * @param string  $dialog_description Optional message to include at the top of the dialog. E.g. "Warning: Post permissions cannot be changed once sent".
 * @param string  $context_help Allows the dialog to present a help icon. E.g. "acl_dialog_post"
 * @param boolean $readonly Not implemented yet. When implemented, the dialog will use acl_readonly.tpl instead, so that permissions may be viewed for posts that can no longer have their permissions changed.

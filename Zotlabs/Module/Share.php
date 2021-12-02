@@ -4,12 +4,13 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
 
 
-class Share extends \Zotlabs\Web\Controller {
+class Share extends Controller {
 
 	function init() {
 	

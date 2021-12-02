@@ -13,14 +13,14 @@ class Hcard extends Controller {
 	        $which = argv(1);
 	    else {
 	        notice( t('Requested profile is not available.') . EOL );
-	        \App::$error = 404;
+	        App::$error = 404;
 	        return;
 	    }
 	
 		logger('hcard_request: ' . $which, LOGGER_DEBUG);
 
 	    $profile = '';
-	    $channel = \App::get_channel();
+	    $channel = App::get_channel();
 	
 	    if((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
 	        $which = $channel['channel_address'];
@@ -54,7 +54,7 @@ class Hcard extends Controller {
 	            dbesc(argv(1))
 	        );
 	        if($x) {
-	            \App::$profile = $x[0];
+	            App::$profile = $x[0];
 	        }
 	    }
 	

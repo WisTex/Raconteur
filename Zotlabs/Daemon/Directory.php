@@ -3,7 +3,7 @@
 namespace Zotlabs\Daemon;
 
 
-use Zotlabs\Lib\Libzot;;
+use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Queue;
 

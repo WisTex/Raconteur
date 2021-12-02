@@ -1,9 +1,12 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+namespace Zotlabs\Module; use App;
+use Zotlabs\Web\Controller;
+
+/** @file */
 
 
 
-class Service_limits extends \Zotlabs\Web\Controller {
+class Service_limits extends Controller {
 
 	function get() {
 	
@@ -12,7 +15,7 @@ class Service_limits extends \Zotlabs\Web\Controller {
 			return;
 		}
 	
-		$account = \App::get_account();
+		$account = App::get_account();
 		if($account['account_service_class']) {
 			$x =  get_config('service_class',$account['account_service_class']);
 			if($x) {

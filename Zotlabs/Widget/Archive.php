@@ -3,17 +3,19 @@
 namespace Zotlabs\Widget;
 
 
+use App;
+
 class Archive {
 
 	function widget($arr) {
 
 		$o = '';
 
-		if(! \App::$profile_uid) {
+		if(! App::$profile_uid) {
 			return '';
 		}
 
-		$uid = \App::$profile_uid;
+		$uid = App::$profile_uid;
 
 		if(! feature_enabled($uid,'archives'))
 			return '';
@@ -29,7 +31,7 @@ class Archive {
 		$mindate = get_pconfig($uid,'system','archive_mindate');
 		$visible_years = get_pconfig($uid,'system','archive_visible_years',5);
 
-		$url = z_root() . '/' . \App::$cmd;
+		$url = z_root() . '/' . App::$cmd;
 
 		$ret = list_post_dates($uid,$wall,$mindate);
 

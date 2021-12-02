@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use Exception;
 use Zotlabs\Lib\Activity;
 
 require_once('library/jsonld/jsonld.php');
@@ -88,7 +89,7 @@ class LDSignatures {
 		try {
 			$d = jsonld_normalize($data,[ 'algorithm' => 'URDNA2015', 'format' => 'application/nquads' ]);
 		}
-		catch (\Exception $e) {
+		catch (Exception $e) {
 			// Don't log the exception - this can exhaust memory
 			// logger('normalise error:' . print_r($e,true));
 			logger('normalise error: ' . print_r($data,true));

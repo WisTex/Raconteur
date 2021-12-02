@@ -2,6 +2,8 @@
 namespace Zotlabs\Module;
 
 use App;
+use DateTime;
+use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
@@ -321,7 +323,7 @@ class Events extends Controller {
 			'$baseurl' => z_root(),
 			'$module_url' => '/events',
 			'$modparams' => 1,
-			'$lang' => \App::$language,
+			'$lang' => App::$language,
 			'$first_day' => $first_day
 		));
 	
@@ -374,7 +376,7 @@ class Events extends Controller {
 					$orig_event = $r[0];
 			}
 	
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 	
 			// Passed parameters overrides anything found in the DB
 			if(!x($orig_event))
@@ -494,10 +496,10 @@ class Events extends Controller {
 				'$c_text' => (($event_id) ? t('Edit Category') : t('Category')),
 				'$category' => $category,
 				'$required' => '<span class="required" title="' . t('Required') . '">*</span>',
-				'$s_dsel' => datetimesel($f,new \DateTime(),\DateTime::createFromFormat('Y',$syear+5),\DateTime::createFromFormat('Y-m-d H:i',"$syear-$smonth-$sday $shour:$sminute"), (($event_id) ? t('Edit start date and time') : t('Start date and time')), 'start_text',true,true,'','',true,$first_day),
+				'$s_dsel' => datetimesel($f,new DateTime(), DateTime::createFromFormat('Y',$syear+5), DateTime::createFromFormat('Y-m-d H:i',"$syear-$smonth-$sday $shour:$sminute"), (($event_id) ? t('Edit start date and time') : t('Start date and time')), 'start_text',true,true,'','',true,$first_day),
 				'$n_text' => t('Finish date and time are not known or not relevant'),
 				'$n_checked' => $n_checked,
-				'$f_dsel' => datetimesel($f,new \DateTime(),\DateTime::createFromFormat('Y',$fyear+5),\DateTime::createFromFormat('Y-m-d H:i',"$fyear-$fmonth-$fday $fhour:$fminute"), (($event_id) ? t('Edit finish date and time') : t('Finish date and time')),'finish_text',true,true,'start_text','',false,$first_day),
+				'$f_dsel' => datetimesel($f,new DateTime(), DateTime::createFromFormat('Y',$fyear+5), DateTime::createFromFormat('Y-m-d H:i',"$fyear-$fmonth-$fday $fhour:$fminute"), (($event_id) ? t('Edit finish date and time') : t('Finish date and time')),'finish_text',true,true,'start_text','',false,$first_day),
 				'$nofinish' => array('nofinish', t('Finish date and time are not known or not relevant'), $n_checked, '', array(t('No'),t('Yes')), 'onclick="enableDisableFinishDate();"'),
 				'$adjust' => array('adjust', t('Adjust for viewer timezone'), $a_checked, t('Important for events that happen in a particular place. Not practical for global holidays.'), array(t('No'),t('Yes'))),
 				'$a_text' => t('Adjust for viewer timezone'),
@@ -510,7 +512,7 @@ class Events extends Controller {
 				'$perms_label' => t('Permission settings'),
 				// populating the acl dialog was a permission description from view_stream because Cal.php, which
 				// displays events, says "since we don't currently have an event permission - use the stream permission"
-				'$acl' => (($orig_event['event_xchan']) ? '' : populate_acl(((x($orig_event)) ? $orig_event : $perm_defaults), false, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'))),
+				'$acl' => (($orig_event['event_xchan']) ? '' : populate_acl(((x($orig_event)) ? $orig_event : $perm_defaults), false, PermissionDescription::fromGlobalPermission('view_stream'))),
 
 				'$allow_cid' => acl2json($permissions['allow_cid']),
 				'$allow_gid' => acl2json($permissions['allow_gid']),
@@ -633,7 +635,7 @@ class Events extends Controller {
 				foreach($r as $rr) {
 					$j = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtstart'], 'j') : datetime_convert('UTC','UTC',$rr['dtstart'],'j'));
 					if(! x($links,$j)) 
-						$links[$j] = z_root() . '/' . \App::$cmd . '#link-' . $j;
+						$links[$j] = z_root() . '/' . App::$cmd . '#link-' . $j;
 				}
 			}
 	
@@ -710,7 +712,7 @@ class Events extends Controller {
 				killme();
 			}
 	
-			if (\App::$argv[1] === 'json'){
+			if (App::$argv[1] === 'json'){
 				echo json_encode($events); killme();
 			}
 			

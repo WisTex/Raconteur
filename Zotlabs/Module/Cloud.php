@@ -9,8 +9,12 @@ namespace Zotlabs\Module;
 
 use App;
 use Sabre\DAV as SDAV;
+use Sabre\DAV\Exception\Forbidden;
+use Sabre\DAV\Exception\NotFound;
+use Sabre\DAV\Exception\NotImplemented;
 use Zotlabs\Storage;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Storage\Browser;
 use Zotlabs\Web\Controller;
 use Zotlabs\Storage\BasicAuth;
 use Zotlabs\Storage\Directory;
@@ -92,7 +96,7 @@ class Cloud extends Controller {
 		$is_readable = false;
 
 		// provide a directory view for the cloud in Hubzilla
-		$browser = new \Zotlabs\Storage\Browser($auth);
+		$browser = new Browser($auth);
 		$auth->setBrowserPlugin($browser);
 
 		$server->addPlugin($browser);
@@ -120,13 +124,13 @@ class Cloud extends Controller {
 
 	function DAVException($err) {
 			
-		if ($err instanceof \Sabre\DAV\Exception\NotFound) {
+		if ($err instanceof NotFound) {
 			notice( t('Not found') . EOL);
 		}
-		elseif ($err instanceof \Sabre\DAV\Exception\Forbidden) {
+		elseif ($err instanceof Forbidden) {
 			notice( t('Permission denied') . EOL);
 		}
-		elseif ($err instanceof \Sabre\DAV\Exception\NotImplemented) {
+		elseif ($err instanceof NotImplemented) {
 			notice( t('Please refresh page') . EOL);
 			// It would be nice to do the following on remote authentication
 			// which provides an unexpected page query param, but we do not

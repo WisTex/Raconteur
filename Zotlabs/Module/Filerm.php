@@ -2,7 +2,10 @@
 namespace Zotlabs\Module;
 
 
-class Filerm extends \Zotlabs\Web\Controller {
+use App;
+use Zotlabs\Web\Controller;
+
+class Filerm extends Controller {
 
 	function get() {
 	
@@ -17,7 +20,7 @@ class Filerm extends \Zotlabs\Web\Controller {
 		if($category)
 			$term = $cat;
 	
-		$item_id = ((\App::$argc > 1) ? intval(\App::$argv[1]) : 0);
+		$item_id = ((App::$argc > 1) ? intval(App::$argv[1]) : 0);
 	
 		logger('filerm: tag ' . $term . ' item ' . $item_id);
 	

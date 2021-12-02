@@ -3,13 +3,16 @@ namespace Zotlabs\Module;
 
 
 
-class Regmod extends \Zotlabs\Web\Controller {
+use App;
+use Zotlabs\Web\Controller;
+
+class Regmod extends Controller {
 
 	function get() {
 	
 		global $lang;
 	
-		$_SESSION['return_url'] = \App::$cmd;
+		$_SESSION['return_url'] = App::$cmd;
 	
 		if(! local_channel()) {
 			info( t('Please login.') . EOL);

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Settings;
 
+use App;
+
 class Account {
 
 	function post() {
@@ -13,14 +15,14 @@ class Account {
 	
 		$email = ((x($_POST,'email')) ? trim(notags($_POST['email'])) : '');
 
-		$account = \App::get_account();
+		$account = App::get_account();
 		if($email != $account['account_email']) {
 			if(! validate_email($email))
 				$errs[] = t('Not valid email.');
 			$adm = trim(get_config('system','admin_email'));
 			if(($adm) && (strcasecmp($email,$adm) == 0)) {
 				$errs[] = t('Protected email address. Cannot change to that email.');
-				$email = \App::$account['account_email'];
+				$email = App::$account['account_email'];
 			}
 			if(! $errs) {
 				$r = q("update account set account_email = '%s' where account_id = %d",
@@ -91,7 +93,7 @@ class Account {
 			
 		call_hooks('account_settings', $account_settings);
 	
-		$email      = \App::$account['account_email'];
+		$email      = App::$account['account_email'];
 
 
 		$tpl = get_markup_template("settings_account.tpl");

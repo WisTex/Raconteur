@@ -3,7 +3,10 @@
 namespace Zotlabs\Module;
 
 
-class Theme_info extends \Zotlabs\Web\Controller {
+use App;
+use Zotlabs\Web\Controller;
+
+class Theme_info extends Controller {
 
 	function get() {
 		$theme = argv(1);
@@ -56,7 +59,7 @@ class Theme_info extends \Zotlabs\Web\Controller {
 
 	function get_theme_config_file($theme){
 
-		$base_theme = \App::$theme_info['extends'];
+		$base_theme = App::$theme_info['extends'];
 	
 		if (file_exists("view/theme/$theme/php/config.php")){
 			return "view/theme/$theme/php/config.php";

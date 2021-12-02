@@ -3,7 +3,9 @@ namespace Zotlabs\Module;
 
 
 
-class Randprof extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Randprof extends Controller {
 
 	function init() {
 		$x = random_profile();

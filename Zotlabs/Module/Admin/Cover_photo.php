@@ -302,9 +302,9 @@ logger('gis: ' . print_r($gis,true));
 			if (argc() < 4) {
 				notice( t('Permission denied.') . EOL );
 				return;
-			};
-			
-	//		check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
+			}
+
+            //		check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
 	        
 			$resource_id = argv(3);
 	
@@ -399,7 +399,7 @@ logger('gis: ' . print_r($gis,true));
 			$o .= replace_macros(get_markup_template('admin_cropcover.tpl'), [
 				'$filename'            => $filename,
 				'$profile'             => intval($_REQUEST['profile']),
-				'$resource'            => \App::$data['imagecrop'] . '-3',
+				'$resource'            => App::$data['imagecrop'] . '-3',
 				'$image_url'           => z_root() . '/photo/' . $filename,
 				'$title'               => t('Crop Image'),
 				'$desc'                => t('Please adjust the image cropping for optimum viewing.'),

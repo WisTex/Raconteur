@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Admin {
 
 	function widget($arr) {
@@ -43,7 +45,7 @@ class Admin {
 				$plugin = $h['aname'];
 				$plugins[] = array(z_root() . '/admin/addons/' . $plugin, $plugin, 'plugin');
 				// temp plugins with admin
-				\App::$plugins_admin[] = $plugin;
+				App::$plugins_admin[] = $plugin;
 			}
 		}
 

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 require_once('include/photos.php');
 
 class Photo_rand {
@@ -19,13 +21,13 @@ class Photo_rand {
 		if(array_key_exists('channel_id', $arr) && intval($arr['channel_id']))
 			$channel_id = intval($arr['channel_id']);
 		if(! $channel_id)
-			$channel_id = \App::$profile_uid;
+			$channel_id = App::$profile_uid;
 		if(! $channel_id)
 			return '';
 
 		$scale = ((array_key_exists('scale',$arr)) ? intval($arr['scale']) : 0);
 
-		$ret = photos_list_photos(array('channel_id' => $channel_id),\App::get_observer(),$album);
+		$ret = photos_list_photos(array('channel_id' => $channel_id), App::get_observer(),$album);
 
 		$filtered = [];
 		if($ret['success'] && $ret['photos'])

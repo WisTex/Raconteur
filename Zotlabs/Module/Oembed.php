@@ -1,9 +1,11 @@
 <?php
 namespace Zotlabs\Module;
+use Zotlabs\Web\Controller;
+
 require_once("include/oembed.php");
 
 
-class Oembed extends \Zotlabs\Web\Controller {
+class Oembed extends Controller {
 
 	function init(){
 		// logger('mod_oembed ' . \App::$query_string, LOGGER_ALL);

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Savedsearch {
 
 	function widget($arr) {
@@ -37,7 +39,7 @@ class Savedsearch {
 			$search = '';
 		}
 
-		$srchurl = \App::$query_string;
+		$srchurl = App::$query_string;
 
 		$srchurl =  rtrim(preg_replace('/searchsave\=[^\&].*?(\&|$)/is','',$srchurl),'&');
 		$hasq = ((strpos($srchurl,'?') !== false) ? true : false);

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Rating {
 
 	function widget($arr) {
@@ -15,7 +17,7 @@ class Rating {
 		if($arr['target'])
 			$hash = $arr['target'];
 		else
-			$hash = \App::$poi['xchan_hash'];
+			$hash = App::$poi['xchan_hash'];
 
 		if(! $hash)
 			return;
@@ -24,7 +26,7 @@ class Rating {
 		$remote = false;
 
 		if(remote_channel() && ! local_channel()) {
-			$ob = \App::get_observer();
+			$ob = App::get_observer();
 			if($ob && $ob['xchan_url']) {
 				$p = parse_url($ob['xchan_url']);
 				if($p) {
@@ -38,7 +40,7 @@ class Rating {
 		$self = false;
 
 		if(local_channel()) {
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			if($hash == $channel['channel_hash'])
 				$self = true;

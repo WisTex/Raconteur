@@ -3,6 +3,8 @@
 namespace Zotlabs\Lib;
 
 
+use App;
+
 class Config {
 
 	/**
@@ -15,19 +17,19 @@ class Config {
 	 *  The category of the configuration value
 	 */
 	static public function Load($family) {
-		if(! array_key_exists($family, \App::$config))
-			\App::$config[$family] = [];
+		if(! array_key_exists($family, App::$config))
+			App::$config[$family] = [];
 
-		if(! array_key_exists('config_loaded', \App::$config[$family])) {
+		if(! array_key_exists('config_loaded', App::$config[$family])) {
 			$r = q("SELECT * FROM config WHERE cat = '%s'", dbesc($family));
 			if($r !== false) {
 				if($r) {
 					foreach($r as $rr) {
 						$k = $rr['k'];
-						\App::$config[$family][$k] = $rr['v'];
+						App::$config[$family][$k] = $rr['v'];
 					}
 				}
-				\App::$config[$family]['config_loaded'] = true;
+				App::$config[$family]['config_loaded'] = true;
 			}
 		}
 	}
@@ -58,7 +60,7 @@ class Config {
 				dbesc($dbvalue)
 			);
 			if($ret) {
-				\App::$config[$family][$key] = $value;
+				App::$config[$family][$key] = $value;
 				$ret = $value;
 			}
 			return $ret;
@@ -71,7 +73,7 @@ class Config {
 		);
 
 		if($ret) {
-			\App::$config[$family][$key] = $value;
+			App::$config[$family][$key] = $value;
 			$ret = $value;
 		}
 
@@ -97,14 +99,14 @@ class Config {
 	 * @return mixed Return value or false on error or if not set
 	 */
 	static public function Get($family, $key, $default = false) {
-		if((! array_key_exists($family, \App::$config)) || (! array_key_exists('config_loaded', \App::$config[$family])))
+		if((! array_key_exists($family, App::$config)) || (! array_key_exists('config_loaded', App::$config[$family])))
 			self::Load($family);
 
-		if(array_key_exists('config_loaded', \App::$config[$family])) {
-			if(! array_key_exists($key, \App::$config[$family])) {
+		if(array_key_exists('config_loaded', App::$config[$family])) {
+			if(! array_key_exists($key, App::$config[$family])) {
 				return $default;
 			}
-			return unserialise(\App::$config[$family][$key]);
+			return unserialise(App::$config[$family][$key]);
 		}
 
 		return $default;
@@ -126,8 +128,8 @@ class Config {
 
 		$ret = false;
 
-		if(array_key_exists($family, \App::$config) && array_key_exists($key, \App::$config[$family]))
-			unset(\App::$config[$family][$key]);
+		if(array_key_exists($family, App::$config) && array_key_exists($key, App::$config[$family]))
+			unset(App::$config[$family][$key]);
 
 		$ret = q("DELETE FROM config WHERE cat = '%s' AND k = '%s'",
 			dbesc($family),

@@ -3,7 +3,9 @@ namespace Zotlabs\Module;
 
 
 
-class Xchan extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Xchan extends Controller {
 
 	function get() {
 	

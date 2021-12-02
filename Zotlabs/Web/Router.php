@@ -253,7 +253,7 @@ class Router {
 			}
 
 			if (! App::$error) {
-				$arr = [ 'content' => \App::$page['content'], 'replace' => false ];
+				$arr = [ 'content' => App::$page['content'], 'replace' => false ];
 				call_hooks(App::$module . '_mod_content', $arr);
 
 				if (! $arr['replace']) {

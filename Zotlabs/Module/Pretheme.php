@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 
-class Pretheme extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Pretheme extends Controller {
 
 	function init() {
 		

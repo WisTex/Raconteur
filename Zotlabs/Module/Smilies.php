@@ -2,10 +2,13 @@
 namespace Zotlabs\Module;
 
 
-class Smilies extends \Zotlabs\Web\Controller {
+use App;
+use Zotlabs\Web\Controller;
+
+class Smilies extends Controller {
 
 	function get() { 
-		if (\App::$argv[1]==="json"){
+		if (App::$argv[1]==="json"){
 			$tmp = list_smilies();
 			$results = [];
 			for($i = 0; $i < count($tmp['texts']); $i++) {

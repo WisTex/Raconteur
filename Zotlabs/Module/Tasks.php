@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Widget\Tasklist;
 
 require_once('include/event.php');
 
@@ -22,7 +23,7 @@ class Tasks extends Controller {
 			$x['html'] = '';
 			if(isset($x['tasks']) && is_array($x['tasks'])) {
 				foreach($x['tasks'] as $y) {
-					$x['html'] .= '<div class="tasklist-item"><input type="checkbox" onchange="taskComplete(' . $y['id'] . '); return false;" /> ' . $y['summary'] . '</div>';
+					$x['html'] .= '<div class="tasklist-item"><input type="checkbox" onchange="taskComplete(' . $y['id'] . ') return false;" /> ' . $y['summary'] . '</div>';
 				}
 			}
 			json_return_and_die($x);
@@ -107,7 +108,7 @@ class Tasks extends Controller {
             return $text;
         }
 
-		$obj = new \Zotlabs\Widget\Tasklist;
+		$obj = new Tasklist;
 		return $obj->widget([]);
 	}
 

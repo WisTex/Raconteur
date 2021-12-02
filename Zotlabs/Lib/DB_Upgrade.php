@@ -3,6 +3,8 @@
 namespace Zotlabs\Lib;
 
 
+use App;
+
 class DB_Upgrade {
 
 	public $config_name = '';
@@ -79,16 +81,16 @@ class DB_Upgrade {
 						file_put_contents($lockfile, $x);
 							
 						$r = q("select account_language from account where account_email = '%s' limit 1",
-							dbesc(\App::$config['system']['admin_email'])
+							dbesc(App::$config['system']['admin_email'])
 						);
 						push_lang(($r) ? $r[0]['account_language'] : 'en');
 						z_mail(
 							[
-								'toEmail'        => \App::$config['system']['admin_email'],
+								'toEmail'        => App::$config['system']['admin_email'],
 								'messageSubject' => sprintf( t('Update Error at %s'), z_root()),
 								'textVersion'    => replace_macros(get_intltext_template('update_fail_eml.tpl'), 
 									[
-										'$sitename' => \App::$config['system']['sitename'],
+										'$sitename' => App::$config['system']['sitename'],
 										'$siteurl' =>  z_root(),
 										'$update' => $x,
 										'$error' => sprintf( t('Update %s failed. See error logs.'), $x),

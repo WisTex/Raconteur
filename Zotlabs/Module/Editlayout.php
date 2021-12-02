@@ -9,14 +9,15 @@ require_once('include/channel.php');
 require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
-class Editlayout extends \Zotlabs\Web\Controller {
+class Editlayout extends Controller
+{
 
 	function init() {
 
 		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
-				\App::$is_sys = true;
+				App::$is_sys = true;
 			}
 		}
 
@@ -31,9 +32,9 @@ class Editlayout extends \Zotlabs\Web\Controller {
 
 	function get() {
 
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 
@@ -42,11 +43,11 @@ class Editlayout extends \Zotlabs\Web\Controller {
 		$uid = local_channel();
 		$owner = 0;
 		$channel = null;
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
-		if(\App::$is_sys && is_site_admin()) {
+		if(App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
 				$uid = $owner = intval($sys['channel_id']);

@@ -3,7 +3,10 @@ namespace Zotlabs\Module;
 
 
 
-class Lostpass extends \Zotlabs\Web\Controller {
+use App;
+use Zotlabs\Web\Controller;
+
+class Lostpass extends Controller {
 
 	function post() {
 	
@@ -103,7 +106,7 @@ class Lostpass extends \Zotlabs\Web\Controller {
 	
 				$email_tpl = get_intltext_template("passchanged_eml.tpl");
 				$message = replace_macros($email_tpl, array(
-					'$sitename' => \App::$config['sitename'],
+					'$sitename' => App::$config['sitename'],
 					'$siteurl' =>  z_root(),
 					'$username' => sprintf( t('Site Member (%s)'), $email),
 					'$email' => $email,

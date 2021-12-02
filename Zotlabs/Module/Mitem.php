@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use App;
+use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 
@@ -16,7 +17,7 @@ class Mitem extends Controller {
 		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
-				\App::$is_sys = true;
+				App::$is_sys = true;
 			}
 		}
 
@@ -30,37 +31,37 @@ class Mitem extends Controller {
 		if(argc() < 3)
 			return;
 	
-		$m = menu_fetch_id(intval(argv(2)),\App::$profile['channel_id']);
+		$m = menu_fetch_id(intval(argv(2)), App::$profile['channel_id']);
 		if(! $m) {
 			notice( t('Menu not found.') . EOL);
 			return '';
 		}
-		\App::$data['menu'] = $m;
+		App::$data['menu'] = $m;
 	
 	}
 	
 	function post() {
 	
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			return;
 		}
 
 		$which = argv(1);
 
 
-		$uid = \App::$profile['channel_id'];
+		$uid = App::$profile['channel_id'];
 	
 		if(array_key_exists('sys', $_REQUEST) && $_REQUEST['sys'] && is_site_admin()) {
 			$sys = get_sys_channel();
 			$uid = intval($sys['channel_id']);
-			\App::$is_sys = true;
+			App::$is_sys = true;
 		}
 	
 		if(! $uid)
 			return;
 
 
-		if(! \App::$data['menu'])
+		if(! App::$data['menu'])
 			return;
 	
 		if(!$_REQUEST['mitem_desc'] || !$_REQUEST['mitem_link']) {
@@ -69,7 +70,7 @@ class Mitem extends Controller {
 		}
 	
 		$_REQUEST['mitem_channel_id'] = $uid;
-		$_REQUEST['menu_id'] = \App::$data['menu']['menu_id'];
+		$_REQUEST['menu_id'] = App::$data['menu']['menu_id'];
 	
 		$_REQUEST['mitem_flags'] = 0;
 		if($_REQUEST['usezid'])
@@ -85,7 +86,7 @@ class Mitem extends Controller {
 			if($r) {
 				menu_sync_packet($uid,get_observer_hash(),$_REQUEST['menu_id']);
 				//info( t('Menu element updated.') . EOL);
-				goaway(z_root() . '/mitem/' . $which . '/' . $_REQUEST['menu_id'] . ((\App::$is_sys) ? '?f=&sys=1' : ''));
+				goaway(z_root() . '/mitem/' . $which . '/' . $_REQUEST['menu_id'] . ((App::$is_sys) ? '?f=&sys=1' : ''));
 			}
 			else
 				notice( t('Unable to update menu element.') . EOL);
@@ -97,10 +98,10 @@ class Mitem extends Controller {
 				menu_sync_packet($uid,get_observer_hash(),$_REQUEST['menu_id']);
 				//info( t('Menu element added.') . EOL);
 				if($_REQUEST['submit']) {
-					goaway(z_root() . '/menu/' . $which . ((\App::$is_sys) ? '?f=&sys=1' : ''));
+					goaway(z_root() . '/menu/' . $which . ((App::$is_sys) ? '?f=&sys=1' : ''));
 				}
 				if($_REQUEST['submit-more']) {
-					goaway(z_root() . '/mitem/' . $which . '/' . $_REQUEST['menu_id'] . '?f=&display=block' . ((\App::$is_sys) ? '&sys=1' : '') );
+					goaway(z_root() . '/mitem/' . $which . '/' . $_REQUEST['menu_id'] . '?f=&display=block' . ((App::$is_sys) ? '&sys=1' : '') );
 				}
 			}
 			else
@@ -114,15 +115,15 @@ class Mitem extends Controller {
 	function get() {
 	
 		$uid = local_channel();
-		$owner = \App::$profile['channel_id'];
+		$owner = App::$profile['channel_id'];
 		$channel = channelx_by_n($owner);
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 
 		$which = argv(1);
 
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 	
-		if(\App::$is_sys && is_site_admin()) {
+		if(App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
 			$uid = intval($sys['channel_id']);
 			$channel = $sys;
@@ -134,13 +135,13 @@ class Mitem extends Controller {
 			return '';
 		}
 	
-		if(argc() < 3 || (! \App::$data['menu'])) {
+		if(argc() < 3 || (! App::$data['menu'])) {
 			notice( t('Not found.') . EOL);
 			return '';
 		}
 	
-		$m = menu_fetch(\App::$data['menu']['menu_name'],$owner,$ob_hash);
-		\App::$data['menu_item'] = $m;
+		$m = menu_fetch(App::$data['menu']['menu_name'],$owner,$ob_hash);
+		App::$data['menu_item'] = $m;
 	
 		$menu_list = menu_list($owner);
 	
@@ -149,13 +150,13 @@ class Mitem extends Controller {
 				$menu_names[] = $menus['menu_name'];
 		}
 	
-		$acl = new \Zotlabs\Access\AccessControl($channel);
+		$acl = new AccessControl($channel);
 	
 		$lockstate = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock');
 	
 		if(argc() == 3) {
 			$r = q("select * from menu_item where mitem_menu_id = %d and mitem_channel_id = %d order by mitem_order asc, mitem_desc asc",
-				intval(\App::$data['menu']['menu_id']),
+				intval(App::$data['menu']['menu_id']),
 				intval($owner)
 			);
 	
@@ -167,7 +168,7 @@ class Mitem extends Controller {
 			}
 
 			$create = replace_macros(get_markup_template('mitemedit.tpl'), array(
-				'$menu_id'     => \App::$data['menu']['menu_id'],
+				'$menu_id'     => App::$data['menu']['menu_id'],
 				'$permissions' => t('Menu Item Permissions'),
 				'$permdesc'    => t("\x28click to open/close\x29"),
 				'$aclselect'   => populate_acl($acl->get(),false),
@@ -186,7 +187,7 @@ class Mitem extends Controller {
 				'$lockstate'   => $lockstate,
 				'$menu_names'  => $menu_names,
 				'$nick'        => $which,
-				'$sys'         => \App::$is_sys
+				'$sys'         => App::$is_sys
 			));
 	
 			$o .= replace_macros(get_markup_template('mitemlist.tpl'),array(
@@ -194,10 +195,10 @@ class Mitem extends Controller {
 				'$create'      => $create,
 				'$nametitle'   => t('Link Name'),
 				'$targettitle' => t('Link Target'),
-				'$menuname'    => \App::$data['menu']['menu_name'],
-				'$menudesc'    => \App::$data['menu']['menu_desc'],
+				'$menuname'    => App::$data['menu']['menu_name'],
+				'$menudesc'    => App::$data['menu']['menu_desc'],
 				'$edmenu'      => t('Edit menu'),
-				'$menu_id'     => \App::$data['menu']['menu_id'],
+				'$menu_id'     => App::$data['menu']['menu_id'],
 				'$mlist'       => $r,
 				'$edit'        => t('Edit element'),
 				'$drop'        => t('Drop element'),
@@ -224,7 +225,7 @@ class Mitem extends Controller {
 	
 				if(! $m) {
 					notice( t('Menu item not found.') . EOL);
-					goaway(z_root() . '/menu/'. $which . ((\App::$is_sys) ? '?f=&sys=1' : ''));
+					goaway(z_root() . '/menu/'. $which . ((App::$is_sys) ? '?f=&sys=1' : ''));
 				}
 	
 				$mitem = $m[0];
@@ -240,13 +241,13 @@ class Mitem extends Controller {
 					else
 						notice( t('Menu item could not be deleted.'). EOL);
 	
-					goaway(z_root() . '/mitem/' . $which . '/' . $mitem['mitem_menu_id'] . ((\App::$is_sys) ? '?f=&sys=1' : ''));
+					goaway(z_root() . '/mitem/' . $which . '/' . $mitem['mitem_menu_id'] . ((App::$is_sys) ? '?f=&sys=1' : ''));
 				}
 	
 				// edit menu item
 				$o = replace_macros(get_markup_template('mitemedit.tpl'), array(
 					'$header' => t('Edit Menu Element'),
-					'$menu_id' => \App::$data['menu']['menu_id'],
+					'$menu_id' => App::$data['menu']['menu_id'],
 					'$permissions' => t('Menu Item Permissions'),
 					'$permdesc' => t("\x28click to open/close\x29"),
 					'$aclselect' => populate_acl($mitem,false),

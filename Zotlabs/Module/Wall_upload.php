@@ -1,6 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+
 require_once('include/photo_factory.php');
 require_once('include/channel.php');
 require_once('include/photos.php');
@@ -8,7 +11,7 @@ require_once('include/photos.php');
 
 
 
-class Wall_upload extends \Zotlabs\Web\Controller {
+class Wall_upload extends Controller {
 
 	function post() {
 	
@@ -32,7 +35,7 @@ class Wall_upload extends \Zotlabs\Web\Controller {
 			killme();
 		}
 	
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
 		$args = array( 'source' => 'editor', 'visible' => 0, 'contact_allow' => array($channel['channel_hash']));
 	

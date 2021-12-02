@@ -22,8 +22,11 @@
 
 namespace Zotlabs\Tests\Unit;
 
+use PDO;
+use PHPUnit\DbUnit\Database\Connection;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use function getenv;
 
 /**
  * @brief Base class for our Database Unit Tests.
@@ -40,14 +43,14 @@ abstract class DatabaseTestCase extends TestCase {
 	/**
 	 * Only instantiate PDO once for test clean-up/fixture load.
 	 *
-	 * @var \PDO
+	 * @var PDO
 	 */
 	static private $pdo = null;
 
 	/**
 	 * Only instantiate \PHPUnit\DbUnit\Database\Connection once per test.
 	 *
-	 * @var \PHPUnit\DbUnit\Database\Connection
+	 * @var Connection
 	 */
 	private $conn = null;
 
@@ -55,12 +58,12 @@ abstract class DatabaseTestCase extends TestCase {
 	final public function getConnection() {
 		if ($this->conn === null) {
 			if (self::$pdo === null) {
-				$dsn = \getenv('hz_db_scheme') . ':host=' . \getenv('hz_db_server')
-					. ';port=' . \getenv('hz_db_port') . ';dbname=' . \getenv('hz_db_database');
+				$dsn = getenv('hz_db_scheme') . ':host=' . getenv('hz_db_server')
+					. ';port=' . getenv('hz_db_port') . ';dbname=' . getenv('hz_db_database');
 
-				self::$pdo = new \PDO($dsn, \getenv('hz_db_user'), \getenv('hz_db_pass'));
+				self::$pdo = new PDO($dsn, getenv('hz_db_user'), getenv('hz_db_pass'));
 			}
-			$this->conn = $this->createDefaultDBConnection(self::$pdo, \getenv('hz_db_database'));
+			$this->conn = $this->createDefaultDBConnection(self::$pdo, getenv('hz_db_database'));
 		}
 
 		return $this->conn;

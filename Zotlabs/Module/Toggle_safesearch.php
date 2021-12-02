@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 
-class Toggle_safesearch extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Toggle_safesearch extends Controller {
 
 	function init() {
 	

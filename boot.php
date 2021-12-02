@@ -652,6 +652,9 @@ function sys_boot() {
 
 	App::$install = ((file_exists('.htconfig.php') && filesize('.htconfig.php')) ? false : true);
 
+    $db_host = $db_user = $db_pass = $db_data = EMPTY_STR;
+    $db_port = $db_type = 0;
+
 	@include('.htconfig.php');
 
 	// allow somebody to set some initial settings 
@@ -660,7 +663,7 @@ function sys_boot() {
 		@include('.htpreconfig.php');
 	}
 
-	if (array_key_exists('default_timezone',get_defined_vars())) {
+	if (isset($default_timezone)) {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
@@ -1252,7 +1255,7 @@ class App {
 			}
 		}
 		if (! $name) {
-			echo "template engine <tt>$class</tt> cannot be registered without a name.\n";
+			echo "template engine <b>$class</b> cannot be registered without a name.\n";
 			killme();
 		}
 		self::$template_engines[$name] = $class;
@@ -1265,7 +1268,7 @@ class App {
 	*
 	* @param string $name Template engine name
 	*
-	* @return object Template Engine instance
+	* @return void Template Engine instance
 	*/
 	public static function template_engine($name = '') {
 		if ($name !== '') {
@@ -1292,7 +1295,7 @@ class App {
 
 		// If we fell through to this step, it is considered fatal.
 		
-		echo "template engine <tt>$template_engine</tt> is not registered!\n";
+		echo "template engine <b>$template_engine</b> is not registered!\n";
 		killme();
 	}
 
@@ -1996,7 +1999,6 @@ function check_php_cli() {
 
 	logger('PHP command line interpreter not found.');
 	throw new Exception('interpreter not  found.');
-	return false;
 }
 
 
@@ -2183,6 +2185,7 @@ function get_custom_nav($navname) {
 	if (! $navname)
 		return App::$page['nav'];
 	// load custom nav menu by name here
+    return EMPTY_STR;
 }
 
 /**
@@ -2503,7 +2506,7 @@ function z_get_temp_dir() {
 	if(! $temp_dir)
 		$temp_dir = sys_get_temp_dir();
 
-	return $upload_dir;
+	return $temp_dir;
 }
 
 
@@ -2565,19 +2568,19 @@ function check_cron_broken() {
 	if(! $t) {
 		// never checked before. Start the timer.
 		set_config('system','lastcroncheck',datetime_convert());
-		return;
+		return true;
 	}
 
 	if($t > datetime_convert('UTC','UTC','now - 3 days')) {
 		// Wait for 3 days before we do anything so as not to swamp the admin with messages
-		return;
+		return true;
 	}
 
 	set_config('system','lastcroncheck',datetime_convert());
 
 	if(($d) && ($d > datetime_convert('UTC','UTC','now - 3 days'))) {
 		// Scheduled tasks have run successfully in the last 3 days.
-		return;
+		return true;
 	}
 
 	return z_mail(

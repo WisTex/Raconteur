@@ -17,7 +17,7 @@ class Blocks extends Controller {
 		if(argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
-				\App::$is_sys = true;
+				App::$is_sys = true;
 			}
 		}
 	
@@ -33,24 +33,24 @@ class Blocks extends Controller {
 	
 	function get() {
 	
-		if(! \App::$profile) {
+		if(! App::$profile) {
 			notice( t('Requested profile is not available.') . EOL );
-			\App::$error = 404;
+			App::$error = 404;
 			return;
 		}
 	
 		$which = argv(1);
 	
-		$_SESSION['return_url'] = \App::$query_string;
+		$_SESSION['return_url'] = App::$query_string;
 	
 		$uid = local_channel();
 		$owner = 0;
 		$channel = null;
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
-		if(\App::$is_sys && is_site_admin()) {
+		if(App::$is_sys && is_site_admin()) {
 			$sys = get_sys_channel();
 			if($sys && intval($sys['channel_id'])) {
 				$uid = $owner = intval($sys['channel_id']);
@@ -90,7 +90,7 @@ class Blocks extends Controller {
 		$x = array(
 			'webpage' => ITEM_TYPE_BLOCK,
 			'is_owner' => true,
-			'nickname' => \App::$profile['channel_address'],
+			'nickname' => App::$profile['channel_address'],
 			'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
 			'bang' => '',
 			'showacl' => false,

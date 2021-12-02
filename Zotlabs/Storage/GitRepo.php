@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Storage;
 
+use PHPGit\Exception\GitException;
 use PHPGit\Git as PHPGit;
 
 
@@ -79,7 +80,7 @@ class GitRepo {
 		if(!$this->path) return false;
 		try {
 			return $this->git->init($this->path);
-		} catch (\PHPGit\Exception\GitException $ex) {
+		} catch (GitException $ex) {
 			return false;
 		}
 	}
@@ -87,7 +88,7 @@ class GitRepo {
 	public function pull() {
 		try {
 			$success = $this->git->pull();
-		} catch (\PHPGit\Exception\GitException $ex) {
+		} catch (GitException $ex) {
 			return false;
 		}
 		return $success;
@@ -131,7 +132,7 @@ class GitRepo {
 	public function commit($msg, $options = []) {
 		try {
 			return $this->git->commit($msg, $options);
-		} catch (\PHPGit\Exception\GitException $ex) {
+		} catch (GitException $ex) {
 			return false;
 		}		
 	}

@@ -2,11 +2,13 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Suggestedchats {
 
 	function widget($arr) {
 
-		if(! feature_enabled(\App::$profile['profile_uid'],'ajaxchat'))
+		if(! feature_enabled(App::$profile['profile_uid'],'ajaxchat'))
 			return '';
 
 		// There are reports that this tool does not ever remove chatrooms on dead sites,

@@ -1,7 +1,9 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -9,7 +11,7 @@ require_once('include/bbcode.php');
 
 
 
-class Tagger extends \Zotlabs\Web\Controller {
+class Tagger extends Controller {
 
 	function get() {
 	
@@ -130,7 +132,7 @@ class Tagger extends \Zotlabs\Web\Controller {
 	
 		$termlink = html_entity_decode('&#x22d5;') . '[zrl=' . z_root() . '/search?tag=' . urlencode($clean_term) . ']'. $clean_term . '[/zrl]';
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 	
 		$arr = [];
 	

@@ -24,6 +24,7 @@
 namespace Zotlabs\Tests\Unit\Access;
 
 use phpmock\phpunit\PHPMock;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Tests\Unit\UnitTestCase;
 use Zotlabs\Access\Permissions;
 
@@ -52,7 +53,7 @@ class PermissionsTest extends UnitTestCase {
 	 */
 	public function testVersionEqualsPermissionRoles() {
 		$p = new Permissions();
-		$pr = new \Zotlabs\Access\PermissionRoles();
+		$pr = new PermissionRoles();
 		$this->assertEquals($p->version(), $pr->version());
 	}
 

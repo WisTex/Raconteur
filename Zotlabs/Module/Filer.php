@@ -1,11 +1,14 @@
 <?php
 namespace Zotlabs\Module;
 
+use App;
+use Zotlabs\Web\Controller;
+
 require_once('include/security.php');
 require_once('include/bbcode.php');
 
 
-class Filer extends \Zotlabs\Web\Controller {
+class Filer extends Controller {
 
 	function get() {
 	
@@ -14,7 +17,7 @@ class Filer extends \Zotlabs\Web\Controller {
 		}
 	
 		$term = unxmlify(trim($_GET['term']));
-		$item_id = ((\App::$argc > 1) ? intval(\App::$argv[1]) : 0);
+		$item_id = ((App::$argc > 1) ? intval(App::$argv[1]) : 0);
 	
 		logger('filer: tag ' . $term . ' item ' . $item_id);
 	

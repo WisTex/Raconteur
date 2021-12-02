@@ -769,7 +769,7 @@ function bb_definitionList($match) {
 		$listElements = preg_replace( '/<\/dd>/ism', '', $listElements, 1);
 	}
 
-	return '<dl class="bb-dl ' . rtrim($classes) . '">' . $listElements . '</dl>';;
+	return '<dl class="bb-dl ' . rtrim($classes) . '">' . $listElements . '</dl>';
 }
 function bb_definitionList_unescapeBraces($match) {
 	return '<dt>' . str_replace('\]', ']', $match[1]) . '</dt>';
@@ -854,10 +854,10 @@ function bb_sanitize_style($input) {
 
 function oblanguage_callback($matches) {
 	if(strlen($matches[1]) == 2) {
-		$compare = strtolower(substr(\App::$language,0,2));
+		$compare = strtolower(substr(App::$language,0,2));
 	}
 	else {
-		$compare = strtolower(\App::$language);
+		$compare = strtolower(App::$language);
 	}
 
 	if($compare === strtolower($matches[1]))
@@ -868,10 +868,10 @@ function oblanguage_callback($matches) {
 
 function oblanguage_necallback($matches) {
 	if(strlen($matches[1]) == 2) {
-		$compare = strtolower(substr(\App::$language,0,2));
+		$compare = strtolower(substr(App::$language,0,2));
 	}
 	else {
-		$compare = strtolower(\App::$language);
+		$compare = strtolower(App::$language);
 	}
 
 	if($compare !== strtolower($matches[1]))

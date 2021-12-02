@@ -2,7 +2,11 @@
 
 namespace Zotlabs\Module\Settings;
 
+use App;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\Permissions;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Permcat;
 
 
 class Permcats {
@@ -12,12 +16,12 @@ class Permcats {
 		if(! local_channel())
 			return;
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 		check_form_security_token_redirectOnErr('/settings/permcats', 'settings_permcats');
 
 
-		$all_perms = \Zotlabs\Access\Permissions::Perms();
+		$all_perms = Permissions::Perms();
 
 		$name = escape_tags(trim($_POST['name']));
 		if(! $name) {
@@ -36,7 +40,7 @@ class Permcats {
 			}
 		}
 		
-		\Zotlabs\Lib\Permcat::update(local_channel(),$name,$pcarr);
+		Permcat::update(local_channel(),$name,$pcarr);
 
 		Libsync::build_sync_packet();
 
@@ -51,14 +55,14 @@ class Permcats {
 		if(! local_channel())
 			return;
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 
 
 		if(argc() > 2) 
 			$name = hex2bin(argv(2));			
 
 		if(argc() > 3 && argv(3) === 'drop') {
-			\Zotlabs\Lib\Permcat::delete(local_channel(),$name);
+			Permcat::delete(local_channel(),$name);
 			Libsync::build_sync_packet();
 			json_return_and_die([ 'success' => true ]);
 		}
@@ -68,7 +72,7 @@ class Permcats {
 
 		$existing = [];
 
-		$pcat = new \Zotlabs\Lib\Permcat(local_channel());
+		$pcat = new Permcat(local_channel());
 		$pcatlist = $pcat->listing();
 		$permcats = [];
 		if($pcatlist) {
@@ -80,11 +84,11 @@ class Permcats {
 			}
 		}
 
-		$global_perms = \Zotlabs\Access\Permissions::Perms();
+		$global_perms = Permissions::Perms();
 
 		foreach($global_perms as $k => $v) {
-			$thisperm = \Zotlabs\Lib\Permcat::find_permcat($existing,$k);
-			$checkinherited = \Zotlabs\Access\PermissionLimits::Get(local_channel(),$k);
+			$thisperm = Permcat::find_permcat($existing,$k);
+			$checkinherited = PermissionLimits::Get(local_channel(),$k);
 
 			if($existing[$k])
 				$thisperm = "1";

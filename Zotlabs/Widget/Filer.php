@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 
 
+use App;
+
 class Filer {
 
 	function widget($arr) {
@@ -30,7 +32,7 @@ class Filer {
 			'$sel_all' => (($selected == '') ? 'selected' : ''),
 			'$all' => t('Everything'),
 			'$terms' => $terms,
-			'$base' => z_root() . '/' . \App::$cmd
+			'$base' => z_root() . '/' . App::$cmd
 		));
 	}
 

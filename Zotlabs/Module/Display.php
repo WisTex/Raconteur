@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 
 use App;
+use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\Controller;
@@ -65,7 +66,7 @@ class Display extends Controller {
 
 		if(local_channel() && (! $this->updating)) {
 	
-			$channel = \App::get_channel();
+			$channel = App::get_channel();
 
 			$channel_acl = array(
 				'allow_cid' => $channel['channel_allow_cid'], 
@@ -80,7 +81,7 @@ class Display extends Controller {
 				'default_location'    => $channel['channel_location'],
 				'nickname'            => $channel['channel_address'],
 				'lockstate'           => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-				'acl'                 => populate_acl($channel_acl,true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),	
+				'acl'                 => populate_acl($channel_acl,true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
 				'permissions'         => $channel_acl,
 				'bang'                => '',
 				'visitor'             => true,
@@ -259,7 +260,7 @@ class Display extends Controller {
 			head_add_link([ 
 				'rel'   => 'alternate',
 				'type'  => 'application/json+oembed',
-				'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+				'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
 				'title' => 'oembed'
 			]);
 

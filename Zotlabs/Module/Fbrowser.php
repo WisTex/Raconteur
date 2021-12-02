@@ -1,5 +1,8 @@
 <?php
 namespace Zotlabs\Module;
+use App;
+use Zotlabs\Web\Controller;
+
 /**
  * @package		Friendica\modules
  * @subpackage	FileBrowser
@@ -9,26 +12,26 @@ namespace Zotlabs\Module;
 require_once('include/photo_factory.php');
 
 
-class Fbrowser extends \Zotlabs\Web\Controller {
+class Fbrowser extends Controller {
 
 	function get(){
 		
 		if (!local_channel())
 			killme();
 	
-		if (\App::$argc==1)
+		if (App::$argc==1)
 			killme();
 		
 		//echo "<pre>"; var_dump(\App::$argv); killme();	
 		
-		switch(\App::$argv[1]){
+		switch(App::$argv[1]){
 			case "image":
 				$path = array( array(z_root()."/fbrowser/image/", t("Photos")));
 				$albums = false;
 				$sql_extra = "";
 				$sql_extra2 = " ORDER BY created DESC LIMIT 0, 10";
 				
-				if (\App::$argc==2){
+				if (App::$argc==2){
 					$albums = q("SELECT distinct(album) AS album FROM photo WHERE uid = %d ",
 						intval(local_channel())
 					);
@@ -38,11 +41,11 @@ class Fbrowser extends \Zotlabs\Web\Controller {
 				}
 				
 				$album = "";
-				if (\App::$argc==3){
-					$album = hex2bin(\App::$argv[2]);
+				if (App::$argc==3){
+					$album = hex2bin(App::$argv[2]);
 					$sql_extra = sprintf("AND album = '%s' ",dbesc($album));
 					$sql_extra2 = "";
-					$path[]=array(z_root() . "/fbrowser/image/" . \App::$argv[2] . "/", $album);
+					$path[]=array(z_root() . "/fbrowser/image/" . App::$argv[2] . "/", $album);
 				}
 					
 				$r = q("SELECT resource_id, id, filename, type, min(imgscale) AS hiq,max(imgscale) AS loq, description  
@@ -66,7 +69,7 @@ class Fbrowser extends \Zotlabs\Web\Controller {
 					
 				break;
 			case "file":
-				if (\App::$argc==2){
+				if (App::$argc==2){
 					$files = q("SELECT id, filename, filetype FROM attach WHERE uid = %d ",
 						intval(local_channel())
 					);
@@ -119,7 +122,7 @@ class Fbrowser extends \Zotlabs\Web\Controller {
 		list($m1,$m2) = explode("/",$rr['filetype']);
 		$filetype = ( (file_exists("images/icons/$m1.png"))?$m1:"zip");
 	
-		if(\App::get_template_engine() === 'internal') {
+		if(App::get_template_engine() === 'internal') {
 			$filename_e = template_escape($rr['filename']);
 		}
 		else {

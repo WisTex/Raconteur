@@ -1081,7 +1081,7 @@ class Photos extends Controller {
 
 				$album_e = $ph[0]['album'];
 				$caption_e = $ph[0]['description'];
-				$aclselect_e = (($_is_owner) ? populate_acl($ph[0], true, \Zotlabs\Lib\PermissionDescription::fromGlobalPermission('view_storage')) : '');
+				$aclselect_e = (($_is_owner) ? populate_acl($ph[0], true, PermissionDescription::fromGlobalPermission('view_storage')) : '');
 				$albums = ((array_key_exists('albums', App::$data)) ? App::$data['albums'] : photos_albums_list(App::$data['channel'],App::$data['observer']));
 	
 				$_SESSION['album_return'] = bin2hex($ph[0]['album']);
@@ -1352,7 +1352,7 @@ class Photos extends Controller {
 		head_add_link([ 
 			'rel'   => 'alternate',
 			'type'  => 'application/json+oembed',
-			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . \App::$query_string),
+			'href'  => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
 			'title' => 'oembed'
 		]);
 

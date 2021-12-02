@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
@@ -245,7 +246,7 @@ class Libzotdir {
 	
 		}
 
-		$ud_hash = random_string() . '@' . \App::get_hostname();
+		$ud_hash = random_string() . '@' . App::get_hostname();
 		self::update_modtime($hash, $ud_hash, channel_reddress($p[0]),(($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
 	}
 

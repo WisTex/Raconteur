@@ -2,6 +2,8 @@
 namespace Zotlabs\Module;
 
 use App;
+use DOMDocument;
+use DomXPath;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
@@ -328,7 +330,7 @@ class Linkinfo extends Controller {
 	
 	
 	public static function deletexnode(&$doc, $node) {
-		$xpath = new \DomXPath($doc);
+		$xpath = new DomXPath($doc);
 		$list = $xpath->query("//".$node);
 		foreach ($list as $child)
 			$child->parentNode->removeChild($child);
@@ -416,7 +418,7 @@ class Linkinfo extends Controller {
 		$body   = mb_convert_encoding($body, 'UTF-8', $cp);
 		$body   = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
 	
-		$doc    = new \DOMDocument();
+		$doc    = new DOMDocument();
 		@$doc->loadHTML($body);
 	
 		self::deletexnode($doc, 'style');
@@ -431,7 +433,7 @@ class Linkinfo extends Controller {
 		self::deletexnode($doc, 'ol');
 		self::deletexnode($doc, 'ul');
 	
-		$xpath = new \DomXPath($doc);
+		$xpath = new DomXPath($doc);
 	
 		//$list = $xpath->query("head/title");
 		$list = $xpath->query("//title");

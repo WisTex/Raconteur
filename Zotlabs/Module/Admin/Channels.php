@@ -77,7 +77,8 @@ class Channels {
 					channel_remove($uid,true);
 
 					notice( sprintf(t("Channel '%s' deleted"), $channel[0]['channel_name']) . EOL);
-				}; break;
+				}
+                    break;
 
 				case "block":{
 					check_form_security_token_redirectOnErr('/admin/channels', 'admin_channels', 't');
@@ -89,7 +90,8 @@ class Channels {
 					Run::Summon( [ 'Directory', $uid, 'nopush' ]);
 
 					notice( sprintf( (($pflags & PAGE_CENSORED) ? t("Channel '%s' censored"): t("Channel '%s' uncensored")) , $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')' ) . EOL);
-				}; break;
+				}
+                    break;
 
 				case "code":{
 					check_form_security_token_redirectOnErr('/admin/channels', 'admin_channels', 't');
@@ -100,7 +102,8 @@ class Channels {
 					);
 
 					notice( sprintf( (($pflags & PAGE_ALLOWCODE) ? t("Channel '%s' code allowed"): t("Channel '%s' code disallowed")) , $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')' ) . EOL);
-				}; break;
+				}
+                    break;
 
 				default:
 					break;

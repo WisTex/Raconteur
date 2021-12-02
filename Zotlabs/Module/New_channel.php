@@ -3,6 +3,8 @@ namespace Zotlabs\Module;
 
 
 use App;
+use URLify;
+use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Web\Controller;
 
 require_once('include/channel.php');
@@ -27,7 +29,7 @@ class New_channel extends Controller {
 			}
 
 			if((! $x) || strlen($x) > 64)
-				$x = strtolower(\URLify::transliterate($n));
+				$x = strtolower(URLify::transliterate($n));
 	
 			$test = [];
 	
@@ -62,7 +64,7 @@ class New_channel extends Controller {
 			}
 
 			if((! $x) || strlen($x) > 64)
-				$x = strtolower(\URLify::transliterate($n));
+				$x = strtolower(URLify::transliterate($n));
 
 
 			$test = [];
@@ -177,10 +179,10 @@ class New_channel extends Controller {
 
 		$privacy_role = ((x($_REQUEST,'permissions_role')) ? $_REQUEST['permissions_role'] :  "" );
 
-		$perm_roles = \Zotlabs\Access\PermissionRoles::roles();
+		$perm_roles = PermissionRoles::roles();
 
 		$name = array('name', t('Channel name'), ((x($_REQUEST,'name')) ? $_REQUEST['name'] : ''), $name_help, "*");
-		$nickhub = '@' . \App::get_hostname();
+		$nickhub = '@' . App::get_hostname();
 		$nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST,'nickname')) ? $_REQUEST['nickname'] : ''), $nick_help, "*");
 		$role = array('permissions_role' , t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role compatible with your usage needs and privacy requirements.'),$perm_roles);
 	

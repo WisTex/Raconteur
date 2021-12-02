@@ -441,9 +441,9 @@ use Zotlabs\Lib\MastAPI;
 		}
 		$r = xchan_fetch($_REQUEST);
 		json_return_and_die($r);
-	};
+	}
 
-	function api_zot_abook_xchan($type) {
+function api_zot_abook_xchan($type) {
 		logger('api_abook_xchan');
 
 		if(api_user() === false)
@@ -458,9 +458,9 @@ use Zotlabs\Lib\MastAPI;
 		);
 
 		json_return_and_die($r);
-	};
+	}
 
-	function api_zot_abconfig($type) {
+function api_zot_abconfig($type) {
 
 		if(api_user() === false)
 			return false;

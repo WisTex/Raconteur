@@ -2,7 +2,10 @@
 namespace Zotlabs\Module;
 
 
-class Hostxrd extends \Zotlabs\Web\Controller {
+use App;
+use Zotlabs\Web\Controller;
+
+class Hostxrd extends Controller {
 
 	function init() {
 		session_write_close();
@@ -12,7 +15,7 @@ class Hostxrd extends \Zotlabs\Web\Controller {
 	
 		$tpl = get_markup_template('xrd_host.tpl');
 		$x = replace_macros(get_markup_template('xrd_host.tpl'), array(
-			'$zhost' => \App::get_hostname(),
+			'$zhost' => App::get_hostname(),
 			'$zroot' => z_root()
 		));
 		$arr = array('xrd' => $x);

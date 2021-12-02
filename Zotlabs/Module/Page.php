@@ -3,6 +3,7 @@ namespace Zotlabs\Module;
 
 
 use App;
+use Zotlabs\Render\Comanche;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 
@@ -20,21 +21,21 @@ class Page extends Controller {
 	
 	
 	
-		if(\App::$profile['profile_uid'])
-			head_set_icon(\App::$profile['thumb']);
+		if(App::$profile['profile_uid'])
+			head_set_icon(App::$profile['thumb']);
 		
 		// load the item here in the init function because we need to extract
 		// the page layout and initialise the correct theme.
 	
 	
-		$observer = \App::get_observer();
+		$observer = App::get_observer();
 		$ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 	
 	
 		// perm_is_allowed is denied unconditionally when 'site blocked to unauthenticated members'. 
 		// This bypasses that restriction for sys channel (public) content
 	
-		if((! perm_is_allowed(\App::$profile['profile_uid'],$ob_hash,'view_pages')) && (! is_sys_channel(\App::$profile['profile_uid']))) {
+		if((! perm_is_allowed(App::$profile['profile_uid'],$ob_hash,'view_pages')) && (! is_sys_channel(App::$profile['profile_uid']))) {
 			notice( t('Permission denied.') . EOL);
 			return;
 		}
@@ -69,7 +70,7 @@ class Page extends Controller {
 		// php or the browser may/will have decoded it, so re-encode it for our search
 	
 		$page_id = urlencode($page_name);
-		$lang_page_id = urlencode(\App::$language . '/' . $page_name);
+		$lang_page_id = urlencode(App::$language . '/' . $page_name);
 
 		$u = q("select channel_id from channel where channel_address = '%s' limit 1",
 			dbesc($channel_address)
@@ -143,12 +144,12 @@ class Page extends Controller {
 		}
 
 		if($r[0]['title'])
-			\App::$page['title'] = escape_tags($r[0]['title']);
+			App::$page['title'] = escape_tags($r[0]['title']);
 	
 		if($r[0]['item_type'] == ITEM_TYPE_PDL) {
-			\App::$comanche = new \Zotlabs\Render\Comanche();
-			\App::$comanche->parse($r[0]['body']);
-			\App::$pdl = $r[0]['body'];
+			App::$comanche = new Comanche();
+			App::$comanche->parse($r[0]['body']);
+			App::$pdl = $r[0]['body'];
 		}
 		elseif($r[0]['layout_mid']) {
 			$l = q("select body from item where mid = '%s' and uid = %d limit 1",
@@ -157,19 +158,19 @@ class Page extends Controller {
 			);
 	
 			if($l) {
-				\App::$comanche = new \Zotlabs\Render\Comanche();
-				\App::$comanche->parse($l[0]['body']);
-				\App::$pdl = $l[0]['body'];
+				App::$comanche = new Comanche();
+				App::$comanche->parse($l[0]['body']);
+				App::$pdl = $l[0]['body'];
 			}
 		}
 	
-		\App::$data['webpage'] = $r;
+		App::$data['webpage'] = $r;
 	
 	}
 		
 	function get() {
 	
-		$r = \App::$data['webpage'];
+		$r = App::$data['webpage'];
 		if(! $r)
 			return;
 	
@@ -184,7 +185,7 @@ class Page extends Controller {
 		$r = fetch_post_tags($r,true);
 	
 		if($r[0]['mimetype'] === 'application/x-pdl')
-			\App::$page['pdl_content'] = true;
+			App::$page['pdl_content'] = true;
 	
 		$o .= prepare_page($r[0]);
 		return $o;

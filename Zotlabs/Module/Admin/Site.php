@@ -66,9 +66,9 @@ class Site {
 		$active_expire_days  = ((array_key_exists('active_expire_days',$_POST)) ? intval($_POST['active_expire_days']) : 7);
 		$max_imported_follow = ((x($_POST,'max_imported_follow'))	? intval(trim($_POST['max_imported_follow']))	    :  MAX_IMPORTED_FOLLOW);
 
-		$reply_address      = ((array_key_exists('reply_address',$_POST) && trim($_POST['reply_address'])) ? trim($_POST['reply_address']) : 'noreply@' . \App::get_hostname());
-		$from_email         = ((array_key_exists('from_email',$_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . \App::get_hostname());
-		$from_email_name    = ((array_key_exists('from_email_name',$_POST) && trim($_POST['from_email_name'])) ? trim($_POST['from_email_name']) : \Zotlabs\Lib\System::get_site_name());
+		$reply_address      = ((array_key_exists('reply_address',$_POST) && trim($_POST['reply_address'])) ? trim($_POST['reply_address']) : 'noreply@' . App::get_hostname());
+		$from_email         = ((array_key_exists('from_email',$_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . App::get_hostname());
+		$from_email_name    = ((array_key_exists('from_email_name',$_POST) && trim($_POST['from_email_name'])) ? trim($_POST['from_email_name']) : System::get_site_name());
 
 		$verifyssl         = ((x($_POST,'verifyssl'))        ? True : False);
 		$proxyuser         = ((x($_POST,'proxyuser'))        ? notags(trim($_POST['proxyuser']))  : '');
@@ -343,9 +343,9 @@ class Site {
 			'$max_imported_follow'  => [ 'max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system','max_imported_follow', MAX_IMPORTED_FOLLOW), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage') ], 
 			'$login_on_homepage'	=> [ 'login_on_homepage', t("Login on Homepage"),((intval($homelogin) || $homelogin === false) ? 1 : '') , t("Present a login box to visitors on the home page if no other content has been configured.") ],
 			'$enable_context_help'	=> [ 'enable_context_help', t("Enable context help"),((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0) , t("Display contextual help for the current page when the help button is pressed.") ],
-			'$reply_address'        => [ 'reply_address', t('Reply-to email address for system generated email.'), get_config('system','reply_address','noreply@' . \App::get_hostname()),'' ],
-			'$from_email'           => [ 'from_email', t('Sender (From) email address for system generated email.'), get_config('system','from_email','Administrator@' . \App::get_hostname()),'' ],
-			'$from_email_name'      => [ 'from_email_name', t('Display name of email sender for system generated email.'), get_config('system','from_email_name',\Zotlabs\Lib\System::get_site_name()),'' ],
+			'$reply_address'        => [ 'reply_address', t('Reply-to email address for system generated email.'), get_config('system','reply_address','noreply@' . App::get_hostname()),'' ],
+			'$from_email'           => [ 'from_email', t('Sender (From) email address for system generated email.'), get_config('system','from_email','Administrator@' . App::get_hostname()),'' ],
+			'$from_email_name'      => [ 'from_email_name', t('Display name of email sender for system generated email.'), get_config('system','from_email_name', System::get_site_name()),'' ],
 			'$directory_server'     => (($dir_choices) ?  [ 'directory_server', t("Directory Server URL"), get_config('system','directory_server'), t("Default directory server"), $dir_choices ] : null),
 			'$proxyuser'            => [ 'proxyuser', t("Proxy user"), get_config('system','proxyuser'), "" ],
 			'$proxy'                => [ 'proxy', t("Proxy URL"), get_config('system','proxy'), "" ],

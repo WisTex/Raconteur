@@ -4,8 +4,9 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
-class Affinity extends \Zotlabs\Web\Controller {
+class Affinity extends Controller {
 
 	function post() {
 

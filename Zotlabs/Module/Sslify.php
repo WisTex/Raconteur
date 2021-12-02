@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 
-class Sslify extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Sslify extends Controller {
 
 	function init() {
 		$x = z_fetch_url($_REQUEST['url']);

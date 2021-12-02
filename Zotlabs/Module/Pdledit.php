@@ -2,8 +2,9 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Web\Controller;
 
-class Pdledit extends \Zotlabs\Web\Controller {
+class Pdledit extends Controller {
 
 	function post() {
 		if(! local_channel())

@@ -2,11 +2,13 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Catcloud {
 
 	function widget($arr) {
 
-		if((! \App::$profile['profile_uid']) || (! \App::$profile['channel_hash']))
+		if((! App::$profile['profile_uid']) || (! App::$profile['channel_hash']))
 			return '';
 
 		$limit = ((array_key_exists('limit',$arr)) ? intval($arr['limit']) : 50);
@@ -16,17 +18,17 @@ class Catcloud {
 
 				case 'cards':
 
-					if(! perm_is_allowed(\App::$profile['profile_uid'], get_observer_hash(), 'view_pages'))
+					if(! perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_pages'))
 						return '';
 
-					return card_catblock(\App::$profile['profile_uid'], $limit, '', \App::$profile['channel_hash']);
+					return card_catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
 
 				case 'articles':
 			
-					if(! perm_is_allowed(\App::$profile['profile_uid'], get_observer_hash(), 'view_articles'))
+					if(! perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_articles'))
 						return '';
 
-					return article_catblock(\App::$profile['profile_uid'], $limit, '', \App::$profile['channel_hash']);
+					return article_catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
 
 
 				default:
@@ -35,10 +37,10 @@ class Catcloud {
 		}
 
 
-		if(! perm_is_allowed(\App::$profile['profile_uid'], get_observer_hash(), 'view_stream'))
+		if(! perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_stream'))
 			return '';
 
-		return catblock(\App::$profile['profile_uid'], $limit, '', \App::$profile['channel_hash']);
+		return catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
 
 
 	}

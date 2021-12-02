@@ -11,8 +11,12 @@ namespace Zotlabs\Module;
 
 use App;
 use Sabre\DAV as SDAV;
+use Sabre\DAV\Auth\Plugin;
+use Zotlabs\Lib\System;
 use Zotlabs\Storage;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Storage\BasicAuth;
+use Zotlabs\Storage\Browser;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 
@@ -101,10 +105,10 @@ class Dav extends Controller {
 			Libprofile::load(argv(1),0);
 
 
-		$auth = new \Zotlabs\Storage\BasicAuth();
+		$auth = new BasicAuth();
 //		$auth->observer = get_observer_hash();
 
-		$auth->setRealm(ucfirst(\Zotlabs\Lib\System::get_platform_name()) . ' ' . 'WebDAV');
+		$auth->setRealm(ucfirst(System::get_platform_name()) . ' ' . 'WebDAV');
 
 		$rootDirectory = new \Zotlabs\Storage\Directory('/', $auth);
 
@@ -112,7 +116,7 @@ class Dav extends Controller {
 		$server = new SDAV\Server($rootDirectory);
 
 
-		$authPlugin = new \Sabre\DAV\Auth\Plugin($auth);
+		$authPlugin = new Plugin($auth);
 		$server->addPlugin($authPlugin);
 
 
@@ -123,7 +127,7 @@ class Dav extends Controller {
 		$server->addPlugin($lockPlugin);
 
 		// provide a directory view for the cloud in Hubzilla
-		$browser = new \Zotlabs\Storage\Browser($auth);
+		$browser = new Browser($auth);
 		$auth->setBrowserPlugin($browser);
 
 		// Experimental QuotaPlugin

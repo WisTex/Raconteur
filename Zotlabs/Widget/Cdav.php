@@ -4,19 +4,23 @@ namespace Zotlabs\Widget;
 
 
 
+use App;
+use DBA;
+use Sabre\CardDAV\Backend\PDO;
+
 class Cdav {
 
 	function widget() {
 		if(!local_channel())
 			return;
 
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$principalUri = 'principals/' . $channel['channel_address'];
 
 		if(!cdav_principal($principalUri))
 			return;
 
-		$pdo = \DBA::$dba->db;
+		$pdo = DBA::$dba->db;
 
 		require_once 'vendor/autoload.php';
 
@@ -153,7 +157,7 @@ class Cdav {
 
 		if(argc() >= 2 && argv(1) === 'addressbook') {
 
-			$carddavBackend = new \Sabre\CardDAV\Backend\PDO($pdo);
+			$carddavBackend = new PDO($pdo);
 
 			$sabreabooks = $carddavBackend->getAddressBooksForUser($principalUri);
 

@@ -16,10 +16,10 @@ class Profperm extends Controller {
 		if(! local_channel())
 			return;
 	
-		$channel = \App::get_channel();
+		$channel = App::get_channel();
 		$which = $channel['channel_address'];
 	
-		$profile = \App::$argv[1];
+		$profile = App::$argv[1];
 	
 		Libprofile::load($which,$profile);
 	

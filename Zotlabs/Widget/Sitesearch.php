@@ -3,13 +3,15 @@
 namespace Zotlabs\Widget;
 
 
+use App;
+
 class Sitesearch {
 
 	function widget($arr) {
 
 		$search = ((x($_GET,'search')) ? $_GET['search'] : '');
 
-		$srchurl = \App::$query_string;
+		$srchurl = App::$query_string;
 
 		$srchurl =  rtrim(preg_replace('/search\=[^\&].*?(\&|$)/is','',$srchurl),'&');
 		$srchurl =  rtrim(preg_replace('/submit\=[^\&].*?(\&|$)/is','',$srchurl),'&');

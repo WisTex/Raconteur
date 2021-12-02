@@ -1,6 +1,5 @@
 <?php
 
-;
 App::$strings["Social Networking"] = "";
 App::$strings["Social - Normal"] = "";
 App::$strings["Social - Restricted"] = "";

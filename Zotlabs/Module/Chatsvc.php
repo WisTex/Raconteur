@@ -4,9 +4,11 @@ namespace Zotlabs\Module;
 
 require_once('include/security.php');
 
-use \Zotlabs\Lib as Zlib;
+use App;
+use Zotlabs\Lib as Zlib;
+use Zotlabs\Web\Controller;
 
-class Chatsvc extends \Zotlabs\Web\Controller {
+class Chatsvc extends Controller {
 
 	function init() {
 	
@@ -14,16 +16,16 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 	
 		$ret = array('success' => false);
 	
-		\App::$data['chat']['room_id'] = intval($_REQUEST['room_id']);
+		App::$data['chat']['room_id'] = intval($_REQUEST['room_id']);
 		$x = q("select cr_uid from chatroom where cr_id = %d and cr_id != 0 limit 1",
-			intval(\App::$data['chat']['room_id'])
+			intval(App::$data['chat']['room_id'])
 		);
 		if(! $x)
 			json_return_and_die($ret);
 	
-		\App::$data['chat']['uid'] = $x[0]['cr_uid'];
+		App::$data['chat']['uid'] = $x[0]['cr_uid'];
 	
-		if(! perm_is_allowed(\App::$data['chat']['uid'],get_observer_hash(),'chat')) {
+		if(! perm_is_allowed(App::$data['chat']['uid'],get_observer_hash(),'chat')) {
 	        json_return_and_die($ret);
 	    }
 	
@@ -33,22 +35,22 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 	
 		$ret = array('success' => false);
 	
-		$room_id = \App::$data['chat']['room_id'];
+		$room_id = App::$data['chat']['room_id'];
 		$text = escape_tags($_REQUEST['chat_text']);
 		if(! $text)
 			return;
 	
-		$sql_extra = permissions_sql(\App::$data['chat']['uid']);
+		$sql_extra = permissions_sql(App::$data['chat']['uid']);
 	
 		$r = q("select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
-			intval(\App::$data['chat']['uid']),
-			intval(\App::$data['chat']['room_id'])
+			intval(App::$data['chat']['uid']),
+			intval(App::$data['chat']['room_id'])
 		);
 		if(! $r)
 			json_return_and_die($ret);
 	
 		$arr = array(
-			'chat_room' => \App::$data['chat']['room_id'],
+			'chat_room' => App::$data['chat']['room_id'],
 			'chat_xchan' => get_observer_hash(),
 			'chat_text' => $text
 		);
@@ -57,7 +59,7 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 	
 		$x = q("insert into chat ( chat_room, chat_xchan, created, chat_text )
 			values( %d, '%s', '%s', '%s' )",
-			intval(\App::$data['chat']['room_id']),
+			intval(App::$data['chat']['room_id']),
 			dbesc(get_observer_hash()),
 			dbesc(datetime_convert()),
 			dbesc(str_rot47(base64url_encode($arr['chat_text'])))		
@@ -70,13 +72,13 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 	function get() {
 	
 		$status = strip_tags($_REQUEST['status']);
-		$room_id = intval(\App::$data['chat']['room_id']);
+		$room_id = intval(App::$data['chat']['room_id']);
 		$stopped = ((x($_REQUEST,'stopped') && intval($_REQUEST['stopped'])) ? true : false);
 	
 		if($status && $room_id) {
 	
 			$x = q("select channel_address from channel where channel_id = %d limit 1",
-				intval(\App::$data['chat']['uid'])
+				intval(App::$data['chat']['uid'])
 			);			
 	
 			$r = q("update chatpresence set cp_status = '%s', cp_last = '%s' where cp_room = %d and cp_xchan = '%s' and cp_client = '%s'",
@@ -96,11 +98,11 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 	
 			$ret = array('success' => false);
 	
-			$sql_extra = permissions_sql(\App::$data['chat']['uid']);
+			$sql_extra = permissions_sql(App::$data['chat']['uid']);
 	
 			$r = q("select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
-				intval(\App::$data['chat']['uid']),
-				intval(\App::$data['chat']['room_id'])
+				intval(App::$data['chat']['uid']),
+				intval(App::$data['chat']['room_id'])
 			);
 			if(! $r)
 				json_return_and_die($ret);
@@ -108,7 +110,7 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 			$inroom = [];
 	
 			$r = q("select * from chatpresence left join xchan on xchan_hash = cp_xchan where cp_room = %d order by xchan_name",
-				intval(\App::$data['chat']['room_id'])
+				intval(App::$data['chat']['room_id'])
 			);
 			if($r) {
 				foreach($r as $rv) {
@@ -145,7 +147,7 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 			$chats = [];
 	
 			$r = q("select * from chat left join xchan on chat_xchan = xchan_hash where chat_room = %d and chat_id > %d order by created",
-				intval(\App::$data['chat']['room_id']),
+				intval(App::$data['chat']['room_id']),
 				intval($lastseen)
 			);
 			if($r) {
@@ -166,7 +168,7 @@ class Chatsvc extends \Zotlabs\Web\Controller {
 	
 		$r = q("update chatpresence set cp_last = '%s' where cp_room = %d and cp_xchan = '%s' and cp_client = '%s'",
 			dbesc(datetime_convert()),
-			intval(\App::$data['chat']['room_id']),
+			intval(App::$data['chat']['room_id']),
 			dbesc(get_observer_hash()),
 			dbesc($_SERVER['REMOTE_ADDR'])
 		);

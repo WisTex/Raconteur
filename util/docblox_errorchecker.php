@@ -37,7 +37,7 @@ function namesList($fileset) {
 		$fsparam=$fsparam.",".$file;
 	}
 	return $fsparam;
-};
+}
 
 /**
  * This functions runs phpdoc on the provided list of files
@@ -58,7 +58,7 @@ function runs($fileset) {
 		echo "\n Subset ".$fsParam." failed. \n";
 		return false;
 	}
-};
+}
 
 /**
  * This functions cuts down a fileset by removing files until it finally works.
@@ -83,7 +83,7 @@ function reduce($fileset, $ps) {
 		return array_reduce($parts, "array_merge", []);
 	}
 	return [];
-};
+}
 
 //return from util folder to frindica base dir
 $dir='..';

@@ -4,16 +4,18 @@ namespace Zotlabs\Widget;
 
 
 
+use App;
+
 class Common_friends {
 
 	function widget($arr) {
 
-		if((! \App::$profile['profile_uid']) 
-			|| (! perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(),'view_contacts'))) {
+		if((! App::$profile['profile_uid'])
+			|| (! perm_is_allowed(App::$profile['profile_uid'],get_observer_hash(),'view_contacts'))) {
 			return '';
 		}
 
-		return self::common_friends_visitor_widget(\App::$profile['profile_uid']);
+		return self::common_friends_visitor_widget(App::$profile['profile_uid']);
 
 	}
 

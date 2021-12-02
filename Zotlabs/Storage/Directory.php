@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Storage;
 
+use;
 use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
@@ -15,9 +16,9 @@ require_once('include/photos.php');
  *
  * A class that represents a directory.
  *
- * @extends \\Sabre\\DAV\\Node
- * @implements \\Sabre\\DAV\\ICollection
- * @implements \\Sabre\\DAV\\IQuota
+ * @extends \Sabre\\DAV\\Node
+ * @implements \Sabre\\DAV\\ICollection
+ * @implements \Sabre\\DAV\\IQuota
  *
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
@@ -595,7 +596,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 	 * @brief Array with all Directory and File DAV\\Node items for the given path.
  	 *
 	 * @param string $file path to a directory
-	 * @param \Zotlabs\Storage\BasicAuth &$auth
+	 * @param BasicAuth &$auth
 	 * @returns null|array \\Sabre\\DAV\\INode[]
 	 * @throw "\Sabre\DAV\Exception\Forbidden"
 	 * @throw "\Sabre\DAV\Exception\NotFound"

@@ -3,6 +3,7 @@
 namespace Zotlabs\Photo;
 
 use App;
+use Imagick;
 
 /**
  * @brief Abstract photo driver class.
@@ -18,7 +19,7 @@ abstract class PhotoDriver {
 	 * For GD it is a PHP image resource.
 	 * For ImageMagick it is an \Imagick object.
 	 *
-	 * @var resource|\Imagick
+	 * @var resource|Imagick
 	 */
 	protected $image;
 
@@ -71,7 +72,7 @@ abstract class PhotoDriver {
 	 * @fixme Shouldn't his method be protected, because outside of the current
 	 * driver it makes no sense at all because of the different return values.
 	 *
-	 * @return boolean|resource|\Imagick
+	 * @return boolean|resource|Imagick
 	 *  false on failure, a PHP image resource for GD driver, an \Imagick object
 	 *  for ImageMagick driver.
 	 */

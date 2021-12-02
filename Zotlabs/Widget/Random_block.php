@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 class Random_block {
 
 	function widget($arr) {
@@ -10,7 +12,7 @@ class Random_block {
 		if(array_key_exists('channel_id',$arr) && intval($arr['channel_id']))
 			$channel_id = intval($arr['channel_id']);
 		if(! $channel_id)
-			$channel_id = \App::$profile_uid;
+			$channel_id = App::$profile_uid;
 		if(! $channel_id)
 			return '';
 

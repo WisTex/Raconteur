@@ -1,11 +1,13 @@
 <?php
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
+
 require_once('include/security.php');
 require_once('include/attach.php');
 
 
-class Attach extends \Zotlabs\Web\Controller {
+class Attach extends Controller {
 
 	function init() {
 	

@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use App;
+use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
@@ -828,7 +829,7 @@ class Profiles extends Controller {
 						'$alt' => t('Profile Image'),
 						'$profile_name' => $rr['profile_name'],
 						'$visible' => (($rr['is_default']) 
-							? '<strong>' . translate_scope(map_scope(\Zotlabs\Access\PermissionLimits::Get($channel['channel_id'],'view_profile'))) . '</strong>' 
+							? '<strong>' . translate_scope(map_scope(PermissionLimits::Get($channel['channel_id'],'view_profile'))) . '</strong>'
 							: '<a href="' . z_root() . '/profperm/' . $rr['id'] . '" />' . t('Edit visibility') . '</a>')
 					));
 				}

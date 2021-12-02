@@ -3,7 +3,9 @@
 namespace Zotlabs\Module;
 
 
-class Email_validation extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Email_validation extends Controller {
 
 	function post() {
 

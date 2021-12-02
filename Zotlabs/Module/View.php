@@ -1,11 +1,13 @@
 <?php
 namespace Zotlabs\Module;
+use Zotlabs\Web\Controller;
+
 /**
  * load view/theme/$current_theme/style.php with Hubzilla context
  */
  
 
-class View extends \Zotlabs\Web\Controller {
+class View extends Controller {
 
 	function init() {
 		header("Content-Type: text/css");

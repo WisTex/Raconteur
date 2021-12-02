@@ -1,5 +1,7 @@
 <?php /** @file */
 
+use Sabre\VObject\Component\VCard;
+use Sabre\VObject\Reader;
 use Zotlabs\Daemon\Run;
 
 use Zotlabs\Lib\Libsync;
@@ -571,7 +573,7 @@ function update_vcard($arr,$vcard = null) {
 	// try to extract it from the FN. 
 
 	if (! $vcard) {
-		$vcard = new \Sabre\VObject\Component\VCard([
+		$vcard = new VCard([
 			'FN' => $fn,
 			'N' => array_reverse(explode(' ', $fn))
 		]);
@@ -826,7 +828,7 @@ function vcard_query(&$r) {
 			foreach($a as $av) {
 				for($x = 0; $x < count($r); $x ++) {
 					if($r[$x]['abook_xchan'] == $av['xchan']) {		
-						$vctmp = \Sabre\VObject\Reader::read($av['v']);
+						$vctmp = Reader::read($av['v']);
 						$r[$x]['vcard'] = (($vctmp) ? get_vcard_array($vctmp,$r[$x]['abook_id']) : [] );
 					}
 				}

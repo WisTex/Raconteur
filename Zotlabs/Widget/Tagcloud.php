@@ -3,12 +3,14 @@
 namespace Zotlabs\Widget;
 
 
+use App;
+
 class Tagcloud {
 
 	function widget($args) {
 
 		$o = '';
-		$uid = \App::$profile_uid;
+		$uid = App::$profile_uid;
 		$count = ((x($args,'count')) ? intval($args['count']) : 24);
 		$flags = 0;
 		$type = TERM_HASHTAG;

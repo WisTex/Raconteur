@@ -1857,7 +1857,7 @@ function import_webpage_element($element, $channel, $type) {
 			$name = $element['pagelink'];
 			if ($name) {
 				require_once('library/urlify/URLify.php');
-				$name = strtolower(\URLify::transliterate($name));
+				$name = strtolower(URLify::transliterate($name));
 			}
 			$arr['title'] = $element['title'];
 			$arr['term'] = $element['term'];

@@ -8,12 +8,14 @@
 
 namespace Zotlabs\Lib;
 
+use ZipArchive;
+
 /**
  * Description of ExtendedZip
  *
  * @author andrew
  */
-class ExtendedZip extends \ZipArchive {
+class ExtendedZip extends ZipArchive {
 		
 		// Member function to add a whole file system subtree to the archive
 		public function addTree($dirname, $localname = '') {

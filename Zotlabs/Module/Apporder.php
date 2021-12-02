@@ -5,7 +5,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
 
-class Apporder extends \Zotlabs\Web\Controller {
+class Apporder extends Controller
+{
 
 
 	function get() {

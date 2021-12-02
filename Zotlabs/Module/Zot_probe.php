@@ -2,12 +2,14 @@
 
 namespace Zotlabs\Module;
 
+use App;
 use Zotlabs\Lib\ZotURL;
 use Zotlabs\Lib\Zotfinger;
 
+use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 
-class Zot_probe extends \Zotlabs\Web\Controller {
+class Zot_probe extends Controller {
 
 	function get() {
 
@@ -21,7 +23,7 @@ class Zot_probe extends \Zotlabs\Web\Controller {
 
 		if(x($_GET,'resource')) {
 			$resource = $_GET['resource'];
-			$channel = (($_GET['authf']) ? \App::get_channel() : null);
+			$channel = (($_GET['authf']) ? App::get_channel() : null);
 
 			if(strpos($resource,'x-zot:') === 0) {
 				$x = ZotURL::fetch($resource,$channel);

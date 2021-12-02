@@ -35,16 +35,16 @@ class Cal extends Controller {
 			if(! $channelx)
 				return;
 	
-			\App::$data['channel'] = $channelx;
+			App::$data['channel'] = $channelx;
 	
-			$observer = \App::get_observer();
-			\App::$data['observer'] = $observer;
+			$observer = App::get_observer();
+			App::$data['observer'] = $observer;
 	
 			$observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
 	
-			head_set_icon(\App::$data['channel']['xchan_photo_s']);
+			head_set_icon(App::$data['channel']['xchan_photo_s']);
 	
-			\App::$page['htmlhead'] .= "<script> var profile_uid = " . ((\App::$data['channel']) ? \App::$data['channel']['channel_id'] : 0) . "; </script>" ;
+			App::$page['htmlhead'] .= "<script> var profile_uid = " . ((App::$data['channel']) ? App::$data['channel']['channel_id'] : 0) . "; </script>" ;
 	
 		}
 	
@@ -85,11 +85,11 @@ class Cal extends Controller {
 		$first_day = intval(get_pconfig($channel['channel_id'],'system','cal_first_day',0));
 	
 		$htpl = get_markup_template('event_head.tpl');
-		\App::$page['htmlhead'] .= replace_macros($htpl,array(
+		App::$page['htmlhead'] .= replace_macros($htpl,array(
 			'$baseurl' => z_root(),
 			'$module_url' => '/cal/' . $channel['channel_address'],
 			'$modparams' => 2,
-			'$lang' => \App::$language,
+			'$lang' => App::$language,
 			'$first_day' => $first_day
 		));
 	
@@ -217,7 +217,7 @@ class Cal extends Controller {
 			$adjust_finish = datetime_convert('UTC', date_default_timezone_get(), $finish);
 	
 
-			if(! perm_is_allowed(\App::$profile['uid'],get_observer_hash(),'view_contacts'))
+			if(! perm_is_allowed(App::$profile['uid'],get_observer_hash(),'view_contacts'))
 				$sql_extra .= " and etype != 'birthday' ";
 
 			if (x($_GET,'id')){
@@ -260,7 +260,7 @@ class Cal extends Controller {
 				foreach($r as $rr) {
 					$j = (($rr['adjust']) ? datetime_convert('UTC',date_default_timezone_get(),$rr['dtstart'], 'j') : datetime_convert('UTC','UTC',$rr['dtstart'],'j'));
 					if(! x($links,$j)) 
-						$links[$j] = z_root() . '/' . \App::$cmd . '#link-' . $j;
+						$links[$j] = z_root() . '/' . App::$cmd . '#link-' . $j;
 				}
 			}
 	

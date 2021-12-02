@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 
-class Xref extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Xref extends Controller {
 
 	function init() {
 		// Sets a referral URL using an xchan directly

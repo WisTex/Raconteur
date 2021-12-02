@@ -2,7 +2,8 @@
 
 namespace Zotlabs\Module\Admin;
 
-use \Michelf\MarkdownExtra;
+use App;
+use Michelf\MarkdownExtra;
 
 /**
  * @brief Admin area theme settings.
@@ -66,8 +67,8 @@ class Themes {
 		 * Single theme
 		 */
 
-		if (\App::$argc == 3){
-			$theme = \App::$argv[2];
+		if (App::$argc == 3){
+			$theme = App::$argv[2];
 			if(! is_dir("view/theme/$theme")){
 				notice( t("Item not found.") );
 				return '';

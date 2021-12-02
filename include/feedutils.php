@@ -4,6 +4,8 @@
  * @brief Some functions to work with XML feeds.
  */
 
+use Zotlabs\Lib\Img_filesize;
+
 /**
  * @brief Return an Atom feed for channel.
  *
@@ -255,7 +257,7 @@ function compat_photos_list($s) {
 				'href' => $match[2],
 				'type' => guess_image_type($match[2])
 			];
-			$sizer = new \Zotlabs\Lib\Img_filesize($match[2]);
+			$sizer = new Img_filesize($match[2]);
 			$size = $sizer->getSize();
 			if(intval($size)) {
 				$entry['length'] = intval($size);

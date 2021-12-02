@@ -2,7 +2,9 @@
 namespace Zotlabs\Module;
 
 
-class Login extends \Zotlabs\Web\Controller {
+use Zotlabs\Web\Controller;
+
+class Login extends Controller {
 
 	function get() {
 		if(local_channel())

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Widget;
 
+use App;
+
 require_once('include/attach.php');
 
 class Portfolio {
@@ -9,7 +11,7 @@ class Portfolio {
 	function widget($args) {
 
 
-		$owner_uid = \App::$profile_uid;
+		$owner_uid = App::$profile_uid;
 		$sql_extra = permissions_sql($owner_uid);
 
 
@@ -77,7 +79,7 @@ class Portfolio {
 				$imgalt_e = $rr['filename'];
 				$desc_e = $rr['description'];
 
-				$imagelink = (z_root() . '/photos/' . \App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
+				$imagelink = (z_root() . '/photos/' . App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
 
 
 				$photos[] = array(
@@ -107,7 +109,7 @@ class Portfolio {
 			'$album_id' => rand(),
 			'$album_edit' => array(t('Edit Album'), $album_edit),
 			'$can_post' => false,
-			'$upload' => array(t('Upload'), z_root() . '/photos/' . \App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
+			'$upload' => array(t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
 			'$order' => false,
 			'$upload_form' => $upload_form,
 			'$usage' => $usage_message
