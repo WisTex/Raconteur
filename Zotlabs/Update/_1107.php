@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1107 {
-function run() {
-	$r = q("CREATE TABLE IF NOT EXISTS `app` (
+class _1107
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE IF NOT EXISTS `app` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `app_id` char(64) NOT NULL DEFAULT '',
   `app_sig` char(255) NOT NULL DEFAULT '',
@@ -24,11 +26,10 @@ function run() {
   KEY `app_channel` (`app_channel`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
+        if ($r)
+            return UPDATE_SUCCESS;
+        return UPDATE_FAILED;
+    }
 
 
 }

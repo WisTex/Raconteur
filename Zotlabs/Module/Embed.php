@@ -9,14 +9,16 @@ namespace Zotlabs\Module;
  
 use Zotlabs\Web\Controller;
 
-class Embed extends Controller {
+class Embed extends Controller
+{
 
-	function init() {
-		$post_id = ((argc() > 1) ? intval(argv(1)) : 0);
-	
-		if ($post_id && local_channel()) {
-			echo '[share=' . $post_id . '][/share]';
-		}
-		killme();
-	}
+    public function init()
+    {
+        $post_id = ((argc() > 1) ? intval(argv(1)) : 0);
+
+        if ($post_id && local_channel()) {
+            echo '[share=' . $post_id . '][/share]';
+        }
+        killme();
+    }
 }

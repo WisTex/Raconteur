@@ -244,7 +244,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
  * @param int $uid The channel_id associated with the resource owner
  * @param string $observer_xchan The xchan_hash representing the observer
  * @param string $permission
- * @param boolean $check_siteblock (default true)
+ * @param bool $check_siteblock (default true)
  *     if false bypass check for "Block Public" at the site level
  * @return bool true if permission is allowed for observer on channel
  */

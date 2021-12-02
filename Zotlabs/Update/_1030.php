@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1030 {
-function run() {
-	$r = q("CREATE TABLE IF NOT EXISTS `issue` (
+class _1030
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE IF NOT EXISTS `issue` (
 `issue_id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `issue_created` DATETIME NOT NULL DEFAULT '0001-01-01 00:00:00',
 `issue_updated` DATETIME NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -20,10 +22,10 @@ KEY `issue_status` (`issue_status`),
 KEY `issue_component` (`issue_component`)
 ) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
+        if ($r)
+            return UPDATE_SUCCESS;
+        return UPDATE_FAILED;
+    }
 
 
 }

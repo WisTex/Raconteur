@@ -45,7 +45,7 @@ abstract class DatabaseTestCase extends TestCase {
 	 *
 	 * @var PDO
 	 */
-	static private $pdo = null;
+	private static $pdo = null;
 
 	/**
 	 * Only instantiate \PHPUnit\DbUnit\Database\Connection once per test.

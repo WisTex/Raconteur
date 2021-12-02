@@ -157,7 +157,7 @@ class Permcat {
 		return $permcats;
 	}
 
-	static public function find_permcat($arr, $name) {
+	public static function find_permcat($arr, $name) {
 		if((! $arr) || (! $name))
 			return false;
 
@@ -166,11 +166,11 @@ class Permcat {
 				return $p['value'];
 	}
 
-	static public function update($channel_id, $name, $permarr) {
+	public static function update($channel_id, $name, $permarr) {
 		PConfig::Set($channel_id, 'permcat', $name, $permarr);
 	}
 
-	static public function delete($channel_id, $name) {
+	public static function delete($channel_id, $name) {
 		PConfig::Delete($channel_id, 'permcat', $name);
 	}
 

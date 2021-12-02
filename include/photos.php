@@ -760,7 +760,7 @@ function photos_album_widget($channelx,$observer,$sortkey = 'display_path',$dire
  * @param array $channel
  * @param array $observer
  * @param string $album (optional) default empty
- * @return boolean|array
+ * @return bool|array
  */
 function photos_list_photos($channel, $observer, $album = '') {
 
@@ -802,7 +802,7 @@ function photos_list_photos($channel, $observer, $album = '') {
  * @param int $channel_id id of the channel
  * @param string $observer_hash
  * @param string $album name of the album
- * @return boolean
+ * @return bool
  */
 function photos_album_exists($channel_id, $observer_hash, $album) {
 
@@ -842,7 +842,7 @@ function photos_album_rename($channel_id, $oldname, $newname) {
  * @param int $channel_id
  * @param string $album
  * @param string $remote_xchan (optional) default empty
- * @return string|boolean
+ * @return string|bool
  */
 function photos_album_get_db_idstr($channel_id, $album, $remote_xchan = '') {
 
@@ -891,7 +891,7 @@ function photos_album_get_db_idstr_admin($channel_id, $album) {
  * @param array $channel
  * @param string $creator_hash
  * @param array $photo
- * @param boolean $visible (optional) default false
+ * @param bool $visible (optional) default false
  * @return int item_id
  */
 function photos_create_item($channel, $creator_hash, $photo, $visible = false) {

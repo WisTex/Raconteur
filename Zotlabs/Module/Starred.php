@@ -7,28 +7,28 @@ use Zotlabs\Web\Controller;
 class Starred extends Controller
 {
 
-    function init()
+    public function init()
     {
 
-        if (! local_channel()) {
+        if (!local_channel()) {
             killme();
         }
         $message_id = ((argc() > 1) ? intval(argv(1)) : 0);
-        if (! $message_id) {
+        if (!$message_id) {
             killme();
         }
-    
+
         $r = q(
             "SELECT item_starred FROM item WHERE uid = %d AND id = %d LIMIT 1",
             intval(local_channel()),
             intval($message_id)
         );
-        if (! count($r)) {
+        if (!count($r)) {
             killme();
         }
-    
+
         $item_starred = (intval($r[0]['item_starred']) ? 0 : 1);
-    
+
         $r = q(
             "UPDATE item SET item_starred = %d WHERE uid = %d and id = %d",
             intval($item_starred),

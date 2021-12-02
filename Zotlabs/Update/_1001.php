@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1001 {
-function run() {
-	$r = q("CREATE TABLE if not exists `verify` (
+class _1001
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE if not exists `verify` (
 		`id` INT(10) UNSIGNED NOT NULL ,
 		`channel` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 		`type` CHAR( 32 ) NOT NULL DEFAULT '',
@@ -14,14 +16,13 @@ function run() {
 		PRIMARY KEY ( `id` )
 		) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 
-	$r2 = q("alter table `verify` add index (`channel`), add index (`type`), add index (`token`),
+        $r2 = q("alter table `verify` add index (`channel`), add index (`type`), add index (`token`),
 		add index (`meta`), add index (`created`)");
 
-	if($r && $r2)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
+        if ($r && $r2)
+            return UPDATE_SUCCESS;
+        return UPDATE_FAILED;
+    }
 
 
 }

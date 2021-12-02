@@ -178,7 +178,7 @@ function create_sys_channel() {
 /**
  * @brief Returns the sys channel.
  *
- * @return array|boolean
+ * @return array|bool
  */
 function get_sys_channel() {
 
@@ -202,7 +202,7 @@ function get_sys_channel() {
  * @brief Checks if $channel_id is sys channel.
  *
  * @param int $channel_id
- * @return boolean
+ * @return bool
  */
 function is_sys_channel($channel_id) {
 	$s = get_sys_channel();
@@ -796,7 +796,7 @@ function channel_change_address($channel,$new_address) {
  *       login account
  * @param int $channel_id
  *       channel id to set as default for this account
- * @param boolean $force (optional) default true
+ * @param bool $force (optional) default true
  *       - if true, set this default unconditionally
  *       - if $force is false only do this if there is no existing default
  */
@@ -1444,7 +1444,7 @@ function get_default_profile_photo($size = 300) {
  *
  * @param string $s
  *    xchan_hash of the identity in question
- * @return boolean true or false
+ * @return bool true or false
  */
 function is_foreigner($s) {
 	return((strpbrk($s, '.:@')) ? true : false);
@@ -1455,7 +1455,7 @@ function is_foreigner($s) {
  *
  * @param string $s
  *    xchan_hash of the identity in question
- * @return boolean true or false
+ * @return bool true or false
  */
 function is_member($s) {
 	return((is_foreigner($s)) ? false : true);
@@ -1500,7 +1500,7 @@ function get_online_status($nick) {
  * @brief
  *
  * @param string $webbie
- * @return array|boolean|string
+ * @return array|bool|string
  */
 function remote_online_status($webbie) {
 
@@ -1900,7 +1900,7 @@ function get_zcard_embed($channel, $observer_hash = '', $args = []) {
  * @brief Get a channel array from a channel nickname.
  *
  * @param string $nick - A channel_address nickname
- * @return array|boolean
+ * @return array|bool
  *   - array with channel entry
  *   - false if no channel with $nick was found
  */
@@ -1933,7 +1933,7 @@ function channelx_by_nick($nick,$include_removed = false) {
  * @brief Get a channel array by a channel_hash.
  *
  * @param string $hash
- * @return array|boolean false if channel ID not found, otherwise the channel array
+ * @return array|bool false if channel ID not found, otherwise the channel array
  */
 
 function channelx_by_hash($hash, $include_removed = false) {
@@ -1957,7 +1957,7 @@ function channelx_by_hash($hash, $include_removed = false) {
  * @brief Get a channel array by a channel ID.
  *
  * @param int $id A channel ID
- * @return array|boolean false if channel ID not found, otherwise the channel array
+ * @return array|bool false if channel ID not found, otherwise the channel array
  */
 
 function channelx_by_n($id, $include_removed = false) {
@@ -2124,9 +2124,9 @@ function profile_store_lowlevel($arr) {
  * authorisation to do this.
  *
  * @param int $account_id
- * @param boolean $local (optional) default true
- * @param boolean $unset_session (optional) default true
- * @return boolean|array
+ * @param bool $local (optional) default true
+ * @param bool $unset_session (optional) default true
+ * @return bool|array
  */
 
 function account_remove($account_id, $local = true, $unset_session = true) {
@@ -2189,8 +2189,8 @@ function account_remove($account_id, $local = true, $unset_session = true) {
  * @brief Removes a channel.
  *
  * @param int $channel_id
- * @param boolean $local default true
- * @param boolean $unset_session default false
+ * @param bool $local default true
+ * @param bool $unset_session default false
  */
 
 function channel_remove($channel_id, $local = true, $unset_session = false) {
@@ -2357,7 +2357,7 @@ function channel_remove_final($channel_id) {
  * is in fact the resource owner whose channel_id is being checked.
  *
  * @param int $channel_id
- * @return boolean
+ * @return bool
  */
 function channel_codeallowed($channel_id) {
 	if(! intval($channel_id))

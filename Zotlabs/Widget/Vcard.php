@@ -4,11 +4,13 @@ namespace Zotlabs\Widget;
 
 use App;
 
-class Vcard {
+class Vcard
+{
 
-	function widget($arr) {
-		return vcard_from_xchan('', App::get_observer());
-	}
+    public function widget($arr)
+    {
+        return vcard_from_xchan('', App::get_observer());
+    }
 
 }
 

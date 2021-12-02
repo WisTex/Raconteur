@@ -2,11 +2,13 @@
 
 namespace Zotlabs\Update;
 
-class _1198 {
-function run() {
+class _1198
+{
+    public function run()
+    {
 
-	if(ACTIVE_DBTYPE == DBTYPE_MYSQL) {
-		$r = q("ALTER TABLE item 
+        if (ACTIVE_DBTYPE == DBTYPE_MYSQL) {
+            $r = q("ALTER TABLE item 
 			DROP INDEX item_blocked,
 			DROP INDEX item_unpublished,
 			DROP INDEX item_deleted,
@@ -15,10 +17,10 @@ function run() {
 			DROP INDEX item_pending_remove,
 			DROP INDEX item_type
 		");
-	}
+        }
 
-	return UPDATE_SUCCESS;
-}
+        return UPDATE_SUCCESS;
+    }
 
 
 }

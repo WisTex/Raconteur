@@ -5,7 +5,7 @@ namespace Zotlabs\Daemon;
 
 class Xchan_photo {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		if ($argc != 3) {
 			return;

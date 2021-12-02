@@ -7,7 +7,7 @@ use Zotlabs\Lib\Libzotdir;
 
 class Onedirsync {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		logger('onedirsync: start ' . intval($argv[1]));
 	

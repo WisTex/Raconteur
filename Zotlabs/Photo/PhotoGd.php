@@ -77,7 +77,7 @@ class PhotoGd extends PhotoDriver {
 	 *
 	 * @see \Zotlabs\Photo\PhotoDriver::getImage()
 	 *
-	 * @return boolean|resource
+	 * @return bool|resource
 	 */
 	public function getImage() {
 		if (! $this->is_valid()) {

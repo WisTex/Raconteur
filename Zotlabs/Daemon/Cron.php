@@ -6,7 +6,7 @@ use Zotlabs\Lib\Libsync;
 
 class Cron {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		$maxsysload = intval(get_config('system','maxloadavg'));
 		if($maxsysload < 1)

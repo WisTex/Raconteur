@@ -5,7 +5,7 @@ namespace Zotlabs\Daemon;
 
 class Expire {
 
-	static public function run($argc,$argv){
+	public static function run($argc, $argv){
 
 		cli_startup();
 

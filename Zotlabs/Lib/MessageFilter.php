@@ -7,7 +7,7 @@ namespace Zotlabs\Lib;
 class MessageFilter {
 
 
-	static public function evaluate($item,$incl,$excl) {
+	public static function evaluate($item, $incl, $excl) {
 
 		require_once('include/html2plain.php');
 

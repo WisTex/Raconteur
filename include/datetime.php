@@ -160,15 +160,15 @@ function dob($dob) {
  * @param string $label
  * @param string $id
  *   id and name of datetimepicker (defaults to "datetimepicker")
- * @param boolean $pickdate
+ * @param bool $pickdate
  *   true to show date picker (default)
- * @param boolean $picktime
+ * @param bool $picktime
  *   true to show time picker (default)
  * @param DateTime $minfrom
  *   set minimum date from picker with id $minfrom (none by default)
  * @param DateTime $maxfrom
  *   set maximum date from picker with id $maxfrom (none by default)
- * @param boolean $required default false
+ * @param bool $required default false
  * @param int $first_day (optional) default 0
  * @return string Parsed HTML output.
  *

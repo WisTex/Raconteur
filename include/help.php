@@ -91,7 +91,7 @@ function preg_callback_help_include($matches) {
 /**
  * @brief
  *
- * @return boolean|array
+ * @return bool|array
  */
 function determine_help_language() {
 
@@ -135,7 +135,7 @@ function find_doc_file($s) {
  * @brief
  *
  * @param string $s
- * @return number|mixed|unknown|boolean
+ * @return number|mixed|unknown|bool
  */
 function search_doc_files($s) {
 
@@ -227,7 +227,7 @@ function load_context_help() {
  * @brief
  *
  * @param string $s
- * @return void|boolean[]|number[]|string[]|unknown[]
+ * @return void|bool|number[]|string[]|unknown[]
  */
 function store_doc_file($s) {
 

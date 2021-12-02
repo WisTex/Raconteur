@@ -153,7 +153,7 @@ function pop_lang() {
  * @brief Load string translation table for alternate language.
  *
  * @param string $lang language code in 2-letter ISO 639-1 (en, de, fr) format
- * @param boolean $install (optional) default false
+ * @param bool $install (optional) default false
  */
 function load_translation_table($lang, $install = false) {
 
@@ -251,7 +251,7 @@ function tt($singular, $plural, $count, $ctx = ''){
  * any language file.
  *
  * @param int $n
- * @return boolean
+ * @return bool
  */
 function string_plural_select_default($n) {
 	return ($n != 1);
@@ -296,7 +296,7 @@ function detect_language($s) {
 		return '';
 	}
 
-	$l = new Text_LanguageDetect;
+	$l = new Text_LanguageDetect();
 	try {
 		// return 2-letter ISO 639-1 (en) language code
 		$l->setNameMode(2);
@@ -337,7 +337,7 @@ function get_language_name($s, $l = null) {
 	if (strpos($s, '-') !== false) $s = substr($s, 0, 2) . strtoupper(substr($s, 2));
 	if ($l !== null && strpos($l, '-') !== false) $l = substr($l, 0, 2) . strtoupper(substr($l, 2));
 
-	$languageRepository = new LanguageRepository;
+	$languageRepository = new LanguageRepository();
 
 	// Sometimes intl doesn't like the second part at all ...
 	try {

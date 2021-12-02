@@ -10,7 +10,7 @@ require_once('include/import.php');
 
 class Content_importer {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 		cli_startup();
 
 		$page = $argv[1];

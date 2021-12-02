@@ -50,7 +50,7 @@ function unload_plugin($plugin){
  * @brief Uninstalls an addon.
  *
  * @param string $plugin name of the addon
- * @return boolean
+ * @return bool
  */
 function uninstall_plugin($plugin) {
 
@@ -168,7 +168,7 @@ function load_plugin($plugin) {
  * @brief Check if addon is installed (deprecated).
  *
  * @param string $name
- * @return boolean
+ * @return bool
  */
 function plugin_is_installed($name) {
 	$r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
@@ -184,7 +184,7 @@ function plugin_is_installed($name) {
  * @brief Check if addon is installed (use this one).
  *
  * @param string $name
- * @return boolean
+ * @return bool
  */
 
 function addon_is_installed($name) {
@@ -1071,7 +1071,7 @@ function get_markup_template($s, $root = '') {
  * @brief
  *
  * @param string $folder
- * @return boolean|string
+ * @return bool|string
  */
 function folder_exists($folder) {
 	// Get canonicalized absolute pathname

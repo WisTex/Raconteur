@@ -6,7 +6,7 @@ use Zotlabs\Lib\Img_cache;
 
 class Cache_image {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		cli_startup();
 		logger('caching: ' . $argv[1] . ' to ' . $argv[2]);

@@ -6,17 +6,17 @@ define ("KEY_NOT_EXISTS", '^R_key_not_Exists^');
 
 class SimpleTemplate implements TemplateEngine {
 
-	static $name = 'internal';
+    static public $name = 'internal';
 
-	var $r;
-	var $search;
-	var $replace;
-	var $stack = [];
-	var $nodes = [];
-	var $done  = false;
-	var $d     = false;
-	var $lang  = null;
-	var $debug = false;
+	public $r;
+	public $search;
+	public $replace;
+	public $stack = [];
+	public $nodes = [];
+	public $done  = false;
+	public $d     = false;
+	public $lang  = null;
+	public $debug = false;
 
 	private function _preg_error() {
 		switch (preg_last_error()) {

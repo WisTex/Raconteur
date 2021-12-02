@@ -180,7 +180,7 @@ function atoken_delete($atoken_id) {
  * @fixme we should set xchan_deleted if it's expired or removed
  *
  * @param array $xchan
- * @return void|boolean
+ * @return void|bool
  */
 function atoken_create_xchan($xchan) {
 

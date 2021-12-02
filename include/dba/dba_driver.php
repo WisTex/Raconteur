@@ -18,15 +18,15 @@ use Zotlabs\Lib\System;
 
 class DBA {
 
-	static public $dba = null;
-	static public $dbtype = null;
-	static public $scheme = 'mysql';
-	static public $logging = false;
+	public static $dba = null;
+	public static $dbtype = null;
+	public static $scheme = 'mysql';
+	public static $logging = false;
 
-	static public $install_script = 'schema_mysql.sql';
-	static public $null_date = '0001-01-01 00:00:00';
-	static public $utc_now = 'UTC_TIMESTAMP()';
-	static public $tquot = "`";
+	public static $install_script = 'schema_mysql.sql';
+	public static $null_date = '0001-01-01 00:00:00';
+	public static $utc_now = 'UTC_TIMESTAMP()';
+	public static $tquot = "`";
 
 
 	/**
@@ -41,7 +41,7 @@ class DBA {
 	 * @param bool $install Defaults to false
 	 * @return null|dba_driver A database driver object (dba_pdo) or null if no driver found.
 	 */
-	static public function dba_factory($server,$port,$user,$pass,$db,$dbtype,$install = false) {
+	public static function dba_factory($server, $port, $user, $pass, $db, $dbtype, $install = false) {
 
 		self::$dba = null;
 		self::$dbtype = intval($dbtype);
@@ -86,142 +86,156 @@ class DBA {
  * dba_mysql, dba_mysqli or dba_postgres, but we moved to PDO and the only
  * implemented driver is dba_pdo.
  */
-abstract class dba_driver {
-	// legacy behavior
+abstract class dba_driver
+{
+    // legacy behavior
 
-	public $db;
+    public $db;
 
-	public  $debug = 0;
-	public  $connected = false;
-	public  $error = false;
+    public $debug = 0;
+    public $connected = false;
+    public $error = false;
 
-	/**
-	 * @brief Connect to the database.
-	 *
-	 * This abstract function needs to be implemented in the real driver.
-	 *
-	 * @param string $server DB server name
-	 * @param string $scheme DB scheme
-	 * @param string $port DB port
-	 * @param string $user DB username
-	 * @param string $pass DB password
-	 * @param string $db database name
-	 * @return bool
-	 */
-	abstract function connect($server, $scheme, $port, $user, $pass, $db);
+    /**
+     * @brief Connect to the database.
+     *
+     * This abstract function needs to be implemented in the real driver.
+     *
+     * @param string $server DB server name
+     * @param string $scheme DB scheme
+     * @param string $port DB port
+     * @param string $user DB username
+     * @param string $pass DB password
+     * @param string $db database name
+     * @return bool
+     */
+    public abstract function connect($server, $scheme, $port, $user, $pass, $db);
 
-	/**
-	 * @brief Perform a DB query with the SQL statement $sql.
-	 *
-	 * This abstract function needs to be implemented in the real driver.
-	 *
-	 * @param string $sql The SQL query to execute
-	 */
-	abstract function q($sql);
+    /**
+     * @brief Perform a DB query with the SQL statement $sql.
+     *
+     * This abstract function needs to be implemented in the real driver.
+     *
+     * @param string $sql The SQL query to execute
+     */
+    public abstract function q($sql);
 
-	/**
-	 * @brief Escape a string before being passed to a DB query.
-	 *
-	 * This abstract function needs to be implemented in the real driver.
-	 *
-	 * @param string $str The string to escape.
-	 */
-	abstract function escape($str);
+    /**
+     * @brief Escape a string before being passed to a DB query.
+     *
+     * This abstract function needs to be implemented in the real driver.
+     *
+     * @param string $str The string to escape.
+     */
+    public abstract function escape($str);
 
-	/**
-	 * @brief Close the database connection.
-	 *
-	 * This abstract function needs to be implemented in the real driver.
-	 */
-	abstract function close();
+    /**
+     * @brief Close the database connection.
+     *
+     * This abstract function needs to be implemented in the real driver.
+     */
+    public abstract function close();
 
-	/**
-	 * @brief Return text name for db driver
-	 *
-	 * This abstract function needs to be implemented in the real driver.
-	 */
-	abstract function getdriver();
+    /**
+     * @brief Return text name for db driver
+     *
+     * This abstract function needs to be implemented in the real driver.
+     */
+    public abstract function getdriver();
 
-	function __construct($server, $scheme, $port, $user,$pass,$db,$install = false) {
-		if(($install) && (! $this->install($server, $scheme, $port, $user, $pass, $db))) {
-			return;
-		}
-		$this->connect($server, $scheme, $port, $user, $pass, $db);
-	}
+    public function __construct($server, $scheme, $port, $user, $pass, $db, $install = false)
+    {
+        if (($install) && (!$this->install($server, $scheme, $port, $user, $pass, $db))) {
+            return;
+        }
+        $this->connect($server, $scheme, $port, $user, $pass, $db);
+    }
 
-	function get_null_date() {
-		return DBA::$null_date;
-	}
+    public function get_null_date()
+    {
+        return DBA::$null_date;
+    }
 
-	function get_install_script() {
-		$platform_name = System::get_platform_name();
-		if(file_exists('install/' . $platform_name . '/' . DBA::$install_script))
-			 return 'install/' . $platform_name . '/' . DBA::$install_script;
+    public function get_install_script()
+    {
+        $platform_name = System::get_platform_name();
+        if (file_exists('install/' . $platform_name . '/' . DBA::$install_script))
+            return 'install/' . $platform_name . '/' . DBA::$install_script;
 
-		return 'install/' . DBA::$install_script;
-	}
+        return 'install/' . DBA::$install_script;
+    }
 
-	function get_table_quote() {
-		return DBA::$tquot;
-	}
+    public function get_table_quote()
+    {
+        return DBA::$tquot;
+    }
 
-	function utcnow() {
-		return DBA::$utc_now;
-	}
+    public function utcnow()
+    {
+        return DBA::$utc_now;
+    }
 
-	function install($server,$scheme,$port,$user,$pass,$db) {
-		if (!(strlen($server) && strlen($user))){
-			$this->connected = false;
-			$this->db = null;
-			return false;
-		}
+    public function install($server, $scheme, $port, $user, $pass, $db)
+    {
+        if (!(strlen($server) && strlen($user))) {
+            $this->connected = false;
+            $this->db = null;
+            return false;
+        }
 
-		if(strlen($server) && ($server !== 'localhost') && ($server !== '127.0.0.1') && (! strpbrk($server,':;'))) {
-			if(! z_dns_check($server)) {
-				$this->error = sprintf( t('Cannot locate DNS info for database server \'%s\''), $server);
-				$this->connected = false;
-				$this->db = null;
-				return false;
-			}
-		}
+        if (strlen($server) && ($server !== 'localhost') && ($server !== '127.0.0.1') && (!strpbrk($server, ':;'))) {
+            if (!z_dns_check($server)) {
+                $this->error = sprintf(t('Cannot locate DNS info for database server \'%s\''), $server);
+                $this->connected = false;
+                $this->db = null;
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @brief Sets the database driver's debugging state.
-	 *
-	 * @param int $dbg 0 to disable debugging
-	 */
-	function dbg($dbg) {
-		$this->debug = $dbg;
-	}
+    /**
+     * @brief Sets the database driver's debugging state.
+     *
+     * @param int $dbg 0 to disable debugging
+     */
+    public function dbg($dbg)
+    {
+        $this->debug = $dbg;
+    }
 
-	function __destruct() {
-		if($this->db && $this->connected) {
-			$this->close();
-		}
-	}
+    public function __destruct()
+    {
+        if ($this->db && $this->connected) {
+            $this->close();
+        }
+    }
 
-	function quote_interval($txt) {
-		return $txt;
-	}
+    public function quote_interval($txt)
+    {
+        return $txt;
+    }
 
-	function optimize_table($table) {
-		q('OPTIMIZE TABLE '.$table);
-	}
+    public function optimize_table($table)
+    {
+        q('OPTIMIZE TABLE ' . $table);
+    }
 
-	function concat($fld, $sep) {
-		return 'GROUP_CONCAT(DISTINCT '.$fld.' SEPARATOR \''.$sep.'\')';
-	}
+    public function concat($fld, $sep)
+    {
+        return 'GROUP_CONCAT(DISTINCT ' . $fld . ' SEPARATOR \'' . $sep . '\')';
+    }
 
-	function escapebin($str) {
-		return $this->escape($str);
-	}
+    public function escapebin($str)
+    {
+        return $this->escape($str);
+    }
 
-	function unescapebin($str) {
-		return $str;
-	}
+    public function unescapebin($str)
+    {
+        return $str;
+    }
 
 } // end abstract dba_driver class
 

@@ -130,7 +130,7 @@ class PhotoImagick extends PhotoDriver {
 	 *
 	 * @see \Zotlabs\Photo\PhotoDriver::getImage()
 	 *
-	 * @return boolean|Imagick
+	 * @return bool|Imagick
 	 */
 	public function getImage() {
 		if (! $this->is_valid()) {

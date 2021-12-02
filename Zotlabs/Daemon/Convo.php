@@ -8,7 +8,7 @@ use Zotlabs\Lib\ASCollection;
 
 class Convo {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		logger('convo invoked: ' . print_r($argv,true));
 

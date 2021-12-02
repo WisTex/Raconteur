@@ -55,7 +55,7 @@ class PermissionDescription {
 	 * default permission. You should pass one of the constants from boot.php - PERMS_PUBLIC,
 	 * PERMS_NETWORK etc.
 	 *
-	 * @param  integer $perm - a single enumerated constant permission - PERMS_PUBLIC, PERMS_NETWORK etc.
+	 * @param int $perm - a single enumerated constant permission - PERMS_PUBLIC, PERMS_NETWORK etc.
 	 * @return a new instance of PermissionDescription
 	 */
 	public static function fromStandalonePermission($perm) {

@@ -2,18 +2,19 @@
 
 namespace Zotlabs\Update;
 
-class _1222 {
+class _1222
+{
 
-	function run() {
+    public function run()
+    {
 
-		$r = dbq("UPDATE hubloc set hubloc_id_url = hubloc_hash where hubloc_id_url = '' ");
+        $r = dbq("UPDATE hubloc set hubloc_id_url = hubloc_hash where hubloc_id_url = '' ");
 
-		if($r) {
-			return UPDATE_SUCCESS;
-		}
-		else {        
-			return UPDATE_FAILED;
-		}
-	}
+        if ($r) {
+            return UPDATE_SUCCESS;
+        } else {
+            return UPDATE_FAILED;
+        }
+    }
 
 }

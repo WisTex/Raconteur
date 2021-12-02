@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1035 {
-function run() {
-	$r = q("CREATE TABLE if not exists `xconfig` (
+class _1035
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE if not exists `xconfig` (
 `id` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `xchan` CHAR( 255 ) NOT NULL ,
 `cat` CHAR( 255 ) NOT NULL ,
@@ -15,10 +17,10 @@ KEY `cat` ( `cat` ),
 KEY `k` ( `k` )
 ) ENGINE = MYISAM DEFAULT CHARSET = utf8");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
+        if ($r)
+            return UPDATE_SUCCESS;
+        return UPDATE_FAILED;
+    }
 
 
 }

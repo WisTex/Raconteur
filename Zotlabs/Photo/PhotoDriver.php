@@ -24,17 +24,17 @@ abstract class PhotoDriver {
 	protected $image;
 
 	/**
-	 * @var integer
+	 * @var int
 	 */
 	protected $width;
 
 	/**
-	 * @var integer
+	 * @var int
 	 */
 	protected $height;
 
 	/**
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $valid;
 
@@ -72,7 +72,7 @@ abstract class PhotoDriver {
 	 * @fixme Shouldn't his method be protected, because outside of the current
 	 * driver it makes no sense at all because of the different return values.
 	 *
-	 * @return boolean|resource|Imagick
+	 * @return bool|resource|Imagick
 	 *  false on failure, a PHP image resource for GD driver, an \Imagick object
 	 *  for ImageMagick driver.
 	 */
@@ -95,7 +95,7 @@ abstract class PhotoDriver {
 	 * @param int $w width of region
 	 * @param int $h height of region
 	 *
-	 * @return boolean|void false on failure
+	 * @return bool|void false on failure
 	 */
 	abstract public function cropImageRect($maxx, $maxy, $x, $y, $w, $h);
 
@@ -134,7 +134,7 @@ abstract class PhotoDriver {
 	/**
 	 * @brief Is it a valid image object.
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function is_valid() {
 		return $this->valid;
@@ -143,7 +143,7 @@ abstract class PhotoDriver {
 	/**
 	 * @brief Get the width of the image.
 	 *
-	 * @return boolean|number Width of image in pixels, or false on failure
+	 * @return bool|number Width of image in pixels, or false on failure
 	 */
 	public function getWidth() {
 		if (! $this->is_valid()) {
@@ -155,7 +155,7 @@ abstract class PhotoDriver {
 	/**
 	 * @brief Get the height of the image.
 	 *
-	 * @return boolean|number Height of image in pixels, or false on failure
+	 * @return bool|number Height of image in pixels, or false on failure
 	 */
 	public function getHeight() {
 		if (! $this->is_valid()) {
@@ -168,7 +168,7 @@ abstract class PhotoDriver {
 	 * @brief Saves the image resource to a file in filesystem.
 	 *
 	 * @param string $path Path and filename where to save the image
-	 * @return boolean False on failure, otherwise true
+	 * @return bool False on failure, otherwise true
 	 */
 	public function saveImage($path, $animated = true) {
 		if (! $this->is_valid()) {
@@ -180,7 +180,7 @@ abstract class PhotoDriver {
 	/**
 	 * @brief Return mimetype of the image resource.
 	 *
-	 * @return boolean|string False on failure, otherwise mimetype.
+	 * @return bool|string False on failure, otherwise mimetype.
 	 */
 	public function getType() {
 		if (! $this->is_valid()) {
@@ -192,7 +192,7 @@ abstract class PhotoDriver {
 	/**
 	 * @brief Return file extension of the image resource.
 	 *
-	 * @return boolean|string False on failure, otherwise file extension.
+	 * @return bool|string False on failure, otherwise file extension.
 	 */
 	public function getExt() {
 		if (! $this->is_valid()) {
@@ -205,10 +205,10 @@ abstract class PhotoDriver {
 	 * @brief Scale image to max pixel size in either dimension.
 	 *
 	 * @param int $max maximum pixel size in either dimension
-	 * @param boolean $float_height (optional)
+	 * @param bool $float_height (optional)
 	 *   If true allow height to float to any length on tall images, constraining
 	 *   only the width
-	 * @return boolean|void false on failure, otherwise void
+	 * @return bool|void false on failure, otherwise void
 	 */
 	public function scaleImage($max, $float_height = true) {
 		if (! $this->is_valid()) {
@@ -318,7 +318,7 @@ abstract class PhotoDriver {
 	 * @brief Scales image to a square.
 	 *
 	 * @param int $dim Pixel of square image
-	 * @return boolean|void false on failure, otherwise void
+	 * @return bool|void false on failure, otherwise void
 	 */
 	public function scaleImageSquare($dim) {
 		if (! $this->is_valid()) {
@@ -338,7 +338,7 @@ abstract class PhotoDriver {
 	 * @param int $w width of region
 	 * @param int $h height of region
 	 *
-	 * @return boolean|void false on failure
+	 * @return bool|void false on failure
 	 */
 	public function cropImage($max, $x, $y, $w, $h) {
 		if (! $this->is_valid()) {
@@ -351,7 +351,7 @@ abstract class PhotoDriver {
 	 * @brief Reads exif data from a given filename.
 	 *
 	 * @param string $filename
-	 * @return boolean|array
+	 * @return bool|array
 	 */
 	public function exif($filename) {
 		if ((! function_exists('exif_read_data')) || (! in_array($this->getType(), ['image/jpeg', 'image/tiff']))) {
@@ -381,7 +381,7 @@ abstract class PhotoDriver {
 	 * @brief Orients current image based on exif orientation information.
 	 *
 	 * @param array $exif
-	 * @return boolean true if oriented, otherwise false
+	 * @return bool true if oriented, otherwise false
 	 */
 	public function orient($exif) {
 		if (! ($this->is_valid() && $exif)) {
@@ -431,8 +431,8 @@ abstract class PhotoDriver {
 	 * @brief Save photo to database.
 	 *
 	 * @param array $arr
-	 * @param boolean $skipcheck (optional) default false
-	 * @return boolean|array
+	 * @param bool $skipcheck (optional) default false
+	 * @return bool|array
 	 */
 	public function save($arr, $skipcheck = false) {
 		if (! ($skipcheck || $this->is_valid())) {
@@ -520,7 +520,7 @@ abstract class PhotoDriver {
 	 *
 	 * @param array $arr
 	 * @param scale int
-	 * @return boolean|array
+	 * @return bool|array
 	 */
 
 	public function storeThumbnail($arr, $scale = 0, $animated = true) {

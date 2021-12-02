@@ -17,7 +17,7 @@ class Ca extends Controller
      *
      * @return void
      */
-    function get()
+    public function get()
     {
         if (argc() > 1) {
             $path = 'cache/img/' . substr(argv(1), 0, 2) . '/' . argv(1);
@@ -29,7 +29,7 @@ class Ca extends Controller
                 }
 
                 $cache = intval(get_config('system', 'photo_cache_time'));
-                if (! $cache) {
+                if (!$cache) {
                     $cache = (3600 * 24); // 1 day
                 }
                 header(
@@ -39,7 +39,7 @@ class Ca extends Controller
                 // Set browser cache age as $cache.  But set timeout of
                 // 'shared caches' much lower in the event that infrastructure
                 // caching is present.
-                $smaxage = intval($cache/12);
+                $smaxage = intval($cache / 12);
                 header(
                     'Cache-Control: s-maxage=' . $smaxage
                     . '; max-age=' . $cache . ';'

@@ -20,7 +20,7 @@ require_once('include/menu.php');
  * @param array $channel
  * @param int $account_id
  * @param int $seize
- * @return boolean|array
+ * @return bool|array
  */
 function import_channel($channel, $account_id, $seize, $newname = '') {
 
@@ -367,8 +367,8 @@ function import_profiles($channel, $profiles) {
  *
  * @param array $channel
  * @param array $hublocs
- * @param boolean $seize
- * @param boolean $moving (optional) default false
+ * @param bool $seize
+ * @param bool $moving (optional) default false
  */
  
 function import_hublocs($channel, $hublocs, $seize, $moving = false) {
@@ -942,7 +942,7 @@ function sync_chatrooms($channel, $chatrooms) {
  *
  * @param array $channel where to import to
  * @param array $items
- * @param boolean $sync default false
+ * @param bool $sync default false
  * @param array $relocate default null
  */
 function import_items($channel, $items, $sync = false, $relocate = null) {
@@ -1351,7 +1351,7 @@ function import_conv($channel,$convs) {
  *
  * @param array $channel
  * @param array $mails
- * @param boolean $sync (optional) default false
+ * @param bool $sync (optional) default false
  */
 function import_mail($channel, $mails, $sync = false) {
 	if ($channel && $mails) {
@@ -2128,8 +2128,8 @@ function get_webpage_elements($channel, $type = 'all') {
  *
  * @param array $files List of files to put in zip file
  * @param string $destination
- * @param boolean $overwrite
- * @return boolean Success status
+ * @param bool $overwrite
+ * @return bool Success status
  */
 function create_zip_file($files = [], $destination = '', $overwrite = false) {
 	// if the zip file already exists and overwrite is false, return false

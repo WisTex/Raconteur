@@ -280,7 +280,7 @@ class PermissionsTest extends UnitTestCase {
 	 *
 	 * @param array $p1 The first permission
 	 * @param array $p2 The second permission
-	 * @param boolean $expectedresult The expected result of the tested method
+	 * @param bool $expectedresult The expected result of the tested method
 	 */
 	public function testPermsCompare($p1, $p2, $expectedresult) {
 		$this->assertEquals($expectedresult, Permissions::PermsCompare($p1, $p2));

@@ -16,7 +16,7 @@ class Config {
 	 * @param string $family
 	 *  The category of the configuration value
 	 */
-	static public function Load($family) {
+	public static function Load($family) {
 		if(! array_key_exists($family, App::$config))
 			App::$config[$family] = [];
 
@@ -48,7 +48,7 @@ class Config {
 	 * @return mixed
 	 *  Return the set value, or false if the database update failed
 	 */
-	static public function Set($family, $key, $value) {
+	public static function Set($family, $key, $value) {
 		// manage array value
 		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
@@ -98,7 +98,7 @@ class Config {
 	 * @param string $default (optional) default false
 	 * @return mixed Return value or false on error or if not set
 	 */
-	static public function Get($family, $key, $default = false) {
+	public static function Get($family, $key, $default = false) {
 		if((! array_key_exists($family, App::$config)) || (! array_key_exists('config_loaded', App::$config[$family])))
 			self::Load($family);
 
@@ -124,7 +124,7 @@ class Config {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
-	static public function Delete($family, $key) {
+	public static function Delete($family, $key) {
 
 		$ret = false;
 
@@ -152,7 +152,7 @@ class Config {
 	 *  The configuration key to query
 	 * @return mixed
 	 */
-	static private function get_from_storage($family,$key) {
+	private static function get_from_storage($family, $key) {
 		$ret = q("SELECT * FROM config WHERE cat = '%s' AND k = '%s' LIMIT 1",
 			dbesc($family),
 			dbesc($key)

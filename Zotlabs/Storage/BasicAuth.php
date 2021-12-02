@@ -21,132 +21,135 @@ use Sabre\HTTP\ResponseInterface;
  * @link http://github.com/friendica/red
  * @license http://opensource.org/unlicense.org
  */
-class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
+class BasicAuth extends DAV\Auth\Backend\AbstractBasic
+{
 
-	/**
-	 * @brief This variable holds the currently logged-in channel_address.
-	 *
-	 * It is used for building path in filestorage/.
-	 *
-	 * @var string|null $channel_name
-	 */
-	public $channel_name = null;
-	/**
-	 * @brief channel_id of the current channel of the logged-in account.
-	 *
-	 * @var int $channel_id
-	 */
-	public $channel_id = 0;
-	/**
-	 * @brief channel_hash of the current channel of the logged-in account.
-	 *
-	 * @var string $channel_hash
-	 */
-	public $channel_hash = '';
-	/**
-	 * @brief Set in mod/cloud.php to observer_hash.
-	 *
-	 * @var string $observer
-	 */
-	public $observer = '';
-	/**
-	 *
-	 * @see Browser::set_writeable()
-	 * @var \Sabre\\DAV\\Browser\\Plugin $browser
-	 */
-	public $browser;
-	/**
-	 * @brief channel_id of the current visited path. Set in Directory::getDir().
-	 *
-	 * @var int $owner_id
-	 */
-	public $owner_id = 0;
-	/**
-	 * channel_name of the current visited path. Set in Directory::getDir().
-	 *
-	 * Used for creating the path in cloud/
-	 *
-	 * @var string $owner_nick
-	 */
-	public $owner_nick = '';
-	/**
-	 * Timezone from the visiting channel's channel_timezone.
-	 *
-	 * Used in @ref Browser
-	 *
-	 * @var string $timezone
-	 */
-	protected $timezone = '';
-
-
-	public $module_disabled = false;
+    /**
+     * @brief This variable holds the currently logged-in channel_address.
+     *
+     * It is used for building path in filestorage/.
+     *
+     * @var string|null $channel_name
+     */
+    public $channel_name = null;
+    /**
+     * @brief channel_id of the current channel of the logged-in account.
+     *
+     * @var int $channel_id
+     */
+    public $channel_id = 0;
+    /**
+     * @brief channel_hash of the current channel of the logged-in account.
+     *
+     * @var string $channel_hash
+     */
+    public $channel_hash = '';
+    /**
+     * @brief Set in mod/cloud.php to observer_hash.
+     *
+     * @var string $observer
+     */
+    public $observer = '';
+    /**
+     *
+     * @see Browser::set_writeable()
+     * @var \Sabre\\DAV\\Browser\\Plugin $browser
+     */
+    public $browser;
+    /**
+     * @brief channel_id of the current visited path. Set in Directory::getDir().
+     *
+     * @var int $owner_id
+     */
+    public $owner_id = 0;
+    /**
+     * channel_name of the current visited path. Set in Directory::getDir().
+     *
+     * Used for creating the path in cloud/
+     *
+     * @var string $owner_nick
+     */
+    public $owner_nick = '';
+    /**
+     * Timezone from the visiting channel's channel_timezone.
+     *
+     * Used in @ref Browser
+     *
+     * @var string $timezone
+     */
+    protected $timezone = '';
 
 
-	/**
-	 * @brief Validates a username and password.
-	 *
-	 *
-	 * @see \\Sabre\\DAV\\Auth\\Backend\\AbstractBasic::validateUserPass
-	 * @param string $username
-	 * @param string $password
-	 * @return bool
-	 */
-	protected function validateUserPass($username, $password) {
+    public $module_disabled = false;
 
-		require_once('include/auth.php');
-		$record = account_verify_password($username, $password);
-		if($record && $record['account']) {
-			if($record['channel'])
-				$channel = $record['channel'];
-			else {
-				$r = q("SELECT * FROM channel WHERE channel_account_id = %d AND channel_id = %d LIMIT 1",
-					intval($record['account']['account_id']),
-					intval($record['account']['account_default_channel'])
-				);
-				if($r)
-					$channel = $r[0];
-			}
-		}
-		if($channel && $this->check_module_access($channel['channel_id'])) {
-			return $this->setAuthenticated($channel);
-		}
 
-		if($this->module_disabled)
-			$error = 'module not enabled for ' . $username;
-		else
-			$error = 'password failed for ' . $username;
-		logger($error);
-		log_failed_login($error);
+    /**
+     * @brief Validates a username and password.
+     *
+     *
+     * @param string $username
+     * @param string $password
+     * @return bool
+     * @see \\Sabre\\DAV\\Auth\\Backend\\AbstractBasic::validateUserPass
+     */
+    protected function validateUserPass($username, $password)
+    {
 
-		return false;
-	}
+        require_once('include/auth.php');
+        $record = account_verify_password($username, $password);
+        if ($record && $record['account']) {
+            if ($record['channel'])
+                $channel = $record['channel'];
+            else {
+                $r = q("SELECT * FROM channel WHERE channel_account_id = %d AND channel_id = %d LIMIT 1",
+                    intval($record['account']['account_id']),
+                    intval($record['account']['account_default_channel'])
+                );
+                if ($r)
+                    $channel = $r[0];
+            }
+        }
+        if ($channel && $this->check_module_access($channel['channel_id'])) {
+            return $this->setAuthenticated($channel);
+        }
 
-	/**
-	 * @brief Sets variables and session parameters after successfull authentication.
-	 *
-	 * @param array $r
-	 *  Array with the values for the authenticated channel.
-	 * @return bool
-	 */
-	protected function setAuthenticated($channel) {
-		$this->channel_name = $channel['channel_address'];
-		$this->channel_id = $channel['channel_id'];
-		$this->channel_hash = $this->observer = $channel['channel_hash'];
-	
-		if ($this->observer) {
-			$r = q("select * from xchan where xchan_hash = '%s' limit 1",
-				dbesc($this->observer)
-			);
-			if ($r) {
-				App::set_observer(array_shift($r));
-			}
-		}
+        if ($this->module_disabled)
+            $error = 'module not enabled for ' . $username;
+        else
+            $error = 'password failed for ' . $username;
+        logger($error);
+        log_failed_login($error);
 
-		$_SESSION['uid'] = $channel['channel_id'];
-		$_SESSION['account_id'] = $channel['channel_account_id'];
-		$_SESSION['authenticated'] = true;
-		return true;
-	}
+        return false;
+    }
+
+    /**
+     * @brief Sets variables and session parameters after successfull authentication.
+     *
+     * @param array $r
+     *  Array with the values for the authenticated channel.
+     * @return bool
+     */
+    protected function setAuthenticated($channel)
+    {
+        $this->channel_name = $channel['channel_address'];
+        $this->channel_id = $channel['channel_id'];
+        $this->channel_hash = $this->observer = $channel['channel_hash'];
+
+        if ($this->observer) {
+            $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+                dbesc($this->observer)
+            );
+            if ($r) {
+                App::set_observer(array_shift($r));
+            }
+        }
+
+        $_SESSION['uid'] = $channel['channel_id'];
+        $_SESSION['account_id'] = $channel['channel_account_id'];
+        $_SESSION['authenticated'] = true;
+        return true;
+    }
 
     /**
      * When this method is called, the backend must check if authentication was
@@ -176,15 +179,15 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
      * @param ResponseInterface $response
      * @return array
      */
-    function check(RequestInterface $request, ResponseInterface $response) {
+    public function check(RequestInterface $request, ResponseInterface $response)
+    {
 
-		if (local_channel()) {
-			$this->setAuthenticated(App::get_channel());
-			return [ true, $this->principalPrefix . $this->channel_name ];
-		}
-		elseif (remote_channel()) {
-			return [ true, $this->principalPrefix . $this->observer ];
-		}
+        if (local_channel()) {
+            $this->setAuthenticated(App::get_channel());
+            return [true, $this->principalPrefix . $this->channel_name];
+        } elseif (remote_channel()) {
+            return [true, $this->principalPrefix . $this->observer];
+        }
 
         $auth = new Basic(
             $this->realm,
@@ -203,78 +206,87 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic {
 
     }
 
-	protected function check_module_access($channel_id) {
-		if($channel_id && in_array(App::$module,[ 'dav', 'cdav', 'snap'] )) {
-			return true;
-		}
-		$this->module_disabled = true;
-		return false;
-	}
+    protected function check_module_access($channel_id)
+    {
+        if ($channel_id && in_array(App::$module, ['dav', 'cdav', 'snap'])) {
+            return true;
+        }
+        $this->module_disabled = true;
+        return false;
+    }
 
-	/**
-	 * Sets the channel_name from the currently logged-in channel.
-	 *
-	 * @param string $name
-	 *  The channel's name
-	 */
-	public function setCurrentUser($name) {
-		$this->channel_name = $name;
-	}
-	/**
-	 * Returns information about the currently logged-in channel.
-	 *
-	 * If nobody is currently logged in, this method should return null.
-	 *
-	 * @see \\Sabre\\DAV\\Auth\\Backend\\AbstractBasic::getCurrentUser
-	 * @return string|null
-	 */
-	public function getCurrentUser() {
-		return $this->channel_name;
-	}
+    /**
+     * Sets the channel_name from the currently logged-in channel.
+     *
+     * @param string $name
+     *  The channel's name
+     */
+    public function setCurrentUser($name)
+    {
+        $this->channel_name = $name;
+    }
 
-	/**
-	 * @brief Sets the timezone from the channel in BasicAuth.
-	 *
-	 * Set in mod/cloud.php if the channel has a timezone set.
-	 *
-	 * @param string $timezone
-	 *  The channel's timezone.
-	 * @return void
-	 */
-	public function setTimezone($timezone) {
-		$this->timezone = $timezone;
-	}
-	/**
-	 * @brief Returns the timezone.
-	 *
-	 * @return string
-	 *  Return the channel's timezone.
-	 */
-	public function getTimezone() {
-		return $this->timezone;
-	}
+    /**
+     * Returns information about the currently logged-in channel.
+     *
+     * If nobody is currently logged in, this method should return null.
+     *
+     * @return string|null
+     * @see \\Sabre\\DAV\\Auth\\Backend\\AbstractBasic::getCurrentUser
+     */
+    public function getCurrentUser()
+    {
+        return $this->channel_name;
+    }
 
-	/**
-	 * @brief Set browser plugin for SabreDAV.
-	 *
-	 * @see RedBrowser::set_writeable()
-	 * @param Plugin $browser
-	 */
-	public function setBrowserPlugin($browser) {
-		$this->browser = $browser;
-	}
+    /**
+     * @brief Sets the timezone from the channel in BasicAuth.
+     *
+     * Set in mod/cloud.php if the channel has a timezone set.
+     *
+     * @param string $timezone
+     *  The channel's timezone.
+     * @return void
+     */
+    public function setTimezone($timezone)
+    {
+        $this->timezone = $timezone;
+    }
 
-	/**
-	 * @brief Prints out all BasicAuth variables to logger().
-	 *
-	 * @return void
-	 */
-	public function log() {
+    /**
+     * @brief Returns the timezone.
+     *
+     * @return string
+     *  Return the channel's timezone.
+     */
+    public function getTimezone()
+    {
+        return $this->timezone;
+    }
+
+    /**
+     * @brief Set browser plugin for SabreDAV.
+     *
+     * @param Plugin $browser
+     * @see RedBrowser::set_writeable()
+     */
+    public function setBrowserPlugin($browser)
+    {
+        $this->browser = $browser;
+    }
+
+    /**
+     * @brief Prints out all BasicAuth variables to logger().
+     *
+     * @return void
+     */
+    public function log()
+    {
 //		logger('channel_name ' . $this->channel_name, LOGGER_DATA);
 //		logger('channel_id ' . $this->channel_id, LOGGER_DATA);
 //		logger('channel_hash ' . $this->channel_hash, LOGGER_DATA);
 //		logger('observer ' . $this->observer, LOGGER_DATA);
 //		logger('owner_id ' . $this->owner_id, LOGGER_DATA);
 //		logger('owner_nick ' . $this->owner_nick, LOGGER_DATA);
-	}
+    }
 }

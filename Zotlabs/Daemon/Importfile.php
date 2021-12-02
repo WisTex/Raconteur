@@ -6,7 +6,7 @@ use Zotlabs\Lib\Libsync;
 
 class Importfile {
 
-	static public function run($argc,$argv){
+	public static function run($argc, $argv){
 
 		logger('Importfile: ' . print_r($argv,true));
 

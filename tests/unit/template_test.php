@@ -35,7 +35,7 @@ class TemplateTest extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
 		global $t;
-		$t=new Template;
+		$t= new Template();
 	}
 
 	public function testListToShort() {

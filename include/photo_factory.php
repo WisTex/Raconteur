@@ -192,9 +192,9 @@ function delete_thing_photo($url, $ob_hash) {
  *    external URL to fetch base image
  * @param string $xchan
  *    channel unique hash
- * @param boolean $thing
+ * @param bool $thing
  *    TRUE if this is a thing URL
- * @param boolean $force
+ * @param bool $force
  *    TRUE if ignore image modification date check (force fetch)
  *
  * @return array of results
@@ -519,7 +519,7 @@ function import_channel_photo_from_url($photo, $aid, $uid) {
  * @param string $type
  * @param int $aid
  * @param int $uid channel_id
- * @return boolean|string false on failure, otherwise resource_id of photo
+ * @return bool|string false on failure, otherwise resource_id of photo
  */
 function import_channel_photo($photo, $type, $aid, $uid) {
 

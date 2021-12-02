@@ -282,7 +282,7 @@ function compat_photos_list($s) {
  * @param array $owner
  * @param string $comment default false
  * @param number $cid default 0
- * @param boolean $compat default false
+ * @param bool $compat default false
  * @return void|string
  */
 function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $compat = false) {

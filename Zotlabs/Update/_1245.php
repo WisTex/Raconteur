@@ -2,17 +2,20 @@
 
 namespace Zotlabs\Update;
 
-class _1245 {
+class _1245
+{
 
-	function run() {
+    public function run()
+    {
 
-	    q("delete from app where app_url like '%%/nocomment'");
-		return UPDATE_SUCCESS;
+        q("delete from app where app_url like '%%/nocomment'");
+        return UPDATE_SUCCESS;
 
-	}
+    }
 
-	function verify() {
-		return true;
-	}
+    public function verify()
+    {
+        return true;
+    }
 
 }

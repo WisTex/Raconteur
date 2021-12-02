@@ -30,7 +30,7 @@ class PConfig {
 	 *  The channel_id
 	 * @return void|false Nothing or false if $uid is null or false
 	 */
-	static public function Load($uid) {
+	public static function Load($uid) {
 		if(is_null($uid) || $uid === false)
 			return false;
 
@@ -82,7 +82,7 @@ class PConfig {
 	 *  Default value to return if key does not exist
 	 * @return mixed Stored value or false if it does not exist
 	 */
-	static public function Get($uid, $family, $key, $default = false) {
+	public static function Get($uid, $family, $key, $default = false) {
 
 		if(is_null($uid) || $uid === false)
 			return $default;
@@ -112,7 +112,7 @@ class PConfig {
 	 *  The value to store
 	 * @return mixed Stored $value or false
 	 */
-	static public function Set($uid, $family, $key, $value) {
+	public static function Set($uid, $family, $key, $value) {
 
 		// this catches subtle errors where this function has been called
 		// with local_channel() when not logged in (which returns false)
@@ -185,7 +185,7 @@ class PConfig {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
-	static public function Delete($uid, $family, $key) {
+	public static function Delete($uid, $family, $key) {
 
 		if(is_null($uid) || $uid === false)
 			return false;

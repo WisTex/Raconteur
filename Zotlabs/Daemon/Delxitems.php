@@ -8,7 +8,7 @@ namespace Zotlabs\Daemon;
 
 class Delxitems {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		cli_startup();
 

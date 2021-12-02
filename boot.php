@@ -1007,7 +1007,7 @@ class App {
 		 * register template engines (probably just smarty, but this can be extended)
 		 */
 
-		self::register_template_engine(get_class(new SmartyTemplate));
+		self::register_template_engine(get_class(new SmartyTemplate()));
 
 	}
 
@@ -1287,7 +1287,7 @@ class App {
 			}
 			else {
 				$class = self::$template_engines[$template_engine];
-				$obj = new $class;
+				$obj = new $class();
 				self::$template_engine_instance[$template_engine] = $obj;
 				return $obj;
 			}
@@ -1434,7 +1434,7 @@ function os_mkdir($path, $mode = 0777, $recursive = false) {
  * @brief Recursively delete a directory.
  *
  * @param string $path
- * @return boolean
+ * @return bool
  */
 function rrmdir($path) {
 	if (is_dir($path) === true) {
@@ -1455,7 +1455,7 @@ function rrmdir($path) {
 /**
  * @brief Function to check if request was an AJAX (xmlhttprequest) request.
  *
- * @return boolean
+ * @return bool
  */
 function is_ajax() {
 	return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
@@ -1659,10 +1659,10 @@ function fix_system_urls($oldurl, $newurl) {
  * on the value of App::$config['system']['register_policy'].
  * Returns the complete html for inserting into the page
  *
- * @param boolean $register (optional) default false
+ * @param bool $register (optional) default false
  * @param string $form_id (optional) default \e main-login
- * @param boolean $hiddens (optional) default false
- * @param boolean $login_page (optional) default true
+ * @param bool $hiddens (optional) default false
+ * @param bool $login_page (optional) default true
  * @return string Parsed HTML code.
  */
 function login($register = false, $form_id = 'main-login', $hiddens = false, $login_page = true) {
@@ -2603,8 +2603,8 @@ function check_cron_broken() {
 /**
  * @brief
  *
- * @param boolean $allow_account (optional) default false
- * @return boolean
+ * @param bool $allow_account (optional) default false
+ * @return bool
  */
 function observer_prohibited($allow_account = false) {
 	if($allow_account) {

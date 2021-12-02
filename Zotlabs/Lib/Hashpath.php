@@ -27,30 +27,31 @@ namespace Zotlabs\Lib;
  * see also: boot.php:os_mkdir() - here we provide the equivalent of mkdir -p with permissions of 770. 
  *
  */
- 
-class Hashpath {
 
-	static function path($url, $prefix = '.', $depth = 1, $mkdir = true) {
-		$hash = hash('sha256', $url);
-		$start = 0;
-		$slice = 2;
-		if ($depth < 1) {
-			$depth = 1;
-		}
-		$sluglen = $depth * $slice;
+class Hashpath
+{
 
-		do {
-			$slug = substr($hash,$start,$slice);
-			$prefix .= '/' . $slug;
-			$start += $slice;
-			$sluglen -= $slice;
-		}
-		while ($sluglen);
+    public static function path($url, $prefix = '.', $depth = 1, $mkdir = true)
+    {
+        $hash = hash('sha256', $url);
+        $start = 0;
+        $slice = 2;
+        if ($depth < 1) {
+            $depth = 1;
+        }
+        $sluglen = $depth * $slice;
 
-		if ($mkdir) {
-			os_mkdir($prefix, STORAGE_DEFAULT_PERMISSIONS, true);
-		}
-		
-		return $prefix . '/' . $hash;
-	}
+        do {
+            $slug = substr($hash, $start, $slice);
+            $prefix .= '/' . $slug;
+            $start += $slice;
+            $sluglen -= $slice;
+        } while ($sluglen);
+
+        if ($mkdir) {
+            os_mkdir($prefix, STORAGE_DEFAULT_PERMISSIONS, true);
+        }
+
+        return $prefix . '/' . $hash;
+    }
 }

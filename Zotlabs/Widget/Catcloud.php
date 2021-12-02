@@ -4,45 +4,47 @@ namespace Zotlabs\Widget;
 
 use App;
 
-class Catcloud {
+class Catcloud
+{
 
-	function widget($arr) {
+    public function widget($arr)
+    {
 
-		if((! App::$profile['profile_uid']) || (! App::$profile['channel_hash']))
-			return '';
+        if ((!App::$profile['profile_uid']) || (!App::$profile['channel_hash']))
+            return '';
 
-		$limit = ((array_key_exists('limit',$arr)) ? intval($arr['limit']) : 50);
+        $limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 50);
 
-		if(array_key_exists('type',$arr)) {
-			switch($arr['type']) {
+        if (array_key_exists('type', $arr)) {
+            switch ($arr['type']) {
 
-				case 'cards':
+                case 'cards':
 
-					if(! perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_pages'))
-						return '';
+                    if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_pages'))
+                        return '';
 
-					return card_catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
+                    return card_catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
 
-				case 'articles':
-			
-					if(! perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_articles'))
-						return '';
+                case 'articles':
 
-					return article_catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
+                    if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_articles'))
+                        return '';
 
-
-				default:
-					break;
-			}
-		}
+                    return article_catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
 
 
-		if(! perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_stream'))
-			return '';
+                default:
+                    break;
+            }
+        }
 
-		return catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
+
+        if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_stream'))
+            return '';
+
+        return catblock(App::$profile['profile_uid'], $limit, '', App::$profile['channel_hash']);
 
 
-	}
+    }
 
 }

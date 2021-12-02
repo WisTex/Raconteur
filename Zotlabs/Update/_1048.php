@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1048 {
-function run() {
-	$r = q("CREATE TABLE IF NOT EXISTS `obj` (
+class _1048
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE IF NOT EXISTS `obj` (
   `obj_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `obj_page` char(64) NOT NULL DEFAULT '',
   `obj_verb` char(255) NOT NULL DEFAULT '',
@@ -19,11 +21,10 @@ function run() {
   KEY `obj_obj` (`obj_obj`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
+        if ($r)
+            return UPDATE_SUCCESS;
+        return UPDATE_FAILED;
+    }
 
 
 }

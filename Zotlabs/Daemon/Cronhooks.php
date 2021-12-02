@@ -4,7 +4,7 @@ namespace Zotlabs\Daemon;
 
 class Cronhooks {
 
-	static public function run($argc,$argv){
+	public static function run($argc, $argv){
 
 		logger('cronhooks: start');
 	

@@ -327,7 +327,7 @@ function count_descendants($item) {
  * in the stream.  
  *
  * @param array $item
- * @return boolean
+ * @return bool
  */
 function visible_activity($item) {
 	$hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Undo' ];
@@ -374,7 +374,7 @@ function visible_activity($item) {
  *
  * @param array $items
  * @param string $mode
- * @param boolean $update
+ * @param bool $update
  * @param string $page_mode default traditional
  * @param string $prepared_item
  * @return string
@@ -1879,7 +1879,7 @@ function prepare_page($item) {
  * @brief
  *
  * @param App $a
- * @param boolean $is_owner default false
+ * @param bool $is_owner default false
  * @param string $nickname default null
  * @return void|string
  */

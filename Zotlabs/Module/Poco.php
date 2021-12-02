@@ -10,10 +10,12 @@ use Zotlabs\Web\Controller;
 
 require_once('include/socgraph.php');
 
-class Poco extends Controller {
+class Poco extends Controller
+{
 
-	function init() {
-		poco();
-	}
-	
+    public function init()
+    {
+        poco();
+    }
+
 }

@@ -425,7 +425,7 @@ function send_register_success_email($email,$password) {
  * @brief Allows a user registration.
  *
  * @param string $hash
- * @return array|boolean
+ * @return array|bool
  */
 function account_allow($hash) {
 
@@ -503,7 +503,7 @@ function account_allow($hash) {
  * allowed to have friends on this system
  *
  * @param string $hash
- * @return boolean
+ * @return bool
  */
 
 function account_deny($hash) {
@@ -677,8 +677,8 @@ function downgrade_accounts() {
  *
  * @param int $uid The channel_id to check
  * @param string $property The service class property to check for
- * @param string|boolean $usage (optional) The value to check against
- * @return boolean
+ * @param string|bool $usage (optional) The value to check against
+ * @return bool
  */
 function service_class_allows($uid, $property, $usage = false) {
 	$limit = service_class_fetch($uid, $property);
@@ -714,8 +714,8 @@ function service_class_allows($uid, $property, $usage = false) {
  *
  * @param int $aid The account_id to check
  * @param string $property The service class property to check for
- * @param int|boolean $usage (optional) The value to check against
- * @return boolean
+ * @param int|bool $usage (optional) The value to check against
+ * @return bool
  */
 function account_service_class_allows($aid, $property, $usage = false) {
 
@@ -748,7 +748,7 @@ function account_service_class_allows($aid, $property, $usage = false) {
  *
  * @param int $uid The channel_id to query
  * @param string $property The service property name to check for
- * @return boolean|int
+ * @return bool|int
  *
  * @todo Should we merge this with account_service_class_fetch()?
  */
@@ -790,7 +790,7 @@ function service_class_fetch($uid, $property) {
  *
  * @param int $aid The account_id to query
  * @param string $property The service property name to check for
- * @return boolean|int
+ * @return bool|int
  */
 function account_service_class_fetch($aid, $property) {
 

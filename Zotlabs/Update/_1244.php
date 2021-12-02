@@ -2,42 +2,44 @@
 
 namespace Zotlabs\Update;
 
-class _1244 {
+class _1244
+{
 
-	function run() {
-	
-	    q("START TRANSACTION");
+    public function run()
+    {
 
-		if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-			$r1 = q("ALTER TABLE xchan ADD xchan_created timestamp NOT NULL DEFAULT '0001-01-01 00:00:00' ");
- 			$r2 = q("create index \"xchan_created_idx\" on xchan (\"xchan_created\")");
+        q("START TRANSACTION");
 
-			$r = ($r1 && $r2);
-		}
-		else {
-			$r = q("ALTER TABLE `xchan` ADD `xchan_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00' , 
+        if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
+            $r1 = q("ALTER TABLE xchan ADD xchan_created timestamp NOT NULL DEFAULT '0001-01-01 00:00:00' ");
+            $r2 = q("create index \"xchan_created_idx\" on xchan (\"xchan_created\")");
+
+            $r = ($r1 && $r2);
+        } else {
+            $r = q("ALTER TABLE `xchan` ADD `xchan_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00' , 
 				ADD INDEX `xchan_created` (`xchan_created`)");
-		}
+        }
 
-		if($r) {
-			q("COMMIT");
-			return UPDATE_SUCCESS;
-		}
+        if ($r) {
+            q("COMMIT");
+            return UPDATE_SUCCESS;
+        }
 
-		q("ROLLBACK");
-		return UPDATE_FAILED;
+        q("ROLLBACK");
+        return UPDATE_FAILED;
 
-	}
+    }
 
-	function verify() {
+    public function verify()
+    {
 
-		$columns = db_columns('xchan');
+        $columns = db_columns('xchan');
 
-		if(in_array('xchan_created',$columns)) {
-			return true;
-		}
+        if (in_array('xchan_created', $columns)) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }

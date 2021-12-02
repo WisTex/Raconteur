@@ -36,7 +36,7 @@ class XConfig {
 	 *  The observer's hash
 	 * @return void|false Returns false if xchan is not set
 	 */
-	static public function Load($xchan) {
+	public static function Load($xchan) {
 
 		if(! $xchan)
 			return false;
@@ -76,10 +76,10 @@ class XConfig {
 	 *  The category of the configuration value
 	 * @param string $key
 	 *  The configuration key to query
-	 * @param boolean $default (optional) default false
+	 * @param bool $default (optional) default false
 	 * @return mixed Stored $value or false if it does not exist
 	 */
-	static public function Get($xchan, $family, $key, $default = false) {
+	public static function Get($xchan, $family, $key, $default = false) {
 
 		if(! $xchan)
 			return $default;
@@ -109,7 +109,7 @@ class XConfig {
 	 *  The value to store
 	 * @return mixed Stored $value or false
 	 */
-	static public function Set($xchan, $family, $key, $value) {
+	public static function Set($xchan, $family, $key, $value) {
 
 		// manage array value
 		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
@@ -159,7 +159,7 @@ class XConfig {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
-	static public function Delete($xchan, $family, $key) {
+	public static function Delete($xchan, $family, $key) {
 
 		if(isset(App::$config[$xchan]) && isset(App::$config[$xchan][$family]) && isset(App::$config[$xchan][$family][$key]))
 			unset(App::$config[$xchan][$family][$key]);

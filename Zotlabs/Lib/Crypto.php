@@ -5,7 +5,7 @@ use Exception;
 
 class Crypto {
 
-	static public $openssl_algorithms = [
+	public static $openssl_algorithms = [
 
 		// zot6 nickname,   opensslname,   keylength, ivlength
 
@@ -16,7 +16,7 @@ class Crypto {
 	];
 
 
-	static public function methods() {
+	public static function methods() {
 		$ret = [];
 
 		foreach(self::$openssl_algorithms as $ossl) {
@@ -28,7 +28,7 @@ class Crypto {
 	}
 
 
-	static public function signing_methods() {
+	public static function signing_methods() {
 
 		$ret = [ 'sha256' ];
 		call_hooks('signing_methods',$ret);
@@ -37,7 +37,7 @@ class Crypto {
 	}
 
 
-	static public function new_keypair($bits) {
+	public static function new_keypair($bits) {
 
 		$openssl_options = [
 			'digest_alg'       => 'sha1',
@@ -72,7 +72,7 @@ class Crypto {
 	}
 
 
-	static public function sign($data,$key,$alg = 'sha256') {
+	public static function sign($data, $key, $alg = 'sha256') {
 
 		if (! $key) {
 			return false;
@@ -84,7 +84,7 @@ class Crypto {
 	}
 
 
-	static public function verify($data,$sig,$key,$alg = 'sha256') {
+	public static function verify($data, $sig, $key, $alg = 'sha256') {
 
 		if (! $key) {
 			return false;
@@ -107,7 +107,7 @@ class Crypto {
 		return (($verify > 0) ? true : false);
 	}
 
-	static public function encapsulate($data,$pubkey,$alg) {
+	public static function encapsulate($data, $pubkey, $alg) {
 
 		if (! ($alg && $pubkey)) {
 			return $data;
@@ -164,7 +164,7 @@ class Crypto {
 		}
 	}
 
-	static public function unencapsulate($data,$prvkey) {
+	public static function unencapsulate($data, $prvkey) {
 
 		if (! (is_array($data) && array_key_exists('encrypted',$data) && array_key_exists('alg',$data) && $data['alg'])) {
 			logger('not encrypted');
