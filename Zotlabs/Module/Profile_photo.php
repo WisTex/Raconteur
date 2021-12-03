@@ -284,7 +284,7 @@ class Profile_photo extends Controller
                 }
             }
 
-            $res = attach_store(App::get_channel(), get_observer_hash(), '', array('album' => t('Profile Photos'), 'hash' => $hash));
+            $res = attach_store(App::get_channel(), get_observer_hash(), '', [ 'album' => t('Profile Photos'), 'hash' => $hash, 'source' => 'photos' ]);
 
             logger('attach_store: ' . print_r($res, true), LOGGER_DEBUG);
 
