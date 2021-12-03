@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -20,16 +21,19 @@ class Wall_upload extends Controller
 
         if ($using_api) {
             require_once('include/api.php');
-            if (api_user())
+            if (api_user()) {
                 $channel = channelx_by_n(api_user());
+            }
         } else {
-            if (argc() > 1)
+            if (argc() > 1) {
                 $channel = channelx_by_nick(argv(1));
+            }
         }
 
         if (!$channel) {
-            if ($using_api)
+            if ($using_api) {
                 return;
+            }
             notice(t('Channel not found.') . EOL);
             killme();
         }
@@ -41,17 +45,18 @@ class Wall_upload extends Controller
         $ret = photo_upload($channel, $observer, $args);
 
         if (!$ret['success']) {
-            if ($using_api)
+            if ($using_api) {
                 return;
+            }
             notice($ret['message']);
             killme();
         }
 
-        if ($using_api)
+        if ($using_api) {
             return ("\n\n" . $ret['body'] . "\n\n");
-        else
+        } else {
             echo "\n\n" . $ret['body'] . "\n\n";
+        }
         killme();
     }
-
 }

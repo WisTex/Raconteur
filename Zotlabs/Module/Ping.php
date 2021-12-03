@@ -95,20 +95,23 @@ class Ping extends Controller
          */
 
         if (get_observer_hash() && (!$result['invalid'])) {
-            $r = q("select cp_id, cp_room from chatpresence where cp_xchan = '%s' and cp_client = '%s' and cp_room = 0 limit 1",
+            $r = q(
+                "select cp_id, cp_room from chatpresence where cp_xchan = '%s' and cp_client = '%s' and cp_room = 0 limit 1",
                 dbesc(get_observer_hash()),
                 dbesc($_SERVER['REMOTE_ADDR'])
             );
             $basic_presence = false;
             if ($r) {
                 $basic_presence = true;
-                q("update chatpresence set cp_last = '%s' where cp_id = %d",
+                q(
+                    "update chatpresence set cp_last = '%s' where cp_id = %d",
                     dbesc(datetime_convert()),
                     intval($r[0]['cp_id'])
                 );
             }
             if (!$basic_presence) {
-                q("insert into chatpresence ( cp_xchan, cp_last, cp_status, cp_client)
+                q(
+                    "insert into chatpresence ( cp_xchan, cp_last, cp_status, cp_client)
 					values( '%s', '%s', '%s', '%s' ) ",
                     dbesc(get_observer_hash()),
                     dbesc(datetime_convert()),
@@ -123,8 +126,10 @@ class Ping extends Controller
          * and shouldn't count as online anymore. We allow an expection for bots.
          */
 
-        q("delete from chatpresence where cp_last < %s - INTERVAL %s and cp_client != 'auto' ",
-            db_utcnow(), db_quoteinterval('3 MINUTE')
+        q(
+            "delete from chatpresence where cp_last < %s - INTERVAL %s and cp_client != 'auto' ",
+            db_utcnow(),
+            db_quoteinterval('3 MINUTE')
         );
 
 
@@ -157,7 +162,8 @@ class Ping extends Controller
         $loadtime = get_loadtime('pubstream');
 
         if ($notify_pubs) {
-            $pubs = q("SELECT id, author_xchan from item
+            $pubs = q(
+                "SELECT id, author_xchan from item
 				WHERE uid = %d
 				AND created > '%s'
 				$seenstr
@@ -179,10 +185,10 @@ class Ping extends Controller
         }
 
         if ((argc() > 1) && (argv(1) === 'pubs') && ($notify_pubs)) {
-
             $local_result = [];
 
-            $r = q("SELECT * FROM item
+            $r = q(
+                "SELECT * FROM item
 				WHERE uid = %d
 				AND author_xchan != '%s'
 				AND created > '%s'
@@ -226,7 +232,8 @@ class Ping extends Controller
         if (x($_REQUEST, 'markRead') && local_channel() && (!$_SESSION['sudo'])) {
             switch ($_REQUEST['markRead']) {
                 case 'stream':
-                    $r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
+                    $r = q(
+                        "UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1",
                         intval(local_channel())
                     );
                     $_SESSION['loadtime_stream'] = datetime_convert();
@@ -235,26 +242,28 @@ class Ping extends Controller
                     PConfig::Set(local_channel(), 'system', 'loadtime_channel', $_SESSION['loadtime_channel']);
                     break;
                 case 'home':
-                    $r = q("UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1 AND item_wall = 1",
+                    $r = q(
+                        "UPDATE item SET item_unseen = 0 WHERE uid = %d AND item_unseen = 1 AND item_wall = 1",
                         intval(local_channel())
                     );
                     $_SESSION['loadtime_channel'] = datetime_convert();
                     PConfig::Set(local_channel(), 'system', 'loadtime_channel', $_SESSION['loadtime_channel']);
                     break;
                 case 'all_events':
-                    $r = q("UPDATE event SET dismissed = 1 WHERE uid = %d AND dismissed = 0 AND dtstart < '%s' AND dtstart > '%s' ",
+                    $r = q(
+                        "UPDATE event SET dismissed = 1 WHERE uid = %d AND dismissed = 0 AND dtstart < '%s' AND dtstart > '%s' ",
                         intval(local_channel()),
                         dbesc(datetime_convert('UTC', date_default_timezone_get(), 'now + ' . intval($evdays) . ' days')),
                         dbesc(datetime_convert('UTC', date_default_timezone_get(), 'now - 1 days'))
                     );
                     break;
                 case 'notify':
-                    $r = q("update notify set seen = 1 where uid = %d",
+                    $r = q(
+                        "update notify set seen = 1 where uid = %d",
                         intval(local_channel())
                     );
                     break;
                 case 'pubs':
-
                     $_SESSION['loadtime_pubstream'] = datetime_convert();
                     PConfig::Set(local_channel(), 'system', 'loadtime_pubstream', $_SESSION['loadtime_pubstream']);
                     break;
@@ -264,7 +273,8 @@ class Ping extends Controller
         }
 
         if (x($_REQUEST, 'markItemRead') && local_channel() && (!$_SESSION['sudo'])) {
-            $r = q("UPDATE item SET item_unseen = 0 WHERE  uid = %d AND parent = %d",
+            $r = q(
+                "UPDATE item SET item_unseen = 0 WHERE  uid = %d AND parent = %d",
                 intval(local_channel()),
                 intval($_REQUEST['markItemRead'])
             );
@@ -282,8 +292,8 @@ class Ping extends Controller
          */
 
         if (argc() > 1 && argv(1) === 'notify') {
-
-            $t = q("SELECT * FROM notify WHERE uid = %d AND seen = 0 ORDER BY CREATED DESC",
+            $t = q(
+                "SELECT * FROM notify WHERE uid = %d AND seen = 0 ORDER BY CREATED DESC",
                 intval(local_channel())
             );
 
@@ -291,8 +301,9 @@ class Ping extends Controller
                 foreach ($t as $tt) {
                     $message = trim(strip_tags(bbcode($tt['msg'])));
 
-                    if (strpos($message, $tt['xname']) === 0)
+                    if (strpos($message, $tt['xname']) === 0) {
                         $message = substr($message, strlen($tt['xname']) + 1);
+                    }
 
 
                     $mid = basename($tt['link']);
@@ -300,7 +311,8 @@ class Ping extends Controller
 
                     if (in_array($tt['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
                         // we need the thread parent
-                        $r = q("select thr_parent from item where mid = '%s' and uid = %d limit 1",
+                        $r = q(
+                            "select thr_parent from item where mid = '%s' and uid = %d limit 1",
                             dbesc($mid),
                             intval(local_channel())
                         );
@@ -333,7 +345,8 @@ class Ping extends Controller
             $item_normal_moderate = $item_normal;
             $loadtime = get_loadtime('stream');
 
-            $r = q("SELECT * FROM item 
+            $r = q(
+                "SELECT * FROM item 
 				WHERE uid = %d
 				AND author_xchan != '%s'
 				AND changed > '%s'
@@ -369,7 +382,8 @@ class Ping extends Controller
 
             $loadtime = get_loadtime('channel');
 
-            $r = q("SELECT * FROM item 
+            $r = q(
+                "SELECT * FROM item 
 				WHERE uid = %d
 				AND author_xchan != '%s'
 				AND changed > '%s'
@@ -400,7 +414,8 @@ class Ping extends Controller
         if (argc() > 1 && (argv(1) === 'intros')) {
             $local_result = [];
 
-            $r = q("SELECT * FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ORDER BY abook_created DESC LIMIT 50",
+            $r = q(
+                "SELECT * FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ORDER BY abook_created DESC LIMIT 50",
                 intval(local_channel())
             );
 
@@ -425,7 +440,8 @@ class Ping extends Controller
         if ((argc() > 1 && (argv(1) === 'register')) && is_site_admin()) {
             $result = [];
 
-            $r = q("SELECT account_email, account_created from account where (account_flags & %d) > 0",
+            $r = q(
+                "SELECT account_email, account_created from account where (account_flags & %d) > 0",
                 intval(ACCOUNT_PENDING)
             );
             if ($r) {
@@ -451,7 +467,8 @@ class Ping extends Controller
 
             $result = [];
 
-            $r = q("SELECT * FROM event left join xchan on event_xchan = xchan_hash
+            $r = q(
+                "SELECT * FROM event left join xchan on event_xchan = xchan_hash
 				WHERE event.uid = %d AND dtstart < '%s' AND dtstart > '%s' and dismissed = 0
 				and etype in ( 'event', 'birthday' )
 				ORDER BY dtstart DESC LIMIT 1000",
@@ -462,7 +479,6 @@ class Ping extends Controller
 
             if ($r) {
                 foreach ($r as $rr) {
-
                     $strt = datetime_convert('UTC', (($rr['adjust']) ? date_default_timezone_get() : 'UTC'), $rr['dtstart']);
                     $today = ((substr($strt, 0, 10) === datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y-m-d')) ? true : false);
                     $when = day_translate(datetime_convert('UTC', (($rr['adjust']) ? date_default_timezone_get() : 'UTC'), $rr['dtstart'], $bd_format)) . (($today) ? ' ' . t('[today]') : '');
@@ -486,7 +502,8 @@ class Ping extends Controller
         if (argc() > 1 && (argv(1) === 'files')) {
             $result = [];
 
-            $r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
+            $r = q(
+                "SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
 				LEFT JOIN xchan on author_xchan = xchan_hash
 				WHERE item.verb = '%s'
 				AND item.obj_type = '%s'
@@ -517,10 +534,10 @@ class Ping extends Controller
         }
 
         if (argc() > 1 && (argv(1) === 'reports') && is_site_admin()) {
-
             $local_result = [];
 
-            $r = q("SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
+            $r = q(
+                "SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
 				LEFT JOIN xchan on author_xchan = xchan_hash
 				WHERE item.type = '%s' AND item.item_unseen = 1",
                 dbesc(ITEM_TYPE_REPORT)
@@ -551,15 +568,18 @@ class Ping extends Controller
 
 
         if ($vnotify & VNOTIFY_SYSTEM) {
-            $t = q("select count(*) as total from notify where uid = %d and seen = 0",
+            $t = q(
+                "select count(*) as total from notify where uid = %d and seen = 0",
                 intval(local_channel())
             );
-            if ($t)
+            if ($t) {
                 $result['notify'] = intval($t[0]['total']);
+            }
         }
 
         if ($vnotify & VNOTIFY_FILES) {
-            $files = q("SELECT count(id) as total FROM item
+            $files = q(
+                "SELECT count(id) as total FROM item
 				WHERE verb = '%s'
 				AND obj_type = '%s'
 				AND uid = %d
@@ -570,14 +590,16 @@ class Ping extends Controller
                 intval(local_channel()),
                 dbesc($ob_hash)
             );
-            if ($files)
+            if ($files) {
                 $result['files'] = intval($files[0]['total']);
+            }
         }
 
 
         if ($vnotify & VNOTIFY_NETWORK) {
             $loadtime = get_loadtime('stream');
-            $r = q("SELECT id, author_xchan FROM item 
+            $r = q(
+                "SELECT id, author_xchan FROM item 
 				WHERE uid = %d and changed > '%s' 
 				$seenstr
 				$item_normal
@@ -605,7 +627,8 @@ class Ping extends Controller
 
         if ($vnotify & VNOTIFY_CHANNEL) {
             $loadtime = get_loadtime('channel');
-            $r = q("SELECT id, author_xchan FROM item 
+            $r = q(
+                "SELECT id, author_xchan FROM item 
 				WHERE item_wall = 1 and uid = %d and changed > '%s'
 				$seenstr 
 				$item_normal
@@ -630,12 +653,14 @@ class Ping extends Controller
 
 
         if ($vnotify & VNOTIFY_INTRO) {
-            $intr = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
+            $intr = q(
+                "SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
                 intval(local_channel())
             );
 
-            if ($intr)
+            if ($intr) {
                 $result['intros'] = intval($intr[0]['total']);
+            }
         }
 
 
@@ -643,26 +668,31 @@ class Ping extends Controller
 
         if ($vnotify & VNOTIFY_REGISTER) {
             if (App::$config['system']['register_policy'] == REGISTER_APPROVE && is_site_admin()) {
-                $regs = q("SELECT count(account_id) as total from account where (account_flags & %d) > 0",
+                $regs = q(
+                    "SELECT count(account_id) as total from account where (account_flags & %d) > 0",
                     intval(ACCOUNT_PENDING)
                 );
-                if ($regs)
+                if ($regs) {
                     $result['register'] = intval($regs[0]['total']);
+                }
             }
         }
 
         if ($vnotify & VNOTIFY_REPORTS) {
             if (is_site_admin()) {
-                $reps = q("SELECT count(id) as total from item where item_type = %d",
+                $reps = q(
+                    "SELECT count(id) as total from item where item_type = %d",
                     intval(ITEM_TYPE_REPORT)
                 );
-                if ($reps)
+                if ($reps) {
                     $result['reports'] = intval($reps[0]['total']);
+                }
             }
         }
 
         if ($vnotify & (VNOTIFY_EVENT | VNOTIFY_EVENTTODAY | VNOTIFY_BIRTHDAY)) {
-            $events = q("SELECT etype, dtstart, adjust FROM event
+            $events = q(
+                "SELECT etype, dtstart, adjust FROM event
 				WHERE event.uid = %d AND dtstart < '%s' AND dtstart > '%s' and dismissed = 0
 				and etype in ( 'event', 'birthday' )
 				ORDER BY dtstart ASC ",
@@ -686,29 +716,32 @@ class Ping extends Controller
                         }
                         if (datetime_convert('UTC', ((intval($x['adjust'])) ? date_default_timezone_get() : 'UTC'), $x['dtstart'], 'Y-m-d') === $str_now) {
                             $result['all_events_today']++;
-                            if ($bd)
+                            if ($bd) {
                                 $result['birthdays_today']++;
-                            else
+                            } else {
                                 $result['events_today']++;
+                            }
                         }
                     }
                 }
             }
         }
 
-        if (!($vnotify & VNOTIFY_EVENT))
+        if (!($vnotify & VNOTIFY_EVENT)) {
             $result['all_events'] = $result['events'] = 0;
-        if (!($vnotify & VNOTIFY_EVENTTODAY))
+        }
+        if (!($vnotify & VNOTIFY_EVENTTODAY)) {
             $result['all_events_today'] = $result['events_today'] = 0;
-        if (!($vnotify & VNOTIFY_BIRTHDAY))
+        }
+        if (!($vnotify & VNOTIFY_BIRTHDAY)) {
             $result['birthdays'] = 0;
+        }
 
 
         if ($vnotify & VNOTIFY_FORUMS) {
             $forums = get_forum_channels(local_channel());
 
             if ($forums) {
-
                 $perms_sql = item_permissions_sql(local_channel()) . item_normal();
                 $fcount = count($forums);
                 $forums['total'] = 0;
@@ -720,7 +753,8 @@ class Ping extends Controller
                     $p = ids_to_querystr($p, 'parent');
                     $pquery = (($p) ? "OR parent IN ( $p )" : '');
 
-                    $r = q("select sum(item_unseen) as unseen from item 
+                    $r = q(
+                        "select sum(item_unseen) as unseen from item 
 						where uid = %d and ( owner_xchan = '%s' $pquery ) and item_unseen = 1 $perms_sql ",
                         intval(local_channel()),
                         dbesc($forums[$x]['xchan_hash'])
@@ -742,7 +776,6 @@ class Ping extends Controller
                         unset($forums[$x]['xchan_name']);
                         unset($forums[$x]['xchan_url']);
                         unset($forums[$x]['xchan_photo_s']);
-
                     } else {
                         unset($forums[$x]);
                     }
@@ -771,5 +804,4 @@ class Ping extends Controller
 
         json_return_and_die($result);
     }
-
 }

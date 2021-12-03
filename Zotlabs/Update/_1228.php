@@ -18,7 +18,5 @@ class _1228
         }
 
         return UPDATE_SUCCESS;
-
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Settings;
 
-
 class Oauth
 {
 
@@ -14,15 +13,16 @@ class Oauth
             check_form_security_token_redirectOnErr('/settings/oauth', 'settings_oauth');
 
             $key = $_POST['remove'];
-            q("DELETE FROM tokens WHERE id='%s' AND uid=%d",
+            q(
+                "DELETE FROM tokens WHERE id='%s' AND uid=%d",
                 dbesc($key),
-                local_channel());
+                local_channel()
+            );
             goaway(z_root() . "/settings/oauth/");
             return;
         }
 
         if ((argc() > 2) && (argv(2) === 'edit' || argv(2) === 'add') && x($_POST, 'submit')) {
-
             check_form_security_token_redirectOnErr('/settings/oauth', 'settings_oauth');
 
             $name = ((x($_POST, 'name')) ? escape_tags($_POST['name']) : '');
@@ -43,7 +43,8 @@ class Oauth
 
             if ($ok) {
                 if ($_POST['submit'] == t("Update")) {
-                    $r = q("UPDATE clients SET
+                    $r = q(
+                        "UPDATE clients SET
 								client_id='%s',
 								pw='%s',
 								clname='%s',
@@ -57,9 +58,11 @@ class Oauth
                         dbesc($redirect),
                         dbesc($icon),
                         intval(local_channel()),
-                        dbesc($key));
+                        dbesc($key)
+                    );
                 } else {
-                    $r = q("INSERT INTO clients (client_id, pw, clname, redirect_uri, icon, uid)
+                    $r = q(
+                        "INSERT INTO clients (client_id, pw, clname, redirect_uri, icon, uid)
 						VALUES ('%s','%s','%s','%s','%s',%d)",
                         dbesc($key),
                         dbesc($secret),
@@ -68,7 +71,8 @@ class Oauth
                         dbesc($icon),
                         intval(local_channel())
                     );
-                    $r = q("INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
+                    $r = q(
+                        "INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
                         dbesc($key),
                         intval(local_channel()),
                         dbesc('all')
@@ -100,9 +104,11 @@ class Oauth
         }
 
         if ((argc() > 3) && (argv(2) === 'edit')) {
-            $r = q("SELECT * FROM clients WHERE client_id='%s' AND uid=%d",
+            $r = q(
+                "SELECT * FROM clients WHERE client_id='%s' AND uid=%d",
                 dbesc(argv(3)),
-                local_channel());
+                local_channel()
+            );
 
             if (!count($r)) {
                 notice(t('Application not found.'));
@@ -128,20 +134,24 @@ class Oauth
         if ((argc() > 3) && (argv(2) === 'delete')) {
             check_form_security_token_redirectOnErr('/settings/oauth', 'settings_oauth', 't');
 
-            $r = q("DELETE FROM clients WHERE client_id='%s' AND uid=%d",
+            $r = q(
+                "DELETE FROM clients WHERE client_id='%s' AND uid=%d",
                 dbesc(argv(3)),
-                local_channel());
+                local_channel()
+            );
             goaway(z_root() . "/settings/oauth/");
             return;
         }
 
 
-        $r = q("SELECT clients.*, tokens.id as oauth_token, (clients.uid=%d) AS my 
+        $r = q(
+            "SELECT clients.*, tokens.id as oauth_token, (clients.uid=%d) AS my 
 				FROM clients
 				LEFT JOIN tokens ON clients.client_id=tokens.client_id
 				WHERE clients.uid IN (%d,0)",
             local_channel(),
-            local_channel());
+            local_channel()
+        );
 
 
         $tpl = get_markup_template("settings_oauth.tpl");
@@ -158,7 +168,5 @@ class Oauth
             '$apps' => $r,
         ));
         return $o;
-
     }
-
 }

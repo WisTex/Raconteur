@@ -11,6 +11,4 @@ class Vcard
     {
         return vcard_from_xchan('', App::get_observer());
     }
-
 }
-

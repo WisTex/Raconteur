@@ -16,8 +16,5 @@ class _1176
             }
         }
         return UPDATE_SUCCESS;
-
     }
-
-
 }

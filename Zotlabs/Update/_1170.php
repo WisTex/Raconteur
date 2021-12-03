@@ -13,11 +13,9 @@ class _1170
         $r4 = q("drop table fsuggest");
         $r5 = q("drop table spam");
 
-        if ($r1 && $r2 && $r3 && $r4 && $r5)
+        if ($r1 && $r2 && $r3 && $r4 && $r5) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

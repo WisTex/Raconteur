@@ -1,17 +1,21 @@
-<?php /** @file */
+<?php
+
+/** @file */
 
 namespace Zotlabs\Daemon;
 
-class Cronhooks {
+class Cronhooks
+{
 
-	public static function run($argc, $argv){
+    public static function run($argc, $argv)
+    {
 
-		logger('cronhooks: start');
-	
-		$d = datetime_convert();
+        logger('cronhooks: start');
 
-		call_hooks('cron', $d);
+        $d = datetime_convert();
 
-		return;
-	}
+        call_hooks('cron', $d);
+
+        return;
+    }
 }

@@ -217,7 +217,6 @@ class HTTPSig
         logger('verified: ' . $x, LOGGER_DEBUG);
 
         if (!$x) {
-
             // try again, ignoring the local actor (xchan) cache and refetching the key
             // from its source
 
@@ -293,7 +292,6 @@ class HTTPSig
 
         $key = self::get_activitystreams_key($id, $force);
         return $key;
-
     }
 
 
@@ -307,7 +305,6 @@ class HTTPSig
         } else {
             return $key;
         }
-
     }
 
 
@@ -329,7 +326,8 @@ class HTTPSig
         // $force is used to ignore the local cache and only use the remote data; for instance the cached key might be stale
 
         if (!$force) {
-            $x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
+            $x = q(
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $cache_url)),
                 dbesc($cache_url),
                 dbesc($cache_url)
@@ -392,7 +390,8 @@ class HTTPSig
     {
 
         if (!$force) {
-            $x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
+            $x = q(
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id),
                 dbesc($id)
@@ -434,7 +433,8 @@ class HTTPSig
     {
 
         if (!$force) {
-            $x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network = 'zot6' order by hubloc_id desc",
+            $x = q(
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network = 'zot6' order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id)
             );
@@ -461,7 +461,6 @@ class HTTPSig
                         continue;
                     }
                     if ($l['rel'] === 'http://purl.org/zot/protocol/6.0' && array_key_exists('href', $l) && $l['href'] !== EMPTY_STR) {
-
                         // The third argument to Zotfinger::exec() tells it not to verify signatures
                         // Since we're inside a function that is fetching keys with which to verify signatures,
                         // this is necessary to prevent infinite loops.
@@ -472,7 +471,8 @@ class HTTPSig
                             if ($i['success']) {
                                 $key['portable_id'] = $i['hash'];
 
-                                $x = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+                                $x = q(
+                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
                                     dbesc($l['href'])
                                 );
                                 if ($x) {
@@ -695,5 +695,4 @@ class HTTPSig
 
         return '';
     }
-
 }

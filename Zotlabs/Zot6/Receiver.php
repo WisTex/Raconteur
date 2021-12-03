@@ -58,7 +58,6 @@ class Receiver
         if ($this->rawdata) {
             $this->data = json_decode($this->rawdata, true);
             if (($this->data) && (!is_array($this->data)) && (substr($this->data, 0, 1) === "{")) {
-
                 // Multiple json encoding has been seen in the wild and needs to be fixed on the sending side.
                 // Proceed anyway and log the event with a backtrace.
 
@@ -184,7 +183,6 @@ class Receiver
     {
 
         switch ($this->messagetype) {
-
             case 'purge':
                 $this->response = $this->handler->Purge($this->sender, $this->recipients, $this->hub);
                 break;
@@ -210,7 +208,6 @@ class Receiver
                     $this->response = $this->handler->Notify($this->data, $this->hub);
                 }
                 break;
-
         }
 
         logger('response_to_return: ' . print_r($this->response, true), LOGGER_DATA);
@@ -229,8 +226,4 @@ class Receiver
             $this->response = Crypto::encapsulate(json_encode($this->response), $this->hub['hubloc_sitekey'], $algorithm);
         }
     }
-
 }
-
-
-

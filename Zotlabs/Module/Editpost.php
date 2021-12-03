@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -30,7 +31,8 @@ class Editpost extends Controller
             return;
         }
 
-        $item = q("SELECT * FROM item WHERE id = %d AND ( owner_xchan = '%s' OR author_xchan = '%s' ) LIMIT 1",
+        $item = q(
+            "SELECT * FROM item WHERE id = %d AND ( owner_xchan = '%s' OR author_xchan = '%s' ) LIMIT 1",
             intval($post_id),
             dbesc(get_observer_hash()),
             dbesc(get_observer_hash())
@@ -140,11 +142,11 @@ class Editpost extends Controller
 
         $editor = status_editor($x);
 
-        $output .= replace_macros(get_markup_template('edpost_head.tpl'),
-            ['$title' => t('Edit post'), '$cancel' => t('Cancel'), '$editor' => $editor]);
+        $output .= replace_macros(
+            get_markup_template('edpost_head.tpl'),
+            ['$title' => t('Edit post'), '$cancel' => t('Cancel'), '$editor' => $editor]
+        );
 
         return $output;
-
     }
-
 }

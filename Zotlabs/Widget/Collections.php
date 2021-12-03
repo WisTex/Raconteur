@@ -11,8 +11,8 @@ class Collections
     public function widget($args)
     {
 
-//		if(argc() < 2)
-//			return;
+//      if(argc() < 2)
+//          return;
 
         $mode = ((array_key_exists('mode', $args)) ? $args['mode'] : 'conversation');
 

@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use URLify;
@@ -29,14 +29,16 @@ class New_channel extends Controller
                 $x = punify(mb_strtolower($n));
             }
 
-            if ((!$x) || strlen($x) > 64)
+            if ((!$x) || strlen($x) > 64) {
                 $x = strtolower(URLify::transliterate($n));
+            }
 
             $test = [];
 
             // first name
-            if (strpos($x, ' '))
+            if (strpos($x, ' ')) {
                 $test[] = legal_webbie(substr($x, 0, strpos($x, ' ')));
+            }
             if ($test[0]) {
                 // first name plus first initial of last
                 $test[] = ((strpos($x, ' ')) ? $test[0] . legal_webbie(trim(substr($x, strpos($x, ' '), 2))) : '');
@@ -64,15 +66,17 @@ class New_channel extends Controller
                 $x = punify(mb_strtolower($n));
             }
 
-            if ((!$x) || strlen($x) > 64)
+            if ((!$x) || strlen($x) > 64) {
                 $x = strtolower(URLify::transliterate($n));
+            }
 
 
             $test = [];
 
             // first name
-            if (strpos($x, ' '))
+            if (strpos($x, ' ')) {
                 $test[] = legal_webbie(substr($x, 0, strpos($x, ' ')));
+            }
             if ($test[0]) {
                 // first name plus first initial of last
                 $test[] = ((strpos($x, ' ')) ? $test[0] . legal_webbie(trim(substr($x, strpos($x, ' '), 2))) : '');
@@ -86,13 +90,12 @@ class New_channel extends Controller
                 $test[] = $n . mt_rand(1000, 9999);
             }
 
-            for ($y = 0; $y < 100; $y++)
+            for ($y = 0; $y < 100; $y++) {
                 $test[] = 'id' . mt_rand(1000, 9999);
+            }
 
             json_return_and_die(check_webbie($test));
         }
-
-
     }
 
     public function post()
@@ -133,7 +136,6 @@ class New_channel extends Controller
 
         $next_page = get_config('system', 'workflow_channel_next', 'profiles');
         goaway(z_root() . '/' . $next_page);
-
     }
 
     public function get()
@@ -149,7 +151,8 @@ class New_channel extends Controller
         $default_role = '';
         $aid = get_account_id();
         if ($aid) {
-            $r = q("select count(channel_id) as total from channel where channel_account_id = %d",
+            $r = q(
+                "select count(channel_id) as total from channel where channel_account_id = %d",
                 intval($aid)
             );
             if ($r && (!intval($r[0]['total']))) {
@@ -202,8 +205,5 @@ class New_channel extends Controller
         ));
 
         return $o;
-
     }
-
-
 }

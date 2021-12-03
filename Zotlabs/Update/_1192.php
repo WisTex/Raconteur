@@ -13,10 +13,9 @@ class _1192
             $r1 = q("ALTER TABLE item ADD INDEX (obj_type)");
         }
 
-        if ($r1)
+        if ($r1) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

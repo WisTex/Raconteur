@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -50,8 +51,10 @@ class Register extends Controller
 
         $max_dailies = intval(get_config('system', 'max_daily_registrations'));
         if ($max_dailies) {
-            $r = q("select count(account_id) as total from account where account_created > %s - INTERVAL %s",
-                db_utcnow(), db_quoteinterval('1 day')
+            $r = q(
+                "select count(account_id) as total from account where account_created > %s - INTERVAL %s",
+                db_utcnow(),
+                db_quoteinterval('1 day')
             );
             if ($r && intval($r[0]['total']) >= $max_dailies) {
                 notice(t('Maximum daily site registrations exceeded. Please try again tomorrow.') . EOL);
@@ -70,7 +73,6 @@ class Register extends Controller
 
 
         switch ($policy) {
-
             case REGISTER_OPEN:
                 $flags = ACCOUNT_OK;
                 break;
@@ -191,7 +193,6 @@ class Register extends Controller
 
         unset($_SESSION['login_return_url']);
         goaway(z_root() . '/' . $next_page);
-
     }
 
 
@@ -225,8 +226,10 @@ class Register extends Controller
 
         $max_dailies = intval(get_config('system', 'max_daily_registrations'));
         if ($max_dailies) {
-            $r = q("select count(account_id) as total from account where account_created > %s - INTERVAL %s",
-                db_utcnow(), db_quoteinterval('1 day')
+            $r = q(
+                "select count(account_id) as total from account where account_created > %s - INTERVAL %s",
+                db_utcnow(),
+                db_quoteinterval('1 day')
             );
             if ($r && $r[0]['total'] >= $max_dailies) {
                 logger('max daily registrations exceeded.');
@@ -302,8 +305,5 @@ class Register extends Controller
         ]);
 
         return $o;
-
     }
-
-
 }

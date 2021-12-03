@@ -16,13 +16,12 @@ class _1201
 				ADD INDEX item_deleted_pending_remove_changed (item_deleted, item_pending_remove, changed)
 			");
 
-            if ($r)
+            if ($r) {
                 return UPDATE_SUCCESS;
+            }
             return UPDATE_FAILED;
         } else {
             return UPDATE_SUCCESS;
         }
-
     }
-
 }

@@ -10,7 +10,6 @@ use Zotlabs\Identity\OAuth2Storage;
 use OAuth2\Request;
 use OAuth2\Response;
 
-
 class Authorize extends Controller
 {
 
@@ -19,7 +18,6 @@ class Authorize extends Controller
         if (!local_channel()) {
             return login();
         } else {
-
             $name = $_REQUEST['client_name'];
             if (!$name) {
                 $name = (($_REQUEST['client_id']) ?: t('Unknown App'));
@@ -141,5 +139,4 @@ class Authorize extends Controller
         $response->send();
         killme();
     }
-
 }

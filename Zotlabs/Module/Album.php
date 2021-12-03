@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -23,7 +24,6 @@ class Album extends Controller
 
 
         if (ActivityStreams::is_as_request()) {
-
             $sigdata = HTTPSig::verify(EMPTY_STR);
             if ($sigdata['portable_id'] && $sigdata['header_valid']) {
                 $portable_id = $sigdata['portable_id'];
@@ -59,7 +59,8 @@ class Album extends Controller
 
             if (argc() > 2) {
                 $folder = argv(2);
-                $r = q("select * from attach where is_dir = 1 and hash = '%s' and uid = %d $sql_extra limit 1",
+                $r = q(
+                    "select * from attach where is_dir = 1 and hash = '%s' and uid = %d $sql_extra limit 1",
                     dbesc($folder),
                     intval($channel['channel_id'])
                 );
@@ -73,7 +74,8 @@ class Album extends Controller
                 http_status_exit(403, 'Permission denied.');
             }
 
-            $x = q("select * from attach where folder = '%s' and uid = %d $sql_extra",
+            $x = q(
+                "select * from attach where folder = '%s' and uid = %d $sql_extra",
                 dbesc($folder),
                 intval($channel['channel_id'])
             );
@@ -96,8 +98,6 @@ class Album extends Controller
 
             $obj = Activity::encode_simple_collection($contents, App::$query_string, 'OrderedCollection', count($contents));
             as_return_and_die($obj, $channel);
-
         }
-
     }
 }

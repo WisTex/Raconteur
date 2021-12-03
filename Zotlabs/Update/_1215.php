@@ -23,5 +23,4 @@ class _1215
             return UPDATE_FAILED;
         }
     }
-
 }

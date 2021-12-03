@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module\Admin;
 
 /*
@@ -13,7 +14,6 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
-
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
@@ -38,7 +38,6 @@ class Profile_photo
 
         $channel = get_sys_channel();
         Libprofile::load($channel['channel_address']);
-
     }
 
     /* @brief Evaluate posted values
@@ -60,7 +59,6 @@ class Profile_photo
         check_form_security_token_redirectOnErr('/profile_photo', 'profile_photo');
 
         if ((array_key_exists('cropfinal', $_POST)) && (intval($_POST['cropfinal']) == 1)) {
-
             // logger('crop: ' . print_r($_POST,true));
 
             // phase 2 - we have finished cropping
@@ -81,7 +79,8 @@ class Profile_photo
             $is_default_profile = 1;
 
             if ($_REQUEST['profile']) {
-                $r = q("select id, profile_guid, is_default, gender from profile where id = %d and uid = %d limit 1",
+                $r = q(
+                    "select id, profile_guid, is_default, gender from profile where id = %d and uid = %d limit 1",
                     intval($_REQUEST['profile']),
                     intval($channel['channel_id'])
                 );
@@ -98,18 +97,18 @@ class Profile_photo
             $srcW = intval($_POST['xfinal']) - $srcX;
             $srcH = intval($_POST['yfinal']) - $srcY;
 
-            $r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale = %d LIMIT 1",
                 dbesc($image_id),
                 dbesc($channel['channel_id']),
-                intval($scale));
+                intval($scale)
+            );
             if ($r) {
-
                 $base_image = array_shift($r);
                 $base_image['content'] = (($base_image['os_storage']) ? @file_get_contents(dbunescbin($base_image['content'])) : dbunescbin($base_image['content']));
 
                 $im = photo_factory($base_image['content'], $base_image['mimetype']);
                 if ($im->is_valid()) {
-
                     $im->cropImage(300, $srcX, $srcY, $srcW, $srcH);
 
                     $aid = 0;
@@ -144,7 +143,8 @@ class Profile_photo
                     if ($r1 === false || $r2 === false || $r3 === false) {
                         // if one failed, delete them all so we can start over.
                         notice(t('Image resize failed.') . EOL);
-                        $x = q("delete from photo where resource_id = '%s' and uid = %d and imgscale in ( %d, %d, %d ) ",
+                        $x = q(
+                            "delete from photo where resource_id = '%s' and uid = %d and imgscale in ( %d, %d, %d ) ",
                             dbesc($base_image['resource_id']),
                             $channel['channel_id'],
                             intval(PHOTO_RES_PROFILE_300),
@@ -155,7 +155,8 @@ class Profile_photo
                     }
 
 
-                    $r = q("UPDATE photo SET photo_usage = %d WHERE photo_usage = %d
+                    $r = q(
+                        "UPDATE photo SET photo_usage = %d WHERE photo_usage = %d
 						AND resource_id != '%s' AND uid = %d",
                         intval(PHOTO_NORMAL),
                         intval(PHOTO_PROFILE),
@@ -169,7 +170,8 @@ class Profile_photo
                     // changed to a generic URL by a clone operation. Otherwise the new photo may
                     // not get pushed to other sites correctly.
 
-                    $r = q("UPDATE xchan set xchan_photo_mimetype = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s'  
+                    $r = q(
+                        "UPDATE xchan set xchan_photo_mimetype = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s'  
 						where xchan_hash = '%s'",
                         dbesc($im->getType()),
                         dbesc(datetime_convert()),
@@ -185,7 +187,6 @@ class Profile_photo
                     Config::Set('system', 'site_icon_url', z_root() . '/photo/profile/m/' . $channel['channel_id']);
 
                     info(t('Shift-reload the page or clear browser cache if the new photo does not display immediately.') . EOL);
-
                 } else {
                     notice(t('Unable to process image') . EOL);
                 }
@@ -207,7 +208,6 @@ class Profile_photo
             $hash = $_REQUEST['importfile'];
             $importing = true;
         } else {
-
             $matches = [];
             $partial = false;
 
@@ -256,7 +256,8 @@ class Profile_photo
         }
 
         if (($res && intval($res['data']['is_photo'])) || $importing) {
-            $i = q("select * from photo where resource_id = '%s' and uid = %d order by imgscale",
+            $i = q(
+                "select * from photo where resource_id = '%s' and uid = %d order by imgscale",
                 dbesc($hash),
                 intval($channel['channel_hash'])
             );
@@ -330,7 +331,8 @@ class Profile_photo
 
             $pf = (($_REQUEST['pf']) ? intval($_REQUEST['pf']) : 0);
 
-            $c = q("select id, is_default from profile where uid = %d",
+            $c = q(
+                "select id, is_default from profile where uid = %d",
                 intval($channel['channel_id'])
             );
 
@@ -343,7 +345,8 @@ class Profile_photo
                 $_REQUEST['profile'] = $pf;
             }
 
-            $r = q("SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' ORDER BY imgscale ASC",
+            $r = q(
+                "SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' ORDER BY imgscale ASC",
                 intval($channel['channel_id']),
                 dbesc($resource_id)
             );
@@ -362,19 +365,22 @@ class Profile_photo
 
             if ($havescale) {
                 // unset any existing profile photos
-                $r = q("UPDATE photo SET photo_usage = %d WHERE photo_usage = %d AND uid = %d",
+                $r = q(
+                    "UPDATE photo SET photo_usage = %d WHERE photo_usage = %d AND uid = %d",
                     intval(PHOTO_NORMAL),
                     intval(PHOTO_PROFILE),
                     intval($channel['channel_id'])
                 );
 
-                $r = q("UPDATE photo SET photo_usage = %d WHERE uid = %d AND resource_id = '%s'",
+                $r = q(
+                    "UPDATE photo SET photo_usage = %d WHERE uid = %d AND resource_id = '%s'",
                     intval(PHOTO_PROFILE),
                     intval($channel['channel_id']),
                     dbesc($resource_id)
                 );
 
-                $r = q("UPDATE xchan set xchan_photo_date = '%s' where xchan_hash = '%s'",
+                $r = q(
+                    "UPDATE xchan set xchan_photo_date = '%s' where xchan_hash = '%s'",
                     dbesc(datetime_convert()),
                     dbesc($channel['xchan_hash'])
                 );
@@ -382,10 +388,10 @@ class Profile_photo
                 goaway(z_root() . '/admin');
             }
 
-            $r = q("SELECT content, mimetype, resource_id, os_storage FROM photo WHERE id = %d and uid = %d limit 1",
+            $r = q(
+                "SELECT content, mimetype, resource_id, os_storage FROM photo WHERE id = %d and uid = %d limit 1",
                 intval($r[0]['id']),
                 intval($channel['channel_id'])
-
             );
             if (!$r) {
                 notice(t('Photo not available.') . EOL);
@@ -402,7 +408,8 @@ class Profile_photo
             $smallest = 0;
             if ($ph->is_valid()) {
                 // go ahead as if we have just uploaded a new photo to crop
-                $i = q("select resource_id, imgscale from photo where resource_id = '%s' and uid = %d order by imgscale",
+                $i = q(
+                    "select resource_id, imgscale from photo where resource_id = '%s' and uid = %d order by imgscale",
                     dbesc($r[0]['resource_id']),
                     intval($channel['channel_id'])
                 );
@@ -424,12 +431,12 @@ class Profile_photo
             }
 
             // falls through with App::$data['imagecrop'] set so we go straight to the cropping section
-
         }
 
         // present an upload form
 
-        $profiles = q("select id, profile_name as name, is_default from profile where uid = %d order by id asc",
+        $profiles = q(
+            "select id, profile_name as name, is_default from profile where uid = %d order by id asc",
             intval($channel['channel_id'])
         );
 
@@ -448,7 +455,6 @@ class Profile_photo
         $importing = ((array_key_exists('importfile', App::$data)) ? true : false);
 
         if (!array_key_exists('imagecrop', App::$data)) {
-
             $tpl = get_markup_template('admin_profile_photo.tpl');
 
             $o .= replace_macros($tpl, [
@@ -480,7 +486,6 @@ class Profile_photo
             call_hooks('profile_photo_content_end', $o);
             return $o;
         } else {
-
             // present a cropping form
 
             $filename = App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'];

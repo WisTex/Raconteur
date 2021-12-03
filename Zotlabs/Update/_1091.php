@@ -10,6 +10,4 @@ class _1091
         @file_put_contents('cache/locks', '');
         return UPDATE_SUCCESS;
     }
-
-
 }

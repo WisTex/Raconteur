@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -56,7 +57,6 @@ class Pubstream extends Controller
 
 
         if (local_channel() && (!$this->updating)) {
-
             $channel = App::get_channel();
 
             $channel_acl = array(
@@ -92,7 +92,6 @@ class Pubstream extends Controller
         }
 
         if (!$this->updating && !$this->loading) {
-
             nav_set_selected(t('Public Stream'));
 
             if (!$mid) {
@@ -105,8 +104,9 @@ class Pubstream extends Controller
             $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
             $maxheight = get_config('system', 'home_divmore_height');
-            if (!$maxheight)
+            if (!$maxheight) {
                 $maxheight = 400;
+            }
 
             $o .= '<div id="live-pubstream"></div>' . "\r\n";
             $o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
@@ -171,10 +171,11 @@ class Pubstream extends Controller
             App::$data['firehose'] = intval($sys['channel_id']);
         }
 
-        if (get_config('system', 'public_list_mode'))
+        if (get_config('system', 'public_list_mode')) {
             $page_mode = 'list';
-        else
+        } else {
             $page_mode = 'client';
+        }
 
 
         if (x($hashtags)) {
@@ -194,18 +195,19 @@ class Pubstream extends Controller
             $simple_update = '';
         }
 
-        if ($static && $simple_update)
+        if ($static && $simple_update) {
             $simple_update .= " and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+        }
 
         //logger('update: ' . $this->updating . ' load: ' . $this->loading);
 
         if ($this->updating) {
-
             $ordering = "commented";
 
             if ($this->loading) {
                 if ($mid) {
-                    $r = q("SELECT parent AS item_id FROM item
+                    $r = q(
+                        "SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan 
 						$net_query
 						WHERE mid like '%s' $uids $item_normal
@@ -221,12 +223,12 @@ class Pubstream extends Controller
 						WHERE true $uids and item.item_thread_top = 1 $item_normal
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
 						$sql_extra $net_query2
-						ORDER BY $ordering DESC $pager_sql "
-                    );
+						ORDER BY $ordering DESC $pager_sql ");
                 }
             } elseif ($this->updating) {
                 if ($mid) {
-                    $r = q("SELECT parent AS item_id FROM item
+                    $r = q(
+                        "SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
 						$net_query
 						WHERE mid like '%s' $uids $item_normal_update $simple_update
@@ -234,8 +236,6 @@ class Pubstream extends Controller
 						$sql_extra $net_query2 LIMIT 1",
                         dbesc($mid . '%')
                     );
-
-
                 } else {
                     $r = q("SELECT parent AS item_id FROM item
 						left join abook on item.author_xchan = abook.abook_xchan
@@ -243,8 +243,7 @@ class Pubstream extends Controller
 						WHERE true $uids $item_normal_update
 						$simple_update
 						and (abook.abook_blocked = 0 or abook.abook_flags is null)
-						$sql_extra $net_query2"
-                    );
+						$sql_extra $net_query2");
                 }
             }
 
@@ -253,10 +252,10 @@ class Pubstream extends Controller
             $update_unseen = '';
 
             if ($r) {
-
                 $parents_str = ids_to_querystr($r, 'item_id');
 
-                $items = q("SELECT item.*, item.id AS item_id FROM item
+                $items = q(
+                    "SELECT item.*, item.id AS item_id FROM item
 					WHERE true $uids $item_normal
 					AND item.parent IN ( %s )
 					$sql_extra ",
@@ -272,7 +271,6 @@ class Pubstream extends Controller
             } else {
                 $items = [];
             }
-
         }
 
         if ($mid && local_channel()) {
@@ -290,13 +288,14 @@ class Pubstream extends Controller
 
         $o .= conversation($items, $mode, $this->updating, $page_mode);
 
-        if ($mid)
+        if ($mid) {
             $o .= '<div id="content-complete"></div>';
+        }
 
-        if (($items) && (!$this->updating))
+        if (($items) && (!$this->updating)) {
             $o .= alt_pager(count($items));
+        }
 
         return $o;
-
     }
 }

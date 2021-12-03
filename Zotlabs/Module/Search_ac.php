@@ -1,10 +1,10 @@
 <?php
+
 namespace Zotlabs\Module;
 
 // Autocomplete for saved searches. Should probably be put in the same place as the other autocompletes
 
 use Zotlabs\Web\Controller;
-
 
 class Search_ac extends Controller
 {
@@ -48,7 +48,8 @@ class Search_ac extends Controller
         $results = [];
 
         if ($do_people) {
-            $r = q("SELECT abook_id, xchan_name, xchan_photo_s, xchan_url, xchan_addr FROM abook 
+            $r = q(
+                "SELECT abook_id, xchan_name, xchan_photo_s, xchan_url, xchan_addr FROM abook 
 				left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d 
 				$people_sql_extra
 				ORDER BY xchan_name ASC ",
@@ -70,7 +71,8 @@ class Search_ac extends Controller
         }
 
         if ($do_tags) {
-            $r = q("select distinct term, tid, url from term 
+            $r = q(
+                "select distinct term, tid, url from term 
 				where ttype in ( %d, %d ) $tag_sql_extra group by term order by term asc",
                 intval(TERM_HASHTAG),
                 intval(TERM_COMMUNITYTAG)
@@ -95,7 +97,5 @@ class Search_ac extends Controller
             'count' => $count,
             'items' => $results,
         ]);
-
     }
-
 }

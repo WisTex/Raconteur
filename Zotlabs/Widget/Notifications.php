@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Widget;
 
 use App;
@@ -152,7 +153,5 @@ class Notifications
         ));
 
         return $o;
-
     }
 }
- 

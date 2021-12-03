@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Admin;
 
-
 class Logs
 {
 
@@ -64,13 +63,15 @@ class Logs
                 $fstat = fstat($fp);
                 $size = $fstat['size'];
                 if ($size != 0) {
-                    if ($size > 5000000 || $size < 0)
+                    if ($size > 5000000 || $size < 0) {
                         $size = 5000000;
+                    }
                     $seek = fseek($fp, 0 - $size, SEEK_END);
                     if ($seek === 0) {
                         $data = escape_tags(fread($fp, $size));
-                        while (!feof($fp))
+                        while (!feof($fp)) {
                             $data .= escape_tags(fread($fp, 4096));
+                        }
                     }
                 }
                 fclose($fp);
@@ -94,6 +95,4 @@ class Logs
             '$form_security_token' => get_form_security_token('admin_logs'),
         ));
     }
-
-
 }

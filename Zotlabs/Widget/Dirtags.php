@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
 class Dirtags
 {
 
@@ -10,5 +9,4 @@ class Dirtags
     {
         return dir_tagblock(z_root() . '/directory', null);
     }
-
 }

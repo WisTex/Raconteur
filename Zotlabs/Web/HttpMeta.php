@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Web;
 
-
 class HttpMeta
 {
 
@@ -15,14 +14,13 @@ class HttpMeta
         $this->vars = [];
         $this->og = [];
         $this->ogproperties = [];
-
     }
 
     //Set Meta Value
     //   Mode:
     //      0 = Default - set if no value currently exists
-    //	1 = Overwrite - replace existing value(s)
-    //	2 = Multi - append to the array of values
+    //  1 = Overwrite - replace existing value(s)
+    //  2 = Multi - append to the array of values
     public function set($property, $value, $mode = 0)
     {
         $ogallowsmulti = ['image', 'audio', 'video'];
@@ -112,5 +110,4 @@ class HttpMeta
         }
         return $o;
     }
-
 }

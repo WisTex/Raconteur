@@ -25,7 +25,6 @@ class Finger extends Controller
         ]);
 
         if ($_GET['resource']) {
-
             $resource = trim(escape_tags($_GET['resource']));
 
             $result = Webfinger::exec($resource);
@@ -34,5 +33,4 @@ class Finger extends Controller
         }
         return $o;
     }
-
 }

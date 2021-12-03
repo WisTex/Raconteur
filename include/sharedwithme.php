@@ -1,32 +1,30 @@
 <?php
 
-function apply_updates() {
+function apply_updates()
+{
 
-	//check for updated items and remove them
-	$x = q("SELECT mid, max(obj) AS obj FROM item WHERE verb = '%s' AND obj_type = '%s' GROUP BY mid",
-		dbesc(ACTIVITY_UPDATE),
-		dbesc(ACTIVITY_OBJ_FILE)
-	);
+    //check for updated items and remove them
+    $x = q(
+        "SELECT mid, max(obj) AS obj FROM item WHERE verb = '%s' AND obj_type = '%s' GROUP BY mid",
+        dbesc(ACTIVITY_UPDATE),
+        dbesc(ACTIVITY_OBJ_FILE)
+    );
 
-	if($x) {
+    if ($x) {
+        foreach ($x as $xx) {
+            $object = json_decode($xx['obj'], true);
 
-		foreach($x as $xx) {
+            $d_mid = $object['d_mid'];
+            $u_mid = $xx['mid'];
 
-			$object = json_decode($xx['obj'],true);
-
-			$d_mid = $object['d_mid'];
-			$u_mid = $xx['mid'];
-
-			$y = q("DELETE FROM item WHERE obj_type = '%s' AND (verb = '%s' AND mid = '%s') OR (verb = '%s' AND mid = '%s')",
-				dbesc(ACTIVITY_OBJ_FILE),
-				dbesc(ACTIVITY_POST),
-				dbesc($d_mid),
-				dbesc(ACTIVITY_UPDATE),
-				dbesc($u_mid)
-			);
-
-		}
-
-	}
-
+            $y = q(
+                "DELETE FROM item WHERE obj_type = '%s' AND (verb = '%s' AND mid = '%s') OR (verb = '%s' AND mid = '%s')",
+                dbesc(ACTIVITY_OBJ_FILE),
+                dbesc(ACTIVITY_POST),
+                dbesc($d_mid),
+                dbesc(ACTIVITY_UPDATE),
+                dbesc($u_mid)
+            );
+        }
+    }
 }

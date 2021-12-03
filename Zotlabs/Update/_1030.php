@@ -22,10 +22,9 @@ KEY `issue_status` (`issue_status`),
 KEY `issue_component` (`issue_component`)
 ) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

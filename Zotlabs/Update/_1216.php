@@ -16,5 +16,4 @@ class _1216
             return UPDATE_FAILED;
         }
     }
-
 }

@@ -18,10 +18,9 @@ class _1167
             $r4 = q("alter table app add index ( app_system ) ");
         }
 
-        if ($r1 && $r2 && $r3 && $r4)
+        if ($r1 && $r2 && $r3 && $r4) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

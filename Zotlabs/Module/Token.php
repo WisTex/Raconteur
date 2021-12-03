@@ -10,7 +10,6 @@ use Zotlabs\Identity\OAuth2Storage;
 use OAuth2\Request;
 use OAuth2\Response;
 
-
 class Token extends Controller
 {
 
@@ -45,5 +44,4 @@ class Token extends Controller
         $response->send();
         killme();
     }
-
 }

@@ -5,7 +5,6 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 
-
 class Dircensor extends Controller
 {
 
@@ -26,7 +25,8 @@ class Dircensor extends Controller
             return;
         }
 
-        $r = q("select * from xchan where xchan_hash = '%s'",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s'",
             dbesc($xchan)
         );
 
@@ -36,7 +36,8 @@ class Dircensor extends Controller
 
         $val = (($r[0]['xchan_censored']) ? 0 : 1);
 
-        q("update xchan set xchan_censored = $val where xchan_hash = '%s'",
+        q(
+            "update xchan set xchan_censored = $val where xchan_hash = '%s'",
             dbesc($xchan)
         );
 
@@ -47,7 +48,5 @@ class Dircensor extends Controller
         }
 
         goaway(z_root() . '/directory');
-
     }
-
 }

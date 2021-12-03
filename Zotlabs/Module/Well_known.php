@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -13,7 +14,6 @@ class Well_known extends Controller
     {
 
         if (argc() > 1) {
-
             $arr = ['server' => $_SERVER, 'request' => $_REQUEST];
             call_hooks('well_known', $arr);
 
@@ -33,7 +33,6 @@ class Well_known extends Controller
             }
 
             switch (argv(1)) {
-
                 case 'webfinger':
                     App::$argc -= 1;
                     array_shift(App::$argv);
@@ -59,8 +58,9 @@ class Well_known extends Controller
                     if (file_exists(App::$cmd)) {
                         echo file_get_contents(App::$cmd);
                         killme();
-                    } elseif (file_exists(App::$cmd . '.php'))
+                    } elseif (file_exists(App::$cmd . '.php')) {
                         require_once(App::$cmd . '.php');
+                    }
                     break;
             }
         }

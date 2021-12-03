@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file Zotlabs/Module/Zot.php
  *
@@ -24,5 +25,4 @@ class Zot extends Controller
         $zot = new Receiver(new Zot6Handler());
         json_return_and_die($zot->run(), 'application/x-zot+json');
     }
-
 }

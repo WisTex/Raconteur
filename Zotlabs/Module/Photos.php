@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -31,7 +32,6 @@ class Photos extends Controller
         }
 
         if (argc() > 1) {
-
             $nick = escape_tags(argv(1));
 
             Libprofile::load($nick);
@@ -75,7 +75,6 @@ class Photos extends Controller
         $acl = new AccessControl(App::$data['channel']);
 
         if ((argc() > 3) && (argv(2) === 'album')) {
-
             $album = argv(3);
 
             if (!photos_album_exists($page_owner_uid, get_observer_hash(), $album)) {
@@ -89,10 +88,10 @@ class Photos extends Controller
              */
 
             if ($_REQUEST['dropalbum'] === t('Delete Album')) {
-
                 $folder_hash = '';
 
-                $r = q("select hash from attach where is_dir = 1 and uid = %d and hash = '%s'",
+                $r = q(
+                    "select hash from attach where is_dir = 1 and uid = %d and hash = '%s'",
                     intval($page_owner_uid),
                     dbesc($album)
                 );
@@ -123,7 +122,8 @@ class Photos extends Controller
                     goaway(z_root() . '/' . $_SESSION['photo_return']);
                 }
 
-                $r = q("select id from item where resource_id in ( $str ) and resource_type = 'photo' and uid = %d " . item_normal(),
+                $r = q(
+                    "select id from item where resource_id in ( $str ) and resource_type = 'photo' and uid = %d " . item_normal(),
                     intval($page_owner_uid)
                 );
                 if ($r) {
@@ -134,11 +134,13 @@ class Photos extends Controller
 
                 // remove the associated photos in case they weren't attached to an item (rare)
 
-                q("delete from photo where resource_id in ( $str ) and uid = %d",
+                q(
+                    "delete from photo where resource_id in ( $str ) and uid = %d",
                     intval($page_owner_uid)
                 );
 
-                q("delete from attach where hash in ( $str ) and uid = %d",
+                q(
+                    "delete from attach where hash in ( $str ) and uid = %d",
                     intval($page_owner_uid)
                 );
 
@@ -178,7 +180,8 @@ class Photos extends Controller
             // The site admin can of course modify anything on their own site for
             // maintenance or legal compliance reasons.
 
-            $r = q("SELECT id, resource_id FROM photo WHERE ( xchan = '%s' or uid = %d ) AND resource_id = '%s' LIMIT 1",
+            $r = q(
+                "SELECT id, resource_id FROM photo WHERE ( xchan = '%s' or uid = %d ) AND resource_id = '%s' LIMIT 1",
                 dbesc($ob_hash),
                 intval(local_channel()),
                 dbesc(argv(2))
@@ -201,8 +204,8 @@ class Photos extends Controller
         // perform move_to_album
 
         if ((argc() > 2) && array_key_exists('move_to_album', $_POST)) {
-
-            $m = q("select folder from attach where hash = '%s' and uid = %d limit 1",
+            $m = q(
+                "select folder from attach where hash = '%s' and uid = %d limit 1",
                 dbesc(argv(2)),
                 intval($page_owner_uid)
             );
@@ -234,12 +237,12 @@ class Photos extends Controller
 
                 $resource_id = argv(2);
 
-                $r = q("select * from photo where resource_id = '%s' and uid = %d and imgscale = 0 limit 1",
+                $r = q(
+                    "select * from photo where resource_id = '%s' and uid = %d and imgscale = 0 limit 1",
                     dbesc($resource_id),
                     intval($page_owner_uid)
                 );
                 if ($r) {
-
                     $ph = photo_factory(@file_get_contents(dbunescbin($r[0]['content'])), $r[0]['mimetype']);
                     if ($ph && $ph->is_valid()) {
                         $rotate_deg = ((intval($_POST['rotate']) == 1) ? 270 : 90);
@@ -247,7 +250,8 @@ class Photos extends Controller
 
                         $edited = datetime_convert();
 
-                        q("update attach set filesize = %d, edited = '%s' where hash = '%s' and uid = %d",
+                        q(
+                            "update attach set filesize = %d, edited = '%s' where hash = '%s' and uid = %d",
                             strlen($ph->imageString()),
                             dbescdate($edited),
                             dbesc($resource_id),
@@ -275,16 +279,19 @@ class Photos extends Controller
 
                         unset($arr['os_syspath']);
 
-                        if ($width > 1024 || $height > 1024)
+                        if ($width > 1024 || $height > 1024) {
                             $ph->scaleImage(1024);
+                        }
                         $ph->storeThumbnail($arr, PHOTO_RES_1024);
 
-                        if ($width > 640 || $height > 640)
+                        if ($width > 640 || $height > 640) {
                             $ph->scaleImage(640);
+                        }
                         $ph->storeThumbnail($arr, PHOTO_RES_640);
 
-                        if ($width > 320 || $height > 320)
+                        if ($width > 320 || $height > 320) {
                             $ph->scaleImage(320);
+                        }
                         $ph->storeThumbnail($arr, PHOTO_RES_320);
                     }
                 }
@@ -295,7 +302,6 @@ class Photos extends Controller
         // edit existing photo properties
 
         if (x($_POST, 'item_id') !== false && intval($_POST['item_id'])) {
-
             $title = ((x($_POST, 'title')) ? escape_tags(trim($_POST['title'])) : EMPTY_STR);
             $desc = ((x($_POST, 'desc')) ? escape_tags(trim($_POST['desc'])) : EMPTY_STR);
             $body = ((x($_POST, 'body')) ? trim($_POST['body']) : EMPTY_STR);
@@ -310,13 +316,15 @@ class Photos extends Controller
 
             $resource_id = argv(2);
 
-            $p = q("SELECT mimetype, is_nsfw, filename, title, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
+            $p = q(
+                "SELECT mimetype, is_nsfw, filename, title, description, resource_id, imgscale, allow_cid, allow_gid, deny_cid, deny_gid FROM photo WHERE resource_id = '%s' AND uid = %d ORDER BY imgscale DESC",
                 dbesc($resource_id),
                 intval($page_owner_uid)
             );
             if ($p) {
                 // update the photo structure with any of the changed elements which are common to all resolutions
-                $r = q("UPDATE photo SET title = '%s', description = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' WHERE resource_id = '%s' AND uid = %d",
+                $r = q(
+                    "UPDATE photo SET title = '%s', description = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' WHERE resource_id = '%s' AND uid = %d",
                     dbesc($title),
                     dbesc($desc),
                     dbesc($perm['allow_cid']),
@@ -332,7 +340,8 @@ class Photos extends Controller
 
             $old_is_nsfw = $p[0]['is_nsfw'];
             if ($old_is_nsfw != $is_nsfw) {
-                $r = q("update photo set is_nsfw = %d where resource_id = '%s' and uid = %d",
+                $r = q(
+                    "update photo set is_nsfw = %d where resource_id = '%s' and uid = %d",
                     intval($is_nsfw),
                     dbesc($resource_id),
                     intval($page_owner_uid)
@@ -346,7 +355,8 @@ class Photos extends Controller
                 $visibility = 1;
             }
 
-            $r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
                 intval($item_id),
                 intval($page_owner_uid)
             );
@@ -398,11 +408,13 @@ class Photos extends Controller
                 }
             }
             if ($post_tags) {
-                q("delete from term where otype = 1 and oid = %d",
+                q(
+                    "delete from term where otype = 1 and oid = %d",
                     intval($linked_item['id'])
                 );
                 foreach ($post_tags as $t) {
-                    q("insert into term (uid,oid,otype,ttype,term,url)
+                    q(
+                        "insert into term (uid,oid,otype,ttype,term,url)
 						values(%d,%d,%d,%d,'%s','%s') ",
                         intval($page_owner_uid),
                         intval($linked_item['id']),
@@ -435,7 +447,8 @@ class Photos extends Controller
             }
 
             // make sure the linked item has the same permissions as the photo regardless of any other changes
-            $x = q("update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', title = '%s', obj = '%s', body = '%s', edited = '%s', item_private = %d where id = %d",
+            $x = q(
+                "update item set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s', title = '%s', obj = '%s', body = '%s', edited = '%s', item_private = %d where id = %d",
                 dbesc($perm['allow_cid']),
                 dbesc($perm['allow_gid']),
                 dbesc($perm['deny_cid']),
@@ -449,7 +462,8 @@ class Photos extends Controller
             );
 
             // make sure the attach has the same permissions as the photo regardless of any other changes
-            $x = q("update attach set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where hash = '%s' and uid = %d and is_photo = 1",
+            $x = q(
+                "update attach set allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where hash = '%s' and uid = %d and is_photo = 1",
                 dbesc($perm['allow_cid']),
                 dbesc($perm['allow_gid']),
                 dbesc($perm['deny_cid']),
@@ -465,13 +479,12 @@ class Photos extends Controller
 
             $sync = attach_export_data(App::$data['channel'], $resource_id);
 
-            if ($sync)
+            if ($sync) {
                 Libsync::build_sync_packet($page_owner_uid, ['file' => [$sync]]);
+            }
 
             goaway(z_root() . '/' . $_SESSION['photo_return']);
             return; // NOTREACHED
-
-
         }
 
 
@@ -550,7 +563,6 @@ class Photos extends Controller
         }
 
         goaway(z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $r['data']['folder']);
-
     }
 
 
@@ -594,14 +606,16 @@ class Photos extends Controller
             if (argc() > 2) {
                 $datatype = argv(2);
                 $datum = '';
-            } else
+            } else {
                 $datatype = 'summary';
+            }
         }
 
-        if (argc() > 4)
+        if (argc() > 4) {
             $cmd = argv(4);
-        else
+        } else {
             $cmd = 'view';
+        }
 
         //
         // Setup permissions structures
@@ -645,7 +659,6 @@ class Photos extends Controller
          */
 
         if ($can_post) {
-
             $uploader = '';
 
             $ret = array('post_url' => z_root() . '/photos/' . App::$data['channel']['channel_address'],
@@ -656,7 +669,8 @@ class Photos extends Controller
 
             /* Show space usage */
 
-            $r = q("select sum(filesize) as total from photo where aid = %d and imgscale = 0 ",
+            $r = q(
+                "select sum(filesize) as total from photo where aid = %d and imgscale = 0 ",
                 intval(App::$data['channel']['channel_account_id'])
             );
 
@@ -732,7 +746,6 @@ class Photos extends Controller
                 '$submit' => t('Upload')
 
             ));
-
         }
 
         //
@@ -744,7 +757,6 @@ class Photos extends Controller
          */
 
         if ($datatype === 'album') {
-
             head_add_link([
                 'rel' => 'alternate',
                 'type' => 'application/json+oembed',
@@ -759,14 +771,16 @@ class Photos extends Controller
                 goaway(z_root() . '/photos/' . App::$data['channel']['channel_address']);
             }
 
-            if ($_GET['order'] === 'posted')
+            if ($_GET['order'] === 'posted') {
                 $order = 'created ASC';
-            elseif ($_GET['order'] === 'name')
+            } elseif ($_GET['order'] === 'name') {
                 $order = 'filename ASC';
-            else
+            } else {
                 $order = 'created DESC';
+            }
 
-            $r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
+            $r = q(
+                "SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
 					(SELECT resource_id, max(imgscale) imgscale FROM photo left join attach on folder = '%s' and photo.resource_id = attach.hash WHERE attach.uid = %d AND imgscale <= 4 AND photo_usage IN ( %d, %d, %d ) and is_nsfw = %d $sql_extra GROUP BY resource_id) ph 
 					ON (p.resource_id = ph.resource_id AND p.imgscale = ph.imgscale)
 				ORDER BY $order LIMIT %d OFFSET %d",
@@ -789,18 +803,17 @@ class Photos extends Controller
 
                 // @fixme - syncronise actions with DAV
 
-                //				$edit_tpl = get_markup_template('album_edit.tpl');
-                //				$album_edit = replace_macros($edit_tpl,array(
-                //					'$nametext' => t('Enter a new album name'),
-                //					'$name_placeholder' => t('or select an existing one (doubleclick)'),
-                //					'$nickname' => App::$data['channel']['channel_address'],
-                //					'$album' => $album_e,
-                //					'$albums' => $albums['albums'],
-                //					'$hexalbum' => bin2hex($album),
-                //					'$submit' => t('Submit'),
-                //					'$dropsubmit' => t('Delete Album')
-                //				));
-
+                //              $edit_tpl = get_markup_template('album_edit.tpl');
+                //              $album_edit = replace_macros($edit_tpl,array(
+                //                  '$nametext' => t('Enter a new album name'),
+                //                  '$name_placeholder' => t('or select an existing one (doubleclick)'),
+                //                  '$nickname' => App::$data['channel']['channel_address'],
+                //                  '$album' => $album_e,
+                //                  '$albums' => $albums['albums'],
+                //                  '$hexalbum' => bin2hex($album),
+                //                  '$submit' => t('Submit'),
+                //                  '$dropsubmit' => t('Delete Album')
+                //              ));
             }
 
             $order = [
@@ -814,11 +827,11 @@ class Photos extends Controller
             if (count($r)) {
                 $twist = 'rotright';
                 foreach ($r as $rr) {
-
-                    if ($twist == 'rotright')
+                    if ($twist == 'rotright') {
                         $twist = 'rotleft';
-                    else
+                    } else {
                         $twist = 'rotright';
+                    }
 
                     $ext = $phototypes[$rr['mimetype']];
 
@@ -881,7 +894,6 @@ class Photos extends Controller
          */
 
         if ($datatype === 'image') {
-
             head_add_link([
                 'rel' => 'alternate',
                 'type' => 'application/json+oembed',
@@ -889,31 +901,34 @@ class Photos extends Controller
                 'title' => 'oembed'
             ]);
 
-            $x = q("select folder from attach where hash = '%s' and uid = %d $sql_attach limit 1",
+            $x = q(
+                "select folder from attach where hash = '%s' and uid = %d $sql_attach limit 1",
                 dbesc($datum),
                 intval($owner_uid)
             );
 
             // fetch image, item containing image, then comments
 
-            $ph = q("SELECT id,aid,uid,xchan,resource_id,created,edited,title,description,album,filename,mimetype,height,width,filesize,imgscale,photo_usage,is_nsfw,allow_cid,allow_gid,deny_cid,deny_gid FROM photo WHERE uid = %d AND resource_id = '%s' 
+            $ph = q(
+                "SELECT id,aid,uid,xchan,resource_id,created,edited,title,description,album,filename,mimetype,height,width,filesize,imgscale,photo_usage,is_nsfw,allow_cid,allow_gid,deny_cid,deny_gid FROM photo WHERE uid = %d AND resource_id = '%s' 
 				$sql_extra ORDER BY imgscale ASC ",
                 intval($owner_uid),
                 dbesc($datum)
             );
 
             if (!($ph && $x)) {
-
                 /* Check again - this time without specifying permissions */
 
-                $ph = q("SELECT id FROM photo WHERE uid = %d AND resource_id = '%s' LIMIT 1",
+                $ph = q(
+                    "SELECT id FROM photo WHERE uid = %d AND resource_id = '%s' LIMIT 1",
                     intval($owner_uid),
                     dbesc($datum)
                 );
-                if ($ph)
+                if ($ph) {
                     notice(t('Permission denied. Access to this item may be restricted.') . EOL);
-                else
+                } else {
                     notice(t('Photo not available') . EOL);
+                }
                 return;
             }
 
@@ -921,15 +936,17 @@ class Photos extends Controller
             $prevlink = '';
             $nextlink = '';
 
-            if ($_GET['order'] === 'posted')
+            if ($_GET['order'] === 'posted') {
                 $order = 'created ASC';
-            elseif ($_GET['order'] === 'name')
+            } elseif ($_GET['order'] === 'name') {
                 $order = 'filename ASC';
-            else
+            } else {
                 $order = 'created DESC';
+            }
 
 
-            $prvnxt = q("SELECT hash FROM attach WHERE folder = '%s' AND uid = %d AND is_photo = 1
+            $prvnxt = q(
+                "SELECT hash FROM attach WHERE folder = '%s' AND uid = %d AND is_photo = 1
 				$sql_attach ORDER BY $order ",
                 dbesc($x[0]['folder']),
                 intval($owner_uid)
@@ -940,10 +957,12 @@ class Photos extends Controller
                     if ($prvnxt[$z]['hash'] == $ph[0]['resource_id']) {
                         $prv = $z - 1;
                         $nxt = $z + 1;
-                        if ($prv < 0)
+                        if ($prv < 0) {
                             $prv = count($prvnxt) - 1;
-                        if ($nxt >= count($prvnxt))
+                        }
+                        if ($nxt >= count($prvnxt)) {
                             $nxt = 0;
+                        }
                         break;
                     }
                 }
@@ -953,8 +972,9 @@ class Photos extends Controller
             }
 
 
-            if (count($ph) == 1)
+            if (count($ph) == 1) {
                 $hires = $lores = $ph[0];
+            }
             if (count($ph) > 1) {
                 if ($ph[1]['imgscale'] == 2) {
                     // original is 640 or less, we can display it directly
@@ -966,8 +986,8 @@ class Photos extends Controller
             }
 
             $album_link = z_root() . '/photos/' . App::$data['channel']['channel_address'] . '/album/' . $x[0]['folder'];
-            $tools = Null;
-            $lock = Null;
+            $tools = null;
+            $lock = null;
 
             if ($can_post && ($ph[0]['uid'] == $owner_uid)) {
                 $tools = array(
@@ -980,17 +1000,20 @@ class Photos extends Controller
             $lockstate = (((strlen($ph[0]['allow_cid']) || strlen($ph[0]['allow_gid'])
                 || strlen($ph[0]['deny_cid']) || strlen($ph[0]['deny_gid'])))
                 ? array('lock', t('Private Photo'))
-                : array('unlock', Null));
+                : array('unlock', null));
 
             App::$page['htmlhead'] .= '<script>$(document).keydown(function(event) {' . "\n";
-            if ($prevlink)
+            if ($prevlink) {
                 App::$page['htmlhead'] .= 'if(event.ctrlKey && event.keyCode == 37) { event.preventDefault(); window.location.href = \'' . $prevlink . '\'; }' . "\n";
-            if ($nextlink)
+            }
+            if ($nextlink) {
                 App::$page['htmlhead'] .= 'if(event.ctrlKey && event.keyCode == 39) { event.preventDefault(); window.location.href = \'' . $nextlink . '\'; }' . "\n";
+            }
             App::$page['htmlhead'] .= '});</script>';
 
-            if ($prevlink)
+            if ($prevlink) {
                 $prevlink = array($prevlink, t('Previous'));
+            }
 
             $photo = array(
                 'href' => z_root() . '/photo/' . $hires['resource_id'] . '-' . $hires['imgscale'] . '.' . $phototypes[$hires['mimetype']],
@@ -998,13 +1021,15 @@ class Photos extends Controller
                 'src' => z_root() . '/photo/' . $lores['resource_id'] . '-' . $lores['imgscale'] . '.' . $phototypes[$lores['mimetype']] . '?f=&_u=' . datetime_convert('', '', '', 'ymdhis')
             );
 
-            if ($nextlink)
+            if ($nextlink) {
                 $nextlink = array($nextlink, t('Next'));
+            }
 
 
             // Do we have an item for this photo?
 
-            $linked_items = q("SELECT * FROM item WHERE resource_id = '%s' and resource_type = 'photo' and uid = %d
+            $linked_items = q(
+                "SELECT * FROM item WHERE resource_id = '%s' and resource_type = 'photo' and uid = %d
 				$sql_item LIMIT 1",
                 dbesc($datum),
                 intval($owner_uid)
@@ -1014,18 +1039,17 @@ class Photos extends Controller
             $link_item = null;
 
             if ($linked_items) {
-
                 xchan_query($linked_items);
                 $linked_items = fetch_post_tags($linked_items, true);
 
                 $link_item = $linked_items[0];
                 $item_normal = item_normal();
 
-                $r = q("select * from item where parent_mid = '%s' 
+                $r = q(
+                    "select * from item where parent_mid = '%s' 
 					$item_normal and uid = %d $sql_item ",
                     dbesc($link_item['mid']),
                     intval($link_item['uid'])
-
                 );
 
                 if ($r) {
@@ -1048,7 +1072,8 @@ class Photos extends Controller
                 }
 
                 if ((local_channel()) && (local_channel() == $link_item['uid'])) {
-                    q("UPDATE item SET item_unseen = 0 WHERE parent = %d and uid = %d and item_unseen = 1",
+                    q(
+                        "UPDATE item SET item_unseen = 0 WHERE parent = %d and uid = %d and item_unseen = 1",
                         intval($link_item['parent']),
                         intval(local_channel())
                     );
@@ -1059,7 +1084,7 @@ class Photos extends Controller
                 }
             }
 
-            //		logger('mod_photo: link_item' . print_r($link_item,true));
+            //      logger('mod_photo: link_item' . print_r($link_item,true));
 
             // FIXME - remove this when we move to conversation module
 
@@ -1067,7 +1092,6 @@ class Photos extends Controller
 
             $edit = null;
             if ($can_post) {
-
                 $album_e = $ph[0]['album'];
                 $caption_e = $ph[0]['description'];
                 $aclselect_e = (($_is_owner) ? populate_acl($ph[0], true, PermissionDescription::fromGlobalPermission('view_storage')) : '');
@@ -1112,7 +1136,6 @@ class Photos extends Controller
             }
 
             if (count($linked_items)) {
-
                 $cmnt_tpl = get_markup_template('comment_item.tpl');
                 $tpl = get_markup_template('photo_item.tpl');
                 $return_url = App::$cmd;
@@ -1188,7 +1211,6 @@ class Photos extends Controller
                 ];
 
                 if ($r) {
-
                     foreach ($r as $item) {
                         builtin_activity_puller($item, $conv_responses);
                     }
@@ -1237,8 +1259,9 @@ class Photos extends Controller
 
                         $drop = '';
 
-                        if ($observer['xchan_hash'] === $item['author_xchan'] || $observer['xchan_hash'] === $item['owner_xchan'])
+                        if ($observer['xchan_hash'] === $item['author_xchan'] || $observer['xchan_hash'] === $item['owner_xchan']) {
                             $drop = replace_macros(get_markup_template('photo_drop.tpl'), array('$id' => $item['id'], '$delete' => t('Delete')));
+                        }
 
 
                         $name_e = $profile_name;
@@ -1260,7 +1283,6 @@ class Photos extends Controller
                             '$drop' => $drop,
                             '$comment' => $comment
                         ));
-
                     }
 
                     if ($observer && ($can_post || $can_comment)) {
@@ -1279,7 +1301,6 @@ class Photos extends Controller
                             '$ww' => ''
                         ));
                     }
-
                 }
                 $paginate = paginate($a);
             }
@@ -1346,7 +1367,8 @@ class Photos extends Controller
 
         App::set_pager_itemspage(60);
 
-        $r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.album, p.imgscale, p.created, p.display_path FROM photo p 
+        $r = q(
+            "SELECT p.resource_id, p.id, p.filename, p.mimetype, p.album, p.imgscale, p.created, p.display_path FROM photo p 
 			INNER JOIN ( SELECT resource_id, max(imgscale) imgscale FROM photo WHERE photo.uid = %d AND photo_usage IN ( %d, %d ) 
 			AND is_nsfw = %d $sql_extra group by resource_id ) ph ON (p.resource_id = ph.resource_id and p.imgscale = ph.imgscale) 
 			ORDER by p.created DESC LIMIT %d OFFSET %d",
@@ -1362,14 +1384,15 @@ class Photos extends Controller
         if ($r) {
             $twist = 'rotright';
             foreach ($r as $rr) {
-
-                if (!attach_can_view_folder(App::$data['channel']['channel_id'], get_observer_hash(), $rr['resource_id']))
+                if (!attach_can_view_folder(App::$data['channel']['channel_id'], get_observer_hash(), $rr['resource_id'])) {
                     continue;
+                }
 
-                if ($twist == 'rotright')
+                if ($twist == 'rotright') {
                     $twist = 'rotleft';
-                else
+                } else {
                     $twist = 'rotright';
+                }
                 $ext = $phototypes[$rr['mimetype']];
 
                 $alt_e = $rr['filename'];
@@ -1399,7 +1422,6 @@ class Photos extends Controller
             echo $o;
             killme();
         } else {
-
             $o .= "<script>var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 
             $o .= replace_macros(get_markup_template('photos_recent.tpl'), [

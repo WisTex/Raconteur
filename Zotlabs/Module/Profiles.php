@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -7,7 +8,6 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Daemon\Run;
-
 use Sabre\VObject\Reader;
 
 class Profiles extends Controller
@@ -23,7 +23,8 @@ class Profiles extends Controller
         }
 
         if ((argc() > 2) && (argv(1) === "drop") && intval(argv(2))) {
-            $r = q("SELECT * FROM profile WHERE id = %d AND uid = %d AND is_default = 0 LIMIT 1",
+            $r = q(
+                "SELECT * FROM profile WHERE id = %d AND uid = %d AND is_default = 0 LIMIT 1",
                 intval(argv(2)),
                 intval(local_channel())
             );
@@ -37,17 +38,20 @@ class Profiles extends Controller
 
             // move every contact using this profile as their default to the user default
 
-            $r = q("UPDATE abook SET abook_profile = (SELECT profile_guid FROM profile WHERE is_default = 1 AND uid = %d LIMIT 1) WHERE abook_profile = '%s' AND abook_channel = %d ",
+            $r = q(
+                "UPDATE abook SET abook_profile = (SELECT profile_guid FROM profile WHERE is_default = 1 AND uid = %d LIMIT 1) WHERE abook_profile = '%s' AND abook_channel = %d ",
                 intval(local_channel()),
                 dbesc($profile_guid),
                 intval(local_channel())
             );
-            $r = q("DELETE FROM profile WHERE id = %d AND uid = %d",
+            $r = q(
+                "DELETE FROM profile WHERE id = %d AND uid = %d",
                 intval(argv(2)),
                 intval(local_channel())
             );
-            if ($r)
+            if ($r) {
                 info(t('Profile deleted.') . EOL);
+            }
 
             // @fixme this is a much more complicated sync - add any changed abook entries and
             // also add deleted flag to profile structure
@@ -61,17 +65,20 @@ class Profiles extends Controller
 
 
         if ((argc() > 1) && (argv(1) === 'new')) {
+            //      check_form_security_token_redirectOnErr('/profiles', 'profile_new', 't');
 
-            //		check_form_security_token_redirectOnErr('/profiles', 'profile_new', 't');
-
-            $r0 = q("SELECT id FROM profile WHERE uid = %d",
-                intval(local_channel()));
+            $r0 = q(
+                "SELECT id FROM profile WHERE uid = %d",
+                intval(local_channel())
+            );
             $num_profiles = count($r0);
 
             $name = t('Profile-') . ($num_profiles + 1);
 
-            $r1 = q("SELECT fullname, photo, thumb FROM profile WHERE uid = %d AND is_default = 1 LIMIT 1",
-                intval(local_channel()));
+            $r1 = q(
+                "SELECT fullname, photo, thumb FROM profile WHERE uid = %d AND is_default = 1 LIMIT 1",
+                intval(local_channel())
+            );
 
             $r2 = profile_store_lowlevel(
                 [
@@ -85,28 +92,32 @@ class Profiles extends Controller
                 ]
             );
 
-            $r3 = q("SELECT id FROM profile WHERE uid = %d AND profile_name = '%s' LIMIT 1",
+            $r3 = q(
+                "SELECT id FROM profile WHERE uid = %d AND profile_name = '%s' LIMIT 1",
                 intval(local_channel()),
                 dbesc($name)
             );
 
             info(t('New profile created.') . EOL);
-            if (count($r3) == 1)
+            if (count($r3) == 1) {
                 goaway(z_root() . '/profiles/' . $r3[0]['id']);
+            }
 
             goaway(z_root() . '/profiles');
         }
 
         if ((argc() > 2) && (argv(1) === 'clone')) {
-
             check_form_security_token_redirectOnErr('/profiles', 'profile_clone', 't');
 
-            $r0 = q("SELECT id FROM profile WHERE uid = %d",
-                intval(local_channel()));
+            $r0 = q(
+                "SELECT id FROM profile WHERE uid = %d",
+                intval(local_channel())
+            );
             $num_profiles = count($r0);
 
             $name = t('Profile-') . ($num_profiles + 1);
-            $r1 = q("SELECT * FROM profile WHERE uid = %d AND id = %d LIMIT 1",
+            $r1 = q(
+                "SELECT * FROM profile WHERE uid = %d AND id = %d LIMIT 1",
                 intval(local_channel()),
                 intval(argv(2))
             );
@@ -123,7 +134,8 @@ class Profiles extends Controller
 
             create_table_from_array('profile', $r1[0]);
 
-            $r3 = q("SELECT id FROM profile WHERE uid = %d AND profile_name = '%s' LIMIT 1",
+            $r3 = q(
+                "SELECT id FROM profile WHERE uid = %d AND profile_name = '%s' LIMIT 1",
                 intval(local_channel()),
                 dbesc($name)
             );
@@ -131,8 +143,9 @@ class Profiles extends Controller
 
             profiles_build_sync(local_channel());
 
-            if (($r3) && (count($r3) == 1))
+            if (($r3) && (count($r3) == 1)) {
                 goaway(z_root() . '/profiles/' . $r3[0]['id']);
+            }
 
             goaway(z_root() . '/profiles');
 
@@ -140,8 +153,8 @@ class Profiles extends Controller
         }
 
         if ((argc() > 2) && (argv(1) === 'export')) {
-
-            $r1 = q("SELECT * FROM profile WHERE uid = %d AND id = %d LIMIT 1",
+            $r1 = q(
+                "SELECT * FROM profile WHERE uid = %d AND id = %d LIMIT 1",
                 intval(local_channel()),
                 intval(argv(2))
             );
@@ -165,16 +178,19 @@ class Profiles extends Controller
         }
 
         if (((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(), 'multi_profiles')) {
-            if (feature_enabled(local_channel(), 'multi_profiles'))
+            if (feature_enabled(local_channel(), 'multi_profiles')) {
                 $id = argv(1);
-            else {
-                $x = q("select id from profile where uid = %d and is_default = 1",
+            } else {
+                $x = q(
+                    "select id from profile where uid = %d and is_default = 1",
                     intval(local_channel())
                 );
-                if ($x)
+                if ($x) {
                     $id = $x[0]['id'];
+                }
             }
-            $r = q("SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
                 intval($id),
                 intval(local_channel())
             );
@@ -229,7 +245,8 @@ class Profiles extends Controller
 
 
         if ((argc() > 1) && (argv(1) !== "new") && intval(argv(1))) {
-            $orig = q("SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
+            $orig = q(
+                "SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
                 intval(argv(1)),
                 intval(local_channel())
             );
@@ -252,10 +269,11 @@ class Profiles extends Controller
             $dob = $_POST['dob'] ? escape_tags(trim($_POST['dob'])) : '0000-00-00';
 
             $y = substr($dob, 0, 4);
-            if ((!ctype_digit($y)) || ($y < 1900))
+            if ((!ctype_digit($y)) || ($y < 1900)) {
                 $ignore_year = true;
-            else
+            } else {
                 $ignore_year = false;
+            }
 
             if ($dob !== '0000-00-00') {
                 if (strpos($dob, '0000-') === 0) {
@@ -263,8 +281,9 @@ class Profiles extends Controller
                     $dob = substr($dob, 5);
                 }
                 $dob = datetime_convert('UTC', 'UTC', (($ignore_year) ? '1900-' . $dob : $dob), (($ignore_year) ? 'm-d' : 'Y-m-d'));
-                if ($ignore_year)
+                if ($ignore_year) {
                     $dob = '0000-' . $dob;
+                }
             }
 
             $name = escape_tags(trim($_POST['name']));
@@ -370,10 +389,11 @@ class Profiles extends Controller
 
             $with = ((x($_POST, 'with')) ? escape_tags(trim($_POST['with'])) : '');
 
-            if (!strlen($howlong))
+            if (!strlen($howlong)) {
                 $howlong = NULL_DATE;
-            else
+            } else {
                 $howlong = datetime_convert(date_default_timezone_get(), 'UTC', $howlong);
+            }
 
             // linkify the relationship target if applicable
 
@@ -384,17 +404,20 @@ class Profiles extends Controller
                     $withchanged = true;
                     $prf = '';
                     $lookup = $with;
-                    if (strpos($lookup, '@') === 0)
+                    if (strpos($lookup, '@') === 0) {
                         $lookup = substr($lookup, 1);
+                    }
                     $lookup = str_replace('_', ' ', $lookup);
                     $newname = $lookup;
 
-                    $r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
+                    $r = q(
+                        "SELECT * FROM abook left join xchan on abook_xchan = xchan_hash WHERE xchan_name = '%s' AND abook_channel = %d LIMIT 1",
                         dbesc($newname),
                         intval(local_channel())
                     );
                     if (!$r) {
-                        $r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash WHERE xchan_addr = '%s' AND abook_channel = %d LIMIT 1",
+                        $r = q(
+                            "SELECT * FROM abook left join xchan on abook_xchan = xchan_hash WHERE xchan_addr = '%s' AND abook_channel = %d LIMIT 1",
                             dbesc($lookup . '@%'),
                             intval(local_channel())
                         );
@@ -407,37 +430,43 @@ class Profiles extends Controller
 
                     if ($prf) {
                         $with = str_replace($lookup, '<a href="' . $prf . '">' . $newname . '</a>', $with);
-                        if (strpos($with, '@') === 0)
+                        if (strpos($with, '@') === 0) {
                             $with = substr($with, 1);
+                        }
                     }
-                } else
+                } else {
                     $with = $orig[0]['partner'];
+                }
             }
 
             $profile_fields_basic = get_profile_fields_basic();
             $profile_fields_advanced = get_profile_fields_advanced();
             $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
-            if ($advanced)
+            if ($advanced) {
                 $fields = $profile_fields_advanced;
-            else
+            } else {
                 $fields = $profile_fields_basic;
+            }
 
             $z = q("select * from profdef where true");
             if ($z) {
                 foreach ($z as $zz) {
                     if (array_key_exists($zz['field_name'], $fields)) {
-                        $w = q("select * from profext where channel_id = %d and hash = '%s' and k = '%s' limit 1",
+                        $w = q(
+                            "select * from profext where channel_id = %d and hash = '%s' and k = '%s' limit 1",
                             intval(local_channel()),
                             dbesc($orig[0]['profile_guid']),
                             dbesc($zz['field_name'])
                         );
                         if ($w) {
-                            q("update profext set v = '%s' where id = %d",
+                            q(
+                                "update profext set v = '%s' where id = %d",
                                 dbesc(escape_tags(trim($_POST[$zz['field_name']]))),
                                 intval($w[0]['id'])
                             );
                         } else {
-                            q("insert into profext ( channel_id, hash, k, v ) values ( %d, '%s', '%s', '%s') ",
+                            q(
+                                "insert into profext ( channel_id, hash, k, v ) values ( %d, '%s', '%s', '%s') ",
                                 intval(local_channel()),
                                 dbesc($orig[0]['profile_guid']),
                                 dbesc($zz['field_name']),
@@ -500,8 +529,10 @@ class Profiles extends Controller
                     // in case this leaks to unintended recipients. Yes, it's in the public
                     // profile but that doesn't mean we have to broadcast it to everybody.
                 }
-                if ($locality != $orig[0]['locality'] || $region != $orig[0]['region']
-                    || $country_name != $orig[0]['country_name']) {
+                if (
+                    $locality != $orig[0]['locality'] || $region != $orig[0]['region']
+                    || $country_name != $orig[0]['country_name']
+                ) {
                     $changes[] = t('Location');
                     $comma1 = ((($locality) && ($region || $country_name)) ? ', ' : ' ');
                     $comma2 = (($region && $country_name) ? ', ' : '');
@@ -509,10 +540,10 @@ class Profiles extends Controller
                 }
 
                 self::profile_activity($changes, $value);
-
             }
 
-            $r = q("UPDATE profile 
+            $r = q(
+                "UPDATE profile 
 				SET profile_name = '%s',
 				fullname = '%s',
 				pdesc = '%s',
@@ -588,10 +619,12 @@ class Profiles extends Controller
                 intval(local_channel())
             );
 
-            if ($r)
+            if ($r) {
                 info(t('Profile updated.') . EOL);
+            }
 
-            $sync = q("select * from profile where id = %d and uid = %d limit 1",
+            $sync = q(
+                "select * from profile where id = %d and uid = %d limit 1",
                 intval(argv(1)),
                 intval(local_channel())
             );
@@ -606,12 +639,14 @@ class Profiles extends Controller
             $channel = App::get_channel();
 
             if ($namechanged && $is_default) {
-                $r = q("UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_hash = '%s'",
+                $r = q(
+                    "UPDATE xchan SET xchan_name = '%s', xchan_name_date = '%s' WHERE xchan_hash = '%s'",
                     dbesc($name),
                     dbesc(datetime_convert()),
                     dbesc($channel['xchan_hash'])
                 );
-                $r = q("UPDATE channel SET channel_name = '%s' WHERE channel_hash = '%s'",
+                $r = q(
+                    "UPDATE channel SET channel_name = '%s' WHERE channel_hash = '%s'",
                     dbesc($name),
                     dbesc($channel['xchan_hash'])
                 );
@@ -646,16 +681,19 @@ class Profiles extends Controller
         $profile_fields_advanced = get_profile_fields_advanced();
 
         if (((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(), 'multi_profiles')) {
-            if (feature_enabled(local_channel(), 'multi_profiles'))
+            if (feature_enabled(local_channel(), 'multi_profiles')) {
                 $id = argv(1);
-            else {
-                $x = q("select id from profile where uid = %d and is_default = 1",
+            } else {
+                $x = q(
+                    "select id from profile where uid = %d and is_default = 1",
                     intval(local_channel())
                 );
-                if ($x)
+                if ($x) {
                     $id = $x[0]['id'];
+                }
             }
-            $r = q("SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM profile WHERE id = %d AND uid = %d LIMIT 1",
                 intval($id),
                 intval(local_channel())
             );
@@ -672,10 +710,11 @@ class Profiles extends Controller
             ));
 
             $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
-            if ($advanced)
+            if ($advanced) {
                 $fields = $profile_fields_advanced;
-            else
+            } else {
                 $fields = $profile_fields_basic;
+            }
 
             $hide_friends = array(
                 'hide_friends',
@@ -690,7 +729,8 @@ class Profiles extends Controller
                 $extra_fields = [];
 
                 foreach ($q as $qq) {
-                    $mine = q("select v from profext where k = '%s' and hash = '%s' and channel_id = %d limit 1",
+                    $mine = q(
+                        "select v from profext where k = '%s' and hash = '%s' and channel_id = %d limit 1",
                         dbesc($qq['field_name']),
                         dbesc($r[0]['profile_guid']),
                         intval(local_channel())
@@ -709,8 +749,9 @@ class Profiles extends Controller
             $vcard = (($vctmp) ? get_vcard_array($vctmp, $r[0]['id']) : []);
 
             $f = get_config('system', 'birthday_input_format');
-            if (!$f)
+            if (!$f) {
                 $f = 'ymd';
+            }
 
             $is_default = (($r[0]['is_default']) ? 1 : 0);
 
@@ -814,11 +855,11 @@ class Profiles extends Controller
 
             return $o;
         } else {
-
-            $r = q("SELECT * FROM profile WHERE uid = %d",
-                local_channel());
+            $r = q(
+                "SELECT * FROM profile WHERE uid = %d",
+                local_channel()
+            );
             if ($r) {
-
                 $tpl = get_markup_template('profile_entry.tpl');
                 foreach ($r as $rr) {
                     $profiles .= replace_macros($tpl, array(
@@ -839,26 +880,27 @@ class Profiles extends Controller
                     '$cr_new_link' => 'profiles/new?t=' . get_form_security_token("profile_new"),
                     '$profiles' => $profiles
                 ));
-
             }
             return $o;
         }
-
     }
 
     public static function profile_activity($changed, $value)
     {
 
-        if (!local_channel() || !is_array($changed) || !count($changed))
+        if (!local_channel() || !is_array($changed) || !count($changed)) {
             return;
+        }
 
-        if (!get_pconfig(local_channel(), 'system', 'post_profilechange'))
+        if (!get_pconfig(local_channel(), 'system', 'post_profilechange')) {
             return;
+        }
 
         $self = App::get_channel();
 
-        if (!$self)
+        if (!$self) {
             return;
+        }
 
         $arr = [];
         $uuid = new_uuid();
@@ -886,10 +928,11 @@ class Profiles extends Controller
         $z = 0;
         foreach ($changed as $ch) {
             if (strlen($changes)) {
-                if ($z == ($t - 1))
+                if ($z == ($t - 1)) {
                     $changes .= t(' and ');
-                else
+                } else {
                     $changes .= t(', ');
+                }
             }
             $z++;
             $changes .= $ch;
@@ -901,8 +944,9 @@ class Profiles extends Controller
             // if it's a url, the HTML quotes will mess it up, so link it and don't try and zidify it because we don't know what it points to.
             $value = preg_replace_callback("/([^\]\='" . '"' . "]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\+\,]+)/ismu", 'red_zrl_callback', $value);
             // take out the bookmark indicator
-            if (substr($value, 0, 2) === '#^')
+            if (substr($value, 0, 2) === '#^') {
                 $value = str_replace('#^', '', $value);
+            }
 
             $message = sprintf(t('%1$s changed %2$s to &ldquo;%3$s&rdquo;'), $A, $changes, $value);
             $message .= "\n\n" . sprintf(t('Visit %1$s\'s %2$s'), $A, $prof);
@@ -933,7 +977,6 @@ class Profiles extends Controller
             // FIXME - limit delivery in notifier.php to those specificed in the perms argument
             Run::Summon(['Notifier', 'activity', $i, 'PERMS_R_PROFILE']);
         }
-
     }
 
     public static function gender_selector($current = "", $suffix = "")
@@ -995,8 +1038,9 @@ class Profiles extends Controller
     {
         $o = '';
 
-        if (!get_config('system', 'profile_gender_textfield'))
+        if (!get_config('system', 'profile_gender_textfield')) {
             return $o;
+        }
 
         $o .= "<input type = \"text\" class=\"form-control\" name=\"gender$suffix\" id=\"gender-select$suffix\" value=\"" . urlencode($current) . "\" >";
         return $o;
@@ -1077,6 +1121,4 @@ class Profiles extends Controller
         $o .= '</select>';
         return $o;
     }
-
-
 }

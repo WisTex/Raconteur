@@ -1,12 +1,14 @@
 <?php
+
 namespace Zotlabs\Module;
+
 use App;
 use Zotlabs\Web\Controller;
 
 /**
- * @package		Friendica\modules
- * @subpackage	FileBrowser
- * @author		Fabio Comuni <fabrixxm@kirgroup.com>
+ * @package     Friendica\modules
+ * @subpackage  FileBrowser
+ * @author      Fabio Comuni <fabrixxm@kirgroup.com>
  */
 
 require_once('include/photo_factory.php');
@@ -18,11 +20,13 @@ class Fbrowser extends Controller
     public function get()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             killme();
+        }
 
-        if (App::$argc == 1)
+        if (App::$argc == 1) {
             killme();
+        }
 
         //echo "<pre>"; var_dump(\App::$argv); killme();
 
@@ -34,12 +38,12 @@ class Fbrowser extends Controller
                 $sql_extra2 = " ORDER BY created DESC LIMIT 0, 10";
 
                 if (App::$argc == 2) {
-                    $albums = q("SELECT distinct(album) AS album FROM photo WHERE uid = %d ",
+                    $albums = q(
+                        "SELECT distinct(album) AS album FROM photo WHERE uid = %d ",
                         intval(local_channel())
                     );
                     // anon functions only from 5.3.0... meglio tardi che mai..
                     $albums = array_map("self::folder1", $albums);
-
                 }
 
                 $album = "";
@@ -50,7 +54,8 @@ class Fbrowser extends Controller
                     $path[] = array(z_root() . "/fbrowser/image/" . App::$argv[2] . "/", $album);
                 }
 
-                $r = q("SELECT resource_id, id, filename, type, min(imgscale) AS hiq,max(imgscale) AS loq, description  
+                $r = q(
+                    "SELECT resource_id, id, filename, type, min(imgscale) AS hiq,max(imgscale) AS loq, description  
 						FROM photo WHERE uid = %d $sql_extra
 						GROUP BY resource_id $sql_extra2",
                     intval(local_channel())
@@ -72,7 +77,8 @@ class Fbrowser extends Controller
                 break;
             case "file":
                 if (App::$argc == 2) {
-                    $files = q("SELECT id, filename, filetype FROM attach WHERE uid = %d ",
+                    $files = q(
+                        "SELECT id, filename, filetype FROM attach WHERE uid = %d ",
                         intval(local_channel())
                     );
 
@@ -89,7 +95,6 @@ class Fbrowser extends Controller
                         '$files' => $files,
                         '$cancel' => t('Cancel'),
                     ));
-
                 }
 
                 break;
@@ -97,7 +102,6 @@ class Fbrowser extends Controller
 
 
         killme();
-
     }
 
     private static function folder1($el)
@@ -135,6 +139,4 @@ class Fbrowser extends Controller
 
         return array(z_root() . '/attach/' . $rr['id'], $filename_e, z_root() . '/images/icons/16/' . $filetype . '.png');
     }
-
-
 }

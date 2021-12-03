@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 
@@ -20,11 +20,10 @@ class Xref extends Controller
         setcookie($path, $referrer, $expire, "/");
         $url = '';
 
-        if (argc() > 2)
+        if (argc() > 2) {
             $url = argv(2);
+        }
 
         goaway(z_root() . '/' . $url);
-
     }
-
 }

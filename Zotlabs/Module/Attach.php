@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -25,31 +26,33 @@ class Attach extends Controller
             return;
         }
 
-        $c = q("select channel_address from channel where channel_id = %d limit 1",
+        $c = q(
+            "select channel_address from channel where channel_id = %d limit 1",
             intval($r['data']['uid'])
         );
 
-        if (!$c)
+        if (!$c) {
             return;
+        }
 
         header('Content-type: ' . $r['data']['filetype']);
         header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
         if (intval($r['data']['os_storage'])) {
             $fname = dbunescbin($r['data']['content']);
-            if (strpos($fname, 'store') !== false)
+            if (strpos($fname, 'store') !== false) {
                 $istream = fopen($fname, 'rb');
-            else
+            } else {
                 $istream = fopen('store/' . $c[0]['channel_address'] . '/' . $fname, 'rb');
+            }
             $ostream = fopen('php://output', 'wb');
             if ($istream && $ostream) {
                 pipe_streams($istream, $ostream);
                 fclose($istream);
                 fclose($ostream);
             }
-        } else
+        } else {
             echo dbunescbin($r['data']['content']);
+        }
         killme();
-
     }
-
 }

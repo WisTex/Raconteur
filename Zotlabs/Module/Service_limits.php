@@ -1,5 +1,8 @@
 <?php
-namespace Zotlabs\Module; use App;
+
+namespace Zotlabs\Module;
+
+use App;
 use Zotlabs\Web\Controller;
 
 /** @file */
@@ -24,6 +27,4 @@ class Service_limits extends Controller
         }
         return t('No service class restrictions found.');
     }
-
-
 }

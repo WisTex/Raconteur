@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -24,8 +25,9 @@ class Hq extends Controller
 
     public function init()
     {
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         App::$profile_uid = local_channel();
     }
@@ -33,41 +35,46 @@ class Hq extends Controller
     public function post()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         if ($_REQUEST['notify_id']) {
-            q("update notify set seen = 1 where id = %d and uid = %d",
+            q(
+                "update notify set seen = 1 where id = %d and uid = %d",
                 intval($_REQUEST['notify_id']),
                 intval(local_channel())
             );
         }
 
         killme();
-
     }
 
     public function get()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
-        if ($this->loading)
+        if ($this->loading) {
             $_SESSION['loadtime_hq'] = datetime_convert();
+        }
 
         if (argc() > 1 && argv(1) !== 'load') {
             $item_hash = argv(1);
         }
 
-        if ($_REQUEST['mid'])
+        if ($_REQUEST['mid']) {
             $item_hash = $_REQUEST['mid'];
+        }
 
         $item_normal = item_normal();
         $item_normal_update = item_normal_update();
 
         if (!$item_hash) {
-            $r = q("SELECT mid FROM item 
+            $r = q(
+                "SELECT mid FROM item 
 				WHERE uid = %d $item_normal
 				AND mid = parent_mid 
 				ORDER BY created DESC LIMIT 1",
@@ -80,12 +87,12 @@ class Hq extends Controller
         }
 
         if ($item_hash) {
-
             $item_hash = unpack_link_id($item_hash);
 
             $target_item = null;
 
-            $r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid like '%s' limit 1",
+            $r = q(
+                "select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, item_blocked from item where mid like '%s' limit 1",
                 dbesc($item_hash . '%')
             );
 
@@ -102,17 +109,18 @@ class Hq extends Controller
 
             $simple_update = (($this->updating) ? " AND item_unseen = 1 " : '');
 
-            if ($this->updating && $_SESSION['loadtime_hq'])
+            if ($this->updating && $_SESSION['loadtime_hq']) {
                 $simple_update = " AND item.changed > '" . datetime_convert('UTC', 'UTC', $_SESSION['loadtime_hq']) . "' ";
+            }
 
-            if ($static && $simple_update)
+            if ($static && $simple_update) {
                 $simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+            }
 
             $sys = get_sys_channel();
             $sql_extra = item_permissions_sql($sys['channel_id']);
 
             $sys_item = false;
-
         }
 
         if (!$this->updating) {
@@ -145,18 +153,17 @@ class Hq extends Controller
                 'reset' => t('Reset form')
             ];
 
-            $o = replace_macros(get_markup_template("hq.tpl"),
+            $o = replace_macros(
+                get_markup_template("hq.tpl"),
                 [
                     '$no_messages' => (($target_item) ? false : true),
                     '$no_messages_label' => [t('Welcome to $Projectname!'), t('You have got no unseen posts...')],
                     '$editor' => status_editor($x)
                 ]
             );
-
         }
 
         if (!$this->updating && !$this->loading) {
-
             nav_set_selected('HQ');
 
             $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
@@ -214,7 +221,8 @@ class Hq extends Controller
         if ($this->loading && $target_item) {
             $r = null;
 
-            $r = q("SELECT item.id AS item_id FROM item
+            $r = q(
+                "SELECT item.id AS item_id FROM item
 				WHERE uid = %d
 				AND mid = '%s'
 				$item_normal
@@ -230,7 +238,8 @@ class Hq extends Controller
             if (!$r) {
                 $sys_item = true;
 
-                $r = q("SELECT item.id AS item_id FROM item
+                $r = q(
+                    "SELECT item.id AS item_id FROM item
 					LEFT JOIN abook ON item.author_xchan = abook.abook_xchan
 					WHERE mid = '%s' AND item.uid = %d $item_normal
 					AND (abook.abook_blocked = 0 or abook.abook_flags is null)
@@ -242,7 +251,8 @@ class Hq extends Controller
         } elseif ($this->updating && $target_item) {
             $r = null;
 
-            $r = q("SELECT item.parent AS item_id FROM item
+            $r = q(
+                "SELECT item.parent AS item_id FROM item
 				WHERE uid = %d
 				AND parent_mid = '%s'
 				$item_normal_update
@@ -259,7 +269,8 @@ class Hq extends Controller
             if (!$r) {
                 $sys_item = true;
 
-                $r = q("SELECT item.parent AS item_id FROM item
+                $r = q(
+                    "SELECT item.parent AS item_id FROM item
 					LEFT JOIN abook ON item.author_xchan = abook.abook_xchan
 					WHERE mid = '%s' AND item.uid = %d $item_normal_update $simple_update
 					AND (abook.abook_blocked = 0 or abook.abook_flags is null)
@@ -275,7 +286,8 @@ class Hq extends Controller
         }
 
         if ($r) {
-            $items = q("SELECT item.*, item.id AS item_id 
+            $items = q(
+                "SELECT item.*, item.id AS item_id 
 				FROM item
 				WHERE parent = '%s' $item_normal ",
                 dbesc($r[0]['item_id'])
@@ -291,7 +303,8 @@ class Hq extends Controller
         $o .= conversation($items, 'hq', $this->updating, 'client');
 
         if ($updateable) {
-            $x = q("UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d AND parent = %d ",
+            $x = q(
+                "UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d AND parent = %d ",
                 intval(local_channel()),
                 intval($r[0]['item_id'])
             );
@@ -300,7 +313,5 @@ class Hq extends Controller
         $o .= '<div id="content-complete"></div>';
 
         return $o;
-
     }
-
 }

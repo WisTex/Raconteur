@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -8,7 +9,7 @@ use Zotlabs\Lib\System;
 require_once('include/help.php');
 
 /**
- * You can create local site resources in doc/site 
+ * You can create local site resources in doc/site
  */
 class Help extends Controller
 {
@@ -49,8 +50,9 @@ class Help extends Controller
         if (argc() > 2 && argv(argc() - 2) === 'assets') {
             $path = '';
             for ($x = 1; $x < argc(); $x++) {
-                if (strlen($path))
+                if (strlen($path)) {
                     $path .= '/';
+                }
                 $path .= argv($x);
             }
             $realpath = 'doc/' . $path;
@@ -137,6 +139,4 @@ class Help extends Controller
         closedir($handle);
         return $results;
     }
-
-
 }

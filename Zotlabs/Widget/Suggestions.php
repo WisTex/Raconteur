@@ -35,8 +35,9 @@ class Suggestions
 
         for ($x = $index; $x <= ($index + 1); $x++) {
             $rr = $r[$x];
-            if (!$rr['xchan_url'])
+            if (!$rr['xchan_url']) {
                 break;
+            }
 
             $connlnk = z_root() . '/follow/?url=' . $rr['xchan_addr'];
 

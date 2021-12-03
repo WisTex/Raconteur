@@ -37,11 +37,11 @@ class Channel
         }
 
         if (($role != $oldrole) || ($role === 'custom')) {
-
             if ($role === 'custom') {
                 $hide_presence = (((x($_POST, 'hide_presence')) && (intval($_POST['hide_presence']) == 1)) ? 1 : 0);
                 $def_group = ((x($_POST, 'group-selection')) ? notags(trim($_POST['group-selection'])) : '');
-                $r = q("update channel set channel_default_group = '%s' where channel_id = %d",
+                $r = q(
+                    "update channel set channel_default_group = '%s' where channel_id = %d",
                     dbesc($def_group),
                     intval(local_channel())
                 );
@@ -55,7 +55,8 @@ class Channel
                 $acl->set_from_array($_POST);
                 $x = $acl->get();
 
-                $r = q("update channel set channel_allow_cid = '%s', channel_allow_gid = '%s', 
+                $r = q(
+                    "update channel set channel_allow_cid = '%s', channel_allow_gid = '%s', 
 					channel_deny_cid = '%s', channel_deny_gid = '%s' where channel_id = %d",
                     dbesc($x['allow_cid']),
                     dbesc($x['allow_gid']),
@@ -71,21 +72,23 @@ class Channel
                 }
                 $hide_presence = 1 - (intval($role_permissions['online']));
                 if ($role_permissions['default_collection']) {
-                    $r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
+                    $r = q(
+                        "select hash from pgrp where uid = %d and gname = '%s' limit 1",
                         intval(local_channel()),
                         dbesc(t('Friends'))
                     );
                     if (!$r) {
-
                         AccessList::add(local_channel(), t('Friends'));
                         AccessList::member_add(local_channel(), t('Friends'), $channel['channel_hash']);
-                        $r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
+                        $r = q(
+                            "select hash from pgrp where uid = %d and gname = '%s' limit 1",
                             intval(local_channel()),
                             dbesc(t('Friends'))
                         );
                     }
                     if ($r) {
-                        q("update channel set channel_default_group = '%s', channel_allow_gid = '%s', channel_allow_cid = '', channel_deny_gid = '', channel_deny_cid = '' where channel_id = %d",
+                        q(
+                            "update channel set channel_default_group = '%s', channel_allow_gid = '%s', channel_allow_cid = '', channel_deny_gid = '', channel_deny_cid = '' where channel_id = %d",
                             dbesc($r[0]['hash']),
                             dbesc('<' . $r[0]['hash'] . '>'),
                             intval(local_channel())
@@ -96,7 +99,8 @@ class Channel
                     }
                 } // no default permissions
                 else {
-                    q("update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '', 
+                    q(
+                        "update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '', 
 						channel_deny_cid = '' where channel_id = %d",
                         intval(local_channel())
                     );
@@ -158,7 +162,7 @@ class Channel
         $unkmail = (((x($_POST, 'unkmail')) && (intval($_POST['unkmail']) == 1)) ? 1 : 0);
         $cntunkmail = ((x($_POST, 'cntunkmail')) ? intval($_POST['cntunkmail']) : 0);
         $suggestme = ((x($_POST, 'suggestme')) ? intval($_POST['suggestme']) : 0);
-//		$anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);  
+//      $anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);
         $hyperdrive = ((x($_POST, 'hyperdrive')) ? intval($_POST['hyperdrive']) : 0);
         $activitypub = ((x($_POST, 'activitypub')) ? intval($_POST['activitypub']) : 0);
         $tag_username = ((x($_POST, 'tag_username')) ? intval($_POST['tag_username']) : 0);
@@ -189,66 +193,92 @@ class Channel
 
         $pageflags = $channel['channel_pageflags'];
         $existing_adult = (($pageflags & PAGE_ADULT) ? 1 : 0);
-        if ($adult != $existing_adult)
+        if ($adult != $existing_adult) {
             $pageflags = ($pageflags ^ PAGE_ADULT);
+        }
 
 
         $notify = 0;
 
-        if (x($_POST, 'notify1'))
+        if (x($_POST, 'notify1')) {
             $notify += intval($_POST['notify1']);
-        if (x($_POST, 'notify2'))
+        }
+        if (x($_POST, 'notify2')) {
             $notify += intval($_POST['notify2']);
-        if (x($_POST, 'notify3'))
+        }
+        if (x($_POST, 'notify3')) {
             $notify += intval($_POST['notify3']);
-        if (x($_POST, 'notify4'))
+        }
+        if (x($_POST, 'notify4')) {
             $notify += intval($_POST['notify4']);
-        if (x($_POST, 'notify5'))
+        }
+        if (x($_POST, 'notify5')) {
             $notify += intval($_POST['notify5']);
-        if (x($_POST, 'notify6'))
+        }
+        if (x($_POST, 'notify6')) {
             $notify += intval($_POST['notify6']);
-        if (x($_POST, 'notify7'))
+        }
+        if (x($_POST, 'notify7')) {
             $notify += intval($_POST['notify7']);
-        if (x($_POST, 'notify8'))
+        }
+        if (x($_POST, 'notify8')) {
             $notify += intval($_POST['notify8']);
-        if (x($_POST, 'notify10'))
+        }
+        if (x($_POST, 'notify10')) {
             $notify += intval($_POST['notify10']);
+        }
 
 
         $vnotify = 0;
 
-        if (x($_POST, 'vnotify1'))
+        if (x($_POST, 'vnotify1')) {
             $vnotify += intval($_POST['vnotify1']);
-        if (x($_POST, 'vnotify2'))
+        }
+        if (x($_POST, 'vnotify2')) {
             $vnotify += intval($_POST['vnotify2']);
-        if (x($_POST, 'vnotify3'))
+        }
+        if (x($_POST, 'vnotify3')) {
             $vnotify += intval($_POST['vnotify3']);
-        if (x($_POST, 'vnotify4'))
+        }
+        if (x($_POST, 'vnotify4')) {
             $vnotify += intval($_POST['vnotify4']);
-        if (x($_POST, 'vnotify5'))
+        }
+        if (x($_POST, 'vnotify5')) {
             $vnotify += intval($_POST['vnotify5']);
-        if (x($_POST, 'vnotify6'))
+        }
+        if (x($_POST, 'vnotify6')) {
             $vnotify += intval($_POST['vnotify6']);
-        if (x($_POST, 'vnotify7'))
+        }
+        if (x($_POST, 'vnotify7')) {
             $vnotify += intval($_POST['vnotify7']);
-        if (x($_POST, 'vnotify8'))
+        }
+        if (x($_POST, 'vnotify8')) {
             $vnotify += intval($_POST['vnotify8']);
-        if (x($_POST, 'vnotify9'))
+        }
+        if (x($_POST, 'vnotify9')) {
             $vnotify += intval($_POST['vnotify9']);
-        if (x($_POST, 'vnotify10'))
+        }
+        if (x($_POST, 'vnotify10')) {
             $vnotify += intval($_POST['vnotify10']);
-        if (x($_POST, 'vnotify11') && is_site_admin())
+        }
+        if (x($_POST, 'vnotify11') && is_site_admin()) {
             $vnotify += intval($_POST['vnotify11']);
-        if (x($_POST, 'vnotify12'))
+        }
+        if (x($_POST, 'vnotify12')) {
             $vnotify += intval($_POST['vnotify12']);
-        if (x($_POST, 'vnotify13'))
+        }
+        if (x($_POST, 'vnotify13')) {
             $vnotify += intval($_POST['vnotify13']);
-        if (x($_POST, 'vnotify14'))
+        }
+        if (x($_POST, 'vnotify14')) {
             $vnotify += intval($_POST['vnotify14']);
-        if (x($_POST, 'vnotify15'))
+        }
+        if (x($_POST, 'vnotify15')) {
             $vnotify += intval($_POST['vnotify15']);
-        if (x($_POST, 'vnotify16'))
+        }
+        if (x($_POST, 'vnotify16')) {
             $vnotify += intval($_POST['vnotify16']);
+        }
 
         $always_show_in_notices = x($_POST, 'always_show_in_notices') ? 1 : 0;
 
@@ -267,8 +297,9 @@ class Channel
         }
 
         if ($timezone != $channel['channel_timezone']) {
-            if (strlen($timezone))
+            if (strlen($timezone)) {
                 date_default_timezone_set($timezone);
+            }
         }
 
 
@@ -301,7 +332,7 @@ class Channel
         set_pconfig(local_channel(), 'system', 'default_permcat', $defpermcat);
         set_pconfig(local_channel(), 'system', 'email_notify_host', $mailhost);
         set_pconfig(local_channel(), 'system', 'profile_assign', $profile_assign);
-//		set_pconfig(local_channel(),'system','anymention',$anymention);
+//      set_pconfig(local_channel(),'system','anymention',$anymention);
         set_pconfig(local_channel(), 'system', 'hyperdrive', $hyperdrive);
         set_pconfig(local_channel(), 'system', 'activitypub', $activitypub);
         set_pconfig(local_channel(), 'system', 'autoperms', $autoperms);
@@ -310,7 +341,8 @@ class Channel
         set_pconfig(local_channel(), 'system', 'noindex', $noindex);
 
 
-        $r = q("update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
+        $r = q(
+            "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
             dbesc($username),
             intval($pageflags),
             dbesc($timezone),
@@ -321,28 +353,33 @@ class Channel
             intval($expire),
             intval(local_channel())
         );
-        if ($r)
+        if ($r) {
             info(t('Settings updated.') . EOL);
+        }
 
 
-        $r = q("UPDATE profile SET publish = %d, hide_friends = %d WHERE is_default = 1 AND uid = %d",
+        $r = q(
+            "UPDATE profile SET publish = %d, hide_friends = %d WHERE is_default = 1 AND uid = %d",
             intval($publish),
             intval($hide_friends),
             intval(local_channel())
         );
-        $r = q("UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
+        $r = q(
+            "UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
             intval(1 - $publish),
             intval($channel['channel_hash'])
         );
 
         if ($name_change) {
             // catch xchans for all protocols by matching the url
-            $r = q("update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_url = '%s'",
+            $r = q(
+                "update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_url = '%s'",
                 dbesc($username),
                 dbesc(datetime_convert()),
                 dbesc(z_root() . '/channel/' . $channel['channel_address'])
             );
-            $r = q("update profile set fullname = '%s' where uid = %d and is_default = 1",
+            $r = q(
+                "update profile set fullname = '%s' where uid = %d and is_default = 1",
                 dbesc($username),
                 intval($channel['channel_id'])
             );
@@ -357,7 +394,6 @@ class Channel
 
 
         if ($email_changed && App::$config['system']['register_policy'] == REGISTER_VERIFY) {
-
             // FIXME - set to un-verified, blocked and redirect to logout
             // Q: Why? Are we verifying people or email addresses?
             // A: the policy is to verify email addresses
@@ -377,11 +413,13 @@ class Channel
         $yes_no = [t('No'), t('Yes')];
 
 
-        $p = q("SELECT * FROM profile WHERE is_default = 1 AND uid = %d LIMIT 1",
+        $p = q(
+            "SELECT * FROM profile WHERE is_default = 1 AND uid = %d LIMIT 1",
             intval(local_channel())
         );
-        if (count($p))
+        if (count($p)) {
             $profile = $p[0];
+        }
 
         load_pconfig(local_channel(), 'expire');
 
@@ -404,8 +442,9 @@ class Channel
             $options = [];
             $can_be_public = ((strstr($k, 'view') || ($k === 'post_comments' && $anon_comments)) ? true : false);
             foreach ($perm_opts as $opt) {
-                if ($opt[1] == PERMS_PUBLIC && (!$can_be_public))
+                if ($opt[1] == PERMS_PUBLIC && (!$can_be_public)) {
                     continue;
+                }
                 $options[$opt[1]] = $opt[0];
             }
             if ($k === 'post_comments') {
@@ -417,7 +456,7 @@ class Channel
             }
         }
 
-        //		logger('permiss: ' . print_r($permiss,true));
+        //      logger('permiss: ' . print_r($permiss,true));
 
         $username = $channel['channel_name'];
         $nickname = $channel['channel_address'];
@@ -530,12 +569,14 @@ class Channel
         }
 
         $evdays = get_pconfig(local_channel(), 'system', 'evdays');
-        if (!$evdays)
+        if (!$evdays) {
             $evdays = 3;
+        }
 
         $permissions_role = get_pconfig(local_channel(), 'system', 'permissions_role');
-        if (!$permissions_role)
+        if (!$permissions_role) {
             $permissions_role = 'custom';
+        }
 
         if (in_array($permissions_role, ['forum', 'repository'])) {
             $autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
@@ -563,8 +604,9 @@ class Channel
 
         $vnotify = get_pconfig(local_channel(), 'system', 'vnotify');
         $always_show_in_notices = get_pconfig(local_channel(), 'system', 'always_show_in_notices');
-        if ($vnotify === false)
+        if ($vnotify === false) {
             $vnotify = (-1);
+        }
 
         $plugin = ['basic' => '', 'security' => '', 'notify' => '', 'misc' => ''];
         call_hooks('channel_settings', $plugin);
@@ -636,7 +678,7 @@ class Channel
             '$cntunkmail' => array('cntunkmail', t('Maximum direct messages per day from unknown people:'), intval($channel['channel_max_anon_mail']), t("Useful to reduce spamming if you allow direct messages from unknown people")),
 
             '$autoperms' => $autoperms,
-//			'$anymention' => $anymention,			
+//          '$anymention' => $anymention,
             '$hyperdrive' => $hyperdrive,
             '$activitypub' => $activitypub,
             '$apconfig' => $apconfig,
@@ -648,14 +690,14 @@ class Channel
             '$post_profilechange' => array('post_profilechange', t('making an <em>interesting</em> profile change'), $post_profilechange, '', $yes_no),
             '$lbl_not' => t('Send a notification email when:'),
             '$notify1' => array('notify1', t('You receive a connection request'), ($notify & NOTIFY_INTRO), NOTIFY_INTRO, '', $yes_no),
-//			'$notify2'	=> array('notify2', t('Your connections are confirmed'), ($notify & NOTIFY_CONFIRM), NOTIFY_CONFIRM, '', $yes_no),
+//          '$notify2'  => array('notify2', t('Your connections are confirmed'), ($notify & NOTIFY_CONFIRM), NOTIFY_CONFIRM, '', $yes_no),
             '$notify3' => array('notify3', t('Someone writes on your profile wall'), ($notify & NOTIFY_WALL), NOTIFY_WALL, '', $yes_no),
             '$notify4' => array('notify4', t('Someone writes a followup comment'), ($notify & NOTIFY_COMMENT), NOTIFY_COMMENT, '', $yes_no),
             '$notify10' => array('notify10', t('Someone shares a followed conversation'), ($notify & NOTIFY_RESHARE), NOTIFY_RESHARE, '', $yes_no),
             '$notify5' => array('notify5', t('You receive a direct (private) message'), ($notify & NOTIFY_MAIL), NOTIFY_MAIL, '', $yes_no),
-//			'$notify6'  => array('notify6', t('You receive a friend suggestion'), ($notify & NOTIFY_SUGGEST), NOTIFY_SUGGEST, '', $yes_no),
+//          '$notify6'  => array('notify6', t('You receive a friend suggestion'), ($notify & NOTIFY_SUGGEST), NOTIFY_SUGGEST, '', $yes_no),
             '$notify7' => array('notify7', t('You are tagged in a post'), ($notify & NOTIFY_TAGSELF), NOTIFY_TAGSELF, '', $yes_no),
-//			'$notify8'  => array('notify8', t('You are poked/prodded/etc. in a post'), ($notify & NOTIFY_POKE), NOTIFY_POKE, '', $yes_no),
+//          '$notify8'  => array('notify8', t('You are poked/prodded/etc. in a post'), ($notify & NOTIFY_POKE), NOTIFY_POKE, '', $yes_no),
 
             '$notify9' => array('notify9', t('Someone likes your post/comment'), ($notify & NOTIFY_LIKE), NOTIFY_LIKE, '', $yes_no),
 
@@ -673,7 +715,7 @@ class Channel
             '$vnotify9' => array('vnotify9', t('System critical alerts'), ($vnotify & VNOTIFY_ALERT), VNOTIFY_ALERT, t('Recommended'), $yes_no),
             '$vnotify10' => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
             '$vnotify11' => ((is_site_admin()) ? array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no) : []),
-//			'$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
+//          '$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
             '$vnotify13' => (($public_stream_mode) ? ['vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no] : []),
             '$vnotify14' => array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
             '$vnotify15' => array('vnotify15', t('Unseen forum posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),

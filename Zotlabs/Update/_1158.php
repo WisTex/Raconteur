@@ -10,7 +10,8 @@ class _1158
         if ($r) {
             foreach ($r as $rr) {
                 $has_slash = ((substr($rr['data'], 0, 1) === '/') ? true : false);
-                q("update attach set data = '%s' where id = %d",
+                q(
+                    "update attach set data = '%s' where id = %d",
                     dbesc('store/' . $rr['channel_address'] . (($has_slash) ? '' : '/' . $rr['data'])),
                     dbesc($rr['id'])
                 );
@@ -18,6 +19,4 @@ class _1158
         }
         return UPDATE_SUCCESS;
     }
-
-
 }

@@ -16,10 +16,11 @@ class Features
         foreach ($features as $fname => $fdata) {
             foreach (array_slice($fdata, 1) as $f) {
                 $k = $f[0];
-                if (array_key_exists("feature_$k", $_POST))
+                if (array_key_exists("feature_$k", $_POST)) {
                     set_pconfig(local_channel(), 'feature', $k, (string)$_POST["feature_$k"]);
-                else
+                } else {
                     set_pconfig(local_channel(), 'feature', $k, '');
+                }
             }
         }
         Libsync::build_sync_packet();
@@ -64,5 +65,4 @@ class Features
 
         return $o;
     }
-
 }

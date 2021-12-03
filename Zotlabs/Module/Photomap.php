@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -21,6 +22,4 @@ class Photomap extends Controller
 
         return $text . '<br><br>' . t('This app is currently installed.');
     }
-
-
 }

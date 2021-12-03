@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -84,5 +85,3 @@ class Settings extends Controller
         $o = EMPTY_STR;
     }
 }
-
-

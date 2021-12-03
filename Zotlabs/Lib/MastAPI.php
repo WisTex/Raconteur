@@ -5,27 +5,30 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\PConfig;
 
-
 class MastAPI
 {
 
     public static function format_channel($channel)
     {
-        $p = q("select * from profile where uid = %d and is_default = 1",
+        $p = q(
+            "select * from profile where uid = %d and is_default = 1",
             intval($channel['channel_id'])
         );
 
-        $a = q("select * from account where account_id = %d",
+        $a = q(
+            "select * from account where account_id = %d",
             intval($channel['channel_account_id'])
         );
 
-        $followers = q("select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'their_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 ",
+        $followers = q(
+            "select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'their_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 ",
             intval($channel['channel_id']),
             intval($channel['channel_id']),
             dbesc($channel['channel_hash'])
         );
 
-        $following = q("select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'my_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0",
+        $following = q(
+            "select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'my_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0",
             intval($channel['channel_id']),
             intval($channel['channel_id']),
             dbesc($channel['channel_hash'])
@@ -36,7 +39,8 @@ class MastAPI
         $item_normal = item_normal();
 
         // count posts/comments
-        $statuses = q("SELECT COUNT(id) as total FROM item
+        $statuses = q(
+            "SELECT COUNT(id) as total FROM item
             WHERE uid = %d
             AND author_xchan = '%s' $item_normal ",
             intval($channel['channel_id']),
@@ -100,7 +104,5 @@ class MastAPI
         $ret['contact_account'] = self::format_channel($adminsx);
 
         return $ret;
-
     }
-
 }

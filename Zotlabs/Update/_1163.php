@@ -14,10 +14,9 @@ class _1163
             $r1 = q("alter table channel add channel_moved char(255) not null default '' ");
             $r2 = q("alter table channel add index ( channel_moved ) ");
         }
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

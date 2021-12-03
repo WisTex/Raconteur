@@ -22,7 +22,6 @@ class _1220
             $r4 = q("create index \"ltype_idx\" on listeners (\"ltype\")");
 
             $r = $r1 && $r2 && $r3 && $r4;
-
         }
 
         if (ACTIVE_DBTYPE == DBTYPE_MYSQL) {
@@ -36,14 +35,11 @@ class _1220
   KEY portable_id (portable_id),
   KEY ltype (ltype)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-
         }
 
         if ($r) {
             return UPDATE_SUCCESS;
         }
         return UPDATE_FAILED;
-
     }
-
 }

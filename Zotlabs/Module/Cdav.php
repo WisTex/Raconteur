@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -43,9 +44,7 @@ class Cdav extends Controller
         $channel_login = false;
 
         if ((argv(1) !== 'calendar') && (argv(1) !== 'addressbook')) {
-
             foreach (['REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION'] as $head) {
-
                 /* Basic authentication */
 
                 if (array_key_exists($head, $_SERVER) && substr(trim($_SERVER[$head]), 0, 5) === 'Basic') {
@@ -70,13 +69,15 @@ class Cdav extends Controller
                     if ($sigblock) {
                         $keyId = str_replace('acct:', '', $sigblock['keyId']);
                         if ($keyId) {
-                            $r = q("select * from hubloc where hubloc_addr = '%s' limit 1",
+                            $r = q(
+                                "select * from hubloc where hubloc_addr = '%s' limit 1",
                                 dbesc($keyId)
                             );
                             if ($r) {
                                 $c = channelx_by_hash($r[0]['hubloc_hash']);
                                 if ($c) {
-                                    $a = q("select * from account where account_id = %d limit 1",
+                                    $a = q(
+                                        "select * from account where account_id = %d limit 1",
                                         intval($c['channel_account_id'])
                                     );
                                     if ($a) {
@@ -85,8 +86,9 @@ class Cdav extends Controller
                                     }
                                 }
                             }
-                            if (!$record)
+                            if (!$record) {
                                 continue;
+                            }
 
                             if ($record) {
                                 $verified = HTTPSig::verify('', $record['channel']['channel_pubkey']);
@@ -155,7 +157,6 @@ class Cdav extends Controller
             $auth->setRealm(ucfirst(System::get_platform_name()) . ' ' . 'CalDAV/CardDAV');
 
             if (local_channel()) {
-
                 logger('loggedin');
 
                 if ((argv(1) == 'addressbooks') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {
@@ -179,7 +180,6 @@ class Cdav extends Controller
                         return;
                     }
                 }
-
             }
 
 
@@ -235,16 +235,15 @@ class Cdav extends Controller
             $server->exec();
 
             killme();
-
         }
-
     }
 
     public function post()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         if ((argv(1) === 'addressbook') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {
             return;
@@ -253,15 +252,15 @@ class Cdav extends Controller
         $channel = App::get_channel();
         $principalUri = 'principals/' . $channel['channel_address'];
 
-        if (!cdav_principal($principalUri))
+        if (!cdav_principal($principalUri)) {
             return;
+        }
 
         $pdo = DBA::$dba->db;
 
         require_once 'vendor/autoload.php';
 
         if (argc() == 2 && argv(1) === 'calendar') {
-
             $caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
             $calendars = $caldavBackend->getCalendarsForUser($principalUri);
 
@@ -271,7 +270,8 @@ class Cdav extends Controller
                     $duplicate = false;
                     $calendarUri = random_string(40);
 
-                    $r = q("SELECT uri FROM calendarinstances WHERE principaluri = '%s' AND uri = '%s' LIMIT 1",
+                    $r = q(
+                        "SELECT uri FROM calendarinstances WHERE principaluri = '%s' AND uri = '%s' LIMIT 1",
                         dbesc($principalUri),
                         dbesc($calendarUri)
                     );
@@ -295,11 +295,11 @@ class Cdav extends Controller
 
             //create new calendar object via ajax request
             if ($_REQUEST['submit'] === 'create_event' && $_REQUEST['title'] && $_REQUEST['target'] && $_REQUEST['dtstart']) {
-
                 $id = explode(':', $_REQUEST['target']);
 
-                if (!cdav_perms($id[0], $calendars, true))
+                if (!cdav_perms($id[0], $calendars, true)) {
                     return;
+                }
 
                 $title = $_REQUEST['title'];
                 $start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
@@ -315,13 +315,15 @@ class Cdav extends Controller
                     $duplicate = false;
                     $objectUri = random_string(40) . '.ics';
 
-                    $r = q("SELECT uri FROM calendarobjects WHERE calendarid = %s AND uri = '%s' LIMIT 1",
+                    $r = q(
+                        "SELECT uri FROM calendarobjects WHERE calendarid = %s AND uri = '%s' LIMIT 1",
                         intval($id[0]),
                         dbesc($objectUri)
                     );
 
-                    if (count($r))
+                    if (count($r)) {
                         $duplicate = true;
+                    }
                 } while ($duplicate == true);
 
 
@@ -335,10 +337,12 @@ class Cdav extends Controller
                     $vcalendar->VEVENT->add('DTEND', $dtend);
                     $vcalendar->VEVENT->DTEND['TZID'] = App::$timezone;
                 }
-                if ($description)
+                if ($description) {
                     $vcalendar->VEVENT->add('DESCRIPTION', $description);
-                if ($location)
+                }
+                if ($location) {
                     $vcalendar->VEVENT->add('LOCATION', $location);
+                }
 
                 $vcalendar->VEVENT->DTSTART['TZID'] = App::$timezone;
 
@@ -351,7 +355,6 @@ class Cdav extends Controller
 
             // edit calendar name and color
             if ($_REQUEST['{DAV:}displayname'] && $_REQUEST['edit'] && $_REQUEST['id']) {
-
                 $id = explode(':', $_REQUEST['id']);
 
                 if (!cdav_perms($id[0], $calendars)) {
@@ -372,11 +375,11 @@ class Cdav extends Controller
 
             // edit calendar object via ajax request
             if ($_REQUEST['submit'] === 'update_event' && $_REQUEST['uri'] && $_REQUEST['title'] && $_REQUEST['target'] && $_REQUEST['dtstart']) {
-
                 $id = explode(':', $_REQUEST['target']);
 
-                if (!cdav_perms($id[0], $calendars, true))
+                if (!cdav_perms($id[0], $calendars, true)) {
                     return;
+                }
 
                 $uri = $_REQUEST['uri'];
                 $title = $_REQUEST['title'];
@@ -419,7 +422,6 @@ class Cdav extends Controller
 
             // delete calendar object via ajax request
             if ($_REQUEST['delete'] && $_REQUEST['uri'] && $_REQUEST['target']) {
-
                 $id = explode(':', $_REQUEST['target']);
 
                 if (!cdav_perms($id[0], $calendars, true)) {
@@ -434,7 +436,6 @@ class Cdav extends Controller
 
             // edit calendar object date/timeme via ajax request (drag and drop)
             if ($_REQUEST['update'] && $_REQUEST['id'] && $_REQUEST['uri']) {
-
                 $id = [$_REQUEST['id'][0], $_REQUEST['id'][1]];
 
                 if (!cdav_perms($id[0], $calendars, true)) {
@@ -471,7 +472,6 @@ class Cdav extends Controller
 
             // share a calendar - this only works on local system (with channels on the same server)
             if ($_REQUEST['sharee'] && $_REQUEST['share']) {
-
                 $id = [intval($_REQUEST['calendarid']), intval($_REQUEST['instanceid'])];
 
                 if (!cdav_perms($id[0], $calendars)) {
@@ -494,7 +494,6 @@ class Cdav extends Controller
         }
 
         if (argc() >= 2 && argv(1) === 'addressbook') {
-
             $carddavBackend = new PDO($pdo);
             $addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
 
@@ -504,7 +503,8 @@ class Cdav extends Controller
                     $duplicate = false;
                     $addressbookUri = random_string(20);
 
-                    $r = q("SELECT uri FROM addressbooks WHERE principaluri = '%s' AND uri = '%s' LIMIT 1",
+                    $r = q(
+                        "SELECT uri FROM addressbooks WHERE principaluri = '%s' AND uri = '%s' LIMIT 1",
                         dbesc($principalUri),
                         dbesc($addressbookUri)
                     );
@@ -521,7 +521,6 @@ class Cdav extends Controller
 
             // edit addressbook
             if ($_REQUEST['{DAV:}displayname'] && $_REQUEST['edit'] && intval($_REQUEST['id'])) {
-
                 $id = $_REQUEST['id'];
 
                 if (!cdav_perms($id, $addressbooks)) {
@@ -547,7 +546,8 @@ class Cdav extends Controller
                     $duplicate = false;
                     $uri = random_string(40) . '.vcf';
 
-                    $r = q("SELECT uri FROM cards WHERE addressbookid = %s AND uri = '%s' LIMIT 1",
+                    $r = q(
+                        "SELECT uri FROM cards WHERE addressbookid = %s AND uri = '%s' LIMIT 1",
                         intval($id),
                         dbesc($uri)
                     );
@@ -645,12 +645,10 @@ class Cdav extends Controller
                 $cardData = $vcard->serialize();
 
                 $carddavBackend->createCard($id, $uri, $cardData);
-
             }
 
             // edit addressbook card
             if ($_REQUEST['update'] && $_REQUEST['uri'] && $_REQUEST['target']) {
-
                 $id = $_REQUEST['target'];
 
                 if (!cdav_perms($id, $addressbooks)) {
@@ -771,7 +769,6 @@ class Cdav extends Controller
 
             // delete addressbook card
             if ($_REQUEST['delete'] && $_REQUEST['uri'] && $_REQUEST['target']) {
-
                 $id = $_REQUEST['target'];
 
                 if (!cdav_perms($id, $addressbooks)) {
@@ -786,11 +783,9 @@ class Cdav extends Controller
 
         // Import calendar or addressbook
         if (($_FILES) && array_key_exists('userfile', $_FILES) && intval($_FILES['userfile']['size']) && $_REQUEST['target']) {
-
             $src = $_FILES['userfile']['tmp_name'];
 
             if ($src) {
-
                 if ($_REQUEST['c_upload']) {
                     if ($_REQUEST['target'] == 'calendar') {
                         $result = parse_ical_file($src, local_channel());
@@ -824,7 +819,6 @@ class Cdav extends Controller
                 }
 
                 while ($object = $objects->getNext()) {
-
                     if ($_REQUEST['a_upload']) {
                         $object = $object->convert(Document::VCARD40);
                     }
@@ -840,7 +834,8 @@ class Cdav extends Controller
                             $duplicate = false;
                             $objectUri = random_string(40) . '.' . $ext;
 
-                            $r = q("SELECT uri FROM $table WHERE $column = %d AND uri = '%s' LIMIT 1",
+                            $r = q(
+                                "SELECT uri FROM $table WHERE $column = %d AND uri = '%s' LIMIT 1",
                                 dbesc($id[0]),
                                 dbesc($objectUri)
                             );
@@ -862,15 +857,13 @@ class Cdav extends Controller
                             notice('<strong>' . t('INVALID EVENT DISMISSED!') . '</strong>' . EOL .
                                 '<strong>' . t('Summary: ') . '</strong>' . (($object->VEVENT->SUMMARY) ? $object->VEVENT->SUMMARY : t('Unknown')) . EOL .
                                 '<strong>' . t('Date: ') . '</strong>' . (($object->VEVENT->DTSTART) ? $object->VEVENT->DTSTART : t('Unknown')) . EOL .
-                                '<strong>' . t('Reason: ') . '</strong>' . $ret[0]['message'] . EOL
-                            );
+                                '<strong>' . t('Reason: ') . '</strong>' . $ret[0]['message'] . EOL);
                         }
 
                         if ($_REQUEST['a_upload']) {
                             notice('<strong>' . t('INVALID CARD DISMISSED!') . '</strong>' . EOL .
                                 '<strong>' . t('Name: ') . '</strong>' . (($object->FN) ? $object->FN : t('Unknown')) . EOL .
-                                '<strong>' . t('Reason: ') . '</strong>' . $ret[0]['message'] . EOL
-                            );
+                                '<strong>' . t('Reason: ') . '</strong>' . $ret[0]['message'] . EOL);
                         }
                     }
                 }
@@ -921,7 +914,6 @@ class Cdav extends Controller
 
         // Display calendar(s) here
         if (argc() <= 3 && argv(1) === 'calendar') {
-
             head_add_css('/library/fullcalendar/packages/core/main.min.css');
             head_add_css('/library/fullcalendar/packages/daygrid/main.min.css');
             head_add_css('/library/fullcalendar/packages/timegrid/main.min.css');
@@ -943,7 +935,8 @@ class Cdav extends Controller
             }
 
             if ($resource_id) {
-                $r = q("SELECT event.*, item.author_xchan, item.owner_xchan, item.plink, item.id as item_id FROM event LEFT JOIN item ON event.event_hash = item.resource_id
+                $r = q(
+                    "SELECT event.*, item.author_xchan, item.owner_xchan, item.plink, item.id as item_id FROM event LEFT JOIN item ON event.event_hash = item.resource_id
 					WHERE event.uid = %d AND event.event_hash = '%s' LIMIT 1",
                     intval(local_channel()),
                     dbesc($resource_id)
@@ -969,7 +962,8 @@ class Cdav extends Controller
                     }
 
                     if ($r[0]['dismissed'] == 0) {
-                        q("UPDATE event SET dismissed = 1 WHERE event.uid = %d AND event.event_hash = '%s'",
+                        q(
+                            "UPDATE event SET dismissed = 1 WHERE event.uid = %d AND event.event_hash = '%s'",
                             intval(local_channel()),
                             dbesc($resource_id)
                         );
@@ -1080,12 +1074,10 @@ class Cdav extends Controller
             ]);
 
             return $o;
-
         }
 
         // Provide json data for calendar
         if (argc() == 5 && argv(1) === 'calendar' && argv(2) === 'json' && intval(argv(3)) && intval(argv(4))) {
-
             $events = [];
 
             $id = [argv(3), argv(4)];
@@ -1112,7 +1104,6 @@ class Cdav extends Controller
             if ($uris) {
                 $objects = $caldavBackend->getMultipleCalendarObjects($id, $uris);
                 foreach ($objects as $object) {
-
                     $vcalendar = Reader::read($object['calendardata']);
 
                     if (isset($vcalendar->VEVENT->RRULE)) {
@@ -1193,7 +1184,6 @@ class Cdav extends Controller
 
         // drop sharee
         if (argc() == 6 && argv(1) === 'calendar' && argv(2) === 'dropsharee' && intval(argv(3)) && intval(argv(4))) {
-
             $id = [argv(3), argv(4)];
             $hash = argv(5);
 
@@ -1222,7 +1212,6 @@ class Cdav extends Controller
 
         // Display Adressbook here
         if (argc() == 3 && argv(1) === 'addressbook' && intval(argv(2))) {
-
             $id = argv(2);
 
             $displayname = cdav_perms($id, $addressbooks);
@@ -1400,7 +1389,6 @@ class Cdav extends Controller
             $carddavBackend->deleteAddressBook($id);
             killme();
         }
-
     }
 
     public function activate($pdo, $channel)
@@ -1413,17 +1401,20 @@ class Cdav extends Controller
         $uri = 'principals/' . $channel['channel_address'];
 
 
-        $r = q("select * from principals where uri = '%s' limit 1",
+        $r = q(
+            "select * from principals where uri = '%s' limit 1",
             dbesc($uri)
         );
         if ($r) {
-            $r = q("update principals set email = '%s', displayname = '%s' where uri = '%s' ",
+            $r = q(
+                "update principals set email = '%s', displayname = '%s' where uri = '%s' ",
                 dbesc($channel['xchan_addr']),
                 dbesc($channel['channel_name']),
                 dbesc($uri)
             );
         } else {
-            $r = q("insert into principals ( uri, email, displayname ) values('%s','%s','%s') ",
+            $r = q(
+                "insert into principals ( uri, email, displayname ) values('%s','%s','%s') ",
                 dbesc($uri),
                 dbesc($channel['xchan_addr']),
                 dbesc($channel['channel_name'])
@@ -1445,8 +1436,6 @@ class Cdav extends Controller
             $carddavBackend = new PDO($pdo);
             $properties = ['{DAV:}displayname' => t('Default Addressbook')];
             $carddavBackend->createAddressBook($uri, 'default', $properties);
-
         }
     }
-
 }

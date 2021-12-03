@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Lib;
 
-
 class Api_router
 {
 
@@ -32,5 +31,4 @@ class Api_router
     {
         return self::$routes;
     }
-
 }

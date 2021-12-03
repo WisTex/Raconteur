@@ -49,8 +49,6 @@ class _1214
                 q("ROLLBACK");
                 return UPDATE_FAILED;
             }
-
         }
     }
-
 }

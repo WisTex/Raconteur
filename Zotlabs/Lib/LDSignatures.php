@@ -26,7 +26,7 @@ class LDSignatures
     public static function dopplesign(&$data, $channel)
     {
         // remove for the time being - performance issues
-        //	$data['magicEnv'] = self::salmon_sign($data,$channel);
+        //  $data['magicEnv'] = self::salmon_sign($data,$channel);
         return self::sign($data, $channel);
     }
 
@@ -89,8 +89,9 @@ class LDSignatures
             $data = json_decode($data);
         }
 
-        if (!is_object($data))
+        if (!is_object($data)) {
             return '';
+        }
 
         jsonld_set_document_loader('jsonld_document_loader');
 
@@ -133,8 +134,5 @@ class LDSignatures
             'meCreator' => channel_url($channel),
             'meSignatureValue' => $signature
         ]);
-
     }
-
-
 }

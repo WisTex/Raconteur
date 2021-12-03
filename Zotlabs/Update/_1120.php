@@ -8,10 +8,9 @@ class _1120
     {
         $r = q("ALTER TABLE `item` ADD `public_policy` CHAR( 255 ) NOT NULL DEFAULT '' AFTER `coord` ,
 ADD INDEX ( `public_policy` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

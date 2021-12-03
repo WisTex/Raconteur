@@ -10,10 +10,9 @@ class _1190
 
         $r2 = q("create index abook_not_here on abook (abook_not_here)");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

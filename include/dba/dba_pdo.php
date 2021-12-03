@@ -39,8 +39,9 @@ class dba_pdo extends dba_driver
             return false;
         }
 
-        if ($this->driver_dbtype === 'pgsql')
+        if ($this->driver_dbtype === 'pgsql') {
             $this->q("SET standard_conforming_strings = 'off'; SET backslash_quote = 'on';");
+        }
 
         $this->connected = true;
 
@@ -58,8 +59,9 @@ class dba_pdo extends dba_driver
      */
     public function q($sql)
     {
-        if ((!$this->db) || (!$this->connected))
+        if ((!$this->db) || (!$this->connected)) {
             return false;
+        }
 
         if ($this->driver_dbtype === 'pgsql') {
             if (substr(rtrim($sql), -1, 1) !== ';') {
@@ -74,7 +76,6 @@ class dba_pdo extends dba_driver
         try {
             $result = $this->db->query($sql, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-
             $this->error = $e->getMessage();
             if ($this->error) {
                 db_logger('dba_pdo: ERROR: ' . printable($sql) . "\n" . $this->error, LOGGER_NORMAL, LOG_ERR);
@@ -117,8 +118,9 @@ class dba_pdo extends dba_driver
 
     public function close()
     {
-        if ($this->db)
+        if ($this->db) {
             $this->db = null;
+        }
 
         $this->connected = false;
     }
@@ -173,7 +175,6 @@ class dba_pdo extends dba_driver
                 $x = hex2bin(substr($x, 2));
             }
             return $x;
-
         } else {
             return $str;
         }
@@ -184,5 +185,4 @@ class dba_pdo extends dba_driver
     {
         return 'pdo';
     }
-
 }

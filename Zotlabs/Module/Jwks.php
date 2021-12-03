@@ -58,6 +58,5 @@ class Jwks extends Controller
         }
 
         json_return_and_die($ret, 'application/jwk-set+json');
-
     }
 }

@@ -19,7 +19,6 @@ class _1234
 
         q("ROLLBACK");
         return UPDATE_FAILED;
-
     }
 
     public function verify()
@@ -33,5 +32,4 @@ class _1234
 
         return false;
     }
-
 }

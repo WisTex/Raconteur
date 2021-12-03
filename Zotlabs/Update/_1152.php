@@ -8,7 +8,6 @@ class _1152
     {
 
         if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-
             $r1 = q("CREATE TABLE IF NOT EXISTS \"dreport\" (
   \"dreport_id\" serial NOT NULL,
   \"dreport_channel\" int(11) NOT NULL DEFAULT '0',
@@ -27,7 +26,6 @@ class _1152
             $r6 = q("create index \"dreport_channel\" on dreport (\"dreport_channel\") ");
 
             $r = $r1 && $r2 && $r3 && $r4 && $r5 && $r6;
-
         } else {
             $r = q("CREATE TABLE IF NOT EXISTS `dreport` (
   `dreport_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -45,14 +43,11 @@ class _1152
   KEY `dreport_xchan` (`dreport_xchan`),
   KEY `dreport_channel` (`dreport_channel`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
-
         }
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

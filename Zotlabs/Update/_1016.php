@@ -32,10 +32,9 @@ class _1016
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
 
-        if ($r && $r2)
+        if ($r && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

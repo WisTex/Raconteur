@@ -24,7 +24,6 @@ class Zotfinger
         $data = json_encode(['zot_token' => random_string()]);
 
         if ($channel && $m) {
-
             $headers = [
                 'Accept' => 'application/x-zot+json',
                 'Content-Type' => 'application/x-zot+json',
@@ -44,7 +43,6 @@ class Zotfinger
         $x = z_post_url($resource, $data, $redirects, ['headers' => $h]);
 
         if ($x['success']) {
-
             if ($verify) {
                 $result['signature'] = HTTPSig::verify($x, EMPTY_STR, 'zot6');
             }
@@ -60,5 +58,4 @@ class Zotfinger
 
         return false;
     }
-
 }

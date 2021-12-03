@@ -17,10 +17,9 @@ class _1099
   KEY `xchat_xchan` (`xchat_xchan`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

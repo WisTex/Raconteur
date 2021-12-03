@@ -249,7 +249,6 @@ class Setup extends Controller
         }
 
         switch ($this->install_wizard_pass) {
-
             case 1:
             {
                 // System check
@@ -480,7 +479,8 @@ class Setup extends Controller
             $mem_warning = '<strong>' . t('This is not sufficient to upload larger images or files. You should be able to upload at least 2MB (2097152 bytes) at once.') . '</strong>';
         }
 
-        $help = sprintf(t('Your max allowed total upload size is set to %s. Maximum size of one file to upload is set to %s. You are allowed to upload up to %d files at once.'),
+        $help = sprintf(
+            t('Your max allowed total upload size is set to %s. Maximum size of one file to upload is set to %s. You are allowed to upload up to %d files at once.'),
             userReadableSize($result['post_max_size']),
             userReadableSize($result['max_upload_filesize']),
             $result['max_file_uploads']
@@ -506,8 +506,7 @@ class Setup extends Controller
             $res = openssl_pkey_new(array(
                     'digest_alg' => 'sha1',
                     'private_key_bits' => 4096,
-                    'encrypt_key' => false)
-            );
+                    'encrypt_key' => false));
         }
 
         // Get private key
@@ -613,8 +612,10 @@ class Setup extends Controller
 
         $fname = '.htconfig.php';
 
-        if ((file_exists($fname) && is_writable($fname)) ||
-            (!(file_exists($fname) && is_writable('.')))) {
+        if (
+            (file_exists($fname) && is_writable($fname)) ||
+            (!(file_exists($fname) && is_writable('.')))
+        ) {
             $this->check_add($checks, t('.htconfig.php is writable'), $status, true, $help);
             return;
         }
@@ -795,8 +796,9 @@ class Setup extends Controller
         // Hence it will not make your system susceptible to POODL or other nasties.
 
         $x = curl_version();
-        if (stristr($x['ssl_version'], 'openssl'))
+        if (stristr($x['ssl_version'], 'openssl')) {
             set_config('system', 'curl_ssl_ciphers', 'ALL:!eNULL');
+        }
 
         // Create a system channel
 
@@ -895,5 +897,4 @@ class Setup extends Controller
 
         return (int)$val;
     }
-
 }

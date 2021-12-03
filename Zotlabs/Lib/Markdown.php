@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Lib;
 
 /**
@@ -6,7 +7,6 @@ namespace Zotlabs\Lib;
  */
 
 use Michelf\MarkdownExtra;
-
 use League\HTMLToMarkdown\HtmlConverter;
 use League\HTMLToMarkdown\Environment;
 use League\HTMLToMarkdown\Converter\ConverterInterface;
@@ -110,10 +110,11 @@ class Markdown
         $res = '';
         $is_zid = is_matrix_url(trim($match[0]));
 
-        if ($is_zid)
+        if ($is_zid) {
             $res = $match[1] . '[zrl=' . $match[2] . $match[3] . ']' . $match[2] . $match[3] . '[/zrl]';
-        else
+        } else {
             $res = $match[1] . '[url=' . $match[2] . $match[3] . ']' . $match[2] . $match[3] . '[/url]';
+        }
 
         return $res;
     }
@@ -123,10 +124,11 @@ class Markdown
         $res = '';
         $is_zid = is_matrix_url(trim($match[1]));
 
-        if ($is_zid)
+        if ($is_zid) {
             $res = '[zmg]' . $match[1] . '[/zmg]';
-        else
+        } else {
             $res = $match[0];
+        }
 
         return $res;
     }
@@ -136,10 +138,11 @@ class Markdown
         $res = '';
         $is_zid = is_matrix_url(trim($match[3]));
 
-        if ($is_zid)
+        if ($is_zid) {
             $res = '[zmg=' . $match[1] . 'x' . $match[2] . ']' . $match[3] . '[/zmg]';
-        else
+        } else {
             $res = $match[0];
+        }
 
         return $res;
     }
@@ -159,39 +162,46 @@ class Markdown
 
         $author = "";
         preg_match("/author='(.*?)'/ism", $attributes, $matches);
-        if ($matches[1] != "")
+        if ($matches[1] != "") {
             $author = urldecode($matches[1]);
+        }
 
         $link = "";
         preg_match("/link='(.*?)'/ism", $attributes, $matches);
-        if ($matches[1] != "")
+        if ($matches[1] != "") {
             $link = $matches[1];
+        }
 
         $avatar = "";
         preg_match("/avatar='(.*?)'/ism", $attributes, $matches);
-        if ($matches[1] != "")
+        if ($matches[1] != "") {
             $avatar = $matches[1];
+        }
 
         $profile = "";
         preg_match("/profile='(.*?)'/ism", $attributes, $matches);
-        if ($matches[1] != "")
+        if ($matches[1] != "") {
             $profile = $matches[1];
+        }
 
         $posted = "";
         preg_match("/posted='(.*?)'/ism", $attributes, $matches);
-        if ($matches[1] != "")
+        if ($matches[1] != "") {
             $posted = $matches[1];
+        }
 
         // message_id is never used, do we still need it?
         $message_id = "";
         preg_match("/message_id='(.*?)'/ism", $attributes, $matches);
-        if ($matches[1] != "")
+        if ($matches[1] != "") {
             $message_id = $matches[1];
+        }
 
         if (!$message_id) {
             preg_match("/guid='(.*?)'/ism", $attributes, $matches);
-            if ($matches[1] != "")
+            if ($matches[1] != "") {
                 $message_id = $matches[1];
+            }
         }
 
 
@@ -199,12 +209,14 @@ class Markdown
 
         $headline = '';
 
-        if ($avatar != "")
+        if ($avatar != "") {
             $headline .= '[url=' . zid($profile) . '][img]' . $avatar . '[/img][/url]';
+        }
 
         // Bob Smith wrote the following post 2 hours ago
 
-        $fmt = sprintf(t('%1$s wrote the following %2$s %3$s'),
+        $fmt = sprintf(
+            t('%1$s wrote the following %2$s %3$s'),
             '[url=' . zid($profile) . ']' . $author . '[/url]',
             '[url=' . zid($link) . ']' . t('post') . '[/url]',
             $reldate
@@ -233,8 +245,11 @@ class Markdown
          * Transform #tags, strip off the [url] and replace spaces with underscore
          */
 
-        $Text = preg_replace_callback('/#\[([zu])rl\=(.*?)\](.*?)\[\/[(zu)]rl\]/i',
-            create_function('$match', 'return \'#\'. str_replace(\' \', \'_\', $match[3]);'), $Text);
+        $Text = preg_replace_callback(
+            '/#\[([zu])rl\=(.*?)\](.*?)\[\/[(zu)]rl\]/i',
+            create_function('$match', 'return \'#\'. str_replace(\' \', \'_\', $match[3]);'),
+            $Text
+        );
 
         $Text = preg_replace('/#\^\[([zu])rl\=(.*?)\](.*?)\[\/([zu])rl\]/i', '[$1rl=$2]$3[/$4rl]', $Text);
 
@@ -336,64 +351,64 @@ class Markdown
 
 class TableConverter implements ConverterInterface
 {
-	/**
-	 * @param ElementInterface $element
-	 *
-	 * @return string
-	 */
-	public function convert(ElementInterface $element)
-	{
-		switch ($element->getTagName()) {
-			case 'tr':
-				$line = [];
-				$i = 1;
-				foreach ($element->getChildren() as $td) {
-					$i++;
-					$v = $td->getValue();
-					$v = trim($v);
-					if ($i % 2 === 0 || $v !== '') {
-						$line[] = $v;
-					}
-				}
-				return '| ' . implode(' | ', $line) . " |\n";
-			case 'td':
-			case 'th':
-				return trim($element->getValue());
-			case 'tbody':
-				return trim($element->getValue());
-			case 'thead':
-				$headerLine = reset($element->getChildren())->getValue();
-				$headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
-				$hr = [];
-				foreach ($headers as $td) {
-					$length = strlen(trim($td)) + 2;
-					$hr[] = str_repeat('-', $length > 3 ? $length : 3);
-				}
-				$hr = '|' . implode('|', $hr) . '|';
-				return $headerLine . $hr . "\n";
-			case 'table':
-				$inner = $element->getValue();
-				if (strpos($inner, '-----') === false) {
-					$inner = explode("\n", $inner);
-					$single = explode(' | ', trim($inner[0], '|'));
-					$hr = [];
-					foreach ($single as $td) {
-						$length = strlen(trim($td)) + 2;
-						$hr[] = str_repeat('-', $length > 3 ? $length : 3);
-					}
-					$hr = '|' . implode('|', $hr) . '|';
-					array_splice($inner, 1, 0, $hr);
-					$inner = implode("\n", $inner);
-				}
-				return trim($inner) . "\n\n";
-		}
-		return $element->getValue();
-	}
-	/**
-	 * @return string[]
-	 */
-	public function getSupportedTags()
-	{
-		return array('table', 'tr', 'thead', 'td', 'tbody');
-	}
+    /**
+     * @param ElementInterface $element
+     *
+     * @return string
+     */
+    public function convert(ElementInterface $element)
+    {
+        switch ($element->getTagName()) {
+            case 'tr':
+                $line = [];
+                $i = 1;
+                foreach ($element->getChildren() as $td) {
+                    $i++;
+                    $v = $td->getValue();
+                    $v = trim($v);
+                    if ($i % 2 === 0 || $v !== '') {
+                        $line[] = $v;
+                    }
+                }
+                return '| ' . implode(' | ', $line) . " |\n";
+            case 'td':
+            case 'th':
+                return trim($element->getValue());
+            case 'tbody':
+                return trim($element->getValue());
+            case 'thead':
+                $headerLine = reset($element->getChildren())->getValue();
+                $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
+                $hr = [];
+                foreach ($headers as $td) {
+                    $length = strlen(trim($td)) + 2;
+                    $hr[] = str_repeat('-', $length > 3 ? $length : 3);
+                }
+                $hr = '|' . implode('|', $hr) . '|';
+                return $headerLine . $hr . "\n";
+            case 'table':
+                $inner = $element->getValue();
+                if (strpos($inner, '-----') === false) {
+                    $inner = explode("\n", $inner);
+                    $single = explode(' | ', trim($inner[0], '|'));
+                    $hr = [];
+                    foreach ($single as $td) {
+                        $length = strlen(trim($td)) + 2;
+                        $hr[] = str_repeat('-', $length > 3 ? $length : 3);
+                    }
+                    $hr = '|' . implode('|', $hr) . '|';
+                    array_splice($inner, 1, 0, $hr);
+                    $inner = implode("\n", $inner);
+                }
+                return trim($inner) . "\n\n";
+        }
+        return $element->getValue();
+    }
+    /**
+     * @return string[]
+     */
+    public function getSupportedTags()
+    {
+        return array('table', 'tr', 'thead', 'td', 'tbody');
+    }
 }

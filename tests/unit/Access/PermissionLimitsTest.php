@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2017 Hubzilla
  *
@@ -32,47 +33,47 @@ use Zotlabs\Access\PermissionLimits;
  *
  * @covers Zotlabs\Access\PermissionLimits
  */
-class PermissionLimitsTest extends UnitTestCase {
+class PermissionLimitsTest extends UnitTestCase
+{
+    use PHPMock;
 
-	use PHPMock;
+    /**
+     * @todo If we could replace static call to Permissions::Perms() in
+     * Std_Limits() we could better unit test this method, now we test the
+     * result of Permissions::Perms() mostly.
+     *
+     * @uses Zotlabs\Access\Permissions::Perms
+     * @uses ::call_hooks
+     */
+    public function testStd_Limits()
+    {
+        // There are 18 default perms
+        $permsCount = 18;
 
-	/**
-	 * @todo If we could replace static call to Permissions::Perms() in
-	 * Std_Limits() we could better unit test this method, now we test the
-	 * result of Permissions::Perms() mostly.
-	 *
-	 * @uses Zotlabs\Access\Permissions::Perms
-	 * @uses ::call_hooks
-	 */
-	public function testStd_Limits() {
-		// There are 18 default perms
-		$permsCount = 18;
+        // Create a stub for global function t() with expectation
+        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t->expects($this->exactly($permsCount));
 
-		// Create a stub for global function t() with expectation
-		$t = $this->getFunctionMock('Zotlabs\Access', 't');
-		$t->expects($this->exactly($permsCount));
+        $stdlimits = PermissionLimits::Std_Limits();
+        $this->assertCount($permsCount, $stdlimits, "There should be $permsCount permissions.");
 
-		$stdlimits = PermissionLimits::Std_Limits();
-		$this->assertCount($permsCount, $stdlimits, "There should be $permsCount permissions.");
-
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['view_stream']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['send_stream']);
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['view_profile']);
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['view_contacts']);
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['view_storage']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_storage']);
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['view_pages']);
-		$this->assertEquals(PERMS_PUBLIC,   $stdlimits['view_wiki']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_pages']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_wiki']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_wall']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_comments']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_mail']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_like']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['tag_deliver']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['chat']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['republish']);
-		$this->assertEquals(PERMS_SPECIFIC, $stdlimits['delegate']);
-	}
-
+        $this->assertEquals(PERMS_PUBLIC, $stdlimits['view_stream']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['send_stream']);
+        $this->assertEquals(PERMS_PUBLIC, $stdlimits['view_profile']);
+        $this->assertEquals(PERMS_PUBLIC, $stdlimits['view_contacts']);
+        $this->assertEquals(PERMS_PUBLIC, $stdlimits['view_storage']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_storage']);
+        $this->assertEquals(PERMS_PUBLIC, $stdlimits['view_pages']);
+        $this->assertEquals(PERMS_PUBLIC, $stdlimits['view_wiki']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_pages']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['write_wiki']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_wall']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_comments']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_mail']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['post_like']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['tag_deliver']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['chat']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['republish']);
+        $this->assertEquals(PERMS_SPECIFIC, $stdlimits['delegate']);
+    }
 }

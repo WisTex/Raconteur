@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 /*
@@ -9,7 +10,7 @@ namespace Zotlabs\Module;
  * for all types of Zot6 resources and is not restricted to
  * channel discovery.
  */
- 
+
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
@@ -41,5 +42,4 @@ class Zotfinger extends Controller
         }
         return $o;
     }
-
 }

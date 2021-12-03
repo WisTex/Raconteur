@@ -24,7 +24,5 @@ class _1212
         }
 
         return UPDATE_SUCCESS;
-
     }
-
 }

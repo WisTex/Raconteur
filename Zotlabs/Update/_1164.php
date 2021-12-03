@@ -35,12 +35,10 @@ class _1164
 			KEY `cat` (`cat`),
 			KEY `k` (`k`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ");
-
         }
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

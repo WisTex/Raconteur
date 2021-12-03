@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -14,21 +15,22 @@ class Common extends Controller
     public function init()
     {
 
-        if (argc() > 1 && intval(argv(1)))
+        if (argc() > 1 && intval(argv(1))) {
             $channel_id = intval(argv(1));
-        else {
+        } else {
             notice(t('No channel.') . EOL);
             App::$error = 404;
             return;
         }
 
-        $x = q("select channel_address from channel where channel_id = %d limit 1",
+        $x = q(
+            "select channel_address from channel where channel_id = %d limit 1",
             intval($channel_id)
         );
 
-        if ($x)
+        if ($x) {
             Libprofile::load($x[0]['channel_address'], 0);
-
+        }
     }
 
     public function get()
@@ -36,8 +38,9 @@ class Common extends Controller
 
         $o = '';
 
-        if (!App::$profile['profile_uid'])
+        if (!App::$profile['profile_uid']) {
             return;
+        }
 
         $observer_hash = get_observer_hash();
 
@@ -75,5 +78,4 @@ class Common extends Controller
 
         return $o;
     }
-
 }

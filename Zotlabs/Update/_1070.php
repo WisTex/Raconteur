@@ -8,10 +8,9 @@ class _1070
     {
         $r = q("ALTER TABLE `updates` ADD `ud_flags` INT NOT NULL DEFAULT '0',
 ADD INDEX ( `ud_flags` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

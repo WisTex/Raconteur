@@ -13,13 +13,12 @@ class _1200
 			ADD INDEX uid_item_type (uid, item_type)
 		");
 
-            if ($r)
+            if ($r) {
                 return UPDATE_SUCCESS;
+            }
             return UPDATE_FAILED;
         } else {
             return UPDATE_SUCCESS;
         }
-
     }
-
 }

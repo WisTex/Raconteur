@@ -13,13 +13,12 @@ class _1206
 				ADD INDEX uid_resource_type (uid, resource_type)
 			");
 
-            if ($r)
+            if ($r) {
                 return UPDATE_SUCCESS;
+            }
             return UPDATE_FAILED;
         } else {
             return UPDATE_SUCCESS;
         }
-
     }
-
 }

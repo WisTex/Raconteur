@@ -37,10 +37,9 @@ class _1006
   KEY `xtag_term` (`xtag_term`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-        if ($r && $r2)
+        if ($r && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

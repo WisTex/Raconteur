@@ -1,11 +1,12 @@
-<?php /** @file */
+<?php
+
+/** @file */
 
 namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Daemon\Run;
-
 
 class Connect
 {
@@ -57,7 +58,8 @@ class Connect
 
         // check service class limits
 
-        $r = q("select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
+        $r = q(
+            "select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
             intval($uid)
         );
         if ($r) {
@@ -72,14 +74,14 @@ class Connect
         $xchan_hash = '';
         $sql_options = (($protocol) ? " and xchan_network = '" . dbesc($protocol) . "' " : '');
 
-        $r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s') $sql_options ",
+        $r = q(
+            "select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s') $sql_options ",
             dbesc($url),
             dbesc($url),
             dbesc($url)
         );
 
         if ($r) {
-
             // reset results to the best record or the first if we don't have the best
             // note: this returns a single record and not an array of records
 
@@ -88,7 +90,8 @@ class Connect
             // ensure there's a valid hubloc for this xchan before proceeding - you cannot connect without it
 
             if (in_array($r['xchan_network'], ['zot6', 'activitypub'])) {
-                $h = q("select * from hubloc where hubloc_hash = '%s'",
+                $h = q(
+                    "select * from hubloc where hubloc_hash = '%s'",
                     dbesc($r['xchan_hash'])
                 );
                 if (!$h) {
@@ -99,7 +102,6 @@ class Connect
             // we may have nulled out this record so check again
 
             if ($r) {
-
                 // Check the site table to see if we should have a zot6 hubloc,
                 // If so, clear the xchan and start fresh
 
@@ -107,7 +109,8 @@ class Connect
                     $m = parse_url($r['xchan_hash']);
                     unset($m['path']);
                     $h = unparse_url($m);
-                    $s = q("select * from site where site_url = '%s'",
+                    $s = q(
+                        "select * from site where site_url = '%s'",
                         dbesc($h)
                     );
                     if (intval($s['site_type']) === SITE_TYPE_ZOT) {
@@ -122,7 +125,6 @@ class Connect
         $singleton = false;
 
         if (!$r) {
-
             // not in cache - try discovery
 
             $wf = discover_by_webbie($url, $protocol, false);
@@ -134,10 +136,10 @@ class Connect
         }
 
         if ($wf) {
-
             // something was discovered - find the record which was just created.
 
-            $r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' ) $sql_options",
+            $r = q(
+                "select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' ) $sql_options",
                 dbesc(($wf) ? $wf : $url),
                 dbesc($url),
                 dbesc($url)
@@ -170,7 +172,6 @@ class Connect
             $result['message'] = t('Channel is blocked on this site.');
             logger('follow: ' . $result['message']);
             return $result;
-
         }
 
 
@@ -212,14 +213,14 @@ class Connect
 
         // See if we are already connected by virtue of having an abook record
 
-        $r = q("select abook_id, abook_xchan, abook_pending, abook_instance from abook 
+        $r = q(
+            "select abook_id, abook_xchan, abook_pending, abook_instance from abook 
 			where abook_xchan = '%s' and abook_channel = %d limit 1",
             dbesc($xchan_hash),
             intval($uid)
         );
 
         if ($r) {
-
             $abook_instance = $r[0]['abook_instance'];
 
             // If they are on a non-nomadic network, add them to this location
@@ -230,7 +231,8 @@ class Connect
                 }
                 $abook_instance .= z_root();
 
-                $x = q("update abook set abook_instance = '%s', abook_not_here = 0 where abook_id = %d",
+                $x = q(
+                    "update abook set abook_instance = '%s', abook_not_here = 0 where abook_id = %d",
                     dbesc($abook_instance),
                     intval($r[0]['abook_id'])
                 );
@@ -239,12 +241,12 @@ class Connect
             // if they have a pending connection, we just followed them so approve the connection request
 
             if (intval($r[0]['abook_pending'])) {
-                $x = q("update abook set abook_pending = 0 where abook_id = %d",
+                $x = q(
+                    "update abook set abook_pending = 0 where abook_id = %d",
                     intval($r[0]['abook_id'])
                 );
             }
         } else {
-
             // create a new abook record
 
             $closeness = get_pconfig($uid, 'system', 'new_abook_closeness', 80);
@@ -278,7 +280,8 @@ class Connect
 
         // fetch the entire record
 
-        $r = q("select abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash 
+        $r = q(
+            "select abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash 
 			where abook_xchan = '%s' and abook_channel = %d limit 1",
             dbesc($xchan_hash),
             intval($uid)

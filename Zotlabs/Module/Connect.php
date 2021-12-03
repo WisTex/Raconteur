@@ -1,12 +1,11 @@
 <?php
 
-namespace Zotlabs\Module; 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libprofile;
-
 
 class Connect extends Controller
 {
@@ -26,8 +25,9 @@ class Connect extends Controller
     public function post()
     {
 
-        if (!array_key_exists('channel', App::$data))
+        if (!array_key_exists('channel', App::$data)) {
             return;
+        }
 
         $edit = ((local_channel() && (local_channel() == App::$data['channel']['channel_id'])) ? true : false);
 
@@ -37,7 +37,8 @@ class Connect extends Controller
             $text = escape_tags($_POST['text']);
 
             if ($has_premium != $premium) {
-                $r = q("update channel set channel_pageflags = ( channel_pageflags %s %d ) where channel_id = %d",
+                $r = q(
+                    "update channel set channel_pageflags = ( channel_pageflags %s %d ) where channel_id = %d",
                     db_getfunc('^'),
                     intval(PAGE_PREMIUM),
                     intval(local_channel())
@@ -48,27 +49,29 @@ class Connect extends Controller
             set_pconfig(App::$data['channel']['channel_id'], 'system', 'selltext', $text);
             // reload the page completely to get fresh data
             goaway(z_root() . '/' . App::$query_string);
-
         }
 
         $url = EMPTY_STR;
         $observer = App::get_observer();
         if (($observer) && ($_POST['submit'] === t('Continue'))) {
-            if ($observer['xchan_follow'])
+            if ($observer['xchan_follow']) {
                 $url = sprintf($observer['xchan_follow'], urlencode(channel_reddress(App::$data['channel'])));
+            }
             if (!$url) {
-                $r = q("select * from hubloc where hubloc_hash = '%s' order by hubloc_id desc limit 1",
+                $r = q(
+                    "select * from hubloc where hubloc_hash = '%s' order by hubloc_id desc limit 1",
                     dbesc($observer['xchan_hash'])
                 );
-                if ($r)
+                if ($r) {
                     $url = $r[0]['hubloc_url'] . '/follow?f=&url=' . urlencode(channel_reddress(App::$data['channel']));
+                }
             }
         }
-        if ($url)
+        if ($url) {
             goaway($url . '&confirm=1');
-        else
+        } else {
             notice('Unable to connect to your home hub location.');
-
+        }
     }
 
 
@@ -80,7 +83,6 @@ class Connect extends Controller
         $text = get_pconfig(App::$data['channel']['channel_id'], 'system', 'selltext');
 
         if ($edit) {
-
             $o = replace_macros(get_markup_template('sellpage_edit.tpl'), array(
                 '$header' => t('Premium Channel Setup'),
                 '$address' => App::$data['channel']['channel_address'],
@@ -96,8 +98,9 @@ class Connect extends Controller
             ));
             return $o;
         } else {
-            if (!$text)
+            if (!$text) {
                 $text = t('(No specific instructions have been provided by the channel owner.)');
+            }
 
             $submit = replace_macros(get_markup_template('sellpage_submit.tpl'), array(
                 '$continue' => t('Continue'),
@@ -117,7 +120,6 @@ class Connect extends Controller
             $arr = array('channel' => App::$data['channel'], 'observer' => App::get_observer(), 'sellpage' => $o, 'submit' => $submit);
             call_hooks('connect_premium', $arr);
             $o = $arr['sellpage'];
-
         }
 
         return $o;

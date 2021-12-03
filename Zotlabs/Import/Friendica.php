@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Import;
 
 use App;
@@ -10,7 +11,6 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Daemon\Run;
-
 
 class Friendica
 {
@@ -56,7 +56,8 @@ class Friendica
         $max_identities = account_service_class_fetch($account_id, 'total_identities');
 
         if ($max_identities !== false) {
-            $r = q("select channel_id from channel where channel_account_id = %d and channel_removed = 0 ",
+            $r = q(
+                "select channel_id from channel where channel_account_id = %d and channel_removed = 0 ",
                 intval($account_id)
             );
             if ($r && count($r) > $max_identities) {
@@ -225,12 +226,12 @@ class Friendica
         set_abconfig($newuid, $channel['channel_hash'], 'system', 'my_perms', $x);
 
         if (intval($channel['channel_account_id'])) {
-
             // Save our permissions role so we can perhaps call it up and modify it later.
 
             if ($role_permissions) {
-                if (array_key_exists('online', $role_permissions))
+                if (array_key_exists('online', $role_permissions)) {
                     set_pconfig($newuid, 'system', 'hide_presence', 1 - intval($role_permissions['online']));
+                }
                 if (array_key_exists('perms_auto', $role_permissions)) {
                     $autoperms = intval($role_permissions['perms_auto']);
                     set_pconfig($newuid, 'system', 'autoperms', $autoperms);
@@ -246,12 +247,14 @@ class Friendica
             // if our role_permissions indicate that we're using a default collection ACL, add it.
 
             if (is_array($role_permissions) && $role_permissions['default_collection']) {
-                $r = q("select hash from pgrp where uid = %d and gname = '%s' limit 1",
+                $r = q(
+                    "select hash from pgrp where uid = %d and gname = '%s' limit 1",
                     intval($newuid),
                     dbesc(t('Friends'))
                 );
                 if ($r) {
-                    q("update channel set channel_default_group = '%s', channel_allow_gid = '%s' where channel_id = %d",
+                    q(
+                        "update channel set channel_default_group = '%s', channel_allow_gid = '%s' where channel_id = %d",
                         dbesc($r[0]['hash']),
                         dbesc('<' . $r[0]['hash'] . '>'),
                         intval($newuid)
@@ -270,14 +273,14 @@ class Friendica
 
             $accts = get_config('system', 'auto_follow');
             if (($accts) && (!$total_identities)) {
-                if (!is_array($accts))
+                if (!is_array($accts)) {
                     $accts = array($accts);
+                }
 
                 foreach ($accts as $acct) {
                     if (trim($acct)) {
                         $f = connect_and_sync($channel, trim($acct));
                         if ($f['success']) {
-
                             $can_view_stream = their_perms_contains($channel['channel_id'], $f['abook']['abook_xchan'], 'view_stream');
 
                             // If we can view their stream, pull in some posts
@@ -357,8 +360,5 @@ class Friendica
         notice(t('Import complete.') . EOL);
 
         goaway(z_root() . '/stream');
-
     }
-
-
 }

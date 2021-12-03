@@ -23,7 +23,6 @@ class _1179
             $r6 = q("create index atoken_expires on atoken (atoken_expires)");
 
             $r = $r1 && $r2 && $r3 && $r4 && $r5 && $r6;
-
         } else {
             $r = q("CREATE TABLE IF NOT EXISTS `atoken` (
   `atoken_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -40,11 +39,9 @@ class _1179
   KEY `atoken_expires` (`atoken_expires`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
         }
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

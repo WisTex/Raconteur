@@ -15,8 +15,9 @@ class Cover_photo
         $o = '';
 
 
-        if (App::$module == 'channel' && $_REQUEST['mid'])
+        if (App::$module == 'channel' && $_REQUEST['mid']) {
             return '';
+        }
 
         $channel_id = 0;
 
@@ -28,12 +29,15 @@ class Cover_photo
             $site_banner = System::get_site_name();
         }
 
-        if (array_key_exists('channel_id', $arr) && intval($arr['channel_id']))
+        if (array_key_exists('channel_id', $arr) && intval($arr['channel_id'])) {
             $channel_id = intval($arr['channel_id']);
-        if (!$channel_id)
+        }
+        if (!$channel_id) {
             $channel_id = App::$profile_uid;
-        if (!$channel_id)
+        }
+        if (!$channel_id) {
             return '';
+        }
 
         // only show cover photos once per login session
         $hide_cover = false;
@@ -47,26 +51,30 @@ class Cover_photo
 
         $channel = channelx_by_n($channel_id);
 
-        if (array_key_exists('style', $arr) && isset($arr['style']))
+        if (array_key_exists('style', $arr) && isset($arr['style'])) {
             $style = $arr['style'];
-        else
+        } else {
             $style = 'width:100%; height: auto;';
+        }
 
         // ensure they can't sneak in an eval(js) function
 
-        if (strpbrk($style, '(\'"<>') !== false)
+        if (strpbrk($style, '(\'"<>') !== false) {
             $style = '';
+        }
 
-        if (array_key_exists('title', $arr) && isset($arr['title']))
+        if (array_key_exists('title', $arr) && isset($arr['title'])) {
             $title = $arr['title'];
-        else
+        } else {
             $title = $channel['channel_name'];
+        }
 
 
-        if (array_key_exists('subtitle', $arr) && isset($arr['subtitle']))
+        if (array_key_exists('subtitle', $arr) && isset($arr['subtitle'])) {
             $subtitle = $arr['subtitle'];
-        else
+        } else {
             $subtitle = str_replace('@', '&#x40;', $channel['xchan_addr']);
+        }
 
 
         if ($site_banner) {

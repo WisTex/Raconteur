@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module;
 
-
 use App;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\System;
@@ -35,12 +34,14 @@ class Display extends Controller
 
         if (argc() > 1) {
             $module_format = substr(argv(1), strrpos(argv(1), '.') + 1);
-            if (!in_array($module_format, ['atom', 'zot', 'json']))
+            if (!in_array($module_format, ['atom', 'zot', 'json'])) {
                 $module_format = 'html';
+            }
         }
 
-        if ($this->loading)
+        if ($this->loading) {
             $_SESSION['loadtime_display'] = datetime_convert();
+        }
 
         if (observer_prohibited()) {
             notice(t('Public access denied.') . EOL);
@@ -54,8 +55,9 @@ class Display extends Controller
             }
         }
 
-        if ($_REQUEST['mid'])
+        if ($_REQUEST['mid']) {
             $item_hash = $_REQUEST['mid'];
+        }
 
         if (!$item_hash) {
             App::$error = 404;
@@ -67,7 +69,6 @@ class Display extends Controller
         $updateable = false;
 
         if (local_channel() && (!$this->updating)) {
-
             $channel = App::get_channel();
 
             $channel_acl = array(
@@ -115,7 +116,8 @@ class Display extends Controller
 
         $item_hash = unpack_link_id($item_hash);
 
-        $r = q("select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, author_xchan, item_blocked from item where mid like '%s' limit 1",
+        $r = q(
+            "select id, uid, mid, parent_mid, thr_parent, verb, item_type, item_deleted, author_xchan, item_blocked from item where mid like '%s' limit 1",
             dbesc($item_hash . '%')
         );
 
@@ -123,12 +125,13 @@ class Display extends Controller
             $target_item = $r[0];
         }
 
-        $x = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $x = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($target_item['author_xchan'])
         );
         if ($x) {
 // not yet ready for prime time
-//			\App::$poi = $x[0];
+//          \App::$poi = $x[0];
         }
 
         // if the item is to be moderated redirect to /moderate
@@ -139,10 +142,12 @@ class Display extends Controller
         $r = null;
 
         if ($target_item['item_type'] == ITEM_TYPE_WEBPAGE) {
-            $x = q("select * from channel where channel_id = %d limit 1",
+            $x = q(
+                "select * from channel where channel_id = %d limit 1",
                 intval($target_item['uid'])
             );
-            $y = q("select * from iconfig left join item on iconfig.iid = item.id 
+            $y = q(
+                "select * from iconfig left join item on iconfig.iid = item.id 
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item.id = %d limit 1",
                 intval($target_item['uid']),
                 intval($target_item['parent'])
@@ -155,10 +160,12 @@ class Display extends Controller
             }
         }
         if ($target_item['item_type'] == ITEM_TYPE_ARTICLE) {
-            $x = q("select * from channel where channel_id = %d limit 1",
+            $x = q(
+                "select * from channel where channel_id = %d limit 1",
                 intval($target_item['uid'])
             );
-            $y = q("select * from iconfig left join item on iconfig.iid = item.id 
+            $y = q(
+                "select * from iconfig left join item on iconfig.iid = item.id 
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and item.id = %d limit 1",
                 intval($target_item['uid']),
                 intval($target_item['parent'])
@@ -171,10 +178,12 @@ class Display extends Controller
             }
         }
         if ($target_item['item_type'] == ITEM_TYPE_CARD) {
-            $x = q("select * from channel where channel_id = %d limit 1",
+            $x = q(
+                "select * from channel where channel_id = %d limit 1",
                 intval($target_item['uid'])
             );
-            $y = q("select * from iconfig left join item on iconfig.iid = item.id 
+            $y = q(
+                "select * from iconfig left join item on iconfig.iid = item.id 
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'CARD' and item.id = %d limit 1",
                 intval($target_item['uid']),
                 intval($target_item['parent'])
@@ -198,16 +207,18 @@ class Display extends Controller
 
         $simple_update = (($this->updating) ? " AND item_unseen = 1 " : '');
 
-        if ($this->updating && $_SESSION['loadtime_display'])
+        if ($this->updating && $_SESSION['loadtime_display']) {
             $simple_update = " AND item.changed > '" . datetime_convert('UTC', 'UTC', $_SESSION['loadtime_display']) . "' ";
-        if ($this->loading)
+        }
+        if ($this->loading) {
             $simple_update = '';
+        }
 
-        if ($static && $simple_update)
+        if ($static && $simple_update) {
             $simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+        }
 
         if ((!$this->updating) && (!$this->loading)) {
-
             $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
 
             // if the target item is not a post (eg a like) we want to address its thread parent
@@ -261,7 +272,6 @@ class Display extends Controller
                 'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
                 'title' => 'oembed'
             ]);
-
         }
 
         $observer_hash = get_observer_hash();
@@ -271,7 +281,6 @@ class Display extends Controller
         $sql_extra = ((local_channel()) ? EMPTY_STR : item_permissions_sql(0, $observer_hash));
 
         if ($noscript_content || $this->loading) {
-
             $r = null;
 
             require_once('include/channel.php');
@@ -279,7 +288,8 @@ class Display extends Controller
             $sysid = $sys['channel_id'];
 
             if (local_channel()) {
-                $r = q("SELECT item.id as item_id from item WHERE uid = %d and mid = '%s' $item_normal limit 1",
+                $r = q(
+                    "SELECT item.id as item_id from item WHERE uid = %d and mid = '%s' $item_normal limit 1",
                     intval(local_channel()),
                     dbesc($target_item['parent_mid'])
                 );
@@ -289,7 +299,8 @@ class Display extends Controller
             }
 
             if (!(is_array($r) && count($r))) {
-                $r = q("SELECT item.id as item_id from item WHERE mid = '%s' $sql_extra $item_normal limit 1",
+                $r = q(
+                    "SELECT item.id as item_id from item WHERE mid = '%s' $sql_extra $item_normal limit 1",
                     dbesc($target_item['parent_mid'])
                 );
             }
@@ -301,7 +312,8 @@ class Display extends Controller
             $sysid = $sys['channel_id'];
 
             if (local_channel()) {
-                $r = q("SELECT item.parent AS item_id from item WHERE uid = %d and parent_mid = '%s' $item_normal_update $simple_update limit 1",
+                $r = q(
+                    "SELECT item.parent AS item_id from item WHERE uid = %d and parent_mid = '%s' $item_normal_update $simple_update limit 1",
                     intval(local_channel()),
                     dbesc($target_item['parent_mid'])
                 );
@@ -311,7 +323,8 @@ class Display extends Controller
             }
 
             if (!$r) {
-                $r = q("SELECT item.parent AS item_id from item WHERE parent_mid = '%s' $sql_extra $item_normal_update $simple_update limit 1",
+                $r = q(
+                    "SELECT item.parent AS item_id from item WHERE parent_mid = '%s' $sql_extra $item_normal_update $simple_update limit 1",
                     dbesc($target_item['parent_mid'])
                 );
             }
@@ -322,7 +335,8 @@ class Display extends Controller
         if ($r) {
             $parents_str = ids_to_querystr($r, 'item_id');
             if ($parents_str) {
-                $items = q("SELECT item.*, item.id AS item_id 
+                $items = q(
+                    "SELECT item.*, item.id AS item_id 
 					FROM item
 					WHERE parent in ( %s ) $item_normal $sql_extra ",
                     dbesc($parents_str)
@@ -343,12 +357,10 @@ class Display extends Controller
 
         foreach ($items as $item) {
             if ($item['mid'] === $item_hash) {
-
-
                 if (preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
                     $ogimage = $matches[2];
-                    //	Will we use og:image:type someday? We keep this just in case
-                    //	$ogimagetype = guess_image_type($ogimage);
+                    //  Will we use og:image:type someday? We keep this just in case
+                    //  $ogimagetype = guess_image_type($ogimage);
                 }
 
                 // some work on post content to generate a description
@@ -365,8 +377,9 @@ class Display extends Controller
                 // shorten description
                 $ogdesc = substr($ogdesc, 0, 300);
                 $ogdesc = str_replace("\n", " ", $ogdesc);
-                while (strpos($ogdesc, "  ") !== false)
+                while (strpos($ogdesc, "  ") !== false) {
                     $ogdesc = str_replace("  ", " ", $ogdesc);
+                }
                 $ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
 
                 $ogsite = (System::get_site_name()) ? escape_tags(System::get_site_name()) : System::get_platform_name();
@@ -413,9 +426,7 @@ class Display extends Controller
         }
 
         switch ($module_format) {
-
             case 'html':
-
                 if ($this->updating) {
                     $o .= conversation($items, 'display', $this->updating, 'client');
                 } else {
@@ -435,7 +446,6 @@ class Display extends Controller
                 break;
 
             case 'atom':
-
                 $atom = replace_macros(get_markup_template('atom_feed.tpl'), array(
                     '$version' => xmlify(System::get_project_version()),
                     '$generator' => xmlify(System::get_platform_name()),
@@ -460,8 +470,9 @@ class Display extends Controller
                 if ($items) {
                     $type = 'html';
                     foreach ($items as $item) {
-                        if ($item['item_private'])
+                        if ($item['item_private']) {
                             continue;
+                        }
                         $atom .= atom_entry($item, $type, null, '', true, '', false);
                     }
                 }
@@ -473,23 +484,21 @@ class Display extends Controller
                 header('Content-type: application/atom+xml');
                 echo $atom;
                 killme();
-
         }
 
         if ($updateable) {
-            $x = q("UPDATE item SET item_unseen = 0 where item_unseen = 1 AND uid = %d and parent = %d ",
+            $x = q(
+                "UPDATE item SET item_unseen = 0 where item_unseen = 1 AND uid = %d and parent = %d ",
                 intval(local_channel()),
                 intval($r[0]['item_id'])
             );
-
-
         }
 
         $o .= '<div id="content-complete"></div>';
 
         if ((($this->updating && $this->loading) || $noscript_content) && (!$items)) {
-
-            $r = q("SELECT id, item_deleted FROM item WHERE mid = '%s' LIMIT 1",
+            $r = q(
+                "SELECT id, item_deleted FROM item WHERE mid = '%s' LIMIT 1",
                 dbesc($item_hash)
             );
 
@@ -502,11 +511,8 @@ class Display extends Controller
             } else {
                 notice(t('Item not found.') . EOL);
             }
-
         }
 
         return $o;
-
     }
-
 }

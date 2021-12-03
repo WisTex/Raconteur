@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -18,8 +19,9 @@ class Share extends Controller
 
         $post_id = ((argc() > 1) ? intval(argv(1)) : 0);
 
-        if (!$post_id)
+        if (!$post_id) {
             killme();
+        }
 
         if (!local_channel()) {
             killme();
@@ -30,22 +32,27 @@ class Share extends Controller
         $channel = App::get_channel();
 
 
-        $r = q("SELECT * from item left join xchan on author_xchan = xchan_hash WHERE id = %d  LIMIT 1",
+        $r = q(
+            "SELECT * from item left join xchan on author_xchan = xchan_hash WHERE id = %d  LIMIT 1",
             intval($post_id)
         );
-        if (!$r)
+        if (!$r) {
             killme();
+        }
 
-        if (($r[0]['item_private']) && ($r[0]['xchan_network'] !== 'rss'))
+        if (($r[0]['item_private']) && ($r[0]['xchan_network'] !== 'rss')) {
             killme();
+        }
 
         $sql_extra = item_permissions_sql($r[0]['uid']);
 
-        $r = q("select * from item where id = %d $sql_extra",
+        $r = q(
+            "select * from item where id = %d $sql_extra",
             intval($post_id)
         );
-        if (!$r)
+        if (!$r) {
             killme();
+        }
 
         /** @FIXME we only share bbcode */
 
@@ -64,32 +71,37 @@ class Share extends Controller
         $owner_aid = $r[0]['aid'];
 
         $can_comment = false;
-        if ((array_key_exists('owner', $item)) && intval($item['owner']['abook_self']))
+        if ((array_key_exists('owner', $item)) && intval($item['owner']['abook_self'])) {
             $can_comment = perm_is_allowed($item['uid'], $observer['xchan_hash'], 'post_comments');
-        else
+        } else {
             $can_comment = can_comment_on_post($observer['xchan_hash'], $item);
+        }
 
         if (!$can_comment) {
             notice(t('Permission denied') . EOL);
             killme();
         }
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($item['owner_xchan'])
         );
 
-        if ($r)
+        if ($r) {
             $thread_owner = $r[0];
-        else
+        } else {
             killme();
+        }
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($item['author_xchan'])
         );
-        if ($r)
+        if ($r) {
             $item_author = $r[0];
-        else
+        } else {
             killme();
+        }
 
 
         $arr['aid'] = $owner_aid;
@@ -121,7 +133,8 @@ class Share extends Controller
 
         info(t('Post repeated') . EOL);
 
-        $r = q("select * from item where id = %d",
+        $r = q(
+            "select * from item where id = %d",
             intval($post_id)
         );
         if ($r) {
@@ -133,7 +146,5 @@ class Share extends Controller
         Run::Summon(['Notifier', 'like', $post_id]);
 
         killme();
-
     }
-
 }

@@ -12,6 +12,5 @@ class _1202
         // rather than being one greater than the last known update
 
         return UPDATE_SUCCESS;
-
     }
 }

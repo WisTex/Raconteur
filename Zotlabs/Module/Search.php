@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -91,7 +92,6 @@ class Search extends Controller
                     if (is_array($AS->obj)) {
                         // matches Collection and orderedCollection
                         if (isset($AS->obj['type']) && strpos($AS->obj['type'], 'Collection') !== false) {
-
                             // Collections are awkward to process because they can be huge.
                             // Our strategy is to limit a navbar search to 100 Collection items
                             // and only fetch the first 10 conversations in the foreground.
@@ -115,7 +115,6 @@ class Search extends Controller
                                         // only process the first several items in the foreground and
                                         // queue the remainder.
                                         if ($processed > 10) {
-
                                             $fetch_url = ((is_string($message)) ? $message : EMPTY_STR);
                                             $fetch_url = ((is_array($message) && array_key_exists('id', $message)) ? $message['id'] : $fetch_url);
 
@@ -166,7 +165,6 @@ class Search extends Controller
                                 goaway(z_root() . '/stream');
                             }
                         } else {
-
                             // It wasn't a Collection object and wasn't an Actor object,
                             // so let's see if it decodes. The boolean flag enables html
                             // cache of the item
@@ -210,7 +208,8 @@ class Search extends Controller
 
         if ($tag) {
             $wildtag = str_replace('*', '%', $search);
-            $sql_extra = sprintf(" AND item.id IN (select oid from term where otype = %d and ttype in ( %d , %d) and term like '%s') ",
+            $sql_extra = sprintf(
+                " AND item.id IN (select oid from term where otype = %d and ttype in ( %d , %d) and term like '%s') ",
                 intval(TERM_OBJ_POST),
                 intval(TERM_HASHTAG),
                 intval(TERM_COMMUNITYTAG),
@@ -228,7 +227,6 @@ class Search extends Controller
 
 
         if ((!$this->updating) && (!$this->loading)) {
-
             $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 0);
 
 
@@ -271,8 +269,6 @@ class Search extends Controller
                 '$dend' => '',
                 '$dbegin' => ''
             ]);
-
-
         }
 
         $item_normal = item_normal_search();
@@ -294,7 +290,8 @@ class Search extends Controller
                 // and results in lots of duplicated content and/or messed up pagination
 
                 if (local_channel()) {
-                    $r = q("SELECT mid, MAX(id) as item_id from item where uid = %d
+                    $r = q(
+                        "SELECT mid, MAX(id) as item_id from item where uid = %d
 						$item_normal
 						$sql_extra
 						group by mid, created order by created desc $pager_sql ",
@@ -305,8 +302,7 @@ class Search extends Controller
                     $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
 						$item_normal
 						$sql_extra 
-						group by mid, created order by created desc $pager_sql"
-                    );
+						group by mid, created order by created desc $pager_sql");
                 }
                 if ($r) {
                     $str = ids_to_querystr($r, 'item_id');
@@ -315,7 +311,6 @@ class Search extends Controller
             } else {
                 $r = [];
             }
-
         }
 
         if ($r) {
@@ -337,10 +332,11 @@ class Search extends Controller
             json_return_and_die(array('success' => true, 'messages' => $result));
         }
 
-        if ($tag)
+        if ($tag) {
             $o .= '<h2>' . sprintf(t('Items tagged with: %s'), $search) . '</h2>';
-        else
+        } else {
             $o .= '<h2>' . sprintf(t('Search results for: %s'), $search) . '</h2>';
+        }
 
         $o .= conversation($items, 'search', $this->updating, 'client');
 
@@ -348,5 +344,4 @@ class Search extends Controller
 
         return $o;
     }
-
 }

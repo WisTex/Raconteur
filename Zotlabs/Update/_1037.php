@@ -22,10 +22,9 @@ ADD INDEX `mid` ( `mid` ),
  DROP INDEX `parent_uri` ,
 ADD INDEX `parent_mid` ( `parent_mid` ) ");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

@@ -27,5 +27,4 @@ class _1253
     {
         return true;
     }
-
 }

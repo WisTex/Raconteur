@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+
 require_once('include/attach.php');
 
 class Album
@@ -33,20 +34,23 @@ class Album
          */
 
         if ($album) {
-            $x = q("select hash from attach where filename = '%s' and uid = %d limit 1",
+            $x = q(
+                "select hash from attach where filename = '%s' and uid = %d limit 1",
                 dbesc($album),
                 intval($owner_uid)
             );
             if ($x) {
                 $y = attach_can_view_folder($owner_uid, get_observer_hash(), $x[0]['hash']);
-                if (!$y)
+                if (!$y) {
                     return '';
+                }
             }
         }
 
         $order = 'DESC';
 
-        $r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
+        $r = q(
+            "SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
 			(SELECT resource_id, max(imgscale) imgscale FROM photo WHERE uid = %d AND album = '%s' AND imgscale <= 4 AND photo_usage IN ( %d, %d ) $sql_extra GROUP BY resource_id) ph
 			ON (p.resource_id = ph.resource_id AND p.imgscale = ph.imgscale)
 			ORDER BY created $order ",
@@ -63,11 +67,11 @@ class Album
         if ($r) {
             $twist = 'rotright';
             foreach ($r as $rr) {
-
-                if ($twist == 'rotright')
+                if ($twist == 'rotright') {
                     $twist = 'rotleft';
-                else
+                } else {
                     $twist = 'rotright';
+                }
 
                 $ext = $phototypes[$rr['mimetype']];
 
@@ -109,4 +113,3 @@ class Album
         return $o;
     }
 }
-

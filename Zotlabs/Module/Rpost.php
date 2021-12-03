@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -16,7 +16,7 @@ require_once('include/attach.php');
 
 /**
  * remote post
- * 
+ *
  * https://yoursite/rpost?f=&title=&body=&remote_return=
  *
  * This can be called via either GET or POST, use POST for long body content as suhosin often limits GET parameter length
@@ -26,7 +26,7 @@ require_once('include/attach.php');
  * body= Body of post
  * url= URL which will be parsed and the results appended to the body
  * source= Source application
- * post_id= post_id of post to 'share' (local use only) 
+ * post_id= post_id of post to 'share' (local use only)
  * remote_return= absolute URL to return after posting is finished
  * type= choices are 'html' or 'bbcode', default is 'bbcode'
  *
@@ -50,8 +50,9 @@ class Rpost extends Controller
                 // make sure we're not looping to our own hub
                 if (($url) && (!stristr($url, App::get_hostname()))) {
                     foreach ($_GET as $key => $arg) {
-                        if ($key === 'req')
+                        if ($key === 'req') {
                             continue;
+                        }
                         $url .= '&' . $key . '=' . $arg;
                     }
                     goaway($url);
@@ -70,7 +71,6 @@ class Rpost extends Controller
         nav_set_selected('Post');
 
         if (local_channel() && array_key_exists('userfile', $_FILES)) {
-
             $channel = App::get_channel();
             $observer = App::get_observer();
 
@@ -160,7 +160,8 @@ class Rpost extends Controller
         }
 
         if (array_key_exists('channel', $_REQUEST)) {
-            $r = q("select channel_id from channel where channel_account_id = %d and channel_address = '%s' limit 1",
+            $r = q(
+                "select channel_id from channel where channel_account_id = %d and channel_address = '%s' limit 1",
                 intval(get_account_id()),
                 dbesc($_REQUEST['channel'])
             );
@@ -196,8 +197,7 @@ class Rpost extends Controller
             $acl->set(['allow_cid' => '<' . $_REQUEST['to'] . '>',
                     'allow_gid' => EMPTY_STR,
                     'deny_cid' => EMPTY_STR,
-                    'deny_gid' => EMPTY_STR]
-            );
+                    'deny_gid' => EMPTY_STR]);
         }
 
         $channel_acl = $acl->get();

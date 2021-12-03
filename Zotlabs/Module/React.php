@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -6,43 +7,46 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Daemon\Run;
 
-
 class React extends Controller
 {
 
     public function get()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $sys = get_sys_channel();
         $channel = App::get_channel();
 
         $postid = $_REQUEST['postid'];
 
-        if (!$postid)
+        if (!$postid) {
             return;
+        }
 
         $emoji = $_REQUEST['emoji'];
 
 
         if ($emoji) {
-
-            $i = q("select * from item where id = %d and uid = %d",
+            $i = q(
+                "select * from item where id = %d and uid = %d",
                 intval($postid),
                 intval(local_channel())
             );
 
             if (!$i) {
                 // try the global public stream
-                $i = q("select * from item where id = %d and uid = %d",
+                $i = q(
+                    "select * from item where id = %d and uid = %d",
                     intval($postid),
                     intval($sys['channel_id'])
                 );
                 // try the local public stream
                 if (!$i) {
-                    $i = q("select * from item where id = %d and item_wall = 1 and item_private = 0",
+                    $i = q(
+                        "select * from item where id = %d and item_wall = 1 and item_private = 0",
                         intval($postid)
                     );
                 }
@@ -91,9 +95,6 @@ class React extends Controller
                 $nid = $x['item_id'];
                 Run::Summon(['Notifier', 'like', $nid]);
             }
-
         }
-
     }
-
 }

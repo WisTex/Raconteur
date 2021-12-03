@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Admin;
 
-
 class Dbsync
 {
 
@@ -15,14 +14,14 @@ class Dbsync
             // remove the old style config if it exists
             del_config('database', 'update_r' . intval(argv(3)));
             set_config('database', '_' . intval(argv(3)), 'success');
-            if (intval(get_config('system', 'db_version')) < intval(argv(3)))
+            if (intval(get_config('system', 'db_version')) < intval(argv(3))) {
                 set_config('system', 'db_version', intval(argv(3)));
+            }
             info(t('Update has been marked successful') . EOL);
             goaway(z_root() . '/admin/dbsync');
         }
 
         if (argc() > 3 && intval(argv(3)) && argv(2) === 'verify') {
-
             $s = '_' . intval(argv(3));
             $cls = '\\Zotlabs\Update\\' . $s;
             if (class_exists($cls)) {
@@ -34,13 +33,15 @@ class Dbsync
                     } elseif ($retval === UPDATE_SUCCESS) {
                         $o .= sprintf(t('Update %s was successfully applied.'), $s);
                         set_config('database', $s, 'success');
-                    } else
+                    } else {
                         $o .= sprintf(t('Verifying update %s did not return a status. Unknown if it succeeded.'), $s);
+                    }
                 } else {
                     $o .= sprintf(t('Update %s does not contain a verification function.'), $s);
                 }
-            } else
+            } else {
                 $o .= sprintf(t('Update function %s could not be found.'), $s);
+            }
 
             return $o;
 
@@ -48,8 +49,9 @@ class Dbsync
             // remove the old style config if it exists
             del_config('database', 'update_r' . intval(argv(3)));
             set_config('database', '_' . intval(argv(3)), 'success');
-            if (intval(get_config('system', 'db_version')) < intval(argv(3)))
+            if (intval(get_config('system', 'db_version')) < intval(argv(3))) {
                 set_config('system', 'db_version', intval(argv(3)));
+            }
             info(t('Update has been marked successful') . EOL);
             goaway(z_root() . '/admin/dbsync');
         }
@@ -66,10 +68,12 @@ class Dbsync
                 } elseif ($retval === UPDATE_SUCCESS) {
                     $o .= sprintf(t('Update %s was successfully applied.'), $s);
                     set_config('database', $s, 'success');
-                } else
+                } else {
                     $o .= sprintf(t('Update %s did not return a status. It cannot be determined if it was successful.'), $s);
-            } else
+                }
+            } else {
                 $o .= sprintf(t('Update function %s could not be found.'), $s);
+            }
 
             return $o;
         }
@@ -79,8 +83,9 @@ class Dbsync
         if (count($r)) {
             foreach ($r as $rr) {
                 $upd = intval(substr($rr['k'], -4));
-                if ($rr['v'] === 'success')
+                if ($rr['v'] === 'success') {
                     continue;
+                }
                 $failed[] = $upd;
             }
         }

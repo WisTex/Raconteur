@@ -17,5 +17,4 @@ class Profile
 
         return Libprofile::widget(App::$profile, observer_prohibited(), true);
     }
-
 }

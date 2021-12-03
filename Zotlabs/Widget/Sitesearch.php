@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
 use App;
 
 class Sitesearch
@@ -23,8 +22,9 @@ class Sitesearch
         $hasq = ((strpos($srchurl, '?') !== false) ? true : false);
         $hasamp = ((strpos($srchurl, '&') !== false) ? true : false);
 
-        if (($hasamp) && (!$hasq))
+        if (($hasamp) && (!$hasq)) {
             $srchurl = substr($srchurl, 0, strpos($srchurl, '&')) . '?f=&' . substr($srchurl, strpos($srchurl, '&') + 1);
+        }
 
         $o = '';
 

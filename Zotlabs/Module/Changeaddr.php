@@ -30,14 +30,17 @@ class Changeaddr extends Controller
             return;
         }
 
-        if ((!x($_POST, 'qxz_password')) || (!strlen(trim($_POST['qxz_password']))))
+        if ((!x($_POST, 'qxz_password')) || (!strlen(trim($_POST['qxz_password'])))) {
             return;
+        }
 
-        if ((!x($_POST, 'verify')) || (!strlen(trim($_POST['verify']))))
+        if ((!x($_POST, 'verify')) || (!strlen(trim($_POST['verify'])))) {
             return;
+        }
 
-        if ($_POST['verify'] !== $_SESSION['remove_account_verify'])
+        if ($_POST['verify'] !== $_SESSION['remove_account_verify']) {
             return;
+        }
 
 
         $account = App::get_account();
@@ -58,8 +61,9 @@ class Changeaddr extends Controller
 
         $new_address = trim($_POST['newname']);
 
-        if ($new_address === $channel['channel_address'])
+        if ($new_address === $channel['channel_address']) {
             return;
+        }
 
         if ($new_address === 'sys') {
             notice(t('Reserved nickname. Please choose another.') . EOL);
@@ -74,7 +78,6 @@ class Changeaddr extends Controller
         channel_change_address($channel, $new_address);
 
         goaway(z_root() . '/changeaddr');
-
     }
 
 
@@ -109,7 +112,5 @@ class Changeaddr extends Controller
         ]);
 
         return $o;
-
     }
-
 }

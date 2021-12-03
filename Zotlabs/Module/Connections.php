@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -22,7 +23,6 @@ class Connections extends Controller
         if ($channel) {
             head_set_icon($channel['xchan_photo_s']);
         }
-
     }
 
     public function get()
@@ -95,7 +95,8 @@ class Connections extends Controller
                     break;
                 case 'ifpending':
                 case intval(argv(1)):
-                    $r = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
+                    $r = q(
+                        "SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
                         intval(local_channel())
                     );
                     if ($r && $r[0]['total']) {
@@ -120,7 +121,6 @@ class Connections extends Controller
                     $active = true;
                     $head = t('Active');
                     break;
-
             }
 
             $sql_extra = $search_flags;
@@ -200,7 +200,8 @@ class Connections extends Controller
             $sql_extra .= " and xchan_hash in ( select xchan from pgrp_member where gid = " . intval($_REQUEST['gid']) . " and uid = " . intval(local_channel()) . " ) ";
         }
 
-        $r = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash 
+        $r = q(
+            "SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash 
 			where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra ",
             intval(local_channel())
         );
@@ -252,17 +253,18 @@ class Connections extends Controller
                 'title' => t('Order by date'),
             ),
 // reserved for cmax
-//			'date' => array(
-//				'label' => t(''),
-//				'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=date', 
-//				'sel'   => ($_REQUEST['order'] === 'date') ? 'active' : '',
-//				'title' => t('Order by recent'),
-//			),
+//          'date' => array(
+//              'label' => t(''),
+//              'url'   => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=date',
+//              'sel'   => ($_REQUEST['order'] === 'date') ? 'active' : '',
+//              'title' => t('Order by recent'),
+//          ),
 
         );
 
 
-        $r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash
+        $r = q(
+            "SELECT abook.*, xchan.* FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash
 			WHERE abook_channel = %d and abook_self = 0 and xchan_deleted = 0 and xchan_orphan = 0 $sql_extra ORDER BY $order_q LIMIT %d OFFSET %d ",
             intval(local_channel()),
             intval(App::$pager['itemspage']),
@@ -272,7 +274,6 @@ class Connections extends Controller
         $contacts = [];
 
         if ($r) {
-
             vcard_query($r);
 
 
@@ -281,11 +282,11 @@ class Connections extends Controller
                     continue;
                 }
                 if ($rr['xchan_url']) {
-
-                    if ((isset($rr['vcard']) && $rr['vcard']) && is_array($rr['vcard']['tels']) && $rr['vcard']['tels'][0]['nr'])
+                    if ((isset($rr['vcard']) && $rr['vcard']) && is_array($rr['vcard']['tels']) && $rr['vcard']['tels'][0]['nr']) {
                         $phone = $rr['vcard']['tels'][0]['nr'];
-                    else
+                    } else {
                         $phone = '';
+                    }
 
                     $status_str = '';
                     $status = array(
@@ -304,8 +305,9 @@ class Connections extends Controller
                     }
 
                     foreach ($status as $str) {
-                        if (!$str)
+                        if (!$str) {
                             continue;
+                        }
                         $status_str .= $str;
                         $status_str .= ', ';
                     }
@@ -382,10 +384,10 @@ class Connections extends Controller
             ));
         }
 
-        if (!$contacts)
+        if (!$contacts) {
             $o .= '<div id="content-complete"></div>';
+        }
 
         return $o;
     }
-
 }

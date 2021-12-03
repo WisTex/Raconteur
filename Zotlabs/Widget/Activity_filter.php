@@ -118,7 +118,8 @@ class Activity_filter
         ];
 
 
-        $groups = q("SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+        $groups = q(
+            "SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
             intval(local_channel())
         );
 
@@ -211,7 +212,8 @@ class Activity_filter
         }
 
         if (feature_enabled(local_channel(), 'filing')) {
-            $terms = q("select distinct term from term where uid = %d and ttype = %d order by term asc",
+            $terms = q(
+                "select distinct term from term where uid = %d and ttype = %d order by term asc",
                 intval(local_channel()),
                 intval(TERM_FILE)
             );
@@ -270,20 +272,19 @@ class Activity_filter
                 'title' => t('Show followed hashtags'),
                 'sub' => $tsub
             ];
-
         }
 
 
-//		if(x($_GET,'search')) {
-//			$filter_active = 'search';
-//			$tabs[] = [
-//				'label' => t('Search'),
-//				'icon' => 'search',
-//				'url' => z_root() . '/' . $cmd . '/?search=' . $_GET['search'],
-//				'sel' => 'active disabled',
-//				'title' => t('Panel search')
-//			];
-//		}
+//      if(x($_GET,'search')) {
+//          $filter_active = 'search';
+//          $tabs[] = [
+//              'label' => t('Search'),
+//              'icon' => 'search',
+//              'url' => z_root() . '/' . $cmd . '/?search=' . $_GET['search'],
+//              'sel' => 'active disabled',
+//              'title' => t('Panel search')
+//          ];
+//      }
 
         $name = [];
         if (isset($_GET['name']) && $_GET['name']) {
@@ -328,7 +329,5 @@ class Activity_filter
         }
 
         return $o;
-
     }
-
 }

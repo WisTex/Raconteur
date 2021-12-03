@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -23,13 +24,13 @@ class Editblock extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
     public function get()
@@ -61,7 +62,8 @@ class Editblock extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = q("select channel_id from channel where channel_address = '%s'",
+            $r = q(
+                "select channel_id from channel where channel_address = '%s'",
                 dbesc($which)
             );
             if ($r) {
@@ -88,16 +90,19 @@ class Editblock extends Controller
             return;
         }
 
-        $itm = q("SELECT * FROM item WHERE id = %d and uid = %s LIMIT 1",
+        $itm = q(
+            "SELECT * FROM item WHERE id = %d and uid = %s LIMIT 1",
             intval($post_id),
             intval($owner)
         );
         if ($itm) {
-            $item_id = q("select * from iconfig where cat = 'system' and k = 'BUILDBLOCK' and iid = %d limit 1",
+            $item_id = q(
+                "select * from iconfig where cat = 'system' and k = 'BUILDBLOCK' and iid = %d limit 1",
                 intval($itm[0]['id'])
             );
-            if ($item_id)
+            if ($item_id) {
                 $block_title = $item_id[0]['v'];
+            }
         } else {
             notice(t('Item not found') . EOL);
             return;
@@ -106,8 +111,9 @@ class Editblock extends Controller
         $mimetype = $itm[0]['mimetype'];
 
         $content = $itm[0]['body'];
-        if ($itm[0]['mimetype'] === 'text/markdown')
+        if ($itm[0]['mimetype'] === 'text/markdown') {
             $content = MarkdownSoap::unescape($itm[0]['body']);
+        }
 
 
         $rp = 'blocks/' . $channel['channel_address'];
@@ -150,7 +156,5 @@ class Editblock extends Controller
         ));
 
         return $o;
-
     }
-
 }

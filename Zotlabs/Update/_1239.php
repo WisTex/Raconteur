@@ -44,5 +44,4 @@ class _1239
         }
         return true;
     }
-
 }

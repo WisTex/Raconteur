@@ -34,14 +34,14 @@ class Site
         $siteinfo = ((x($_POST, 'siteinfo')) ? trim($_POST['siteinfo']) : '');
         $language = ((x($_POST, 'language')) ? notags(trim($_POST['language'])) : 'en');
         $theme = ((x($_POST, 'theme')) ? notags(trim($_POST['theme'])) : '');
-//		$theme_mobile			=	((x($_POST,'theme_mobile'))		? notags(trim($_POST['theme_mobile']))			: '');
-//		$site_channel			=	((x($_POST,'site_channel'))	? notags(trim($_POST['site_channel']))				: '');
+//      $theme_mobile           =   ((x($_POST,'theme_mobile'))     ? notags(trim($_POST['theme_mobile']))          : '');
+//      $site_channel           =   ((x($_POST,'site_channel')) ? notags(trim($_POST['site_channel']))              : '');
         $maximagesize = ((x($_POST, 'maximagesize')) ? intval(trim($_POST['maximagesize'])) : 0);
 
         $register_policy = ((x($_POST, 'register_policy')) ? intval(trim($_POST['register_policy'])) : 0);
         $minimum_age = ((x($_POST, 'minimum_age')) ? intval(trim($_POST['minimum_age'])) : 13);
         $access_policy = ((x($_POST, 'access_policy')) ? intval(trim($_POST['access_policy'])) : 0);
-        $invite_only = ((x($_POST, 'invite_only')) ? True : False);
+        $invite_only = ((x($_POST, 'invite_only')) ? true : false);
         $abandon_days = ((x($_POST, 'abandon_days')) ? intval(trim($_POST['abandon_days'])) : 0);
 
         $register_text = ((x($_POST, 'register_text')) ? notags(trim($_POST['register_text'])) : '');
@@ -56,14 +56,14 @@ class Site
         }
         $mirror_frontpage = ((x($_POST, 'mirror_frontpage')) ? intval(trim($_POST['mirror_frontpage'])) : 0);
         $directory_server = ((x($_POST, 'directory_server')) ? trim($_POST['directory_server']) : '');
-        $force_publish = ((x($_POST, 'publish_all')) ? True : False);
-        $open_pubstream = ((x($_POST, 'open_pubstream')) ? True : False);
+        $force_publish = ((x($_POST, 'publish_all')) ? true : false);
+        $open_pubstream = ((x($_POST, 'open_pubstream')) ? true : false);
         $public_stream_mode = ((x($_POST, 'public_stream_mode')) ? intval($_POST['public_stream_mode']) : PUBLIC_STREAM_NONE);
-        $animations = ((x($_POST, 'animations')) ? True : False);
-        $login_on_homepage = ((x($_POST, 'login_on_homepage')) ? True : False);
-        $enable_context_help = ((x($_POST, 'enable_context_help')) ? True : False);
+        $animations = ((x($_POST, 'animations')) ? true : false);
+        $login_on_homepage = ((x($_POST, 'login_on_homepage')) ? true : false);
+        $enable_context_help = ((x($_POST, 'enable_context_help')) ? true : false);
         $global_directory = ((x($_POST, 'directory_submit_url')) ? notags(trim($_POST['directory_submit_url'])) : '');
-        $no_community_page = !((x($_POST, 'no_community_page')) ? True : False);
+        $no_community_page = !((x($_POST, 'no_community_page')) ? true : false);
         $default_expire_days = ((array_key_exists('default_expire_days', $_POST)) ? intval($_POST['default_expire_days']) : 0);
         $active_expire_days = ((array_key_exists('active_expire_days', $_POST)) ? intval($_POST['active_expire_days']) : 7);
         $max_imported_follow = ((x($_POST, 'max_imported_follow')) ? intval(trim($_POST['max_imported_follow'])) : MAX_IMPORTED_FOLLOW);
@@ -72,7 +72,7 @@ class Site
         $from_email = ((array_key_exists('from_email', $_POST) && trim($_POST['from_email'])) ? trim($_POST['from_email']) : 'Administrator@' . App::get_hostname());
         $from_email_name = ((array_key_exists('from_email_name', $_POST) && trim($_POST['from_email_name'])) ? trim($_POST['from_email_name']) : System::get_site_name());
 
-        $verifyssl = ((x($_POST, 'verifyssl')) ? True : False);
+        $verifyssl = ((x($_POST, 'verifyssl')) ? true : false);
         $proxyuser = ((x($_POST, 'proxyuser')) ? notags(trim($_POST['proxyuser'])) : '');
         $proxy = ((x($_POST, 'proxy')) ? notags(trim($_POST['proxy'])) : '');
         $timeout = ((x($_POST, 'timeout')) ? intval(trim($_POST['timeout'])) : 60);
@@ -83,7 +83,7 @@ class Site
         $delivery_batch_count = ((x($_POST, 'delivery_batch_count') && $_POST['delivery_batch_count'] > 0) ? intval(trim($_POST['delivery_batch_count'])) : 3);
         $poll_interval = ((x($_POST, 'poll_interval')) ? intval(trim($_POST['poll_interval'])) : 0);
         $maxloadavg = ((x($_POST, 'maxloadavg')) ? intval(trim($_POST['maxloadavg'])) : 50);
-//		$feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
+//      $feed_contacts     = ((x($_POST,'feed_contacts'))    ? intval($_POST['feed_contacts'])    : 0);
         $ap_contacts = ((x($_POST, 'ap_contacts')) ? intval($_POST['ap_contacts']) : 0);
         $verify_email = ((x($_POST, 'verify_email')) ? 1 : 0);
         $imagick_path = ((x($_POST, 'imagick_path')) ? trim($_POST['imagick_path']) : '');
@@ -93,7 +93,7 @@ class Site
 
         $permissions_role = escape_tags(trim($_POST['permissions_role']));
 
-//		set_config('system', 'feed_contacts', $feed_contacts);
+//      set_config('system', 'feed_contacts', $feed_contacts);
         set_config('system', 'activitypub', $ap_contacts);
         set_config('system', 'delivery_interval', $delivery_interval);
         set_config('system', 'delivery_batch_count', $delivery_batch_count);
@@ -138,19 +138,23 @@ class Site
 
         // sync sitename and siteinfo updates to the system channel
 
-        q("update profile set about = '%s' where uid = %d and is_default = 1",
+        q(
+            "update profile set about = '%s' where uid = %d and is_default = 1",
             dbesc($siteinfo),
             intval($sys['channel_id'])
         );
-        q("update profile set fullname = '%s' where uid = %d and is_default = 1",
+        q(
+            "update profile set fullname = '%s' where uid = %d and is_default = 1",
             dbesc($sitename),
             intval($sys['channel_id'])
         );
-        q("update channel set channel_name = '%s' where channel_id  = %d",
+        q(
+            "update channel set channel_name = '%s' where channel_id  = %d",
             dbesc($sitename),
             intval($sys['channel_id'])
         );
-        q("update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
+        q(
+            "update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
             dbesc($sitename),
             dbesc(datetime_convert()),
             dbesc($sys['channel_hash'])
@@ -158,7 +162,7 @@ class Site
 
         set_config('system', 'language', $language);
         set_config('system', 'theme', $theme);
-        //	set_config('system','site_channel', $site_channel);
+        //  set_config('system','site_channel', $site_channel);
         set_config('system', 'maximagesize', $maximagesize);
 
         set_config('system', 'register_policy', $register_policy);
@@ -203,8 +207,9 @@ class Site
         $langs = glob('view/*/strings.php');
 
         if (is_array($langs) && count($langs)) {
-            if (!in_array('view/en/strings.php', $langs))
+            if (!in_array('view/en/strings.php', $langs)) {
                 $langs[] = 'view/en/';
+            }
             asort($langs);
             foreach ($langs as $l) {
                 $t = explode("/", $l);
@@ -228,14 +233,18 @@ class Site
                     continue;
                 }
 
-                if (file_exists($file . '/library'))
+                if (file_exists($file . '/library')) {
                     continue;
-                if (file_exists($file . '/mobile'))
+                }
+                if (file_exists($file . '/mobile')) {
                     $vars = t('mobile');
-                if (file_exists($file . '/experimental'))
+                }
+                if (file_exists($file . '/experimental')) {
                     $vars .= t('experimental');
-                if (file_exists($file . '/unsupported'))
+                }
+                if (file_exists($file . '/unsupported')) {
                     $vars .= t('unsupported');
+                }
                 if ($vars) {
                     $theme_choices[$f] = $f . ' (' . $vars . ')';
                     $theme_choices_mobile[$f] = $f . ' (' . $vars . ')';
@@ -254,7 +263,8 @@ class Site
         // avoid older redmatrix servers which don't have modern encryption
 
         if ($dirmode == DIRECTORY_MODE_NORMAL) {
-            $x = q("select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0",
+            $x = q(
+                "select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0",
                 intval(DIRECTORY_MODE_SECONDARY),
                 intval(DIRECTORY_MODE_PRIMARY),
                 dbesc($realm)
@@ -311,8 +321,8 @@ class Site
             '$siteinfo' => ['siteinfo', t('Site Information'), get_config('system', 'siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.")],
             '$language' => ['language', t("System language"), get_config('system', 'language', 'en'), "", $lang_choices],
             '$theme' => ['theme', t("System theme"), get_config('system', 'theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices],
-//			'$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
-//			'$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
+//          '$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
+//          '$site_channel'         => [ 'site_channel', t("Channel to use for this website's static pages"), get_config('system','site_channel'), t("Site Channel") ],
             '$ap_contacts' => ['ap_contacts', t('ActivityPub protocol'), get_config('system', 'activitypub', ACTIVITYPUB_ENABLED), t('Provides access to software supporting the ActivityPub protocol.')],
             '$maximagesize' => ['maximagesize', t("Maximum image size"), intval(get_config('system', 'maximagesize')), t("Maximum size in bytes of uploaded images. Default is 0, which means no limits.")],
             '$cache_images' => ['cache_images', t('Cache all public images'), intval(get_config('system', 'cache_images', 1)), t('If disabled, proxy non-SSL images, but do not store locally')],
@@ -366,5 +376,4 @@ class Site
             '$form_security_token' => get_form_security_token("admin_site"),
         ]);
     }
-
 }

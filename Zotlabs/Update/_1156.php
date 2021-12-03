@@ -13,7 +13,8 @@ class _1156
         if ($r3) {
             foreach ($r3 as $rr) {
                 if ($rr['convid']) {
-                    q("update mail set conv_guid = '%s' where id = %d",
+                    q(
+                        "update mail set conv_guid = '%s' where id = %d",
                         dbesc($rr['guid']),
                         intval($rr['id'])
                     );
@@ -21,10 +22,9 @@ class _1156
             }
         }
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

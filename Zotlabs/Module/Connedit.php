@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -21,7 +22,6 @@ use Sabre\VObject\Reader;
  * @brief In this file the connection-editor form is generated and evaluated.
  */
 
-
 require_once('include/socgraph.php');
 require_once('include/photos.php');
 
@@ -41,7 +41,8 @@ class Connedit extends Controller
         }
 
         if ((argc() >= 2) && intval(argv(1))) {
-            $r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
+            $r = q(
+                "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                 intval(local_channel()),
                 intval(argv(1))
@@ -77,7 +78,8 @@ class Connedit extends Controller
 
         $channel = App::get_channel();
 
-        $orig_record = q("SELECT * FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
+        $orig_record = q(
+            "SELECT * FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
             intval($contact_id),
             intval(local_channel())
         );
@@ -109,7 +111,8 @@ class Connedit extends Controller
         $profile_id = ((array_key_exists('profile_assign', $_POST)) ? $_POST['profile_assign'] : $orig_record['abook_profile']);
 
         if ($profile_id) {
-            $r = q("SELECT profile_guid FROM profile WHERE profile_guid = '%s' AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT profile_guid FROM profile WHERE profile_guid = '%s' AND uid = %d LIMIT 1",
                 dbesc($profile_id),
                 intval(local_channel())
             );
@@ -164,7 +167,6 @@ class Connedit extends Controller
         $new_friend = false;
 
         if (($_REQUEST['pending']) && intval($orig_record['abook_pending'])) {
-
             $new_friend = true;
 
             // @fixme it won't be common, but when you accept a new connection request
@@ -183,7 +185,8 @@ class Connedit extends Controller
 
         $abook_pending = (($new_friend) ? 0 : $orig_record['abook_pending']);
 
-        $r = q("UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
+        $r = q(
+            "UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
 			abook_incl = '%s', abook_excl = '%s', abook_alias = '%s'
 			where abook_id = %d AND abook_channel = %d",
             dbesc($profile_id),
@@ -227,7 +230,8 @@ class Connedit extends Controller
             // friends in general or this friend in particular aren't hidden)
             // and send out a new friend activity
 
-            $pr = q("select * from profile where uid = %d and is_default = 1 and hide_friends = 0",
+            $pr = q(
+                "select * from profile where uid = %d and is_default = 1 and hide_friends = 0",
                 intval($channel['channel_id'])
             );
             if (($pr) && (!intval($orig_record['abook_hidden'])) && (intval(get_pconfig($channel['channel_id'], 'system', 'post_newfriend')))) {
@@ -248,7 +252,6 @@ class Connedit extends Controller
                 $xarr['body'] .= "\n\n\n" . '[zrl=' . App::$poi['xchan_url'] . '][zmg=80x80]' . App::$poi['xchan_photo_m'] . '[/zmg][/zrl]';
 
                 post_activity_item($xarr);
-
             }
 
             // pull in a bit of content if there is any to pull in
@@ -257,7 +260,8 @@ class Connedit extends Controller
 
         // Refresh the structure in memory with the new data
 
-        $r = q("SELECT abook.*, xchan.*
+        $r = q(
+            "SELECT abook.*, xchan.*
 			FROM abook left join xchan on abook_xchan = xchan_hash
 			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
             intval(local_channel()),
@@ -279,7 +283,6 @@ class Connedit extends Controller
         }
 
         return;
-
     }
 
     /* @brief Clone connection
@@ -296,7 +299,8 @@ class Connedit extends Controller
 
         $channel = App::get_channel();
 
-        $r = q("SELECT abook.*, xchan.*
+        $r = q(
+            "SELECT abook.*, xchan.*
 			FROM abook left join xchan on abook_xchan = xchan_hash
 			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
             intval(local_channel()),
@@ -355,7 +359,6 @@ class Connedit extends Controller
         $o .= " }\n</script>\n";
 
         if (argc() == 3) {
-
             $contact_id = intval(argv(1));
             if (!$contact_id) {
                 return;
@@ -363,7 +366,8 @@ class Connedit extends Controller
 
             $cmd = argv(2);
 
-            $orig_record = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
+            $orig_record = q(
+                "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_id = %d AND abook_channel = %d AND abook_self = 0 LIMIT 1",
                 intval($contact_id),
                 intval(local_channel())
@@ -406,7 +410,8 @@ class Connedit extends Controller
 
 
             if ($cmd === 'resetphoto') {
-                q("update xchan set xchan_photo_date = '2001-01-01 00:00:00' where xchan_hash = '%s'",
+                q(
+                    "update xchan set xchan_photo_date = '2001-01-01 00:00:00' where xchan_hash = '%s'",
                     dbesc($orig_record['xchan_hash'])
                 );
                 $cmd = 'refresh';
@@ -444,7 +449,8 @@ class Connedit extends Controller
                             'block_type' => BLOCKTYPE_CHANNEL,
                             'block_comment' => t('Added by Connedit')
                         ]);
-                        $z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
+                        $z = q(
+                            "insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
                             intval(local_channel()),
                             dbesc($orig_record['abook_xchan'])
                         );
@@ -505,14 +511,14 @@ class Connedit extends Controller
         }
 
         if (App::$poi) {
-
             $abook_prev = 0;
             $abook_next = 0;
 
             $contact_id = App::$poi['abook_id'];
             $contact = App::$poi;
 
-            $cn = q("SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 order by xchan_name",
+            $cn = q(
+                "SELECT abook_id, xchan_name from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and xchan_deleted = 0 order by xchan_name",
                 intval(local_channel())
             );
 
@@ -645,14 +651,14 @@ class Connedit extends Controller
 
             $vctmp = (($vc) ? Reader::read($vc) : null);
             $vcard = (($vctmp) ? get_vcard_array($vctmp, $contact['abook_id']) : []);
-            if (!$vcard)
+            if (!$vcard) {
                 $vcard['fn'] = $contact['xchan_name'];
+            }
 
 
             $tpl = get_markup_template("abook_edit.tpl");
 
             if (Apps::system_app_installed(local_channel(), 'Friend Zoom')) {
-
                 $sections['affinity'] = [
                     'label' => t('Friend Zoom'),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/?f=&section=affinity',
@@ -693,7 +699,8 @@ class Connedit extends Controller
             $rating_val = 0;
             $rating_text = '';
 
-            $xl = q("select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 1",
+            $xl = q(
+                "select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 1",
                 dbesc($channel['channel_hash']),
                 dbesc($contact['xchan_hash'])
             );
@@ -726,22 +733,26 @@ class Connedit extends Controller
 
             $multiprofs = ((feature_enabled(local_channel(), 'multi_profiles')) ? true : false);
 
-            if ($slide && !$multiprofs)
+            if ($slide && !$multiprofs) {
                 $affinity = t('Set Friend Zoom');
+            }
 
-            if (!$slide && $multiprofs)
+            if (!$slide && $multiprofs) {
                 $affinity = t('Set Profile');
+            }
 
-            if ($slide && $multiprofs)
+            if ($slide && $multiprofs) {
                 $affinity = t('Set Friend Zoom & Profile');
+            }
 
 
             $theirs = get_abconfig(local_channel(), $contact['abook_xchan'], 'system', 'their_perms', EMPTY_STR);
 
             $their_perms = Permissions::FilledPerms(explode(',', $theirs));
             foreach ($global_perms as $k => $v) {
-                if (!array_key_exists($k, $their_perms))
+                if (!array_key_exists($k, $their_perms)) {
                     $their_perms[$k] = 1;
+                }
             }
 
             $my_perms = explode(',', get_abconfig(local_channel(), $contact['abook_xchan'], 'system', 'my_perms', EMPTY_STR));
@@ -753,8 +764,9 @@ class Connedit extends Controller
 
                 // For auto permissions (when $self is true) we don't want to look at existing
                 // permissions because they are enabled for the channel owner
-                if ((!$self) && ($existing[$k]))
+                if ((!$self) && ($existing[$k])) {
                     $thisperm = "1";
+                }
 
                 $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
             }
@@ -769,8 +781,9 @@ class Connedit extends Controller
             }
 
             $locstr = locations_by_netid($contact['xchan_hash']);
-            if (!$locstr)
+            if (!$locstr) {
                 $locstr = unpunify($contact['xchan_url']);
+            }
 
             $clone_warn = '';
             $clonable = (in_array($contact['xchan_network'], ['zot6', 'zot', 'rss']) ? true : false);
@@ -784,8 +797,9 @@ class Connedit extends Controller
             }
 
 
-            if (intval($contact['abook_not_here']) && $unclonable)
+            if (intval($contact['abook_not_here']) && $unclonable) {
                 $not_here = t('This connection is unreachable from this location. Location independence is not supported by their network.');
+            }
 
             $o .= replace_macros($tpl, [
                 '$header' => (($self) ? t('Connection Default Permissions') : sprintf(t('Connection: %s'), $contact['xchan_name']) . (($contact['abook_alias']) ? ' &lt;' . $contact['abook_alias'] . '&gt;' : '')),
@@ -879,7 +893,6 @@ class Connedit extends Controller
             call_hooks('contact_edit', $arr);
 
             return $arr['output'];
-
         }
     }
 }

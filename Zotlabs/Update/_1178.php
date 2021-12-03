@@ -28,17 +28,17 @@ class _1178
 
         if ($c2) {
             foreach ($c2 as $c) {
-                q("UPDATE abconfig SET chan = %d where id = %d",
+                q(
+                    "UPDATE abconfig SET chan = %d where id = %d",
                     intval($c['chan']),
                     intval($c['id'])
                 );
             }
         }
 
-        if ($r1)
+        if ($r1) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

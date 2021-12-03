@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 // Connection autocompleter for util/nsh
@@ -7,7 +8,6 @@ namespace Zotlabs\Module;
 // Returns as json a simply array containing the webfinger addresses of all your Nomad connections
 
 use Zotlabs\Web\Controller;
-
 
 class Connac extends Controller
 {
@@ -22,7 +22,8 @@ class Connac extends Controller
         }
 
 
-        $r = q("select xchan_addr from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and xchan_network = 'zot6'",
+        $r = q(
+            "select xchan_addr from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and xchan_network = 'zot6'",
             intval(local_channel())
         );
         if ($r) {

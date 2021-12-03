@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -11,9 +12,9 @@ class Hcard extends Controller
     public function init()
     {
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else {
+        } else {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
             return;
@@ -27,12 +28,14 @@ class Hcard extends Controller
         if ((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
             $which = $channel['channel_address'];
             $profile = argv(1);
-            $r = q("select profile_guid from profile where id = %d and uid = %d limit 1",
+            $r = q(
+                "select profile_guid from profile where id = %d and uid = %d limit 1",
                 intval($profile),
                 intval(local_channel())
             );
-            if (!$r)
+            if (!$r) {
                 $profile = '';
+            }
             $profile = $r[0]['profile_guid'];
         }
 
@@ -52,7 +55,8 @@ class Hcard extends Controller
 
 
         if (!$profile) {
-            $x = q("select channel_id as profile_uid from channel where channel_address = '%s' limit 1",
+            $x = q(
+                "select channel_id as profile_uid from channel where channel_address = '%s' limit 1",
                 dbesc(argv(1))
             );
             if ($x) {
@@ -61,8 +65,6 @@ class Hcard extends Controller
         }
 
         Libprofile::load($which, $profile);
-
-
     }
 
 
@@ -71,8 +73,5 @@ class Hcard extends Controller
 
         $x = new \Zotlabs\Widget\Profile();
         return $x->widget([]);
-
     }
-
-
 }

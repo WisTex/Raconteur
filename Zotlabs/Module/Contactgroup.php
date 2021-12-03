@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -33,7 +34,6 @@ class Contactgroup extends Controller
         }
 
         if ((argc() > 1) && (intval(argv(1)))) {
-
             $group = AccessList::by_id(local_channel(), argv(1));
 
             if (!$group) {

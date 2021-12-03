@@ -16,11 +16,9 @@ class _1084
 			`public_perm` TINYINT( 1 ) UNSIGNED NOT NULL
 ) ENGINE = MYISAM DEFAULT CHARSET = utf8");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

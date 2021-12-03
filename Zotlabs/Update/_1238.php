@@ -23,7 +23,6 @@ class _1238
 		  MODIFY block_id int(10) UNSIGNED NOT NULL AUTO_INCREMENT ");
 
         return (($r1 && $r2 && $r3) ? UPDATE_SUCCESS : UPDATE_FAILED);
-
     }
 
 
@@ -38,6 +37,4 @@ class _1238
 
         return false;
     }
-
-
 }

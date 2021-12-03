@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2016-2017 Hubzilla
  *
@@ -32,66 +33,70 @@ use Zotlabs\Lib\PermissionDescription;
  *
  * @covers Zotlabs\Lib\PermissionDescription
  */
-class PermissionDescriptionTest extends UnitTestCase {
+class PermissionDescriptionTest extends UnitTestCase
+{
+    use PHPMock;
 
-	use PHPMock;
+    public function testFromDescription()
+    {
+        $permDesc = PermissionDescription::fromDescription('test');
+        $permDesc2 = PermissionDescription::fromDescription('test');
+        $permDesc3 = PermissionDescription::fromDescription('test2');
 
-	public function testFromDescription() {
-		$permDesc = PermissionDescription::fromDescription('test');
-		$permDesc2 = PermissionDescription::fromDescription('test');
-		$permDesc3 = PermissionDescription::fromDescription('test2');
+        $this->assertEquals($permDesc, $permDesc2);
+        $this->assertNotEquals($permDesc, $permDesc3);
+    }
 
-		$this->assertEquals($permDesc, $permDesc2);
-		$this->assertNotEquals($permDesc, $permDesc3);
-	}
+    public function testFromStandalonePermission()
+    {
+        // Create a stub for global function t()
+        $t = $this->getFunctionMock('Zotlabs\Lib', 't');
+        $t->expects($this->atLeastOnce())->willReturnCallback(
+            function ($string) {
+                return $string;
+            }
+        );
+        // Create a mock for global function logger()
+        $this->getFunctionMock('Zotlabs\Lib', 'logger');
 
-	public function testFromStandalonePermission() {
-		// Create a stub for global function t()
-		$t = $this->getFunctionMock('Zotlabs\Lib', 't');
-		$t->expects($this->atLeastOnce())->willReturnCallback(
-			function ($string) {
-				return $string;
-			}
-		);
-		// Create a mock for global function logger()
-		$this->getFunctionMock('Zotlabs\Lib', 'logger');
+        $permDescUnknown = PermissionDescription::fromStandalonePermission(-1);
+        $permDescSelf = PermissionDescription::fromStandalonePermission(0);
 
-		$permDescUnknown = PermissionDescription::fromStandalonePermission(-1);
-		$permDescSelf = PermissionDescription::fromStandalonePermission(0);
+        $this->assertNull($permDescUnknown);
+        $this->assertNotNull($permDescSelf);
+    }
 
-		$this->assertNull($permDescUnknown);
-		$this->assertNotNull($permDescSelf);
-	}
+    public function testFromGlobalPermission()
+    {
+        //$permDesc = PermissionDescription::fromGlobalPermission('view_profile');
 
-	public function testFromGlobalPermission() {
-		//$permDesc = PermissionDescription::fromGlobalPermission('view_profile');
+        $this->markTestIncomplete(
+            'The method fromGlobalPermission() is not yet testable ...'
+        );
+    }
 
-		$this->markTestIncomplete(
-			'The method fromGlobalPermission() is not yet testable ...'
-		);
-	}
+    public function testGetPermissionDescription()
+    {
+        // Create a stub for global function t()
+        $t = $this->getFunctionMock('Zotlabs\Lib', 't');
+        $t->expects($this->atLeastOnce())->willReturnCallback(
+            function ($string) {
+                return $string;
+            }
+        );
+        // Create a mock for global function logger()
+        $this->getFunctionMock('Zotlabs\Lib', 'logger');
 
-	public function testGetPermissionDescription() {
-		// Create a stub for global function t()
-		$t = $this->getFunctionMock('Zotlabs\Lib', 't');
-		$t->expects($this->atLeastOnce())->willReturnCallback(
-				function ($string) {
-					return $string;
-				}
-		);
-		// Create a mock for global function logger()
-		$this->getFunctionMock('Zotlabs\Lib', 'logger');
+        // Create a stub for the PermissionDescription class
+        $stub = $this->createMock(PermissionDescription::class);
+        $stub->method('get_permission_description')
+            ->will($this->returnArgument(0));
 
-		// Create a stub for the PermissionDescription class
-		$stub = $this->createMock(PermissionDescription::class);
-		$stub->method('get_permission_description')
-			->will($this->returnArgument(0));
+        $permDescSelf = PermissionDescription::fromStandalonePermission(0);
+        $this->assertInstanceOf(PermissionDescription::class, $permDescSelf);
+        $this->assertEquals($permDescSelf->get_permission_description(), 'Only me');
 
-		$permDescSelf = PermissionDescription::fromStandalonePermission(0);
-		$this->assertInstanceOf(PermissionDescription::class, $permDescSelf);
-		$this->assertEquals($permDescSelf->get_permission_description(), 'Only me');
-
-		$permDescPublic = PermissionDescription::fromStandalonePermission(PERMS_PUBLIC);
-		$this->assertEquals($permDescPublic->get_permission_description(), 'Public');
-	}
+        $permDescPublic = PermissionDescription::fromStandalonePermission(PERMS_PUBLIC);
+        $this->assertEquals($permDescPublic->get_permission_description(), 'Public');
+    }
 }

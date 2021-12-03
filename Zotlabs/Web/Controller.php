@@ -21,6 +21,4 @@ class Controller
     public function get()
     {
     }
-
 }
-

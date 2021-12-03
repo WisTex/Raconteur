@@ -1,10 +1,10 @@
 <?php
-namespace Zotlabs\Module; 
+
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
-
 
 class Locs extends Controller
 {
@@ -12,16 +12,17 @@ class Locs extends Controller
     public function post()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
 
         if ($_REQUEST['primary']) {
             $hubloc_id = intval($_REQUEST['primary']);
             if ($hubloc_id) {
-
-                $r = q("select hubloc_id from hubloc where hubloc_id = %d and hubloc_hash = '%s' limit 1",
+                $r = q(
+                    "select hubloc_id from hubloc where hubloc_id = %d and hubloc_hash = '%s' limit 1",
                     intval($hubloc_id),
                     dbesc($channel['channel_hash'])
                 );
@@ -31,15 +32,18 @@ class Locs extends Controller
                     return;
                 }
 
-                $r = q("update hubloc set hubloc_primary = 0 where hubloc_primary = 1 and hubloc_hash = '%s' ",
+                $r = q(
+                    "update hubloc set hubloc_primary = 0 where hubloc_primary = 1 and hubloc_hash = '%s' ",
                     dbesc($channel['channel_hash'])
                 );
-                $r = q("update hubloc set hubloc_primary = 1 where hubloc_id = %d and hubloc_hash = '%s'",
+                $r = q(
+                    "update hubloc set hubloc_primary = 1 where hubloc_id = %d and hubloc_hash = '%s'",
                     intval($hubloc_id),
                     dbesc($channel['channel_hash'])
                 );
 
-                $x = q("select * from hubloc where hubloc_id = %d and hubloc_hash = '%s' ",
+                $x = q(
+                    "select * from hubloc where hubloc_id = %d and hubloc_hash = '%s' ",
                     intval($hubloc_id),
                     dbesc($channel['channel_hash'])
                 );
@@ -57,7 +61,8 @@ class Locs extends Controller
             $hubloc_id = intval($_REQUEST['drop']);
 
             if ($hubloc_id) {
-                $r = q("select * from hubloc where hubloc_id = %d and hubloc_url != '%s' and hubloc_hash = '%s' limit 1",
+                $r = q(
+                    "select * from hubloc where hubloc_id = %d and hubloc_url != '%s' and hubloc_hash = '%s' limit 1",
                     intval($hubloc_id),
                     dbesc(z_root()),
                     dbesc($channel['channel_hash'])
@@ -68,7 +73,8 @@ class Locs extends Controller
                     return;
                 }
                 if (intval($r[0]['hubloc_primary'])) {
-                    $x = q("select hubloc_id from hubloc where hubloc_primary = 1 and hubloc_hash = '%s'",
+                    $x = q(
+                        "select hubloc_id from hubloc where hubloc_primary = 1 and hubloc_hash = '%s'",
                         dbesc($channel['channel_hash'])
                     );
                     if (!$x) {
@@ -81,7 +87,8 @@ class Locs extends Controller
                     }
                 }
 
-                $r = q("update hubloc set hubloc_deleted = 1 where hubloc_id = %d and hubloc_hash = '%s'",
+                $r = q(
+                    "update hubloc set hubloc_deleted = 1 where hubloc_id = %d and hubloc_hash = '%s'",
                     intval($hubloc_id),
                     dbesc($channel['channel_hash'])
                 );
@@ -110,7 +117,8 @@ class Locs extends Controller
         }
 
 
-        $r = q("select * from hubloc where hubloc_hash = '%s'",
+        $r = q(
+            "select * from hubloc where hubloc_hash = '%s'",
             dbesc($channel['channel_hash'])
         );
 
@@ -136,5 +144,4 @@ class Locs extends Controller
 
         return $o;
     }
-
 }

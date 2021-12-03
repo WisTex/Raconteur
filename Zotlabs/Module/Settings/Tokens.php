@@ -27,15 +27,18 @@ class Tokens
             }
             $name = trim(escape_tags($_POST['name']));
             $token = trim($_POST['token']);
-            if ((!$name) || (!$token))
+            if ((!$name) || (!$token)) {
                 $token_errs++;
-            if (trim($_POST['expires']))
+            }
+            if (trim($_POST['expires'])) {
                 $expires = datetime_convert(date_default_timezone_get(), 'UTC', $_POST['expires']);
-            else
+            } else {
                 $expires = NULL_DATE;
+            }
             $max_atokens = service_class_fetch(local_channel(), 'access_tokens');
             if ($max_atokens) {
-                $r = q("select count(atoken_id) as total where atoken_uid = %d",
+                $r = q(
+                    "select count(atoken_id) as total where atoken_uid = %d",
                     intval(local_channel())
                 );
                 if ($r && intval($r[0]['total']) >= $max_tokens) {
@@ -49,7 +52,8 @@ class Tokens
             return;
         }
 
-        $old_atok = q("select * from atoken where atoken_uid = %d and atoken_name = '%s'",
+        $old_atok = q(
+            "select * from atoken where atoken_uid = %d and atoken_name = '%s'",
             intval($channel['channel_id']),
             dbesc($name)
         );
@@ -59,7 +63,8 @@ class Tokens
         }
 
         if ($atoken_id) {
-            $r = q("update atoken set atoken_name = '%s', atoken_token = '%s', atoken_expires = '%s' 
+            $r = q(
+                "update atoken set atoken_name = '%s', atoken_token = '%s', atoken_expires = '%s' 
 				where atoken_id = %d and atoken_uid = %d",
                 dbesc($name),
                 dbesc($token),
@@ -68,7 +73,8 @@ class Tokens
                 intval($channel['channel_id'])
             );
         } else {
-            $r = q("insert into atoken ( atoken_guid, atoken_aid, atoken_uid, atoken_name, atoken_token, atoken_expires )
+            $r = q(
+                "insert into atoken ( atoken_guid, atoken_aid, atoken_uid, atoken_name, atoken_token, atoken_expires )
 				values ( '%s', %d, %d, '%s', '%s', '%s' ) ",
                 dbesc($atoken_guid),
                 intval($channel['channel_account_id']),
@@ -78,7 +84,8 @@ class Tokens
                 dbesc($expires)
             );
         }
-        $atok = q("select * from atoken where atoken_uid = %d and atoken_name = '%s'",
+        $atok = q(
+            "select * from atoken where atoken_uid = %d and atoken_name = '%s'",
             intval($channel['channel_id']),
             dbesc($name)
         );
@@ -87,7 +94,8 @@ class Tokens
             atoken_create_xchan($xchan);
             $atoken_xchan = $xchan['xchan_hash'];
             if ($old_atok && $old_xchan) {
-                $r = q("update xchan set xchan_name = '%s' where xchan_hash = '%s'",
+                $r = q(
+                    "update xchan set xchan_name = '%s' where xchan_hash = '%s'",
                     dbesc($xchan['xchan_name']),
                     dbesc($old_xchan['xchan_hash'])
                 );
@@ -101,20 +109,18 @@ class Tokens
         if ($all_perms) {
             foreach ($all_perms as $perm => $desc) {
                 if (array_key_exists('perms_' . $perm, $_POST)) {
-                    if ($p)
+                    if ($p) {
                         $p .= ',';
+                    }
                     $p .= $perm;
                 }
             }
             set_abconfig(local_channel(), $atoken_xchan, 'system', 'my_perms', $p);
             if ($old_atok) {
-
-
             }
         }
 
         if (!$atoken_id) {
-
             // If this is a new token, create a new abook record
 
             $closeness = get_pconfig($uid, 'system', 'new_abook_closeness', 80);
@@ -147,7 +153,8 @@ class Tokens
                 }
             }
 
-            $r = q("SELECT abook.*, xchan.*
+            $r = q(
+                "SELECT abook.*, xchan.*
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
                 intval($channel['channel_id']),
@@ -170,9 +177,11 @@ class Tokens
                 $clone['abconfig'] = $abconfig;
             }
 
-            Libsync::build_sync_packet($channel['channel_id'],
+            Libsync::build_sync_packet(
+                $channel['channel_id'],
                 ['abook' => [$clone], 'atoken' => $atok],
-                true);
+                true
+            );
         }
 
         info(t('Token saved.') . EOL);
@@ -191,7 +200,8 @@ class Tokens
         if (argc() > 2) {
             $id = argv(2);
 
-            $atoken = q("select * from atoken where atoken_id = %d and atoken_uid = %d",
+            $atoken = q(
+                "select * from atoken where atoken_id = %d and atoken_uid = %d",
                 intval($id),
                 intval(local_channel())
             );
@@ -204,7 +214,8 @@ class Tokens
             if ($atoken && argc() > 3 && argv(3) === 'drop') {
                 $atoken['deleted'] = true;
 
-                $r = q("SELECT abook.*, xchan.*
+                $r = q(
+                    "SELECT abook.*, xchan.*
 					FROM abook left join xchan on abook_xchan = xchan_hash
 					WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
                     intval($channel['channel_id']),
@@ -228,16 +239,19 @@ class Tokens
                 }
 
                 atoken_delete($id);
-                Libsync::build_sync_packet($channel['channel_id'],
+                Libsync::build_sync_packet(
+                    $channel['channel_id'],
                     ['abook' => [$clone], 'atoken' => [$atoken]],
-                    true);
+                    true
+                );
 
                 $atoken = null;
                 $atoken_xchan = '';
             }
         }
 
-        $t = q("select * from atoken where atoken_uid = %d",
+        $t = q(
+            "select * from atoken where atoken_uid = %d",
             intval(local_channel())
         );
 
@@ -253,8 +267,9 @@ class Tokens
 
         $their_perms = Permissions::FilledPerms(explode(',', $theirs));
         foreach ($global_perms as $k => $v) {
-            if (!array_key_exists($k, $their_perms))
+            if (!array_key_exists($k, $their_perms)) {
                 $their_perms[$k] = 1;
+            }
         }
 
         $my_perms = explode(',', get_abconfig(local_channel(), $atoken_xchan, 'system', 'my_perms', EMPTY_STR));
@@ -266,8 +281,9 @@ class Tokens
 
             // For auto permissions (when $self is true) we don't want to look at existing
             // permissions because they are enabled for the channel owner
-            if ((!$self) && ($existing[$k]))
+            if ((!$self) && ($existing[$k])) {
                 $thisperm = "1";
+            }
 
             $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
         }
@@ -299,5 +315,4 @@ class Tokens
         ));
         return $o;
     }
-
 }

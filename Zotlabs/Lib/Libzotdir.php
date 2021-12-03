@@ -39,8 +39,9 @@ class Libzotdir
             }
         }
 
-        if (!$isadir)
+        if (!$isadir) {
             set_config('system', 'directory_server', '');
+        }
     }
 
 
@@ -48,10 +49,11 @@ class Libzotdir
     {
 
 
-        if ($observer)
+        if ($observer) {
             $ret = get_xconfig($observer, 'directory', $setting);
-        else
+        } else {
             $ret = ((array_key_exists($setting, $_SESSION)) ? intval($_SESSION[$setting]) : false);
+        }
 
         if ($ret === false) {
             $ret = get_config('directory', $setting);
@@ -60,8 +62,9 @@ class Libzotdir
             }
         }
 
-        if ($setting === 'globaldir' && intval(get_config('system', 'localdir_hide')))
+        if ($setting === 'globaldir' && intval(get_config('system', 'localdir_hide'))) {
             $ret = 1;
+        }
 
         return $ret;
     }
@@ -116,7 +119,7 @@ class Libzotdir
             '$forumsurl' => $forumsurl,
             '$safemode' => array('safemode', t('Safe Mode'), $safe_mode, '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
             '$pubforums' => array('pubforums', t('Groups Only'), (($pubforums == 1) ? true : false), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 1 : 0)\''),
-//			'$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
+//          '$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
             '$hide_local' => $hide_local,
             '$globaldir' => array('globaldir', t('This Website Only'), 1 - intval($globaldir), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
             '$activedir' => array('activedir', t('Recently Updated'), intval($activedir), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''),
@@ -153,7 +156,8 @@ class Libzotdir
             if (is_array($zf) && array_path_exists('signature/signer', $zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
                 $xc = Libzot::import_xchan($zf['data'], 0, $ud);
             } else {
-                q("update updates set ud_last = '%s' where ud_addr = '%s'",
+                q(
+                    "update updates set ud_last = '%s' where ud_addr = '%s'",
                     dbesc(datetime_convert()),
                     dbesc($ud['ud_addr'])
                 );
@@ -178,7 +182,8 @@ class Libzotdir
 
         logger('local_dir_update: uid: ' . $uid, LOGGER_DEBUG);
 
-        $p = q("select channel_hash, channel_address, channel_timezone, profile.* from profile left join channel on channel_id = uid where uid = %d and is_default = 1",
+        $p = q(
+            "select channel_hash, channel_address, channel_timezone, profile.* from profile left join channel on channel_id = uid where uid = %d and is_default = 1",
             intval($uid)
         );
 
@@ -190,8 +195,9 @@ class Libzotdir
 
             $profile['description'] = $p[0]['pdesc'];
             $profile['birthday'] = $p[0]['dob'];
-            if ($age = age($p[0]['dob'], $p[0]['channel_timezone'], ''))
+            if ($age = age($p[0]['dob'], $p[0]['channel_timezone'], '')) {
                 $profile['age'] = $age;
+            }
 
             $profile['gender'] = $p[0]['gender'];
             $profile['marital'] = $p[0]['marital'];
@@ -207,25 +213,31 @@ class Libzotdir
             if ($p[0]['keywords']) {
                 $tags = [];
                 $k = explode(' ', $p[0]['keywords']);
-                if ($k)
-                    foreach ($k as $kk)
-                        if (trim($kk))
+                if ($k) {
+                    foreach ($k as $kk) {
+                        if (trim($kk)) {
                             $tags[] = trim($kk);
+                        }
+                    }
+                }
 
-                if ($tags)
+                if ($tags) {
                     $profile['keywords'] = $tags;
+                }
             }
 
             $hidden = (1 - intval($p[0]['publish']));
 
             // logger('hidden: ' . $hidden);
 
-            $r = q("select xchan_hidden from xchan where xchan_hash = '%s' limit 1",
+            $r = q(
+                "select xchan_hidden from xchan where xchan_hash = '%s' limit 1",
                 dbesc($p[0]['channel_hash'])
             );
 
             if (intval($r[0]['xchan_hidden']) != $hidden) {
-                $r = q("update xchan set xchan_hidden = %d where xchan_hash = '%s'",
+                $r = q(
+                    "update xchan set xchan_hidden = %d where xchan_hash = '%s'",
                     intval($hidden),
                     dbesc($p[0]['channel_hash'])
                 );
@@ -240,14 +252,15 @@ class Libzotdir
                 self::import_directory_profile($hash, $arr['profile'], $address, 0);
             } else {
                 // they may have made it private
-                $r = q("delete from xprof where xprof_hash = '%s'",
+                $r = q(
+                    "delete from xprof where xprof_hash = '%s'",
                     dbesc($hash)
                 );
-                $r = q("delete from xtag where xtag_hash = '%s'",
+                $r = q(
+                    "delete from xtag where xtag_hash = '%s'",
                     dbesc($hash)
                 );
             }
-
         }
 
         $ud_hash = random_string() . '@' . App::get_hostname();
@@ -270,8 +283,9 @@ class Libzotdir
     {
 
         logger('import_directory_profile', LOGGER_DEBUG);
-        if (!$hash)
+        if (!$hash) {
             return false;
+        }
 
 
         $maxlen = get_max_import_size();
@@ -315,19 +329,23 @@ class Libzotdir
 
 
         if (in_arrayi('nsfw', $clean) || in_arrayi('adult', $clean)) {
-            q("update xchan set xchan_selfcensored = 1 where xchan_hash = '%s'",
+            q(
+                "update xchan set xchan_selfcensored = 1 where xchan_hash = '%s'",
                 dbesc($hash)
             );
         }
 
-        $r = q("select * from xprof where xprof_hash = '%s' limit 1",
+        $r = q(
+            "select * from xprof where xprof_hash = '%s' limit 1",
             dbesc($hash)
         );
 
-        if ($arr['xprof_age'] > 150)
+        if ($arr['xprof_age'] > 150) {
             $arr['xprof_age'] = 150;
-        if ($arr['xprof_age'] < 0)
+        }
+        if ($arr['xprof_age'] < 0) {
             $arr['xprof_age'] = 0;
+        }
 
         if ($r) {
             $update = false;
@@ -339,7 +357,8 @@ class Libzotdir
                 }
             }
             if ($update) {
-                q("update xprof set
+                q(
+                    "update xprof set
 					xprof_desc = '%s',
 					xprof_dob = '%s',
 					xprof_age = %d,
@@ -377,7 +396,8 @@ class Libzotdir
         } else {
             $update = true;
             logger('New profile');
-            q("insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords, xprof_pronouns) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
+            q(
+                "insert into xprof (xprof_hash, xprof_desc, xprof_dob, xprof_age, xprof_gender, xprof_marital, xprof_sexual, xprof_locale, xprof_region, xprof_postcode, xprof_country, xprof_about, xprof_homepage, xprof_hometown, xprof_keywords, xprof_pronouns) values ('%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s') ",
                 dbesc($arr['xprof_hash']),
                 dbesc($arr['xprof_desc']),
                 dbesc($arr['xprof_dob']),
@@ -417,7 +437,8 @@ class Libzotdir
             self::update_modtime($arr['xprof_hash'], new_uuid(), $addr, $ud_flags);
         }
 
-        q("update xchan set xchan_updated = '%s' where xchan_hash = '%s'",
+        q(
+            "update xchan set xchan_updated = '%s' where xchan_hash = '%s'",
             dbesc(datetime_convert()),
             dbesc($arr['xprof_hash'])
         );
@@ -436,13 +457,15 @@ class Libzotdir
     {
 
         $existing = [];
-        $r = q("select * from xtag where xtag_hash = '%s' and xtag_flags = 0",
+        $r = q(
+            "select * from xtag where xtag_hash = '%s' and xtag_flags = 0",
             dbesc($hash)
         );
 
         if ($r) {
-            foreach ($r as $rr)
+            foreach ($r as $rr) {
                 $existing[] = $rr['xtag_term'];
+            }
         }
 
         $clean = [];
@@ -453,15 +476,18 @@ class Libzotdir
         }
 
         foreach ($existing as $x) {
-            if (!in_array($x, $clean))
-                $r = q("delete from xtag where xtag_hash = '%s' and xtag_term = '%s' and xtag_flags = 0",
+            if (!in_array($x, $clean)) {
+                $r = q(
+                    "delete from xtag where xtag_hash = '%s' and xtag_term = '%s' and xtag_flags = 0",
                     dbesc($hash),
                     dbesc($x)
                 );
+            }
         }
         foreach ($clean as $x) {
             if (!in_array($x, $existing)) {
-                $r = q("insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', 0 )",
+                $r = q(
+                    "insert into xtag ( xtag_hash, xtag_term, xtag_flags) values ( '%s' ,'%s', 0 )",
                     dbesc($hash),
                     dbesc($x)
                 );
@@ -484,11 +510,13 @@ class Libzotdir
 
         $dirmode = intval(get_config('system', 'directory_mode'));
 
-        if ($dirmode == DIRECTORY_MODE_NORMAL)
+        if ($dirmode == DIRECTORY_MODE_NORMAL) {
             return;
+        }
 
         if ($flags) {
-            q("insert into updates (ud_hash, ud_guid, ud_date, ud_flags, ud_addr ) values ( '%s', '%s', '%s', %d, '%s' )",
+            q(
+                "insert into updates (ud_hash, ud_guid, ud_date, ud_flags, ud_addr ) values ( '%s', '%s', '%s', %d, '%s' )",
                 dbesc($hash),
                 dbesc($guid),
                 dbesc(datetime_convert()),
@@ -496,13 +524,12 @@ class Libzotdir
                 dbesc($addr)
             );
         } else {
-            q("update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
+            q(
+                "update updates set ud_flags = ( ud_flags | %d ) where ud_addr = '%s' and (ud_flags & %d) = 0 ",
                 intval(UPDATE_FLAGS_UPDATED),
                 dbesc($addr),
                 intval(UPDATE_FLAGS_UPDATED)
             );
         }
     }
-
-
 }

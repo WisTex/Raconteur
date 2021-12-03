@@ -35,7 +35,8 @@ class Inspect extends Controller
         }
 
         if ($item_type === 'item') {
-            $r = q("select * from item where uuid = '%s' or id = %d ",
+            $r = q(
+                "select * from item where uuid = '%s' or id = %d ",
                 dbesc($item_id),
                 intval($item_id)
             );
@@ -65,13 +66,12 @@ class Inspect extends Controller
                 $output .= '<pre>' . escape_tags(json_encode(Activity::encode_activity($item, true), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL . EOL;
 
                 $output .= '<pre>' . escape_tags(json_encode(json_decode(get_iconfig($item['id'], 'activitypub', 'rawmsg'), true), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL . EOL;
-
             }
-
         }
 
         if ($item_type === 'xchan') {
-            $items = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_hash = '%s' or hubloc_addr = '%s' ",
+            $items = q(
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_hash = '%s' or hubloc_addr = '%s' ",
                 dbesc($item_id),
                 dbesc($item_id)
             );
@@ -88,6 +88,4 @@ class Inspect extends Controller
 
         return $output;
     }
-
-
 }

@@ -26,21 +26,22 @@ class Moderate extends Controller
 
         //show all items
         if (argc() == 1) {
-            $r = q("select item.id as item_id, item.* from item where item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
+            $r = q(
+                "select item.id as item_id, item.* from item where item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
                 intval(local_channel()),
                 intval(ITEM_MODERATED)
             );
             if (!$r) {
                 info(t('No entries.') . EOL);
             }
-
         }
 
         // show a single item
         if (argc() == 2) {
             $post_id = unpack_link_id(escape_tags(argv(1)));
 
-            $r = q("select item.id as item_id, item.* from item where item.mid = '%s' and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
+            $r = q(
+                "select item.id as item_id, item.* from item where item.mid = '%s' and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
                 dbesc($post_id),
                 intval(local_channel()),
                 intval(ITEM_MODERATED)
@@ -49,12 +50,14 @@ class Moderate extends Controller
 
         if (argc() > 2) {
             $post_id = intval(argv(1));
-            if (!$post_id)
+            if (!$post_id) {
                 goaway(z_root() . '/moderate');
+            }
 
             $action = argv(2);
 
-            $r = q("select * from item where uid = %d and id = %d and item_blocked = %d limit 1",
+            $r = q(
+                "select * from item where uid = %d and id = %d and item_blocked = %d limit 1",
                 intval(local_channel()),
                 intval($post_id),
                 intval(ITEM_MODERATED)
@@ -64,7 +67,8 @@ class Moderate extends Controller
                 $item = $r[0];
 
                 if ($action === 'approve') {
-                    q("update item set item_blocked = 0 where uid = %d and id = %d",
+                    q(
+                        "update item set item_blocked = 0 where uid = %d and id = %d",
                         intval(local_channel()),
                         intval($post_id)
                     );
@@ -81,7 +85,8 @@ class Moderate extends Controller
 
                 // refetch the item after changes have been made
 
-                $r = q("select * from item where id = %d",
+                $r = q(
+                    "select * from item where id = %d",
                     intval($post_id)
                 );
                 if ($r) {
@@ -118,7 +123,5 @@ class Moderate extends Controller
         $o = conversation($items, 'moderate', false, 'traditional');
         $o .= alt_pager(count($items));
         return $o;
-
     }
-
 }

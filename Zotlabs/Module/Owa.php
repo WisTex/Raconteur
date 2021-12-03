@@ -11,9 +11,9 @@ use Zotlabs\Web\Controller;
  * See spec/OpenWebAuth/Home.md
  * Requests to this endpoint should be signed using HTTP Signatures
  * using the 'Authorization: Signature' authentication method
- * If the signature verifies a token is returned. 
+ * If the signature verifies a token is returned.
  *
- * This token may be exchanged for an authenticated cookie. 
+ * This token may be exchanged for an authenticated cookie.
  */
 class Owa extends Controller
 {
@@ -33,7 +33,8 @@ class Owa extends Controller
             if ($sigblock) {
                 $keyId = $sigblock['keyId'];
                 if ($keyId) {
-                    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
+                    $r = q(
+                        "select * from hubloc left join xchan on hubloc_hash = xchan_hash 
 						where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and xchan_pubkey != '' ",
                         dbesc(str_replace('acct:', '', $keyId)),
                         dbesc($keyId)
@@ -41,7 +42,8 @@ class Owa extends Controller
                     if (!$r) {
                         $found = discover_by_webbie(str_replace('acct:', '', $keyId));
                         if ($found) {
-                            $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash 
+                            $r = q(
+                                "select * from hubloc left join xchan on hubloc_hash = xchan_hash 
 								where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and xchan_pubkey != '' ",
                                 dbesc(str_replace('acct:', '', $keyId)),
                                 dbesc($keyId)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Widget;
 
 use App;
@@ -67,10 +68,5 @@ class Newmember
         ]);
 
         return $o;
-
     }
-
 }
-
-
-	

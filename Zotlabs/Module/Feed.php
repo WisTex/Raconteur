@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -29,7 +30,6 @@ class Feed extends Controller
         }
 
         if (argc() > 1) {
-
             if (observer_prohibited(true)) {
                 killme();
             }
@@ -45,7 +45,5 @@ class Feed extends Controller
 
             killme();
         }
-
     }
-
 }

@@ -12,8 +12,5 @@ ADD `app_page` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD INDEX ( `app_price` )");
 
         return UPDATE_SUCCESS;
-
     }
-
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -7,7 +8,6 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Daemon\Run;
-
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -26,8 +26,9 @@ class Calendar extends Controller
 
         logger('post: ' . print_r($_REQUEST, true), LOGGER_DATA);
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $event_id = ((x($_POST, 'event_id')) ? intval($_POST['event_id']) : 0);
         $event_hash = ((x($_POST, 'event_hash')) ? $_POST['event_hash'] : '');
@@ -108,7 +109,8 @@ class Calendar extends Controller
         $acl = new AccessControl(false);
 
         if ($event_id) {
-            $x = q("select * from event where id = %d and uid = %d limit 1",
+            $x = q(
+                "select * from event where id = %d and uid = %d limit 1",
                 intval($event_id),
                 intval(local_channel())
             );
@@ -212,13 +214,15 @@ class Calendar extends Controller
         $item_id = event_store_item($datarray, $event);
 
         if ($item_id) {
-            $r = q("select * from item where id = %d",
+            $r = q(
+                "select * from item where id = %d",
                 intval($item_id)
             );
             if ($r) {
                 xchan_query($r);
                 $sync_item = fetch_post_tags($r);
-                $z = q("select * from event where event_hash = '%s' and uid = %d limit 1",
+                $z = q(
+                    "select * from event where event_hash = '%s' and uid = %d limit 1",
                     dbesc($r[0]['resource_id']),
                     intval($channel['channel_id'])
                 );
@@ -230,7 +234,6 @@ class Calendar extends Controller
 
         Run::Summon(['Notifier', 'event', $item_id]);
         killme();
-
     }
 
 
@@ -242,7 +245,8 @@ class Calendar extends Controller
 
             $sql_extra = permissions_sql(local_channel());
 
-            $r = q("select * from event where event_hash = '%s' $sql_extra limit 1",
+            $r = q(
+                "select * from event where event_hash = '%s' $sql_extra limit 1",
                 dbesc($event_id)
             );
             if ($r) {
@@ -262,14 +266,16 @@ class Calendar extends Controller
         }
 
         if ((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
-            $r = q("update event set dismissed = 1 where id = %d and uid = %d",
+            $r = q(
+                "update event set dismissed = 1 where id = %d and uid = %d",
                 intval(argv(2)),
                 intval(local_channel())
             );
         }
 
         if ((argc() > 2) && (argv(1) === 'unignore') && intval(argv(2))) {
-            $r = q("update event set dismissed = 0 where id = %d and uid = %d",
+            $r = q(
+                "update event set dismissed = 0 where id = %d and uid = %d",
                 intval(argv(2)),
                 intval(local_channel())
             );
@@ -309,10 +315,10 @@ class Calendar extends Controller
         }
 
         if ($mode == 'view') {
-
             /* edit/create form */
             if ($event_id) {
-                $r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                     dbesc($event_id),
                     intval(local_channel())
                 );
@@ -339,14 +345,16 @@ class Calendar extends Controller
             $adjust_finish = datetime_convert('UTC', date_default_timezone_get(), $finish);
 
             if (x($_GET, 'id')) {
-                $r = q("SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan, item.id as item_id
+                $r = q(
+                    "SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan, item.id as item_id
 	                                from event left join item on item.resource_id = event.event_hash
 					where item.resource_type = 'event' and event.uid = %d and event.id = %d limit 1",
                     intval(local_channel()),
                     intval($_GET['id'])
                 );
             } elseif ($export) {
-                $r = q("SELECT * from event where uid = %d",
+                $r = q(
+                    "SELECT * from event where uid = %d",
                     intval(local_channel())
                 );
             } else {
@@ -355,7 +363,8 @@ class Calendar extends Controller
                 // Noting this for now - it will need to be fixed here and in Friendica.
                 // Ultimately the finish date shouldn't be involved in the query.
 
-                $r = q("SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan, item.id as item_id
+                $r = q(
+                    "SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan, item.id as item_id
 					from event left join item on event.event_hash = item.resource_id 
 					where item.resource_type = 'event' and event.uid = %d and event.uid = item.uid $ignored 
 					AND (( event.adjust = 0 AND ( event.dtend >= '%s' or event.nofinish = 1 ) AND event.dtstart <= '%s' ) 
@@ -366,7 +375,6 @@ class Calendar extends Controller
                     dbesc($adjust_start),
                     dbesc($adjust_finish)
                 );
-
             }
 
             if ($r && !$export) {
@@ -379,7 +387,6 @@ class Calendar extends Controller
             $events = [];
 
             if ($r) {
-
                 foreach ($r as $rr) {
                     $start = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], 'c') : datetime_convert('UTC', 'UTC', $rr['dtstart'], 'c'));
                     if ($rr['nofinish']) {
@@ -390,8 +397,9 @@ class Calendar extends Controller
                         // give a fake end to birthdays so they get crammed into a
                         // single day on the calendar
 
-                        if ($rr['etype'] === 'birthday')
+                        if ($rr['etype'] === 'birthday') {
                             $end = null;
+                        }
                     }
 
                     $catsenabled = Apps::system_app_installed($x['profile_uid'], 'Categories');
@@ -405,10 +413,12 @@ class Calendar extends Controller
                     $allDay = false;
 
                     // allDay event rules
-                    if (!strpos($start, 'T') && !strpos($end, 'T'))
+                    if (!strpos($start, 'T') && !strpos($end, 'T')) {
                         $allDay = true;
-                    if (strpos($start, 'T00:00:00') && strpos($end, 'T00:00:00'))
+                    }
+                    if (strpos($start, 'T00:00:00') && strpos($end, 'T00:00:00')) {
                         $allDay = true;
+                    }
 
                     $edit = ((local_channel() && $rr['author_xchan'] == get_observer_hash()) ? array(z_root() . '/events/' . $rr['event_hash'] . '?expandform=1', t('Edit event'), '', '') : false);
 
@@ -452,7 +462,8 @@ class Calendar extends Controller
 
 
         if ($mode === 'drop' && $event_id) {
-            $r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                 dbesc($event_id),
                 intval(local_channel())
             );
@@ -460,12 +471,14 @@ class Calendar extends Controller
             $sync_event = $r[0];
 
             if ($r) {
-                $r = q("delete from event where event_hash = '%s' and uid = %d",
+                $r = q(
+                    "delete from event where event_hash = '%s' and uid = %d",
                     dbesc($event_id),
                     intval(local_channel())
                 );
                 if ($r) {
-                    $r = q("update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
+                    $r = q(
+                        "update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
                         dbesc($event_id),
                         intval(local_channel())
                     );
@@ -477,7 +490,5 @@ class Calendar extends Controller
                 killme();
             }
         }
-
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Thumbs;
 
-
 class Video
 {
 
@@ -66,4 +65,3 @@ class Video
         @unlink($tmpfile);
     }
 }
-

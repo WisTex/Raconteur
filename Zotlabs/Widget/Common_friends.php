@@ -2,8 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
-
 use App;
 
 class Common_friends
@@ -12,32 +10,36 @@ class Common_friends
     public function widget($arr)
     {
 
-        if ((!App::$profile['profile_uid'])
-            || (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_contacts'))) {
+        if (
+            (!App::$profile['profile_uid'])
+            || (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_contacts'))
+        ) {
             return '';
         }
 
         return self::common_friends_visitor_widget(App::$profile['profile_uid']);
-
     }
 
     public static function common_friends_visitor_widget($profile_uid, $cnt = 25)
     {
 
-        if (local_channel() == $profile_uid)
+        if (local_channel() == $profile_uid) {
             return;
+        }
 
         $observer_hash = get_observer_hash();
 
-        if ((!$observer_hash) || (!perm_is_allowed($profile_uid, $observer_hash, 'view_contacts')))
+        if ((!$observer_hash) || (!perm_is_allowed($profile_uid, $observer_hash, 'view_contacts'))) {
             return;
+        }
 
         require_once('include/socgraph.php');
 
         $t = count_common_friends($profile_uid, $observer_hash);
 
-        if (!$t)
+        if (!$t) {
             return;
+        }
 
         $r = common_friends($profile_uid, $observer_hash, 0, $cnt, true);
 
@@ -50,7 +52,5 @@ class Common_friends
             '$more' => sprintf(t('View all %d common connections'), $t),
             '$items' => $r
         ));
-
     }
-
 }

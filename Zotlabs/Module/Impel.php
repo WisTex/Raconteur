@@ -1,5 +1,8 @@
 <?php
-namespace Zotlabs\Module; use App;
+
+namespace Zotlabs\Module;
+
+use App;
 use URLify;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Web\Controller;
@@ -19,19 +22,22 @@ class Impel extends Controller
 
         $ret = array('success' => false);
 
-        if (!local_channel())
+        if (!local_channel()) {
             json_return_and_die($ret);
+        }
 
         logger('impel: ' . print_r($_REQUEST, true), LOGGER_DATA);
 
         $elm = $_REQUEST['element'];
         $x = base64url_decode($elm);
-        if (!$x)
+        if (!$x) {
             json_return_and_die($ret);
+        }
 
         $j = json_decode($x, true);
-        if (!$j)
+        if (!$j) {
             json_return_and_die($ret);
+        }
 
         // logger('element: ' . print_r($j,true));
 
@@ -76,18 +82,21 @@ class Impel extends Controller
             $m['menu_channel_id'] = local_channel();
             $m['menu_name'] = $j['pagetitle'];
             $m['menu_desc'] = $j['desc'];
-            if ($j['created'])
+            if ($j['created']) {
                 $m['menu_created'] = datetime_convert($j['created']);
-            if ($j['edited'])
+            }
+            if ($j['edited']) {
                 $m['menu_edited'] = datetime_convert($j['edited']);
+            }
 
             $m['menu_flags'] = 0;
             if ($j['flags']) {
-                if (in_array('bookmark', $j['flags']))
+                if (in_array('bookmark', $j['flags'])) {
                     $m['menu_flags'] |= MENU_BOOKMARK;
-                if (in_array('system', $j['flags']))
+                }
+                if (in_array('system', $j['flags'])) {
                     $m['menu_flags'] |= MENU_SYSTEM;
-
+                }
             }
 
             $menu_id = menu_create($m);
@@ -106,17 +115,21 @@ class Impel extends Controller
                         $mitem['mitem_order'] = intval($it['order']);
                         if (is_array($it['flags'])) {
                             $mitem['mitem_flags'] = 0;
-                            if (in_array('zid', $it['flags']))
+                            if (in_array('zid', $it['flags'])) {
                                 $mitem['mitem_flags'] |= MENU_ITEM_ZID;
-                            if (in_array('new-window', $it['flags']))
+                            }
+                            if (in_array('new-window', $it['flags'])) {
                                 $mitem['mitem_flags'] |= MENU_ITEM_NEWWIN;
-                            if (in_array('chatroom', $it['flags']))
+                            }
+                            if (in_array('chatroom', $it['flags'])) {
                                 $mitem['mitem_flags'] |= MENU_ITEM_CHATROOM;
+                            }
                         }
                         menu_add_item($menu_id, local_channel(), $mitem);
                     }
                     if ($j['edited']) {
-                        $x = q("update menu set menu_edited = '%s' where menu_id = %d and menu_channel_id = %d",
+                        $x = q(
+                            "update menu set menu_edited = '%s' where menu_id = %d and menu_channel_id = %d",
                             dbesc(datetime_convert('UTC', 'UTC', $j['edited'])),
                             intval($menu_id),
                             intval(local_channel())
@@ -156,7 +169,8 @@ class Impel extends Controller
 
             $execflag = ((intval($channel['channel_id']) == intval(local_channel()) && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
 
-            $i = q("select id, edited, item_deleted from item where mid = '%s' and uid = %d limit 1",
+            $i = q(
+                "select id, edited, item_deleted from item where mid = '%s' and uid = %d limit 1",
                 dbesc($arr['mid']),
                 intval(local_channel())
             );
@@ -166,17 +180,20 @@ class Impel extends Controller
             if ($i) {
                 $arr['id'] = $i[0]['id'];
                 // don't update if it has the same timestamp as the original
-                if ($arr['edited'] > $i[0]['edited'])
+                if ($arr['edited'] > $i[0]['edited']) {
                     $x = item_store_update($arr, $execflag);
+                }
             } else {
                 if (($i) && (intval($i[0]['item_deleted']))) {
                     // was partially deleted already, finish it off
-                    q("delete from item where mid = '%s' and uid = %d",
+                    q(
+                        "delete from item where mid = '%s' and uid = %d",
                         dbesc($arr['mid']),
                         intval(local_channel())
                     );
-                } else
+                } else {
                     $x = item_store($arr, $execflag);
+                }
             }
 
             if ($x && $x['success']) {
@@ -194,7 +211,5 @@ class Impel extends Controller
         //??? should perhaps return ret?
 
         json_return_and_die(true);
-
     }
-
 }

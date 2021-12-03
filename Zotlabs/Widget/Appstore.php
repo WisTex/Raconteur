@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
 class Appstore
 {
 

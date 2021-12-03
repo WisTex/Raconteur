@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -22,7 +23,6 @@ class Photo extends Controller
 
 
         if (ActivityStreams::is_as_request()) {
-
             $sigdata = HTTPSig::verify(EMPTY_STR);
             if ($sigdata['portable_id'] && $sigdata['header_valid']) {
                 $portable_id = $sigdata['portable_id'];
@@ -45,7 +45,8 @@ class Photo extends Controller
                 logger('bear: ' . $bear, LOGGER_DEBUG);
             }
 
-            $r = q("select * from item where resource_type = 'photo' and resource_id = '%s' limit 1",
+            $r = q(
+                "select * from item where resource_type = 'photo' and resource_id = '%s' limit 1",
                 dbesc(argv(1))
             );
             if ($r) {
@@ -59,7 +60,6 @@ class Photo extends Controller
             $obj = json_decode($r[0]['obj'], true);
 
             as_return_and_die($obj, $channel);
-
         }
 
         $prvcachecontrol = false;
@@ -122,7 +122,8 @@ class Photo extends Controller
             $mimetype = $d['mimetype'];
 
             if (!$data) {
-                $r = q("SELECT * FROM photo WHERE imgscale = %d AND uid = %d AND photo_usage = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM photo WHERE imgscale = %d AND uid = %d AND photo_usage = %d LIMIT 1",
                     intval($resolution),
                     intval($uid),
                     intval(PHOTO_PROFILE)
@@ -142,7 +143,6 @@ class Photo extends Controller
                 $mimetype = 'image/png';
             }
         } else {
-
             $bear = Activity::token_from_request();
             if ($bear) {
                 logger('bear: ' . $bear, LOGGER_DEBUG);
@@ -184,12 +184,12 @@ class Photo extends Controller
                 }
             }
 
-            $r = q("SELECT uid, photo_usage FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
+            $r = q(
+                "SELECT uid, photo_usage FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
                 dbesc($photo),
                 intval($resolution)
             );
             if ($r) {
-
                 $allowed = (-1);
 
                 if (intval($r[0]['photo_usage'])) {
@@ -213,7 +213,8 @@ class Photo extends Controller
                 $channel = channelx_by_n($r[0]['uid']);
 
                 // Now we'll see if we can access the photo
-                $e = q("SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d $sql_extra LIMIT 1",
+                $e = q(
+                    "SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d $sql_extra LIMIT 1",
                     dbesc($photo),
                     intval($resolution)
                 );
@@ -227,8 +228,9 @@ class Photo extends Controller
                         $streaming = $data;
                     }
 
-                    if ($e[0]['allow_cid'] != '' || $e[0]['allow_gid'] != '' || $e[0]['deny_gid'] != '' || $e[0]['deny_gid'] != '')
+                    if ($e[0]['allow_cid'] != '' || $e[0]['allow_gid'] != '' || $e[0]['deny_gid'] != '' || $e[0]['deny_gid'] != '') {
                         $prvcachecontrol = 'no-store, no-cache, must-revalidate';
+                    }
                 } else {
                     if (!$allowed) {
                         http_status_exit(403, 'forbidden');
@@ -275,13 +277,11 @@ class Photo extends Controller
         header("Content-type: " . $mimetype);
 
         if ($prvcachecontrol) {
-
             // it is a private photo that they have permission to view.
             // tell the browser and infrastructure caches not to cache it,
             // in case permissions change before the next access.
 
             header("Cache-Control: no-store, no-cache, must-revalidate");
-
         } else {
             // The cache default for public photos is 1 day to provide a privacy trade-off,
             // as somebody reducing photo permissions on a photo that is already
@@ -301,7 +301,6 @@ class Photo extends Controller
             // much lower in the event that infrastructure caching is present.
             $smaxage = intval($cache / 12);
             header('Cache-Control: s-maxage=' . $smaxage . '; max-age=' . $cache . ';');
-
         }
 
         // If it's a file resource, stream it.
@@ -323,5 +322,4 @@ class Photo extends Controller
         }
         killme();
     }
-
 }

@@ -41,6 +41,4 @@ class _1196
 
         return UPDATE_FAILED;
     }
-
-
 }

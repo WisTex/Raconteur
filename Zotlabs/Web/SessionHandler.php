@@ -27,7 +27,8 @@ class SessionHandler implements SessionHandlerInterface
             if ($r) {
                 return $r[0]['sess_data'];
             } else {
-                q("INSERT INTO session (sess_data, sid, expire) values ('%s', '%s', '%s')",
+                q(
+                    "INSERT INTO session (sess_data, sid, expire) values ('%s', '%s', '%s')",
                     dbesc(''),
                     dbesc($id),
                     dbesc(time() + 1800)
@@ -58,15 +59,17 @@ class SessionHandler implements SessionHandlerInterface
         $expire = time() + 1800;
 
         if ($_SESSION) {
-            if (array_key_exists('remember_me', $_SESSION) && intval($_SESSION['remember_me']))
+            if (array_key_exists('remember_me', $_SESSION) && intval($_SESSION['remember_me'])) {
                 $expire = time() + (60 * 60 * 24 * 365);
-            elseif (local_channel())
+            } elseif (local_channel()) {
                 $expire = time() + (60 * 60 * 24 * 3);
-            elseif (remote_channel())
+            } elseif (remote_channel()) {
                 $expire = time() + (60 * 60 * 24 * 1);
+            }
         }
 
-        q("UPDATE session
+        q(
+            "UPDATE session
 			SET sess_data = '%s', expire = '%s' WHERE sid = '%s'",
             dbesc($data),
             dbesc($expire),
@@ -95,5 +98,4 @@ class SessionHandler implements SessionHandlerInterface
         q("DELETE FROM session WHERE expire < %d", dbesc(time()));
         return true;
     }
-
 }

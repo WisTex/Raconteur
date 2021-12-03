@@ -13,5 +13,4 @@ class Chatroom_members
             '$header' => t('Chat Members')
         ));
     }
-
 }

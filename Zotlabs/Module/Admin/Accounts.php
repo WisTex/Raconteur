@@ -31,7 +31,8 @@ class Accounts
             for ($i = 0; $i < count($users); $i++) {
                 // if account is blocked remove blocked bit-flag, otherwise add blocked bit-flag
                 $op = ($blocked[$i]) ? '& ~' : '| ';
-                q("UPDATE account SET account_flags = (account_flags $op %d) WHERE account_id = %d",
+                q(
+                    "UPDATE account SET account_flags = (account_flags $op %d) WHERE account_id = %d",
                     intval(ACCOUNT_BLOCKED),
                     intval($users[$i])
                 );
@@ -78,7 +79,8 @@ class Accounts
     {
         if (argc() > 2) {
             $uid = argv(3);
-            $account = q("SELECT * FROM account WHERE account_id = %d",
+            $account = q(
+                "SELECT * FROM account WHERE account_id = %d",
                 intval($uid)
             );
 
@@ -97,7 +99,8 @@ class Accounts
                     notice(sprintf(t("Account '%s' deleted"), $account[0]['account_email']) . EOL);
                     break;
                 case 'block':
-                    q("UPDATE account SET account_flags = ( account_flags | %d ) WHERE account_id = %d",
+                    q(
+                        "UPDATE account SET account_flags = ( account_flags | %d ) WHERE account_id = %d",
                         intval(ACCOUNT_BLOCKED),
                         intval($uid)
                     );
@@ -105,7 +108,8 @@ class Accounts
                     notice(sprintf(t("Account '%s' blocked"), $account[0]['account_email']) . EOL);
                     break;
                 case 'unblock':
-                    q("UPDATE account SET account_flags = ( account_flags & ~ %d ) WHERE account_id = %d",
+                    q(
+                        "UPDATE account SET account_flags = ( account_flags & ~ %d ) WHERE account_id = %d",
                         intval(ACCOUNT_BLOCKED),
                         intval($uid)
                     );
@@ -118,7 +122,8 @@ class Accounts
         }
 
         /* get pending */
-        $pending = q("SELECT account.*, register.hash from account left join register on account_id = register.uid where (account_flags & %d ) != 0 ",
+        $pending = q(
+            "SELECT account.*, register.hash from account left join register on account_id = register.uid where (account_flags & %d ) != 0 ",
             intval(ACCOUNT_PENDING)
         );
 
@@ -141,7 +146,8 @@ class Accounts
         $base = z_root() . '/admin/accounts?f=';
         $odir = (($dir === 'asc') ? '0' : '1');
 
-        $users = q("SELECT account_id , account_email, account_lastlog, account_created, account_expires, account_service_class, ( account_flags & %d ) > 0 as blocked, 
+        $users = q(
+            "SELECT account_id , account_email, account_lastlog, account_created, account_expires, account_service_class, ( account_flags & %d ) > 0 as blocked, 
 			(SELECT %s FROM channel as ch WHERE ch.channel_account_id = ac.account_id and ch.channel_removed = 0 ) as channels FROM account as ac 
 			where true $serviceclass and account_flags != %d order by $key $dir limit %d offset %d ",
             intval(ACCOUNT_BLOCKED),

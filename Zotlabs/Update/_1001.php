@@ -19,10 +19,9 @@ class _1001
         $r2 = q("alter table `verify` add index (`channel`), add index (`type`), add index (`token`),
 		add index (`meta`), add index (`created`)");
 
-        if ($r && $r2)
+        if ($r && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

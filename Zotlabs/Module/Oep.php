@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -22,33 +23,36 @@ class Oep extends Controller
             $url = $_REQUEST['url'];
         }
 
-        if (!$url)
+        if (!$url) {
             http_status_exit(404, 'Not found');
+        }
 
         $maxwidth = $_REQUEST['maxwidth'];
         $maxheight = $_REQUEST['maxheight'];
         $format = $_REQUEST['format'];
-        if ($format && $format !== 'json')
+        if ($format && $format !== 'json') {
             http_status_exit(501, 'Not implemented');
+        }
 
-        if (fnmatch('*/photos/*/album/*', $url))
+        if (fnmatch('*/photos/*/album/*', $url)) {
             $arr = $this->oep_album_reply($_REQUEST);
-        elseif (fnmatch('*/photos/*/image/*', $url))
+        } elseif (fnmatch('*/photos/*/image/*', $url)) {
             $arr = $this->oep_photo_reply($_REQUEST);
-        elseif (fnmatch('*/photos*', $url))
+        } elseif (fnmatch('*/photos*', $url)) {
             $arr = $this->oep_phototop_reply($_REQUEST);
-        elseif (fnmatch('*/display/*', $url))
+        } elseif (fnmatch('*/display/*', $url)) {
             $arr = $this->oep_display_reply($_REQUEST);
-        elseif (fnmatch('*/channel/*mid=*', $url))
+        } elseif (fnmatch('*/channel/*mid=*', $url)) {
             $arr = $this->oep_mid_reply($_REQUEST);
-        elseif (fnmatch('*/channel*', $url))
+        } elseif (fnmatch('*/channel*', $url)) {
             $arr = $this->oep_profile_reply($_REQUEST);
-        elseif (fnmatch('*/profile/*', $url))
+        } elseif (fnmatch('*/profile/*', $url)) {
             $arr = $this->oep_profile_reply($_REQUEST);
-        elseif (fnmatch('*/cards/*', $url))
+        } elseif (fnmatch('*/cards/*', $url)) {
             $arr = $this->oep_cards_reply($_REQUEST);
-        elseif (fnmatch('*/articles/*', $url))
+        } elseif (fnmatch('*/articles/*', $url)) {
             $arr = $this->oep_articles_reply($_REQUEST);
+        }
 
         if ($arr) {
             if ($html) {
@@ -64,7 +68,6 @@ class Oep extends Controller
         }
 
         http_status_exit(404, 'Not found');
-
     }
 
     public function oep_display_reply($args)
@@ -83,31 +86,37 @@ class Oep extends Controller
 
         $item_normal = item_normal();
 
-        $p = q("select * from item where mid like '%s' limit 1",
+        $p = q(
+            "select * from item where mid like '%s' limit 1",
             dbesc($res . '%')
         );
 
-        if (!$p)
+        if (!$p) {
             return;
+        }
 
         $c = channelx_by_n($p[0]['uid']);
 
 
-        if (!($c && $res))
+        if (!($c && $res)) {
             return;
+        }
 
-        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_stream'))
+        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_stream')) {
             return;
+        }
 
         $sql_extra = item_permissions_sql($c['channel_id']);
 
-        $p = q("select * from item where mid like '%s' and uid = %d $sql_extra $item_normal limit 1",
+        $p = q(
+            "select * from item where mid like '%s' and uid = %d $sql_extra $item_normal limit 1",
             dbesc($res . '%'),
             intval($c['channel_id'])
         );
 
-        if (!$p)
+        if (!$p) {
             return;
+        }
 
         xchan_query($p, true);
         $p = fetch_post_tags($p, true);
@@ -129,8 +138,9 @@ class Oep extends Controller
             "' auth='" . (($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
             "' posted='" . $p[0]['created'] .
             "' message_id='" . $p[0]['mid'] . "']";
-        if ($p[0]['title'])
+        if ($p[0]['title']) {
             $o .= '[b]' . $p[0]['title'] . '[/b]' . "\r\n";
+        }
 
         $o .= $x;
         $o .= "[/share]";
@@ -149,7 +159,6 @@ class Oep extends Controller
         $ret['height'] = $h;
 
         return $ret;
-
     }
 
 
@@ -165,21 +174,25 @@ class Oep extends Controller
             $nick = $matches[2];
             $res = $matches[3];
         }
-        if (!($nick && $res))
+        if (!($nick && $res)) {
             return $ret;
+        }
 
         $channel = channelx_by_nick($nick);
 
-        if (!$channel)
+        if (!$channel) {
             return $ret;
+        }
 
 
-        if (!perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_pages'))
+        if (!perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_pages')) {
             return $ret;
+        }
 
         $sql_extra = item_permissions_sql($channel['channel_id'], get_observer_hash());
 
-        $r = q("select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.v = '%s' limit 1",
+        $r = q(
+            "select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.v = '%s' limit 1",
             dbesc($res)
         );
         if ($r) {
@@ -188,7 +201,8 @@ class Oep extends Controller
             return $ret;
         }
 
-        $r = q("select * from item 
+        $r = q(
+            "select * from item 
 			where item.uid = %d and item_type = %d 
 			$sql_extra order by item.created desc",
             intval($channel['channel_id']),
@@ -215,8 +229,9 @@ class Oep extends Controller
             "' auth='" . (($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
             "' posted='" . $p[0]['created'] .
             "' message_id='" . $p[0]['mid'] . "']";
-        if ($p[0]['title'])
+        if ($p[0]['title']) {
             $o .= '[b]' . $p[0]['title'] . '[/b]' . "\r\n";
+        }
 
         $o .= $x;
         $o .= "[/share]";
@@ -235,7 +250,6 @@ class Oep extends Controller
         $ret['height'] = $h;
 
         return $ret;
-
     }
 
     public function oep_articles_reply($args)
@@ -250,21 +264,25 @@ class Oep extends Controller
             $nick = $matches[2];
             $res = $matches[3];
         }
-        if (!($nick && $res))
+        if (!($nick && $res)) {
             return $ret;
+        }
 
         $channel = channelx_by_nick($nick);
 
-        if (!$channel)
+        if (!$channel) {
             return $ret;
+        }
 
 
-        if (!perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_pages'))
+        if (!perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_pages')) {
             return $ret;
+        }
 
         $sql_extra = item_permissions_sql($channel['channel_id'], get_observer_hash());
 
-        $r = q("select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.v = '%s' limit 1",
+        $r = q(
+            "select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.v = '%s' limit 1",
             dbesc($res)
         );
         if ($r) {
@@ -273,7 +291,8 @@ class Oep extends Controller
             return $ret;
         }
 
-        $r = q("select * from item 
+        $r = q(
+            "select * from item 
 			where item.uid = %d and item_type = %d 
 			$sql_extra order by item.created desc",
             intval($channel['channel_id']),
@@ -300,8 +319,9 @@ class Oep extends Controller
             "' auth='" . (($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
             "' posted='" . $p[0]['created'] .
             "' message_id='" . $p[0]['mid'] . "']";
-        if ($p[0]['title'])
+        if ($p[0]['title']) {
             $o .= '[b]' . $p[0]['title'] . '[/b]' . "\r\n";
+        }
 
         $o .= $x;
         $o .= "[/share]";
@@ -320,7 +340,6 @@ class Oep extends Controller
         $ret['height'] = $h;
 
         return $ret;
-
     }
 
 
@@ -337,26 +356,32 @@ class Oep extends Controller
             $res = $matches[5];
         }
 
-        if (!($chn && $res))
+        if (!($chn && $res)) {
             return;
-        $c = q("select * from channel where channel_address = '%s' limit 1",
+        }
+        $c = q(
+            "select * from channel where channel_address = '%s' limit 1",
             dbesc($chn)
         );
 
-        if (!$c)
+        if (!$c) {
             return;
+        }
 
-        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_stream'))
+        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_stream')) {
             return;
+        }
 
         $sql_extra = item_permissions_sql($c[0]['channel_id']);
 
-        $p = q("select * from item where mid = '%s' and uid = %d $sql_extra limit 1",
+        $p = q(
+            "select * from item where mid = '%s' and uid = %d $sql_extra limit 1",
             dbesc($res),
             intval($c[0]['channel_id'])
         );
-        if (!$p)
+        if (!$p) {
             return;
+        }
 
         xchan_query($p, true);
         $p = fetch_post_tags($p, true);
@@ -377,8 +402,9 @@ class Oep extends Controller
             "' auth='" . (($p[0]['author']['network'] === 'zot6') ? 'true' : 'false') .
             "' posted='" . $p[0]['created'] .
             "' message_id='" . $p[0]['mid'] . "']";
-        if ($p[0]['title'])
+        if ($p[0]['title']) {
             $o .= '[b]' . $p[0]['title'] . '[/b]' . "\r\n";
+        }
         $o .= $x;
         $o .= "[/share]";
         $o = bbcode($o);
@@ -396,7 +422,6 @@ class Oep extends Controller
         $ret['height'] = $h;
 
         return $ret;
-
     }
 
     public function oep_profile_reply($args)
@@ -411,13 +436,15 @@ class Oep extends Controller
             $chn = $matches[3];
         }
 
-        if (!$chn)
+        if (!$chn) {
             return;
+        }
 
         $c = channelx_by_nick($chn);
 
-        if (!$c)
+        if (!$c) {
             return;
+        }
 
 
         $maxwidth = intval($args['maxwidth']);
@@ -445,7 +472,6 @@ class Oep extends Controller
         $ret['html'] = get_zcard_embed($c, get_observer_hash(), array('width' => $width, 'height' => $height));
 
         return $ret;
-
     }
 
     public function oep_album_reply($args)
@@ -461,30 +487,37 @@ class Oep extends Controller
             $res = basename($url);
         }
 
-        if (!($chn && $res))
+        if (!($chn && $res)) {
             return;
-        $c = q("select * from channel where channel_address = '%s' limit 1",
+        }
+        $c = q(
+            "select * from channel where channel_address = '%s' limit 1",
             dbesc($chn)
         );
 
-        if (!$c)
+        if (!$c) {
             return;
+        }
 
-        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_files'))
+        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_files')) {
             return;
+        }
 
         $sql_extra = permissions_sql($c[0]['channel_id']);
 
-        $p = q("select resource_id from photo where album = '%s' and uid = %d and imgscale = 0 $sql_extra order by created desc limit 1",
+        $p = q(
+            "select resource_id from photo where album = '%s' and uid = %d and imgscale = 0 $sql_extra order by created desc limit 1",
             dbesc($res),
             intval($c[0]['channel_id'])
         );
-        if (!$p)
+        if (!$p) {
             return;
+        }
 
         $res = $p[0]['resource_id'];
 
-        $r = q("select height, width, imgscale, resource_id from photo where uid = %d and resource_id = '%s' $sql_extra order by imgscale asc",
+        $r = q(
+            "select height, width, imgscale, resource_id from photo where uid = %d and resource_id = '%s' $sql_extra order by imgscale asc",
             intval($c[0]['channel_id']),
             dbesc($res)
         );
@@ -492,10 +525,12 @@ class Oep extends Controller
         if ($r) {
             foreach ($r as $rr) {
                 $foundres = false;
-                if ($maxheight && $rr['height'] > $maxheight)
+                if ($maxheight && $rr['height'] > $maxheight) {
                     continue;
-                if ($maxwidth && $rr['width'] > $maxwidth)
+                }
+                if ($maxwidth && $rr['width'] > $maxwidth) {
                     continue;
+                }
                 $foundres = true;
                 break;
             }
@@ -506,11 +541,8 @@ class Oep extends Controller
                 $ret['thumbnail_width'] = $rr['width'];
                 $ret['thumbnail_height'] = $rr['height'];
             }
-
-
         }
         return $ret;
-
     }
 
 
@@ -526,29 +558,36 @@ class Oep extends Controller
             $chn = $matches[3];
         }
 
-        if (!$chn)
+        if (!$chn) {
             return;
-        $c = q("select * from channel where channel_address = '%s' limit 1",
+        }
+        $c = q(
+            "select * from channel where channel_address = '%s' limit 1",
             dbesc($chn)
         );
 
-        if (!$c)
+        if (!$c) {
             return;
+        }
 
-        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_files'))
+        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_files')) {
             return;
+        }
 
         $sql_extra = permissions_sql($c[0]['channel_id']);
 
-        $p = q("select resource_id from photo where uid = %d and imgscale = 0 $sql_extra order by created desc limit 1",
+        $p = q(
+            "select resource_id from photo where uid = %d and imgscale = 0 $sql_extra order by created desc limit 1",
             intval($c[0]['channel_id'])
         );
-        if (!$p)
+        if (!$p) {
             return;
+        }
 
         $res = $p[0]['resource_id'];
 
-        $r = q("select height, width, imgscale, resource_id from photo where uid = %d and resource_id = '%s' $sql_extra order by imgscale asc",
+        $r = q(
+            "select height, width, imgscale, resource_id from photo where uid = %d and resource_id = '%s' $sql_extra order by imgscale asc",
             intval($c[0]['channel_id']),
             dbesc($res)
         );
@@ -556,10 +595,12 @@ class Oep extends Controller
         if ($r) {
             foreach ($r as $rr) {
                 $foundres = false;
-                if ($maxheight && $rr['height'] > $maxheight)
+                if ($maxheight && $rr['height'] > $maxheight) {
                     continue;
-                if ($maxwidth && $rr['width'] > $maxwidth)
+                }
+                if ($maxwidth && $rr['width'] > $maxwidth) {
                     continue;
+                }
                 $foundres = true;
                 break;
             }
@@ -570,11 +611,8 @@ class Oep extends Controller
                 $ret['thumbnail_width'] = $rr['width'];
                 $ret['thumbnail_height'] = $rr['height'];
             }
-
-
         }
         return $ret;
-
     }
 
 
@@ -591,22 +629,27 @@ class Oep extends Controller
             $res = basename($url);
         }
 
-        if (!($chn && $res))
+        if (!($chn && $res)) {
             return;
-        $c = q("select * from channel where channel_address = '%s' limit 1",
+        }
+        $c = q(
+            "select * from channel where channel_address = '%s' limit 1",
             dbesc($chn)
         );
 
-        if (!$c)
+        if (!$c) {
             return;
+        }
 
-        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_files'))
+        if (!perm_is_allowed($c[0]['channel_id'], get_observer_hash(), 'view_files')) {
             return;
+        }
 
         $sql_extra = permissions_sql($c[0]['channel_id']);
 
 
-        $r = q("select height, width, imgscale, resource_id from photo where uid = %d and resource_id = '%s' $sql_extra order by imgscale asc",
+        $r = q(
+            "select height, width, imgscale, resource_id from photo where uid = %d and resource_id = '%s' $sql_extra order by imgscale asc",
             intval($c[0]['channel_id']),
             dbesc($res)
         );
@@ -614,10 +657,12 @@ class Oep extends Controller
         if ($r) {
             foreach ($r as $rr) {
                 $foundres = false;
-                if ($maxheight && $rr['height'] > $maxheight)
+                if ($maxheight && $rr['height'] > $maxheight) {
                     continue;
-                if ($maxwidth && $rr['width'] > $maxwidth)
+                }
+                if ($maxwidth && $rr['width'] > $maxwidth) {
                     continue;
+                }
                 $foundres = true;
                 break;
             }
@@ -628,10 +673,7 @@ class Oep extends Controller
                 $ret['thumbnail_width'] = $rr['width'];
                 $ret['thumbnail_height'] = $rr['height'];
             }
-
-
         }
         return $ret;
-
     }
 }

@@ -2,13 +2,11 @@
 
 namespace Zotlabs\Module;
 
-
 use App;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Libsync;
-
 
 /**
  * @file Zotlabs/Module/Thing.php
@@ -25,8 +23,9 @@ class Thing extends Controller
     public function init()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
 
@@ -67,8 +66,9 @@ class Thing extends Controller
          */
 
         if (!$translated_verb) {
-            if (is_site_admin())
+            if (is_site_admin()) {
                 $translated_verb = $verb;
+            }
         }
 
         /*
@@ -81,22 +81,26 @@ class Thing extends Controller
          * and to describe other non-thing objects like channels, such as Karl wants Susan - where Susan represents a channel profile.
          */
 
-        if ((!$name) || (!$translated_verb))
+        if ((!$name) || (!$translated_verb)) {
             return;
+        }
 
         $acl = new AccessControl($channel);
 
-        if (array_key_exists('contact_allow', $_REQUEST)
+        if (
+            array_key_exists('contact_allow', $_REQUEST)
             || array_key_exists('group_allow', $_REQUEST)
             || array_key_exists('contact_deny', $_REQUEST)
-            || array_key_exists('group_deny', $_REQUEST)) {
+            || array_key_exists('group_deny', $_REQUEST)
+        ) {
             $acl->set_from_array($_REQUEST);
         }
 
         $x = $acl->get();
 
         if ($term_hash) {
-            $t = q("select * from obj where obj_obj = '%s' and obj_channel = %d limit 1",
+            $t = q(
+                "select * from obj where obj_obj = '%s' and obj_channel = %d limit 1",
                 dbesc($term_hash),
                 intval(local_channel())
             );
@@ -118,7 +122,8 @@ class Thing extends Controller
                 $local_photo = $orig_record['obj_imgurl'];
             }
             if ($local_photo) {
-                $r = q("update obj set obj_term = '%s', obj_url = '%s', obj_imgurl = '%s', obj_edited = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where obj_obj = '%s' and obj_channel = %d ",
+                $r = q(
+                    "update obj set obj_term = '%s', obj_url = '%s', obj_imgurl = '%s', obj_edited = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid = '%s' where obj_obj = '%s' and obj_channel = %d ",
                     dbesc($name),
                     dbesc(($url) ? $url : z_root() . '/thing/' . $term_hash),
                     dbesc($local_photo),
@@ -133,7 +138,8 @@ class Thing extends Controller
             }
             info(t('Thing updated') . EOL);
 
-            $r = q("select * from obj where obj_channel = %d and obj_obj = '%s' limit 1",
+            $r = q(
+                "select * from obj where obj_channel = %d and obj_obj = '%s' limit 1",
                 intval(local_channel()),
                 dbesc($term_hash)
             );
@@ -145,14 +151,16 @@ class Thing extends Controller
         }
 
         $sql = (($profile_guid) ? " and profile_guid = '" . dbesc($profile_guid) . "' " : " and is_default = 1 ");
-        $p = q("select profile_guid, is_default from profile where uid = %d $sql limit 1",
+        $p = q(
+            "select profile_guid, is_default from profile where uid = %d $sql limit 1",
             intval(local_channel())
         );
 
-        if ($p)
+        if ($p) {
             $profile = $p[0];
-        else
+        } else {
             return;
+        }
 
         $local_photo = null;
 
@@ -170,7 +178,8 @@ class Thing extends Controller
         $created = datetime_convert();
         $url = (($url) ? $url : z_root() . '/thing/' . $hash);
 
-        $r = q("insert into obj ( obj_page, obj_verb, obj_type, obj_channel, obj_obj, obj_term, obj_url, obj_imgurl, obj_created, obj_edited, allow_cid, allow_gid, deny_cid, deny_gid ) values ('%s','%s', %d, %d, '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') ",
+        $r = q(
+            "insert into obj ( obj_page, obj_verb, obj_type, obj_channel, obj_obj, obj_term, obj_url, obj_imgurl, obj_created, obj_edited, allow_cid, allow_gid, deny_cid, deny_gid ) values ('%s','%s', %d, %d, '%s','%s','%s','%s','%s','%s','%s','%s','%s','%s') ",
             dbesc($profile['profile_guid']),
             dbesc($verb),
             intval(TERM_OBJ_THING),
@@ -194,7 +203,8 @@ class Thing extends Controller
 
         info(t('Thing added'));
 
-        $r = q("select * from obj where obj_channel = %d and obj_obj = '%s' limit 1",
+        $r = q(
+            "select * from obj where obj_channel = %d and obj_obj = '%s' limit 1",
             intval(local_channel()),
             dbesc($hash)
         );
@@ -205,8 +215,9 @@ class Thing extends Controller
         if ($activity) {
             $arr = [];
             $links = array(array('rel' => 'alternate', 'type' => 'text/html', 'href' => $url));
-            if ($local_photo)
+            if ($local_photo) {
                 $links[] = array('rel' => 'photo', 'type' => $local_photo_type, 'href' => $local_photo);
+            }
 
             $objtype = ACTIVITY_OBJ_THING;
 
@@ -232,8 +243,9 @@ class Thing extends Controller
 
             $arr['body'] = sprintf($bodyverb, $ulink, $translated_verb, $plink);
 
-            if ($local_photo)
+            if ($local_photo) {
                 $arr['body'] .= "\n\n[zmg]" . $local_photo . "[/zmg]";
+            }
 
             $arr['verb'] = $verb;
             $arr['obj_type'] = $objtype;
@@ -242,16 +254,19 @@ class Thing extends Controller
             if (!$profile['is_default']) {
                 $arr['item_private'] = true;
                 $str = '';
-                $r = q("select abook_xchan from abook where abook_channel = %d and abook_profile = '%s'",
+                $r = q(
+                    "select abook_xchan from abook where abook_channel = %d and abook_profile = '%s'",
                     intval(local_channel()),
                     dbesc($profile_guid)
                 );
                 if ($r) {
                     $arr['allow_cid'] = '';
-                    foreach ($r as $rr)
+                    foreach ($r as $rr) {
                         $arr['allow_cid'] .= '<' . $rr['abook_xchan'] . '>';
-                } else
+                    }
+                } else {
                     $arr['allow_cid'] = '<' . get_observer_hash() . '>';
+                }
             }
 
             $ret = post_activity_item($arr);
@@ -266,15 +281,17 @@ class Thing extends Controller
         // so we can definitively lookup the owner.
 
         if (argc() == 2) {
-
-            $r = q("select obj_channel from obj where obj_type = %d and obj_obj = '%s' limit 1",
+            $r = q(
+                "select obj_channel from obj where obj_type = %d and obj_obj = '%s' limit 1",
                 intval(TERM_OBJ_THING),
                 dbesc(argv(1))
             );
-            if ($r)
+            if ($r) {
                 $sql_extra = permissions_sql($r[0]['obj_channel']);
+            }
 
-            $r = q("select * from obj where obj_type = %d and obj_obj = '%s' $sql_extra limit 1",
+            $r = q(
+                "select * from obj where obj_type = %d and obj_obj = '%s' $sql_extra limit 1",
                 intval(TERM_OBJ_THING),
                 dbesc(argv(1))
             );
@@ -309,7 +326,8 @@ class Thing extends Controller
         if (argc() == 3 && argv(1) === 'edit') {
             $thing_hash = argv(2);
 
-            $r = q("select * from obj where obj_type = %d and obj_obj = '%s' limit 1",
+            $r = q(
+                "select * from obj where obj_type = %d and obj_obj = '%s' limit 1",
                 intval(TERM_OBJ_THING),
                 dbesc($thing_hash)
             );
@@ -350,7 +368,8 @@ class Thing extends Controller
         if (argc() == 3 && argv(1) === 'drop') {
             $thing_hash = argv(2);
 
-            $r = q("select * from obj where obj_type = %d and obj_obj = '%s' limit 1",
+            $r = q(
+                "select * from obj where obj_type = %d and obj_obj = '%s' limit 1",
                 intval(TERM_OBJ_THING),
                 dbesc($thing_hash)
             );
@@ -363,7 +382,8 @@ class Thing extends Controller
 
             delete_thing_photo($r[0]['obj_imgurl'], get_observer_hash());
 
-            $x = q("delete from obj where obj_obj = '%s' and obj_type = %d and obj_channel = %d",
+            $x = q(
+                "delete from obj where obj_obj = '%s' and obj_type = %d and obj_channel = %d",
                 dbesc($thing_hash),
                 intval(TERM_OBJ_THING),
                 intval(local_channel())
@@ -399,5 +419,4 @@ class Thing extends Controller
 
         return $o;
     }
-
 }

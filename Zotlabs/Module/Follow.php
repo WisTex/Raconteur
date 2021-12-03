@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -21,10 +22,12 @@ class Follow extends Controller
 
         if (ActivityStreams::is_as_request() && argc() >= 2) {
             $abook_id = intval(argv(1));
-            if (!$abook_id)
+            if (!$abook_id) {
                 return;
+            }
 
-            $r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d",
+            $r = q(
+                "select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d",
                 intval($abook_id)
             );
             if (!$r) {
@@ -56,7 +59,6 @@ class Follow extends Controller
                 'actor' => $actor,
                 'object' => $r[0]['xchan_url']
             ], $chan);
-
         }
 
 
@@ -77,8 +79,10 @@ class Follow extends Controller
             if ($n && isset($n['type']) && !ActivityStreams::is_an_actor($n['type'])) {
                 // set client flag to convert objects to implied activities
                 $a = new ActivityStreams($n, null, true);
-                if ($a->type === 'Announce' && is_array($a->obj)
-                    && array_key_exists('object', $a->obj) && array_key_exists('actor', $a->obj)) {
+                if (
+                    $a->type === 'Announce' && is_array($a->obj)
+                    && array_key_exists('object', $a->obj) && array_key_exists('actor', $a->obj)
+                ) {
                     // This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
                     // Reparse the encapsulated Activity and use that instead
                     logger('relayed activity', LOGGER_DEBUG);
@@ -86,7 +90,6 @@ class Follow extends Controller
                 }
 
                 if ($a->is_valid()) {
-
                     if (is_array($a->actor) && array_key_exists('id', $a->actor)) {
                         Activity::actor_store($a->actor['id'], $a->actor);
                     }
@@ -97,7 +100,8 @@ class Follow extends Controller
                     if ($item) {
                         Activity::store($channel, get_observer_hash(), $a, $item, true);
 
-                        $r = q("select * from item where mid = '%s' and uid = %d",
+                        $r = q(
+                            "select * from item where mid = '%s' and uid = %d",
                             dbesc($item['mid']),
                             intval($uid)
                         );
@@ -118,7 +122,6 @@ class Follow extends Controller
         $result = Connect::connect($channel, $url);
 
         if ($result['success'] == false) {
-
             if ($result['message']) {
                 notice($result['message']);
             }
@@ -160,7 +163,6 @@ class Follow extends Controller
         } else {
             json_return_and_die(['success' => true]);
         }
-
     }
 
     public function get()

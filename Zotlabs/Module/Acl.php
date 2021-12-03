@@ -70,11 +70,11 @@ class Acl extends Controller
         $permitted = [];
 
         if (in_array($type, ['m', 'a', 'f'])) {
-
             // These queries require permission checking. We'll create a simple array of xchan_hash for those with
             // the requisite permissions which we can check against.
 
-            $x = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s'",
+            $x = q(
+                "select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s'",
                 intval(local_channel()),
                 dbesc(($type === 'm') ? '%post_mail%' : '%tag_deliver%')
             );
@@ -102,8 +102,6 @@ class Acl extends Controller
             $sql_extra3 = "AND ( xchan_addr like " . protect_sprintf("'%" . dbesc(punify($search)) . "%'") . " OR xchan_name like " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR abook_alias like " . protect_sprintf("'%" . dbesc($search) . "%'") . " ) ";
 
             $sql_extra4 = "AND ( xchan_name LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR xchan_addr LIKE " . protect_sprintf("'%" . dbesc(punify($search)) . ((strpos($search, '@') === false) ? "%@%'" : "%'")) . " OR abook_alias LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . ") ";
-
-
         } else {
             $sql_extra = $sql_extra2 = $sql_extra3 = $sql_extra4 = "";
         }
@@ -113,10 +111,10 @@ class Acl extends Controller
         $contacts = [];
 
         if ($type == '' || $type == 'g') {
-
             // Normal privacy groups
 
-            $r = q("SELECT pgrp.id, pgrp.hash, pgrp.gname
+            $r = q(
+                "SELECT pgrp.id, pgrp.hash, pgrp.gname
 					FROM pgrp, pgrp_member 
 					WHERE pgrp.deleted = 0 AND pgrp.uid = %d 
 					AND pgrp_member.gid = pgrp.id
@@ -131,7 +129,7 @@ class Acl extends Controller
 
             if ($r) {
                 foreach ($r as $g) {
-                    //		logger('acl: group: ' . $g['gname'] . ' members: ' . AccessList::members_xchan(local_channel(),$g['id']));
+                    //      logger('acl: group: ' . $g['gname'] . ' members: ' . AccessList::members_xchan(local_channel(),$g['id']));
                     $groups[] = [
                         "type" => "g",
                         "photo" => "images/twopeople.png",
@@ -146,40 +144,36 @@ class Acl extends Controller
         }
 
         if ($type == '' || $type == 'c' || $type === 'f') {
-
             // Getting info from the abook is better for local users because it contains info about permissions
             if (local_channel()) {
-
                 // add connections
 
-                $r = q("SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
+                $r = q(
+                    "SELECT abook_id as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, xchan_type, abook_flags, abook_self 
 					FROM abook left join xchan on abook_xchan = xchan_hash 
 					WHERE abook_channel = %d AND abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 $sql_extra4 order by xchan_name asc limit $count",
                     intval(local_channel())
                 );
-
             } else { // Visitors
-                $r = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self
+                $r = q(
+                    "SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self
 					FROM xchan left join xlink on xlink_link = xchan_hash
 					WHERE xlink_xchan  = '%s' AND xchan_deleted = 0 $sql_extra2 order by $order_extra2 xchan_name asc limit $count",
                     dbesc(get_observer_hash())
                 );
-
             }
             if ((count($r) < 100) && $type == 'c') {
                 $r2 = q("SELECT xchan_hash as id, xchan_hash as hash, xchan_name as name, xchan_photo_s as micro, xchan_url as url, xchan_addr as nick, 0 as abook_flags, 0 as abook_self 
-					FROM xchan WHERE xchan_deleted = 0 and xchan_network != 'unknown' $sql_extra2 order by $order_extra2 xchan_name asc limit $count"
-                );
+					FROM xchan WHERE xchan_deleted = 0 and xchan_network != 'unknown' $sql_extra2 order by $order_extra2 xchan_name asc limit $count");
                 if ($r2) {
                     $r = array_merge($r, $r2);
                     $r = unique_multidim_array($r, 'hash');
                 }
             }
-
         } elseif ($type == 'm') {
-
             $r = [];
-            $z = q("SELECT xchan_hash as hash, xchan_name as name, xchan_addr as nick, xchan_photo_s as micro, xchan_url as url 
+            $z = q(
+                "SELECT xchan_hash as hash, xchan_name as name, xchan_addr as nick, xchan_photo_s as micro, xchan_url as url 
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d 
 				and xchan_deleted = 0
@@ -194,19 +188,18 @@ class Acl extends Controller
                     }
                 }
             }
-
         } elseif ($type == 'a') {
-
-            $r = q("SELECT abook_id as id, xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag FROM abook left join xchan on abook_xchan = xchan_hash
+            $r = q(
+                "SELECT abook_id as id, xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d
 				and xchan_deleted = 0
 				$sql_extra3
 				ORDER BY xchan_name ASC ",
                 intval(local_channel())
             );
-
         } elseif ($type == 'z') {
-            $r = q("SELECT xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag FROM xchan left join abook on xchan_hash = abook_xchan
+            $r = q(
+                "SELECT xchan_name as name, xchan_hash as hash, xchan_addr as nick, xchan_photo_s as micro, xchan_network as network, xchan_url as url, xchan_addr as attag FROM xchan left join abook on xchan_hash = abook_xchan
 				WHERE ( abook_channel = %d OR abook_channel IS NULL ) 
 				and xchan_deleted = 0
 				$sql_extra3
@@ -240,7 +233,6 @@ class Acl extends Controller
 
         if ($r) {
             foreach ($r as $g) {
-
                 if (isset($g['network']) && in_array($g['network'], ['rss', 'anon', 'unknown']) && ($type != 'a')) {
                     continue;
                 }
@@ -301,7 +293,7 @@ class Acl extends Controller
     public function navbar_complete()
     {
 
-        //	logger('navbar_complete');
+        //  logger('navbar_complete');
 
         if (observer_prohibited()) {
             return;

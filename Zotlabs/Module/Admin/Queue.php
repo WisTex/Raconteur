@@ -46,6 +46,4 @@ class Queue
 
         return $o;
     }
-
-
 }

@@ -13,6 +13,4 @@ class _1115
         $r = q("update account set account_flags = (account_flags ^ 1) where (account_flags & 1) ");
         return UPDATE_SUCCESS;
     }
-
-
 }

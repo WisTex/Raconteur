@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -13,13 +14,14 @@ class Tasks extends Controller
 
     public function init()
     {
-        //	logger('request: ' . print_r($_REQUEST,true));
+        //  logger('request: ' . print_r($_REQUEST,true));
 
         $arr = [];
 
         if (argc() > 1 && argv(1) === 'fetch') {
-            if (argc() > 2 && argv(2) === 'all')
+            if (argc() > 2 && argv(2) === 'all') {
                 $arr['all'] = 1;
+            }
 
             $x = tasks_fetch($arr);
             $x['html'] = '';
@@ -30,13 +32,12 @@ class Tasks extends Controller
             }
             json_return_and_die($x);
         }
-
     }
 
 
     public function post()
     {
-        //	logger('post: ' . print_r($_POST,true));
+        //  logger('post: ' . print_r($_POST,true));
 
 
         if (!local_channel()) {
@@ -47,7 +48,8 @@ class Tasks extends Controller
 
         if ((argc() > 2) && (argv(1) === 'complete') && intval(argv(2))) {
             $ret = array('success' => false);
-            $r = q("select * from event where etype = 'task' and uid = %d and id = %d limit 1",
+            $r = q(
+                "select * from event where etype = 'task' and uid = %d and id = %d limit 1",
                 intval(local_channel()),
                 intval(argv(2))
             );
@@ -112,6 +114,4 @@ class Tasks extends Controller
         $obj = new Tasklist();
         return $obj->widget([]);
     }
-
-
 }

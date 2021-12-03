@@ -53,7 +53,6 @@ class Apps
         call_hooks('get_system_apps', $ret);
 
         return $ret;
-
     }
 
     public static function get_base_apps()
@@ -107,7 +106,8 @@ class Apps
 
         self::$available_apps = q("select * from app where app_channel = 0");
 
-        self::$installed_apps = q("select * from app where app_channel = %d",
+        self::$installed_apps = q(
+            "select * from app where app_channel = %d",
             intval(local_channel())
         );
 
@@ -130,7 +130,8 @@ class Apps
                 }
                 if ($id !== true) {
                     // if we already installed this app, but it changed, preserve any categories we created
-                    $r = q("select term from term where otype = %d and oid = %d",
+                    $r = q(
+                        "select term from term where otype = %d and oid = %d",
                         intval(TERM_OBJ_APP),
                         intval($id)
                     );
@@ -142,7 +143,6 @@ class Apps
                 $app['guid'] = hash('whirlpool', $app['name']);
                 $app['system'] = 1;
                 self::app_install(local_channel(), $app);
-
             }
         }
     }
@@ -161,13 +161,17 @@ class Apps
         foreach (self::$available_apps as $iapp) {
             if ($iapp['app_id'] == hash('whirlpool', $app['name'])) {
                 $notfound = false;
-                if ((isset($app['version']) && $iapp['app_version'] !== $app['version'])
-                    || ((isset($app['plugin']) && $app['plugin']) && (!(isset($iapp['app_plugin']) && $iapp['app_plugin'])))) {
+                if (
+                    (isset($app['version']) && $iapp['app_version'] !== $app['version'])
+                    || ((isset($app['plugin']) && $app['plugin']) && (!(isset($iapp['app_plugin']) && $iapp['app_plugin'])))
+                ) {
                     return intval($iapp['app_id']);
                 }
 
-                if (($iapp['app_url'] !== $app['url'])
-                    || ($iapp['app_photo'] !== $app['photo'])) {
+                if (
+                    ($iapp['app_url'] !== $app['url'])
+                    || ($iapp['app_photo'] !== $app['photo'])
+                ) {
                     return intval($iapp['app_id']);
                 }
             }
@@ -188,8 +192,10 @@ class Apps
         foreach (self::$installed_apps as $iapp) {
             if ($iapp['app_id'] == hash('whirlpool', $app['name'])) {
                 $installed = true;
-                if (($iapp['app_version'] != $app['version'])
-                    || (isset($app['plugin']) && $app['plugin'] && (!(isset($iapp['app_plugin']) && $iapp['app_plugin'])))) {
+                if (
+                    ($iapp['app_version'] != $app['version'])
+                    || (isset($app['plugin']) && $app['plugin'] && (!(isset($iapp['app_plugin']) && $iapp['app_plugin'])))
+                ) {
                     return intval($iapp['app_id']);
                 }
             }
@@ -629,7 +635,8 @@ class Apps
     {
 
         if (!is_array($app)) {
-            $r = q("select * from app where app_name = '%s' and app_channel = 0",
+            $r = q(
+                "select * from app where app_name = '%s' and app_channel = 0",
                 dbesc($app)
             );
             if (!$r) {
@@ -648,14 +655,16 @@ class Apps
         }
 
         if ($x['success']) {
-            $r = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
+            $r = q(
+                "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($x['app_id']),
                 intval($uid)
             );
             if ($r) {
                 if (($app['uid']) && (!$r[0]['app_system'])) {
                     if ($app['categories'] && (!$app['term'])) {
-                        $r[0]['term'] = q("select * from term where otype = %d and oid = %d",
+                        $r[0]['term'] = q(
+                            "select * from term where otype = %d and oid = %d",
                             intval(TERM_OBJ_APP),
                             intval($r[0]['id'])
                         );
@@ -695,8 +704,8 @@ class Apps
     {
 
         if ($uid && $app['guid']) {
-
-            $x = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
+            $x = q(
+                "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($app['guid']),
                 intval($uid)
             );
@@ -704,17 +713,20 @@ class Apps
                 if (!intval($x[0]['app_deleted'])) {
                     $x[0]['app_deleted'] = 1;
                     if (self::can_delete($uid, $app)) {
-                        $r = q("delete from app where app_id = '%s' and app_channel = %d",
+                        $r = q(
+                            "delete from app where app_id = '%s' and app_channel = %d",
                             dbesc($app['guid']),
                             intval($uid)
                         );
-                        q("delete from term where otype = %d and oid = %d",
+                        q(
+                            "delete from term where otype = %d and oid = %d",
                             intval(TERM_OBJ_APP),
                             intval($x[0]['id'])
                         );
                         call_hooks('app_destroy', $x[0]);
                     } else {
-                        $r = q("update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
+                        $r = q(
+                            "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
                             dbesc($app['guid']),
                             intval($uid)
                         );
@@ -729,7 +741,6 @@ class Apps
                 }
             }
         }
-
     }
 
     public static function app_undestroy($uid, $app)
@@ -738,14 +749,15 @@ class Apps
         // undelete a system app
 
         if ($uid && $app['guid']) {
-
-            $x = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
+            $x = q(
+                "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($app['guid']),
                 intval($uid)
             );
             if ($x) {
                 if ($x[0]['app_system']) {
-                    $r = q("update app set app_deleted = 0 where app_id = '%s' and app_channel = %d",
+                    $r = q(
+                        "update app set app_deleted = 0 where app_id = '%s' and app_channel = %d",
                         dbesc($app['guid']),
                         intval($uid)
                     );
@@ -756,19 +768,22 @@ class Apps
 
     public static function app_feature($uid, $app, $term)
     {
-        $r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+        $r = q(
+            "select id from app where app_id = '%s' and app_channel = %d limit 1",
             dbesc($app['guid']),
             intval($uid)
         );
 
-        $x = q("select * from term where otype = %d and oid = %d and term = '%s' limit 1",
+        $x = q(
+            "select * from term where otype = %d and oid = %d and term = '%s' limit 1",
             intval(TERM_OBJ_APP),
             intval($r[0]['id']),
             dbesc($term)
         );
 
         if ($x) {
-            q("delete from term where otype = %d and oid = %d and term = '%s'",
+            q(
+                "delete from term where otype = %d and oid = %d and term = '%s'",
                 intval(TERM_OBJ_APP),
                 intval($x[0]['oid']),
                 dbesc($term)
@@ -781,7 +796,8 @@ class Apps
     public static function app_installed($uid, $app, $bypass_filter = false)
     {
 
-        $r = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+        $r = q(
+            "select id from app where app_id = '%s' and app_channel = %d limit 1",
             dbesc((array_key_exists('guid', $app)) ? $app['guid'] : ''),
             intval($uid)
         );
@@ -796,13 +812,13 @@ class Apps
         }
 
         return (($r) ? true : false);
-
     }
 
     public static function addon_app_installed($uid, $app, $bypass_filter = false)
     {
 
-        $r = q("select id from app where app_plugin = '%s' and app_channel = %d limit 1",
+        $r = q(
+            "select id from app where app_plugin = '%s' and app_channel = %d limit 1",
             dbesc($app),
             intval($uid)
         );
@@ -817,13 +833,13 @@ class Apps
         }
 
         return (($r) ? true : false);
-
     }
 
     public static function system_app_installed($uid, $app, $bypass_filter = false)
     {
 
-        $r = q("select id from app where app_id = '%s' and app_channel = %d and app_deleted = 0 limit 1",
+        $r = q(
+            "select id from app where app_id = '%s' and app_channel = %d and app_deleted = 0 limit 1",
             dbesc(hash('whirlpool', $app)),
             intval($uid)
         );
@@ -848,19 +864,20 @@ class Apps
             $sql_extra = " and app_deleted = 0 ";
         }
         if ($cats) {
-
             $cat_sql_extra = " and ( ";
 
             foreach ($cats as $cat) {
-                if (strpos($cat_sql_extra, 'term'))
+                if (strpos($cat_sql_extra, 'term')) {
                     $cat_sql_extra .= "or ";
+                }
 
                 $cat_sql_extra .= "term = '" . dbesc($cat) . "' ";
             }
 
             $cat_sql_extra .= ") ";
 
-            $r = q("select oid from term where otype = %d $cat_sql_extra",
+            $r = q(
+                "select oid from term where otype = %d $cat_sql_extra",
                 intval(TERM_OBJ_APP)
             );
             if (!$r) {
@@ -869,7 +886,8 @@ class Apps
             $sql_extra .= " and app.id in ( " . array_elm_to_str($r, 'oid') . ') ';
         }
 
-        $r = q("select * from app where app_channel = %d $sql_extra order by app_name asc",
+        $r = q(
+            "select * from app where app_channel = %d $sql_extra order by app_name asc",
             intval($uid)
         );
 
@@ -881,7 +899,8 @@ class Apps
                 if (!$r[$x]['app_system']) {
                     $r[$x]['type'] = 'personal';
                 }
-                $r[$x]['term'] = q("select * from term where otype = %d and oid = %d",
+                $r[$x]['term'] = q(
+                    "select * from term where otype = %d and oid = %d",
                     intval(TERM_OBJ_APP),
                     intval($r[$x]['id'])
                 );
@@ -898,7 +917,8 @@ class Apps
         // not yet finished
         // somehow need to account for translations
 
-        $r = q("select * from app where app_channel = 0 $sql_extra order by app_name asc",
+        $r = q(
+            "select * from app where app_channel = 0 $sql_extra order by app_name asc",
             intval($uid)
         );
 
@@ -909,8 +929,9 @@ class Apps
     public static function app_order($uid, $apps, $menu)
     {
 
-        if (!$apps)
+        if (!$apps) {
             return $apps;
+        }
 
         $conf = (($menu === 'nav_featured_app') ? 'app_order' : 'app_pin_order');
 
@@ -938,7 +959,6 @@ class Apps
             }
         }
         return $ret;
-
     }
 
     public static function find_app_in_array($name, $arr)
@@ -999,7 +1019,6 @@ class Apps
         }
 
         set_pconfig($uid, 'system', $conf, implode(',', $narr));
-
     }
 
     public static function movedown($uid, $guid, $menu)
@@ -1047,7 +1066,6 @@ class Apps
         }
 
         set_pconfig($uid, 'system', $conf, implode(',', $narr));
-
     }
 
     public static function app_decode($s)
@@ -1074,7 +1092,6 @@ class Apps
 
         $arr['url'] = str_replace(array('$baseurl', '$nick'), array($baseurl, $address), $arr['url']);
         $arr['photo'] = str_replace(array('$baseurl', '$nick'), array($baseurl, $address), $arr['photo']);
-
     }
 
 
@@ -1128,7 +1145,8 @@ class Apps
 
         $created = datetime_convert();
 
-        $r = q("insert into app ( app_id, app_sig, app_author, app_name, app_desc, app_url, app_photo, app_version, app_channel, app_addr, app_price, app_page, app_requires, app_created, app_edited, app_system, app_plugin, app_deleted, app_options ) values ( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', %d, %d )",
+        $r = q(
+            "insert into app ( app_id, app_sig, app_author, app_name, app_desc, app_url, app_photo, app_version, app_channel, app_addr, app_price, app_page, app_requires, app_created, app_edited, app_system, app_plugin, app_deleted, app_options ) values ( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', %d, %d )",
             dbesc($darray['app_id']),
             dbesc($darray['app_sig']),
             dbesc($darray['app_author']),
@@ -1156,7 +1174,8 @@ class Apps
         }
 
         if ($arr['categories']) {
-            $x = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+            $x = q(
+                "select id from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($darray['app_id']),
                 intval($darray['app_channel'])
             );
@@ -1218,7 +1237,8 @@ class Apps
 
         $edited = datetime_convert();
 
-        $r = q("update app set app_sig = '%s', app_author = '%s', app_name = '%s', app_desc = '%s', app_url = '%s', app_photo = '%s', app_version = '%s', app_addr = '%s', app_price = '%s', app_page = '%s', app_requires = '%s', app_edited = '%s', app_system = %d, app_plugin = '%s', app_deleted = %d, app_options = %d where app_id = '%s' and app_channel = %d",
+        $r = q(
+            "update app set app_sig = '%s', app_author = '%s', app_name = '%s', app_desc = '%s', app_url = '%s', app_photo = '%s', app_version = '%s', app_addr = '%s', app_price = '%s', app_page = '%s', app_requires = '%s', app_edited = '%s', app_system = %d, app_plugin = '%s', app_deleted = %d, app_options = %d where app_id = '%s' and app_channel = %d",
             dbesc($darray['app_sig']),
             dbesc($darray['app_author']),
             dbesc($darray['app_name']),
@@ -1243,18 +1263,21 @@ class Apps
             $ret['app_id'] = $darray['app_id'];
         }
 
-        $x = q("select id from app where app_id = '%s' and app_channel = %d limit 1",
+        $x = q(
+            "select id from app where app_id = '%s' and app_channel = %d limit 1",
             dbesc($darray['app_id']),
             intval($darray['app_channel'])
         );
 
         // if updating an embed app and we don't have a 0 channel_id don't mess with any existing categories
 
-        if (array_key_exists('embed', $arr) && intval($arr['embed']) && (intval($darray['app_channel'])))
+        if (array_key_exists('embed', $arr) && intval($arr['embed']) && (intval($darray['app_channel']))) {
             return $ret;
+        }
 
         if ($x) {
-            q("delete from term where otype = %d and oid = %d",
+            q(
+                "delete from term where otype = %d and oid = %d",
                 intval(TERM_OBJ_APP),
                 intval($x[0]['id'])
             );
@@ -1272,7 +1295,6 @@ class Apps
         }
 
         return $ret;
-
     }
 
 
@@ -1350,7 +1372,6 @@ class Apps
 
         $j = json_encode($ret);
         return '[app]' . chunk_split(base64_encode($j), 72, "\n") . '[/app]';
-
     }
 
 
@@ -1358,7 +1379,4 @@ class Apps
     {
         return chunk_split(base64_encode(json_encode($papp)), 72, "\n");
     }
-
 }
-
-

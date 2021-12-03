@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -12,23 +13,27 @@ class Tagrm extends Controller
     public function post()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             goaway(z_root() . '/' . $_SESSION['photo_return']);
+        }
 
 
-        if ((x($_POST, 'submit')) && ($_POST['submit'] === t('Cancel')))
+        if ((x($_POST, 'submit')) && ($_POST['submit'] === t('Cancel'))) {
             goaway(z_root() . '/' . $_SESSION['photo_return']);
+        }
 
         $tag = ((x($_POST, 'tag')) ? trim($_POST['tag']) : '');
         $item = ((x($_POST, 'item')) ? intval($_POST['item']) : 0);
 
-        $r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
+        $r = q(
+            "SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
             intval($item),
             intval(local_channel())
         );
 
-        if (!$r)
+        if (!$r) {
             goaway(z_root() . '/' . $_SESSION['photo_return']);
+        }
 
         $r = fetch_post_tags($r, true);
 
@@ -37,15 +42,17 @@ class Tagrm extends Controller
 
         if ($item['term']) {
             for ($x = 0; $x < count($item['term']); $x++) {
-                if ($item['term'][$x]['term'] !== hex2bin($tag))
+                if ($item['term'][$x]['term'] !== hex2bin($tag)) {
                     $new_tags[] = $item['term'][$x];
+                }
             }
         }
 
-        if ($new_tags)
+        if ($new_tags) {
             $item['term'] = $new_tags;
-        else
+        } else {
             unset($item['term']);
+        }
 
         item_store_update($item);
 
@@ -53,7 +60,6 @@ class Tagrm extends Controller
         goaway(z_root() . '/' . $_SESSION['photo_return']);
 
         // NOTREACHED
-
     }
 
 
@@ -67,17 +73,18 @@ class Tagrm extends Controller
 
         // remove tag on the fly if item and tag are provided
         if ((argc() == 4) && (argv(1) === 'drop') && intval(argv(2))) {
-
             $item = intval(argv(2));
             $tag = argv(3);
 
-            $r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
                 intval($item),
                 intval(local_channel())
             );
 
-            if (!$r)
+            if (!$r) {
                 goaway(z_root() . '/' . $_SESSION['photo_return']);
+            }
 
             $r = fetch_post_tags($r, true);
 
@@ -87,42 +94,45 @@ class Tagrm extends Controller
 
             if ($item['term']) {
                 for ($x = 0; $x < count($item['term']); $x++) {
-                    if ($item['term'][$x]['term'] !== hex2bin($tag))
+                    if ($item['term'][$x]['term'] !== hex2bin($tag)) {
                         $new_tags[] = $item['term'][$x];
+                    }
                 }
             }
 
-            if ($new_tags)
+            if ($new_tags) {
                 $item['term'] = $new_tags;
-            else
+            } else {
                 unset($item['term']);
+            }
 
             item_store_update($item);
 
             info(t('Tag removed') . EOL);
             goaway(z_root() . '/' . $_SESSION['photo_return']);
-
         }
 
         //if we got only the item print a list of tags to select
         if ((argc() == 3) && (argv(1) === 'drop') && intval(argv(2))) {
-
             $o = '';
 
             $item = intval(argv(2));
 
-            $r = q("SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM item WHERE id = %d AND uid = %d LIMIT 1",
                 intval($item),
                 intval(local_channel())
             );
 
-            if (!$r)
+            if (!$r) {
                 goaway(z_root() . '/' . $_SESSION['photo_return']);
+            }
 
             $r = fetch_post_tags($r, true);
 
-            if (!count($r[0]['term']))
+            if (!count($r[0]['term'])) {
                 goaway(z_root() . '/' . $_SESSION['photo_return']);
+            }
 
             $o .= '<h3>' . t('Remove Item Tag') . '</h3>';
 
@@ -143,9 +153,6 @@ class Tagrm extends Controller
             $o .= '</form>';
 
             return $o;
-
         }
-
     }
-
 }

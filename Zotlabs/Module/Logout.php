@@ -16,6 +16,5 @@ class Logout extends Controller
             App::$session->nuke();
         }
         goaway(z_root());
-
     }
 }
