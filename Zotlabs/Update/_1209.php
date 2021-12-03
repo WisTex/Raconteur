@@ -18,10 +18,9 @@ class _1209
 				ADD INDEX `pelm_order` (`pelm_order`)");
         }
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
 }

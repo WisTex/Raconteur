@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
 class Photo
 {
 
@@ -23,25 +22,31 @@ class Photo
 
         $style = $zrl = false;
 
-        if (array_key_exists('src', $arr) && isset($arr['src']))
+        if (array_key_exists('src', $arr) && isset($arr['src'])) {
             $url = $arr['src'];
+        }
 
-        if (strpos($url, 'http') !== 0)
+        if (strpos($url, 'http') !== 0) {
             return '';
+        }
 
-        if (array_key_exists('style', $arr) && isset($arr['style']))
+        if (array_key_exists('style', $arr) && isset($arr['style'])) {
             $style = $arr['style'];
+        }
 
         // ensure they can't sneak in an eval(js) function
 
-        if (strpbrk($style, '(\'"<>') !== false)
+        if (strpbrk($style, '(\'"<>') !== false) {
             $style = '';
+        }
 
-        if (array_key_exists('zrl', $arr) && isset($arr['zrl']))
+        if (array_key_exists('zrl', $arr) && isset($arr['zrl'])) {
             $zrl = (($arr['zrl']) ? true : false);
+        }
 
-        if ($zrl)
+        if ($zrl) {
             $url = zid($url);
+        }
 
         $o = '<div class="widget">';
 
@@ -54,4 +59,3 @@ class Photo
         return $o;
     }
 }
-

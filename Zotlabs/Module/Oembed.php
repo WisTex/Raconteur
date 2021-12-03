@@ -1,5 +1,7 @@
 <?php
+
 namespace Zotlabs\Module;
+
 use Zotlabs\Web\Controller;
 
 require_once("include/oembed.php");
@@ -26,11 +28,10 @@ class Oembed extends Controller
                 $src = base64url_decode(argv(1));
                 $j = oembed_fetch_url($src);
                 echo $j['html'];
-                //		    logger('mod-oembed ' . $h, LOGGER_ALL);
+                //          logger('mod-oembed ' . $h, LOGGER_ALL);
                 echo "</body></html>";
             }
         }
         killme();
     }
-
 }

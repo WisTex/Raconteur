@@ -18,10 +18,9 @@ class _1208
 				ADD INDEX `poll_author` (`poll_author`)");
         }
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -44,21 +45,23 @@ class Invite extends Controller
         if (get_config('system', 'invitation_only')) {
             $invonly = true;
             $x = get_pconfig(local_channel(), 'system', 'invites_remaining');
-            if ((!$x) && (!is_site_admin()))
+            if ((!$x) && (!is_site_admin())) {
                 return;
+            }
         }
 
         foreach ($recips as $recip) {
-
             $recip = trim($recip);
-            if (!$recip)
+            if (!$recip) {
                 continue;
+            }
 
             if (!validate_email($recip)) {
                 notice(sprintf(t('%s : Not a valid email address.'), $recip) . EOL);
                 continue;
-            } else
+            } else {
                 $nmessage = $message;
+            }
 
             $account = App::get_account();
 
@@ -83,7 +86,6 @@ class Invite extends Controller
             } else {
                 notice(sprintf(t('%s : Message delivery failed.'), $recip) . EOL);
             }
-
         }
         notice(sprintf(tt("%d message sent.", "%d messages sent.", $total), $total) . EOL);
         return;
@@ -125,23 +127,26 @@ class Invite extends Controller
             $invite_code = autoname(8) . rand(1000, 9999);
             $nmessage = str_replace('$invite_code', $invite_code, $message);
 
-            $r = q("INSERT INTO register (hash,created,uid,password,lang) VALUES ('%s', '%s',0,'','') ",
+            $r = q(
+                "INSERT INTO register (hash,created,uid,password,lang) VALUES ('%s', '%s',0,'','') ",
                 dbesc($invite_code),
                 dbesc(datetime_convert())
             );
 
             if (!is_site_admin()) {
                 $x--;
-                if ($x >= 0)
+                if ($x >= 0) {
                     set_pconfig(local_channel(), 'system', 'invites_remaining', $x);
-                else
+                } else {
                     return;
+                }
             }
         }
 
         $ob = App::get_observer();
-        if (!$ob)
+        if (!$ob) {
             return $o;
+        }
 
         $channel = App::get_channel();
 
@@ -165,5 +170,4 @@ class Invite extends Controller
 
         return $o;
     }
-
 }

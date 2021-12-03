@@ -21,6 +21,4 @@ class _1198
 
         return UPDATE_SUCCESS;
     }
-
-
 }

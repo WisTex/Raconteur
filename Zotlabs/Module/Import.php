@@ -9,9 +9,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Daemon\Run;
-
 use Zotlabs\Import\Friendica;
-
 
 require_once('include/import.php');
 require_once('include/photo_factory.php');
@@ -53,7 +51,6 @@ class Import extends Controller
 
         // import channel from file
         if ($src) {
-
             // This is OS specific and could also fail if your tmpdir isn't very
             // large mostly used for Diaspora which exports gzipped files.
 
@@ -123,7 +120,6 @@ class Import extends Controller
         // handle Friendica export
 
         if (array_path_exists('user/parent-uid', $data)) {
-
             $settings = ['account_id' => $account_id, 'sieze' => 1, 'newname' => $newname];
             $f = new Friendica($data, $settings);
 
@@ -153,11 +149,11 @@ class Import extends Controller
         $relocate = ((array_key_exists('relocate', $data)) ? $data['relocate'] : null);
 
         if (array_key_exists('channel', $data)) {
-
             $max_identities = account_service_class_fetch($account_id, 'total_identities');
 
             if ($max_identities !== false) {
-                $r = q("select channel_id from channel where channel_account_id = %d and channel_removed = 0 ",
+                $r = q(
+                    "select channel_id from channel where channel_account_id = %d and channel_removed = 0 ",
                     intval($account_id)
                 );
                 if ($r && count($r) > $max_identities) {
@@ -215,10 +211,10 @@ class Import extends Controller
         // This *must* be done before importing hublocs
 
         if (array_key_exists('channel', $data) && $seize) {
-
             // replace any existing xchan we may have on this site if we're seizing control
 
-            $r = q("delete from xchan where xchan_hash = '%s'",
+            $r = q(
+                "delete from xchan where xchan_hash = '%s'",
                 dbesc($channel['channel_hash'])
             );
 
@@ -250,7 +246,6 @@ class Import extends Controller
         $xchans = $data['xchan'];
         if ($xchans) {
             foreach ($xchans as $xchan) {
-
                 // Provide backward compatibility for zot11 based projects
 
                 if ($xchan['xchan_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
@@ -264,7 +259,8 @@ class Import extends Controller
                     continue;
                 }
 
-                $r = q("select xchan_hash from xchan where xchan_hash = '%s' limit 1",
+                $r = q(
+                    "select xchan_hash from xchan where xchan_hash = '%s' limit 1",
                     dbesc($xchan['xchan_hash'])
                 );
                 if ($r) {
@@ -274,7 +270,8 @@ class Import extends Controller
 
 
                 if ($xchan['xchan_hash'] === $channel['channel_hash']) {
-                    $r = q("update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s' where xchan_hash = '%s'",
+                    $r = q(
+                        "update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s' where xchan_hash = '%s'",
                         dbesc(datetime_convert()),
                         dbesc(z_root() . '/photo/profile/l/' . $channel['channel_id']),
                         dbesc(z_root() . '/photo/profile/m/' . $channel['channel_id']),
@@ -290,7 +287,8 @@ class Import extends Controller
                             $photodate = $xchan['xchan_photo_date'];
                         }
 
-                        $r = q("update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
+                        $r = q(
+                            "update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
                             dbesc(datetime_convert()),
                             dbesc($photos[0]),
                             dbesc($photos[1]),
@@ -341,7 +339,8 @@ class Import extends Controller
             // reset the original primary hubloc if it is being seized
 
             if ($seize) {
-                $r = q("update hubloc set hubloc_primary = 0 where hubloc_primary = 1 and hubloc_hash = '%s' and hubloc_url != '%s' ",
+                $r = q(
+                    "update hubloc set hubloc_primary = 0 where hubloc_primary = 1 and hubloc_hash = '%s' and hubloc_url != '%s' ",
                     dbesc($channel['channel_hash']),
                     dbesc(z_root())
                 );
@@ -356,7 +355,6 @@ class Import extends Controller
         $abooks = $data['abook'];
         if ($abooks) {
             foreach ($abooks as $abook) {
-
                 $abook_copy = $abook;
 
                 $abconfig = null;
@@ -393,7 +391,8 @@ class Import extends Controller
                         $ctype = 1;
                     }
                     if ($ctype) {
-                        q("update xchan set xchan_type = %d where xchan_hash = '%s' ",
+                        q(
+                            "update xchan set xchan_type = %d where xchan_hash = '%s' ",
                             intval($ctype),
                             dbesc($abook['abook_xchan'])
                         );
@@ -407,7 +406,8 @@ class Import extends Controller
                     }
                 }
 
-                $r = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
+                $r = q(
+                    "select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
                     dbesc($abook['abook_xchan']),
                     intval($channel['channel_id'])
                 );
@@ -418,7 +418,8 @@ class Import extends Controller
                         if (!in_array($k, $columns)) {
                             continue;
                         }
-                        $r = q("UPDATE abook SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE abook_xchan = '%s' AND abook_channel = %d",
+                        $r = q(
+                            "UPDATE abook SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE abook_xchan = '%s' AND abook_channel = %d",
                             dbesc($k),
                             dbesc($v),
                             dbesc($abook['abook_xchan']),
@@ -462,7 +463,8 @@ class Import extends Controller
 
                 create_table_from_array('pgrp', $group);
             }
-            $r = q("select * from pgrp where uid = %d",
+            $r = q(
+                "select * from pgrp where uid = %d",
                 intval($channel['channel_id'])
             );
             if ($r) {
@@ -514,27 +516,27 @@ class Import extends Controller
         if (is_array($data['chatroom'])) {
             import_chatrooms($channel, $data['chatroom']);
         }
-//		if (is_array($data['conv'])) {
-//			import_conv($channel,$data['conv']);
-//		}
-//		if (is_array($data['mail'])) {
-//			import_mail($channel,$data['mail']);
-//		}
+//      if (is_array($data['conv'])) {
+//          import_conv($channel,$data['conv']);
+//      }
+//      if (is_array($data['mail'])) {
+//          import_mail($channel,$data['mail']);
+//      }
         if (is_array($data['event'])) {
             import_events($channel, $data['event']);
         }
         if (is_array($data['event_item'])) {
             import_items($channel, $data['event_item'], false, $relocate);
         }
-//		if (is_array($data['menu'])) {
-//			import_menus($channel,$data['menu']);
-//		}
-//		if (is_array($data['wiki'])) {
-//			import_items($channel,$data['wiki'],false,$relocate);
-//		}
-//		if (is_array($data['webpages'])) {
-//			import_items($channel,$data['webpages'],false,$relocate);
-//		}
+//      if (is_array($data['menu'])) {
+//          import_menus($channel,$data['menu']);
+//      }
+//      if (is_array($data['wiki'])) {
+//          import_items($channel,$data['wiki'],false,$relocate);
+//      }
+//      if (is_array($data['webpages'])) {
+//          import_items($channel,$data['webpages'],false,$relocate);
+//      }
         $addon = array('channel' => $channel, 'data' => $data);
         call_hooks('import_channel', $addon);
 
@@ -544,7 +546,6 @@ class Import extends Controller
         }
 
         if ($api_path && $import_posts) {  // we are importing from a server and not a file
-
             $m = parse_url($api_path);
 
             $hz_server = $m['scheme'] . '://' . $m['host'];
@@ -630,7 +631,6 @@ class Import extends Controller
             }
 
             notice(t('Files and Posts imported.') . EOL);
-
         }
 
         notifications_on($channel['channel_id'], $saved_notification_flags);
@@ -703,5 +703,4 @@ class Import extends Controller
             '$submit' => t('Submit')
         ]);
     }
-
 }

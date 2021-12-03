@@ -1,11 +1,8 @@
 <?php
 
-
 namespace Zotlabs\Module;
 
-
 use Zotlabs\Web\Controller;
-
 
 class Q extends Controller
 {
@@ -20,7 +17,8 @@ class Q extends Controller
             json_return_and_die($ret);
         }
 
-        $r = q("select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0",
+        $r = q(
+            "select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0",
             dbesc($h)
         );
         if ($r) {
@@ -29,5 +27,4 @@ class Q extends Controller
         }
         json_return_and_die($ret);
     }
-
 }

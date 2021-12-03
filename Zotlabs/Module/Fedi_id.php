@@ -4,7 +4,6 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 
-
 class Fedi_id extends Controller
 {
 
@@ -17,7 +16,8 @@ class Fedi_id extends Controller
         if ($_REQUEST['address']) {
             $x = discover_by_webbie(trim($_REQUEST['address']));
             if ($x) {
-                $ab = q("select * from abook where abook_xchan = '%s' and abook_channel = %d",
+                $ab = q(
+                    "select * from abook where abook_xchan = '%s' and abook_channel = %d",
                     dbesc($x),
                     intval($channel['channel_id'])
                 );
@@ -25,7 +25,8 @@ class Fedi_id extends Controller
                     notice(t('You are already connected with this channel.'));
                     goaway(channel_url($channel));
                 }
-                $r = q("select * from xchan where xchan_hash = '%s'",
+                $r = q(
+                    "select * from xchan where xchan_hash = '%s'",
                     dbesc($x)
                 );
                 if ($r && $r[0]['xchan_follow']) {
@@ -41,7 +42,8 @@ class Fedi_id extends Controller
     public function get()
     {
 
-        return replace_macros(get_markup_template('fedi_id.tpl'),
+        return replace_macros(
+            get_markup_template('fedi_id.tpl'),
             [
                 '$title' => t('Home instance'),
                 '$address' => ['address', t('Enter your channel address or fediverse ID (e.g. channel@example.com)'), '', t('If you do not have a fediverse ID, please use your browser \'back\' button to return to the previous page')],
@@ -50,7 +52,5 @@ class Fedi_id extends Controller
                 '$submit' => t('Connect')
             ]
         );
-
     }
-
 }

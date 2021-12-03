@@ -1,10 +1,10 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
-
 
 class Viewconnections extends Controller
 {
@@ -55,7 +55,8 @@ class Viewconnections extends Controller
             $sql_extra = " and xchan_hidden = 0 ";
         }
 
-        $r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d $abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra order by xchan_name LIMIT %d OFFSET %d ",
+        $r = q(
+            "SELECT * FROM abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d $abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra order by xchan_name LIMIT %d OFFSET %d ",
             intval(App::$profile['uid']),
             intval(App::$pager['itemspage']),
             intval(App::$pager['start'])
@@ -69,7 +70,6 @@ class Viewconnections extends Controller
         $contacts = [];
 
         foreach ($r as $rr) {
-
             $oneway = false;
             if (!their_perms_contains(App::$profile['uid'], $rr['xchan_hash'], 'post_comments')) {
                 $oneway = true;
@@ -117,5 +117,4 @@ class Viewconnections extends Controller
         }
         return $o;
     }
-
 }

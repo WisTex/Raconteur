@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
@@ -49,10 +50,8 @@ class File_upload extends Controller
                     Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
                 }
                 goaway(z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path']);
-
             }
         } else {
-
             $matches = [];
             $partial = false;
 
@@ -97,13 +96,11 @@ class File_upload extends Controller
             $r = attach_store($channel, get_observer_hash(), '', $_REQUEST);
             if ($r['success']) {
                 $sync = attach_export_data($channel, $r['data']['hash']);
-                if ($sync)
+                if ($sync) {
                     Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
-
+                }
             }
         }
         goaway(z_root() . '/' . $_REQUEST['return_url']);
-
     }
-
 }

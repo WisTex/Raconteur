@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libzotdir;
@@ -21,7 +22,6 @@ class Sites extends Controller
 
 
         if ($r) {
-
             $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
             foreach ($r as $rr) {
                 $found_block = false;
@@ -41,21 +41,23 @@ class Sites extends Controller
                     continue;
                 }
 
-                if ($rr['site_access'] == ACCESS_FREE)
+                if ($rr['site_access'] == ACCESS_FREE) {
                     $access = t('free');
-                elseif ($rr['site_access'] == ACCESS_PAID)
+                } elseif ($rr['site_access'] == ACCESS_PAID) {
                     $access = t('subscription');
-                elseif ($rr['site_access'] == ACCESS_TIERED)
+                } elseif ($rr['site_access'] == ACCESS_TIERED) {
                     $access = t('tiered service plans');
-                else
+                } else {
                     $access = 'private';
+                }
 
-                if ($rr['site_register'] == REGISTER_OPEN)
+                if ($rr['site_register'] == REGISTER_OPEN) {
                     $register = t('Register');
-                elseif ($rr['site_register'] == REGISTER_APPROVE)
+                } elseif ($rr['site_register'] == REGISTER_APPROVE) {
                     $register = t('Register (requires approval)');
-                else
+                } else {
                     $register = 'closed';
+                }
 
 
                 $sitename = get_sconfig($rr['site_url'], 'system', 'sitename', $rr['site_url']);

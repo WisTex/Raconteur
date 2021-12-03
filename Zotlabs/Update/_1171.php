@@ -14,12 +14,9 @@ class _1171
         $r5 = q("ALTER TABLE session CHANGE `data` `sess_data` TEXT NOT NULL ");
         $r6 = q("ALTER TABLE register CHANGE `language` `lang` varchar(16) NOT NULL DEFAULT '' ");
 
-        if ($r1 && $r2 && $r3 && $r4 && $r5 && $r6)
+        if ($r1 && $r2 && $r3 && $r4 && $r5 && $r6) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
-
     }
-
-
 }

@@ -22,7 +22,6 @@ class Categories extends Controller
             }
             Libprofile::load($which, 0);
         }
-
     }
 
 
@@ -39,8 +38,5 @@ class Categories extends Controller
 
         $c = new Comanche();
         return $c->widget('catcloud', EMPTY_STR);
-
     }
-
-
 }

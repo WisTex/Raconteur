@@ -7,10 +7,9 @@ class _1077
     public function run()
     {
         $r = q("ALTER TABLE `item` ADD `source_xchan` CHAR( 255 ) NOT NULL DEFAULT '' AFTER `author_xchan` ");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

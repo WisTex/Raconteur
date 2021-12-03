@@ -28,4 +28,3 @@ class Photo_albums
         return photos_album_widget($channel, App::get_observer(), $sortkey, $direction);
     }
 }
-

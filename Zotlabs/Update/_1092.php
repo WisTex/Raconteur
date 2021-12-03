@@ -51,10 +51,9 @@ class _1092
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 
-        if ($r1 && $r2 && $r3)
+        if ($r1 && $r2 && $r3) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

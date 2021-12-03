@@ -10,10 +10,10 @@ class _1235
 
         $r = q("ALTER TABLE item add replyto text NOT NULL DEFAULT ''");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
 
     public function verify()
@@ -26,7 +26,5 @@ class _1235
         }
 
         return false;
-
     }
-
 }

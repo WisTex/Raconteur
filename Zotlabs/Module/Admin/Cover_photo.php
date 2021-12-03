@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module\Admin;
 
 use App;
@@ -7,7 +8,7 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 
-/* 
+/*
    @file cover_photo.php
    @brief Module-file with functions for handling of cover-photos
 
@@ -57,7 +58,6 @@ class Cover_photo
         check_form_security_token_redirectOnErr('/admin/cover_photo', 'cover_photo');
 
         if ((array_key_exists('cropfinal', $_POST)) && ($_POST['cropfinal'] == 1)) {
-
             // phase 2 - we have finished cropping
 
             if (argc() != 3) {
@@ -78,31 +78,31 @@ class Cover_photo
             $srcW = intval($_POST['xfinal']) - $srcX;
             $srcH = intval($_POST['yfinal']) - $srcY;
 
-            $r = q("select gender from profile where uid = %d and is_default = 1 limit 1",
+            $r = q(
+                "select gender from profile where uid = %d and is_default = 1 limit 1",
                 intval($channel['channel_id'])
             );
             if ($r) {
                 $profile = array_shift($r);
             }
 
-            $r = q("SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale > 0 order by imgscale asc LIMIT 1",
+            $r = q(
+                "SELECT * FROM photo WHERE resource_id = '%s' AND uid = %d AND imgscale > 0 order by imgscale asc LIMIT 1",
                 dbesc($image_id),
                 intval($channel['channel_id'])
             );
 
             if ($r) {
-
                 $max_thumb = intval(get_config('system', 'max_thumbnail', 1600));
                 $iscaled = false;
                 if (intval($r[0]['height']) > $max_thumb || intval($r[0]['width']) > $max_thumb) {
                     $imagick_path = get_config('system', 'imagick_convert_path');
                     if ($imagick_path && @file_exists($imagick_path) && intval($r[0]['os_storage'])) {
-
                         $fname = dbunescbin($r[0]['content']);
                         $tmp_name = $fname . '-001';
                         $newsize = photo_calculate_scale(array_merge(getimagesize($fname), ['max' => $max_thumb]));
                         $cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $fname) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
-                        //	logger('imagick thumbnail command: ' . $cmd);
+                        //  logger('imagick thumbnail command: ' . $cmd);
                         for ($x = 0; $x < 4; $x++) {
                             exec($cmd);
                             if (file_exists($tmp_name)) {
@@ -128,14 +128,14 @@ class Cover_photo
 
                 $im = photo_factory($base_image['content'], $base_image['mimetype']);
                 if ($im->is_valid()) {
-
                     // We are scaling and cropping the relative pixel locations to the original photo instead of the
                     // scaled photo we operated on.
 
                     // First load the scaled photo to check its size. (Should probably pass this in the post form and save
                     // a query.)
 
-                    $g = q("select width, height from photo where resource_id = '%s' and uid = %d and imgscale = 3",
+                    $g = q(
+                        "select width, height from photo where resource_id = '%s' and uid = %d and imgscale = 3",
                         dbesc($image_id),
                         intval($channel['channel_id'])
                     );
@@ -151,7 +151,8 @@ class Cover_photo
 
                     // unset all other cover photos
 
-                    q("update photo set photo_usage = %d where photo_usage = %d and uid = %d",
+                    q(
+                        "update photo set photo_usage = %d where photo_usage = %d and uid = %d",
                         intval(PHOTO_NORMAL),
                         intval(PHOTO_COVER),
                         intval($channel['channel_id'])
@@ -196,19 +197,19 @@ class Cover_photo
                     if ($r1 === false || $r2 === false || $r3 === false) {
                         // if one failed, delete them all so we can start over.
                         notice(t('Image resize failed.') . EOL);
-                        $x = q("delete from photo where resource_id = '%s' and uid = %d and imgscale >= 7 ",
+                        $x = q(
+                            "delete from photo where resource_id = '%s' and uid = %d and imgscale >= 7 ",
                             dbesc($base_image['resource_id']),
                             intval($channel['channel_id'])
                         );
                         return;
                     }
-
-                } else
+                } else {
                     notice(t('Unable to process image') . EOL);
+                }
             }
 
             goaway(z_root() . '/admin');
-
         }
 
 
@@ -260,7 +261,6 @@ class Cover_photo
         logger('attach_store: ' . print_r($res, true), LOGGER_DEBUG);
 
         json_return_and_die(['message' => $hash]);
-
     }
 
 
@@ -284,12 +284,14 @@ class Cover_photo
 
         $newuser = false;
 
-        if (argc() == 3 && argv(1) === 'new')
+        if (argc() == 3 && argv(1) === 'new') {
             $newuser = true;
+        }
 
 
         if (argv(2) === 'reset') {
-            q("update photo set photo_usage = %d where photo_usage = %d and uid = %d",
+            q(
+                "update photo set photo_usage = %d where photo_usage = %d and uid = %d",
                 intval(PHOTO_NORMAL),
                 intval(PHOTO_COVER),
                 intval($channel['channel_id'])
@@ -302,11 +304,12 @@ class Cover_photo
                 return;
             }
 
-            //		check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
+            //      check_form_security_token_redirectOnErr('/cover_photo', 'cover_photo');
 
             $resource_id = argv(3);
 
-            $r = q("SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' and imgscale > 0 ORDER BY imgscale ASC",
+            $r = q(
+                "SELECT id, album, imgscale FROM photo WHERE uid = %d AND resource_id = '%s' and imgscale > 0 ORDER BY imgscale ASC",
                 intval($channel['channel_id']),
                 dbesc($resource_id)
             );
@@ -321,10 +324,10 @@ class Cover_photo
                 }
             }
 
-            $r = q("SELECT content, mimetype, resource_id, os_storage FROM photo WHERE id = %d and uid = %d limit 1",
+            $r = q(
+                "SELECT content, mimetype, resource_id, os_storage FROM photo WHERE id = %d and uid = %d limit 1",
                 intval($r[0]['id']),
                 intval($channel['channel_id'])
-
             );
             if (!$r) {
                 notice(t('Photo not available.') . EOL);
@@ -341,7 +344,8 @@ class Cover_photo
             $smallest = 0;
             if ($ph->is_valid()) {
                 // go ahead as if we have just uploaded a new photo to crop
-                $i = q("select resource_id, imgscale from photo where resource_id = '%s' and uid = %d and imgscale = 0",
+                $i = q(
+                    "select resource_id, imgscale from photo where resource_id = '%s' and uid = %d and imgscale = 0",
                     dbesc($r[0]['resource_id']),
                     intval($channel['channel_id'])
                 );
@@ -359,7 +363,6 @@ class Cover_photo
 
 
         if (!array_key_exists('imagecrop', App::$data)) {
-
             $o .= replace_macros(get_markup_template('admin_cover_photo.tpl'), [
                 '$user' => $channel['channel_address'],
                 '$channel_id' => $channel['channel_id'],
@@ -438,6 +441,4 @@ class Cover_photo
         App::$page['htmlhead'] .= replace_macros(get_markup_template('crophead.tpl'), []);
         return;
     }
-
-
 }

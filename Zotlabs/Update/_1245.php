@@ -10,12 +10,10 @@ class _1245
 
         q("delete from app where app_url like '%%/nocomment'");
         return UPDATE_SUCCESS;
-
     }
 
     public function verify()
     {
         return true;
     }
-
 }

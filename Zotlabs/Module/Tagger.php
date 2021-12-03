@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -25,25 +26,29 @@ class Tagger extends Controller
         //strip html-tags
         $term = notags(trim($_GET['term']));
         //check if empty
-        if (!$term)
+        if (!$term) {
             return;
+        }
 
         $item_id = ((argc() > 1) ? notags(trim(argv(1))) : 0);
 
         logger('tagger: tag ' . $term . ' item ' . $item_id);
 
-        $r = q("select * from item where id = %d and uid = %d limit 1",
+        $r = q(
+            "select * from item where id = %d and uid = %d limit 1",
             intval($item_id),
             intval(local_channel())
         );
 
         if (!$r) {
-            $r = q("select * from item where id = %d and uid = %d limit 1",
+            $r = q(
+                "select * from item where id = %d and uid = %d limit 1",
                 intval($item_id),
                 intval($sys['channel_id'])
             );
             if (!$r) {
-                $r = q("select * from item where id = %d and item_private = 0 and item_wall = 1",
+                $r = q(
+                    "select * from item where id = %d and item_private = 0 and item_wall = 1",
                     intval($item_id)
                 );
             }
@@ -58,7 +63,8 @@ class Tagger extends Controller
             return;
         }
 
-        $r = q("SELECT * FROM item left join xchan on xchan_hash = author_xchan WHERE id = %d and uid = %d LIMIT 1",
+        $r = q(
+            "SELECT * FROM item left join xchan on xchan_hash = author_xchan WHERE id = %d and uid = %d LIMIT 1",
             intval($item_id),
             intval(local_channel())
         );
@@ -84,8 +90,9 @@ class Tagger extends Controller
             default:
                 $targettype = ACTIVITY_OBJ_NOTE;
                 $post_type = t('post');
-                if ($item['mid'] != $item['parent_mid'])
+                if ($item['mid'] != $item['parent_mid']) {
                     $post_type = t('comment');
+                }
                 break;
         }
 
@@ -158,7 +165,8 @@ class Tagger extends Controller
         $ret = post_activity_item($arr);
 
         if ($ret['success']) {
-            Libsync::build_sync_packet(local_channel(),
+            Libsync::build_sync_packet(
+                local_channel(),
                 [
                     'item' => [encode_item($ret['activity'], true)]
                 ]
@@ -166,7 +174,5 @@ class Tagger extends Controller
         }
 
         killme();
-
     }
-
 }

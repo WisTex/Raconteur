@@ -5,7 +5,6 @@ namespace Zotlabs\Module\Settings;
 use App;
 use Zotlabs\Lib\Libsync;
 
-
 class Display
 {
 
@@ -23,8 +22,9 @@ class Display
 
         $theme = ((x($_POST, 'theme')) ? notags(trim($_POST['theme'])) : $existing_theme);
 
-        if (!$theme)
+        if (!$theme) {
             $theme = 'redbasic';
+        }
 
 
         $preload_images = ((x($_POST, 'preload_images')) ? intval($_POST['preload_images']) : 0);
@@ -34,20 +34,24 @@ class Display
         $indentpx = ((x($_POST, 'indentpx')) ? intval($_POST['indentpx']) : 0);
 
         $channel_divmore_height = ((x($_POST, 'channel_divmore_height')) ? intval($_POST['channel_divmore_height']) : 400);
-        if ($channel_divmore_height < 50)
+        if ($channel_divmore_height < 50) {
             $channel_divmore_height = 50;
+        }
         $stream_divmore_height = ((x($_POST, 'stream_divmore_height')) ? intval($_POST['stream_divmore_height']) : 400);
-        if ($stream_divmore_height < 50)
+        if ($stream_divmore_height < 50) {
             $stream_divmore_height = 50;
+        }
 
         $browser_update = ((x($_POST, 'browser_update')) ? intval($_POST['browser_update']) : 0);
         $browser_update = $browser_update * 1000;
-        if ($browser_update < 15000)
+        if ($browser_update < 15000) {
             $browser_update = 15000;
+        }
 
         $itemspage = ((x($_POST, 'itemspage')) ? intval($_POST['itemspage']) : 20);
-        if ($itemspage > 100)
+        if ($itemspage > 100) {
             $itemspage = 100;
+        }
 
         if ($indentpx < 0) {
             $indentpx = 0;
@@ -75,10 +79,12 @@ class Display
                     $clsname = '\\Zotlabs\\Theme\\' . ucfirst($theme) . 'Config';
                     $theme_config = new $clsname();
                     $schemas = $theme_config->get_schemas();
-                    if (array_key_exists($_POST['schema'], $schemas))
+                    if (array_key_exists($_POST['schema'], $schemas)) {
                         $newschema = $_POST['schema'];
-                    if ($newschema === '---')
+                    }
+                    if ($newschema === '---') {
                         $newschema = '';
+                    }
                     $theme_config->post();
                 }
             }
@@ -88,7 +94,8 @@ class Display
 
         $_SESSION['theme'] = $theme . (($newschema) ? ':' . $newschema : '');
 
-        $r = q("UPDATE channel SET channel_theme = '%s' WHERE channel_id = %d",
+        $r = q(
+            "UPDATE channel SET channel_theme = '%s' WHERE channel_id = %d",
             dbesc($theme . (($newschema) ? ':' . $newschema : '')),
             intval(local_channel())
         );
@@ -106,8 +113,9 @@ class Display
         $yes_no = array(t('No'), t('Yes'));
 
         $default_theme = get_config('system', 'theme');
-        if (!$default_theme)
+        if (!$default_theme) {
             $default_theme = 'redbasic';
+        }
 
         $themespec = explode(':', App::$channel['channel_theme']);
         $existing_theme = $themespec[0];
@@ -118,10 +126,13 @@ class Display
         $allowed_themes_str = get_config('system', 'allowed_themes');
         $allowed_themes_raw = explode(',', $allowed_themes_str);
         $allowed_themes = [];
-        if (count($allowed_themes_raw))
-            foreach ($allowed_themes_raw as $x)
-                if (strlen(trim($x)) && is_dir("view/theme/$x"))
+        if (count($allowed_themes_raw)) {
+            foreach ($allowed_themes_raw as $x) {
+                if (strlen(trim($x)) && is_dir("view/theme/$x")) {
                     $allowed_themes[] = trim($x);
+                }
+            }
+        }
 
 
         $themes = [];
@@ -230,6 +241,4 @@ class Display
         }
         return null;
     }
-
-
 }

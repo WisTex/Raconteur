@@ -1,4 +1,6 @@
-<?php /** @file */
+<?php
+
+/** @file */
 
 namespace Zotlabs\Render;
 
@@ -41,7 +43,6 @@ class SmartyInterface extends Smarty
         if (!is_dir($basecompiledir)) {
             echo "<b>ERROR:</b> folder <tt>$basecompiledir</tt> does not exist.";
             killme();
-
         }
 
         if (!is_writable($basecompiledir)) {
@@ -69,6 +70,3 @@ class SmartyInterface extends Smarty
         return $this->fetch('file:' . $this->filename);
     }
 }
-
-
-

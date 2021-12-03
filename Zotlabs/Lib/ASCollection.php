@@ -9,7 +9,7 @@ use Zotlabs\Lib\Activity;
  * Class for dealing with fetching ActivityStreams collections (ordered or unordered, normal or paged).
  * Construct with either an existing object or url and an optional channel to sign requests.
  * $direction is 0 (default) to fetch from the beginning, and 1 to fetch from the end and reverse order the resultant array.
- * An optional limit to the number of records returned may also be specified. 
+ * An optional limit to the number of records returned may also be specified.
  * Use $class->get() to return an array of collection members.
  */
 class ASCollection

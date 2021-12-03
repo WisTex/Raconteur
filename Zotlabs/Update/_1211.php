@@ -18,10 +18,9 @@ class _1211
 				ADD INDEX `channel_active` (`channel_active`)");
         }
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
 }

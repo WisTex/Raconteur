@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -102,7 +103,8 @@ class Stream extends Controller
         if ($search) {
             $_GET['netsearch'] = escape_tags($search);
             if (strpos($search, '@') === 0) {
-                $r = q("select abook_id from abook left join xchan on abook_xchan = xchan_hash where xchan_name = '%s' and abook_channel = %d limit 1",
+                $r = q(
+                    "select abook_id from abook left join xchan on abook_xchan = xchan_hash where xchan_name = '%s' and abook_channel = %d limit 1",
                     dbesc(substr($search, 1)),
                     intval(local_channel())
                 );
@@ -144,7 +146,8 @@ class Stream extends Controller
                         break;
                 }
             } else {
-                $r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
                     intval($gid),
                     intval(local_channel())
                 );
@@ -160,7 +163,6 @@ class Stream extends Controller
 
             $group = $gid;
             $group_hash = $r[0]['hash'];
-
         }
 
         $default_cmin = ((Apps::system_app_installed(local_channel(), 'Friend Zoom')) ? get_pconfig(local_channel(), 'affinity', 'cmin', 0) : (-1));
@@ -187,7 +189,8 @@ class Stream extends Controller
         }
 
         if ($cid) {
-            $cid_r = q("SELECT abook.abook_xchan, xchan.xchan_addr, xchan.xchan_name, xchan.xchan_url, xchan.xchan_photo_s, xchan.xchan_type from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
+            $cid_r = q(
+                "SELECT abook.abook_xchan, xchan.xchan_addr, xchan.xchan_name, xchan.xchan_url, xchan.xchan_photo_s, xchan.xchan_type from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d and abook_blocked = 0 limit 1",
                 intval($cid),
                 intval(local_channel())
             );
@@ -199,17 +202,16 @@ class Stream extends Controller
                 notice(t('No such channel') . EOL);
                 goaway(z_root() . '/stream');
             }
-
         }
 
         if (!$this->updating) {
-
             // search terms header
 
             // hide the terms we use to search for videos from
             // the activity_filter widget because it doesn't look very good
             if ($search && $search !== 'video]') {
-                $o .= replace_macros(get_markup_template("section_title.tpl"),
+                $o .= replace_macros(
+                    get_markup_template("section_title.tpl"),
                     ['$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT, 'UTF-8')]
                 );
             }
@@ -252,7 +254,6 @@ class Stream extends Controller
             $o .= $status_editor;
 
             $static = channel_manual_conv_update(local_channel());
-
         }
 
 
@@ -303,7 +304,6 @@ class Stream extends Controller
             }
 
             $o = $title . $status_editor;
-
         } elseif (isset($cid_r) && $cid_r) {
             $item_thread_top = EMPTY_STR;
 
@@ -328,7 +328,8 @@ class Stream extends Controller
             $o = $title;
             $o .= $status_editor;
         } elseif ($xchan) {
-            $r = q("select * from xchan where xchan_hash = '%s'",
+            $r = q(
+                "select * from xchan where xchan_hash = '%s'",
                 dbesc($xchan)
             );
             if ($r) {
@@ -340,12 +341,10 @@ class Stream extends Controller
 
                 $o = $title;
                 $o .= $status_editor;
-
             } else {
                 notice(t('Invalid channel.') . EOL);
                 goaway(z_root() . '/stream');
             }
-
         }
 
         if (x($category)) {
@@ -361,8 +360,9 @@ class Stream extends Controller
             // way and also you aren't writing a comment (discovered in javascript).
 
             $maxheight = get_pconfig(local_channel(), 'system', 'stream_divmore_height');
-            if (!$maxheight)
+            if (!$maxheight) {
                 $maxheight = 400;
+            }
 
 
             $o .= '<div id="live-stream"></div>' . "\r\n";
@@ -422,7 +422,8 @@ class Stream extends Controller
             if (strpos($search, '#') === 0) {
                 $sql_extra .= term_query('item', substr($search, 1), TERM_HASHTAG, TERM_COMMUNITYTAG);
             } else {
-                $sql_extra .= sprintf(" AND (item.body like '%s' OR item.title like '%s') ",
+                $sql_extra .= sprintf(
+                    " AND (item.body like '%s' OR item.title like '%s') ",
                     dbesc(protect_sprintf('%' . $search . '%')),
                     dbesc(protect_sprintf('%' . $search . '%'))
                 );
@@ -430,7 +431,6 @@ class Stream extends Controller
         }
 
         if ($verb) {
-
             // the presence of a leading dot in the verb determines
             // whether to match the type of activity or the child object.
             // The name 'verb' is a holdover from the earlier XML
@@ -438,11 +438,13 @@ class Stream extends Controller
 
             if (substr($verb, 0, 1) === '.') {
                 $verb = substr($verb, 1);
-                $sql_extra .= sprintf(" AND item.obj_type like '%s' ",
+                $sql_extra .= sprintf(
+                    " AND item.obj_type like '%s' ",
                     dbesc(protect_sprintf('%' . $verb . '%'))
                 );
             } else {
-                $sql_extra .= sprintf(" AND item.verb like '%s' ",
+                $sql_extra .= sprintf(
+                    " AND item.verb like '%s' ",
                     dbesc(protect_sprintf('%' . $verb . '%'))
                 );
             }
@@ -457,23 +459,21 @@ class Stream extends Controller
         }
 
         if ($conv) {
-
             $item_thread_top = '';
 
             if ($nouveau) {
                 $sql_extra .= " AND author_xchan = '" . dbesc($channel['channel_hash']) . "' ";
             } else {
-                $sql_extra .= sprintf(" AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 ) and item_deleted = 0 ) ",
+                $sql_extra .= sprintf(
+                    " AND parent IN (SELECT distinct(parent) from item where ( author_xchan = '%s' or item_mentionsme = 1 ) and item_deleted = 0 ) ",
                     dbesc(protect_sprintf($channel['channel_hash']))
                 );
             }
         }
 
         if ($this->updating && !$this->loading) {
-
             // only setup pagination on initial page view
             $pager_sql = '';
-
         } else {
             $itemspage = get_pconfig(local_channel(), 'system', 'itemspage');
             App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
@@ -483,7 +483,6 @@ class Stream extends Controller
         // cmin and cmax are both -1 when the affinity tool is disabled
 
         if (($cmin != (-1)) || ($cmax != (-1))) {
-
             // Not everybody who shows up in the network stream will be in your address book.
             // By default those that aren't are assumed to have closeness = 99; but this isn't
             // recorded anywhere. So if cmax is 99, we'll open the search up to anybody in
@@ -491,15 +490,16 @@ class Stream extends Controller
 
             $sql_nets .= " AND ";
 
-            if ($cmax == 99)
+            if ($cmax == 99) {
                 $sql_nets .= " ( ";
+            }
 
             $sql_nets .= "( abook.abook_closeness >= " . intval($cmin) . " ";
             $sql_nets .= " AND abook.abook_closeness <= " . intval($cmax) . " ) ";
 
-            if ($cmax == 99)
+            if ($cmax == 99) {
                 $sql_nets .= " OR abook.abook_closeness IS NULL ) ";
-
+            }
         }
 
         $net_query = (($net) ? " left join xchan on xchan_hash = author_xchan " : '');
@@ -508,10 +508,11 @@ class Stream extends Controller
         $abook_uids = " and abook.abook_channel = " . local_channel() . " ";
         $uids = " and item.uid = " . local_channel() . " ";
 
-        if (get_pconfig(local_channel(), 'system', 'stream_list_mode'))
+        if (get_pconfig(local_channel(), 'system', 'stream_list_mode')) {
             $page_mode = 'list';
-        else
+        } else {
             $page_mode = 'client';
+        }
 
         $simple_update = (($this->updating) ? " and item_changed >  = '" . $_SESSION['loadtime_stream'] . "' " : '');
 
@@ -531,13 +532,16 @@ class Stream extends Controller
         // by storing in your session the current UTC time whenever you LOAD a network page, and only UPDATE items
         // which are both ITEM_UNSEEN and have "changed" since that time. Cross fingers...
 
-        if ($this->updating && $_SESSION['loadtime_stream'])
+        if ($this->updating && $_SESSION['loadtime_stream']) {
             $simple_update = " AND item.changed > '" . datetime_convert('UTC', 'UTC', $_SESSION['loadtime_stream']) . "' ";
-        if ($this->loading)
+        }
+        if ($this->loading) {
             $simple_update = '';
+        }
 
-        if ($static && $simple_update)
+        if ($static && $simple_update) {
             $simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
+        }
 
 
         // we are not yet using this in updates because the content may have just been marked seen
@@ -562,20 +566,19 @@ class Stream extends Controller
 				$simple_update
 				$sql_extra $sql_options $sql_nets
 				$net_query2
-				ORDER BY item.created DESC $pager_sql "
-            );
+				ORDER BY item.created DESC $pager_sql ");
 
             xchan_query($items);
 
             $items = fetch_post_tags($items, true);
         } elseif ($this->updating) {
-
             // Normal conversation view
 
-            if ($order === 'post')
+            if ($order === 'post') {
                 $ordering = "created";
-            else
+            } else {
                 $ordering = "commented";
+            }
 
             if ($this->loading) {
                 // Fetch a page full of parent items for this page
@@ -587,10 +590,8 @@ class Stream extends Controller
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets
 					$net_query2
-					ORDER BY $ordering DESC $pager_sql "
-                );
+					ORDER BY $ordering DESC $pager_sql ");
             } else {
-
                 // this is an update
 
                 $r = q("SELECT item.parent AS item_id FROM item
@@ -598,15 +599,14 @@ class Stream extends Controller
 					$net_query
 					WHERE true $uids $item_normal_update $simple_update
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
-					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2"
-                );
+					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2");
             }
 
             if ($r) {
-
                 $parents_str = ids_to_querystr($r, 'item_id');
 
-                $items = q("SELECT item.*, item.id AS item_id FROM item
+                $items = q(
+                    "SELECT item.*, item.id AS item_id FROM item
 					WHERE true $uids $item_normal
 					AND item.parent IN ( %s )
 					$sql_extra ",
@@ -616,7 +616,6 @@ class Stream extends Controller
                 xchan_query($items, true);
                 $items = fetch_post_tags($items, true);
                 $items = conv_sort($items, $ordering);
-
             }
 
             if ($page_mode === 'list') {
@@ -643,7 +642,8 @@ class Stream extends Controller
             $x = ['channel_id' => local_channel(), 'update' => 'unset'];
             call_hooks('update_unseen', $x);
             if ($x['update'] === 'unset' || intval($x['update'])) {
-                $r = q("UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d $update_unseen ",
+                $r = q(
+                    "UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d $update_unseen ",
                     intval(local_channel())
                 );
             }
@@ -663,5 +663,4 @@ class Stream extends Controller
 
         return $o;
     }
-
 }

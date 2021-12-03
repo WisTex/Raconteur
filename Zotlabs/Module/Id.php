@@ -7,8 +7,8 @@ namespace Zotlabs\Module;
  * Controller for responding to x-zot: protocol requests
  * x-zot:_jkfRG85nJ-714zn-LW_VbTFW8jSjGAhAydOcJzHxqHkvEHWG2E0RbA_pbch-h4R63RG1YJZifaNzgccoLa3MQ/453c1678-1a79-4af7-ab65-6b012f6cab77
 
- *  
- */  
+ *
+ */
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
@@ -34,7 +34,6 @@ class Id extends Controller
     {
 
         if (Libzot::is_zot_request()) {
-
             $conversation = false;
 
             $request_portable_id = argv(1);
@@ -69,13 +68,14 @@ class Id extends Controller
 
             $sql_extra = item_permissions_sql(0);
 
-            $r = q("select * from item where uuid = '%s' $item_normal $sql_extra and uid = %d limit 1",
+            $r = q(
+                "select * from item where uuid = '%s' $item_normal $sql_extra and uid = %d limit 1",
                 dbesc($item_id),
                 intval($channel_id)
             );
             if (!$r) {
-
-                $r = q("select * from item where uuid = '%s' $item_normal and uid = %d limit 1",
+                $r = q(
+                    "select * from item where uuid = '%s' $item_normal and uid = %d limit 1",
                     dbesc($item_id),
                     intval($channel_id)
                 );
@@ -85,16 +85,18 @@ class Id extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream'))
+            if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream')) {
                 http_status_exit(403, 'Forbidden');
+            }
 
             xchan_query($r, true);
             $items = fetch_post_tags($r, true);
 
             $i = Activity::encode_item($items[0], (get_config('system', 'activitypub', ACTIVITYPUB_ENABLED) ? true : false));
 
-            if (!$i)
+            if (!$i) {
                 http_status_exit(404, 'Not found');
+            }
 
             $x = array_merge(['@context' => [
                 ACTIVITYSTREAMS_JSONLD_REV,
@@ -111,11 +113,6 @@ class Id extends Controller
             HTTPSig::set_headers($h);
             echo $ret;
             killme();
-
         }
-
     }
-
 }
-
-

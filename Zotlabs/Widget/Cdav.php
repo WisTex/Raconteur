@@ -2,8 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
-
 use App;
 use DBA;
 use Sabre\CardDAV\Backend\PDO;
@@ -13,14 +11,16 @@ class Cdav
 
     public function widget()
     {
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
         $principalUri = 'principals/' . $channel['channel_address'];
 
-        if (!cdav_principal($principalUri))
+        if (!cdav_principal($principalUri)) {
             return;
+        }
 
         $pdo = DBA::$dba->db;
 
@@ -29,13 +29,13 @@ class Cdav
         $o = '';
 
         if (argc() <= 3 && argv(1) === 'calendar') {
-
             $caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
 
             $sabrecals = $caldavBackend->getCalendarsForUser($principalUri);
 
             //TODO: we should probably also check for permission to send stream here
-            $local_channels = q("SELECT * FROM channel LEFT JOIN abook ON abook_xchan = channel_hash WHERE channel_system = 0 AND channel_removed = 0 AND channel_hash != '%s' AND abook_channel = %d",
+            $local_channels = q(
+                "SELECT * FROM channel LEFT JOIN abook ON abook_xchan = channel_hash WHERE channel_system = 0 AND channel_removed = 0 AND channel_hash != '%s' AND abook_channel = %d",
                 dbesc($channel['channel_hash']),
                 intval($channel['channel_id'])
             );
@@ -50,12 +50,15 @@ class Cdav
 
             //list calendars
             foreach ($sabrecals as $sabrecal) {
-                if ($sabrecal['share-access'] == 1)
+                if ($sabrecal['share-access'] == 1) {
                     $access = '';
-                if ($sabrecal['share-access'] == 2)
+                }
+                if ($sabrecal['share-access'] == 2) {
                     $access = 'read';
-                if ($sabrecal['share-access'] == 3)
+                }
+                if ($sabrecal['share-access'] == 3) {
                     $access = 'read-write';
+                }
 
                 $invites = $caldavBackend->getInvites($sabrecal['id']);
 
@@ -153,11 +156,9 @@ class Cdav
             ]);
 
             return $o;
-
         }
 
         if (argc() >= 2 && argv(1) === 'addressbook') {
-
             $carddavBackend = new PDO($pdo);
 
             $sabreabooks = $carddavBackend->getAddressBooksForUser($principalUri);
@@ -188,8 +189,6 @@ class Cdav
             ]);
 
             return $o;
-
         }
-
     }
 }

@@ -27,8 +27,9 @@ class Themes
             }
         }
         info(t('Theme settings updated.'));
-        if (is_ajax())
+        if (is_ajax()) {
             return;
+        }
 
         goaway(z_root() . '/admin/themes/' . $theme);
     }
@@ -44,10 +45,13 @@ class Themes
         $allowed_themes_str = get_config('system', 'allowed_themes');
         $allowed_themes_raw = explode(',', $allowed_themes_str);
         $allowed_themes = [];
-        if (count($allowed_themes_raw))
-            foreach ($allowed_themes_raw as $x)
-                if (strlen(trim($x)))
+        if (count($allowed_themes_raw)) {
+            foreach ($allowed_themes_raw as $x) {
+                if (strlen(trim($x))) {
                     $allowed_themes[] = trim($x);
+                }
+            }
+        }
 
         $themes = [];
         $files = glob('view/theme/*');
@@ -84,10 +88,11 @@ class Themes
 
                 $this->toggle_theme($themes, $theme, $result);
                 $s = $this->rebuild_theme_table($themes);
-                if ($result)
+                if ($result) {
                     info(sprintf('Theme %s enabled.', $theme));
-                else
+                } else {
                     info(sprintf('Theme %s disabled.', $theme));
+                }
 
                 set_config('system', 'allowed_themes', $s);
                 goaway(z_root() . '/admin/themes');
@@ -103,11 +108,11 @@ class Themes
                 $action = t("Enable");
             }
 
-            $readme = Null;
+            $readme = null;
             if (is_file("view/theme/$theme/README.md")) {
                 $readme = file_get_contents("view/theme/$theme/README.md");
                 $readme = MarkdownExtra::defaultTransform($readme);
-            } else if (is_file("view/theme/$theme/README")) {
+            } elseif (is_file("view/theme/$theme/README")) {
                 $readme = '<pre>' . file_get_contents("view/theme/$theme/README") . '</pre>';
             }
 
@@ -120,8 +125,9 @@ class Themes
             }
 
             $screenshot = array(get_theme_screenshot($theme), t('Screenshot'));
-            if (!stristr($screenshot[0], $theme))
+            if (!stristr($screenshot[0], $theme)) {
                 $screenshot = null;
+            }
 
             $t = get_markup_template('admin_plugins_details.tpl');
             return replace_macros($t, array(
@@ -223,13 +229,13 @@ class Themes
         if (count($themes)) {
             foreach ($themes as $th) {
                 if ($th['allowed']) {
-                    if (strlen($o))
+                    if (strlen($o)) {
                         $o .= ',';
+                    }
                     $o .= $th['name'];
                 }
             }
         }
         return $o;
     }
-
 }

@@ -12,7 +12,8 @@ class _1159
                 $x = dbunescbin($rr['data']);
                 $has_slash = (($x === 'store/' . $rr['channel_address'] . '/') ? true : false);
                 if (($x === 'store/' . $rr['channel_address']) || ($has_slash)) {
-                    q("update attach set data = '%s' where id = %d",
+                    q(
+                        "update attach set data = '%s' where id = %d",
                         dbesc('store/' . $rr['channel_address'] . (($has_slash) ? '' : '/' . $rr['hash'])),
                         dbesc($rr['id'])
                     );
@@ -21,6 +22,4 @@ class _1159
         }
         return UPDATE_SUCCESS;
     }
-
-
 }

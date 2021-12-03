@@ -12,7 +12,7 @@ require_once('include/socgraph.php');
 require_once('include/bbcode.php');
 require_once('include/html2plain.php');
 
-define( 'DIRECTORY_PAGESIZE', 60);
+define('DIRECTORY_PAGESIZE', 60);
 
 class Directory extends Controller
 {
@@ -22,7 +22,8 @@ class Directory extends Controller
         App::set_pager_itemspage(DIRECTORY_PAGESIZE);
 
         if (x($_GET, 'ignore') && local_channel()) {
-            q("insert into xign ( uid, xchan ) values ( %d, '%s' ) ",
+            q(
+                "insert into xign ( uid, xchan ) values ( %d, '%s' ) ",
                 intval(local_channel()),
                 dbesc($_GET['ignore'])
             );
@@ -86,7 +87,6 @@ class Directory extends Controller
                 set_xconfig($observer, 'directory', 'activedir', $active);
             }
         }
-
     }
 
     public function get()
@@ -136,7 +136,6 @@ class Directory extends Controller
         $suggest = (local_channel() && x($_REQUEST, 'suggest')) ? $_REQUEST['suggest'] : '';
 
         if ($suggest) {
-
             // the directory options have no effect in suggestion mode
 
             $globaldir = 1;
@@ -177,7 +176,6 @@ class Directory extends Controller
             }
             // Remove last space in the advanced query
             $advanced = rtrim($advanced);
-
         }
 
         $tpl = get_markup_template('directory_header.tpl');
@@ -194,7 +192,8 @@ class Directory extends Controller
         $contacts = [];
 
         if (local_channel()) {
-            $x = q("select abook_xchan from abook where abook_channel = %d",
+            $x = q(
+                "select abook_xchan from abook where abook_channel = %d",
                 intval(local_channel())
             );
             if ($x) {
@@ -205,7 +204,6 @@ class Directory extends Controller
         }
 
         if ($url) {
-
             $numtags = get_config('system', 'directorytags');
 
             $kw = ((intval($numtags) > 0) ? intval($numtags) : 50);
@@ -270,9 +268,7 @@ class Directory extends Controller
                 $t = 0;
                 $j = json_decode($x['body'], true);
                 if ($j) {
-
                     if ($j['results']) {
-
                         $results = $j['results'];
                         if ($suggest) {
                             // change order to "number of common friends descending"
@@ -284,7 +280,6 @@ class Directory extends Controller
                         $photo = 'thumb';
 
                         foreach ($results as $rr) {
-
                             $profile_link = chanlink_url($rr['url']);
 
                             $pdesc = (($rr['description']) ? $rr['description'] . '<br>' : '');
@@ -328,12 +323,12 @@ class Directory extends Controller
 
                             $profile = $rr;
 
-                            $gender = ((x($profile, 'gender') == 1) ? t('Gender: ') . $profile['gender'] : False);
-                            $marital = ((x($profile, 'marital') == 1) ? t('Status: ') . $profile['marital'] : False);
-                            $homepage = ((x($profile, 'homepage') == 1) ? t('Homepage: ') : False);
+                            $gender = ((x($profile, 'gender') == 1) ? t('Gender: ') . $profile['gender'] : false);
+                            $marital = ((x($profile, 'marital') == 1) ? t('Status: ') . $profile['marital'] : false);
+                            $homepage = ((x($profile, 'homepage') == 1) ? t('Homepage: ') : false);
                             $homepageurl = ((x($profile, 'homepage') == 1) ? html2plain($profile['homepage']) : '');
-                            $hometown = ((x($profile, 'hometown') == 1) ? html2plain($profile['hometown']) : False);
-                            $about = ((x($profile, 'about') == 1) ? zidify_links(bbcode($profile['about'])) : False);
+                            $hometown = ((x($profile, 'hometown') == 1) ? html2plain($profile['hometown']) : false);
+                            $about = ((x($profile, 'about') == 1) ? zidify_links(bbcode($profile['about'])) : false);
 
                             $keywords = ((x($profile, 'keywords')) ? $profile['keywords'] : '');
 
@@ -346,7 +341,8 @@ class Directory extends Controller
 
                                 if ($karr) {
                                     if (local_channel()) {
-                                        $pk = q("select keywords from profile where uid = %d and is_default = 1 limit 1",
+                                        $pk = q(
+                                            "select keywords from profile where uid = %d and is_default = 1 limit 1",
                                             intval(local_channel())
                                         );
                                         if ($pk) {
@@ -505,7 +501,8 @@ class Directory extends Controller
                             } elseif (strpos($search, 'http') === 0) {
                                 goaway(z_root() . '/chanview/?f=&url=' . $search);
                             } else {
-                                $r = q("select xchan_hash from xchan where xchan_name = '%s' limit 1",
+                                $r = q(
+                                    "select xchan_hash from xchan where xchan_name = '%s' limit 1",
                                     dbesc($search)
                                 );
                                 if ($r) {
@@ -539,5 +536,4 @@ class Directory extends Controller
         }
         return $out;
     }
-
 }

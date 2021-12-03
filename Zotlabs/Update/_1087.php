@@ -10,10 +10,9 @@ class _1087
 ADD `xprof_homepage` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD `xprof_hometown` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD INDEX ( `xprof_hometown` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

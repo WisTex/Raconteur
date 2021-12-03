@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 /**
  * @file Zotlabs/Module/Filestorage.php
@@ -43,13 +43,13 @@ class Filestorage extends Controller
         if ($newdir || $newname) {
             $changed = false;
 
-            $m = q("select folder from attach where hash = '%s' and uid = %d limit 1",
+            $m = q(
+                "select folder from attach where hash = '%s' and uid = %d limit 1",
                 dbesc($resource),
                 intval($channel_id)
             );
 
             if ($m) {
-
                 // we should always have $newdir, but only call attach_move()
                 // if it is being changed *or* a new filename is set, and
                 // account for the fact $newdir can legally be an empty sring
@@ -83,7 +83,7 @@ class Filestorage extends Controller
             Libsync::build_sync_packet($channel_id, array('file' => array($sync)));
         }
 
-//		file_activity($channel_id, $object, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], 'post', $notify);
+//      file_activity($channel_id, $object, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], 'post', $notify);
 
         goaway(dirname($url));
     }
@@ -114,7 +114,6 @@ class Filestorage extends Controller
 
 
         if (argc() > 3 && argv(3) === 'delete') {
-
             if (argc() > 4 && argv(4) === 'json') {
                 $json_return = true;
             }
@@ -134,7 +133,8 @@ class Filestorage extends Controller
             }
 
             $file = intval(argv(2));
-            $r = q("SELECT hash, creator FROM attach WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT hash, creator FROM attach WHERE id = %d AND uid = %d LIMIT 1",
                 dbesc($file),
                 intval($owner)
             );
@@ -199,7 +199,8 @@ class Filestorage extends Controller
 
             $file = intval(argv(2));
 
-            $r = q("select id, uid, folder, filename, revision, flags, is_dir, os_storage, hash, allow_cid, allow_gid, deny_cid, deny_gid from attach where id = %d and uid = %d limit 1",
+            $r = q(
+                "select id, uid, folder, filename, revision, flags, is_dir, os_storage, hash, allow_cid, allow_gid, deny_cid, deny_gid from attach where id = %d and uid = %d limit 1",
                 intval($file),
                 intval($owner)
             );

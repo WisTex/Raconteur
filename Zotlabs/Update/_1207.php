@@ -13,13 +13,12 @@ class _1207
 				DROP INDEX resource_type
 			");
 
-            if ($r)
+            if ($r) {
                 return UPDATE_SUCCESS;
+            }
             return UPDATE_FAILED;
         } else {
             return UPDATE_SUCCESS;
         }
-
     }
-
 }

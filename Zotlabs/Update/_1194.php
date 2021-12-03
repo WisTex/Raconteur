@@ -10,7 +10,8 @@ class _1194
         if ($r) {
             foreach ($r as $rv) {
                 $mimetype = get_iconfig($rv['id'], 'wiki', 'mimeType');
-                q("update item set mimetype = '%s' where resource_type = 'nwikipage' and resource_id = '%s'",
+                q(
+                    "update item set mimetype = '%s' where resource_type = 'nwikipage' and resource_id = '%s'",
                     dbesc($mimetype),
                     dbesc($rv['resource_id'])
                 );
@@ -19,6 +20,4 @@ class _1194
 
         return UPDATE_SUCCESS;
     }
-
-
 }

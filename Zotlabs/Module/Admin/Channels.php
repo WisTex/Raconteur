@@ -27,7 +27,8 @@ class Channels
 
         if (x($_POST, 'page_channels_block')) {
             foreach ($channels as $uid) {
-                q("UPDATE channel SET channel_pageflags = ( channel_pageflags $xor %d ) where channel_id = %d",
+                q(
+                    "UPDATE channel SET channel_pageflags = ( channel_pageflags $xor %d ) where channel_id = %d",
                     intval(PAGE_CENSORED),
                     intval($uid)
                 );
@@ -37,7 +38,8 @@ class Channels
         }
         if (x($_POST, 'page_channels_code')) {
             foreach ($channels as $uid) {
-                q("UPDATE channel SET channel_pageflags = ( channel_pageflags $xor %d ) where channel_id = %d",
+                q(
+                    "UPDATE channel SET channel_pageflags = ( channel_pageflags $xor %d ) where channel_id = %d",
                     intval(PAGE_ALLOWCODE),
                     intval($uid)
                 );
@@ -63,7 +65,8 @@ class Channels
     {
         if (argc() > 2) {
             $uid = argv(3);
-            $channel = q("SELECT * FROM channel WHERE channel_id = %d",
+            $channel = q(
+                "SELECT * FROM channel WHERE channel_id = %d",
                 intval($uid)
             );
 
@@ -80,34 +83,36 @@ class Channels
                         channel_remove($uid, true);
 
                         notice(sprintf(t("Channel '%s' deleted"), $channel[0]['channel_name']) . EOL);
-                    }
+                }
                     break;
 
                 case "block":
                     {
                         check_form_security_token_redirectOnErr('/admin/channels', 'admin_channels', 't');
                         $pflags = $channel[0]['channel_pageflags'] ^ PAGE_CENSORED;
-                        q("UPDATE channel SET channel_pageflags = %d where channel_id = %d",
+                        q(
+                            "UPDATE channel SET channel_pageflags = %d where channel_id = %d",
                             intval($pflags),
                             intval($uid)
                         );
                         Run::Summon(['Directory', $uid, 'nopush']);
 
                         notice(sprintf((($pflags & PAGE_CENSORED) ? t("Channel '%s' censored") : t("Channel '%s' uncensored")), $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')') . EOL);
-                    }
+                }
                     break;
 
                 case "code":
                     {
                         check_form_security_token_redirectOnErr('/admin/channels', 'admin_channels', 't');
                         $pflags = $channel[0]['channel_pageflags'] ^ PAGE_ALLOWCODE;
-                        q("UPDATE channel SET channel_pageflags = %d where channel_id = %d",
+                        q(
+                            "UPDATE channel SET channel_pageflags = %d where channel_id = %d",
                             intval($pflags),
                             intval($uid)
                         );
 
                         notice(sprintf((($pflags & PAGE_ALLOWCODE) ? t("Channel '%s' code allowed") : t("Channel '%s' code disallowed")), $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')') . EOL);
-                    }
+                }
                     break;
 
                 default:
@@ -118,8 +123,9 @@ class Channels
 
         $key = (($_REQUEST['key']) ? dbesc($_REQUEST['key']) : 'channel_id');
         $dir = 'asc';
-        if (array_key_exists('dir', $_REQUEST))
+        if (array_key_exists('dir', $_REQUEST)) {
             $dir = ((intval($_REQUEST['dir'])) ? 'asc' : 'desc');
+        }
 
         $base = z_root() . '/admin/channels?f=';
         $odir = (($dir === 'asc') ? '0' : '1');
@@ -132,22 +138,25 @@ class Channels
             App::set_pager_itemspage(100);
         }
 
-        $channels = q("SELECT * from channel where channel_removed = 0 and channel_system = 0 order by $key $dir limit %d offset %d ",
+        $channels = q(
+            "SELECT * from channel where channel_removed = 0 and channel_system = 0 order by $key $dir limit %d offset %d ",
             intval(App::$pager['itemspage']),
             intval(App::$pager['start'])
         );
 
         if ($channels) {
             for ($x = 0; $x < count($channels); $x++) {
-                if ($channels[$x]['channel_pageflags'] & PAGE_CENSORED)
+                if ($channels[$x]['channel_pageflags'] & PAGE_CENSORED) {
                     $channels[$x]['blocked'] = true;
-                else
+                } else {
                     $channels[$x]['blocked'] = false;
+                }
 
-                if ($channels[$x]['channel_pageflags'] & PAGE_ALLOWCODE)
+                if ($channels[$x]['channel_pageflags'] & PAGE_ALLOWCODE) {
                     $channels[$x]['allowcode'] = true;
-                else
+                } else {
                     $channels[$x]['allowcode'] = false;
+                }
 
                 $channels[$x]['channel_link'] = z_root() . '/channel/' . $channels[$x]['channel_address'];
             }
@@ -187,5 +196,4 @@ class Channels
 
         return $o;
     }
-
 }

@@ -1,12 +1,10 @@
 <?php
+
 namespace Zotlabs\Module;
-
-
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
-
 use Zotlabs\Lib\Apps;
 
 require_once('include/conversation.php');
@@ -34,8 +32,9 @@ class Cal extends Controller
 
             $channelx = channelx_by_nick($nick);
 
-            if (!$channelx)
+            if (!$channelx) {
                 return;
+            }
 
             App::$data['channel'] = $channelx;
 
@@ -47,7 +46,6 @@ class Cal extends Controller
             head_set_icon(App::$data['channel']['xchan_photo_s']);
 
             App::$page['htmlhead'] .= "<script> var profile_uid = " . ((App::$data['channel']) ? App::$data['channel']['channel_id'] : 0) . "; </script>";
-
         }
 
         return;
@@ -115,26 +113,29 @@ class Cal extends Controller
         }
 
         if ($mode == 'view') {
-
             /* edit/create form */
             if ($event_id) {
-                $r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                     dbesc($event_id),
                     intval($channel['channel_id'])
                 );
-                if (count($r))
+                if (count($r)) {
                     $orig_event = $r[0];
+                }
             }
 
 
             // Passed parameters overrides anything found in the DB
-            if (!x($orig_event))
+            if (!x($orig_event)) {
                 $orig_event = [];
+            }
 
 
             $tz = date_default_timezone_get();
-            if (x($orig_event))
+            if (x($orig_event)) {
                 $tz = (($orig_event['adjust']) ? date_default_timezone_get() : 'UTC');
+            }
 
             $syear = datetime_convert('UTC', $tz, $sdt, 'Y');
             $smonth = datetime_convert('UTC', $tz, $sdt, 'm');
@@ -157,8 +158,9 @@ class Cal extends Controller
             $type = ((x($orig_event)) ? $orig_event['etype'] : 'event');
 
             $f = get_config('system', 'event_input_format');
-            if (!$f)
+            if (!$f) {
                 $f = 'ymd';
+            }
 
             $catsenabled = Apps::system_app_installed(local_channel(), 'Categories');
 
@@ -173,18 +175,22 @@ class Cal extends Controller
 
             $thisyear = datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y');
             $thismonth = datetime_convert('UTC', date_default_timezone_get(), 'now', 'm');
-            if (!$y)
+            if (!$y) {
                 $y = intval($thisyear);
-            if (!$m)
+            }
+            if (!$m) {
                 $m = intval($thismonth);
+            }
 
             // Put some limits on dates. The PHP date functions don't seem to do so well before 1900.
             // An upper limit was chosen to keep search engines from exploring links millions of years in the future.
 
-            if ($y < 1901)
+            if ($y < 1901) {
                 $y = 1900;
-            if ($y > 2099)
+            }
+            if ($y > 2099) {
                 $y = 2100;
+            }
 
             $nextyear = $y;
             $nextmonth = $m + 1;
@@ -194,9 +200,9 @@ class Cal extends Controller
             }
 
             $prevyear = $y;
-            if ($m > 1)
+            if ($m > 1) {
                 $prevmonth = $m - 1;
-            else {
+            } else {
                 $prevmonth = 12;
                 $prevyear--;
             }
@@ -207,8 +213,12 @@ class Cal extends Controller
 
 
             if (argv(2) === 'json') {
-                if (x($_GET, 'start')) $start = $_GET['start'];
-                if (x($_GET, 'end')) $finish = $_GET['end'];
+                if (x($_GET, 'start')) {
+                    $start = $_GET['start'];
+                }
+                if (x($_GET, 'end')) {
+                    $finish = $_GET['end'];
+                }
             }
 
             $start = datetime_convert('UTC', 'UTC', $start);
@@ -218,11 +228,13 @@ class Cal extends Controller
             $adjust_finish = datetime_convert('UTC', date_default_timezone_get(), $finish);
 
 
-            if (!perm_is_allowed(App::$profile['uid'], get_observer_hash(), 'view_contacts'))
+            if (!perm_is_allowed(App::$profile['uid'], get_observer_hash(), 'view_contacts')) {
                 $sql_extra .= " and etype != 'birthday' ";
+            }
 
             if (x($_GET, 'id')) {
-                $r = q("SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
+                $r = q(
+                    "SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
 	                                from event left join item on resource_id = event_hash where resource_type = 'event' and event.uid = %d and event.id = %d $sql_extra limit 1",
                     intval($channel['channel_id']),
                     intval($_GET['id'])
@@ -233,7 +245,8 @@ class Cal extends Controller
                 // Noting this for now - it will need to be fixed here and in Friendica.
                 // Ultimately the finish date shouldn't be involved in the query.
 
-                $r = q("SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
+                $r = q(
+                    "SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
 	                              from event left join item on event_hash = resource_id 
 					where resource_type = 'event' and event.uid = %d and event.uid = item.uid $ignored 
 					AND (( adjust = 0 AND ( dtend >= '%s' or nofinish = 1 ) AND dtstart <= '%s' ) 
@@ -244,7 +257,6 @@ class Cal extends Controller
                     dbesc($adjust_start),
                     dbesc($adjust_finish)
                 );
-
             }
 
             $links = [];
@@ -259,8 +271,9 @@ class Cal extends Controller
             if ($r) {
                 foreach ($r as $rr) {
                     $j = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], 'j') : datetime_convert('UTC', 'UTC', $rr['dtstart'], 'j'));
-                    if (!x($links, $j))
+                    if (!x($links, $j)) {
                         $links[$j] = z_root() . '/' . App::$cmd . '#link-' . $j;
+                    }
                 }
             }
 
@@ -270,9 +283,7 @@ class Cal extends Controller
             $fmt = t('l, F j');
 
             if ($r) {
-
                 foreach ($r as $rr) {
-
                     $j = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], 'j') : datetime_convert('UTC', 'UTC', $rr['dtstart'], 'j'));
                     $d = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], $fmt) : datetime_convert('UTC', 'UTC', $rr['dtstart'], $fmt));
                     $d = day_translate($d);
@@ -319,8 +330,6 @@ class Cal extends Controller
                         'html' => $html,
                         'plink' => array($rr['plink'], t('Link to Source'), '', ''),
                     );
-
-
                 }
             }
 
@@ -362,7 +371,5 @@ class Cal extends Controller
 
             return $o;
         }
-
     }
-
 }

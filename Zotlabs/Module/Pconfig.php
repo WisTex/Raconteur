@@ -1,10 +1,10 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
-
 
 class Pconfig extends Controller
 {
@@ -50,7 +50,6 @@ class Pconfig extends Controller
         }
 
         goaway(z_root() . '/pconfig/' . $cat . '/' . $k);
-
     }
 
 
@@ -73,8 +72,9 @@ class Pconfig extends Controller
             if (in_array(argv(2), $this->disallowed_pconfig())) {
                 notice(t('This setting requires special processing and editing has been blocked.') . EOL);
                 return $content;
-            } else
+            } else {
                 $content .= $this->pconfig_form(escape_tags(argv(1)), escape_tags(argv(2)));
+            }
         }
 
 
@@ -89,7 +89,6 @@ class Pconfig extends Controller
         }
 
         if (argc() == 1) {
-
             $r = q("select * from pconfig where uid = " . local_channel());
             if ($r) {
                 foreach ($r as $rr) {
@@ -98,7 +97,6 @@ class Pconfig extends Controller
             }
         }
         return $content;
-
     }
 
 
@@ -109,16 +107,17 @@ class Pconfig extends Controller
         $o .= '<input type="hidden" name="form_security_token" value="' . get_form_security_token('pconfig') . '" />';
 
         $v = get_pconfig(local_channel(), $cat, $k);
-        if (strpos($k, 'password') !== false)
+        if (strpos($k, 'password') !== false) {
             $v = unobscurify($v);
+        }
 
         $o .= '<input type="hidden" name="cat" value="' . $cat . '" />';
         $o .= '<input type="hidden" name="k" value="' . $k . '" />';
 
 
-        if (strpos($v, "\n"))
+        if (strpos($v, "\n")) {
             $o .= '<textarea name="v" >' . escape_tags($v) . '</textarea>';
-        else {
+        } else {
             if (is_array($v)) {
                 $o .= '<code><pre>' . "\n" . print_array($v) . '</pre></code>';
                 $o .= '<input type="hidden" name="v" value="' . serialise($v) . '" />';
@@ -131,7 +130,6 @@ class Pconfig extends Controller
         $o .= '</form>';
 
         return $o;
-
     }
 
 
@@ -141,5 +139,4 @@ class Pconfig extends Controller
             'permissions_role'
         );
     }
-
 }

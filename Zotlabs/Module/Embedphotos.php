@@ -55,7 +55,6 @@ class Embedphotos extends Controller
                 json_return_and_die(array('status' => true, 'photolink' => $x, 'resource_id' => $resource_id));
             }
             json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false));
-
         }
     }
 
@@ -71,7 +70,8 @@ class Embedphotos extends Controller
         $output = EMPTY_STR;
         if ($channel) {
             $resolution = ((feature_enabled($channel['channel_id'], 'large_photos')) ? 1 : 2);
-            $r = q("select mimetype, height, width, title from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
+            $r = q(
+                "select mimetype, height, width, title from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
                 dbesc($resource),
                 intval($resolution),
                 intval($channel['channel_id'])
@@ -92,7 +92,8 @@ class Embedphotos extends Controller
 
             $alt = $r[0]['title'];
             if (!$alt) {
-                $a = q("select filename from attach where hash = '%s' and uid = %d limit 1",
+                $a = q(
+                    "select filename from attach where hash = '%s' and uid = %d limit 1",
                     dbesc($resource),
                     intval($channel['channel_id'])
                 );
@@ -138,8 +139,9 @@ class Embedphotos extends Controller
         require_once('include/security.php');
         $sql_extra = permissions_sql($channel_id);
 
-        if (!perm_is_allowed($channel_id, get_observer_hash(), 'view_storage'))
+        if (!perm_is_allowed($channel_id, get_observer_hash(), 'view_storage')) {
             return '';
+        }
 
         if ($args['album']) {
             $album = (($args['album'] === '/') ? '' : $args['album']);
@@ -154,7 +156,8 @@ class Embedphotos extends Controller
          * It is a limitation of the photo table using a name for a photo album instead of a folder hash
          */
         if ($album) {
-            $x = q("select hash from attach where filename = '%s' and uid = %d limit 1",
+            $x = q(
+                "select hash from attach where filename = '%s' and uid = %d limit 1",
                 dbesc($album),
                 intval($owner_uid)
             );
@@ -168,7 +171,8 @@ class Embedphotos extends Controller
 
         $order = 'DESC';
 
-        $r = q("SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
+        $r = q(
+            "SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
 				(SELECT resource_id, max(imgscale) imgscale FROM photo WHERE uid = %d AND album = '%s' AND imgscale <= 4 
 				AND photo_usage IN ( %d, %d ) $sql_extra GROUP BY resource_id) ph
 				ON (p.resource_id = ph.resource_id AND p.imgscale = ph.imgscale)
@@ -237,5 +241,4 @@ class Embedphotos extends Controller
             return null;
         }
     }
-
 }

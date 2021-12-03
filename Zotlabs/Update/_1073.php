@@ -16,10 +16,9 @@ class _1073
 
         $r2 = q("ALTER TABLE `source` ADD INDEX ( `src_channel_id` ), ADD INDEX ( `src_channel_xchan` ), ADD INDEX ( `src_xchan` ) ");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

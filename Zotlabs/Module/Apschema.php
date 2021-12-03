@@ -18,8 +18,5 @@ class Apschema extends Controller
         header('Content-Type: application/ld+json');
         echo json_encode($arr, JSON_UNESCAPED_SLASHES);
         killme();
-
     }
-
-
 }

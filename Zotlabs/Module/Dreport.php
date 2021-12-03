@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -36,7 +37,8 @@ class Dreport extends Controller
         }
 
         if ($cmd === 'push') {
-            $i = q("select id from item where mid = '%s' and uid = %d and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
+            $i = q(
+                "select id from item where mid = '%s' and uid = %d and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
                 dbesc($message_id),
                 intval($channel['channel_id']),
                 dbesc($channel['channel_hash']),
@@ -51,7 +53,8 @@ class Dreport extends Controller
 
         if ($cmd === 'log') {
             $host = escape_tags($_REQUEST['host']);
-            $r = q("select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s' and dreport_recip = '%s'",
+            $r = q(
+                "select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s' and dreport_recip = '%s'",
                 dbesc($channel['channel_hash']),
                 dbesc($message_id),
                 dbesc($host)
@@ -68,7 +71,8 @@ class Dreport extends Controller
 
         switch ($table) {
             case 'item':
-                $i = q("select id from item where mid = '%s' and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
+                $i = q(
+                    "select id from item where mid = '%s' and ( author_xchan = '%s' or ( owner_xchan = '%s' and item_wall = 1 )) ",
                     dbesc($message_id),
                     dbesc($channel['channel_hash']),
                     dbesc($channel['channel_hash'])
@@ -83,7 +87,8 @@ class Dreport extends Controller
             return;
         }
 
-        $r = q("select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
+        $r = q(
+            "select * from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
             dbesc($channel['channel_hash']),
             dbesc($message_id)
         );
@@ -93,7 +98,6 @@ class Dreport extends Controller
         }
 
         for ($x = 0; $x < count($r); $x++) {
-
             // This has two purposes: 1. make the delivery report strings translateable, and
             // 2. assign an ordering to item delivery results so we can group them and provide
             // a readable report with more interesting events listed toward the top and lesser
@@ -178,18 +182,16 @@ class Dreport extends Controller
 
 
         return $output;
-
-
     }
 
     private static function dreport_gravity_sort($a, $b)
     {
         if ($a['gravity'] == $b['gravity']) {
-            if ($a['dreport_name'] === $b['dreport_name'])
+            if ($a['dreport_name'] === $b['dreport_name']) {
                 return strcmp($a['dreport_time'], $b['dreport_time']);
+            }
             return strcmp($a['dreport_name'], $b['dreport_name']);
         }
         return (($a['gravity'] > $b['gravity']) ? 1 : (-1));
     }
-
 }

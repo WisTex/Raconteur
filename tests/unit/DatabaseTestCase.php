@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 2017 Hubzilla
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +27,7 @@ use PDO;
 use PHPUnit\DbUnit\Database\Connection;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PHPUnit\Framework\TestCase;
+
 use function getenv;
 
 /**
@@ -36,36 +38,37 @@ use function getenv;
  *
  * @author Klaus Weidenbach
  */
-abstract class DatabaseTestCase extends TestCase {
+abstract class DatabaseTestCase extends TestCase
+{
+    use TestCaseTrait;
 
-	use TestCaseTrait;
+    /**
+     * Only instantiate PDO once for test clean-up/fixture load.
+     *
+     * @var PDO
+     */
+    private static $pdo = null;
 
-	/**
-	 * Only instantiate PDO once for test clean-up/fixture load.
-	 *
-	 * @var PDO
-	 */
-	private static $pdo = null;
-
-	/**
-	 * Only instantiate \PHPUnit\DbUnit\Database\Connection once per test.
-	 *
-	 * @var Connection
-	 */
-	private $conn = null;
+    /**
+     * Only instantiate \PHPUnit\DbUnit\Database\Connection once per test.
+     *
+     * @var Connection
+     */
+    private $conn = null;
 
 
-	final public function getConnection() {
-		if ($this->conn === null) {
-			if (self::$pdo === null) {
-				$dsn = getenv('hz_db_scheme') . ':host=' . getenv('hz_db_server')
-					. ';port=' . getenv('hz_db_port') . ';dbname=' . getenv('hz_db_database');
+    final public function getConnection()
+    {
+        if ($this->conn === null) {
+            if (self::$pdo === null) {
+                $dsn = getenv('hz_db_scheme') . ':host=' . getenv('hz_db_server')
+                    . ';port=' . getenv('hz_db_port') . ';dbname=' . getenv('hz_db_database');
 
-				self::$pdo = new PDO($dsn, getenv('hz_db_user'), getenv('hz_db_pass'));
-			}
-			$this->conn = $this->createDefaultDBConnection(self::$pdo, getenv('hz_db_database'));
-		}
+                self::$pdo = new PDO($dsn, getenv('hz_db_user'), getenv('hz_db_pass'));
+            }
+            $this->conn = $this->createDefaultDBConnection(self::$pdo, getenv('hz_db_database'));
+        }
 
-		return $this->conn;
-	}
+        return $this->conn;
+    }
 }

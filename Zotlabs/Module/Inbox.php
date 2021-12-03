@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 // ActivityPub delivery endpoint
@@ -21,8 +22,10 @@ class Inbox extends Controller
         // This SHOULD be handled by the webserver, but in the RFC it is only indicated as
         // a SHOULD and not a MUST, so some webservers fail to reject appropriately.
 
-        if ((array_key_exists('HTTP_ACCEPT', $_SERVER)) && ($_SERVER['HTTP_ACCEPT'])
-            && (strpos($_SERVER['HTTP_ACCEPT'], '*') === false) && (!ActivityStreams::is_as_request())) {
+        if (
+            (array_key_exists('HTTP_ACCEPT', $_SERVER)) && ($_SERVER['HTTP_ACCEPT'])
+            && (strpos($_SERVER['HTTP_ACCEPT'], '*') === false) && (!ActivityStreams::is_as_request())
+        ) {
             logger('unhandled accept header: ' . $_SERVER['HTTP_ACCEPT'], LOGGER_DEBUG);
             http_status_exit(406, 'not acceptable');
         }
@@ -67,8 +70,10 @@ class Inbox extends Controller
         }
 
         $AS = new ActivityStreams($data);
-        if ($AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
-            && array_key_exists('object', $AS->obj) && array_key_exists('actor', $AS->obj)) {
+        if (
+            $AS->is_valid() && $AS->type === 'Announce' && is_array($AS->obj)
+            && array_key_exists('object', $AS->obj) && array_key_exists('actor', $AS->obj)
+        ) {
             // This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
             // Reparse the encapsulated Activity and use that instead
             logger('relayed activity', LOGGER_DEBUG);
@@ -113,7 +118,6 @@ class Inbox extends Controller
         // AND the signature is valid AND the signer is the actor.
 
         if ($hsig['header_valid'] && $hsig['content_valid'] && $hsig['portable_id']) {
-
             // if the sender has the ability to send messages over zot/nomad, ignore messages sent via activitypub
             // as observer aware features and client side markup will be unavailable
 
@@ -142,14 +146,12 @@ class Inbox extends Controller
                     // The activity signature isn't valid.
                     return;
                 }
-
             }
 
             if ($v) {
                 // The sender has been validated and stored
                 $observer_hash = $hsig['portable_id'];
             }
-
         }
 
         if (!$observer_hash) {
@@ -165,7 +167,8 @@ class Inbox extends Controller
                 http_status_exit(403, 'Permission denied');
             }
             // this site obviously isn't dead because they are trying to communicate with us.
-            $test = q("update site set site_dead = 0 where site_dead = 1 and site_url = '%s' ",
+            $test = q(
+                "update site set site_dead = 0 where site_dead = 1 and site_url = '%s' ",
                 dbesc($m['scheme'] . '://' . $m['host'])
             );
         }
@@ -175,7 +178,8 @@ class Inbox extends Controller
 
         // update the hubloc_connected timestamp, ignore failures
 
-        $test = q("update hubloc set hubloc_connected = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
+        $test = q(
+            "update hubloc set hubloc_connected = '%s' where hubloc_hash = '%s' and hubloc_network = 'activitypub'",
             dbesc(datetime_convert()),
             dbesc($observer_hash)
         );
@@ -184,15 +188,16 @@ class Inbox extends Controller
         // Now figure out who the recipients are
 
         if ($is_public) {
-
             if (in_array($AS->type, ['Follow', 'Join']) && is_array($AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
-                $channels = q("SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
+                $channels = q(
+                    "SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
                     dbesc(basename($AS->obj['id']))
                 );
             } else {
                 // deliver to anybody following $AS->actor
 
-                $channels = q("SELECT * from channel where channel_id in ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash WHERE xchan_network = 'activitypub' and xchan_hash = '%s' ) and channel_removed = 0 ",
+                $channels = q(
+                    "SELECT * from channel where channel_id in ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash WHERE xchan_network = 'activitypub' and xchan_hash = '%s' ) and channel_removed = 0 ",
                     dbesc($observer_hash)
                 );
                 if (!$channels) {
@@ -202,7 +207,8 @@ class Inbox extends Controller
                 $parent = $AS->parent_id;
                 if ($parent) {
                     // this is a comment - deliver to everybody who owns the parent
-                    $owners = q("SELECT * from channel where channel_id in ( SELECT uid from item where mid = '%s' ) ",
+                    $owners = q(
+                        "SELECT * from channel where channel_id in ( SELECT uid from item where mid = '%s' ) ",
                         dbesc($parent)
                     );
                     if ($owners) {
@@ -216,7 +222,6 @@ class Inbox extends Controller
             }
 
             if (in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips) || in_array('Public', $AS->recips) || in_array('as:Public', $AS->recips)) {
-
                 // look for channels with send_stream = PERMS_PUBLIC (accept posts from anybody on the internet)
 
                 $r = q("select * from channel where channel_id in (select uid from pconfig where cat = 'perm_limits' and k = 'send_stream' and v = '1' ) and channel_removed = 0 ");
@@ -235,9 +240,7 @@ class Inbox extends Controller
                 if (!$sys_disabled) {
                     $channels[] = get_sys_channel();
                 }
-
             }
-
         }
 
         // $channels represents all "potential" recipients. If they are not in this array, they will not receive the activity.
@@ -260,7 +263,6 @@ class Inbox extends Controller
 
 
         foreach ($channels as $channel) {
-
             // Even though activitypub may be enabled for the site, check if the channel has specifically disabled it
             if (!PConfig::Get($channel['channel_id'], 'system', 'activitypub', Config::Get('system', 'activitypub', ACTIVITYPUB_ENABLED))) {
                 continue;
@@ -298,10 +300,8 @@ class Inbox extends Controller
                     break;
 
                 case 'Reject':
-
                 default:
                     break;
-
             }
 
             // These activities require permissions
@@ -367,15 +367,16 @@ class Inbox extends Controller
                     break;
 
                 case 'Move':
-                    if ($observer_hash && $observer_hash === $AS->actor
+                    if (
+                        $observer_hash && $observer_hash === $AS->actor
                         && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
-                        && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])) {
+                        && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])
+                    ) {
                         ActivityPub::move($AS->obj, $AS->tgt);
                     }
                     break;
                 case 'Add':
                 case 'Remove':
-
                     // for writeable collections as target, it's best to provide an array and include both the type and the id in the target element.
                     // If it's just a string id, we'll try to fetch the collection when we receive it and that's wasteful since we don't actually need
                     // the contents.
@@ -386,14 +387,12 @@ class Inbox extends Controller
                     }
                 default:
                     break;
-
             }
 
             if ($item) {
                 logger('parsed_item: ' . print_r($item, true), LOGGER_DATA);
                 Activity::store($channel, $observer_hash, $AS, $item);
             }
-
         }
 
         http_status_exit(200, 'OK');
@@ -401,10 +400,5 @@ class Inbox extends Controller
 
     public function get()
     {
-
     }
-
 }
-
-
-

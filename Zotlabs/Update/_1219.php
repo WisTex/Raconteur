@@ -9,7 +9,8 @@ class _1219
     {
         q("START TRANSACTION");
 
-        $r = q("DELETE FROM xchan WHERE
+        $r = q(
+            "DELETE FROM xchan WHERE
 			xchan_hash like '%s' AND
 			xchan_network = 'activitypub'",
             dbesc(z_root()) . '%'
@@ -23,5 +24,4 @@ class _1219
             return UPDATE_FAILED;
         }
     }
-
 }

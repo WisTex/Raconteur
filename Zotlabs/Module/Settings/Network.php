@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Settings;
 
-
 class Network
 {
 
@@ -14,10 +13,11 @@ class Network
 
         foreach ($features as $f) {
             $k = $f[0];
-            if (array_key_exists("feature_$k", $_POST))
+            if (array_key_exists("feature_$k", $_POST)) {
                 set_pconfig(local_channel(), 'feature', $k, (string)$_POST["feature_$k"]);
-            else
+            } else {
                 set_pconfig(local_channel(), 'feature', $k, '');
+            }
         }
 
         build_sync_packet();
@@ -126,7 +126,5 @@ class Network
         ];
 
         return $arr;
-
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -37,9 +38,11 @@ class Webfinger extends Controller
         // or a normal channel
 
         $site_query = false;
-        if (strcasecmp(rtrim($resource, '/'), z_root()) === 0
+        if (
+            strcasecmp(rtrim($resource, '/'), z_root()) === 0
             || strcasecmp($resource, 'acct:sys@' . App::get_hostname()) === 0
-            || $resource === z_root() . '/channel/sys') {
+            || $resource === z_root() . '/channel/sys'
+        ) {
             $site_query = true;
             $result['subject'] = $resource;
             $resource = z_root() . '/channel/sys';
@@ -75,7 +78,6 @@ class Webfinger extends Controller
         }
 
         if ($channel_target || $site_query) {
-
             $h = get_hubloc_addrs_by_hash($channel_target['channel_hash']);
 
             if (!isset($result['subject'])) {

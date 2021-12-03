@@ -5,7 +5,6 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\ZotURL;
 use Zotlabs\Lib\Zotfinger;
-
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 
@@ -41,17 +40,13 @@ class Zot_probe extends Controller
             }
 
             if ($x['success']) {
-
                 $o .= '<pre>' . htmlspecialchars($x['header']) . '</pre>' . EOL;
 
                 $o .= 'verify returns: ' . str_replace("\n", EOL, print_r(HTTPSig::verify($x, EMPTY_STR, 'zot6'), true)) . EOL;
 
                 $o .= '<pre>' . htmlspecialchars(json_encode(json_decode($x['body']), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL;
-
             }
-
         }
         return $o;
     }
-
 }

@@ -71,10 +71,9 @@ CREATE TABLE oauth_jwt (
             }
         }
 
-        if (!$errors)
+        if (!$errors) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
 }

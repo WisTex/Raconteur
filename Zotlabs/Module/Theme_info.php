@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module;
 
-
 use App;
 use Zotlabs\Web\Controller;
 
@@ -12,8 +11,9 @@ class Theme_info extends Controller
     public function get()
     {
         $theme = argv(1);
-        if (!$theme)
+        if (!$theme) {
             killme();
+        }
 
         $schemalist = [];
 
@@ -54,7 +54,6 @@ class Theme_info extends Controller
             'config' => $theme_config
         ];
         json_return_and_die($ret);
-
     }
 
 
@@ -71,6 +70,4 @@ class Theme_info extends Controller
         }
         return null;
     }
-
-
 }

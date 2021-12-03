@@ -1,7 +1,6 @@
 <?php
+
 namespace Zotlabs\Module;
-
-
 
 use Zotlabs\Web\Controller;
 
@@ -22,7 +21,8 @@ class Xchan extends Controller
         if (x($_GET, 'addr')) {
             $addr = trim($_GET['addr']);
 
-            $r = q("select * from xchan where xchan_hash like '%s%%' or xchan_addr = '%s' group by xchan_hash",
+            $r = q(
+                "select * from xchan where xchan_hash like '%s%%' or xchan_addr = '%s' group by xchan_hash",
                 dbesc($addr),
                 dbesc($addr)
             );
@@ -31,20 +31,21 @@ class Xchan extends Controller
                 foreach ($r as $rr) {
                     $o .= str_replace(array("\n", " "), array("<br>", "&nbsp;"), print_r($rr, true)) . EOL;
 
-                    $s = q("select * from hubloc where hubloc_hash like '%s'",
+                    $s = q(
+                        "select * from hubloc where hubloc_hash like '%s'",
                         dbesc($r[0]['xchan_hash'])
                     );
 
                     if ($s) {
-                        foreach ($s as $rrr)
+                        foreach ($s as $rrr) {
                             $o .= str_replace(array("\n", " "), array("<br>", "&nbsp;"), print_r($rrr, true)) . EOL;
+                        }
                     }
                 }
-            } else
+            } else {
                 notice(t('Not found.') . EOL);
-
+            }
         }
         return $o;
     }
-
 }

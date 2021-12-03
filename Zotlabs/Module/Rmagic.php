@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -16,7 +17,8 @@ class Rmagic extends Controller
 
         $me = get_my_address();
         if ($me) {
-            $r = q("select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",
+            $r = q(
+                "select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",
                 dbesc($me)
             );
             if ($r) {
@@ -42,7 +44,6 @@ class Rmagic extends Controller
             notice(t('Authentication failed.') . EOL);
             return;
         } else {
-
             // Presumed Red identity. Perform reverse magic auth
 
             if (strpos($address, '@') === false) {
@@ -52,7 +53,8 @@ class Rmagic extends Controller
 
             $r = null;
             if ($address) {
-                $r = q("select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",
+                $r = q(
+                    "select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",
                     dbesc($address)
                 );
             }
@@ -76,7 +78,8 @@ class Rmagic extends Controller
 
     public function get()
     {
-        return replace_macros(get_markup_template('rmagic.tpl'),
+        return replace_macros(
+            get_markup_template('rmagic.tpl'),
             [
                 '$title' => t('Remote Authentication'),
                 '$address' => ['address', t('Enter your channel address (e.g. channel@example.com)'), '', ''],

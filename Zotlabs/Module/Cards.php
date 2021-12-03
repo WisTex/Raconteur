@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -17,13 +18,13 @@ class Cards extends Controller
     public function init()
     {
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
     /**
@@ -103,7 +104,6 @@ class Cards extends Controller
 
 
         if (perm_is_allowed($owner, $ob_hash, 'write_pages')) {
-
             $x = [
                 'webpage' => ITEM_TYPE_CARD,
                 'is_owner' => true,
@@ -112,8 +112,11 @@ class Cards extends Controller
                 'nickname' => $channel['channel_address'],
                 'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
                     || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-                'acl' => (($is_owner) ? populate_acl($channel_acl, false,
-                    PermissionDescription::fromGlobalPermission('view_pages')) : ''),
+                'acl' => (($is_owner) ? populate_acl(
+                    $channel_acl,
+                    false,
+                    PermissionDescription::fromGlobalPermission('view_pages')
+                ) : ''),
                 'permissions' => $channel_acl,
                 'showacl' => (($is_owner) ? true : false),
                 'visitor' => true,
@@ -130,10 +133,12 @@ class Cards extends Controller
                 'bbcode' => true
             ];
 
-            if ($_REQUEST['title'])
+            if ($_REQUEST['title']) {
                 $x['title'] = $_REQUEST['title'];
-            if ($_REQUEST['body'])
+            }
+            if ($_REQUEST['body']) {
                 $x['body'] = $_REQUEST['body'];
+            }
 
             $editor = status_editor($x);
         } else {
@@ -150,7 +155,8 @@ class Cards extends Controller
         $sql_item = '';
 
         if ($selected_card) {
-            $r = q("select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.v = '%s' limit 1",
+            $r = q(
+                "select * from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.v = '%s' limit 1",
                 dbesc($selected_card)
             );
             if ($r) {
@@ -158,7 +164,8 @@ class Cards extends Controller
             }
         }
 
-        $r = q("select * from item
+        $r = q(
+            "select * from item
 			where uid = %d and item_type = %d
 			$sql_extra $sql_item order by item.created desc $pager_sql",
             intval($owner),
@@ -171,12 +178,12 @@ class Cards extends Controller
 
         $items_result = [];
         if ($r) {
-
             $pager_total = count($r);
 
             $parents_str = ids_to_querystr($r, 'id');
 
-            $items = q("SELECT item.*, item.id AS item_id
+            $items = q(
+                "SELECT item.*, item.id AS item_id
 				FROM item
 				WHERE item.uid = %d $item_normal
 				AND item.parent IN ( %s )
@@ -193,10 +200,11 @@ class Cards extends Controller
 
         $mode = 'cards';
 
-        if (get_pconfig(local_channel(), 'system', 'articles_list_mode') && (!$selected_card))
+        if (get_pconfig(local_channel(), 'system', 'articles_list_mode') && (!$selected_card)) {
             $page_mode = 'pager_list';
-        else
+        } else {
             $page_mode = 'traditional';
+        }
 
         $content = conversation($items_result, $mode, false, $page_mode);
 
@@ -209,5 +217,4 @@ class Cards extends Controller
 
         return $o;
     }
-
 }

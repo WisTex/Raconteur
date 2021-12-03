@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -33,10 +33,10 @@ class Sharedwithme extends Controller
 
         //drop single file - localuser
         if ((argc() > 2) && (argv(2) === 'drop')) {
-
             $id = intval(argv(1));
 
-            q("DELETE FROM item WHERE id = %d AND uid = %d",
+            q(
+                "DELETE FROM item WHERE id = %d AND uid = %d",
                 intval($id),
                 intval(local_channel())
             );
@@ -46,8 +46,8 @@ class Sharedwithme extends Controller
 
         //drop all files - localuser
         if ((argc() > 1) && (argv(1) === 'dropall')) {
-
-            q("DELETE FROM item WHERE verb = '%s' AND obj_type = '%s' AND uid = %d",
+            q(
+                "DELETE FROM item WHERE verb = '%s' AND obj_type = '%s' AND uid = %d",
                 dbesc(ACTIVITY_POST),
                 dbesc(ACTIVITY_OBJ_FILE),
                 intval(local_channel())
@@ -57,7 +57,8 @@ class Sharedwithme extends Controller
         }
 
         //list files
-        $r = q("SELECT id, uid, obj, item_unseen FROM item WHERE verb = '%s' AND obj_type = '%s' AND uid = %d AND owner_xchan != '%s'",
+        $r = q(
+            "SELECT id, uid, obj, item_unseen FROM item WHERE verb = '%s' AND obj_type = '%s' AND uid = %d AND owner_xchan != '%s'",
             dbesc(ACTIVITY_POST),
             dbesc(ACTIVITY_OBJ_FILE),
             intval(local_channel()),
@@ -68,7 +69,6 @@ class Sharedwithme extends Controller
         $ids = '';
 
         if ($r) {
-
             foreach ($r as $rr) {
                 $object = json_decode($rr['obj'], true);
 
@@ -87,20 +87,17 @@ class Sharedwithme extends Controller
                 if ($item['unseen'] > 0) {
                     $ids .= " '" . $rr['id'] . "',";
                 }
-
             }
-
         }
 
         if ($ids) {
-
             //remove trailing ,
             $ids = rtrim($ids, ",");
 
-            q("UPDATE item SET item_unseen = 0 WHERE id IN ( $ids ) AND uid = %d",
+            q(
+                "UPDATE item SET item_unseen = 0 WHERE id IN ( $ids ) AND uid = %d",
                 intval(local_channel())
             );
-
         }
 
         $o = '';
@@ -117,8 +114,5 @@ class Sharedwithme extends Controller
         ));
 
         return $o;
-
     }
-
-
 }

@@ -51,7 +51,6 @@ class Router
         $modname = "Zotlabs\\Module\\" . ucfirst($module);
 
         if (strlen($module)) {
-
             /*
              * We will always have a module name.
              * First see if we have a plugin handling this route
@@ -97,7 +96,6 @@ class Router
                         throw new Exception('Module not found');
                     }
                 } catch (Exception $e) {
-
                 }
             }
 
@@ -130,7 +128,6 @@ class Router
               */
 
             if (!(App::$module_loaded)) {
-
                 // undo the setting of a letsencrypt acme-challenge rewrite rule
                 // which blocks access to our .well-known routes.
                 // Also provide a config setting for sites that have a legitimate need
@@ -188,7 +185,6 @@ class Router
          */
 
         if (App::$module_loaded) {
-
             App::$page['page_title'] = App::$module;
             $placeholder = '';
 

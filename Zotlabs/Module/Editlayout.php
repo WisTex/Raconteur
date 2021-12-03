@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -22,13 +23,13 @@ class Editlayout extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
     public function get()
@@ -60,7 +61,8 @@ class Editlayout extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = q("select channel_id from channel where channel_address = '%s'",
+            $r = q(
+                "select channel_id from channel where channel_address = '%s'",
                 dbesc($which)
             );
             if ($r) {
@@ -98,16 +100,19 @@ class Editlayout extends Controller
             return;
         }
 
-        $itm = q("SELECT * FROM item WHERE id = %d and uid = %s LIMIT 1",
+        $itm = q(
+            "SELECT * FROM item WHERE id = %d and uid = %s LIMIT 1",
             intval($post_id),
             intval($owner)
         );
 
-        $item_id = q("select * from iconfig where cat = 'system' and k = 'PDL' and iid = %d limit 1",
+        $item_id = q(
+            "select * from iconfig where cat = 'system' and k = 'PDL' and iid = %d limit 1",
             intval($itm[0]['id'])
         );
-        if ($item_id)
+        if ($item_id) {
             $layout_title = $item_id[0]['v'];
+        }
 
 
         $rp = 'layouts/' . $which;
@@ -149,7 +154,5 @@ class Editlayout extends Controller
         ));
 
         return $o;
-
     }
-
 }

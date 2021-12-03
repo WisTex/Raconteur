@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -25,13 +26,13 @@ class Editwebpage extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
     public function get()
@@ -63,7 +64,8 @@ class Editwebpage extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = q("select channel_id from channel where channel_address = '%s'",
+            $r = q(
+                "select channel_id from channel where channel_address = '%s'",
                 dbesc($which)
             );
             if ($r) {
@@ -104,7 +106,8 @@ class Editwebpage extends Controller
 
         $sql_extra = item_permissions_sql($owner);
 
-        $itm = q("SELECT * FROM item WHERE id = %d and uid = %s $sql_extra LIMIT 1",
+        $itm = q(
+            "SELECT * FROM item WHERE id = %d and uid = %s $sql_extra LIMIT 1",
             intval($post_id),
             intval($owner)
         );
@@ -117,11 +120,13 @@ class Editwebpage extends Controller
             return;
         }
 
-        $item_id = q("select * from iconfig where cat = 'system' and k = 'WEBPAGE' and iid = %d limit 1",
+        $item_id = q(
+            "select * from iconfig where cat = 'system' and k = 'WEBPAGE' and iid = %d limit 1",
             intval($itm[0]['id'])
         );
-        if ($item_id)
+        if ($item_id) {
             $page_title = urldecode($item_id[0]['v']);
+        }
 
         $mimetype = $itm[0]['mimetype'];
 
@@ -135,8 +140,9 @@ class Editwebpage extends Controller
         $layout = $itm[0]['layout_mid'];
 
         $content = $itm[0]['body'];
-        if ($itm[0]['mimetype'] === 'text/markdown')
+        if ($itm[0]['mimetype'] === 'text/markdown') {
             $content = MarkdownSoap::unescape($itm[0]['body']);
+        }
 
         $rp = 'webpages/' . $which;
 
@@ -180,7 +186,5 @@ class Editwebpage extends Controller
         ));
 
         return $o;
-
     }
-
 }

@@ -45,14 +45,15 @@ class Dirsearch extends Controller
             if ($advanced) {
                 foreach ($advanced as $adv) {
                     if (in_array($adv['field'], $tables)) {
-                        if ($adv['field'] === 'name')
+                        if ($adv['field'] === 'name') {
                             $sql_extra .= $this->dir_query_build($adv['logic'], 'xchan_name', $adv['value']);
-                        elseif ($adv['field'] === 'address')
+                        } elseif ($adv['field'] === 'address') {
                             $sql_extra .= $this->dir_query_build($adv['logic'], 'xchan_addr', $adv['value']);
-                        elseif ($adv['field'] === 'xhash')
+                        } elseif ($adv['field'] === 'xhash') {
                             $sql_extra .= $this->dir_query_build($adv['logic'], 'xchan_hash', $adv['value']);
-                        else
+                        } else {
                             $sql_extra .= $this->dir_query_build($adv['logic'], 'xprof_' . $adv['field'], $adv['value']);
+                        }
                     }
                 }
             }
@@ -78,8 +79,9 @@ class Dirsearch extends Controller
         $type = ((array_key_exists('type', $_REQUEST)) ? intval($_REQUEST['type']) : 0);
 
         // allow a site to disable the directory's keyword list
-        if (get_config('system', 'disable_directory_keywords'))
+        if (get_config('system', 'disable_directory_keywords')) {
             $kw = 0;
+        }
 
         // by default use a safe search
         $safe = ((x($_REQUEST, 'safe')));
@@ -91,12 +93,14 @@ class Dirsearch extends Controller
         // of records that have changed since the sync datetime.
 
         if (array_key_exists('sync', $_REQUEST)) {
-            if ($_REQUEST['sync'])
+            if ($_REQUEST['sync']) {
                 $sync = datetime_convert('UTC', 'UTC', $_REQUEST['sync']);
-            else
+            } else {
                 $sync = datetime_convert('UTC', 'UTC', '2010-01-01 01:01:00');
-        } else
+            }
+        } else {
             $sync = false;
+        }
 
         if (($dirmode == DIRECTORY_MODE_STANDALONE) && (!$hub)) {
             $hub = App::get_hostname();
@@ -109,7 +113,8 @@ class Dirsearch extends Controller
         }
 
         if ($url) {
-            $r = q("select xchan_name from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s'",
+            $r = q(
+                "select xchan_name from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s'",
                 dbesc($url),
                 dbesc($url)
             );
@@ -127,8 +132,9 @@ class Dirsearch extends Controller
 
         $joiner = ' OR ';
 
-        if ($_REQUEST['and'])
+        if ($_REQUEST['and']) {
             $joiner = ' AND ';
+        }
 
         if ($name) {
             $sql_extra .= $this->dir_query_build($joiner, 'xchan_name', $name);
@@ -236,26 +242,25 @@ class Dirsearch extends Controller
             // punctuation un-searchable in this mode
 
             $safesql .= " and ascii(substring(xchan_name FROM 1 FOR 1)) > 64 ";
-        } elseif ($sort_order == 'reverse')
+        } elseif ($sort_order == 'reverse') {
             $order = " order by xchan_name desc ";
-        elseif ($sort_order == 'reversedate')
+        } elseif ($sort_order == 'reversedate') {
             $order = " order by xchan_name_date asc ";
-        else
+        } else {
             $order = " order by xchan_name_date desc ";
+        }
 
 
         // normal directory query
 
         $r = q("SELECT xchan.*, xprof.* from xchan left join xprof on xchan_hash = xprof_hash 
 			where ( $logic $sql_extra ) $hub_query $network and xchan_hidden = 0 and xchan_orphan = 0 and xchan_deleted = 0 
-			$safesql $activesql $order $qlimit "
-        );
+			$safesql $activesql $order $qlimit ");
 
         $ret['page'] = $page + 1;
         $ret['records'] = count($r);
 
         if ($r) {
-
             $entries = [];
             $dups = [];
             $isdup = EMPTY_STR;
@@ -282,7 +287,6 @@ class Dirsearch extends Controller
             }
 
             foreach ($r as $rr) {
-
                 // If it's an activitypub record and the channel also has a zot6 address, don't return it.
 
                 if (array_key_exists($rr['xchan_url'], $dups)) {
@@ -326,7 +330,6 @@ class Dirsearch extends Controller
                 $entry['keywords'] = $rr['xprof_keywords'];
 
                 $entries[] = $entry;
-
             }
 
             $ret['results'] = $entries;
@@ -346,8 +349,9 @@ class Dirsearch extends Controller
     public function dir_query_build($joiner, $field, $s)
     {
         $ret = '';
-        if (trim($s))
+        if (trim($s)) {
             $ret .= dbesc($joiner) . " " . dbesc($field) . " like '" . protect_sprintf('%' . dbesc($s) . '%') . "' ";
+        }
         return $ret;
     }
 
@@ -381,8 +385,9 @@ class Dirsearch extends Controller
                         continue;
                     }
                     if (strpos($q, '=')) {
-                        if (!isset($curr['logic']))
+                        if (!isset($curr['logic'])) {
                             $curr['logic'] = 'or';
+                        }
                         $curr['field'] = trim(substr($q, 0, strpos($q, '=')));
                         $curr['value'] = trim(substr($q, strpos($q, '=') + 1));
                         if ($curr['value'][0] == '"' && $curr['value'][strlen($curr['value']) - 1] != '"') {
@@ -406,8 +411,9 @@ class Dirsearch extends Controller
                         $ret[] = $curr;
                         $curr = [];
                         $quoted_string = false;
-                    } else
+                    } else {
                         $curr['value'] .= ' ' . trim($q);
+                    }
                 }
             }
         }
@@ -422,7 +428,8 @@ class Dirsearch extends Controller
         $rand = db_getfunc('rand');
         $realm = get_directory_realm();
 
-        $r = q("select * from site where site_type = %d and site_dead = 0",
+        $r = q(
+            "select * from site where site_type = %d and site_dead = 0",
             intval(SITE_TYPE_ZOT)
         );
 
@@ -433,28 +440,27 @@ class Dirsearch extends Controller
             $ret['sites'] = [];
 
             foreach ($r as $rr) {
-
-                if ($rr['site_access'] == ACCESS_FREE)
+                if ($rr['site_access'] == ACCESS_FREE) {
                     $access = 'free';
-                elseif ($rr['site_access'] == ACCESS_PAID)
+                } elseif ($rr['site_access'] == ACCESS_PAID) {
                     $access = 'paid';
-                elseif ($rr['site_access'] == ACCESS_TIERED)
+                } elseif ($rr['site_access'] == ACCESS_TIERED) {
                     $access = 'tiered';
-                else
+                } else {
                     $access = 'private';
+                }
 
-                if ($rr['site_register'] == REGISTER_OPEN)
+                if ($rr['site_register'] == REGISTER_OPEN) {
                     $register = 'open';
-                elseif ($rr['site_register'] == REGISTER_APPROVE)
+                } elseif ($rr['site_register'] == REGISTER_APPROVE) {
                     $register = 'approve';
-                else
+                } else {
                     $register = 'closed';
+                }
 
                 $ret['sites'][] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
-
             }
         }
         return $ret;
     }
-
 }

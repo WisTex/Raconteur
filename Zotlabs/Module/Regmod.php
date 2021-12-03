@@ -1,7 +1,6 @@
 <?php
+
 namespace Zotlabs\Module;
-
-
 
 use App;
 use Zotlabs\Web\Controller;
@@ -26,21 +25,25 @@ class Regmod extends Controller
             return '';
         }
 
-        if (argc() != 3)
+        if (argc() != 3) {
             killme();
+        }
 
         $cmd = argv(1);
         $hash = argv(2);
 
         if ($cmd === 'deny') {
-            if (!account_deny($hash)) killme();
+            if (!account_deny($hash)) {
+                killme();
+            }
         }
 
         if ($cmd === 'allow') {
-            if (!account_allow($hash)) killme();
+            if (!account_allow($hash)) {
+                killme();
+            }
         }
 
         goaway('/admin/accounts');
     }
-
 }

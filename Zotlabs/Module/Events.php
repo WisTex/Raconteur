@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -24,8 +25,9 @@ class Events extends Controller
 
         logger('post: ' . print_r($_REQUEST, true), LOGGER_DATA);
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
 
@@ -33,10 +35,11 @@ class Events extends Controller
             $src = $_FILES['userfile']['tmp_name'];
             if ($src) {
                 $result = parse_ical_file($src, local_channel());
-                if ($result)
+                if ($result) {
                     info(t('Calendar entries imported.') . EOL);
-                else
+                } else {
                     notice(t('No calendar entries found.') . EOL);
+                }
                 @unlink($src);
             }
             goaway(z_root() . '/events');
@@ -63,8 +66,9 @@ class Events extends Controller
 
         // only allow editing your own events.
 
-        if (($xchan) && ($xchan !== get_observer_hash()))
+        if (($xchan) && ($xchan !== get_observer_hash())) {
             return;
+        }
 
         if ($start_text) {
             $start = $start_text;
@@ -86,12 +90,14 @@ class Events extends Controller
 
         if ($adjust) {
             $start = datetime_convert($tz, 'UTC', $start);
-            if (!$nofinish)
+            if (!$nofinish) {
                 $finish = datetime_convert($tz, 'UTC', $finish);
+            }
         } else {
             $start = datetime_convert('UTC', 'UTC', $start);
-            if (!$nofinish)
+            if (!$nofinish) {
                 $finish = datetime_convert('UTC', 'UTC', $finish);
+            }
         }
 
         // Don't allow the event to finish before it begins.
@@ -150,7 +156,7 @@ class Events extends Controller
             goaway($onerror_url);
         }
 
-        //		$share = ((intval($_POST['distr'])) ? intval($_POST['distr']) : 0);
+        //      $share = ((intval($_POST['distr'])) ? intval($_POST['distr']) : 0);
 
         $share = 1;
 
@@ -158,7 +164,8 @@ class Events extends Controller
         $acl = new AccessControl(false);
 
         if ($event_id) {
-            $x = q("select * from event where id = %d and uid = %d limit 1",
+            $x = q(
+                "select * from event where id = %d and uid = %d limit 1",
                 intval($event_id),
                 intval(local_channel())
             );
@@ -176,8 +183,10 @@ class Events extends Controller
             $created = $x[0]['created'];
             $edited = datetime_convert();
 
-            if ($x[0]['allow_cid'] === '<' . $channel['channel_hash'] . '>'
-                && $x[0]['allow_gid'] === '' && $x[0]['deny_cid'] === '' && $x[0]['deny_gid'] === '') {
+            if (
+                $x[0]['allow_cid'] === '<' . $channel['channel_hash'] . '>'
+                && $x[0]['allow_gid'] === '' && $x[0]['deny_cid'] === '' && $x[0]['deny_gid'] === ''
+            ) {
                 $share = false;
             } else {
                 $share = true;
@@ -237,19 +246,22 @@ class Events extends Controller
 
         $event = event_store_event($datarray);
 
-        if ($post_tags)
+        if ($post_tags) {
             $datarray['term'] = $post_tags;
+        }
 
         $item_id = event_store_item($datarray, $event);
 
         if ($item_id) {
-            $r = q("select * from item where id = %d",
+            $r = q(
+                "select * from item where id = %d",
                 intval($item_id)
             );
             if ($r) {
                 xchan_query($r);
                 $sync_item = fetch_post_tags($r);
-                $z = q("select * from event where event_hash = '%s' and uid = %d limit 1",
+                $z = q(
+                    "select * from event where event_hash = '%s' and uid = %d limit 1",
                     dbesc($r[0]['resource_id']),
                     intval($channel['channel_id'])
                 );
@@ -259,9 +271,9 @@ class Events extends Controller
             }
         }
 
-        if ($share)
+        if ($share) {
             Run::Summon(['Notifier', 'event', $item_id]);
-
+        }
     }
 
 
@@ -274,7 +286,8 @@ class Events extends Controller
             require_once('include/security.php');
             $sql_extra = permissions_sql(local_channel());
 
-            $r = q("select * from event where event_hash = '%s' $sql_extra limit 1",
+            $r = q(
+                "select * from event where event_hash = '%s' $sql_extra limit 1",
                 dbesc($event_id)
             );
             if ($r) {
@@ -298,14 +311,16 @@ class Events extends Controller
         nav_set_selected('Events');
 
         if ((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
-            $r = q("update event set dismissed = 1 where id = %d and uid = %d",
+            $r = q(
+                "update event set dismissed = 1 where id = %d and uid = %d",
                 intval(argv(2)),
                 intval(local_channel())
             );
         }
 
         if ((argc() > 2) && (argv(1) === 'unignore') && intval(argv(2))) {
-            $r = q("update event set dismissed = 0 where id = %d and uid = %d",
+            $r = q(
+                "update event set dismissed = 0 where id = %d and uid = %d",
                 intval(argv(2)),
                 intval(local_channel())
             );
@@ -359,22 +374,24 @@ class Events extends Controller
         }
 
         if ($mode == 'view') {
-
             /* edit/create form */
             if ($event_id) {
-                $r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                     dbesc($event_id),
                     intval(local_channel())
                 );
-                if (count($r))
+                if (count($r)) {
                     $orig_event = $r[0];
+                }
             }
 
             $channel = App::get_channel();
 
             // Passed parameters overrides anything found in the DB
-            if (!x($orig_event))
+            if (!x($orig_event)) {
                 $orig_event = [];
+            }
 
             // In case of an error the browser is redirected back here, with these parameters filled in with the previous values
             /*
@@ -404,16 +421,18 @@ class Events extends Controller
                 $sh_checked = ((($orig_event['allow_cid'] === '<' . $channel['channel_hash'] . '>' || (!$orig_event['allow_cid'])) && (!$orig_event['allow_gid']) && (!$orig_event['deny_cid']) && (!$orig_event['deny_gid'])) ? '' : ' checked="checked" ');
             }
 
-            if ($orig_event['event_xchan'])
+            if ($orig_event['event_xchan']) {
                 $sh_checked .= ' disabled="disabled" ';
+            }
 
             $sdt = ((x($orig_event)) ? $orig_event['dtstart'] : 'now');
 
             $fdt = ((x($orig_event)) ? $orig_event['dtend'] : '+1 hour');
 
             $tz = date_default_timezone_get();
-            if (x($orig_event))
+            if (x($orig_event)) {
                 $tz = (($orig_event['adjust']) ? date_default_timezone_get() : 'UTC');
+            }
 
             $syear = datetime_convert('UTC', $tz, $sdt, 'Y');
             $smonth = datetime_convert('UTC', $tz, $sdt, 'm');
@@ -436,15 +455,17 @@ class Events extends Controller
             $type = ((x($orig_event)) ? $orig_event['etype'] : 'event');
 
             $f = get_config('system', 'event_input_format');
-            if (!$f)
+            if (!$f) {
                 $f = 'ymd';
+            }
 
             $catsenabled = Apps::system_app_installed(local_channel(), 'Categories');
 
             $category = '';
 
             if ($catsenabled && x($orig_event)) {
-                $itm = q("select * from item where resource_type = 'event' and resource_id = '%s' and uid = %d limit 1",
+                $itm = q(
+                    "select * from item where resource_type = 'event' and resource_id = '%s' and uid = %d limit 1",
                     dbesc($orig_event['event_hash']),
                     intval(local_channel())
                 );
@@ -452,8 +473,9 @@ class Events extends Controller
                 if ($itm) {
                     $cats = get_terms_oftype($itm[0]['term'], TERM_CATEGORY);
                     foreach ($cats as $cat) {
-                        if (strlen($category))
+                        if (strlen($category)) {
                             $category .= ', ';
+                        }
                         $category .= $cat['term'];
                     }
                 }
@@ -531,22 +553,27 @@ class Events extends Controller
 
             $thisyear = datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y');
             $thismonth = datetime_convert('UTC', date_default_timezone_get(), 'now', 'm');
-            if (!$y)
+            if (!$y) {
                 $y = intval($thisyear);
-            if (!$m)
+            }
+            if (!$m) {
                 $m = intval($thismonth);
+            }
 
             $export = false;
-            if (argc() === 4 && argv(3) === 'export')
+            if (argc() === 4 && argv(3) === 'export') {
                 $export = true;
+            }
 
             // Put some limits on dates. The PHP date functions don't seem to do so well before 1900.
             // An upper limit was chosen to keep search engines from exploring links millions of years in the future.
 
-            if ($y < 1901)
+            if ($y < 1901) {
                 $y = 1900;
-            if ($y > 2099)
+            }
+            if ($y > 2099) {
                 $y = 2100;
+            }
 
             $nextyear = $y;
             $nextmonth = $m + 1;
@@ -556,9 +583,9 @@ class Events extends Controller
             }
 
             $prevyear = $y;
-            if ($m > 1)
+            if ($m > 1) {
                 $prevmonth = $m - 1;
-            else {
+            } else {
                 $prevmonth = 12;
                 $prevyear--;
             }
@@ -569,8 +596,12 @@ class Events extends Controller
 
 
             if (argv(1) === 'json') {
-                if (x($_GET, 'start')) $start = $_GET['start'];
-                if (x($_GET, 'end')) $finish = $_GET['end'];
+                if (x($_GET, 'start')) {
+                    $start = $_GET['start'];
+                }
+                if (x($_GET, 'end')) {
+                    $finish = $_GET['end'];
+                }
             }
 
             $start = datetime_convert('UTC', 'UTC', $start);
@@ -580,13 +611,15 @@ class Events extends Controller
             $adjust_finish = datetime_convert('UTC', date_default_timezone_get(), $finish);
 
             if (x($_GET, 'id')) {
-                $r = q("SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
+                $r = q(
+                    "SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
 	                                from event left join item on resource_id = event_hash where resource_type = 'event' and event.uid = %d and event.id = %d limit 1",
                     intval(local_channel()),
                     intval($_GET['id'])
                 );
             } elseif ($export) {
-                $r = q("SELECT * from event where uid = %d
+                $r = q(
+                    "SELECT * from event where uid = %d
 					AND (( adjust = 0 AND ( dtend >= '%s' or nofinish = 1 ) AND dtstart <= '%s' ) 
 					OR  (  adjust = 1 AND ( dtend >= '%s' or nofinish = 1 ) AND dtstart <= '%s' )) ",
                     intval(local_channel()),
@@ -601,7 +634,8 @@ class Events extends Controller
                 // Noting this for now - it will need to be fixed here and in Friendica.
                 // Ultimately the finish date shouldn't be involved in the query.
 
-                $r = q("SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
+                $r = q(
+                    "SELECT event.*, item.plink, item.item_flags, item.author_xchan, item.owner_xchan
 	                              from event left join item on event_hash = resource_id 
 					where resource_type = 'event' and event.uid = %d and event.uid = item.uid $ignored 
 					AND (( adjust = 0 AND ( dtend >= '%s' or nofinish = 1 ) AND dtstart <= '%s' ) 
@@ -626,8 +660,9 @@ class Events extends Controller
             if ($r) {
                 foreach ($r as $rr) {
                     $j = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], 'j') : datetime_convert('UTC', 'UTC', $rr['dtstart'], 'j'));
-                    if (!x($links, $j))
+                    if (!x($links, $j)) {
                         $links[$j] = z_root() . '/' . App::$cmd . '#link-' . $j;
+                    }
                 }
             }
 
@@ -637,9 +672,7 @@ class Events extends Controller
             $fmt = t('l, F j');
 
             if ($r) {
-
                 foreach ($r as $rr) {
-
                     $j = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], 'j') : datetime_convert('UTC', 'UTC', $rr['dtstart'], 'j'));
                     $d = (($rr['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $rr['dtstart'], $fmt) : datetime_convert('UTC', 'UTC', $rr['dtstart'], $fmt));
                     $d = day_translate($d);
@@ -653,8 +686,9 @@ class Events extends Controller
                         // give a fake end to birthdays so they get crammed into a
                         // single day on the calendar
 
-                        if ($rr['etype'] === 'birthday')
+                        if ($rr['etype'] === 'birthday') {
                             $end = null;
+                        }
                     }
 
 
@@ -692,8 +726,6 @@ class Events extends Controller
                         'html' => $html,
                         'plink' => array($rr['plink'], t('Link to Source'), '', ''),
                     );
-
-
                 }
             }
 
@@ -744,7 +776,8 @@ class Events extends Controller
         }
 
         if ($mode === 'drop' && $event_id) {
-            $r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                 dbesc($event_id),
                 intval(local_channel())
             );
@@ -752,18 +785,19 @@ class Events extends Controller
             $sync_event = $r[0];
 
             if ($r) {
-                $r = q("delete from event where event_hash = '%s' and uid = %d",
+                $r = q(
+                    "delete from event where event_hash = '%s' and uid = %d",
                     dbesc($event_id),
                     intval(local_channel())
                 );
                 if ($r) {
-                    $i = q("select * from item where resource_type = 'event' and resource_id = '%s' and uid = %d",
+                    $i = q(
+                        "select * from item where resource_type = 'event' and resource_id = '%s' and uid = %d",
                         dbesc($event_id),
                         intval(local_channel())
                     );
 
                     if ($i) {
-
                         $can_delete = false;
                         $local_delete = true;
 
@@ -778,12 +812,12 @@ class Events extends Controller
 
                         if (is_site_admin()) {
                             $local_delete = true;
-                            if (intval($i[0]['item_origin']))
+                            if (intval($i[0]['item_origin'])) {
                                 $can_delete = true;
+                            }
                         }
 
                         if ($can_delete || $local_delete) {
-
                             // if this is a different page type or it's just a local delete
                             // but not by the item author or owner, do a simple deletion
 
@@ -797,7 +831,8 @@ class Events extends Controller
                                 $complex = true;
                             }
 
-                            $ii = q("select * from item where id = %d",
+                            $ii = q(
+                                "select * from item where id = %d",
                                 intval($i[0]['id'])
                             );
                             if ($ii) {
@@ -812,7 +847,8 @@ class Events extends Controller
                         }
                     }
 
-                    $r = q("update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
+                    $r = q(
+                        "update item set resource_type = '', resource_id = '' where resource_type = 'event' and resource_id = '%s' and uid = %d",
                         dbesc($event_id),
                         intval(local_channel())
                     );
@@ -826,7 +862,5 @@ class Events extends Controller
                 goaway(z_root() . '/events');
             }
         }
-
     }
-
 }

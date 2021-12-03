@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -35,10 +36,11 @@ class Linkinfo extends Controller
 
         $br = "\n";
 
-        if (x($_GET, 'binurl'))
+        if (x($_GET, 'binurl')) {
             $url = trim(hex2bin($_GET['binurl']));
-        else
+        } else {
             $url = trim($_GET['url']);
+        }
 
         if (substr($url, 0, 1) === '!') {
             $process_embed = false;
@@ -71,7 +73,8 @@ class Linkinfo extends Controller
             if (strpos($url, '@')) {
                 $xc = discover_by_webbie($url);
                 if ($xc) {
-                    $x = q("select * from xchan where xchan_hash = '%s'",
+                    $x = q(
+                        "select * from xchan where xchan_hash = '%s'",
                         dbesc($xc)
                     );
                     if ($x) {
@@ -86,11 +89,13 @@ class Linkinfo extends Controller
             }
         }
 
-        if ($_GET['title'])
+        if ($_GET['title']) {
             $title = strip_tags(trim($_GET['title']));
+        }
 
-        if ($_GET['description'])
+        if ($_GET['description']) {
             $text = strip_tags(trim($_GET['description']));
+        }
 
         if ($_GET['tags']) {
             $arr_tags = str_getcsv($_GET['tags']);
@@ -121,38 +126,43 @@ class Linkinfo extends Controller
                 list($k, $v) = array_map("trim", explode(":", trim($l), 2));
                 $hdrs[strtolower($k)] = $v;
             }
-            if (array_key_exists('content-type', $hdrs))
+            if (array_key_exists('content-type', $hdrs)) {
                 $type = $hdrs['content-type'];
+            }
             if ($type) {
                 if (stripos($type, 'image/') !== false) {
                     $basename = basename($url);
 
-                    if ($zrl)
+                    if ($zrl) {
                         echo $br . '[zmg alt="' . $basename . '"]' . $url . '[/zmg]' . $br;
-                    else
+                    } else {
                         echo $br . '[img alt="' . $basename . '"]' . $url . '[/img]' . $br;
+                    }
                     killme();
                 }
                 if ((stripos($type, 'video/') !== false) || ($type === 'application/ogg')) {
                     $thumb = self::get_video_poster($url);
                     if ($thumb) {
-                        if ($zrl)
+                        if ($zrl) {
                             echo $br . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . $br;
-                        else
+                        } else {
                             echo $br . '[video poster=\'' . $thumb . '\']' . $url . '[/video]' . $br;
+                        }
                         killme();
                     }
-                    if ($zrl)
+                    if ($zrl) {
                         echo $br . '[zvideo]' . $url . '[/zvideo]' . $br;
-                    else
+                    } else {
                         echo $br . '[video]' . $url . '[/video]' . $br;
+                    }
                     killme();
                 }
                 if (stripos($type, 'audio/') !== false) {
-                    if ($zrl)
+                    if ($zrl) {
                         echo $br . '[zaudio]' . $url . '[/zaudio]' . $br;
-                    else
+                    } else {
                         echo $br . '[audio]' . $url . '[/audio]' . $br;
+                    }
                     killme();
                 }
                 if (strtolower($type) === 'text/calendar') {
@@ -212,8 +222,10 @@ class Linkinfo extends Controller
                     }
                 } else {
                     $y = new ActivityStreams($x);
-                    if ($y->is_valid() && $y->type === 'Announce' && is_array($y->obj)
-                        && array_key_exists('object', $y->obj) && array_key_exists('actor', $y->obj)) {
+                    if (
+                        $y->is_valid() && $y->type === 'Announce' && is_array($y->obj)
+                        && array_key_exists('object', $y->obj) && array_key_exists('actor', $y->obj)
+                    ) {
                         // This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
                         // Reparse the encapsulated Activity and use that instead
                         logger('relayed activity', LOGGER_DEBUG);
@@ -223,7 +235,8 @@ class Linkinfo extends Controller
 
                 if ($y && $y->is_valid()) {
                     $z = Activity::decode_note($y);
-                    $r = q("select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
+                    $r = q(
+                        "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
                         dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor),
                         dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor)
                     );
@@ -236,7 +249,6 @@ class Linkinfo extends Controller
                     }
 
                     if ($z) {
-
                         // do not allow somebody to embed a post that was blocked by the site admin
                         // We *will* let them over-rule any blocks they created themselves
 
@@ -252,7 +264,6 @@ class Linkinfo extends Controller
 
 
         if ($url && $title && $text) {
-
             $text = $br . '[quote]' . trim($text) . '[/quote]' . $br;
 
             $title = str_replace(array("\r", "\n"), array('', ''), $title);
@@ -269,8 +280,9 @@ class Linkinfo extends Controller
 
         // If the site uses this platform, use zrl rather than url so they get zids sent to them by default
 
-        if (is_matrix_url($url))
+        if (is_matrix_url($url)) {
             $template = str_replace('url', 'zrl', $template);
+        }
 
         if ($siteinfo["title"] == "") {
             echo sprintf($template, $url, $url, '') . $str_tags;
@@ -287,10 +299,11 @@ class Linkinfo extends Controller
 
             $total_images = 0;
             $max_images = get_config('system', 'max_bookmark_images');
-            if ($max_images === false)
+            if ($max_images === false) {
                 $max_images = 2;
-            else
+            } else {
                 $max_images = intval($max_images);
+            }
 
             foreach ($siteinfo["images"] as $imagedata) {
                 if ($url) {
@@ -302,8 +315,9 @@ class Linkinfo extends Controller
                 }
                 $image .= "\n";
                 $total_images++;
-                if ($max_images && $max_images >= $total_images)
+                if ($max_images && $max_images >= $total_images) {
                     break;
+                }
             }
         }
 
@@ -322,7 +336,6 @@ class Linkinfo extends Controller
 
         echo trim($result);
         killme();
-
     }
 
 
@@ -330,34 +343,40 @@ class Linkinfo extends Controller
     {
         $xpath = new DomXPath($doc);
         $list = $xpath->query("//" . $node);
-        foreach ($list as $child)
+        foreach ($list as $child) {
             $child->parentNode->removeChild($child);
+        }
     }
 
     public static function completeurl($url, $scheme)
     {
         $urlarr = parse_url($url);
 
-        if (isset($urlarr["scheme"]))
+        if (isset($urlarr["scheme"])) {
             return ($url);
+        }
 
         $schemearr = parse_url($scheme);
 
         $complete = $schemearr["scheme"] . "://" . $schemearr["host"];
 
-        if ($schemearr["port"] != "")
+        if ($schemearr["port"] != "") {
             $complete .= ":" . $schemearr["port"];
+        }
 
-        if (strpos($urlarr['path'], '/') !== 0)
+        if (strpos($urlarr['path'], '/') !== 0) {
             $complete .= '/';
+        }
 
         $complete .= $urlarr["path"];
 
-        if ($urlarr["query"] != "")
+        if ($urlarr["query"] != "") {
             $complete .= "?" . $urlarr["query"];
+        }
 
-        if ($urlarr["fragment"] != "")
+        if ($urlarr["fragment"] != "") {
             $complete .= "#" . $urlarr["fragment"];
+        }
 
         return ($complete);
     }
@@ -381,10 +400,10 @@ class Linkinfo extends Controller
         $u = channelx_by_nick($nick);
 
         if ($u && $p) {
-
             $sql_extra = permissions_sql(intval($u['channel_id']));
 
-            $r = q("select hash, content from attach where display_path = '%s' and uid = %d and os_storage = 1 $sql_extra limit 1",
+            $r = q(
+                "select hash, content from attach where display_path = '%s' and uid = %d and os_storage = 1 $sql_extra limit 1",
                 dbesc($p),
                 intval($u['channel_id'])
             );
@@ -405,16 +424,18 @@ class Linkinfo extends Controller
 
 
         $result = z_fetch_url($url, false, 0, array('novalidate' => true));
-        if (!$result['success'])
+        if (!$result['success']) {
             return $siteinfo;
+        }
 
         $header = $result['header'];
         $body = $result['body'];
 
         // Check codepage in HTTP headers or HTML if not exist
         $cp = (preg_match('/Content-Type: text\/html; charset=(.+)\r\n/i', $header, $o) ? $o[1] : '');
-        if (empty($cp))
+        if (empty($cp)) {
             $cp = (preg_match('/meta.+content=["|\']text\/html; charset=([^"|\']+)/i', $body, $o) ? $o[1] : 'AUTO');
+        }
 
         $body = mb_convert_encoding($body, 'UTF-8', $cp);
         $body = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
@@ -438,16 +459,19 @@ class Linkinfo extends Controller
 
         //$list = $xpath->query("head/title");
         $list = $xpath->query("//title");
-        foreach ($list as $node)
+        foreach ($list as $node) {
             $siteinfo["title"] = html_entity_decode($node->nodeValue, ENT_QUOTES, "UTF-8");
+        }
 
         //$list = $xpath->query("head/meta[@name]");
         $list = $xpath->query("//meta[@name]");
         foreach ($list as $node) {
             $attr = [];
-            if ($node->attributes->length)
-                foreach ($node->attributes as $attribute)
+            if ($node->attributes->length) {
+                foreach ($node->attributes as $attribute) {
                     $attr[$attribute->name] = $attribute->value;
+                }
+            }
 
             $attr["content"] = html_entity_decode($attr["content"], ENT_QUOTES, "UTF-8");
 
@@ -497,9 +521,11 @@ class Linkinfo extends Controller
         $list = $xpath->query("//meta[@property]");
         foreach ($list as $node) {
             $attr = [];
-            if ($node->attributes->length)
-                foreach ($node->attributes as $attribute)
+            if ($node->attributes->length) {
+                foreach ($node->attributes as $attribute) {
                     $attr[$attribute->name] = $attribute->value;
+                }
+            }
 
             $attr["content"] = html_entity_decode($attr["content"], ENT_QUOTES, "UTF-8");
 
@@ -520,9 +546,11 @@ class Linkinfo extends Controller
             $list = $xpath->query("//img[@src]");
             foreach ($list as $node) {
                 $attr = [];
-                if ($node->attributes->length)
-                    foreach ($node->attributes as $attribute)
+                if ($node->attributes->length) {
+                    foreach ($node->attributes as $attribute) {
                         $attr[$attribute->name] = $attribute->value;
+                    }
+                }
 
                 $src = self::completeurl($attr["src"], $url);
                 $photodata = @getimagesize($src);
@@ -540,7 +568,6 @@ class Linkinfo extends Controller
                         "width" => $photodata[0],
                         "height" => $photodata[1]);
                 }
-
             }
         } else {
             $src = self::completeurl($siteinfo["image"], $url);
@@ -549,40 +576,48 @@ class Linkinfo extends Controller
 
             $photodata = @getimagesize($src);
 
-            if (($photodata) && ($photodata[0] > 10) and ($photodata[1] > 10))
+            if (($photodata) && ($photodata[0] > 10) and ($photodata[1] > 10)) {
                 $siteinfo["images"][] = array("src" => $src,
                     "width" => $photodata[0],
                     "height" => $photodata[1]);
+            }
         }
 
         if ($siteinfo["text"] == "") {
             $text = "";
 
             $list = $xpath->query("//div[@class='article']");
-            foreach ($list as $node)
-                if (strlen($node->nodeValue) > 40)
+            foreach ($list as $node) {
+                if (strlen($node->nodeValue) > 40) {
                     $text .= " " . trim($node->nodeValue);
+                }
+            }
 
             if ($text == "") {
                 $list = $xpath->query("//div[@class='content']");
-                foreach ($list as $node)
-                    if (strlen($node->nodeValue) > 40)
+                foreach ($list as $node) {
+                    if (strlen($node->nodeValue) > 40) {
                         $text .= " " . trim($node->nodeValue);
+                    }
+                }
             }
 
             // If none text was found then take the paragraph content
             if ($text == "") {
                 $list = $xpath->query("//p");
-                foreach ($list as $node)
-                    if (strlen($node->nodeValue) > 40)
+                foreach ($list as $node) {
+                    if (strlen($node->nodeValue) > 40) {
                         $text .= " " . trim($node->nodeValue);
+                    }
+                }
             }
 
             if ($text != "") {
                 $text = trim(str_replace(array("\n", "\r"), array(" ", " "), $text));
 
-                while (strpos($text, "  "))
+                while (strpos($text, "  ")) {
                     $text = trim(str_replace("  ", " ", $text));
+                }
 
                 $siteinfo["text"] = html_entity_decode(substr($text, 0, 350), ENT_QUOTES, "UTF-8") . '...';
             }
@@ -598,5 +633,4 @@ class Linkinfo extends Controller
             $item = '#' . $item;
         }
     }
-
 }

@@ -42,8 +42,9 @@ class Helpindex
         }
         */
 
-        if ($level_0)
+        if ($level_0) {
             $o .= $level_0;
+        }
         if ($levels) {
             foreach ($levels as $l) {
                 $o .= '<br><br>';

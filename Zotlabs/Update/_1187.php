@@ -14,12 +14,9 @@ class _1187
         }
         $r2 = q("create index outq_scheduled_idx on outq (outq_scheduled)");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
-
     }
-
-
 }

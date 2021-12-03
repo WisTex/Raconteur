@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -6,7 +7,6 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
-
 
 class Poke extends Controller
 {
@@ -45,7 +45,8 @@ class Poke extends Controller
             return;
         }
 
-        $r = q("SELECT * FROM xchan where xchan_hash = '%s' LIMIT 1",
+        $r = q(
+            "SELECT * FROM xchan where xchan_hash = '%s' LIMIT 1",
             dbesc($xchan)
         );
 
@@ -90,7 +91,8 @@ class Poke extends Controller
 
         if ($i['success']) {
             $item_id = $i['item_id'];
-            $r = q("select * from item where id = %d",
+            $r = q(
+                "select * from item where id = %d",
                 intval($item_id)
             );
             if ($r) {

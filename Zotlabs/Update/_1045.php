@@ -8,10 +8,9 @@ class _1045
     {
         $r = q("ALTER TABLE `site` ADD `site_register` INT NOT NULL DEFAULT '0',
 ADD INDEX ( `site_register` ) ");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

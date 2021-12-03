@@ -14,6 +14,4 @@ class _1197
 
         return UPDATE_SUCCESS;
     }
-
-
 }

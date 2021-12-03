@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Thumbs;
 
-
 class Pdf
 {
 
@@ -48,4 +47,3 @@ class Pdf
         @unlink($tmpfile);
     }
 }
-

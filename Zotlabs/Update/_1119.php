@@ -28,10 +28,9 @@ class _1119
   KEY `k` (`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

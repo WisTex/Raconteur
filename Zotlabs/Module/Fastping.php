@@ -68,7 +68,5 @@ class Fastping extends Controller
         }
 
         json_return_and_die($result);
-
     }
-
 }

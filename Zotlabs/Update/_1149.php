@@ -26,11 +26,9 @@ class _1149
         $r5 = q("create index obj_created on obj ( obj_created ) ");
         $r6 = q("create index obj_edited on obj ( obj_edited ) ");
         $r = $r1 && $r2 && $r3 && $r4 && $r5 && $r6;
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

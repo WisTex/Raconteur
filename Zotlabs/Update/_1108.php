@@ -10,10 +10,9 @@ class _1108
 ADD `app_price` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD `app_page` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD INDEX ( `app_price` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

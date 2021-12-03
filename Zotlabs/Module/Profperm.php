@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -15,8 +15,9 @@ class Profperm extends Controller
     public function init()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
         $which = $channel['channel_address'];
@@ -24,7 +25,6 @@ class Profperm extends Controller
         $profile = App::$argv[1];
 
         Libprofile::load($which, $profile);
-
     }
 
 
@@ -45,24 +45,29 @@ class Profperm extends Controller
         // Switch to text mod interface if we have more than 'n' contacts or group members
 
         $switchtotext = get_pconfig(local_channel(), 'system', 'groupedit_image_limit');
-        if ($switchtotext === false)
+        if ($switchtotext === false) {
             $switchtotext = get_config('system', 'groupedit_image_limit');
-        if ($switchtotext === false)
+        }
+        if ($switchtotext === false) {
             $switchtotext = 400;
+        }
 
 
         if ((argc() > 2) && intval(argv(1)) && intval(argv(2))) {
-            $r = q("SELECT abook_id FROM abook WHERE abook_id = %d and abook_channel = %d limit 1",
+            $r = q(
+                "SELECT abook_id FROM abook WHERE abook_id = %d and abook_channel = %d limit 1",
                 intval(argv(2)),
                 intval(local_channel())
             );
-            if ($r)
+            if ($r) {
                 $change = intval(argv(2));
+            }
         }
 
 
         if ((argc() > 1) && (intval(argv(1)))) {
-            $r = q("SELECT * FROM profile WHERE id = %d AND uid = %d AND is_default = 0 LIMIT 1",
+            $r = q(
+                "SELECT * FROM profile WHERE id = %d AND uid = %d AND is_default = 0 LIMIT 1",
                 intval(argv(1)),
                 intval(local_channel())
             );
@@ -73,34 +78,39 @@ class Profperm extends Controller
 
             $profile = $r[0];
 
-            $r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d AND abook_profile = '%s'",
+            $r = q(
+                "SELECT * FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d AND abook_profile = '%s'",
                 intval(local_channel()),
                 dbesc($profile['profile_guid'])
             );
 
             $ingroup = [];
-            if ($r)
-                foreach ($r as $member)
+            if ($r) {
+                foreach ($r as $member) {
                     $ingroup[] = $member['abook_id'];
+                }
+            }
 
             $members = $r;
 
             if ($change) {
                 if (in_array($change, $ingroup)) {
-                    q("UPDATE abook SET abook_profile = '' WHERE abook_id = %d AND abook_channel = %d",
+                    q(
+                        "UPDATE abook SET abook_profile = '' WHERE abook_id = %d AND abook_channel = %d",
                         intval($change),
                         intval(local_channel())
                     );
                 } else {
-                    q("UPDATE abook SET abook_profile = '%s' WHERE abook_id = %d AND abook_channel = %d",
+                    q(
+                        "UPDATE abook SET abook_profile = '%s' WHERE abook_id = %d AND abook_channel = %d",
                         dbesc($profile['profile_guid']),
                         intval($change),
                         intval(local_channel())
                     );
-
                 }
 
-                $r = q("SELECT * FROM abook left join xchan on abook_xchan = xchan_hash 
+                $r = q(
+                    "SELECT * FROM abook left join xchan on abook_xchan = xchan_hash 
 					WHERE abook_channel = %d AND abook_profile = '%s'",
                     intval(local_channel()),
                     dbesc($profile['profile_guid'])
@@ -109,9 +119,11 @@ class Profperm extends Controller
                 $members = $r;
 
                 $ingroup = [];
-                if (count($r))
-                    foreach ($r as $member)
+                if (count($r)) {
+                    foreach ($r as $member) {
                         $ingroup[] = $member['abook_id'];
+                    }
+                }
             }
 
             $o .= '<h2>' . t('Profile Visibility Editor') . '</h2>';
@@ -119,12 +131,12 @@ class Profperm extends Controller
             $o .= '<h3>' . t('Profile') . ' \'' . $profile['profile_name'] . '\'</h3>';
 
             $o .= '<div id="prof-edit-desc">' . t('Click on a contact to add or remove.') . '</div>';
-
         }
 
         $o .= '<div id="prof-update-wrapper">';
-        if ($change)
+        if ($change) {
             $o = '';
+        }
 
         $o .= '<div id="prof-members-title">';
         $o .= '<h3>' . t('Visible To') . '</h3>';
@@ -167,8 +179,5 @@ class Profperm extends Controller
         }
         $o .= '</div>';
         return $o;
-
     }
-
-
 }

@@ -14,11 +14,9 @@ class _1189
         } else {
             $r2 = q("alter table mail add mail_raw tinyint(4) not null default 0 ");
         }
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

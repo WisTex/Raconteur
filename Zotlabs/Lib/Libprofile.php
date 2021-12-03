@@ -27,7 +27,7 @@ class Libprofile
     public static function load($nickname, $profile = '')
     {
 
-        //	logger('Libprofile::load: ' . $nickname . (($profile) ? ' profile: ' . $profile : ''));
+        //  logger('Libprofile::load: ' . $nickname . (($profile) ? ' profile: ' . $profile : ''));
 
         $channel = channelx_by_nick($nickname);
 
@@ -50,25 +50,29 @@ class Libprofile
         }
 
         if (!$profile) {
-            $r = q("SELECT abook_profile FROM abook WHERE abook_xchan = '%s' and abook_channel = '%d' limit 1",
+            $r = q(
+                "SELECT abook_profile FROM abook WHERE abook_xchan = '%s' and abook_channel = '%d' limit 1",
                 dbesc(($observer) ? $observer['xchan_hash'] : ''),
                 intval($channel['channel_id'])
             );
-            if ($r)
+            if ($r) {
                 $profile = $r[0]['abook_profile'];
+            }
         }
 
         $p = null;
 
         if ($profile) {
-            $p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
+            $p = q(
+                "SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
 				LEFT JOIN channel ON profile.uid = channel.channel_id
 				WHERE channel.channel_address = '%s' AND profile.profile_guid = '%s' LIMIT 1",
                 dbesc($nickname),
                 dbesc($profile)
             );
             if (!$p) {
-                $p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
+                $p = q(
+                    "SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
 					LEFT JOIN channel ON profile.uid = channel.channel_id
 					WHERE channel.channel_address = '%s' AND profile.id = %d LIMIT 1",
                     dbesc($nickname),
@@ -78,7 +82,8 @@ class Libprofile
         }
 
         if (!$p) {
-            $p = q("SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
+            $p = q(
+                "SELECT profile.uid AS profile_uid, profile.*, channel.* FROM profile
 				LEFT JOIN channel ON profile.uid = channel.channel_id
 				WHERE channel.channel_address = '%s' and channel_removed = 0
 				AND profile.is_default = 1 LIMIT 1",
@@ -93,22 +98,23 @@ class Libprofile
             return;
         }
 
-        $q = q("select * from profext where hash = '%s' and channel_id = %d",
+        $q = q(
+            "select * from profext where hash = '%s' and channel_id = %d",
             dbesc($p[0]['profile_guid']),
             intval($p[0]['profile_uid'])
         );
         if ($q) {
-
             $extra_fields = [];
 
             $profile_fields_basic = get_profile_fields_basic();
             $profile_fields_advanced = get_profile_fields_advanced();
 
             $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
-            if ($advanced)
+            if ($advanced) {
                 $fields = $profile_fields_advanced;
-            else
+            } else {
                 $fields = $profile_fields_basic;
+            }
 
             foreach ($q as $qq) {
                 foreach ($fields as $k => $f) {
@@ -123,7 +129,8 @@ class Libprofile
 
         $p[0]['extra_fields'] = ((isset($extra_fields)) ? $extra_fields : []);
 
-        $z = q("select xchan_photo_date, xchan_addr from xchan where xchan_hash = '%s' limit 1",
+        $z = q(
+            "select xchan_photo_date, xchan_addr from xchan where xchan_hash = '%s' limit 1",
             dbesc($p[0]['channel_hash'])
         );
         if ($z) {
@@ -134,11 +141,13 @@ class Libprofile
         // fetch user tags if this isn't the default profile
 
         if (!$p[0]['is_default']) {
-            $x = q("select keywords from profile where uid = %d and is_default = 1 limit 1",
+            $x = q(
+                "select keywords from profile where uid = %d and is_default = 1 limit 1",
                 intval($p[0]['profile_uid'])
             );
-            if ($x && $can_view_profile)
+            if ($x && $can_view_profile) {
                 $p[0]['keywords'] = $x[0]['keywords'];
+            }
         }
 
         if ($p[0]['keywords']) {
@@ -171,8 +180,7 @@ class Libprofile
          * load/reload current theme info
          */
 
-        //	$_SESSION['theme'] = $p[0]['channel_theme'];
-
+        //  $_SESSION['theme'] = $p[0]['channel_theme'];
     }
 
     public static function edit_menu($uid)
@@ -198,14 +206,16 @@ class Libprofile
                 $ret['edit'] = [z_root() . '/profiles/' . $uid, t('Edit Profile'), '', t('Edit')];
             }
 
-            $r = q("SELECT * FROM profile WHERE uid = %d",
+            $r = q(
+                "SELECT * FROM profile WHERE uid = %d",
                 local_channel()
             );
 
             if ($r) {
                 foreach ($r as $rr) {
-                    if (!($multi_profiles || $rr['is_default']))
+                    if (!($multi_profiles || $rr['is_default'])) {
                         continue;
+                    }
 
                     $ret['menu']['entries'][] = [
                         'photo' => $rr['thumb'],
@@ -252,13 +262,15 @@ class Libprofile
             $block = true;
         }
 
-        if ((!is_array($profile)) && (!count($profile)))
+        if ((!is_array($profile)) && (!count($profile))) {
             return $o;
+        }
 
         head_set_icon($profile['thumb']);
 
-        if (is_sys_channel($profile['uid']))
+        if (is_sys_channel($profile['uid'])) {
             $show_connect = false;
+        }
 
         $profile['picdate'] = urlencode($profile['picdate']);
 
@@ -269,42 +281,46 @@ class Libprofile
         call_hooks('profile_sidebar_enter', $profile);
 
         if ($show_connect) {
-
             // This will return an empty string if we're already connected.
 
             $connect_url = rconnect_url($profile['uid'], get_observer_hash());
             $connect = (($connect_url) ? t('Connect') : '');
-            if ($connect_url)
+            if ($connect_url) {
                 $connect_url = sprintf($connect_url, urlencode(channel_reddress($profile)));
+            }
 
             // premium channel - over-ride
 
-            if ($profile['channel_pageflags'] & PAGE_PREMIUM)
+            if ($profile['channel_pageflags'] & PAGE_PREMIUM) {
                 $connect_url = z_root() . '/connect/' . $profile['channel_address'];
+            }
         }
 
-        if ((x($profile, 'address') == 1)
+        if (
+            (x($profile, 'address') == 1)
             || (x($profile, 'locality') == 1)
             || (x($profile, 'region') == 1)
             || (x($profile, 'postal_code') == 1)
-            || (x($profile, 'country_name') == 1))
+            || (x($profile, 'country_name') == 1)
+        ) {
             $location = t('Location:');
+        }
 
         $profile['homepage'] = linkify($profile['homepage'], true);
 
-        $gender = ((x($profile, 'gender') == 1) ? t('Gender:') : False);
-        $marital = ((x($profile, 'marital') == 1) ? t('Status:') : False);
-        $homepage = ((x($profile, 'homepage') == 1) ? t('Homepage:') : False);
-        $pronouns = ((x($profile, 'pronouns') == 1) ? t('Pronouns:') : False);
+        $gender = ((x($profile, 'gender') == 1) ? t('Gender:') : false);
+        $marital = ((x($profile, 'marital') == 1) ? t('Status:') : false);
+        $homepage = ((x($profile, 'homepage') == 1) ? t('Homepage:') : false);
+        $pronouns = ((x($profile, 'pronouns') == 1) ? t('Pronouns:') : false);
 
         // zap/osada do not have a realtime chat system at this time so don't show online state
-        //	$profile['online']   = (($profile['online_status'] === 'online') ? t('Online Now') : False);
-        //	logger('online: ' . $profile['online']);
+        //  $profile['online']   = (($profile['online_status'] === 'online') ? t('Online Now') : False);
+        //  logger('online: ' . $profile['online']);
 
         $profile['online'] = false;
 
         if (($profile['hidewall'] && (!local_channel()) && (!remote_channel())) || $block) {
-            $location = $reddress = $pdesc = $gender = $marital = $homepage = False;
+            $location = $reddress = $pdesc = $gender = $marital = $homepage = false;
         }
 
         if ($profile['gender']) {
@@ -327,8 +343,9 @@ class Libprofile
         if ($menu && !$block) {
             require_once('include/menu.php');
             $m = menu_fetch($menu, $profile['uid'], $observer['xchan_hash']);
-            if ($m)
+            if ($m) {
                 $channel_menu = menu_render($m);
+            }
         }
         $menublock = get_pconfig($profile['uid'], 'system', 'channel_menublock');
         if ($menublock && (!$block)) {
@@ -336,10 +353,11 @@ class Libprofile
             $channel_menu .= $comanche->block($menublock);
         }
 
-        if ($zcard)
+        if ($zcard) {
             $tpl = get_markup_template('profile_vcard_short.tpl');
-        else
+        } else {
             $tpl = get_markup_template('profile_vcard.tpl');
+        }
 
         $o .= replace_macros($tpl, array(
             '$zcard' => $zcard,
@@ -383,23 +401,29 @@ class Libprofile
     public static function gender_icon($gender)
     {
 
-        //	logger('gender: ' . $gender);
+        //  logger('gender: ' . $gender);
 
         // This can easily get throw off if the observer language is different
         // than the channel owner language.
 
-        if (strpos(strtolower($gender), strtolower(t('Female'))) !== false)
+        if (strpos(strtolower($gender), strtolower(t('Female'))) !== false) {
             return 'venus';
-        if (strpos(strtolower($gender), strtolower(t('Male'))) !== false)
+        }
+        if (strpos(strtolower($gender), strtolower(t('Male'))) !== false) {
             return 'mars';
-        if (strpos(strtolower($gender), strtolower(t('Trans'))) !== false)
+        }
+        if (strpos(strtolower($gender), strtolower(t('Trans'))) !== false) {
             return 'transgender';
-        if (strpos(strtolower($gender), strtolower(t('Inter'))) !== false)
+        }
+        if (strpos(strtolower($gender), strtolower(t('Inter'))) !== false) {
             return 'transgender';
-        if (strpos(strtolower($gender), strtolower(t('Neuter'))) !== false)
+        }
+        if (strpos(strtolower($gender), strtolower(t('Neuter'))) !== false) {
             return 'neuter';
-        if (strpos(strtolower($gender), strtolower(t('Non-specific'))) !== false)
+        }
+        if (strpos(strtolower($gender), strtolower(t('Non-specific'))) !== false) {
             return 'genderless';
+        }
 
         return '';
     }
@@ -411,12 +435,15 @@ class Libprofile
         // This can easily get throw off if the observer language is different
         // than the channel owner language.
 
-        if (strpos(strtolower($pronouns), strtolower(t('She'))) !== false)
+        if (strpos(strtolower($pronouns), strtolower(t('She'))) !== false) {
             return 'venus';
-        if (strpos(strtolower($pronouns), strtolower(t('Him'))) !== false)
+        }
+        if (strpos(strtolower($pronouns), strtolower(t('Him'))) !== false) {
             return 'mars';
-        if (strpos(strtolower($pronouns), strtolower(t('Them'))) !== false)
+        }
+        if (strpos(strtolower($pronouns), strtolower(t('Them'))) !== false) {
             return 'users';
+        }
 
         return '';
     }
@@ -425,19 +452,20 @@ class Libprofile
     public static function advanced()
     {
 
-        if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_profile'))
+        if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_profile')) {
             return '';
+        }
 
         if (App::$profile['fullname']) {
-
             $profile_fields_basic = get_profile_fields_basic();
             $profile_fields_advanced = get_profile_fields_advanced();
 
             $advanced = ((feature_enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
-            if ($advanced)
+            if ($advanced) {
                 $fields = $profile_fields_advanced;
-            else
+            } else {
                 $fields = $profile_fields_basic;
+            }
 
             $clean_fields = [];
             if ($fields) {
@@ -453,38 +481,40 @@ class Libprofile
 
             $profile['fullname'] = array(t('Full Name:'), App::$profile['fullname']);
 
-            if (App::$profile['gender']) $profile['gender'] = array(t('Gender:'), App::$profile['gender']);
+            if (App::$profile['gender']) {
+                $profile['gender'] = array(t('Gender:'), App::$profile['gender']);
+            }
 
 
             $ob_hash = get_observer_hash();
 // this may not work at all any more, but definitely won't work correctly if the liked profile belongs to a group
 // comment out until we are able to look at it much closer
-//			if($ob_hash && perm_is_allowed(App::$profile['profile_uid'],$ob_hash,'post_like')) {
-//				$profile['canlike'] = true;
-//				$profile['likethis'] = t('Like this channel');
-//				$profile['profile_guid'] = App::$profile['profile_guid'];
-//			}
+//          if($ob_hash && perm_is_allowed(App::$profile['profile_uid'],$ob_hash,'post_like')) {
+//              $profile['canlike'] = true;
+//              $profile['likethis'] = t('Like this channel');
+//              $profile['profile_guid'] = App::$profile['profile_guid'];
+//          }
 
-//			$likers = q("select liker, xchan.*  from likes left join xchan on liker = xchan_hash where channel_id = %d and target_type = '%s' and verb = '%s'",
-//				intval(App::$profile['profile_uid']),
-//				dbesc(ACTIVITY_OBJ_PROFILE),
-//				dbesc(ACTIVITY_LIKE)
-//			);
-//			$profile['likers'] = [];
-//			$profile['like_count'] = count($likers);
-//			$profile['like_button_label'] = tt('Like','Likes',$profile['like_count'],'noun');
+//          $likers = q("select liker, xchan.*  from likes left join xchan on liker = xchan_hash where channel_id = %d and target_type = '%s' and verb = '%s'",
+//              intval(App::$profile['profile_uid']),
+//              dbesc(ACTIVITY_OBJ_PROFILE),
+//              dbesc(ACTIVITY_LIKE)
+//          );
+//          $profile['likers'] = [];
+//          $profile['like_count'] = count($likers);
+//          $profile['like_button_label'] = tt('Like','Likes',$profile['like_count'],'noun');
 
-//			if($likers) {
-//				foreach($likers as $l)
-//					$profile['likers'][] = array('name' => $l['xchan_name'],'photo' => zid($l['xchan_photo_s']), 'url' => zid($l['xchan_url']));
-//			}
+//          if($likers) {
+//              foreach($likers as $l)
+//                  $profile['likers'][] = array('name' => $l['xchan_name'],'photo' => zid($l['xchan_photo_s']), 'url' => zid($l['xchan_url']));
+//          }
 
             if ((App::$profile['dob']) && (App::$profile['dob'] != '0000-00-00')) {
-
                 $val = '';
 
-                if ((substr(App::$profile['dob'], 5, 2) === '00') || (substr(App::$profile['dob'], 8, 2) === '00'))
+                if ((substr(App::$profile['dob'], 5, 2) === '00') || (substr(App::$profile['dob'], 8, 2) === '00')) {
                     $val = substr(App::$profile['dob'], 0, 4);
+                }
 
                 $year_bd_format = t('j F, Y');
                 $short_bd_format = t('j F');
@@ -497,14 +527,17 @@ class Libprofile
                 $profile['birthday'] = array(t('Birthday:'), $val);
             }
 
-            if ($age = age(App::$profile['dob'], App::$profile['timezone'], ''))
+            if ($age = age(App::$profile['dob'], App::$profile['timezone'], '')) {
                 $profile['age'] = array(t('Age:'), $age);
+            }
 
-            if (App::$profile['marital'])
+            if (App::$profile['marital']) {
                 $profile['marital'] = array(t('Status:'), App::$profile['marital']);
+            }
 
-            if (App::$profile['partner'])
+            if (App::$profile['partner']) {
                 $profile['marital']['partner'] = zidify_links(bbcode(App::$profile['partner']));
+            }
 
             if (strlen(App::$profile['howlong']) && App::$profile['howlong'] > NULL_DATE) {
                 $profile['howlong'] = relative_date(App::$profile['howlong'], t('for %1$d %2$s'));
@@ -523,51 +556,91 @@ class Libprofile
             }
 
 
-            if (App::$profile['sexual']) $profile['sexual'] = array(t('Sexual Preference:'), App::$profile['sexual']);
+            if (App::$profile['sexual']) {
+                $profile['sexual'] = array(t('Sexual Preference:'), App::$profile['sexual']);
+            }
 
-            if (App::$profile['pronouns']) $profile['pronouns'] = array(t('Pronouns:'), App::$profile['pronouns']);
+            if (App::$profile['pronouns']) {
+                $profile['pronouns'] = array(t('Pronouns:'), App::$profile['pronouns']);
+            }
 
-            if (App::$profile['homepage']) $profile['homepage'] = array(t('Homepage:'), linkify(App::$profile['homepage']));
+            if (App::$profile['homepage']) {
+                $profile['homepage'] = array(t('Homepage:'), linkify(App::$profile['homepage']));
+            }
 
-            if (App::$profile['hometown']) $profile['hometown'] = array(t('Hometown:'), linkify(App::$profile['hometown']));
+            if (App::$profile['hometown']) {
+                $profile['hometown'] = array(t('Hometown:'), linkify(App::$profile['hometown']));
+            }
 
-            if (App::$profile['politic']) $profile['politic'] = array(t('Political Views:'), App::$profile['politic']);
+            if (App::$profile['politic']) {
+                $profile['politic'] = array(t('Political Views:'), App::$profile['politic']);
+            }
 
-            if (App::$profile['religion']) $profile['religion'] = array(t('Religion:'), App::$profile['religion']);
+            if (App::$profile['religion']) {
+                $profile['religion'] = array(t('Religion:'), App::$profile['religion']);
+            }
 
-            if ($txt = prepare_text(App::$profile['about'])) $profile['about'] = array(t('About:'), $txt);
+            if ($txt = prepare_text(App::$profile['about'])) {
+                $profile['about'] = array(t('About:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['interest'])) $profile['interest'] = array(t('Hobbies/Interests:'), $txt);
+            if ($txt = prepare_text(App::$profile['interest'])) {
+                $profile['interest'] = array(t('Hobbies/Interests:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['likes'])) $profile['likes'] = array(t('Likes:'), $txt);
+            if ($txt = prepare_text(App::$profile['likes'])) {
+                $profile['likes'] = array(t('Likes:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['dislikes'])) $profile['dislikes'] = array(t('Dislikes:'), $txt);
+            if ($txt = prepare_text(App::$profile['dislikes'])) {
+                $profile['dislikes'] = array(t('Dislikes:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['contact'])) $profile['contact'] = array(t('Contact information and Social Networks:'), $txt);
+            if ($txt = prepare_text(App::$profile['contact'])) {
+                $profile['contact'] = array(t('Contact information and Social Networks:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['channels'])) $profile['channels'] = array(t('My other channels:'), $txt);
+            if ($txt = prepare_text(App::$profile['channels'])) {
+                $profile['channels'] = array(t('My other channels:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['music'])) $profile['music'] = array(t('Musical interests:'), $txt);
+            if ($txt = prepare_text(App::$profile['music'])) {
+                $profile['music'] = array(t('Musical interests:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['book'])) $profile['book'] = array(t('Books, literature:'), $txt);
+            if ($txt = prepare_text(App::$profile['book'])) {
+                $profile['book'] = array(t('Books, literature:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['tv'])) $profile['tv'] = array(t('Television:'), $txt);
+            if ($txt = prepare_text(App::$profile['tv'])) {
+                $profile['tv'] = array(t('Television:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['film'])) $profile['film'] = array(t('Film/dance/culture/entertainment:'), $txt);
+            if ($txt = prepare_text(App::$profile['film'])) {
+                $profile['film'] = array(t('Film/dance/culture/entertainment:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['romance'])) $profile['romance'] = array(t('Love/Romance:'), $txt);
+            if ($txt = prepare_text(App::$profile['romance'])) {
+                $profile['romance'] = array(t('Love/Romance:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['employment'])) $profile['employment'] = array(t('Work/employment:'), $txt);
+            if ($txt = prepare_text(App::$profile['employment'])) {
+                $profile['employment'] = array(t('Work/employment:'), $txt);
+            }
 
-            if ($txt = prepare_text(App::$profile['education'])) $profile['education'] = array(t('School/education:'), $txt);
+            if ($txt = prepare_text(App::$profile['education'])) {
+                $profile['education'] = array(t('School/education:'), $txt);
+            }
 
             if (App::$profile['extra_fields']) {
                 foreach (App::$profile['extra_fields'] as $f) {
-                    $x = q("select * from profdef where field_name = '%s' limit 1",
+                    $x = q(
+                        "select * from profdef where field_name = '%s' limit 1",
                         dbesc($f)
                     );
-                    if ($x && $txt = prepare_text(App::$profile[$f]))
+                    if ($x && $txt = prepare_text(App::$profile[$f])) {
                         $profile[$f] = array($x[0]['field_desc'] . ':', $txt);
+                    }
                 }
                 $profile['extra_fields'] = App::$profile['extra_fields'];
             }
@@ -575,9 +648,9 @@ class Libprofile
             $things = get_things(App::$profile['profile_guid'], App::$profile['profile_uid']);
 
 
-            //		logger('mod_profile: things: ' . print_r($things,true), LOGGER_DATA);
+            //      logger('mod_profile: things: ' . print_r($things,true), LOGGER_DATA);
 
-            //		$exportlink = ((App::$profile['profile_vcard']) ? zid(z_root() . '/profile/' . App::$profile['channel_address'] . '/vcard') : '');
+            //      $exportlink = ((App::$profile['profile_vcard']) ? zid(z_root() . '/profile/' . App::$profile['channel_address'] . '/vcard') : '');
 
             return replace_macros($tpl, array(
                 '$title' => t('Profile'),
@@ -594,6 +667,4 @@ class Libprofile
 
         return '';
     }
-
-
 }

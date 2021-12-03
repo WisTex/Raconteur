@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -22,13 +23,13 @@ class Menu extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
 
@@ -50,15 +51,18 @@ class Menu extends Controller
             App::$is_sys = true;
         }
 
-        if (!$uid)
+        if (!$uid) {
             return;
+        }
 
         $_REQUEST['menu_channel_id'] = $uid;
 
-        if ($_REQUEST['menu_bookmark'])
+        if ($_REQUEST['menu_bookmark']) {
             $_REQUEST['menu_flags'] |= MENU_BOOKMARK;
-        if ($_REQUEST['menu_system'])
+        }
+        if ($_REQUEST['menu_system']) {
             $_REQUEST['menu_flags'] |= MENU_SYSTEM;
+        }
 
         $menu_id = ((argc() > 1) ? intval(argv(1)) : 0);
         if ($menu_id) {
@@ -68,8 +72,9 @@ class Menu extends Controller
                 menu_sync_packet($uid, get_observer_hash(), $menu_id);
                 //info( t('Menu updated.') . EOL);
                 goaway(z_root() . '/mitem/' . $which . '/' . $menu_id . ((App::$is_sys) ? '?f=&sys=1' : ''));
-            } else
+            } else {
                 notice(t('Unable to update menu.') . EOL);
+            }
         } else {
             $r = menu_create($_REQUEST);
             if ($r) {
@@ -77,9 +82,9 @@ class Menu extends Controller
 
                 //info( t('Menu created.') . EOL);
                 goaway(z_root() . '/mitem/' . $which . '/' . $r . ((App::$is_sys) ? '?f=&sys=1' : ''));
-            } else
+            } else {
                 notice(t('Unable to create menu.') . EOL);
-
+            }
         }
     }
 
@@ -143,7 +148,6 @@ class Menu extends Controller
         }
 
         if (argc() == 2) {
-
             $channel = (($sys) ? $sys : channelx_by_n($owner));
 
             // list menus
@@ -151,8 +155,9 @@ class Menu extends Controller
             if ($x) {
                 for ($y = 0; $y < count($x); $y++) {
                     $m = menu_fetch($x[$y]['menu_name'], $owner, get_observer_hash());
-                    if ($m)
+                    if ($m) {
                         $x[$y]['element'] = '[element]' . base64url_encode(json_encode(menu_element($channel, $m))) . '[/element]';
+                    }
                     $x[$y]['bookmark'] = (($x[$y]['menu_flags'] & MENU_BOOKMARK) ? true : false);
                 }
             }
@@ -188,17 +193,16 @@ class Menu extends Controller
             ));
 
             return $o;
-
         }
 
         if (argc() > 2) {
             if (intval(argv(2))) {
-
                 if (argc() == 4 && argv(3) == 'drop') {
                     menu_sync_packet($owner, get_observer_hash(), intval(argv(1)), true);
                     $r = menu_delete_id(intval(argv(2)), $owner);
-                    if (!$r)
+                    if (!$r) {
                         notice(t('Menu could not be deleted.') . EOL);
+                    }
 
                     goaway(z_root() . '/menu/' . $which . ((App::$is_sys) ? '?f=&sys=1' : ''));
                 }
@@ -226,13 +230,10 @@ class Menu extends Controller
                 ));
 
                 return $o;
-
             } else {
                 notice(t('Not found.') . EOL);
                 return;
             }
         }
-
     }
-
 }

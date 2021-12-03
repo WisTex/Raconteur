@@ -40,8 +40,5 @@ class Findpeople
             '$advanced_hint' => "\r\n" . t('Advanced example: name=fred and country=iceland'),
             '$loggedin' => local_channel()
         ));
-
     }
-
 }
-

@@ -9,10 +9,9 @@ class _1185
 
         $r1 = q("alter table app add app_plugin text not null default '' ");
 
-        if ($r1)
+        if ($r1) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

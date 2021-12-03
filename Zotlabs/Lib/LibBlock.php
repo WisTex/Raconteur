@@ -2,12 +2,11 @@
 
 namespace Zotlabs\Lib;
 
-
 class LibBlock
 {
 
-    static public $cache = [];
-    static public $empty = [];
+    public static $cache = [];
+    public static $empty = [];
 
     // This limits the number of DB queries for fetch_by_entity to once per page load.
 
@@ -46,7 +45,8 @@ class LibBlock
         $arr['block_comment'] = ((array_key_exists('block_comment', $arr)) ? escape_tags(trim($arr['block_comment'])) : EMPTY_STR);
 
         if (!intval($arr['block_id'])) {
-            $r = q("select * from block where block_channel_id = %d and block_entity = '%s' and block_type = %d limit 1",
+            $r = q(
+                "select * from block where block_channel_id = %d and block_entity = '%s' and block_type = %d limit 1",
                 intval($arr['block_channel_id']),
                 dbesc($arr['block_entity']),
                 intval($arr['block_type'])
@@ -57,7 +57,8 @@ class LibBlock
         }
 
         if (intval($arr['block_id'])) {
-            return q("UPDATE block set block_channel_id = %d, block_entity = '%s', block_type = %d, block_comment = '%s' where block_id = %d",
+            return q(
+                "UPDATE block set block_channel_id = %d, block_entity = '%s', block_type = %d, block_comment = '%s' where block_id = %d",
                 intval($arr['block_channel_id']),
                 dbesc($arr['block_entity']),
                 intval($arr['block_type']),
@@ -71,7 +72,8 @@ class LibBlock
 
     public static function remove($channel_id, $entity)
     {
-        return q("delete from block where block_channel_id = %d and block_entity = '%s'",
+        return q(
+            "delete from block where block_channel_id = %d and block_entity = '%s'",
             intval($channel_id),
             dbesc($entity)
         );
@@ -82,7 +84,8 @@ class LibBlock
         if (!intval($channel_id)) {
             return false;
         }
-        $r = q("select * from block where block_channel_id = %d and block_id = %d ",
+        $r = q(
+            "select * from block where block_channel_id = %d and block_id = %d ",
             intval($channel_id)
         );
         return (($r) ? array_shift($r) : $r);
@@ -96,7 +99,6 @@ class LibBlock
         }
 
         return self::fetch_from_cache($channel_id, $entity);
-
     }
 
     public static function fetch($channel_id, $type = false)
@@ -107,10 +109,10 @@ class LibBlock
 
         $sql_extra = (($type === false) ? EMPTY_STR : " and block_type = " . intval($type));
 
-        $r = q("select * from block where block_channel_id = %d $sql_extra",
+        $r = q(
+            "select * from block where block_channel_id = %d $sql_extra",
             intval($channel_id)
         );
         return $r;
     }
-
 }

@@ -1,9 +1,8 @@
-<?php 
+<?php
 
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libsync;
-
 
 class AccessList
 {
@@ -15,14 +14,14 @@ class AccessList
         if ($uid && $name) {
             $r = self::byname($uid, $name); // check for dups
             if ($r !== false) {
-
                 // This could be a problem.
                 // Let's assume we've just created a list which we once deleted
                 // all the old members are gone, but the list remains so we don't break any security
                 // access lists. What we're doing here is reviving the dead list, but old content which
                 // was restricted to this list may now be seen by the new list members.
 
-                $z = q("SELECT * FROM pgrp WHERE id = %d LIMIT 1",
+                $z = q(
+                    "SELECT * FROM pgrp WHERE id = %d LIMIT 1",
                     intval($r)
                 );
                 if (($z) && $z[0]['deleted']) {
@@ -35,7 +34,8 @@ class AccessList
 
             $hash = new_uuid();
 
-            $r = q("INSERT INTO pgrp ( hash, uid, visible, gname, rule )
+            $r = q(
+                "INSERT INTO pgrp ( hash, uid, visible, gname, rule )
 				VALUES( '%s', %d, %d, '%s', '' ) ",
                 dbesc($hash),
                 intval($uid),
@@ -55,7 +55,8 @@ class AccessList
     {
         $ret = false;
         if ($uid && $name) {
-            $r = q("SELECT id, hash FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
+            $r = q(
+                "SELECT id, hash FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
                 intval($uid),
                 dbesc($name)
             );
@@ -67,7 +68,8 @@ class AccessList
             }
 
             // remove group from default posting lists
-            $r = q("SELECT channel_default_group, channel_allow_gid, channel_deny_gid FROM channel WHERE channel_id = %d LIMIT 1",
+            $r = q(
+                "SELECT channel_default_group, channel_allow_gid, channel_deny_gid FROM channel WHERE channel_id = %d LIMIT 1",
                 intval($uid)
             );
             if ($r) {
@@ -88,7 +90,8 @@ class AccessList
                 }
 
                 if ($change) {
-                    q("UPDATE channel SET channel_default_group = '%s', channel_allow_gid = '%s', channel_deny_gid = '%s' 
+                    q(
+                        "UPDATE channel SET channel_default_group = '%s', channel_allow_gid = '%s', channel_deny_gid = '%s' 
 						WHERE channel_id = %d",
                         intval($user_info['channel_default_group']),
                         dbesc($user_info['channel_allow_gid']),
@@ -99,19 +102,20 @@ class AccessList
             }
 
             // remove all members
-            $r = q("DELETE FROM pgrp_member WHERE uid = %d AND gid = %d ",
+            $r = q(
+                "DELETE FROM pgrp_member WHERE uid = %d AND gid = %d ",
                 intval($uid),
                 intval($group_id)
             );
 
             // remove group
-            $r = q("UPDATE pgrp SET deleted = 1 WHERE uid = %d AND gname = '%s'",
+            $r = q(
+                "UPDATE pgrp SET deleted = 1 WHERE uid = %d AND gname = '%s'",
                 intval($uid),
                 dbesc($name)
             );
 
             $ret = $r;
-
         }
 
         Libsync::build_sync_packet($uid, null, true);
@@ -127,7 +131,8 @@ class AccessList
         if (!($uid && $name)) {
             return false;
         }
-        $r = q("SELECT id FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
+        $r = q(
+            "SELECT id FROM pgrp WHERE uid = %d AND gname = '%s' LIMIT 1",
             intval($uid),
             dbesc($name)
         );
@@ -143,7 +148,8 @@ class AccessList
             return false;
         }
 
-        $r = q("SELECT * FROM pgrp WHERE uid = %d AND id = %d and deleted = 0",
+        $r = q(
+            "SELECT * FROM pgrp WHERE uid = %d AND id = %d and deleted = 0",
             intval($uid),
             intval($id)
         );
@@ -159,7 +165,8 @@ class AccessList
         if (!($uid && $hash)) {
             return false;
         }
-        $r = q("SELECT * FROM pgrp WHERE uid = %d AND hash = '%s' LIMIT 1",
+        $r = q(
+            "SELECT * FROM pgrp WHERE uid = %d AND hash = '%s' LIMIT 1",
             intval($uid),
             dbesc($hash)
         );
@@ -179,7 +186,8 @@ class AccessList
         if (!($uid && $gid && $member)) {
             return false;
         }
-        $r = q("DELETE FROM pgrp_member WHERE uid = %d AND gid = %d AND xchan = '%s' ",
+        $r = q(
+            "DELETE FROM pgrp_member WHERE uid = %d AND gid = %d AND xchan = '%s' ",
             intval($uid),
             intval($gid),
             dbesc($member)
@@ -200,7 +208,8 @@ class AccessList
             return false;
         }
 
-        $r = q("SELECT * FROM pgrp_member WHERE uid = %d AND gid = %d AND xchan = '%s' LIMIT 1",
+        $r = q(
+            "SELECT * FROM pgrp_member WHERE uid = %d AND gid = %d AND xchan = '%s' LIMIT 1",
             intval($uid),
             intval($gid),
             dbesc($member)
@@ -210,7 +219,8 @@ class AccessList
             // we indicate success because the group member was in fact created
             // -- It was just created at another time
         } else {
-            $r = q("INSERT INTO pgrp_member (uid, gid, xchan)
+            $r = q(
+                "INSERT INTO pgrp_member (uid, gid, xchan)
 				VALUES( %d, %d, '%s' ) ",
                 intval($uid),
                 intval($gid),
@@ -246,13 +256,15 @@ class AccessList
                     break;
             }
             if ($total) {
-                $r = q("SELECT count(*) FROM abook left join xchan on xchan_hash = abook_xchan WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
+                $r = q(
+                    "SELECT count(*) FROM abook left join xchan on xchan_hash = abook_xchan WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
                     intval($uid)
                 );
                 return ($r) ? $r[0]['total'] : false;
             }
 
-            $r = q("SELECT * FROM abook left join xchan on xchan_hash = abook_xchan
+            $r = q(
+                "SELECT * FROM abook left join xchan on xchan_hash = abook_xchan
 				WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
                 intval($uid)
             );
@@ -266,7 +278,8 @@ class AccessList
 
         if (intval($gid)) {
             if ($total) {
-                $r = q("SELECT count(xchan) as total FROM pgrp_member 
+                $r = q(
+                    "SELECT count(xchan) as total FROM pgrp_member 
 					LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
 					WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0
 					and abook_blocked = 0 and abook_pending = 0",
@@ -279,7 +292,8 @@ class AccessList
                 }
             }
 
-            $r = q("SELECT * FROM pgrp_member 
+            $r = q(
+                "SELECT * FROM pgrp_member 
 				LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
 				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC $pager_sql",
                 intval($gid),
@@ -297,7 +311,8 @@ class AccessList
     {
         $ret = [];
         if (intval($gid)) {
-            $r = q("SELECT xchan FROM pgrp_member WHERE gid = %d AND uid = %d",
+            $r = q(
+                "SELECT xchan FROM pgrp_member WHERE gid = %d AND uid = %d",
                 intval($gid),
                 intval($uid)
             );
@@ -315,7 +330,8 @@ class AccessList
 
         $grps = [];
 
-        $r = q("SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+        $r = q(
+            "SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
             intval($uid)
         );
         $grps[] = ['name' => '', 'hash' => '0', 'selected' => ''];
@@ -323,7 +339,6 @@ class AccessList
             foreach ($r as $rr) {
                 $grps[] = ['name' => $rr['gname'], 'id' => $rr['hash'], 'selected' => (($group == $rr['hash']) ? 'true' : '')];
             }
-
         }
 
         return replace_macros(get_markup_template('group_selection.tpl'), [
@@ -340,7 +355,8 @@ class AccessList
 
         $groups = [];
 
-        $r = q("SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+        $r = q(
+            "SELECT * FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
             intval($_SESSION['uid'])
         );
         $member_of = [];
@@ -379,7 +395,6 @@ class AccessList
             '$groups' => $groups,
             '$add' => t('add'),
         ]);
-
     }
 
 
@@ -393,7 +408,6 @@ class AccessList
         $x = [];
 
         foreach ($g as $gv) {
-
             // virtual access lists
             // connections:abc is all the connection sof the channel with channel_hash abc
             // zot:abc is all of abc's zot6 connections
@@ -408,12 +422,14 @@ class AccessList
                 if (strpos($gv, 'activitypub:') === 0) {
                     $sql_extra = " and xchan_network = 'activitypub' ";
                 }
-                $r = q("select channel_id from channel where channel_hash = '%s' ",
+                $r = q(
+                    "select channel_id from channel where channel_hash = '%s' ",
                     dbesc($channel_hash)
                 );
                 if ($r) {
                     foreach ($r as $rv) {
-                        $y = q("select abook_xchan from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 $sql_extra",
+                        $y = q(
+                            "select abook_xchan from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 $sql_extra",
                             intval($rv['channel_id'])
                         );
                         if ($y) {
@@ -438,7 +454,6 @@ class AccessList
                         $ret[] = $rv['xchan'];
                     }
                 }
-
             }
         }
         return $ret;
@@ -447,7 +462,8 @@ class AccessList
 
     public static function member_of($c)
     {
-        $r = q("SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id 
+        $r = q(
+            "SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id 
 			WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
             dbesc($c)
         );
@@ -458,15 +474,17 @@ class AccessList
     public static function containing($uid, $c)
     {
 
-        $r = q("SELECT gid FROM pgrp_member WHERE uid = %d AND pgrp_member.xchan = '%s' ",
+        $r = q(
+            "SELECT gid FROM pgrp_member WHERE uid = %d AND pgrp_member.xchan = '%s' ",
             intval($uid),
             dbesc($c)
         );
 
         $ret = [];
         if ($r) {
-            foreach ($r as $rv)
+            foreach ($r as $rv) {
                 $ret[] = $rv['gid'];
+            }
         }
 
         return $ret;

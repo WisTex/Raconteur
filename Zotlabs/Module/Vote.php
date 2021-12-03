@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -28,14 +29,14 @@ class Vote extends Controller
         $response = $_REQUEST['answer'];
 
         if ($id) {
-            $fetch = q("select * from item where id = %d limit 1",
+            $fetch = q(
+                "select * from item where id = %d limit 1",
                 intval($id)
             );
         }
 
         if ($fetch && $fetch[0]['obj_type'] === 'Question') {
             $obj = json_decode($fetch[0]['obj'], true);
-
         } else {
             $ret['message'] = t('Poll not found.');
             json_return_and_die($ret);
@@ -45,8 +46,8 @@ class Vote extends Controller
 
         if ($obj['oneOf']) {
             foreach ($obj['oneOf'] as $selection) {
-                //		logger('selection: ' . $selection);
-                //		logger('response: ' . $response);
+                //      logger('selection: ' . $selection);
+                //      logger('response: ' . $response);
                 if ($selection['name'] && $selection['name'] === $response) {
                     $valid = true;
                 }
@@ -77,7 +78,6 @@ class Vote extends Controller
         }
 
         foreach ($response as $res) {
-
             $item = [];
 
             $item['aid'] = $channel['channel_account_id'];
@@ -92,8 +92,8 @@ class Vote extends Controller
             $item['title'] = $res;
             $item['author_xchan'] = $channel['channel_hash'];
             $item['owner_xchan'] = $fetch[0]['author_xchan'];
-//			$item['allow_cid'] = '<' . $fetch[0]['author_xchan'] . '>';
-//			$item['item_private'] = 1;
+//          $item['allow_cid'] = '<' . $fetch[0]['author_xchan'] . '>';
+//          $item['item_private'] = 1;
 
             // These two are placeholder values that will be reset after
             // we encode the item
@@ -117,7 +117,8 @@ class Vote extends Controller
                 Run::Summon(['Notifier', 'like', $itemid]);
             }
 
-            $r = q("select * from item where id = %d",
+            $r = q(
+                "select * from item where id = %d",
                 intval($itemid)
             );
             if ($r) {
@@ -131,11 +132,3 @@ class Vote extends Controller
         json_return_and_die($ret);
     }
 }
-
-
-
-
-
-
-
-

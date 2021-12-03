@@ -67,7 +67,8 @@ class MarkdownSoap
     public function extract_code($s)
     {
 
-        $text = preg_replace_callback('{
+        $text = preg_replace_callback(
+            '{
 					(?:\n\n|\A\n?)
 					(	            # $1 = the code block -- one or more lines, starting with a space/tab
 					  (?>
@@ -77,7 +78,9 @@ class MarkdownSoap
 					)
 					((?=^[ ]{0,' . '4' . '}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
 				}xm',
-            [$this, 'encode_code'], $s);
+            [$this, 'encode_code'],
+            $s
+        );
 
         return $text;
     }

@@ -71,39 +71,39 @@ class Outbox extends Controller
 
         logger('outbox_channel: ' . $channel['channel_address'], LOGGER_DEBUG);
 
-//		switch ($AS->type) {
-//			case 'Follow':
-//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type']) && isset($AS->obj['id'])) {
-//					// do follow activity
-//					Activity::follow($channel,$AS);
-//				}
-//				break;
-//			case 'Invite':
-//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-//					// do follow activity
-//					Activity::follow($channel,$AS);
-//				}
-//				break;
-//			case 'Join':
-//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-//					// do follow activity
-//					Activity::follow($channel,$AS);
-//				}
-//				break;
-//			case 'Accept':			
-//				// Activitypub for wordpress sends lowercase 'follow' on accept.
-//				// https://github.com/pfefferle/wordpress-activitypub/issues/97
-//				// Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
-//				if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
-//					// do follow activity
-//					Activity::follow($channel,$AS);
-//				}
-//				break;
-//			case 'Reject':
-//			default:
-//				break;
+//      switch ($AS->type) {
+//          case 'Follow':
+//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type']) && isset($AS->obj['id'])) {
+//                  // do follow activity
+//                  Activity::follow($channel,$AS);
+//              }
+//              break;
+//          case 'Invite':
+//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+//                  // do follow activity
+//                  Activity::follow($channel,$AS);
+//              }
+//              break;
+//          case 'Join':
+//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+//                  // do follow activity
+//                  Activity::follow($channel,$AS);
+//              }
+//              break;
+//          case 'Accept':
+//              // Activitypub for wordpress sends lowercase 'follow' on accept.
+//              // https://github.com/pfefferle/wordpress-activitypub/issues/97
+//              // Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
+//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
+//                  // do follow activity
+//                  Activity::follow($channel,$AS);
+//              }
+//              break;
+//          case 'Reject':
+//          default:
+//              break;
 //
-//		}
+//      }
 
         // These activities require permissions
 
@@ -170,9 +170,11 @@ class Outbox extends Controller
                 Activity::drop($channel, $observer_hash, $AS);
                 break;
             case 'Move':
-                if ($observer_hash && $observer_hash === $AS->actor
+                if (
+                    $observer_hash && $observer_hash === $AS->actor
                     && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
-                    && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])) {
+                    && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])
+                ) {
                     ActivityPub::move($AS->obj, $AS->tgt);
                 }
                 break;
@@ -180,7 +182,6 @@ class Outbox extends Controller
             case 'Remove':
             default:
                 break;
-
         }
 
         if ($item) {
@@ -190,7 +191,6 @@ class Outbox extends Controller
 
         http_status_exit(200, 'OK');
         return;
-
     }
 
 
@@ -210,9 +210,9 @@ class Outbox extends Controller
             killme();
         }
 
-//		if (intval($channel['channel_system'])) {
-//			killme();
-//		}
+//      if (intval($channel['channel_system'])) {
+//          killme();
+//      }
 
         if (ActivityStreams::is_as_request()) {
             $sigdata = HTTPSig::verify(($_SERVER['REQUEST_METHOD'] === 'POST') ? file_get_contents('php://input') : EMPTY_STR);
@@ -255,7 +255,11 @@ class Outbox extends Controller
                     'top' => $params['top'],
                     'cat' => $params['cat'],
                     'compat' => $params['compat']
-                ], $channel, $observer_hash, CLIENT_MODE_NORMAL, App::$module
+                ],
+                $channel,
+                $observer_hash,
+                CLIENT_MODE_NORMAL,
+                App::$module
             );
 
             if ($total) {
@@ -279,15 +283,19 @@ class Outbox extends Controller
                         'top' => $params['top'],
                         'cat' => $params['cat'],
                         'compat' => $params['compat']
-                    ], $channel, $observer_hash, CLIENT_MODE_NORMAL, App::$module
+                    ],
+                    $channel,
+                    $observer_hash,
+                    CLIENT_MODE_NORMAL,
+                    App::$module
                 );
 
                 if ($items && $observer_hash) {
-
                     // check to see if this observer is a connection. If not, register any items
                     // belonging to this channel for notification of deletion/expiration
 
-                    $x = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
+                    $x = q(
+                        "select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
                         intval($channel['channel_id']),
                         dbesc($observer_hash)
                     );
@@ -307,6 +315,3 @@ class Outbox extends Controller
         }
     }
 }
-
-
-

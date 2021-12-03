@@ -1,10 +1,10 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
-
 
 class Manifest extends Controller
 {
@@ -47,6 +47,4 @@ class Manifest extends Controller
 
         json_return_and_die($ret, 'application/manifest+json');
     }
-
-
 }

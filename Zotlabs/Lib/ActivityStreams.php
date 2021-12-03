@@ -4,7 +4,6 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Web\HTTPSig;
 
-
 /**
  * @brief ActivityStreams class.
  *
@@ -57,7 +56,6 @@ class ActivityStreams
         }
 
         if ($this->data) {
-
             // verify and unpack JSalmon signature if present
             // This will only be the case for Zot6 packets
 
@@ -90,7 +88,6 @@ class ActivityStreams
                     $this->valid = false;
                 }
             }
-
         }
 
         // Attempt to assemble an Activity from what we were given.
@@ -108,8 +105,10 @@ class ActivityStreams
             $this->ldsig = $this->get_compound_property('signature');
             if ($this->ldsig) {
                 $this->signer = $this->get_compound_property('creator', $this->ldsig);
-                if ($this->signer && is_array($this->signer) && array_key_exists('publicKey', $this->signer)
-                    && is_array($this->signer['publicKey']) && $this->signer['publicKey']['publicKeyPem']) {
+                if (
+                    $this->signer && is_array($this->signer) && array_key_exists('publicKey', $this->signer)
+                    && is_array($this->signer['publicKey']) && $this->signer['publicKey']['publicKeyPem']
+                ) {
                     $this->sigok = LDSignatures::verify($this->data, $this->signer['publicKey']['publicKeyPem']);
                 }
             }
@@ -199,7 +198,7 @@ class ActivityStreams
         }
 
 // not yet ready for prime time
-//		$x = $this->expand($x,$base,$namespace);
+//      $x = $this->expand($x,$base,$namespace);
         return $x;
     }
 

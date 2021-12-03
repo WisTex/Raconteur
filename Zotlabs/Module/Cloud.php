@@ -1,5 +1,7 @@
 <?php
+
 namespace Zotlabs\Module;
+
 /**
  * @file Zotlabs/Module/Cloud.php
  * @brief Initialize Hubzilla's cloud (SabreDAV).
@@ -103,8 +105,8 @@ class Cloud extends Controller
         $server->addPlugin($browser);
 
         // Experimental QuotaPlugin
-        //	require_once('\Zotlabs\Storage/QuotaPlugin.php');
-        //	$server->addPlugin(new \Zotlabs\Storage\\QuotaPlugin($auth));
+        //  require_once('\Zotlabs\Storage/QuotaPlugin.php');
+        //  $server->addPlugin(new \Zotlabs\Storage\\QuotaPlugin($auth));
 
 
         // over-ride the default XML output on thrown exceptions
@@ -144,7 +146,4 @@ class Cloud extends Controller
 
         killme();
     }
-
 }
-
-

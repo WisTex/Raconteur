@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Admin;
 
-
 class Profs
 {
 
@@ -20,10 +19,11 @@ class Profs
                     }
                 }
             }
-            if (!$narr)
+            if (!$narr) {
                 del_config('system', 'profile_fields_basic');
-            else
+            } else {
                 set_config('system', 'profile_fields_basic', $narr);
+            }
 
 
             if (array_key_exists('advanced', $_REQUEST)) {
@@ -37,11 +37,11 @@ class Profs
                         }
                     }
                 }
-                if (!$narr)
+                if (!$narr) {
                     del_config('system', 'profile_fields_advanced');
-                else
+                } else {
                     set_config('system', 'profile_fields_advanced', $narr);
-
+                }
             }
             goaway(z_root() . '/admin/profs');
         }
@@ -49,7 +49,8 @@ class Profs
 
         if (array_key_exists('field_name', $_REQUEST)) {
             if ($_REQUEST['id']) {
-                $r = q("update profdef set field_name = '%s', field_type = '%s', field_desc = '%s' field_help = '%s', field_inputs = '%s' where id = %d",
+                $r = q(
+                    "update profdef set field_name = '%s', field_type = '%s', field_desc = '%s' field_help = '%s', field_inputs = '%s' where id = %d",
                     dbesc($_REQUEST['field_name']),
                     dbesc($_REQUEST['field_type']),
                     dbesc($_REQUEST['field_desc']),
@@ -58,7 +59,8 @@ class Profs
                     intval($_REQUEST['id'])
                 );
             } else {
-                $r = q("insert into profdef ( field_name, field_type, field_desc, field_help, field_inputs ) values ( '%s' , '%s', '%s', '%s', '%s' )",
+                $r = q(
+                    "insert into profdef ( field_name, field_type, field_desc, field_help, field_inputs ) values ( '%s' , '%s', '%s', '%s', '%s' )",
                     dbesc($_REQUEST['field_name']),
                     dbesc($_REQUEST['field_type']),
                     dbesc($_REQUEST['field_desc']),
@@ -78,7 +80,8 @@ class Profs
     {
 
         if ((argc() > 3) && argv(2) == 'drop' && intval(argv(3))) {
-            $r = q("delete from profdef where id = %d",
+            $r = q(
+                "delete from profdef where id = %d",
                 intval(argv(3))
             );
             // remove from allowed fields
@@ -98,7 +101,8 @@ class Profs
         }
 
         if ((argc() > 2) && intval(argv(2))) {
-            $r = q("select * from profdef where id = %d limit 1",
+            $r = q(
+                "select * from profdef where id = %d limit 1",
                 intval(argv(2))
             );
             if (!$r) {
@@ -121,12 +125,14 @@ class Profs
         $barr = [];
         $fields = get_profile_fields_basic();
 
-        if (!$fields)
+        if (!$fields) {
             $fields = get_profile_fields_basic(1);
+        }
         if ($fields) {
             foreach ($fields as $k => $v) {
-                if ($basic)
+                if ($basic) {
                     $basic .= ', ';
+                }
                 $basic .= trim($k);
                 $barr[] = trim($k);
             }
@@ -134,14 +140,17 @@ class Profs
 
         $advanced = '';
         $fields = get_profile_fields_advanced();
-        if (!$fields)
+        if (!$fields) {
             $fields = get_profile_fields_advanced(1);
+        }
         if ($fields) {
             foreach ($fields as $k => $v) {
-                if (in_array(trim($k), $barr))
+                if (in_array(trim($k), $barr)) {
                     continue;
-                if ($advanced)
+                }
+                if ($advanced) {
                     $advanced .= ', ';
+                }
                 $advanced .= trim($k);
             }
         }
@@ -150,8 +159,9 @@ class Profs
         $fields = get_profile_fields_advanced(1);
         if ($fields) {
             foreach ($fields as $k => $v) {
-                if ($all)
+                if ($all) {
                     $all .= ', ';
+                }
                 $all .= trim($k);
             }
         }
@@ -159,8 +169,9 @@ class Profs
         $r = q("select * from profdef where true");
         if ($r) {
             foreach ($r as $rr) {
-                if ($all)
+                if ($all) {
                     $all .= ', ';
+                }
                 $all .= $rr['field_name'];
             }
         }
@@ -181,9 +192,5 @@ class Profs
         ));
 
         return $o;
-
-
     }
-
-
 }

@@ -18,6 +18,4 @@ class Safe extends Controller
         }
         goaway(z_root());
     }
-
-
 }

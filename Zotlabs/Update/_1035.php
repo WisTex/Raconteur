@@ -17,10 +17,9 @@ KEY `cat` ( `cat` ),
 KEY `k` ( `k` )
 ) ENGINE = MYISAM DEFAULT CHARSET = utf8");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

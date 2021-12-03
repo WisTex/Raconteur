@@ -1,13 +1,12 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SConfig;
-
 
 class Magic extends Controller
 {
@@ -63,14 +62,13 @@ class Magic extends Controller
         }
 
         if ((get_observer_hash()) && (stripos($dest, z_root()) === 0)) {
-
             // We are already authenticated on this site and a registered observer.
             // First check if this is a delegate request on the local system and process accordingly.
             // Otherwise redirect.
 
             if ($delegate) {
-
-                $r = q("select * from channel left join hubloc on channel_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
+                $r = q(
+                    "select * from channel left join hubloc on channel_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
                     dbesc($delegate)
                 );
 
@@ -97,7 +95,6 @@ class Magic extends Controller
             // OpenWebAuth
 
             if ($owa) {
-
                 $dest = strip_zids($dest);
                 $dest = strip_query_param($dest, 'f');
 
@@ -133,5 +130,4 @@ class Magic extends Controller
 
         goaway($dest);
     }
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -21,7 +22,8 @@ class Lists extends Controller
             if (!$item_id) {
                 http_status_exit(404, 'Not found');
             }
-            $x = q("select * from pgrp where hash = '%s' limit 1",
+            $x = q(
+                "select * from pgrp where hash = '%s' limit 1",
                 dbesc($item_id)
             );
             if (!$x) {
@@ -76,7 +78,6 @@ class Lists extends Controller
             }
 
             as_return_and_die($ret, $channel);
-
         }
 
         if (!local_channel()) {
@@ -108,17 +109,18 @@ class Lists extends Controller
                 notice(t('Could not create access list.') . EOL);
             }
             goaway(z_root() . '/lists');
-
         }
         if ((argc() == 2) && (intval(argv(1)))) {
             check_form_security_token_redirectOnErr('/lists', 'group_edit');
 
-            $r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
+            $r = q(
+                "SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
                 intval(argv(1)),
                 intval(local_channel())
             );
             if (!$r) {
-                $r = q("select * from pgrp where id = %d limit 1",
+                $r = q(
+                    "select * from pgrp where id = %d limit 1",
                     intval(argv(1))
                 );
                 if ($r) {
@@ -127,14 +129,14 @@ class Lists extends Controller
                     notice(t('Access list not found.') . EOL);
                 }
                 goaway(z_root() . '/connections');
-
             }
             $group = array_shift($r);
             $groupname = notags(trim($_POST['groupname']));
             $public = intval($_POST['public']);
 
             if ((strlen($groupname)) && (($groupname != $group['gname']) || ($public != $group['visible']))) {
-                $r = q("UPDATE pgrp SET gname = '%s', visible = %d  WHERE uid = %d AND id = %d",
+                $r = q(
+                    "UPDATE pgrp SET gname = '%s', visible = %d  WHERE uid = %d AND id = %d",
                     dbesc($groupname),
                     intval($public),
                     intval(local_channel()),
@@ -162,7 +164,8 @@ class Lists extends Controller
         if (argc() > 2 && argv(1) === 'view') {
             $grp = argv(2);
             if ($grp) {
-                $r = q("select * from pgrp where hash = '%s' and deleted = 0",
+                $r = q(
+                    "select * from pgrp where hash = '%s' and deleted = 0",
                     dbesc($grp)
                 );
                 if ($r) {
@@ -206,10 +209,10 @@ class Lists extends Controller
         $switchtotext = get_pconfig(local_channel(), 'system', 'listedit_image_limit', get_config('system', 'listedit_image_limit', 1000));
 
         if ((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
-
             $new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
 
-            $groups = q("SELECT id, gname FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
+            $groups = q(
+                "SELECT id, gname FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
                 intval(local_channel())
             );
 
@@ -241,7 +244,6 @@ class Lists extends Controller
             ]);
 
             return $o;
-
         }
 
         $context = array('$submit' => t('Submit'));
@@ -251,16 +253,19 @@ class Lists extends Controller
             check_form_security_token_redirectOnErr('/lists', 'group_drop', 't');
 
             if (intval(argv(2))) {
-                $r = q("SELECT gname FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
+                $r = q(
+                    "SELECT gname FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
                     intval(argv(2)),
                     intval(local_channel())
                 );
-                if ($r)
+                if ($r) {
                     $result = AccessList::remove(local_channel(), $r[0]['gname']);
-                if ($result)
+                }
+                if ($result) {
                     info(t('Access list removed.') . EOL);
-                else
+                } else {
                     notice(t('Unable to remove access list.') . EOL);
+                }
             }
             goaway(z_root() . '/lists');
             // NOTREACHED
@@ -268,38 +273,40 @@ class Lists extends Controller
 
 
         if ((argc() > 2) && intval(argv(1)) && argv(2)) {
-
             check_form_security_token_ForbiddenOnErr('group_member_change', 't');
 
-            $r = q("SELECT abook_xchan from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 limit 1",
+            $r = q(
+                "SELECT abook_xchan from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 limit 1",
                 dbesc(base64url_decode(argv(2))),
                 intval(local_channel())
             );
-            if (count($r))
+            if (count($r)) {
                 $change = base64url_decode(argv(2));
-
+            }
         }
 
         if (argc() > 1) {
-
             require_once('include/acl_selectors.php');
 
             if (strlen(argv(1)) <= 11 && intval(argv(1))) {
-                $r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d AND deleted = 0 LIMIT 1",
+                $r = q(
+                    "SELECT * FROM pgrp WHERE id = %d AND uid = %d AND deleted = 0 LIMIT 1",
                     intval(argv(1)),
                     intval(local_channel())
                 );
             } else {
-                $r = q("SELECT * FROM pgrp WHERE hash = '%s' AND uid = %d AND deleted = 0 LIMIT 1",
+                $r = q(
+                    "SELECT * FROM pgrp WHERE hash = '%s' AND uid = %d AND deleted = 0 LIMIT 1",
                     dbesc(argv(1)),
                     intval(local_channel())
                 );
             }
 
             if (!$r) {
-                $r = q("SELECT * FROM pgrp WHERE id = %d AND deleted = 0 LIMIT 1",
+                $r = q(
+                    "SELECT * FROM pgrp WHERE id = %d AND deleted = 0 LIMIT 1",
                     intval(argv(1)),
-				);
+                );
                 if ($r) {
                     notice(t('Permission denied.') . EOL);
                 } else {
@@ -313,13 +320,14 @@ class Lists extends Controller
 
             $preselected = [];
             if (count($members)) {
-                foreach ($members as $member)
-                    if (!in_array($member['xchan_hash'], $preselected))
+                foreach ($members as $member) {
+                    if (!in_array($member['xchan_hash'], $preselected)) {
                         $preselected[] = $member['xchan_hash'];
+                    }
+                }
             }
 
             if ($change) {
-
                 if (in_array($change, $preselected)) {
                     AccessList::member_remove(local_channel(), $group['gname'], $change);
                 } else {
@@ -330,8 +338,9 @@ class Lists extends Controller
 
                 $preselected = [];
                 if (count($members)) {
-                    foreach ($members as $member)
+                    foreach ($members as $member) {
                         $preselected[] = $member['xchan_hash'];
+                    }
                 }
             }
 
@@ -346,11 +355,11 @@ class Lists extends Controller
                     '$delete' => t('Delete access list'),
                     '$form_security_token_drop' => get_form_security_token("group_drop"),
                 );
-
         }
 
-        if (!isset($group))
+        if (!isset($group)) {
             return;
+        }
 
         $groupeditor = array(
             'label_members' => t('List members'),
@@ -366,11 +375,13 @@ class Lists extends Controller
                 $member['archived'] = (intval($member['abook_archived']) ? true : false);
                 $member['click'] = 'groupChangeMember(' . $group['id'] . ',\'' . base64url_encode($member['xchan_hash']) . '\',\'' . $sec_token . '\'); return false;';
                 $groupeditor['members'][] = micropro($member, true, 'mpgroup', $textmode);
-            } else
+            } else {
                 AccessList::member_remove(local_channel(), $group['gname'], $member['xchan_hash']);
+            }
         }
 
-        $r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d AND abook_self = 0 and abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 order by xchan_name asc",
+        $r = q(
+            "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d AND abook_self = 0 and abook_blocked = 0 and abook_pending = 0 and xchan_deleted = 0 order by xchan_name asc",
             intval(local_channel())
         );
 
@@ -395,8 +406,5 @@ class Lists extends Controller
         }
 
         return replace_macros($tpl, $context);
-
     }
-
-
 }

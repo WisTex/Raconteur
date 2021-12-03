@@ -14,8 +14,9 @@ class _1133
 			xp_perm varchar( 64 ) NOT NULL DEFAULT '',
 			PRIMARY KEY (xp_id) )");
             $r2 = 0;
-            foreach (array('xp_client', 'xp_channel', 'xp_perm') as $fld)
+            foreach (array('xp_client', 'xp_channel', 'xp_perm') as $fld) {
                 $r2 += ((q("create index $fld on xperm ($fld)") == false) ? 0 : 1);
+            }
 
             $r = (($r1 && $r2) ? true : false);
         } else {
@@ -29,11 +30,9 @@ class _1133
 			KEY `xp_perm` (`xp_perm`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ");
         }
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

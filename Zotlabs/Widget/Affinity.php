@@ -10,8 +10,9 @@ class Affinity
     public function widget($arr)
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return '';
+        }
 
         $default_cmin = ((Apps::system_app_installed(local_channel(), 'Friend Zoom')) ? get_pconfig(local_channel(), 'affinity', 'cmin', 0) : 0);
         $default_cmax = ((Apps::system_app_installed(local_channel(), 'Friend Zoom')) ? get_pconfig(local_channel(), 'affinity', 'cmax', 99) : 99);
@@ -21,7 +22,6 @@ class Affinity
 
 
         if (Apps::system_app_installed(local_channel(), 'Friend Zoom')) {
-
             $labels = array(
                 0 => t('Me'),
                 20 => t('Family'),
@@ -48,4 +48,3 @@ class Affinity
         return '';
     }
 }
- 

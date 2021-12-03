@@ -12,11 +12,9 @@ class _1085
 
         $r3 = q("ALTER TABLE `event` CHANGE `desc` `description` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ");
 
-        if ($r1 && $r2 && $r3)
+        if ($r1 && $r2 && $r3) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

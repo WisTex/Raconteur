@@ -1,11 +1,10 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
-
 
 require_once('include/channel.php');
 require_once('include/conversation.php');
@@ -24,13 +23,13 @@ class Layouts extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
     public function get()
@@ -64,7 +63,8 @@ class Layouts extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = q("select channel_id from channel where channel_address = '%s'",
+            $r = q(
+                "select channel_id from channel where channel_address = '%s'",
                 dbesc($which)
             );
             if ($r) {
@@ -104,7 +104,8 @@ class Layouts extends Controller
         // Use the buildin share/install feature instead.
 
         if ((argc() > 3) && (argv(2) === 'share') && (argv(3))) {
-            $r = q("select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
+            $r = q(
+                "select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
 				left join item on item.id = iconfig.iid 
 				where uid = %d and mid = '%s' and iconfig.cat = 'system' and iconfig.k = 'PDL' order by iconfig.v asc",
                 intval($owner),
@@ -143,16 +144,20 @@ class Layouts extends Controller
             'bbco_autocomplete' => 'comanche'
         );
 
-        if ($_REQUEST['title'])
+        if ($_REQUEST['title']) {
             $x['title'] = $_REQUEST['title'];
-        if ($_REQUEST['body'])
+        }
+        if ($_REQUEST['body']) {
             $x['body'] = $_REQUEST['body'];
-        if ($_REQUEST['pagetitle'])
+        }
+        if ($_REQUEST['pagetitle']) {
             $x['pagetitle'] = $_REQUEST['pagetitle'];
+        }
 
         $editor = status_editor($x);
 
-        $r = q("select iconfig.iid, iconfig.v, mid, title, body, mimetype, created, edited, item_type from iconfig 
+        $r = q(
+            "select iconfig.iid, iconfig.v, mid, title, body, mimetype, created, edited, item_type from iconfig 
 			left join item on iconfig.iid = item.id
 			where uid = %d and iconfig.cat = 'system' and iconfig.k = 'PDL' and item_type = %d order by item.created desc",
             intval($owner),
@@ -208,7 +213,5 @@ class Layouts extends Controller
         ));
 
         return $o;
-
     }
-
 }

@@ -1,4 +1,6 @@
-<?php /** @file */
+<?php
+
+/** @file */
 
 namespace Zotlabs\Lib;
 
@@ -23,14 +25,16 @@ class Queue
         // getting stuck on a particular message when another one with different content
         // might actually succeed.
 
-        $x = q("select outq_created, outq_hash, outq_posturl from outq where outq_hash = '%s' limit 1",
+        $x = q(
+            "select outq_created, outq_hash, outq_posturl from outq where outq_hash = '%s' limit 1",
             dbesc($id)
         );
         if (!$x) {
             return;
         }
 
-        $g = q("select outq_created, outq_hash, outq_posturl from outq where outq_posturl = '%s' and outq_hash != '%s' limit 1",
+        $g = q(
+            "select outq_created, outq_hash, outq_posturl from outq where outq_posturl = '%s' and outq_hash != '%s' limit 1",
             dbesc($x[0]['outq_posturl']),
             dbesc($id)
         );
@@ -42,7 +46,8 @@ class Queue
         }
 
 
-        $y = q("select min(outq_created) as earliest from outq where outq_posturl = '%s'",
+        $y = q(
+            "select min(outq_created) as earliest from outq where outq_posturl = '%s'",
             dbesc($x[0]['outq_posturl'])
         );
 
@@ -52,8 +57,9 @@ class Queue
 
         $might_be_down = false;
 
-        if ($y)
+        if ($y) {
             $might_be_down = ((datetime_convert('UTC', 'UTC', $y[0]['earliest']) < datetime_convert('UTC', 'UTC', 'now - 2 days')) ? true : false);
+        }
 
 
         // Set all other records for this destination way into the future.
@@ -64,7 +70,8 @@ class Queue
         // queue item is less than 12 hours old, we'll schedule for fifteen
         // minutes.
 
-        $r = q("UPDATE outq SET outq_scheduled = '%s' WHERE outq_posturl = '%s'",
+        $r = q(
+            "UPDATE outq SET outq_scheduled = '%s' WHERE outq_posturl = '%s'",
             dbesc(datetime_convert('UTC', 'UTC', 'now + 5 days')),
             dbesc($x[0]['outq_posturl'])
         );
@@ -77,11 +84,11 @@ class Queue
             $next = datetime_convert('UTC', 'UTC', 'now + ' . intval($add_priority) . ' minutes');
         }
 
-        q("UPDATE outq SET outq_updated = '%s', 
+        q(
+            "UPDATE outq SET outq_updated = '%s', 
 			outq_priority = outq_priority + %d, 
 			outq_scheduled = '%s' 
 			WHERE outq_hash = '%s'",
-
             dbesc(datetime_convert()),
             intval($add_priority),
             dbesc($next),
@@ -95,7 +102,8 @@ class Queue
         logger('queue: remove queue item ' . $id, LOGGER_DEBUG);
         $sql_extra = (($channel_id) ? " and outq_channel = " . intval($channel_id) . " " : '');
 
-        q("DELETE FROM outq WHERE outq_hash = '%s' $sql_extra",
+        q(
+            "DELETE FROM outq WHERE outq_hash = '%s' $sql_extra",
             dbesc($id)
         );
     }
@@ -105,7 +113,8 @@ class Queue
     {
         logger('queue: remove queue posturl ' . $posturl, LOGGER_DEBUG);
 
-        q("DELETE FROM outq WHERE outq_posturl = '%s' ",
+        q(
+            "DELETE FROM outq WHERE outq_posturl = '%s' ",
             dbesc($posturl)
         );
     }
@@ -119,7 +128,8 @@ class Queue
         // Set the next scheduled run date so far in the future that it will be expired
         // long before it ever makes it back into the delivery chain.
 
-        q("update outq set outq_delivered = 1, outq_updated = '%s', outq_scheduled = '%s' where outq_hash = '%s' $sql_extra ",
+        q(
+            "update outq set outq_delivered = 1, outq_updated = '%s', outq_scheduled = '%s' where outq_hash = '%s' $sql_extra ",
             dbesc(datetime_convert()),
             dbesc(datetime_convert('UTC', 'UTC', 'now + 5 days')),
             dbesc($id)
@@ -140,7 +150,8 @@ class Queue
         }
 
 
-        $x = q("insert into outq ( outq_hash, outq_account, outq_channel, outq_driver, outq_posturl, outq_async, outq_priority,
+        $x = q(
+            "insert into outq ( outq_hash, outq_account, outq_channel, outq_driver, outq_posturl, outq_async, outq_priority,
 			outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg ) 
 			values ( '%s', %d, %d, '%s', '%s', %d, %d, '%s', '%s', '%s', '%s', '%s' )",
             dbesc($arr['hash']),
@@ -157,7 +168,6 @@ class Queue
             dbesc(($arr['msg']) ? $arr['msg'] : '')
         );
         return $x;
-
     }
 
 
@@ -171,12 +181,14 @@ class Queue
         }
 
         if (($base) && ($base !== z_root()) && ($immediate)) {
-            $y = q("select site_update, site_dead from site where site_url = '%s' ",
+            $y = q(
+                "select site_update, site_dead from site where site_url = '%s' ",
                 dbesc($base)
             );
             if ($y) {
                 if (intval($y[0]['site_dead'])) {
-                    q("update dreport set dreport_result = '%s' where dreport_queue = '%s'",
+                    q(
+                        "update dreport set dreport_result = '%s' where dreport_queue = '%s'",
                         dbesc('site dead'),
                         dbesc($outq['outq_hash'])
                     );
@@ -186,7 +198,8 @@ class Queue
                     return;
                 }
                 if ($y[0]['site_update'] < datetime_convert('UTC', 'UTC', 'now - 1 month')) {
-                    q("update dreport set dreport_log = '%s' where dreport_queue = '%s'",
+                    q(
+                        "update dreport set dreport_log = '%s' where dreport_queue = '%s'",
                         dbesc('site deferred'),
                         dbesc($outq['outq_hash'])
                     );
@@ -195,7 +208,6 @@ class Queue
                     return;
                 }
             } else {
-
                 // zot sites should all have a site record, unless they've been dead for as long as
                 // your site has existed. Since we don't know for sure what these sites are,
                 // call them unknown
@@ -214,8 +226,9 @@ class Queue
 
         $arr = array('outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate);
         call_hooks('queue_deliver', $arr);
-        if ($arr['handled'])
+        if ($arr['handled']) {
             return;
+        }
 
         // "post" queue driver - used for diaspora and friendica-over-diaspora communications.
 
@@ -224,12 +237,14 @@ class Queue
             if ($result['success'] && $result['return_code'] < 300) {
                 logger('deliver: queue post success to ' . $outq['outq_posturl'], LOGGER_DEBUG);
                 if ($base) {
-                    q("update site set site_update = '%s', site_dead = 0 where site_url = '%s' ",
+                    q(
+                        "update site set site_update = '%s', site_dead = 0 where site_url = '%s' ",
                         dbesc(datetime_convert()),
                         dbesc($base)
                     );
                 }
-                q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+                q(
+                    "update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
                     dbesc('accepted for delivery'),
                     dbesc(datetime_convert()),
                     dbesc($outq['outq_hash'])
@@ -241,7 +256,8 @@ class Queue
                 // immediate delivery otherwise we could get into a queue loop.
 
                 if (!$immediate) {
-                    $x = q("select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
+                    $x = q(
+                        "select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
                         dbesc($outq['outq_posturl'])
                     );
 
@@ -265,7 +281,6 @@ class Queue
         }
 
         if ($outq['outq_driver'] === 'asfetch') {
-
             $channel = channelx_by_n($outq['outq_channel']);
             if (!$channel) {
                 logger('missing channel: ' . $outq['outq_channel']);
@@ -303,7 +318,8 @@ class Queue
                 // immediate delivery otherwise we could get into a queue loop.
 
                 if (!$immediate) {
-                    $x = q("select outq_hash from outq where outq_driver = 'asfetch' and outq_channel = %d and outq_delivered = 0",
+                    $x = q(
+                        "select outq_hash from outq where outq_driver = 'asfetch' and outq_channel = %d and outq_delivered = 0",
                         dbesc($outq['outq_channel'])
                     );
 
@@ -325,7 +341,6 @@ class Queue
         }
 
         if ($outq['outq_driver'] === 'activitypub') {
-
             $channel = channelx_by_n($outq['outq_channel']);
             if (!$channel) {
                 logger('missing channel: ' . $outq['outq_channel']);
@@ -356,12 +371,14 @@ class Queue
             if ($result['success'] && $result['return_code'] < 300) {
                 logger('deliver: queue post success to ' . $outq['outq_posturl'], LOGGER_DEBUG);
                 if ($base) {
-                    q("update site set site_update = '%s', site_dead = 0 where site_url = '%s' ",
+                    q(
+                        "update site set site_update = '%s', site_dead = 0 where site_url = '%s' ",
                         dbesc(datetime_convert()),
                         dbesc($base)
                     );
                 }
-                q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+                q(
+                    "update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
                     dbesc('accepted for delivery'),
                     dbesc(datetime_convert()),
                     dbesc($outq['outq_hash'])
@@ -373,7 +390,8 @@ class Queue
                 // immediate delivery otherwise we could get into a queue loop.
 
                 if (!$immediate) {
-                    $x = q("select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
+                    $x = q(
+                        "select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
                         dbesc($outq['outq_posturl'])
                     );
 
@@ -389,18 +407,21 @@ class Queue
                 }
             } else {
                 if ($result['return_code'] >= 300) {
-                    q("update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+                    q(
+                        "update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
                         dbesc('delivery rejected' . ' ' . $result['return_code']),
                         dbesc(datetime_convert()),
                         dbesc($outq['outq_hash'])
                     );
                 } else {
-                    $dr = q("select * from dreport where dreport_queue = '%s'",
+                    $dr = q(
+                        "select * from dreport where dreport_queue = '%s'",
                         dbesc($outq['outq_hash'])
                     );
                     if ($dr) {
                         // update every queue entry going to this site with the most recent communication error
-                        q("update dreport set dreport_log = '%s' where dreport_site = '%s'",
+                        q(
+                            "update dreport set dreport_log = '%s' where dreport_site = '%s'",
                             dbesc(z_curl_error($result)),
                             dbesc($dr[0]['dreport_site'])
                         );
@@ -426,7 +447,8 @@ class Queue
             Libzot::process_response($outq['outq_posturl'], ['success' => true, 'body' => json_encode($result)], $outq);
 
             if (!$immediate) {
-                $x = q("select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
+                $x = q(
+                    "select outq_hash from outq where outq_posturl = '%s' and outq_delivered = 0",
                     dbesc($outq['outq_posturl'])
                 );
 
@@ -451,7 +473,8 @@ class Queue
             $host_crypto = null;
 
             if ($channel && $base) {
-                $h = q("select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc limit 1",
+                $h = q(
+                    "select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' and hubloc_network = 'zot6' order by hubloc_id desc limit 1",
                     dbesc($base)
                 );
                 if ($h) {
@@ -467,12 +490,14 @@ class Queue
                 logger('deliver: remote zot delivery succeeded to ' . $outq['outq_posturl']);
                 Libzot::process_response($outq['outq_posturl'], $result, $outq);
             } else {
-                $dr = q("select * from dreport where dreport_queue = '%s'",
+                $dr = q(
+                    "select * from dreport where dreport_queue = '%s'",
                     dbesc($outq['outq_hash'])
                 );
 
                 // update every queue entry going to this site with the most recent communication error
-                q("update dreport set dreport_log = '%s' where dreport_site = '%s'",
+                q(
+                    "update dreport set dreport_log = '%s' where dreport_site = '%s'",
                     dbesc(z_curl_error($result)),
                     dbesc($dr[0]['dreport_site'])
                 );
@@ -485,4 +510,3 @@ class Queue
         return;
     }
 }
-

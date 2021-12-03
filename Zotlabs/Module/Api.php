@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -6,7 +7,6 @@ use Exception;
 use OAuth1Request;
 use OAuth1Consumer;
 use OAuth1Util;
-
 use Zotlabs\Web\Controller;
 
 require_once('include/api.php');
@@ -35,14 +35,12 @@ class Api extends Controller
             notice(t('Permission denied.') . EOL);
             return;
         }
-
     }
 
     public function get()
     {
 
         if (App::$cmd === 'api/oauth/authorize') {
-
             /*
              * api/oauth/authorize interact with the user. return a standard page
              */
@@ -60,10 +58,10 @@ class Api extends Controller
 
 
             if (x($_POST, 'oauth_yes')) {
-
                 $app = $this->oauth_get_client($request);
-                if (is_null($app))
+                if (is_null($app)) {
                     return "Invalid request. Unknown token.";
+                }
 
                 $consumer = new OAuth1Consumer($app['client_id'], $app['pw'], $app['redirect_uri']);
 
@@ -74,8 +72,9 @@ class Api extends Controller
                 if ($consumer->callback_url != null) {
                     $params = $request->get_parameters();
                     $glue = '?';
-                    if (strstr($consumer->callback_url, $glue))
+                    if (strstr($consumer->callback_url, $glue)) {
                         $glue = '?';
+                    }
                     goaway($consumer->callback_url . $glue . "oauth_token=" . OAuth1Util::urlencode_rfc3986($params['oauth_token']) . "&oauth_verifier=" . OAuth1Util::urlencode_rfc3986($verifier));
                     killme();
                 }
@@ -98,8 +97,9 @@ class Api extends Controller
             }
 
             $app = $this->oauth_get_client($request);
-            if (is_null($app))
+            if (is_null($app)) {
                 return "Invalid request. Unknown token.";
+            }
 
             $tpl = get_markup_template('oauth_authorize.tpl');
             $o = replace_macros($tpl, array(
@@ -125,15 +125,15 @@ class Api extends Controller
         $params = $request->get_parameters();
         $token = $params['oauth_token'];
 
-        $r = q("SELECT clients.* FROM clients, tokens WHERE clients.client_id = tokens.client_id 
+        $r = q(
+            "SELECT clients.* FROM clients, tokens WHERE clients.client_id = tokens.client_id 
 			AND tokens.id = '%s' AND tokens.auth_scope = 'request' ",
             dbesc($token)
         );
-        if ($r)
+        if ($r) {
             return $r[0];
+        }
 
         return null;
-
     }
-
 }

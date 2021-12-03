@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
 class Site_projects
 {
 
@@ -17,7 +16,6 @@ class Site_projects
         usort($r, ['self', 'site_sort']);
 
         if ($r) {
-
             foreach ($r as $rv) {
                 $result = [];
                 $result['name'] = $rv['site_project'];

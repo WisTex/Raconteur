@@ -72,8 +72,5 @@ class Oexchange extends Controller
         $_REQUEST = $post;
         $mod = new Item();
         $mod->post();
-
     }
-
-
 }

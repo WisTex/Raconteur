@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2017 Hubzilla
  *
@@ -35,34 +36,36 @@ require_once 'include/dba/dba_driver.php';
  * This test needs process isolation because of static \DBA.
  * @runTestsInSeparateProcesses
  */
-class DBATest extends UnitTestCase {
+class DBATest extends UnitTestCase
+{
 
-	public function testDbaFactoryMysql() {
-		$this->assertNull(DBA::$dba);
+    public function testDbaFactoryMysql()
+    {
+        $this->assertNull(DBA::$dba);
 
-		$ret = DBA::dba_factory('server', 'port', 'user', 'pass', 'db', '0');
-		$this->assertInstanceOf('dba_pdo', $ret);
-		$this->assertFalse($ret->connected);
+        $ret = DBA::dba_factory('server', 'port', 'user', 'pass', 'db', '0');
+        $this->assertInstanceOf('dba_pdo', $ret);
+        $this->assertFalse($ret->connected);
 
-		$this->assertSame('mysql', DBA::$scheme);
-		$this->assertSame('schema_mysql.sql', DBA::$install_script);
-		$this->assertSame('0001-01-01 00:00:00', DBA::$null_date);
-		$this->assertSame('UTC_TIMESTAMP()', DBA::$utc_now);
-		$this->assertSame('`', DBA::$tquot);
-	}
+        $this->assertSame('mysql', DBA::$scheme);
+        $this->assertSame('schema_mysql.sql', DBA::$install_script);
+        $this->assertSame('0001-01-01 00:00:00', DBA::$null_date);
+        $this->assertSame('UTC_TIMESTAMP()', DBA::$utc_now);
+        $this->assertSame('`', DBA::$tquot);
+    }
 
-	public function testDbaFactoryPostgresql() {
-		$this->assertNull(DBA::$dba);
+    public function testDbaFactoryPostgresql()
+    {
+        $this->assertNull(DBA::$dba);
 
-		$ret = DBA::dba_factory('server', 'port', 'user', 'pass', 'db', '1');
-		$this->assertInstanceOf('dba_pdo', $ret);
-		$this->assertFalse($ret->connected);
+        $ret = DBA::dba_factory('server', 'port', 'user', 'pass', 'db', '1');
+        $this->assertInstanceOf('dba_pdo', $ret);
+        $this->assertFalse($ret->connected);
 
-		$this->assertSame('pgsql', DBA::$scheme);
-		$this->assertSame('schema_postgres.sql', DBA::$install_script);
-		$this->assertSame('0001-01-01 00:00:00', DBA::$null_date);
-		$this->assertSame("now() at time zone 'UTC'", DBA::$utc_now);
-		$this->assertSame('"', DBA::$tquot);
-	}
-
+        $this->assertSame('pgsql', DBA::$scheme);
+        $this->assertSame('schema_postgres.sql', DBA::$install_script);
+        $this->assertSame('0001-01-01 00:00:00', DBA::$null_date);
+        $this->assertSame("now() at time zone 'UTC'", DBA::$utc_now);
+        $this->assertSame('"', DBA::$tquot);
+    }
 }

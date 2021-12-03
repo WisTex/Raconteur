@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -21,5 +21,4 @@ class Smilies extends Controller
             return smilies('', true);
         }
     }
-
 }

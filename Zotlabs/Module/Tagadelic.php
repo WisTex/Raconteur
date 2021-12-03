@@ -22,7 +22,6 @@ class Tagadelic extends Controller
             }
             Libprofile::load($which, 0);
         }
-
     }
 
 
@@ -44,8 +43,5 @@ class Tagadelic extends Controller
 
         $c = new Comanche();
         return $text . EOL . EOL . $c->widget('tagcloud_wall', EMPTY_STR);
-
     }
-
-
 }

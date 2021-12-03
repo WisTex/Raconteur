@@ -25,6 +25,5 @@ class Comment_control extends Controller
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 
         return $text;
-
     }
 }

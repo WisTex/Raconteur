@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -75,5 +76,4 @@ class Removeme extends Controller
 
         return $o;
     }
-
 }

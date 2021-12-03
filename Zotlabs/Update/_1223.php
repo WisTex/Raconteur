@@ -9,7 +9,8 @@ class _1223
     {
         foreach (['abconfig', 'config', 'pconfig', 'xconfig', 'iconfig'] as $tbl) {
             while (1) {
-                $r = q("select id, v from %s where v like '%s' limit 100 ",
+                $r = q(
+                    "select id, v from %s where v like '%s' limit 100 ",
                     dbesc($tbl),
                     dbesc('a:%')
                 );
@@ -18,11 +19,13 @@ class _1223
                 }
                 foreach ($r as $rv) {
                     $s = unserialize($rv['v']);
-                    if ($s && is_array($s))
+                    if ($s && is_array($s)) {
                         $s = serialise($s);
-                    else
+                    } else {
                         $s = $rv['v'];
-                    q("update %s set v = '%s' where id = %d",
+                    }
+                    q(
+                        "update %s set v = '%s' where id = %d",
                         dbesc($tbl),
                         dbesc($s),
                         dbesc($rv['id'])

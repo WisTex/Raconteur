@@ -25,11 +25,10 @@ class _1204
             $r = ($r1 && $r2 && $r3);
         }
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
 
         return UPDATE_FAILED;
-
     }
-
 }
