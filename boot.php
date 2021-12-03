@@ -125,7 +125,7 @@ define ( 'PNG_QUALITY',             8  );
 /**
  * Language detection parameters
  */
-define ( 'LANGUAGE_DETECT_MIN_LENGTH',     128 );
+define ( 'LANGUAGE_DETECT_MIN_LENGTH',     64 );
 define ( 'LANGUAGE_DETECT_MIN_CONFIDENCE', 0.01 );
 
 
