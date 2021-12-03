@@ -13,7 +13,7 @@ require_once('include/socgraph.php');
 
 class Onepoll {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		logger('onepoll: start');
 	

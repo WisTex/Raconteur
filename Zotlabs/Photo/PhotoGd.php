@@ -2,6 +2,10 @@
 
 namespace Zotlabs\Photo;
 
+use function imagejpeg;
+use function imagepng;
+use function imagewebp;
+
 /**
  * @brief GD photo driver.
  *
@@ -73,7 +77,7 @@ class PhotoGd extends PhotoDriver {
 	 *
 	 * @see \Zotlabs\Photo\PhotoDriver::getImage()
 	 *
-	 * @return boolean|resource
+	 * @return bool|resource
 	 */
 	public function getImage() {
 		if (! $this->is_valid()) {
@@ -169,7 +173,7 @@ class PhotoGd extends PhotoDriver {
 		switch ($this->getType()){
 			case 'image/webp':
 
-				\imagewebp($this->image);
+				imagewebp($this->image);
 				break;
 				
 			case 'image/png':
@@ -178,7 +182,7 @@ class PhotoGd extends PhotoDriver {
 					$quality = PNG_QUALITY;
 				}
 
-				\imagepng($this->image, NULL, $quality);
+				imagepng($this->image, NULL, $quality);
 				break;
 			case 'image/jpeg':
 			// gd can lack imagejpeg(), but we verify during installation it is available
@@ -188,7 +192,7 @@ class PhotoGd extends PhotoDriver {
 					$quality = JPEG_QUALITY;
 				}
 
-				\imagejpeg($this->image, NULL, $quality);
+				imagejpeg($this->image, NULL, $quality);
 				break;
 		}
 		$string = ob_get_contents();

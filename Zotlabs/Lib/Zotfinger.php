@@ -4,60 +4,61 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Web\HTTPSig;
 
-class Zotfinger {
+class Zotfinger
+{
 
-	static function exec($resource,$channel = null,$verify = true) {
+    public static function exec($resource, $channel = null, $verify = true)
+    {
 
-		if (! $resource) {
-			return false;
-		}
+        if (!$resource) {
+            return false;
+        }
 
-		$m = parse_url($resource);
-		
-		if ($m['host'] !== punify($m['host'])) {
-			$url = str_replace($m['host'],punify($m['host']),$url);
-			$m['host'] = punify($m['host']);
-		}
+        $m = parse_url($resource);
 
-		$data = json_encode([ 'zot_token' => random_string() ]);
+        if ($m['host'] !== punify($m['host'])) {
+            $url = str_replace($m['host'], punify($m['host']), $url);
+            $m['host'] = punify($m['host']);
+        }
 
-		if ($channel && $m) {
+        $data = json_encode(['zot_token' => random_string()]);
 
-			$headers = [ 
-				'Accept'           => 'application/x-zot+json', 
-				'Content-Type'     => 'application/x-zot+json',
-				'X-Zot-Token'      => random_string(),
-				'Digest'           => HTTPSig::generate_digest_header($data),
-				'Host'             => $m['host'],
-				'(request-target)' => 'post ' . get_request_string($resource)
-			];
-			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
-		}
-		else {
-			$h = [ 'Accept: application/x-zot+json' ]; 
-		}
-				
-		$result = [];
+        if ($channel && $m) {
 
-		$redirects = 0;
-		$x = z_post_url($resource,$data,$redirects, [ 'headers' => $h  ] );
+            $headers = [
+                'Accept' => 'application/x-zot+json',
+                'Content-Type' => 'application/x-zot+json',
+                'X-Zot-Token' => random_string(),
+                'Digest' => HTTPSig::generate_digest_header($data),
+                'Host' => $m['host'],
+                '(request-target)' => 'post ' . get_request_string($resource)
+            ];
+            $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
+        } else {
+            $h = ['Accept: application/x-zot+json'];
+        }
 
-		if ($x['success']) {
+        $result = [];
 
-			if ($verify) {
-				$result['signature'] = HTTPSig::verify($x, EMPTY_STR, 'zot6');
-			}
-    
-			$result['data'] = json_decode($x['body'],true);
+        $redirects = 0;
+        $x = z_post_url($resource, $data, $redirects, ['headers' => $h]);
 
-			if ($result['data'] && is_array($result['data']) && array_key_exists('encrypted',$result['data']) && $result['data']['encrypted']) {
-				$result['data'] = json_decode(Crypto::unencapsulate($result['data'],get_config('system','prvkey')),true);
-			}
+        if ($x['success']) {
 
-			return $result;
-		}
+            if ($verify) {
+                $result['signature'] = HTTPSig::verify($x, EMPTY_STR, 'zot6');
+            }
 
-		return false;
-	}
+            $result['data'] = json_decode($x['body'], true);
+
+            if ($result['data'] && is_array($result['data']) && array_key_exists('encrypted', $result['data']) && $result['data']['encrypted']) {
+                $result['data'] = json_decode(Crypto::unencapsulate($result['data'], get_config('system', 'prvkey')), true);
+            }
+
+            return $result;
+        }
+
+        return false;
+    }
 
 }

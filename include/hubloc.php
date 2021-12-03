@@ -12,7 +12,7 @@ use Zotlabs\Daemon\Run;
  * Creates an assoziative array which will be inserted into the hubloc table.
  *
   * @param array $arr An assoziative array with hubloc values
- * @return boolean|PDOStatement
+ * @return bool|PDOStatement
  */
 function hubloc_store_lowlevel($arr) {
 
@@ -180,7 +180,7 @@ function remove_obsolete_hublocs() {
  * hubloc primary selection.
  *
  * @param array $hubloc
- * @return boolean
+ * @return bool
  */
 function hubloc_change_primary($hubloc) {
 

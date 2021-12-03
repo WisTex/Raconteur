@@ -3,20 +3,24 @@
 namespace Zotlabs\Widget;
 
 
-class Website_portation_tools {
+use App;
 
-	function widget($arr) {
+class Website_portation_tools
+{
 
-		// mod menu doesn't load a profile. For any modules which load a profile, check it.
-		// otherwise local_channel() is sufficient for permissions.
+    public function widget($arr)
+    {
 
-		if(\App::$profile['profile_uid'])
-			if((\App::$profile['profile_uid'] != local_channel()) && (! \App::$is_sys))
-				return '';
+        // mod menu doesn't load a profile. For any modules which load a profile, check it.
+        // otherwise local_channel() is sufficient for permissions.
 
-		if(! local_channel())
-			return '';
+        if (App::$profile['profile_uid'])
+            if ((App::$profile['profile_uid'] != local_channel()) && (!App::$is_sys))
+                return '';
 
-		return website_portation_tools();
-	}
+        if (!local_channel())
+            return '';
+
+        return website_portation_tools();
+    }
 }

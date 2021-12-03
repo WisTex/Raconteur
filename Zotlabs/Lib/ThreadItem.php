@@ -521,8 +521,8 @@ class ThreadItem {
 				$additional_mentions = [];
 				foreach ($item['term'] as $t) {
 					if ($t['ttype'] == TERM_MENTION) {
-						$additional_mentions[] = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);;
-					}
+						$additional_mentions[] = ((($position = strpos($t['url'],'url=')) !== false) ? urldecode(substr($t['url'],$position + 4)) : $t['url']);
+                    }
 				}
 				if ($additional_mentions) {
 					$r = q("select hubloc_addr, hubloc_id_url, hubloc_hash from hubloc where hubloc_id_url in (" . protect_sprintf(stringify_array($additional_mentions, true)) . ") ");

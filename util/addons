@@ -41,7 +41,7 @@ cli_startup();
 					if ($idz !== false) {
 						unset(App::$plugins[$idz]);
 						uninstall_plugin($id);
-						set_config("system","addon", implode(", ",App::$plugins));
+						set_config('system', 'addon', implode(', ',App::$plugins));
 					}
 				}
 				$info['disabled'] = 1-intval($x);
@@ -92,7 +92,7 @@ if($argc == 3 && $argv[1] === 'install') {
 				else {
 					App::$plugins[] = $p[0];
 					install_plugin($p[0]);
-					set_config("system","addon", implode(", ",App::$plugins));
+					set_config('system', 'addon', implode(', ',App::$plugins));
 					echo $p[0] . ' installed.' . "\n";
 				}
 			}
@@ -121,7 +121,7 @@ if($argc == 3 && $argv[1] === 'uninstall') {
 					if ($idx !== false)
 						unset(App::$plugins[$idx]);
 					uninstall_plugin($p[0]);
-					set_config("system","addon", implode(", ",App::$plugins));
+					set_config('system', 'addon', implode(', ',App::$plugins));
 					echo $p[0] . ' uninstalled.' . "\n";
 				}
 			}
@@ -135,7 +135,7 @@ if($argc == 3 && $argv[1] === 'uninstall') {
 		if ($idx !== false)
 			unset(App::$plugins[$idx]);
 		uninstall_plugin($argv[2]);
-		set_config("system","addon", implode(", ",App::$plugins));
+		set_config('system', 'addon', implode(', ',App::$plugins));
 		echo $argv[2] . ' uninstalled.' . "\n";
 	}
 

@@ -6,7 +6,7 @@ namespace Zotlabs\Lib;
 
 class Nodeinfo {
 
-	static public function fetch($url) {
+	public static function fetch($url) {
 		$href = EMPTY_STR;
 		$m = parse_url($url);
 		if ($m['scheme'] && $m['host']) {

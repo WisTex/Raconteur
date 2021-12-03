@@ -2,25 +2,27 @@
 
 namespace Zotlabs\Widget;
 
-class Hq_controls {
+class Hq_controls
+{
 
-	function widget($arr) {
+    public function widget($arr)
+    {
 
-		if (! local_channel())
-			return;
+        if (!local_channel())
+            return;
 
-		return replace_macros(get_markup_template('hq_controls.tpl'),
-			[
-				'$title' => t('HQ Control Panel'),
-				'$menu' => [
-					'create' => [
-						'label' => t('Create a new post'),
-						'id' => 'jot-toggle',
-						'href' => '#',
-						'class' => ''
-					]
-				]
-			]
-		);
-	}
+        return replace_macros(get_markup_template('hq_controls.tpl'),
+            [
+                '$title' => t('HQ Control Panel'),
+                '$menu' => [
+                    'create' => [
+                        'label' => t('Create a new post'),
+                        'id' => 'jot-toggle',
+                        'href' => '#',
+                        'class' => ''
+                    ]
+                ]
+            ]
+        );
+    }
 }

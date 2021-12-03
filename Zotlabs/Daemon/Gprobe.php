@@ -10,7 +10,7 @@ use Zotlabs\Lib\Zotfinger;
 
 class Gprobe {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 
 		if ($argc != 2) {

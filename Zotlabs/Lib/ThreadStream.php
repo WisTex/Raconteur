@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+
 require_once('boot.php');
 require_once('include/text.php');
 
@@ -45,7 +47,7 @@ class ThreadStream {
 		if($this->get_mode() == $mode)
 			return;
 
-		$this->observer = \App::get_observer();
+		$this->observer = App::get_observer();
 		$ob_hash = (($this->observer) ? $this->observer['xchan_hash'] : '');
 
 		switch($mode) {
@@ -62,16 +64,16 @@ class ThreadStream {
 				$this->writable = true;
 				break;
 			case 'channel':
-				$this->profile_owner = \App::$profile['profile_uid'];
+				$this->profile_owner = App::$profile['profile_uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				break;
 			case 'cards':
-				$this->profile_owner = \App::$profile['profile_uid'];
+				$this->profile_owner = App::$profile['profile_uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				$this->reload = $_SESSION['return_url'];
 				break;
 			case 'articles':
-				$this->profile_owner = \App::$profile['profile_uid'];
+				$this->profile_owner = App::$profile['profile_uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				$this->reload = $_SESSION['return_url'];
 				break;
@@ -83,7 +85,7 @@ class ThreadStream {
 				$this->uploadable = perm_is_allowed($this->profile_owner,$ob_hash,'write_storage');
 				break;
 			case 'page':
-				$this->profile_owner = \App::$profile['uid'];
+				$this->profile_owner = App::$profile['uid'];
 				$this->writable = perm_is_allowed($this->profile_owner,$ob_hash,'post_comments');
 				break;
 			default:

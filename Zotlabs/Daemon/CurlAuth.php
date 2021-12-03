@@ -8,14 +8,16 @@ namespace Zotlabs\Daemon;
 
 // Handles expiration of stale cookies currently by deleting them and rewriting the file.  
 
+use App;
+
 class CurlAuth {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		if($argc != 2)
 			return;
 
-		\App::$session->start();
+		App::$session->start();
 
 		$_SESSION['authenticated'] = 1;
 		$_SESSION['uid'] = $argv[1];
@@ -46,7 +48,7 @@ class CurlAuth {
 			}
 		}
 		$t = time() + (24 * 3600);
-		file_put_contents($f, $output . 'HttpOnly_' . \App::get_hostname() . "\tFALSE\t/\tTRUE\t$t\tPHPSESSID\t" . $x, (($e) ? FILE_APPEND : 0));
+		file_put_contents($f, $output . 'HttpOnly_' . App::get_hostname() . "\tFALSE\t/\tTRUE\t$t\tPHPSESSID\t" . $x, (($e) ? FILE_APPEND : 0));
 
 		file_put_contents($c,$x);
 

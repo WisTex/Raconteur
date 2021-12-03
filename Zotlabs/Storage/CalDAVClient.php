@@ -26,52 +26,56 @@ namespace Zotlabs\Storage;
 // Sabre vobject provides a function to automatically expand recurring events into individual event instances.  
 
 
+class CalDAVClient
+{
 
-class CalDAVClient {
+    private $username;
+    private $password;
 
-	private $username;
-	private $password;
+    private $url;
 
-	private $url;
+    public $filepos = 0;
+    public $request_data = '';
 
-	public $filepos = 0;
-	public $request_data = '';	
+    public function __construct($user, $pass, $url)
+    {
+        $this->username = $user;
+        $this->password = $pass;
+        $this->url = $url;
 
-	function __construct($user,$pass,$url) {
-		$this->username = $user;
-		$this->password = $pass;
-		$this->url = $url;
+    }
 
-	}
+    private function set_data($s)
+    {
+        $this->request_data = $s;
+        $this->filepos = 0;
+    }
 
-	private function set_data($s) {
-		$this->request_data = $s;
-		$this->filepos = 0;
-	}
+    public function curl_read($ch, $fh, $size)
+    {
 
-	public function curl_read($ch,$fh,$size) {
+        if ($this->filepos < 0) {
+            unset($fh);
+            return '';
+        }
 
-		if($this->filepos < 0) {
-			unset($fh);
-			return '';
-		}
+        $s = substr($this->request_data, $this->filepos, $size);
 
-		$s = substr($this->request_data,$this->filepos,$size);
+        if (strlen($s) < $size)
+            $this->filepos = (-1);
+        else
+            $this->filepos = $this->filepos + $size;
 
-		if(strlen($s) < $size)
-			$this->filepos = (-1);
-		else
-			$this->filepos = $this->filepos + $size;
+        return $s;
+    }
 
-		return $s;
-	} 
+    public function ctag_fetch()
+    {
+        $headers = ['Depth: 0', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
 
-	function ctag_fetch() {
-		$headers = [ 'Depth: 0', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
+        // recommended ctag fetch by sabre
 
-		// recommended ctag fetch by sabre
-
-		$this->set_data('<?xml version="1.0"?>
+        $this->set_data('<?xml version="1.0"?>
 <d:propfind xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/">
   <d:prop>
      <d:displayname />
@@ -80,10 +84,10 @@ class CalDAVClient {
   </d:prop>
 </d:propfind>');
 
-		// thunderbird uses this - it's a bit more verbose on what capabilities
-		// are provided by the server
+        // thunderbird uses this - it's a bit more verbose on what capabilities
+        // are provided by the server
 
-		$this->set_data('<?xml version="1.0" encoding="UTF-8"?>
+        $this->set_data('<?xml version="1.0" encoding="UTF-8"?>
 <D:propfind xmlns:D="DAV:" xmlns:CS="http://calendarserver.org/ns/" xmlns:C="urn:ietf:params:xml:ns:caldav">
 <D:prop>
     <D:resourcetype/>
@@ -96,33 +100,33 @@ class CalDAVClient {
 </D:propfind>');
 
 
+        $auth = $this->username . ':' . $this->password;
 
-		$auth = $this->username . ':' . $this->password;
+        $recurse = 0;
 
-		$recurse = 0;
+        $x = z_fetch_url($this->url, true, $recurse,
+            ['headers' => $headers,
+                'http_auth' => $auth,
+                'custom' => 'PROPFIND',
+                'upload' => true,
+                'infile' => 3,
+                'infilesize' => strlen($this->request_data),
+                'readfunc' => [$this, 'curl_read']
+            ]);
 
-		$x = z_fetch_url($this->url,true,$recurse,
-			[   'headers' => $headers, 
-				'http_auth' => $auth, 
-				'custom' => 'PROPFIND', 
-				'upload' => true,
-				'infile' => 3, 
-				'infilesize' => strlen($this->request_data), 
-				'readfunc' => [ $this, 'curl_read' ] 
-			]);
+        return $x;
 
-		return $x;
-
-	}
+    }
 
 
-	function detail_fetch() {
-		$headers = [ 'Depth: 1', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
+    public function detail_fetch()
+    {
+        $headers = ['Depth: 1', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
 
-		// this query should return all objects in the given calendar, you can filter it appropriately 
-		// using filter options
+        // this query should return all objects in the given calendar, you can filter it appropriately
+        // using filter options
 
-		$this->set_data('<?xml version="1.0"?>
+        $this->set_data('<?xml version="1.0"?>
 <c:calendar-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/">
   <d:prop>
      <d:getetag />
@@ -133,23 +137,23 @@ class CalDAVClient {
     </c:filter>
 </c:calendar-query>');
 
-		$auth = $this->username . ':' . $this->password;
+        $auth = $this->username . ':' . $this->password;
 
-		$recurse = 0;
-		$x = z_fetch_url($this->url,true,$recurse,
-			[   'headers' => $headers, 
-				'http_auth' => $auth, 
-				'custom' => 'REPORT', 
-				'upload' => true,
-				'infile' => 3, 
-				'infilesize' => strlen($this->request_data), 
-				'readfunc' => [ $this, 'curl_read' ] 
-			]);
+        $recurse = 0;
+        $x = z_fetch_url($this->url, true, $recurse,
+            ['headers' => $headers,
+                'http_auth' => $auth,
+                'custom' => 'REPORT',
+                'upload' => true,
+                'infile' => 3,
+                'infilesize' => strlen($this->request_data),
+                'readfunc' => [$this, 'curl_read']
+            ]);
 
 
-		return $x;
+        return $x;
 
-	}
+    }
 
 
 }

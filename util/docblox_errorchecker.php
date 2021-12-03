@@ -32,12 +32,12 @@
  * @return string comma-seperated list of the file names
  */
 function namesList($fileset) {
-	$fsparam="";
+	$fsparam= '';
 	foreach($fileset as $file) {
-		$fsparam=$fsparam.",".$file;
+		$fsparam=$fsparam. ',' .$file;
 	}
 	return $fsparam;
-};
+}
 
 /**
  * This functions runs phpdoc on the provided list of files
@@ -50,7 +50,7 @@ function namesList($fileset) {
 function runs($fileset) {
 	$fsParam=namesList($fileset);
 	exec('docblox -t phpdoc_out -f '.$fsParam);
-	if(file_exists("phpdoc_out/index.html")) {
+	if(file_exists('phpdoc_out/index.html')) {
 		echo "\n Subset ".$fsParam." is okay. \n";
 		exec('rm -r phpdoc_out');
 		return true;
@@ -58,7 +58,7 @@ function runs($fileset) {
 		echo "\n Subset ".$fsParam." failed. \n";
 		return false;
 	}
-};
+}
 
 /**
  * This functions cuts down a fileset by removing files until it finally works.
@@ -77,13 +77,13 @@ function reduce($fileset, $ps) {
 	//split array...
 	$parts=array_chunk($fileset, $ps);
 	//filter working subsets...
-	$parts=array_filter($parts, "runs");
+	$parts=array_filter($parts, 'runs');
 	//melt remaining parts together
 	if(is_array($parts)) {
-		return array_reduce($parts, "array_merge", []);
+		return array_reduce($parts, 'array_merge', []);
 	}
 	return [];
-};
+}
 
 //return from util folder to frindica base dir
 $dir='..';
@@ -96,17 +96,17 @@ $filelist=[];
 //loop over all files in $dir
 while($dh=opendir($dir)) {
 	while($file=readdir($dh)) {
-		if(is_dir($dir."/".$file)) {
+		if(is_dir($dir. '/' .$file)) {
 			//add to directory stack
-			if($file!=".." && $file!=".") {
-				array_push($dirstack, $dir."/".$file);
-				echo "dir ".$dir."/".$file."\n";
+			if($file!= '..' && $file!= '.') {
+				array_push($dirstack, $dir. '/' .$file);
+				echo 'dir ' .$dir. '/' .$file."\n";
 			}
 		} else  {
 			//test if it is a source file and add to filelist
-			if(substr($file, strlen($file)-4)==".php") {
-				array_push($filelist, $dir."/".$file);
-				echo $dir."/".$file."\n";
+			if(substr($file, strlen($file)-4)== '.php') {
+				array_push($filelist, $dir. '/' .$file);
+				echo $dir. '/' .$file."\n";
 			}
 		}
 	}
@@ -125,7 +125,7 @@ $res=$filelist;
 $i=0;
 do {
 	$i=count($res);
-	echo $i."/".count($fileset)." elements remaining. \n";
+	echo $i. '/' .count($fileset)." elements remaining. \n";
 	$res=reduce($res, count($res)/2);
 	shuffle($res);
 } while(count($res)<$i);
@@ -137,9 +137,9 @@ while(count($res)!=0) {
 	$file=array_pop($res);
 
 	if(runs(array_merge($res, $needed))) {
-		echo "needs: ".$file." and file count ".count($needed);
+		echo 'needs: ' .$file. ' and file count ' .count($needed);
 		array_push($needed, $file);
 	}
 }
 
-echo "\nSmallest Set is: ".namesList($needed)." with ".count($needed)." files. ";
+echo "\nSmallest Set is: ".namesList($needed). ' with ' .count($needed). ' files. ';

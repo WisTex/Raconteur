@@ -21,11 +21,13 @@ require_once 'mod/item.php';
  * @author Alexander Kampmann
  * @package test.util
  */
-class MockApp {
-	function get_baseurl() {
-		return "baseurl"; 
-	}
-}; 
+class MockApp
+{
+    public function get_baseurl()
+    {
+        return "baseurl";
+    }
+}
 
 /**
  * the test should not rely on a database, 

@@ -5,7 +5,7 @@ namespace Zotlabs\Lib;
 
 class AbConfig {
 
-	static public function Load($chan,$xhash,$family = '') {
+	public static function Load($chan, $xhash, $family = '') {
 		if($family)
 			$where = sprintf(" and cat = '%s' ",dbesc($family));
 		$r = q("select * from abconfig where chan = %d and xchan = '%s' $where",
@@ -16,7 +16,7 @@ class AbConfig {
 	}
 
 
-	static public function Get($chan,$xhash,$family,$key, $default = false) {
+	public static function Get($chan, $xhash, $family, $key, $default = false) {
 		$r = q("select * from abconfig where chan = %d and xchan = '%s' and cat = '%s' and k = '%s' limit 1",
 			intval($chan),
 			dbesc($xhash),
@@ -30,7 +30,7 @@ class AbConfig {
 	}
 
 
-	static public function Set($chan,$xhash,$family,$key,$value) {
+	public static function Set($chan, $xhash, $family, $key, $value) {
 
 		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
@@ -60,7 +60,7 @@ class AbConfig {
 	}
 
 
-	static public function Delete($chan,$xhash,$family,$key) {
+	public static function Delete($chan, $xhash, $family, $key) {
 
 		$r = q("delete from abconfig where chan = %d and xchan = '%s' and cat = '%s' and k = '%s' ",
 			intval($chan),

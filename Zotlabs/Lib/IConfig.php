@@ -6,11 +6,11 @@ namespace Zotlabs\Lib;
 
 class IConfig {
 
-	static public function Load(&$item) {
+	public static function Load(&$item) {
 		return;
 	}
 
-	static public function Get(&$item, $family, $key, $default = false) {
+	public static function Get(&$item, $family, $key, $default = false) {
 
 		$is_item = false;
 	
@@ -76,7 +76,7 @@ class IConfig {
 	 */
  
 
-	static public function Set(&$item, $family, $key, $value, $sharing = false) {
+	public static function Set(&$item, $family, $key, $value, $sharing = false) {
 
 		$dbvalue = ((is_array($value))  ? serialise($value) : $value);
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
@@ -137,7 +137,7 @@ class IConfig {
 
 
 
-	static public function Delete(&$item, $family, $key) {
+	public static function Delete(&$item, $family, $key) {
 
 
 		$is_item = false;

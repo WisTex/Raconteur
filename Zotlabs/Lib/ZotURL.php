@@ -7,7 +7,7 @@ use Zotlabs\Web\HTTPSig;
 
 class ZotURL {
 
-	static public function fetch($url,$channel,$hub = null) {
+	public static function fetch($url, $channel, $hub = null) {
 
 		$ret = [ 'success' => false ];
 
@@ -66,7 +66,7 @@ class ZotURL {
 
 	}
 
-	static public function is_zoturl($s) {
+	public static function is_zoturl($s) {
 
 		if(strpos($url,'x-zot:') === 0) {
 			return true;
@@ -75,7 +75,7 @@ class ZotURL {
 	}
 
 
-	static public function lookup($portable_id,$hub) {
+	public static function lookup($portable_id, $hub) {
 
 		$r = q("select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
 			dbesc($portable_id)
@@ -107,7 +107,7 @@ class ZotURL {
 	}
 
 
-	static public function parse_response($arr) {
+	public static function parse_response($arr) {
 		if(! $arr['success']) {
 			return false;
 		}

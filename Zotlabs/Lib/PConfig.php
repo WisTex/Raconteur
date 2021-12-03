@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+
 /**
  * @brief Class for handling channel specific configurations.
  *
@@ -28,19 +30,19 @@ class PConfig {
 	 *  The channel_id
 	 * @return void|false Nothing or false if $uid is null or false
 	 */
-	static public function Load($uid) {
+	public static function Load($uid) {
 		if(is_null($uid) || $uid === false)
 			return false;
 
-		if(! is_array(\App::$config)) {
+		if(! is_array(App::$config)) {
 			btlogger('App::$config not an array');
 		}
 
-		if(! array_key_exists($uid, \App::$config)) {
-			\App::$config[$uid] = [];
+		if(! array_key_exists($uid, App::$config)) {
+			App::$config[$uid] = [];
 		}
 
-		if(! is_array(\App::$config[$uid])) {
+		if(! is_array(App::$config[$uid])) {
 			btlogger('App::$config[$uid] not an array: ' . $uid);
 		}
 
@@ -52,11 +54,11 @@ class PConfig {
 			foreach($r as $rr) {
 				$k = $rr['k'];
 				$c = $rr['cat'];
-				if(! array_key_exists($c, \App::$config[$uid])) {
-					\App::$config[$uid][$c] = [];
-					\App::$config[$uid][$c]['config_loaded'] = true;
+				if(! array_key_exists($c, App::$config[$uid])) {
+					App::$config[$uid][$c] = [];
+					App::$config[$uid][$c]['config_loaded'] = true;
 				}
-				\App::$config[$uid][$c][$k] = $rr['v'];
+				App::$config[$uid][$c][$k] = $rr['v'];
 			}
 		}
 	}
@@ -80,18 +82,18 @@ class PConfig {
 	 *  Default value to return if key does not exist
 	 * @return mixed Stored value or false if it does not exist
 	 */
-	static public function Get($uid, $family, $key, $default = false) {
+	public static function Get($uid, $family, $key, $default = false) {
 
 		if(is_null($uid) || $uid === false)
 			return $default;
 
-		if(! array_key_exists($uid, \App::$config))
+		if(! array_key_exists($uid, App::$config))
 			self::Load($uid);
 
-		if((! array_key_exists($family, \App::$config[$uid])) || (! array_key_exists($key, \App::$config[$uid][$family])))
+		if((! array_key_exists($family, App::$config[$uid])) || (! array_key_exists($key, App::$config[$uid][$family])))
 			return $default;
 
-		return unserialise(\App::$config[$uid][$family][$key]);
+		return unserialise(App::$config[$uid][$family][$key]);
 	}
 
 	/**
@@ -110,7 +112,7 @@ class PConfig {
 	 *  The value to store
 	 * @return mixed Stored $value or false
 	 */
-	static public function Set($uid, $family, $key, $value) {
+	public static function Set($uid, $family, $key, $value) {
 
 		// this catches subtle errors where this function has been called
 		// with local_channel() when not logged in (which returns false)
@@ -128,10 +130,10 @@ class PConfig {
 		$dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
 		if(self::Get($uid, $family, $key) === false) {
-			if(! array_key_exists($uid, \App::$config))
-				\App::$config[$uid] = [];
-			if(! array_key_exists($family, \App::$config[$uid]))
-				\App::$config[$uid][$family] = [];
+			if(! array_key_exists($uid, App::$config))
+				App::$config[$uid] = [];
+			if(! array_key_exists($family, App::$config[$uid]))
+				App::$config[$uid][$family] = [];
 
 			$ret = q("INSERT INTO pconfig ( uid, cat, k, v ) VALUES ( %d, '%s', '%s', '%s' ) ",
 				intval($uid),
@@ -154,13 +156,13 @@ class PConfig {
 		// set in the life of this page. We need this to
 		// synchronise channel clones.
 
-		if(! array_key_exists('transient', \App::$config[$uid]))
-			\App::$config[$uid]['transient'] = [];
-		if(! array_key_exists($family, \App::$config[$uid]['transient']))
-			\App::$config[$uid]['transient'][$family] = [];
+		if(! array_key_exists('transient', App::$config[$uid]))
+			App::$config[$uid]['transient'] = [];
+		if(! array_key_exists($family, App::$config[$uid]['transient']))
+			App::$config[$uid]['transient'][$family] = [];
 
-		\App::$config[$uid][$family][$key] = $value;
-		\App::$config[$uid]['transient'][$family][$key] = $value;
+		App::$config[$uid][$family][$key] = $value;
+		App::$config[$uid]['transient'][$family][$key] = $value;
 
 		if($ret)
 			return $value;
@@ -183,18 +185,18 @@ class PConfig {
 	 *  The configuration key to delete
 	 * @return mixed
 	 */
-	static public function Delete($uid, $family, $key) {
+	public static function Delete($uid, $family, $key) {
 
 		if(is_null($uid) || $uid === false)
 			return false;
 
 		$ret = false;
 
-		if(array_key_exists($uid,\App::$config)
-			&& is_array(\App::$config['uid'])
-			&& array_key_exists($family,\App::$config['uid'])
-			&& array_key_exists($key, \App::$config[$uid][$family]))
-			unset(\App::$config[$uid][$family][$key]);
+		if(array_key_exists($uid, App::$config)
+			&& is_array(App::$config['uid'])
+			&& array_key_exists($family, App::$config['uid'])
+			&& array_key_exists($key, App::$config[$uid][$family]))
+			unset(App::$config[$uid][$family][$key]);
 
 		$ret = q("DELETE FROM pconfig WHERE uid = %d AND cat = '%s' AND k = '%s'",
 			intval($uid),

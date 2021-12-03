@@ -3,53 +3,57 @@
 namespace Zotlabs\Widget;
 
 
-class Archive {
+use App;
 
-	function widget($arr) {
+class Archive
+{
 
-		$o = '';
+    public function widget($arr)
+    {
 
-		if(! \App::$profile_uid) {
-			return '';
-		}
+        $o = '';
 
-		$uid = \App::$profile_uid;
+        if (!App::$profile_uid) {
+            return '';
+        }
 
-		if(! feature_enabled($uid,'archives'))
-			return '';
+        $uid = App::$profile_uid;
 
-		if(! perm_is_allowed($uid,get_observer_hash(),'view_stream'))
-			return '';
+        if (!feature_enabled($uid, 'archives'))
+            return '';
 
-		$wall = ((array_key_exists('wall', $arr)) ? intval($arr['wall']) : 0);
-		$wall = ((array_key_exists('articles', $arr)) ? 2 : $wall);
+        if (!perm_is_allowed($uid, get_observer_hash(), 'view_stream'))
+            return '';
 
-		$style = ((array_key_exists('style', $arr)) ? $arr['style'] : 'select');
-		$showend = ((get_pconfig($uid,'system','archive_show_end_date')) ? true : false);
-		$mindate = get_pconfig($uid,'system','archive_mindate');
-		$visible_years = get_pconfig($uid,'system','archive_visible_years',5);
+        $wall = ((array_key_exists('wall', $arr)) ? intval($arr['wall']) : 0);
+        $wall = ((array_key_exists('articles', $arr)) ? 2 : $wall);
 
-		$url = z_root() . '/' . \App::$cmd;
+        $style = ((array_key_exists('style', $arr)) ? $arr['style'] : 'select');
+        $showend = ((get_pconfig($uid, 'system', 'archive_show_end_date')) ? true : false);
+        $mindate = get_pconfig($uid, 'system', 'archive_mindate');
+        $visible_years = get_pconfig($uid, 'system', 'archive_visible_years', 5);
 
-		$ret = list_post_dates($uid,$wall,$mindate);
+        $url = z_root() . '/' . App::$cmd;
 
-		if(! count($ret))
-			return '';
+        $ret = list_post_dates($uid, $wall, $mindate);
 
-		$cutoff_year = intval(datetime_convert('',date_default_timezone_get(),'now','Y')) - $visible_years;
-		$cutoff = ((array_key_exists($cutoff_year,$ret))? true : false);
+        if (!count($ret))
+            return '';
 
-		$o = replace_macros(get_markup_template('posted_date_widget.tpl'),array(
-			'$title' => t('Archives'),
-			'$size' => $visible_years,
-			'$cutoff_year' => $cutoff_year,
-			'$cutoff' => $cutoff,
-			'$url' => $url,
-			'$style' => $style,
-			'$showend' => $showend,
-			'$dates' => $ret
-		));
-		return $o;
-	}
+        $cutoff_year = intval(datetime_convert('', date_default_timezone_get(), 'now', 'Y')) - $visible_years;
+        $cutoff = ((array_key_exists($cutoff_year, $ret)) ? true : false);
+
+        $o = replace_macros(get_markup_template('posted_date_widget.tpl'), array(
+            '$title' => t('Archives'),
+            '$size' => $visible_years,
+            '$cutoff_year' => $cutoff_year,
+            '$cutoff' => $cutoff,
+            '$url' => $url,
+            '$style' => $style,
+            '$showend' => $showend,
+            '$dates' => $ret
+        ));
+        return $o;
+    }
 }
 

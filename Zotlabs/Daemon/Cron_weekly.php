@@ -4,7 +4,7 @@ namespace Zotlabs\Daemon;
 
 class Cron_weekly {
 
-	static public function run($argc,$argv) {		
+	public static function run($argc, $argv) {
 
 		/**
 		 * Cron Weekly

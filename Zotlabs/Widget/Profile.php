@@ -5,15 +5,17 @@ namespace Zotlabs\Widget;
 use App;
 use Zotlabs\Lib\Libprofile;
 
-class Profile {
+class Profile
+{
 
-	function widget($args) {
+    public function widget($args)
+    {
 
-		if (! App::$profile['profile_uid']) {
-			return EMPTY_STR;
-		}
-		
-		return Libprofile::widget(App::$profile, observer_prohibited(), true);
-	}
+        if (!App::$profile['profile_uid']) {
+            return EMPTY_STR;
+        }
+
+        return Libprofile::widget(App::$profile, observer_prohibited(), true);
+    }
 
 }

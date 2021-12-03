@@ -2,6 +2,10 @@
 
 namespace Zotlabs\Lib;
 
+use App;
+use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Access\Permissions;
+
 require_once("include/permissions.php");
 require_once("include/language.php");
 require_once("include/text.php");
@@ -51,7 +55,7 @@ class PermissionDescription {
 	 * default permission. You should pass one of the constants from boot.php - PERMS_PUBLIC,
 	 * PERMS_NETWORK etc.
 	 *
-	 * @param  integer $perm - a single enumerated constant permission - PERMS_PUBLIC, PERMS_NETWORK etc.
+	 * @param int $perm - a single enumerated constant permission - PERMS_PUBLIC, PERMS_NETWORK etc.
 	 * @return a new instance of PermissionDescription
 	 */
 	public static function fromStandalonePermission($perm) {
@@ -80,11 +84,11 @@ class PermissionDescription {
 
 		$result = null;
 
-		$global_perms = \Zotlabs\Access\Permissions::Perms();
+		$global_perms = Permissions::Perms();
 
 		if(array_key_exists($permname, $global_perms)) {
 
-			$channelPerm = \Zotlabs\Access\PermissionLimits::Get(\App::$channel['channel_id'], $permname);
+			$channelPerm = PermissionLimits::Get(App::$channel['channel_id'], $permname);
 
 			$result = new PermissionDescription('', $channelPerm);
 		} else {
@@ -107,7 +111,7 @@ class PermissionDescription {
 			case 0:              return t('Only me');
 			case PERMS_PUBLIC:   return t('Public');
 			case PERMS_NETWORK:  return t('Anybody in the $Projectname network');
-			case PERMS_SITE:     return sprintf(t('Any account on %s'), \App::get_hostname());
+			case PERMS_SITE:     return sprintf(t('Any account on %s'), App::get_hostname());
 			case PERMS_CONTACTS: return t('Any of my connections');
 			case PERMS_SPECIFIC: return t('Only connections I specifically allow');
 			case PERMS_AUTHED:   return t('Anybody authenticated (could include visitors from other networks)');

@@ -49,8 +49,8 @@ function quotelevel($message, $wraplength = 75)
 
 	$newlines = [];
 	$level = 0;
-	foreach($lines as $line) {;
-		$line = trim($line);
+	foreach($lines as $line) {
+        $line = trim($line);
 		$startquote = false;
 		while (strpos("*".$line, '[quote]') > 0) {
 			$level++;

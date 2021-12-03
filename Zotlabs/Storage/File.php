@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Storage;
 
+use;
 use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
@@ -14,8 +15,8 @@ require_once('include/photos.php');
  *
  * It provides all functions to work with files in the project cloud through DAV protocol.
  *
- * @extends \\Sabre\\DAV\\Node
- * @implements \\Sabre\\DAV\\IFile
+ * @extends \Sabre\\DAV\\Node
+ * @implements \Sabre\\DAV\\IFile
  *
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
@@ -36,7 +37,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 	/**
 	 * @see \\Sabre\\DAV\\Auth\\Backend\\BackendInterface
-	 * @var \\Zotlabs\\Storage\\BasicAuth $auth
+	 * @var \Zotlabs\\Storage\\BasicAuth $auth
 	 */
 
 	private $auth;
@@ -427,7 +428,7 @@ class File extends DAV\Node implements DAV\IFile {
 		// invoked on a dav-mounted filesystem. By setting system.os_delete_prohibit, one can remove files
 		// via the web interface but from their operating system the filesystem is treated as read-only. 
 		
-		if (get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && \App::$module == 'dav') {
+		if (get_pconfig($this->auth->owner_id,'system','os_delete_prohibit') && App::$module == 'dav') {
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 

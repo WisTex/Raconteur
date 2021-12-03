@@ -33,7 +33,7 @@ function get_capath() {
  *
  * @param string $url
  *    URL to fetch
- * @param boolean $binary default false
+ * @param bool $binary default false
  *    TRUE if asked to return binary results (file download)
  * @param int $redirects default 0
  *    internal use, recursion counter
@@ -527,7 +527,7 @@ function http_status($val, $msg = '') {
 	if ($val >= 200 && $val < 300)
 		$msg = (($msg) ? $msg : 'OK');
 
-	logger(\App::$query_string . ':' . $val . ' ' . $msg);
+	logger(App::$query_string . ':' . $val . ' ' . $msg);
 	header($_SERVER['SERVER_PROTOCOL'] . ' ' . $val . ' ' . $msg);
 }
 
@@ -653,7 +653,7 @@ function z_dns_check($h,$check_mx = 0) {
  * @see z_dns_check()
  *
  * @param[in,out] string $url URL to check
- * @return boolean Return true if it's OK, false if something is wrong with it
+ * @return bool Return true if it's OK, false if something is wrong with it
  */
 function validate_url(&$url) {
 
@@ -677,7 +677,7 @@ function validate_url(&$url) {
  * @brief Checks that email is an actual resolvable internet address.
  *
  * @param string $addr
- * @return boolean
+ * @return bool
  */
 function validate_email($addr) {
 
@@ -702,7 +702,7 @@ function validate_email($addr) {
  * Compare against our list (wildcards allowed).
  *
  * @param string $email
- * @return boolean Returns false if not allowed, true if allowed or if allowed list is
+ * @return bool Returns false if not allowed, true if allowed or if allowed list is
  * not configured.
  */
 function allowed_email($email) {
@@ -804,7 +804,7 @@ function sxml2array ( $xmlObject, $out = array () )
  *           $array =  xml2array(file_get_contents('feed.xml', true, 1, 'attribute'));
  *
  * @param string $contents The XML text
- * @param boolean $namespaces true or false include namespace information in the returned array as array elements
+ * @param bool $namespaces true or false include namespace information in the returned array as array elements
  * @param int $get_attributes 1 or 0. If this is 1 the function will get the attributes as well as the tag values - this results in a different array structure in the return value.
  * @param string $priority Can be 'tag' or 'attribute'. This will change the way the resulting array sturcture. For 'tag', the tags are given more importance.
  *
@@ -1017,8 +1017,8 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject') {
  *
  * @param string $webbie
  * @param string $protocol (optional) default empty
- * @param boolean $verify (optional) default true, verify HTTP signatures on Zot discovery packets.
- * @return boolean
+ * @param bool $verify (optional) default true, verify HTTP signatures on Zot discovery packets.
+ * @return bool
  */
 function discover_by_webbie($webbie, $protocol = '', $verify = true) {
 
@@ -1120,7 +1120,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true) {
  * No longer used - see Zotlabs/Lib/Webfinger.php
  *
  * @param string $webbie - The resource
- * @return boolean|string false or associative array from result JSON
+ * @return bool|string false or associative array from result JSON
  */
 function webfinger_rfc7033($webbie) {
 
@@ -1323,7 +1323,7 @@ function get_site_info() {
  * @brief
  *
  * @param string $url
- * @return boolean
+ * @return bool
  */
 function check_siteallowed($url) {
 
@@ -1381,7 +1381,7 @@ function check_siteallowed($url) {
  * @brief
  *
  * @param string $url
- * @return boolean
+ * @return bool
  */
 function check_pubstream_siteallowed($url) {
 
@@ -1441,7 +1441,7 @@ function check_pubstream_siteallowed($url) {
  * @brief
  *
  * @param string $hash
- * @return boolean
+ * @return bool
  */
 function check_channelallowed($hash) {
 
@@ -1495,7 +1495,7 @@ function check_channelallowed($hash) {
  * @brief
  *
  * @param string $hash
- * @return boolean
+ * @return bool
  */
 function check_pubstream_channelallowed($hash) {
 
@@ -1790,7 +1790,7 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false) {
  * @brief Perform caching for jsonld normaliser.
  *
  * @param string $url
- * @return mixed|boolean|array
+ * @return mixed|bool|array
  */
 function jsonld_document_loader($url) {
 

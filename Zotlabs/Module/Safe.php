@@ -4,20 +4,20 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 
-class Safe extends Controller {
+class Safe extends Controller
+{
 
-	function init() {
+    public function init()
+    {
 
-		$x = get_safemode();
-		if ($x) {
-			$_SESSION['safemode'] = 0;
-		}
-		else {
-			$_SESSION['safemode'] = 1;
-		}
-		goaway(z_root());
-	}
-
+        $x = get_safemode();
+        if ($x) {
+            $_SESSION['safemode'] = 0;
+        } else {
+            $_SESSION['safemode'] = 1;
+        }
+        goaway(z_root());
+    }
 
 
 }

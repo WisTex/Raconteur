@@ -78,16 +78,16 @@ require_once('include/bbcode.php');
 
 class Notifier {
 
-	static public $deliveries   = [];
-	static public $recipients   = [];
-	static public $env_recips   = [];
-	static public $packet_type  = 'activity';
-	static public $encoding     = 'activitystreams';
-	static public $encoded_item = null;
-	static public $channel      = null;
-	static public $private      = false;
+	public static $deliveries   = [];
+	public static $recipients   = [];
+	public static $env_recips   = [];
+	public static $packet_type  = 'activity';
+	public static $encoding     = 'activitystreams';
+	public static $encoded_item = null;
+	public static $channel      = null;
+	public static $private      = false;
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		if ($argc < 3) {
 			return;

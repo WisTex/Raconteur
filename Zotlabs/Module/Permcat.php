@@ -2,9 +2,10 @@
 
 namespace Zotlabs\Module;
 
-use \Zotlabs\Lib as Zlib;
+use Zotlabs\Lib as Zlib;
+use Zotlabs\Web\Controller;
 
-class Permcat extends \Zotlabs\Web\Controller {
+class Permcat extends Controller {
 
 	private $permcats = [];
 

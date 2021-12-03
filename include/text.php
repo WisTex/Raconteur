@@ -145,7 +145,7 @@ function z_input_filter($s, $type = 'text/bbcode', $allow_code = false) {
  * @see HTMLPurifier
  *
  * @param string $s raw HTML
- * @param boolean $allow_position allow CSS position
+ * @param bool $allow_position allow CSS position
  * @return string standards compliant filtered HTML
  */
 function purify_html($s, $opts = []) {
@@ -187,96 +187,96 @@ function purify_html($s, $opts = []) {
 	// f6 navigation
 
 	//dropdown menu
-	$def->info_global_attr['data-dropdown-menu'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-dropdown-menu'] = new HTMLPurifier_AttrDef_Text();
 	//drilldown menu
-	$def->info_global_attr['data-drilldown'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-drilldown'] = new HTMLPurifier_AttrDef_Text();
 	//accordion menu
-	$def->info_global_attr['data-accordion-menu'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-accordion-menu'] = new HTMLPurifier_AttrDef_Text();
 	//responsive navigation
-	$def->info_global_attr['data-responsive-menu'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-responsive-toggle'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-responsive-menu'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-responsive-toggle'] = new HTMLPurifier_AttrDef_Text();
 	//magellan 
-	$def->info_global_attr['data-magellan'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-magellan-target'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-magellan'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-magellan-target'] = new HTMLPurifier_AttrDef_Text();
 
 	// f6 containers
 
 	//accordion
-	$def->info_global_attr['data-accordion'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-accordion-item'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-tab-content'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-accordion'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-accordion-item'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-tab-content'] = new HTMLPurifier_AttrDef_Text();
 	//dropdown
-	$def->info_global_attr['data-dropdown'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-dropdown'] = new HTMLPurifier_AttrDef_Text();
 	//off-canvas
-	$def->info_global_attr['data-off-canvas-wrapper'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-off-canvas'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-off-canvas-content'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-off-canvas-wrapper'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-off-canvas'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-off-canvas-content'] = new HTMLPurifier_AttrDef_Text();
 	//reveal
-	$def->info_global_attr['data-reveal'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-reveal'] = new HTMLPurifier_AttrDef_Text();
 	//tabs
-	$def->info_global_attr['data-tabs'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-tabs-content'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-tabs'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-tabs-content'] = new HTMLPurifier_AttrDef_Text();
 
 	// f6 media
 
 	//orbit
-	$def->info_global_attr['data-orbit'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-slide'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-orbit'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-slide'] = new HTMLPurifier_AttrDef_Text();
 	//tooltip
-	$def->info_global_attr['data-tooltip'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-tooltip'] = new HTMLPurifier_AttrDef_Text();
 
 	// f6 plugins
 
 	//abide - the use is pointless since we can't do anything with forms
 
 	//equalizer
-	$def->info_global_attr['data-equalizer'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-equalizer-watch'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-equalizer'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-equalizer-watch'] = new HTMLPurifier_AttrDef_Text();
 
 	//interchange - potentially dangerous since it can load content
 
 	//toggler
-	$def->info_global_attr['data-toggler'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-toggler'] = new HTMLPurifier_AttrDef_Text();
 
 	//sticky
-	$def->info_global_attr['data-sticky'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-sticky-container'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-sticky'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-sticky-container'] = new HTMLPurifier_AttrDef_Text();
 
 	// f6 common
 
-	$def->info_global_attr['data-options'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-toggle'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-close'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-open'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-position'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-options'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-toggle'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-close'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-open'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-position'] = new HTMLPurifier_AttrDef_Text();
 
 
 	//data- attributes used by the bootstrap library
-	$def->info_global_attr['data-dismiss'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-target'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-toggle'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-backdrop'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-keyboard'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-show'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-spy'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-offset'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-animation'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-container'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-delay'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-placement'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-title'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-trigger'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-content'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-trigger'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-parent'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-ride'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-slide-to'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-slide'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-interval'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-pause'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-wrap'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-offset-top'] = new HTMLPurifier_AttrDef_Text;
-	$def->info_global_attr['data-offset-bottom'] = new HTMLPurifier_AttrDef_Text;
+	$def->info_global_attr['data-dismiss'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-target'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-toggle'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-backdrop'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-keyboard'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-show'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-spy'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-offset'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-animation'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-container'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-delay'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-placement'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-title'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-trigger'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-content'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-trigger'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-parent'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-ride'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-slide-to'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-slide'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-interval'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-pause'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-wrap'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-offset-top'] = new HTMLPurifier_AttrDef_Text();
+	$def->info_global_attr['data-offset-bottom'] = new HTMLPurifier_AttrDef_Text();
 
 	//some html5 elements
 	//Block
@@ -657,7 +657,7 @@ function new_uuid() {
  *
  * @param string $attr attribute string
  * @param string $s attribute you are looking for
- * @return boolean true if found
+ * @return bool true if found
  */
 function attribute_contains($attr, $s) {
 	// remove quotes
@@ -1003,7 +1003,7 @@ function searchbox($s,$id='search-box',$url='/search',$save = false) {
  * @brief Replace naked text hyperlink with HTML formatted hyperlink.
  *
  * @param string $s
- * @param boolean $me (optional) default false
+ * @param bool $me (optional) default false
  * @return string
  */
 function linkify($s, $me = false) {
@@ -1280,7 +1280,7 @@ function list_smilies($default_only = false) {
  * bbcode source for HTML display.
  *
  * @param string $s
- * @param boolean $sample (optional) default false
+ * @param bool $sample (optional) default false
  * @return string
  */
 function smilies($s, $sample = false) {
@@ -1980,7 +1980,7 @@ function prepare_binary($item) {
  *
  * @param string $text
  * @param string $content_type (optional) default text/bbcode
- * @param boolean $cache (optional) default false
+ * @param bool $cache (optional) default false
  *
  * @return string
  */
@@ -2483,7 +2483,7 @@ function trim_and_unpunify($s) {
  * save extra per item lookups there.
  *
  * @param[in,out] array &$items
- * @param boolean $abook If true also include the abook info
+ * @param bool $abook If true also include the abook info
  * @param number $effective_uid
  */
 function xchan_query(&$items, $abook = true, $effective_uid = 0) {
@@ -2583,7 +2583,7 @@ function magic_link($s) {
  * @brief If $escape is true, dbesc() each element before adding quotes.
  *
  * @param[in,out] array &$arr
- * @param boolean $escape (optional) default false
+ * @param bool $escape (optional) default false
  */
 function stringify_array_elms(&$arr, $escape = false) {
 	for($x = 0; $x < count($arr); $x ++)
@@ -2595,7 +2595,7 @@ function stringify_array_elms(&$arr, $escape = false) {
  * @brief Similar to stringify_array_elms but returns a string. If $escape is true, dbesc() each element before adding quotes.
  *
  * @param array $arr
- * @param boolean $escape (optional) default false
+ * @param bool $escape (optional) default false
  * @return string
  */
 function stringify_array($arr, $escape = false) {
@@ -2737,7 +2737,7 @@ function website_portation_tools() {
  *
  * @param string $needle
  * @param array $haystack
- * @return boolean
+ * @return bool
  */
 function in_arrayi($needle, $haystack) {
 	return in_array(strtolower($needle), array_map('strtolower', $haystack));
@@ -2786,8 +2786,8 @@ function extra_query_args() {
  * @param[in,out] string &$str_tags string to add the tag to
  * @param int $profile_uid
  * @param string $tag the tag to replace
- * @param boolean $in_network default true
- * @return boolean true if replaced, false if not replaced
+ * @param bool $in_network default true
+ * @return bool true if replaced, false if not replaced
  */
 function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true) {
 
@@ -3516,7 +3516,7 @@ function array2XML($obj, $array) {
  * @param string $table
  * @param array $arr
  * @param array $binary_fields - fields which will be cleansed with dbescbin rather than dbesc; this is critical for postgres
- * @return boolean|PDOStatement
+ * @return bool|PDOStatement
  */
 function create_table_from_array($table, $arr, $binary_fields = []) {
 

@@ -23,9 +23,13 @@
 
 namespace Zotlabs\Tests\Unit\includes;
 
+use dba_driver;
+use dba_pdo;
+use PHPUnit\DbUnit\DataSet\IDataSet;
 use Zotlabs\Tests\Unit\DatabaseTestCase;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PHPUnit\DbUnit\DataSet\YamlDataSet;
+use function getenv;
 
 require_once 'include/dba/dba_pdo.php';
 
@@ -40,7 +44,7 @@ class dba_pdoTest extends DatabaseTestCase {
 	use TestCaseTrait;
 
 	/**
-	 * @var \dba_driver
+	 * @var dba_driver
 	 */
 	protected $dba;
 
@@ -49,7 +53,7 @@ class dba_pdoTest extends DatabaseTestCase {
 	 * Set initial state of the database before each test is executed.
 	 * Load database fixtures.
 	 *
-	 * @return \PHPUnit\DbUnit\DataSet\IDataSet
+	 * @return IDataSet
 	 */
 	public function getDataSet() {
 		return new YamlDataSet(dirname(__FILE__) . '/_files/account.yml');
@@ -59,13 +63,13 @@ class dba_pdoTest extends DatabaseTestCase {
 		// Will invoke getDataSet() to load fixtures into DB
 		parent::setUp();
 
-		$this->dba = new \dba_pdo(
-				\getenv('hz_db_server'),
-				\getenv('hz_db_scheme'),
-				\getenv('hz_db_port'),
-				\getenv('hz_db_user'),
-				\getenv('hz_db_pass'),
-				\getenv('hz_db_database')
+		$this->dba = new dba_pdo(
+				getenv('hz_db_server'),
+				getenv('hz_db_scheme'),
+				getenv('hz_db_port'),
+				getenv('hz_db_user'),
+				getenv('hz_db_pass'),
+				getenv('hz_db_database')
 		);
 	}
 	protected function assertPreConditions() {
@@ -150,10 +154,10 @@ class dba_pdoTest extends DatabaseTestCase {
 
 
 	public function testConnectToWrongSqlServer() {
-		$nodba = new \dba_pdo('wrongserver',
-				\getenv('hz_db_scheme'), \getenv('hz_db_port'),
-				\getenv('hz_db_user'), \getenv('hz_db_pass'),
-				\getenv('hz_db_database')
+		$nodba = new dba_pdo('wrongserver',
+				getenv('hz_db_scheme'), getenv('hz_db_port'),
+				getenv('hz_db_user'), getenv('hz_db_pass'),
+				getenv('hz_db_database')
 		);
 
 		$this->assertSame('pdo', $nodba->getdriver());

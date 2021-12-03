@@ -91,7 +91,7 @@ function preg_callback_help_include($matches) {
 /**
  * @brief
  *
- * @return boolean|array
+ * @return bool|array
  */
 function determine_help_language() {
 
@@ -106,7 +106,7 @@ function determine_help_language() {
 		$lang = argv(1);
 		$from_url = true;
 	} else {
-		$lang = \App::$language;
+		$lang = App::$language;
 		if(! isset($lang))
 			$lang = 'en';
 
@@ -135,13 +135,13 @@ function find_doc_file($s) {
  * @brief
  *
  * @param string $s
- * @return number|mixed|unknown|boolean
+ * @return number|mixed|unknown|bool
  */
 function search_doc_files($s) {
 
 
 	App::set_pager_itemspage(60);
-	$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(\App::$pager['itemspage']), intval(\App::$pager['start']));
+	$pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
 	$regexop = db_getfunc('REGEXP');
 
@@ -227,7 +227,7 @@ function load_context_help() {
  * @brief
  *
  * @param string $s
- * @return void|boolean[]|number[]|string[]|unknown[]
+ * @return void|bool|number[]|string[]|unknown[]
  */
 function store_doc_file($s) {
 

@@ -37,7 +37,7 @@ require_once('include/photo_factory.php');
  *
  * @param array $item
  * @param[out] boolean $private_envelope
- * @param boolean $include_groups 
+ * @param bool $include_groups
  * @return array containing the recipients
  */
 function collect_recipients($item, &$private_envelope,$include_groups = true) {
@@ -289,7 +289,7 @@ function is_item_normal($item) {
  *
  * @param string $observer_xchan
  * @param array $item
- * @return boolean
+ * @return bool
  */
 function can_comment_on_post($observer_xchan, $item) {
 
@@ -410,7 +410,7 @@ function absolutely_no_comments($item) {
  *
  * Modifies item in the database pointed to by $iid.
  *
- * @param integer $iid
+ * @param int $iid
  *    item['id'] of target item
  * @param string $hash
  *    xchan_hash of the channel that sent the item
@@ -443,8 +443,8 @@ function add_source_route($iid, $hash) {
  * or other processing is performed.
  *
  * @param array $arr
- * @param boolean $allow_code (optional) default false
- * @param boolean $deliver (optional) default true
+ * @param bool $allow_code (optional) default false
+ * @param bool $deliver (optional) default true
  * @returns array
  *  * \e boolean \b success true or false
  *  * \e array \b activity the resulting activity if successful
@@ -1175,7 +1175,7 @@ function encode_item($item,$mirror = false) {
  * @brief
  *
  * @param int $scope
- * @param boolean $strip (optional) default false
+ * @param bool $strip (optional) default false
  * @return string
  */
 function map_scope($scope, $strip = false) {
@@ -1563,8 +1563,8 @@ function item_json_encapsulate($arr,$k)  {
  * @brief Stores an item type record.
  *
  * @param array $arr
- * @param boolean $allow_exec (optional) default false
- * @param boolean $deliver (optional) default true
+ * @param bool $allow_exec (optional) default false
+ * @param bool $deliver (optional) default true
  *
  * @return array
  *   * \e boolean \b success
@@ -2081,8 +2081,8 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
  * @brief Update a stored item.
  *
  * @param array $arr an item
- * @param boolean $allow_exec (optional) default false
- * @param boolean $deliver (optional) default true
+ * @param bool $allow_exec (optional) default false
+ * @param bool $deliver (optional) default true
  * @return array
  */
 function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid = true) {
@@ -2912,7 +2912,7 @@ function tag_deliver($uid, $item_id) {
  *
  * @param number $uid A chnnel_id
  * @param array $item
- * @return boolean
+ * @return bool
  */
 
 function tgroup_check($uid, $item) {
@@ -3045,7 +3045,7 @@ function i_am_mentioned($channel,$item) {
  * @param array $channel
  * @param array $item
  * @param int $item_id
- * @param boolean $parent
+ * @param bool $parent
  */
 function start_delivery_chain($channel, $item, $item_id, $parent, $group = false, $edit = false) {
 
@@ -3860,8 +3860,8 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
  *
  * @param array $item
  * @param int $stage
- * @param boolean $force
- * @return boolean
+ * @param bool $force
+ * @return bool
  */
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
@@ -3946,8 +3946,8 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
  * @brief Return the first post date.
  *
  * @param int $uid
- * @param boolean $wall (optional) no longer used
- * @return string|boolean date string, otherwise false
+ * @param bool $wall (optional) no longer used
+ * @return string|bool date string, otherwise false
  */
 function first_post_date($uid, $wall = false) {
 
@@ -3986,7 +3986,7 @@ function first_post_date($uid, $wall = false) {
  * current flat list of all representative dates.
  *
  * @param int $uid
- * @param boolean $wall
+ * @param bool $wall
  * @param string $mindate
  * @return array
  */
@@ -4078,7 +4078,7 @@ function posted_dates($uid,$wall) {
  * @brief Extend an item array with the associated tags of the posts.
  *
  * @param array $items
- * @param boolean $link (optional) default false
+ * @param bool $link (optional) default false
  * @return array Return the provided $items array after extended the posts with tags
  */
 function fetch_post_tags($items, $link = false) {
@@ -4720,7 +4720,7 @@ function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow,
  * cause looping, so use this hackish but accurate method.
  *
  * @param array $item
- * @return boolean
+ * @return bool
  */
 function comment_local_origin($item) {
 	if(stripos($item['mid'], App::get_hostname()) && ($item['parent'] != $item['id']))

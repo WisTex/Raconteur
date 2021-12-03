@@ -3,7 +3,7 @@
 namespace Zotlabs\Daemon;
 
 
-use Zotlabs\Lib\Libzot;;
+use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Queue;
 
@@ -11,7 +11,7 @@ use Zotlabs\Lib\Queue;
 
 class Directory {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		if ($argc < 2) {
 			return;

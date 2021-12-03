@@ -1065,7 +1065,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null) {
  *
  * Also checking permissions of all parent components.
  *
- * @param integer $channel_id
+ * @param int $channel_id
  * @param string $observer_hash hash of current observer
  * @param string $pathname
  * @param string $parent_hash (optional)
@@ -1393,8 +1393,8 @@ function attach_mkdirp($channel, $observer_hash, $arr = null) {
  * @param string $allow_gid
  * @param string $deny_cid
  * @param string $deny_gid
- * @param boolean $recurse (optional) default false
- * @param boolean $sync (optional) default false
+ * @param bool $recurse (optional) default false
+ * @param bool $sync (optional) default false
  */
 function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gid, $deny_cid, $deny_gid, $recurse = false, $sync = false) {
 
@@ -1703,7 +1703,7 @@ function get_cloud_url($channel_id, $channel_name, $attachHash) {
  *  The id of the channel
  * @param string $attachHash
  *  The hash of the attachment
- * @param boolean $recurse
+ * @param bool $recurse
  *  (optional) default false
  * @return string
  */
@@ -1817,7 +1817,7 @@ function pipe_streams($in, $out, $bufsize = 16384) {
  * @param string $deny_cid
  * @param string $deny_gid
  * @param string $verb
- * @param boolean $notify
+ * @param bool $notify
  */
 function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, $deny_gid, $verb, $notify) {
 
@@ -2343,7 +2343,7 @@ function get_filename_by_cloudname($cloudname, $channel, $storepath) {
  * @param string $observer_hash
  * @param string $srcpath
  * @param string $cloudpath
- * @return boolean
+ * @return bool
  */
 function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpath) {
 	if (!is_dir($srcpath) || !is_readable($srcpath)) {
@@ -2403,7 +2403,7 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
  * @param int $channel_id
  * @param int $resource_id
  * @param string $new_folder_hash
- * @return void|boolean
+ * @return void|bool
  */
 
 function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '') {

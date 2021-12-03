@@ -2,14 +2,16 @@
 
 namespace Zotlabs\Widget;
 
-class Chatroom_members {
+class Chatroom_members
+{
 
-	// The actual contents are filled in via AJAX
+    // The actual contents are filled in via AJAX
 
-	function widget() {
-		return replace_macros(get_markup_template('chatroom_members.tpl'), array(
-			'$header' => t('Chat Members')
-		));
-	}
+    public function widget()
+    {
+        return replace_macros(get_markup_template('chatroom_members.tpl'), array(
+            '$header' => t('Chat Members')
+        ));
+    }
 
 }

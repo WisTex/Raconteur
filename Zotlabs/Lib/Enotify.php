@@ -29,7 +29,7 @@ class Enotify {
 	 */
 
 
-	static public function submit($params) {
+	public static function submit($params) {
 
 		logger('notification: entry', LOGGER_DEBUG);
 
@@ -807,7 +807,7 @@ class Enotify {
 	 *  * \e string \b textVersion     text only version of the message
 	 *  * \e string \b additionalMailHeader  additions to the smtp mail header
 	 */
-	static public function send($params) {
+	public static function send($params) {
 
 		$params['sent']   = false;
 		$params['result'] = false;
@@ -862,7 +862,7 @@ class Enotify {
 		return $res;
 	}
 
-	static public function format($item) {
+	public static function format($item) {
 
 		$ret = '';
 

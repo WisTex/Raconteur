@@ -318,11 +318,13 @@ function oembed_format_object($j){
 				$ret=$jhtml;
 			}
 			$ret.="<br>";
-		}; break;
+		}
+            break;
 		case "photo": {
 			$ret.= "<img width='".$j['width']."' src='".$j['url']."'>";
 			$ret.="<br>";
-		}; break;  
+		}
+            break;
 		case "link": {
 			if($j['thumbnail_url']) {
 				if(is_matrix_url($embedurl)) {
@@ -333,7 +335,8 @@ function oembed_format_object($j){
 			}
 
 			//$ret = "<a href='".$embedurl."'>".$j['title']."</a>";
-		}; break;  
+		}
+            break;
 		case 'pdf': {
 			$ret = $j['html'];
 			break;

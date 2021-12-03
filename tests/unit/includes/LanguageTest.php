@@ -55,7 +55,7 @@ class LanguageTest extends UnitTestCase {
 
 		// Can not unit test detect_language(), therefore test the used library
 		// only for now to find regressions on library updates.
-		$l = new Text_LanguageDetect;
+		$l = new Text_LanguageDetect();
 		// return 2-letter ISO 639-1 (en) language code
 		$l->setNameMode(2);
 		$lng = $l->detectConfidence($text);

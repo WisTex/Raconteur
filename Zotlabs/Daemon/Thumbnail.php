@@ -5,7 +5,7 @@ namespace Zotlabs\Daemon;
 
 class Thumbnail {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		if (! ($argc == 2)) {
 			return;

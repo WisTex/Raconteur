@@ -5,7 +5,7 @@ namespace Zotlabs\Daemon;
 
 class Importdoc {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		require_once('include/help.php');
 
@@ -13,7 +13,7 @@ class Importdoc {
 
 	}
 
-	static public function update_docs_dir($s) {
+	public static function update_docs_dir($s) {
 		$f = basename($s);
 		$d = dirname($s);
 		if($s === 'doc/html')

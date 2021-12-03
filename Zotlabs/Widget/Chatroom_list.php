@@ -2,23 +2,28 @@
 
 namespace Zotlabs\Widget;
 
-class Chatroom_list {
+use App;
+use Zotlabs\Lib\Chatroom;
 
-	function widget($arr) {
+class Chatroom_list
+{
 
-		if(! \App::$profile)
-			return '';
+    public function widget($arr)
+    {
 
-		$r = \Zotlabs\Lib\Chatroom::roomlist(\App::$profile['profile_uid']);
+        if (!App::$profile)
+            return '';
 
-		if($r) {
-			return replace_macros(get_markup_template('chatroomlist.tpl'), array(
-				'$header' => t('Chatrooms'),
-				'$baseurl' => z_root(),
-				'$nickname' => \App::$profile['channel_address'],
-				'$items' => $r,
-				'$overview' => t('Overview')
-			));
-		}
-	}
+        $r = Chatroom::roomlist(App::$profile['profile_uid']);
+
+        if ($r) {
+            return replace_macros(get_markup_template('chatroomlist.tpl'), array(
+                '$header' => t('Chatrooms'),
+                '$baseurl' => z_root(),
+                '$nickname' => App::$profile['channel_address'],
+                '$items' => $r,
+                '$overview' => t('Overview')
+            ));
+        }
+    }
 }

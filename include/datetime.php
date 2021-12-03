@@ -160,15 +160,15 @@ function dob($dob) {
  * @param string $label
  * @param string $id
  *   id and name of datetimepicker (defaults to "datetimepicker")
- * @param boolean $pickdate
+ * @param bool $pickdate
  *   true to show date picker (default)
- * @param boolean $picktime
+ * @param bool $picktime
  *   true to show time picker (default)
  * @param DateTime $minfrom
  *   set minimum date from picker with id $minfrom (none by default)
  * @param DateTime $maxfrom
  *   set maximum date from picker with id $maxfrom (none by default)
- * @param boolean $required default false
+ * @param bool $required default false
  * @param int $first_day (optional) default 0
  * @return string Parsed HTML output.
  *
@@ -212,7 +212,7 @@ function datetimesel($format, $min, $max, $default, $label, $id = 'datetimepicke
 	$o .= replace_macros($tpl,array(
 			'$field' => array($id, $label, $input_text, (($required) ? t('Required') : ''), (($required) ? '*' : ''), 'placeholder="' . $readable_format . '"'),
 		));
-	$o .= "<script>\$(function () {var picker = \$('#id_$id').datetimepicker({step:15,format:'$dateformat' $minjs $maxjs $pickers $defaultdatejs,dayOfWeekStart:$first_day}); $extra_js})</script>";
+	$o .= "<script>\$(function () {var picker = \$('#id_$id').datetimepicker({step:15,format:'$dateformat' $minjs $maxjs $pickers $defaultdatejs,dayOfWeekStart:$first_day}) $extra_js})</script>";
 
 	return $o;
 }

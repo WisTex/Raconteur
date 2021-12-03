@@ -2,13 +2,17 @@
 
 namespace Zotlabs\Widget;
 
-class Design_tools {
+use App;
 
-	function widget($arr) {
+class Design_tools
+{
 
-		if(perm_is_allowed(\App::$profile['profile_uid'],get_observer_hash(),'write_pages') || (\App::$is_sys && is_site_admin()))
-			return design_tools();
+    public function widget($arr)
+    {
 
-		return EMPTY_STR;
-	}
+        if (perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'write_pages') || (App::$is_sys && is_site_admin()))
+            return design_tools();
+
+        return EMPTY_STR;
+    }
 }

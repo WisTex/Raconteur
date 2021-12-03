@@ -3,14 +3,14 @@
 function po2php_run($argc,$argv) {
 
 	if ($argc < 2) {
-		print "Usage: ".$argv[0]." <file.po>\n\n";
+		print 'Usage: ' .$argv[0]." <file.po>\n\n";
 		return;
 	}
 
 	$rtl = false;	
 
 	$pofile = $argv[1];
-	$outfile = dirname($pofile)."/strings.php";
+	$outfile = dirname($pofile). '/strings.php';
 
 	if($argc > 2) {
 		if($argv[2] === 'rtl')
@@ -34,9 +34,9 @@ function po2php_run($argc,$argv) {
 	$out="<?php\n\n";
 	
 	$infile = file($pofile);
-	$k="";
-	$v="";
-	$ctx="";
+	$k= '';
+	$v= '';
+	$ctx= '';
 	$arr = False;
 	$ink = False;
 	$inv = False;
@@ -49,7 +49,7 @@ function po2php_run($argc,$argv) {
 	foreach ($infile as $l) {
 		$l = str_replace(array('$projectname','$Projectname'),array('\$projectname','\$Projectname'),$l);
 		$len = strlen($l);
-		if ($l[0]=="#") $l="";
+		if ($l[0]== '#') $l= '';
 		if (substr($l,0,15)=='"Plural-Forms: '){
 			$match=Array();
 			preg_match("|nplurals=([0-9]*); *plural=(.*)[;\\\\]|", $l, $match);
@@ -62,7 +62,7 @@ function po2php_run($argc,$argv) {
 			$out .= 'App::$rtl = ' . intval($rtl) ;
 		}
 		
-		if ($k!="" && substr($l,0,7)=="msgstr "){
+		if ($k!= '' && substr($l,0,7)== 'msgstr '){
 			if ($ink) { $ink = False; $out .= 'App::$strings["'.$k.'"] = '; }
 			if ($inv) {	$inv = False; $out .= '"'.$v.'"'; }
 			
@@ -71,7 +71,7 @@ function po2php_run($argc,$argv) {
 			$inv = True;
 			//$out .= $v;
 		}
-		if ($k!="" && substr($l,0,7)=="msgstr["){
+		if ($k!= '' && substr($l,0,7)== 'msgstr['){
 			if ($ink) { 
 				$ink = False; 
 				$out .= 'App::$strings["'.$k.'"] = '; 
@@ -85,14 +85,14 @@ function po2php_run($argc,$argv) {
 				$out .= "[\n";
 			}
 			$match=Array();
-			preg_match("|\[([0-9]*)\] (.*)|", $l, $match);
+			preg_match('|\[([0-9]*)\] (.*)|', $l, $match);
 			$out .= "\t".
 				preg_replace_callback($escape_s_exp,'escape_s',$match[1])
-				." => "
+				. ' => '
 				.preg_replace_callback($escape_s_exp,'escape_s',$match[2]) .",\n";
 		}
 	
-		if (substr($l,0,6)=="msgid_") { 
+		if (substr($l,0,6)== 'msgid_') {
 			$ink = False; 
 			$out .= 'App::$strings["'.$k.'"] = '; 
 		}
@@ -104,36 +104,36 @@ function po2php_run($argc,$argv) {
 			//$out .= 'App::$strings['.$k.'] = ';
 		}
 		
-		if (substr($l,0,6)=="msgid "){
+		if (substr($l,0,6)== 'msgid '){
 			if ($inv) {	$inv = False; $out .= '"'.$v.'"'; }
-			if ($k!="") $out .= $arr?"];\n":";\n";
+			if ($k!= '') $out .= $arr?"];\n":";\n";
 			$arr=False;
-			$k = str_replace("msgid ","",$l);
+			$k = str_replace('msgid ', '',$l);
 			$k = trim_message($k);
 			$k = $ctx.$k;
 		//	echo $ctx ? $ctx."\nX\n":"";
 			$k = preg_replace_callback($escape_s_exp,'escape_s',$k);
-			$ctx = "";
+			$ctx = '';
 			$ink = True;
 		}
 		
-		if ($inv && substr($l,0,6)!="msgstr" && substr($l,0,7)!="msgctxt") {
+		if ($inv && substr($l,0,6)!= 'msgstr' && substr($l,0,7)!= 'msgctxt') {
 			$v .= trim_message($l);
 			$v = preg_replace_callback($escape_s_exp,'escape_s',$v);
 			//$out .= 'App::$strings['.$k.'] = ';
 		}
 
-		if (substr($l,0,7)=="msgctxt") {
-			$ctx = str_replace("msgctxt ","",$l);
+		if (substr($l,0,7)== 'msgctxt') {
+			$ctx = str_replace('msgctxt ', '',$l);
 			$ctx = trim_message($ctx);
-			$ctx = "__ctx:".$ctx."__ ";
+			$ctx = '__ctx:' .$ctx. '__ ';
 			$ctx = preg_replace_callback($escape_s_exp,'escape_s',$ctx);
 		}
 
 	}
 
 	if ($inv) {	$inv = False; $out .= '"'.$v.'"'; }
-	if ($k!="") $out .= $arr?"];\n":";\n";
+	if ($k!= '') $out .= $arr?"];\n":";\n";
 	
 	file_put_contents($outfile, $out);
 	

@@ -3,36 +3,40 @@
 namespace Zotlabs\Widget;
 
 
-class Sitesearch {
+use App;
 
-	function widget($arr) {
+class Sitesearch
+{
 
-		$search = ((x($_GET,'search')) ? $_GET['search'] : '');
+    public function widget($arr)
+    {
 
-		$srchurl = \App::$query_string;
+        $search = ((x($_GET, 'search')) ? $_GET['search'] : '');
 
-		$srchurl =  rtrim(preg_replace('/search\=[^\&].*?(\&|$)/is','',$srchurl),'&');
-		$srchurl =  rtrim(preg_replace('/submit\=[^\&].*?(\&|$)/is','',$srchurl),'&');
-		$srchurl = str_replace(array('?f=','&f='),array('',''),$srchurl);
+        $srchurl = App::$query_string;
+
+        $srchurl = rtrim(preg_replace('/search\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
+        $srchurl = rtrim(preg_replace('/submit\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
+        $srchurl = str_replace(array('?f=', '&f='), array('', ''), $srchurl);
 
 
-		$hasq = ((strpos($srchurl,'?') !== false) ? true : false);
-		$hasamp = ((strpos($srchurl,'&') !== false) ? true : false);
+        $hasq = ((strpos($srchurl, '?') !== false) ? true : false);
+        $hasamp = ((strpos($srchurl, '&') !== false) ? true : false);
 
-		if(($hasamp) && (! $hasq))
-			$srchurl = substr($srchurl,0,strpos($srchurl,'&')) . '?f=&' . substr($srchurl,strpos($srchurl,'&')+1);
+        if (($hasamp) && (!$hasq))
+            $srchurl = substr($srchurl, 0, strpos($srchurl, '&')) . '?f=&' . substr($srchurl, strpos($srchurl, '&') + 1);
 
-		$o = '';
+        $o = '';
 
-		$saved = [];
+        $saved = [];
 
-		$tpl = get_markup_template("sitesearch.tpl");
-		$o = replace_macros($tpl, array(
-			'$title'	 => t('Search'),
-			'$searchbox' => searchbox($search, 'netsearch-box', $srchurl . (($hasq) ? '' : '?f='), false),
-			'$saved' 	 => $saved,
-		));
+        $tpl = get_markup_template("sitesearch.tpl");
+        $o = replace_macros($tpl, array(
+            '$title' => t('Search'),
+            '$searchbox' => searchbox($search, 'netsearch-box', $srchurl . (($hasq) ? '' : '?f='), false),
+            '$saved' => $saved,
+        ));
 
-		return $o;
-	}
+        return $o;
+    }
 }

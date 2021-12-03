@@ -55,9 +55,9 @@ class Session {
 		   	if (! $x) {
 		   		logger('Session save handler initialisation failed.',LOGGER_NORMAL,LOG_ERR);
 			}
-		};
-		
-		// Force cookies to be secure (https only) if this site is SSL enabled. 
+		}
+
+        // Force cookies to be secure (https only) if this site is SSL enabled.
 		// Must be done before session_start().
 
 		$arr = session_get_cookie_params();

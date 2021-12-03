@@ -2,50 +2,54 @@
 
 namespace Zotlabs\Lib;
 
-class Img_filesize {
+class Img_filesize
+{
 
-	private $url;
+    private $url;
 
-	function __construct($url) {
-		$this->url = $url;
-	}
+    public function __construct($url)
+    {
+        $this->url = $url;
+    }
 
-	function getSize() {
-		$size = null;
+    public function getSize()
+    {
+        $size = null;
 
-		if(stripos($this->url,z_root() . '/photo') !== false) {
-			$size = self::getLocalFileSize($this->url);
-		}
-		if(! $size) {
-			$size = getRemoteFileSize($this->url);
-		}
+        if (stripos($this->url, z_root() . '/photo') !== false) {
+            $size = self::getLocalFileSize($this->url);
+        }
+        if (!$size) {
+            $size = getRemoteFileSize($this->url);
+        }
 
-		return $size;
-	}
+        return $size;
+    }
 
 
-	static function getLocalFileSize($url) {
-	
-		$fname = basename($url);
-		$resolution = 0;
-	
-		if(strpos($fname,'.') !== false)
-			$fname = substr($fname,0,strpos($fname,'.'));
-	
-		if(substr($fname,-2,1) == '-') {
-			$resolution = intval(substr($fname,-1,1));
-			$fname = substr($fname,0,-2);
-		}
-			
-		$r = q("SELECT filesize FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
-			dbesc($fname),
-			intval($resolution)
-		);
-		if($r) {
-			return $r[0]['filesize'];
-		}
-		return null;
-	}
+    public static function getLocalFileSize($url)
+    {
+
+        $fname = basename($url);
+        $resolution = 0;
+
+        if (strpos($fname, '.') !== false)
+            $fname = substr($fname, 0, strpos($fname, '.'));
+
+        if (substr($fname, -2, 1) == '-') {
+            $resolution = intval(substr($fname, -1, 1));
+            $fname = substr($fname, 0, -2);
+        }
+
+        $r = q("SELECT filesize FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
+            dbesc($fname),
+            intval($resolution)
+        );
+        if ($r) {
+            return $r[0]['filesize'];
+        }
+        return null;
+    }
 
 }
 

@@ -5,7 +5,7 @@ namespace Zotlabs\Daemon;
 
 class Channel_purge {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		cli_startup();
 

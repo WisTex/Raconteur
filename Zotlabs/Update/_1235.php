@@ -2,28 +2,31 @@
 
 namespace Zotlabs\Update;
 
-class _1235 {
+class _1235
+{
 
-	function run() {
+    public function run()
+    {
 
-		$r = q("ALTER TABLE item add replyto text NOT NULL DEFAULT ''");
+        $r = q("ALTER TABLE item add replyto text NOT NULL DEFAULT ''");
 
-		if($r)
-			return UPDATE_SUCCESS;
-		return UPDATE_FAILED;
+        if ($r)
+            return UPDATE_SUCCESS;
+        return UPDATE_FAILED;
 
-	}
+    }
 
-	function verify() {
+    public function verify()
+    {
 
-		$columns = db_columns('item');
+        $columns = db_columns('item');
 
-		if(in_array('replyto',$columns)) {
-			return true;
-		}
+        if (in_array('replyto', $columns)) {
+            return true;
+        }
 
-		return false;
+        return false;
 
-	}
+    }
 
 }

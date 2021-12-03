@@ -7,7 +7,7 @@ use App;
 
 class SmartyTemplate implements TemplateEngine {
 
-	static $name ="smarty3";
+    static public $name = "smarty3";
 	
 	public function __construct() {
 

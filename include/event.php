@@ -693,18 +693,18 @@ function parse_vobject($ical, $type) {
 	$ev['adjust'] = (($ical->DTSTART->isFloating()) ? 0 : 1);
 
 	$ev['dtstart'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-		$dtstart->format(\DateTime::W3C));
+		$dtstart->format(DateTime::W3C));
 
 
 	if(isset($ical->DUE)) {
 		$dtend = $ical->DUE->getDateTime();
 		$ev['dtend'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-			$dtend->format(\DateTime::W3C));
+			$dtend->format(DateTime::W3C));
 	}
 	elseif(isset($ical->DTEND)) {
 		$dtend = $ical->DTEND->getDateTime();
 		$ev['dtend'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-			$dtend->format(\DateTime::W3C));
+			$dtend->format(DateTime::W3C));
 	}
 	else
 		$ev['nofinish'] = 1;
@@ -715,16 +715,16 @@ function parse_vobject($ical, $type) {
 
 	if(isset($ical->CREATED)) {
 		$created = $ical->CREATED->getDateTime();
-		$ev['created'] = datetime_convert('UTC','UTC',$created->format(\DateTime::W3C));
+		$ev['created'] = datetime_convert('UTC','UTC',$created->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'DTSTAMP'})) {
 		$edited = $ical->{'DTSTAMP'}->getDateTime();
-		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(\DateTime::W3C));
+		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(DateTime::W3C));
 	}
 	if(isset($ical->{'LAST-MODIFIED'})) {
 		$edited = $ical->{'LAST-MODIFIED'}->getDateTime();
-		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(\DateTime::W3C));
+		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'X-ZOT-LOCATION'}))
@@ -760,7 +760,7 @@ function parse_vobject($ical, $type) {
 
 	if(isset($ical->{'COMPLETED'})) {
 		$completed = $ical->{'COMPLETED'}->getDateTime();
-		$ev['event_status_date'] = datetime_convert('UTC','UTC',$completed->format(\DateTime::W3C));
+		$ev['event_status_date'] = datetime_convert('UTC','UTC',$completed->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'PERCENT-COMPLETE'})) {
@@ -826,12 +826,12 @@ function event_import_ical($ical, $uid) {
 //	logger('dtstart: ' . var_export($dtstart,true));
 
 	$ev['dtstart'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-		$dtstart->format(\DateTime::W3C));
+		$dtstart->format(DateTime::W3C));
 
 	if(isset($ical->DTEND)) {
 		$dtend = $ical->DTEND->getDateTime();
 		$ev['dtend'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-			$dtend->format(\DateTime::W3C));
+			$dtend->format(DateTime::W3C));
 	}
 	else {
 		$ev['nofinish'] = 1;
@@ -842,12 +842,12 @@ function event_import_ical($ical, $uid) {
 
 	if(isset($ical->CREATED)) {
 		$created = $ical->CREATED->getDateTime();
-		$ev['created'] = datetime_convert('UTC','UTC',$created->format(\DateTime::W3C));
+		$ev['created'] = datetime_convert('UTC','UTC',$created->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'LAST-MODIFIED'})) {
 		$edited = $ical->{'LAST-MODIFIED'}->getDateTime();
-		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(\DateTime::W3C));
+		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'X-ZOT-LOCATION'}))
@@ -927,13 +927,13 @@ function event_import_ical_task($ical, $uid) {
 //	logger('dtstart: ' . var_export($dtstart,true));
 
 	$ev['dtstart'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-		$dtstart->format(\DateTime::W3C));
+		$dtstart->format(DateTime::W3C));
 
 
 	if(isset($ical->DUE)) {
 		$dtend = $ical->DUE->getDateTime();
 		$ev['dtend'] = datetime_convert((($ev['adjust']) ? 'UTC' : date_default_timezone_get()),'UTC',
-			$dtend->format(\DateTime::W3C));
+			$dtend->format(DateTime::W3C));
 	}
 	else
 		$ev['nofinish'] = 1;
@@ -944,17 +944,17 @@ function event_import_ical_task($ical, $uid) {
 
 	if(isset($ical->CREATED)) {
 		$created = $ical->CREATED->getDateTime();
-		$ev['created'] = datetime_convert('UTC','UTC',$created->format(\DateTime::W3C));
+		$ev['created'] = datetime_convert('UTC','UTC',$created->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'DTSTAMP'})) {
 		$edited = $ical->{'DTSTAMP'}->getDateTime();
-		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(\DateTime::W3C));
+		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'LAST-MODIFIED'})) {
 		$edited = $ical->{'LAST-MODIFIED'}->getDateTime();
-		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(\DateTime::W3C));
+		$ev['edited'] = datetime_convert('UTC','UTC',$edited->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'X-ZOT-LOCATION'}))
@@ -1006,7 +1006,7 @@ function event_import_ical_task($ical, $uid) {
 
 	if(isset($ical->{'COMPLETED'})) {
 		$completed = $ical->{'COMPLETED'}->getDateTime();
-		$ev['event_status_date'] = datetime_convert('UTC','UTC',$completed->format(\DateTime::W3C));
+		$ev['event_status_date'] = datetime_convert('UTC','UTC',$completed->format(DateTime::W3C));
 	}
 
 	if(isset($ical->{'PERCENT-COMPLETE'})) {

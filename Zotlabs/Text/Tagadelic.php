@@ -5,7 +5,7 @@ namespace Zotlabs\Text;
 
 class Tagadelic {
 
-	static public function calc($arr) {
+	public static function calc($arr) {
 
 		$tags = [];
 		$min = 1e9;
@@ -36,7 +36,7 @@ class Tagadelic {
 		return $tags;
 	}
 
-	static public function tags_sort($a,$b) {
+	public static function tags_sort($a, $b) {
 		if (strtolower($a[0]) === strtolower($b[0])) {
 			return 0;
 		}

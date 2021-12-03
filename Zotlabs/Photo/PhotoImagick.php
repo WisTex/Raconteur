@@ -4,6 +4,7 @@ namespace Zotlabs\Photo;
 
 use Imagick;
 use Exception;
+use ImagickPixel;
 
 
 /**
@@ -129,7 +130,7 @@ class PhotoImagick extends PhotoDriver {
 	 *
 	 * @see \Zotlabs\Photo\PhotoDriver::getImage()
 	 *
-	 * @return boolean|\Imagick
+	 * @return bool|Imagick
 	 */
 	public function getImage() {
 		if (! $this->is_valid()) {
@@ -162,7 +163,7 @@ class PhotoImagick extends PhotoDriver {
 		$this->image->setFirstIterator();
 		do {
 			// ImageMagick rotates in the opposite direction of imagerotate()
-			$this->image->rotateImage(new \ImagickPixel(), -$degrees);
+			$this->image->rotateImage(new ImagickPixel(), -$degrees);
 		} while($this->image->nextImage());
 
 		$this->setDimensions();

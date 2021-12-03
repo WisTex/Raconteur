@@ -10,7 +10,7 @@ use App;
  */
 class Hook {
 
-	static public function register($hook,$file,$function,$version = 1,$priority = 0) {
+	public static function register($hook, $file, $function, $version = 1, $priority = 0) {
 		if (is_array($function)) {
 			$function = serialize($function);
 		}
@@ -46,7 +46,7 @@ class Hook {
 		return $r;
 	}
 
-	static public function register_array($file,$arr) {
+	public static function register_array($file, $arr) {
 		if ($arr) {
 			foreach ($arr as $k => $v) {
 				self::register($k,$file,$v);
@@ -55,7 +55,7 @@ class Hook {
 	}
 
 
-	static public function unregister($hook,$file,$function,$version = 1,$priority = 0) {
+	public static function unregister($hook, $file, $function, $version = 1, $priority = 0) {
 		if (is_array($function)) {
 			$function = serialize($function);
 		}
@@ -78,7 +78,7 @@ class Hook {
 	 * @param string $file
 	 */
 	 
-	static public function unregister_by_file($file) {
+	public static function unregister_by_file($file) {
 		$r = q("DELETE FROM hook WHERE file = '%s' ",
 			dbesc($file)
 		);
@@ -107,7 +107,7 @@ class Hook {
 	 * @param int $priority
 	 *     currently not implemented in this function, would require the hook array to be resorted
 	 */
-	static public function insert($hook, $fn, $version = 0, $priority = 0) {
+	public static function insert($hook, $fn, $version = 0, $priority = 0) {
 		if (is_array($fn)) {
 			$fn = serialize($fn);
 		}

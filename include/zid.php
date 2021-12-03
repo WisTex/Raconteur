@@ -34,7 +34,7 @@ function is_matrix_url($url) {
  *
  * @param string $s
  *   The url to accept the zid
- * @param boolean $address
+ * @param bool $address
  *   $address to use instead of session environment
  * @return string
  */

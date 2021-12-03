@@ -7,7 +7,7 @@ require_once('include/hubloc.php');
 
 class Checksites {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		logger('checksites: start');
 	

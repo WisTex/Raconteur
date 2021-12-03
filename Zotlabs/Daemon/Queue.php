@@ -7,7 +7,7 @@ use Zotlabs\Lib as Zlib;
 
 class Queue {
 
-	static public function run($argc,$argv) {
+	public static function run($argc, $argv) {
 
 		if($argc > 1)
 			$queue_id = $argv[1];
