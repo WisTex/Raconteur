@@ -21,11 +21,9 @@ class _1145
 			ADD `event_repeat` TEXT NOT NULL DEFAULT '',
 			ADD INDEX ( `event_status` ) ");
         }
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

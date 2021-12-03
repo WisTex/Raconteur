@@ -18,10 +18,9 @@ class _1098
         $r9 = q("ALTER TABLE `channel` CHANGE `channel_w_photos` `channel_w_photos` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'");
         $r10 = q("ALTER TABLE `channel` CHANGE `channel_w_chat` `channel_w_chat` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'");
         $r11 = q("ALTER TABLE `channel` CHANGE `channel_a_delegate` `channel_a_delegate` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'");
-        if ($r && $r2 && $r3 && $r3 && $r5 && $r6 && $r7 && $r8 && $r9 && $r9 && $r10 && $r11)
+        if ($r && $r2 && $r3 && $r3 && $r5 && $r6 && $r7 && $r8 && $r9 && $r9 && $r10 && $r11) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

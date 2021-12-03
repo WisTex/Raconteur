@@ -1,4 +1,6 @@
-<?php /** @file */
+<?php
+
+/** @file */
 
 namespace Zotlabs\Render;
 
@@ -398,7 +400,8 @@ class Comanche
         $channel_id = $this->get_channel_id();
 
         if ($channel_id) {
-            $r = q("select * from item inner join iconfig on iconfig.iid = item.id and item.uid = %d
+            $r = q(
+                "select * from item inner join iconfig on iconfig.iid = item.id and item.uid = %d
 				and iconfig.cat = 'system' and iconfig.k = 'BUILDBLOCK' and iconfig.v = '%s' limit 1",
                 intval($channel_id),
                 dbesc($name)
@@ -681,5 +684,4 @@ class Comanche
         App::$page_layouts[$arr['template']] = array($arr['variant']);
         return;
     }
-
 }

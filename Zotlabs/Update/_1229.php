@@ -18,7 +18,5 @@ class _1229
             return UPDATE_SUCCESS;
         }
         return UPDATE_FAILED;
-
     }
-
 }

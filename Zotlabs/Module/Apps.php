@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -13,10 +14,11 @@ class Apps extends Controller
 
         nav_set_selected('Apps');
 
-        if (argc() == 2 && argv(1) == 'edit')
+        if (argc() == 2 && argv(1) == 'edit') {
             $mode = 'edit';
-        else
+        } else {
             $mode = 'list';
+        }
 
         $available = ((argc() == 2 && argv(1) === 'available') ? true : false);
 
@@ -35,12 +37,13 @@ class Apps extends Controller
                 }
             }
             Zlib\Apps::translate_system_apps($syslist);
-        } else
+        } else {
             $syslist = Zlib\Apps::get_system_apps(true);
+        }
 
         usort($syslist, 'Zotlabs\\Lib\\Apps::app_name_compare');
 
-        //	logger('apps: ' . print_r($syslist,true));
+        //  logger('apps: ' . print_r($syslist,true));
 
         foreach ($syslist as $app) {
             $apps[] = Zlib\Apps::app_render($app, (($available) ? 'install' : $mode));
@@ -55,7 +58,5 @@ class Apps extends Controller
             '$manage' => (($available) ? EMPTY_STR : t('Manage apps')),
             '$create' => (($mode == 'edit') ? t('Create Custom App') : '')
         ));
-
     }
-
 }

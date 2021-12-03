@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Admin;
 
-
 class Account_edit
 {
 
@@ -11,38 +10,42 @@ class Account_edit
 
         $account_id = $_REQUEST['aid'];
 
-        if (!$account_id)
+        if (!$account_id) {
             return;
+        }
 
         $pass1 = trim($_REQUEST['pass1']);
         $pass2 = trim($_REQUEST['pass2']);
         if ($pass1 && $pass2 && ($pass1 === $pass2)) {
             $salt = random_string(32);
             $password_encoded = hash('whirlpool', $salt . $pass1);
-            $r = q("update account set account_salt = '%s', account_password = '%s', 
+            $r = q(
+                "update account set account_salt = '%s', account_password = '%s', 
 				account_password_changed = '%s' where account_id = %d",
                 dbesc($salt),
                 dbesc($password_encoded),
                 dbesc(datetime_convert()),
                 intval($account_id)
             );
-            if ($r)
+            if ($r) {
                 info(sprintf(t('Password changed for account %d.'), $account_id) . EOL);
-
+            }
         }
 
         $service_class = trim($_REQUEST['service_class']);
         $account_language = trim($_REQUEST['account_language']);
 
-        $r = q("update account set account_service_class = '%s', account_language = '%s' 
+        $r = q(
+            "update account set account_service_class = '%s', account_language = '%s' 
 			where account_id = %d",
             dbesc($service_class),
             dbesc($account_language),
             intval($account_id)
         );
 
-        if ($r)
+        if ($r) {
             info(t('Account settings updated.') . EOL);
+        }
 
         goaway(z_root() . '/admin/accounts');
     }
@@ -50,10 +53,12 @@ class Account_edit
 
     public function get()
     {
-        if (argc() > 2)
+        if (argc() > 2) {
             $account_id = argv(2);
+        }
 
-        $x = q("select * from account where account_id = %d limit 1",
+        $x = q(
+            "select * from account where account_id = %d limit 1",
             intval($account_id)
         );
 
@@ -71,13 +76,8 @@ class Account_edit
                 '$account_language' => ['account_language', t('Account language (for emails)'), $x[0]['account_language'], '', language_list()],
                 '$service_class' => ['service_class', t('Service class'), $x[0]['account_service_class'], ''],
                 '$submit' => t('Submit'),
-            ]
-        );
+            ]);
 
         return $a;
-
-
     }
-
-
 }

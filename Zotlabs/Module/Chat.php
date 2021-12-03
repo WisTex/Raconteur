@@ -1,4 +1,6 @@
-<?php /** @file */
+<?php
+
+/** @file */
 
 namespace Zotlabs\Module;
 
@@ -35,7 +37,6 @@ class Chat extends Controller
         // we start loading content
 
         Libprofile::load($which, $profile);
-
     }
 
     public function post()
@@ -69,7 +70,8 @@ class Chat extends Controller
 
         Chatroom::create($channel, $arr);
 
-        $x = q("select * from chatroom where cr_name = '%s' and cr_uid = %d limit 1",
+        $x = q(
+            "select * from chatroom where cr_name = '%s' and cr_uid = %d limit 1",
             dbesc($room),
             intval(local_channel())
         );
@@ -83,22 +85,20 @@ class Chat extends Controller
         // that failed. Try again perhaps?
 
         goaway(z_root() . '/chat/' . $channel['channel_address'] . '/new');
-
-
     }
 
 
     public function get()
     {
 
-//		if(! Apps::system_app_installed(App::$profile_uid, 'Chatrooms')) {
-//			// Do not display any associated widgets at this point
-//			App::$pdl = '';
+//      if(! Apps::system_app_installed(App::$profile_uid, 'Chatrooms')) {
+//          // Do not display any associated widgets at this point
+//          App::$pdl = '';
 //
-//			$o = '<b>Chatrooms App (Not Installed):</b><br>';
-//			$o .= t('Access Controlled Chatrooms');
-//			return $o;
-//		}
+//          $o = '<b>Chatrooms App (Not Installed):</b><br>';
+//          $o .= t('Access Controlled Chatrooms');
+//          return $o;
+//      }
 
         if (local_channel()) {
             $channel = App::get_channel();
@@ -130,7 +130,8 @@ class Chat extends Controller
                 return;
             }
 
-            $r = q("select * from chatroom where cr_id = %d limit 1",
+            $r = q(
+                "select * from chatroom where cr_id = %d limit 1",
                 intval($room_id)
             );
             if (!$r) {
@@ -139,14 +140,16 @@ class Chat extends Controller
             require_once('include/security.php');
             $sql_extra = permissions_sql($r[0]['cr_uid']);
 
-            $x = q("select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
+            $x = q(
+                "select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
                 intval($room_id),
                 intval($r[0]['cr_uid'])
             );
             if (!$x) {
                 json_return_and_die($ret);
             }
-            $y = q("select count(*) as total from chatpresence where cp_room = %d",
+            $y = q(
+                "select count(*) as total from chatpresence where cp_room = %d",
                 intval($room_id)
             );
             if ($y) {
@@ -157,7 +160,8 @@ class Chat extends Controller
 
             // figure out how to present a timestamp of the last activity, since we don't know the observer's timezone.
 
-            $z = q("select created from chat where chat_room = %d order by created desc limit 1",
+            $z = q(
+                "select created from chat where chat_room = %d order by created desc limit 1",
                 intval($room_id)
             );
             if ($z) {
@@ -168,14 +172,14 @@ class Chat extends Controller
 
 
         if (argc() > 2 && intval(argv(2))) {
-
             $room_id = intval(argv(2));
 
             $x = Chatroom::enter($observer, $room_id, 'online', $_SERVER['REMOTE_ADDR']);
             if (!$x) {
                 return;
             }
-            $x = q("select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
+            $x = q(
+                "select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
                 intval($room_id),
                 intval(App::$profile['profile_uid'])
             );
@@ -262,7 +266,5 @@ class Chat extends Controller
         ]);
 
         return $o;
-
     }
-
 }

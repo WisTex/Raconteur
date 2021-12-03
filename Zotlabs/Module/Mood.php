@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -16,8 +17,9 @@ class Mood extends Controller
     public function init()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         if (!Apps::system_app_installed(local_channel(), 'Mood')) {
             return;
@@ -27,13 +29,15 @@ class Mood extends Controller
         $channel = App::get_channel();
         $verb = notags(trim($_GET['verb']));
 
-        if (!$verb)
+        if (!$verb) {
             return;
+        }
 
         $verbs = get_mood_verbs();
 
-        if (!array_key_exists($verb, $verbs))
+        if (!array_key_exists($verb, $verbs)) {
             return;
+        }
 
         $activity = ACTIVITY_MOOD . '#' . urlencode($verb);
 
@@ -44,7 +48,8 @@ class Mood extends Controller
 
 
         if ($parent) {
-            $r = q("select mid, owner_xchan, private, allow_cid, allow_gid, deny_cid, deny_gid 
+            $r = q(
+                "select mid, owner_xchan, private, allow_cid, allow_gid, deny_cid, deny_gid 
 				from item where id = %d and parent = %d and uid = %d limit 1",
                 intval($parent),
                 intval($parent),
@@ -59,7 +64,6 @@ class Mood extends Controller
                 $deny_gid = $r[0]['deny_gid'];
             }
         } else {
-
             $private = 0;
 
             $allow_cid = $channel['channel_allow_cid'];
@@ -95,8 +99,9 @@ class Mood extends Controller
         $arr['item_origin'] = 1;
         $arr['item_wall'] = 1;
         $arr['item_unseen'] = 1;
-        if (!$parent_mid)
+        if (!$parent_mid) {
             $item['item_thread_top'] = 1;
+        }
 
         if ((!$arr['plink']) && intval($arr['item_thread_top'])) {
             $arr['plink'] = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
@@ -112,8 +117,9 @@ class Mood extends Controller
 
         call_hooks('post_local_end', $arr);
 
-        if ($_SESSION['return_url'])
+        if ($_SESSION['return_url']) {
             goaway(z_root() . '/' . $_SESSION['return_url']);
+        }
 
         return;
     }
@@ -143,9 +149,11 @@ class Mood extends Controller
         $verbs = get_mood_verbs();
 
         $shortlist = [];
-        foreach ($verbs as $k => $v)
-            if ($v !== 'NOTRANSLATION')
+        foreach ($verbs as $k => $v) {
+            if ($v !== 'NOTRANSLATION') {
                 $shortlist[] = array($k, $v);
+            }
+        }
 
 
         $tpl = get_markup_template('mood_content.tpl');
@@ -159,7 +167,5 @@ class Mood extends Controller
         ));
 
         return $o;
-
     }
-
 }

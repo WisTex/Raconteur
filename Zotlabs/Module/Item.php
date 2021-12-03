@@ -8,16 +8,16 @@ namespace Zotlabs\Module;
  * acts as a permalink for local content.
  *
  * Otherwise this is the POST destination for most all locally posted
- * text stuff. This function handles status, wall-to-wall status, 
- * local comments, and remote coments that are posted on this site 
+ * text stuff. This function handles status, wall-to-wall status,
+ * local comments, and remote coments that are posted on this site
  * (as opposed to being delivered in a feed).
- * Also processed here are posts and comments coming through the API. 
- * All of these become an "item" which is our basic unit of 
+ * Also processed here are posts and comments coming through the API.
+ * All of these become an "item" which is our basic unit of
  * information.
- * Posts that originate externally or do not fall into the above 
- * posting categories go through item_store() instead of this function. 
+ * Posts that originate externally or do not fall into the above
+ * posting categories go through item_store() instead of this function.
  *
- */  
+ */
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
@@ -69,7 +69,8 @@ class Item extends Controller
             // do we have the item (at all)?
             // add preferential bias to item owners (item_wall = 1)
 
-            $r = q("select * from item where (mid = '%s' or uuid = '%s') $item_normal order by item_wall desc limit 1",
+            $r = q(
+                "select * from item where (mid = '%s' or uuid = '%s') $item_normal order by item_wall desc limit 1",
                 dbesc(z_root() . '/item/' . $item_uuid),
                 dbesc($item_uuid)
             );
@@ -92,7 +93,8 @@ class Item extends Controller
                 }
                 observer_auth($portable_id);
 
-                $i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1 ",
+                $i = q(
+                    "select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1 ",
                     dbesc($r[0]['parent_mid']),
                     dbesc($portable_id)
                 );
@@ -106,7 +108,8 @@ class Item extends Controller
             $sql_extra = item_permissions_sql(0);
 
             if (!$i) {
-                $i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+                $i = q(
+                    "select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
                     dbesc($r[0]['parent_mid'])
                 );
             }
@@ -115,11 +118,13 @@ class Item extends Controller
             if ($bear) {
                 logger('bear: ' . $bear, LOGGER_DEBUG);
                 if (!$i) {
-                    $t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+                    $t = q(
+                        "select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
                         dbesc($bear)
                     );
                     if ($t) {
-                        $i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+                        $i = q(
+                            "select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
                             dbesc($item_uuid),
                             intval($t[0]['iid'])
                         );
@@ -154,7 +159,8 @@ class Item extends Controller
 
 
             if ($portable_id && (!intval($items[0]['item_private']))) {
-                $c = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
+                $c = q(
+                    "select abook_id from abook where abook_channel = %d and abook_xchan = '%s'",
                     intval($items[0]['uid']),
                     dbesc($portable_id)
                 );
@@ -167,7 +173,6 @@ class Item extends Controller
         }
 
         if (Libzot::is_zot_request()) {
-
             $item_uuid = argv(1);
 
             if (!$item_uuid) {
@@ -182,7 +187,8 @@ class Item extends Controller
 
             // do we have the item (at all)?
 
-            $r = q("select * from item where (mid = '%s' or uuid = '%s') $item_normal limit 1",
+            $r = q(
+                "select * from item where (mid = '%s' or uuid = '%s') $item_normal limit 1",
                 dbesc(z_root() . '/item/' . $item_uuid),
                 dbesc($item_uuid)
             );
@@ -204,7 +210,8 @@ class Item extends Controller
                 }
                 observer_auth($portable_id);
 
-                $i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
+                $i = q(
+                    "select id as item_id from item where mid = '%s' $item_normal and owner_xchan = '%s' limit 1",
                     dbesc($r[0]['parent_mid']),
                     dbesc($portable_id)
                 );
@@ -218,7 +225,8 @@ class Item extends Controller
             $sql_extra = item_permissions_sql(0);
 
             if (!$i) {
-                $i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+                $i = q(
+                    "select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
                     dbesc($r[0]['parent_mid'])
                 );
             }
@@ -227,11 +235,13 @@ class Item extends Controller
             if ($bear) {
                 logger('bear: ' . $bear, LOGGER_DEBUG);
                 if (!$i) {
-                    $t = q("select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
+                    $t = q(
+                        "select * from iconfig where cat = 'ocap' and k = 'relay' and v = '%s'",
                         dbesc($bear)
                     );
                     if ($t) {
-                        $i = q("select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
+                        $i = q(
+                            "select id as item_id from item where uuid = '%s' and id = %d $item_normal limit 1",
                             dbesc($item_uuid),
                             intval($t[0]['iid'])
                         );
@@ -245,7 +255,8 @@ class Item extends Controller
 
             $parents_str = ids_to_querystr($i, 'item_id');
 
-            $items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal order by item.id asc",
+            $items = q(
+                "SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal order by item.id asc",
                 dbesc($parents_str)
             );
 
@@ -293,7 +304,6 @@ class Item extends Controller
             HTTPSig::set_headers($h);
             echo $ret;
             killme();
-
         }
 
         // if it isn't a drop command and isn't a post method and wasn't handled already,
@@ -301,7 +311,8 @@ class Item extends Controller
         // the text/html page of the item.
 
         if (argc() > 1 && argv(1) !== 'drop') {
-            $x = q("select uid, item_wall, llink, mid from item where mid = '%s' or mid = '%s' or uuid = '%s'",
+            $x = q(
+                "select uid, item_wall, llink, mid from item where mid = '%s' or mid = '%s' or uuid = '%s'",
                 dbesc(z_root() . '/item/' . argv(1)),
                 dbesc(z_root() . '/activity/' . argv(1)),
                 dbesc(argv(1))
@@ -478,10 +489,12 @@ class Item extends Controller
             $ret = $this->item_check_service_class($uid, (($_REQUEST['webpage'] == ITEM_TYPE_WEBPAGE) ? true : false));
             if (!$ret['success']) {
                 notice(t($ret['message']) . EOL);
-                if ($api_source)
+                if ($api_source) {
                     return (['success' => false, 'message' => 'service class exception']);
-                if (x($_REQUEST, 'return'))
+                }
+                if (x($_REQUEST, 'return')) {
                     goaway(z_root() . "/" . $return_path);
+                }
                 killme();
             }
         }
@@ -504,7 +517,6 @@ class Item extends Controller
         // If this is a comment, find the parent and preset some stuff
 
         if ($parent || $parent_mid) {
-
             if (!x($_REQUEST, 'type')) {
                 $_REQUEST['type'] = 'net-comment';
             }
@@ -515,12 +527,14 @@ class Item extends Controller
             // fetch the parent item
 
             if ($parent) {
-                $r = q("SELECT * FROM item WHERE id = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM item WHERE id = %d LIMIT 1",
                     intval($parent)
                 );
             } elseif ($parent_mid && $uid) {
                 // This is coming from an API source, and we are logged in
-                $r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d LIMIT 1",
+                $r = q(
+                    "SELECT * FROM item WHERE mid = '%s' AND uid = %d LIMIT 1",
                     dbesc($parent_mid),
                     intval($uid)
                 );
@@ -531,7 +545,8 @@ class Item extends Controller
                 $parid = $r[0]['parent'];
                 $parent_mid = $r[0]['mid'];
                 if ($r[0]['id'] != $r[0]['parent']) {
-                    $r = q("SELECT * FROM item WHERE id = parent AND parent = %d LIMIT 1",
+                    $r = q(
+                        "SELECT * FROM item WHERE id = parent AND parent = %d LIMIT 1",
                         intval($parid)
                     );
                 }
@@ -572,7 +587,6 @@ class Item extends Controller
             $thr_parent = $parent_mid;
 
             $route = $parent_item['route'];
-
         }
 
         if ($parent_item && isset($parent_item['replyto']) && $parent_item['replyto']) {
@@ -617,20 +631,24 @@ class Item extends Controller
 
             if (!$can_comment) {
                 notice(t('Permission denied.') . EOL);
-                if ($api_source)
+                if ($api_source) {
                     return (['success' => false, 'message' => 'permission denied']);
-                if (x($_REQUEST, 'return'))
+                }
+                if (x($_REQUEST, 'return')) {
                     goaway(z_root() . "/" . $return_path);
+                }
                 killme();
             }
         } else {
             // fixme - $webpage could also be a wiki page or article and require a different permission to be checked.
             if (!perm_is_allowed($profile_uid, $observer['xchan_hash'], ($webpage) ? 'write_pages' : 'post_wall')) {
                 notice(t('Permission denied.') . EOL);
-                if ($api_source)
+                if ($api_source) {
                     return (['success' => false, 'message' => 'permission denied']);
-                if (x($_REQUEST, 'return'))
+                }
+                if (x($_REQUEST, 'return')) {
                     goaway(z_root() . "/" . $return_path);
+                }
                 killme();
             }
         }
@@ -653,25 +671,30 @@ class Item extends Controller
 
         if ($namespace && $remote_id) {
             // It wasn't an internally generated post - see if we've got an item matching this remote service id
-            $i = q("select iid from iconfig where cat = 'system' and k = '%s' and v = '%s' limit 1",
+            $i = q(
+                "select iid from iconfig where cat = 'system' and k = '%s' and v = '%s' limit 1",
                 dbesc($namespace),
                 dbesc($remote_id)
             );
-            if ($i)
+            if ($i) {
                 $post_id = $i[0]['iid'];
+            }
         }
 
         $iconfig = null;
 
         if ($post_id) {
-            $i = q("SELECT * FROM item WHERE uid = %d AND id = %d LIMIT 1",
+            $i = q(
+                "SELECT * FROM item WHERE uid = %d AND id = %d LIMIT 1",
                 intval($profile_uid),
                 intval($post_id)
             );
-            if (!count($i))
+            if (!count($i)) {
                 killme();
+            }
             $orig_post = $i[0];
-            $iconfig = q("select * from iconfig where iid = %d",
+            $iconfig = q(
+                "select * from iconfig where iid = %d",
                 intval($post_id)
             );
         }
@@ -682,45 +705,53 @@ class Item extends Controller
                 $channel = App::get_channel();
             } else {
                 // posting as yourself but not necessarily to a channel you control
-                $r = q("select * from channel left join account on channel_account_id = account_id where channel_id = %d LIMIT 1",
+                $r = q(
+                    "select * from channel left join account on channel_account_id = account_id where channel_id = %d LIMIT 1",
                     intval($profile_uid)
                 );
-                if ($r)
+                if ($r) {
                     $channel = $r[0];
+                }
             }
         }
 
 
         if (!$channel) {
             logger("mod_item: no channel.");
-            if ($api_source)
+            if ($api_source) {
                 return (['success' => false, 'message' => 'no channel']);
-            if (x($_REQUEST, 'return'))
+            }
+            if (x($_REQUEST, 'return')) {
                 goaway(z_root() . "/" . $return_path);
+            }
             killme();
         }
 
         $owner_xchan = null;
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($channel['channel_hash'])
         );
         if ($r && count($r)) {
             $owner_xchan = $r[0];
         } else {
             logger("mod_item: no owner.");
-            if ($api_source)
+            if ($api_source) {
                 return (['success' => false, 'message' => 'no owner']);
-            if (x($_REQUEST, 'return'))
+            }
+            if (x($_REQUEST, 'return')) {
                 goaway(z_root() . "/" . $return_path);
+            }
             killme();
         }
 
         $walltowall = false;
         $walltowall_comment = false;
 
-        if ($remote_xchan && !$moderated)
+        if ($remote_xchan && !$moderated) {
             $observer = $remote_observer;
+        }
 
         if ($observer) {
             logger('mod_item: post accepted from ' . $observer['xchan_name'] . ' for ' . $owner_xchan['xchan_name'], LOGGER_DEBUG);
@@ -755,13 +786,14 @@ class Item extends Controller
         $comment_policy = ((isset($_REQUEST['comments_from']) && intval($_REQUEST['comments_from'])) ? intval($_REQUEST['comments_from']) : PermissionLimits::Get($channel['channel_id'], 'post_comments'));
 
         $public_policy = ((x($_REQUEST, 'public_policy')) ? escape_tags($_REQUEST['public_policy']) : map_scope($view_policy, true));
-        if ($webpage)
+        if ($webpage) {
             $public_policy = '';
-        if ($public_policy)
+        }
+        if ($public_policy) {
             $private = 1;
+        }
 
         if ($orig_post) {
-
             $private = 0;
             // webpages and unpublished drafts are allowed to change ACLs after the fact. Normal conversation items aren't.
             if ($webpage || intval($orig_post['item_unpublished'])) {
@@ -814,16 +846,16 @@ class Item extends Controller
             $mid = $orig_post['mid'];
             $parent_mid = $orig_post['parent_mid'];
             $plink = $orig_post['plink'];
-
         } else {
             if (!$walltowall) {
-                if ((array_key_exists('contact_allow', $_REQUEST))
+                if (
+                    (array_key_exists('contact_allow', $_REQUEST))
                     || (array_key_exists('group_allow', $_REQUEST))
                     || (array_key_exists('contact_deny', $_REQUEST))
-                    || (array_key_exists('group_deny', $_REQUEST))) {
+                    || (array_key_exists('group_deny', $_REQUEST))
+                ) {
                     $acl->set_from_array($_REQUEST);
                 } elseif (!$api_source) {
-
                     // if no ACL has been defined and we aren't using the API, the form
                     // didn't send us any parameters. This means there's no ACL or it has
                     // been reset to the default audience.
@@ -863,13 +895,16 @@ class Item extends Controller
             }
 
             if ((!$allow_empty) && (!strlen($body))) {
-                if ($preview)
+                if ($preview) {
                     killme();
+                }
                 info(t('Empty post discarded.') . EOL);
-                if ($api_source)
+                if ($api_source) {
                     return (['success' => false, 'message' => 'no content']);
-                if (x($_REQUEST, 'return'))
+                }
+                if (x($_REQUEST, 'return')) {
                     goaway(z_root() . "/" . $return_path);
+                }
                 killme();
             }
         }
@@ -878,15 +913,17 @@ class Item extends Controller
         if (Apps::system_app_installed($profile_uid, 'Expire Posts')) {
             if (x($_REQUEST, 'expire')) {
                 $expires = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['expire']);
-                if ($expires <= datetime_convert())
+                if ($expires <= datetime_convert()) {
                     $expires = NULL_DATE;
+                }
             }
         }
 
 
         $mimetype = notags(trim($_REQUEST['mimetype']));
-        if (!$mimetype)
+        if (!$mimetype) {
             $mimetype = 'text/bbcode';
+        }
 
 
         $execflag = ((intval($uid) == intval($profile_uid)
@@ -968,7 +1005,6 @@ class Item extends Controller
 
 
         if ($mimetype === 'text/bbcode') {
-
             // BBCODE alert: the following functions assume bbcode input
             // and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
             // we may need virtual or template classes to implement the possible alternatives
@@ -992,9 +1028,7 @@ class Item extends Controller
             $comment_tags = linkify_tags($hidden_mentions, ($uid) ? $uid : $profile_uid);
 
             foreach ([$summary_tags, $body_tags, $comment_tags] as $results) {
-
                 if ($results) {
-
                     // Set permissions based on tag replacements
                     set_linkified_perms($results, $str_contact_allow, $str_group_allow, $profile_uid, $parent_item, $private);
 
@@ -1004,7 +1038,6 @@ class Item extends Controller
                     foreach ($results as $result) {
                         $success = $result['success'];
                         if ($success['replaced']) {
-
                             // suppress duplicate mentions/tags
                             $already_tagged = false;
                             foreach ($post_tags as $pt) {
@@ -1030,7 +1063,8 @@ class Item extends Controller
                             // this is checked inside tag_deliver() to create a second delivery chain
 
                             if ($success['termtype'] === TERM_HASHTAG) {
-                                $r = q("select xchan_url from channel left join xchan on xchan_hash = channel_hash where channel_address = '%s' and channel_parent = '%s' and channel_removed = 0",
+                                $r = q(
+                                    "select xchan_url from channel left join xchan on xchan_hash = channel_hash where channel_address = '%s' and channel_parent = '%s' and channel_removed = 0",
                                     dbesc($success['term']),
                                     dbesc(get_observer_hash())
                                 );
@@ -1056,7 +1090,8 @@ class Item extends Controller
 
             if (array_key_exists('collections', $_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
                 foreach ($_REQUEST['collections'] as $clct) {
-                    $r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
+                    $r = q(
+                        "select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
                         dbesc($clct)
                     );
                     if ($r) {
@@ -1080,7 +1115,6 @@ class Item extends Controller
             }
 
             if ($private) {
-
                 // for edited posts, re-use any existing OCAP token (if found).
                 // Otherwise generate a new one.
 
@@ -1157,7 +1191,6 @@ class Item extends Controller
                     $i++;
                 }
             }
-
         }
 
         // BBCODE end alert
@@ -1169,7 +1202,6 @@ class Item extends Controller
 
             $cats = explode(',', $categories);
             foreach ($cats as $cat) {
-
                 if ($webpage == ITEM_TYPE_CARD) {
                     $catlink = z_root() . '/cards/' . $channel['channel_address'] . '?f=&cat=' . urlencode(trim($cat));
                 } elseif ($webpage == ITEM_TYPE_ARTICLE) {
@@ -1190,7 +1222,8 @@ class Item extends Controller
 
         if ($orig_post) {
             // preserve original tags
-            $t = q("select * from term where oid = %d and otype = %d and uid = %d and ttype in ( %d, %d, %d )",
+            $t = q(
+                "select * from term where oid = %d and otype = %d and uid = %d and ttype in ( %d, %d, %d )",
                 intval($orig_post['id']),
                 intval(TERM_OBJ_POST),
                 intval($profile_uid),
@@ -1233,12 +1266,14 @@ class Item extends Controller
         }
 
 
-        if ($moderated)
+        if ($moderated) {
             $item_blocked = ITEM_MODERATED;
+        }
 
 
-        if (!strlen($verb))
+        if (!strlen($verb)) {
             $verb = ACTIVITY_POST;
+        }
 
         $notify_type = (($parent) ? 'comment-new' : 'wall-new');
 
@@ -1283,14 +1318,16 @@ class Item extends Controller
             $parent_mid = $mid;
         }
 
-        if ($parent_item)
+        if ($parent_item) {
             $parent_mid = $parent_item['mid'];
+        }
 
 
         // Fallback so that we alway have a thr_parent
 
-        if (!$thr_parent)
+        if (!$thr_parent) {
             $thr_parent = $mid;
+        }
 
 
         $item_thread_top = ((!$parent) ? 1 : 0);
@@ -1302,7 +1339,8 @@ class Item extends Controller
             $plink = z_root() . '/cards/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : $uuid);
         }
         if (($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_CARD)) {
-            $r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.iid = %d limit 1",
+            $r = q(
+                "select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'CARD' and iconfig.iid = %d limit 1",
                 intval($parent_item['id'])
             );
             if ($r) {
@@ -1314,7 +1352,8 @@ class Item extends Controller
             $plink = z_root() . '/articles/' . $channel['channel_address'] . '/' . (($pagetitle) ? $pagetitle : $uuid);
         }
         if (($parent_item) && ($parent_item['item_type'] == ITEM_TYPE_ARTICLE)) {
-            $r = q("select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.iid = %d limit 1",
+            $r = q(
+                "select v from iconfig where iconfig.cat = 'system' and iconfig.k = 'ARTICLE' and iconfig.iid = %d limit 1",
                 intval($parent_item['id'])
             );
             if ($r) {
@@ -1395,8 +1434,9 @@ class Item extends Controller
 
         // A specific ACL over-rides public_policy completely
 
-        if (!empty_acl($datarray))
+        if (!empty_acl($datarray)) {
             $datarray['public_policy'] = '';
+        }
 
         if ($iconfig) {
             $datarray['iconfig'] = $iconfig;
@@ -1431,7 +1471,7 @@ class Item extends Controller
             $datarray['author'] = $observer;
             $datarray['attach'] = json_encode($datarray['attach']);
             $o = conversation(array($datarray), 'search', false, 'preview');
-            //		logger('preview: ' . $o, LOGGER_DEBUG);
+            //      logger('preview: ' . $o, LOGGER_DEBUG);
             echo json_encode(array('preview' => $o));
             killme();
         }
@@ -1448,8 +1488,8 @@ class Item extends Controller
         // some attribute besides the content, such as title or categories.
 
         if (PConfig::Get($profile_uid, 'system', 'suppress_duplicates', true) && (!$orig_post)) {
-
-            $z = q("select created from item where uid = %d and created > %s - INTERVAL %s and body = '%s' limit 1",
+            $z = q(
+                "select created from item where uid = %d and created > %s - INTERVAL %s and body = '%s' limit 1",
                 intval($profile_uid),
                 db_utcnow(),
                 db_quoteinterval('2 MINUTE'),
@@ -1482,15 +1522,26 @@ class Item extends Controller
         }
 
 
-        if (mb_strlen($datarray['title']) > 191)
+        if (mb_strlen($datarray['title']) > 191) {
             $datarray['title'] = mb_substr($datarray['title'], 0, 191);
+        }
 
         if ($webpage) {
-            IConfig::Set($datarray, 'system', webpage_to_namespace($webpage),
-                (($pagetitle) ? $pagetitle : basename($datarray['mid'])), true);
+            IConfig::Set(
+                $datarray,
+                'system',
+                webpage_to_namespace($webpage),
+                (($pagetitle) ? $pagetitle : basename($datarray['mid'])),
+                true
+            );
         } elseif ($namespace) {
-            IConfig::Set($datarray, 'system', $namespace,
-                (($remote_id) ? $remote_id : basename($datarray['mid'])), true);
+            IConfig::Set(
+                $datarray,
+                'system',
+                $namespace,
+                (($remote_id) ? $remote_id : basename($datarray['mid'])),
+                true
+            );
         }
 
         if (intval($datarray['item_unpublished'])) {
@@ -1502,7 +1553,8 @@ class Item extends Controller
 
             $x = item_store_update($datarray, $execflag);
             if (!$parent) {
-                $r = q("select * from item where id = %d",
+                $r = q(
+                    "select * from item where id = %d",
                     intval($post_id)
                 );
                 if ($r) {
@@ -1530,8 +1582,9 @@ class Item extends Controller
                 goaway(z_root() . "/" . $return_path);
             }
             killme();
-        } else
+        } else {
             $post_id = 0;
+        }
 
         $post = item_store($datarray, $execflag);
 
@@ -1547,11 +1600,11 @@ class Item extends Controller
             logger('mod_item: saved item ' . $post_id);
 
             if ($parent) {
-
                 // prevent conversations which you are involved from being expired
 
-                if (local_channel())
+                if (local_channel()) {
                     retain_item($parent);
+                }
 
                 // only send comment notification if this is a wall-to-wall comment and not a DM,
                 // otherwise it will happen during delivery
@@ -1568,7 +1621,6 @@ class Item extends Controller
                         'parent' => $parent,
                         'parent_mid' => $parent_item['mid']
                     ));
-
                 }
             } else {
                 $parent = $post_id;
@@ -1586,7 +1638,8 @@ class Item extends Controller
                 }
 
                 if ($uid && $uid == $profile_uid && (is_item_normal($datarray))) {
-                    q("update channel set channel_lastpost = '%s' where channel_id = %d",
+                    q(
+                        "update channel set channel_lastpost = '%s' where channel_id = %d",
                         dbesc(datetime_convert()),
                         intval($uid)
                     );
@@ -1598,17 +1651,20 @@ class Item extends Controller
             // They will show up as people comment on them.
 
             if (intval($parent_item['item_hidden'])) {
-                $r = q("UPDATE item SET item_hidden = 0 WHERE id = %d",
+                $r = q(
+                    "UPDATE item SET item_hidden = 0 WHERE id = %d",
                     intval($parent_item['id'])
                 );
             }
         } else {
             logger('mod_item: unable to retrieve post that was just stored.');
             notice(t('System error. Post not saved.') . EOL);
-            if ($return_path)
+            if ($return_path) {
                 goaway(z_root() . "/" . $return_path);
-            if ($api_source)
+            }
+            if ($api_source) {
                 return (['success' => false, 'message' => 'system error']);
+            }
             killme();
         }
 
@@ -1618,7 +1674,8 @@ class Item extends Controller
             //$ditem['author'] = $observer;
             //store_diaspora_comment_sig($ditem,$channel,$parent_item, $post_id, (($walltowall_comment) ? 1 : 0));
         } else {
-            $r = q("select * from item where id = %d",
+            $r = q(
+                "select * from item where id = %d",
                 intval($post_id)
             );
             if ($r) {
@@ -1648,8 +1705,9 @@ class Item extends Controller
 
         // figure out how to return, depending on from whence we came
 
-        if ($api_source)
+        if ($api_source) {
             return $post;
+        }
 
         if (intval($datarray['item_unpublished'])) {
             info($draft_msg);
@@ -1660,8 +1718,9 @@ class Item extends Controller
         }
 
         $json = array('success' => 1);
-        if (x($_REQUEST, 'jsreload') && strlen($_REQUEST['jsreload']))
+        if (x($_REQUEST, 'jsreload') && strlen($_REQUEST['jsreload'])) {
             $json['reload'] = z_root() . '/' . $_REQUEST['jsreload'];
+        }
 
         logger('post_json: ' . print_r($json, true), LOGGER_DEBUG);
 
@@ -1680,8 +1739,9 @@ class Item extends Controller
             return;
         }
 
-        if ((!local_channel()) && (!remote_channel()))
+        if ((!local_channel()) && (!remote_channel())) {
             return;
+        }
 
         // allow pinned items to be dropped. 'pin-' was prepended to the id of these
         // items so that they would have a unique html id even if the pinned item
@@ -1690,8 +1750,8 @@ class Item extends Controller
         $drop_id = str_replace('pin-', '', argv(2));
 
         if ((argc() == 3) && (argv(1) === 'drop') && intval($drop_id)) {
-
-            $i = q("select * from item where id = %d limit 1",
+            $i = q(
+                "select * from item where id = %d limit 1",
                 intval($drop_id)
             );
 
@@ -1716,8 +1776,9 @@ class Item extends Controller
 
                 if (is_site_admin()) {
                     $local_delete = true;
-                    if (intval($i[0]['item_origin']))
+                    if (intval($i[0]['item_origin'])) {
                         $can_delete = true;
+                    }
                 }
 
 
@@ -1728,13 +1789,15 @@ class Item extends Controller
 
                 if ($i[0]['resource_type'] === 'event') {
                     // delete and sync the event separately
-                    $r = q("SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+                    $r = q(
+                        "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                         dbesc($i[0]['resource_id']),
                         intval($i[0]['uid'])
                     );
                     if ($r && $regular_delete) {
                         $sync_event = $r[0];
-                        q("delete from event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
+                        q(
+                            "delete from event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
                             dbesc($i[0]['resource_id']),
                             intval($i[0]['uid'])
                         );
@@ -1768,7 +1831,8 @@ class Item extends Controller
                     $complex = true;
                 }
 
-                $r = q("select * from item where id = %d",
+                $r = q(
+                    "select * from item where id = %d",
                     intval($i[0]['id'])
                 );
                 if ($r) {
@@ -1790,14 +1854,16 @@ class Item extends Controller
         $ret = array('success' => false, 'message' => '');
 
         if ($iswebpage) {
-            $r = q("select count(i.id)  as total from item i 
+            $r = q(
+                "select count(i.id)  as total from item i 
 				right join channel c on (i.author_xchan=c.channel_hash and i.uid=c.channel_id )  
 				and i.parent=i.id and i.item_type = %d and i.item_deleted = 0 and i.uid= %d ",
                 intval(ITEM_TYPE_WEBPAGE),
                 intval($channel_id)
             );
         } else {
-            $r = q("select count(id) as total from item where parent = id and item_wall = 1 and uid = %d " . item_normal(),
+            $r = q(
+                "select count(id) as total from item where parent = id and item_wall = 1 and uid = %d " . item_normal(),
                 intval($channel_id)
             );
         }
@@ -1880,7 +1946,6 @@ class Item extends Controller
         }
 
         return $obj;
-
     }
 
     public function extract_poll_data($poll, $item)
@@ -1898,8 +1963,9 @@ class Item extends Controller
         $obj['content'] = bbcode($question);
 
         foreach ($answers as $answer) {
-            if (trim($answer))
+            if (trim($answer)) {
                 $ptr[] = ['name' => escape_tags($answer), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+            }
         }
 
         if ($multiple) {
@@ -1917,7 +1983,5 @@ class Item extends Controller
         }
 
         return $obj;
-
     }
-
 }

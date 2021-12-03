@@ -10,10 +10,9 @@ class _1123
 ADD INDEX ( `hubloc_network` )");
         $r2 = q("update hubloc set hubloc_network = 'zot' where true");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

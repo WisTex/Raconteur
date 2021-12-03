@@ -12,12 +12,10 @@ class _1250
 
         q("delete from app where app_id = '$access' ");
         return UPDATE_SUCCESS;
-
     }
 
     public function verify()
     {
         return true;
     }
-
 }

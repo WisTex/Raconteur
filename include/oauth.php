@@ -1,8 +1,10 @@
-<?php /** @file */
+<?php
 
-/** 
+/** @file */
+
+/**
  * OAuth-1 server
- * 
+ *
  */
 
 define('REQUEST_TOKEN_DURATION', 300);
@@ -23,7 +25,8 @@ class ZotOAuth1DataStore extends OAuth1DataStore
     {
         logger('consumer_key: ' . $consumer_key, LOGGER_DEBUG);
 
-        $r = q("SELECT client_id, pw, redirect_uri FROM clients WHERE client_id = '%s'",
+        $r = q(
+            "SELECT client_id, pw, redirect_uri FROM clients WHERE client_id = '%s'",
             dbesc($consumer_key)
         );
 
@@ -39,7 +42,8 @@ class ZotOAuth1DataStore extends OAuth1DataStore
 
         logger(__function__ . ':' . $consumer . ', ' . $token_type . ', ' . $token, LOGGER_DEBUG);
 
-        $r = q("SELECT id, secret, auth_scope, expires, uid  FROM tokens WHERE client_id = '%s' AND auth_scope = '%s' AND id = '%s'",
+        $r = q(
+            "SELECT id, secret, auth_scope, expires, uid  FROM tokens WHERE client_id = '%s' AND auth_scope = '%s' AND id = '%s'",
             dbesc($consumer->key),
             dbesc($token_type),
             dbesc($token)
@@ -58,7 +62,8 @@ class ZotOAuth1DataStore extends OAuth1DataStore
     public function lookup_nonce($consumer, $token, $nonce, $timestamp)
     {
 
-        $r = q("SELECT id, secret FROM tokens WHERE client_id = '%s' AND id = '%s' AND expires = %d",
+        $r = q(
+            "SELECT id, secret FROM tokens WHERE client_id = '%s' AND id = '%s' AND expires = %d",
             dbesc($consumer->key),
             dbesc($nonce),
             intval($timestamp)
@@ -84,12 +89,14 @@ class ZotOAuth1DataStore extends OAuth1DataStore
             $k = $consumer;
         }
 
-        $r = q("INSERT INTO tokens (id, secret, client_id, auth_scope, expires, uid) VALUES ('%s','%s','%s','%s', %d, 0)",
+        $r = q(
+            "INSERT INTO tokens (id, secret, client_id, auth_scope, expires, uid) VALUES ('%s','%s','%s','%s', %d, 0)",
             dbesc($key),
             dbesc($sec),
             dbesc($k),
             'request',
-            time() + intval(REQUEST_TOKEN_DURATION));
+            time() + intval(REQUEST_TOKEN_DURATION)
+        );
 
         if (!$r) {
             return null;
@@ -113,17 +120,18 @@ class ZotOAuth1DataStore extends OAuth1DataStore
         $uverifier = get_config("oauth", $verifier);
         logger(__function__ . ':' . $verifier . ', ' . $uverifier, LOGGER_DEBUG);
         if (is_null($verifier) || ($uverifier !== false)) {
-
             $key = $this->gen_token();
             $sec = $this->gen_token();
 
-            $r = q("INSERT INTO tokens (id, secret, client_id, auth_scope, expires, uid) VALUES ('%s','%s','%s','%s', %d, %d)",
+            $r = q(
+                "INSERT INTO tokens (id, secret, client_id, auth_scope, expires, uid) VALUES ('%s','%s','%s','%s', %d, %d)",
                 dbesc($key),
                 dbesc($sec),
                 dbesc($consumer->key),
                 'access',
                 time() + intval(ACCESS_TOKEN_DURATION),
-                intval($uverifier));
+                intval($uverifier)
+            );
 
             if ($r) {
                 $ret = new OAuth1Token($key, $sec);
@@ -156,7 +164,8 @@ class ZotOAuth1 extends OAuth1Server
 
         logger("ZotOAuth1::loginUser $uid");
 
-        $r = q("SELECT * FROM channel WHERE channel_id = %d LIMIT 1",
+        $r = q(
+            "SELECT * FROM channel WHERE channel_id = %d LIMIT 1",
             intval($uid)
         );
         if ($r) {
@@ -171,7 +180,8 @@ class ZotOAuth1 extends OAuth1Server
         $_SESSION['uid'] = $record['channel_id'];
         $_SESSION['addr'] = $_SERVER['REMOTE_ADDR'];
 
-        $x = q("select * from account where account_id = %d limit 1",
+        $x = q(
+            "select * from account where account_id = %d limit 1",
             intval($record['channel_account_id'])
         );
         if ($x) {
@@ -180,6 +190,4 @@ class ZotOAuth1 extends OAuth1Server
             $_SESSION['allow_api'] = true;
         }
     }
-
 }
-

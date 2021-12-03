@@ -8,8 +8,9 @@ class Eventstools
     public function widget($arr)
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         return replace_macros(get_markup_template('events_tools_side.tpl'), array(
             '$title' => t('Events Tools'),

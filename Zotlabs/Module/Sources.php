@@ -1,5 +1,6 @@
 <?php
-namespace Zotlabs\Module; 
+
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -34,7 +35,8 @@ class Sources extends Controller
         }
 
         if ($abook) {
-            $r = q("select abook_xchan from abook where abook_id = %d and abook_channel = %d limit 1",
+            $r = q(
+                "select abook_xchan from abook where abook_id = %d and abook_channel = %d limit 1",
                 intval($abook),
                 intval(local_channel())
             );
@@ -51,7 +53,8 @@ class Sources extends Controller
         set_abconfig(local_channel(), $xchan, 'system', 'rself', $resend);
 
         if (!$source) {
-            $r = q("insert into source ( src_channel_id, src_channel_xchan, src_xchan, src_patt, src_tag )
+            $r = q(
+                "insert into source ( src_channel_id, src_channel_xchan, src_xchan, src_patt, src_tag )
 				values ( %d, '%s', '%s', '%s', '%s' ) ",
                 intval(local_channel()),
                 dbesc($channel['channel_hash']),
@@ -64,7 +67,8 @@ class Sources extends Controller
             }
             goaway(z_root() . '/sources');
         } else {
-            $r = q("update source set src_xchan = '%s', src_patt = '%s', src_tag = '%s' where src_channel_id = %d and src_id = %d",
+            $r = q(
+                "update source set src_xchan = '%s', src_patt = '%s', src_tag = '%s' where src_channel_id = %d and src_id = %d",
                 dbesc($xchan),
                 dbesc($words),
                 dbesc($tags),
@@ -92,7 +96,8 @@ class Sources extends Controller
 
         // list sources
         if (argc() == 1) {
-            $r = q("select source.*, xchan.* from source left join xchan on src_xchan = xchan_hash where src_channel_id = %d",
+            $r = q(
+                "select source.*, xchan.* from source left join xchan on src_xchan = xchan_hash where src_channel_id = %d",
                 intval(local_channel())
             );
             if ($r) {
@@ -125,17 +130,18 @@ class Sources extends Controller
                 '$submit' => t('Submit')
             ]);
             return $o;
-
         }
 
         if (argc() == 2 && intval(argv(1))) {
             // edit source
-            $r = q("select source.*, xchan.* from source left join xchan on src_xchan = xchan_hash where src_id = %d and src_channel_id = %d limit 1",
+            $r = q(
+                "select source.*, xchan.* from source left join xchan on src_xchan = xchan_hash where src_id = %d and src_channel_id = %d limit 1",
                 intval(argv(1)),
                 intval(local_channel())
             );
             if ($r) {
-                $x = q("select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
+                $x = q(
+                    "select abook_id from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
                     dbesc($r[0]['src_xchan']),
                     intval(local_channel())
                 );
@@ -162,11 +168,11 @@ class Sources extends Controller
                 '$submit' => t('Submit')
             ));
             return $o;
-
         }
 
         if (argc() == 3 && intval(argv(1)) && argv(2) === 'drop') {
-            $r = q("select * from source where src_id = %d and src_channel_id = %d limit 1",
+            $r = q(
+                "select * from source where src_id = %d and src_channel_id = %d limit 1",
                 intval(argv(1)),
                 intval(local_channel())
             );
@@ -174,20 +180,20 @@ class Sources extends Controller
                 notice(t('Source not found.') . EOL);
                 return '';
             }
-            $r = q("delete from source where src_id = %d and src_channel_id = %d",
+            $r = q(
+                "delete from source where src_id = %d and src_channel_id = %d",
                 intval(argv(1)),
                 intval(local_channel())
             );
-            if ($r)
+            if ($r) {
                 info(t('Source removed') . EOL);
-            else
+            } else {
                 notice(t('Unable to remove source.') . EOL);
+            }
 
             goaway(z_root() . '/sources');
-
         }
 
         // shouldn't get here.
-
     }
 }

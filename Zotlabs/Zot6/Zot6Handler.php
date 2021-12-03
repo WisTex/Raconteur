@@ -68,11 +68,11 @@ class Zot6Handler implements IHandler
         $ret = array('success' => false);
 
         if ($recipients) {
-
             // This would be a permissions update, typically for one connection
 
             foreach ($recipients as $recip) {
-                $r = q("select channel.*,xchan.* from channel
+                $r = q(
+                    "select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
 					where channel_hash ='%s' limit 1",
                     dbesc($recip)
@@ -81,7 +81,6 @@ class Zot6Handler implements IHandler
                 $x = Libzot::refresh(['hubloc_id_url' => $hub['hubloc_id_url']], $r[0], $force);
             }
         } else {
-
             // system wide refresh
             $x = Libzot::refresh(['hubloc_id_url' => $hub['hubloc_id_url']], null, $force);
         }
@@ -96,26 +95,29 @@ class Zot6Handler implements IHandler
 
         $ret = array('success' => false);
 
-        //	newsig is newkey signed with oldkey
+        //  newsig is newkey signed with oldkey
 
         // The original xchan will remain. In Zot/Receiver we will have imported the new xchan and hubloc to verify
         // the packet authenticity. What we will do now is verify that the keychange operation was signed by the
         // oldkey, and if so change all the abook, abconfig, group, and permission elements which reference the
         // old xchan_hash.
 
-        if ((!$data['old_key']) && (!$data['new_key']) && (!$data['new_sig']))
+        if ((!$data['old_key']) && (!$data['new_key']) && (!$data['new_sig'])) {
             return $ret;
+        }
 
 
         $old = null;
 
         if (Libzot::verify($data['old_guid'], $data['old_guid_sig'], $data['old_key'])) {
             $oldhash = make_xchan_hash($data['old_guid'], $data['old_key']);
-            $old = q("select * from xchan where xchan_hash = '%s' limit 1",
+            $old = q(
+                "select * from xchan where xchan_hash = '%s' limit 1",
                 dbesc($oldhash)
             );
-        } else
+        } else {
             return $ret;
+        }
 
 
         if (!$old) {
@@ -128,7 +130,8 @@ class Zot6Handler implements IHandler
             return $ret;
         }
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($sender)
         );
 
@@ -166,13 +169,15 @@ class Zot6Handler implements IHandler
         if ($recipients) {
             // basically this means "unfriend"
             foreach ($recipients as $recip) {
-                $channel = q("select channel.*,xchan.* from channel
+                $channel = q(
+                    "select channel.*,xchan.* from channel
 					left join xchan on channel_hash = xchan_hash
 					where channel_hash = '%s' limit 1",
                     dbesc($recip)
                 );
                 if ($channel) {
-                    $abook = q("select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
+                    $abook = q(
+                        "select abook_id from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
                         intval($channel[0]['channel_id']),
                         dbesc($sender)
                     );
@@ -183,7 +188,6 @@ class Zot6Handler implements IHandler
             }
             $ret['success'] = true;
         } else {
-
             // Unfriend everybody - basically this means the channel has committed suicide
 
             remove_all_xchan_resources($sender);
@@ -193,5 +197,4 @@ class Zot6Handler implements IHandler
 
         return $ret;
     }
-
 }

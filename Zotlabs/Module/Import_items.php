@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -17,8 +18,9 @@ class Import_items extends Controller
     public function post()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         check_form_security_token_redirectOnErr('/import_items', 'import_items');
 
@@ -45,7 +47,6 @@ class Import_items extends Controller
         }
 
         if (!$src) {
-
             $old_address = ((x($_REQUEST, 'old_address')) ? $_REQUEST['old_address'] : '');
 
             if (!$old_address) {
@@ -69,12 +70,14 @@ class Import_items extends Controller
             $opts = array('http_auth' => $email . ':' . $password);
             $url = $scheme . $servername . $api_path;
             $ret = z_fetch_url($url, $binary, $redirects, $opts);
-            if (!$ret['success'])
+            if (!$ret['success']) {
                 $ret = z_fetch_url('http://' . $servername . $api_path, $binary, $redirects, $opts);
-            if ($ret['success'])
+            }
+            if ($ret['success']) {
                 $data = $ret['body'];
-            else
+            } else {
                 notice(t('Unable to download data from old server') . EOL);
+            }
         }
 
         if (!$data) {
@@ -88,17 +91,18 @@ class Import_items extends Controller
         //logger('import: data: ' . print_r($data,true));
         //print_r($data);
 
-        if (!is_array($data))
+        if (!is_array($data)) {
             return;
+        }
 
-//		if(array_key_exists('compatibility',$data) && array_key_exists('database',$data['compatibility'])) {
-//			$v1 = substr($data['compatibility']['database'],-4);
-//			$v2 = substr(DB_UPDATE_VERSION,-4);
-//			if($v2 > $v1) {
-//				$t = sprintf( t('Warning: Database versions differ by %1$d updates.'), $v2 - $v1 );
-//				notice($t . EOL);
-//			}
-//		}
+//      if(array_key_exists('compatibility',$data) && array_key_exists('database',$data['compatibility'])) {
+//          $v1 = substr($data['compatibility']['database'],-4);
+//          $v2 = substr(DB_UPDATE_VERSION,-4);
+//          if($v2 > $v1) {
+//              $t = sprintf( t('Warning: Database versions differ by %1$d updates.'), $v2 - $v1 );
+//              notice($t . EOL);
+//          }
+//      }
 
         $codebase = 'zap';
 
@@ -140,5 +144,4 @@ class Import_items extends Controller
 
         return $o;
     }
-
 }

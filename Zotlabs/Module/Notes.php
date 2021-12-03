@@ -1,5 +1,8 @@
 <?php
-namespace Zotlabs\Module; /** @file */
+
+namespace Zotlabs\Module;
+
+/** @file */
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
@@ -11,8 +14,9 @@ class Notes extends Controller
     public function init()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $ret = array('success' => true);
         if (array_key_exists('note_text', $_REQUEST)) {
@@ -24,8 +28,9 @@ class Notes extends Controller
 
             if (!$body) {
                 $old_text = get_pconfig(local_channel(), 'notes', 'text');
-                if ($old_text)
+                if ($old_text) {
                     set_pconfig(local_channel(), 'notes', 'text.bak', $old_text);
+                }
             }
             set_pconfig(local_channel(), 'notes', 'text', $body);
 
@@ -38,7 +43,6 @@ class Notes extends Controller
 
             logger('notes saved.', LOGGER_DEBUG);
             json_return_and_die($ret);
-
         }
     }
 
@@ -58,8 +62,5 @@ class Notes extends Controller
         $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
 
         return $text;
-
     }
-
-
 }

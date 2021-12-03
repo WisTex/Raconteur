@@ -30,9 +30,9 @@ class Followers extends Controller
             http_status_exit(404, 'Not found');
         }
 
-//		if (intval($channel['channel_system'])) {
-//			http_status_exit(403,'Permission denied');
-//		}
+//      if (intval($channel['channel_system'])) {
+//          http_status_exit(403,'Permission denied');
+//      }
 
         Libprofile::load(argv(1));
 
@@ -46,7 +46,8 @@ class Followers extends Controller
             http_status_exit(403, 'Forbidden');
         }
 
-        $t = q("select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'their_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 ",
+        $t = q(
+            "select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'their_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 ",
             intval($channel['channel_id']),
             intval($channel['channel_id']),
             dbesc($channel['channel_hash'])
@@ -61,7 +62,8 @@ class Followers extends Controller
         } else {
             $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
-            $r = q("select * from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'their_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 $pager_sql",
+            $r = q(
+                "select * from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'their_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 $pager_sql",
                 intval($channel['channel_id']),
                 intval($channel['channel_id']),
                 dbesc($channel['channel_hash'])
@@ -73,7 +75,5 @@ class Followers extends Controller
         if (ActivityStreams::is_as_request()) {
             as_return_and_die($ret, $channel);
         }
-
     }
-
 }

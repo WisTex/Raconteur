@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -17,11 +18,11 @@ class Conversation extends Controller
     {
 
         if (ActivityStreams::is_as_request()) {
-
             $item_id = argv(1);
 
-            if (!$item_id)
+            if (!$item_id) {
                 http_status_exit(404, 'Not found');
+            }
 
             $portable_id = EMPTY_STR;
 
@@ -31,12 +32,14 @@ class Conversation extends Controller
 
             // do we have the item (at all)?
 
-            $r = q("select * from item where mid = '%s' $item_normal limit 1",
+            $r = q(
+                "select * from item where mid = '%s' $item_normal limit 1",
                 dbesc(z_root() . '/activity/' . $item_id)
             );
 
             if (!$r) {
-                $r = q("select * from item where mid = '%s' $item_normal limit 1",
+                $r = q(
+                    "select * from item where mid = '%s' $item_normal limit 1",
                     dbesc(z_root() . '/item/' . $item_id)
                 );
                 if (!$r) {
@@ -54,12 +57,14 @@ class Conversation extends Controller
                 // first see if we have a copy of this item's parent owned by the current signer
                 // include xchans for all zot-like networks - these will have the same guid and public key
 
-                $x = q("select * from xchan where xchan_hash = '%s'",
+                $x = q(
+                    "select * from xchan where xchan_hash = '%s'",
                     dbesc($sigdata['portable_id'])
                 );
 
                 if ($x) {
-                    $xchans = q("select xchan_hash from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
+                    $xchans = q(
+                        "select xchan_hash from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
                         dbesc($sigdata['portable_id']),
                         dbesc($x[0]['xchan_guid']),
                         dbesc($x[0]['xchan_pubkey'])
@@ -67,7 +72,8 @@ class Conversation extends Controller
 
                     if ($xchans) {
                         $hashes = ids_to_querystr($xchans, 'xchan_hash', true);
-                        $i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan in ( " . protect_sprintf($hashes) . " ) limit 1",
+                        $i = q(
+                            "select id as item_id from item where mid = '%s' $item_normal and owner_xchan in ( " . protect_sprintf($hashes) . " ) limit 1",
                             dbesc($r[0]['parent_mid'])
                         );
                     }
@@ -80,7 +86,8 @@ class Conversation extends Controller
             $sql_extra = item_permissions_sql(0);
 
             if (!$i) {
-                $i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+                $i = q(
+                    "select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
                     dbesc($r[0]['parent_mid'])
                 );
             }
@@ -91,7 +98,8 @@ class Conversation extends Controller
 
             $parents_str = ids_to_querystr($i, 'item_id');
 
-            $items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal ",
+            $items = q(
+                "SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal ",
                 dbesc($parents_str)
             );
 
@@ -108,7 +116,6 @@ class Conversation extends Controller
             $to = (($recips && array_key_exists('to', $recips) && is_array($recips['to'])) ? $recips['to'] : null);
             $nitems = [];
             foreach ($items as $i) {
-
                 $mids = [];
 
                 if (intval($i['item_private'])) {
@@ -130,33 +137,35 @@ class Conversation extends Controller
                     if ((!$to) || (!in_array($observer['xchan_url'], $to))) {
                         continue;
                     }
-
                 }
                 $nitems[] = $i;
             }
 
-            if (!$nitems)
+            if (!$nitems) {
                 http_status_exit(404, 'Not found');
+            }
 
             $chan = channelx_by_n($nitems[0]['uid']);
 
-            if (!$chan)
+            if (!$chan) {
                 http_status_exit(404, 'Not found');
+            }
 
-            if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream'))
+            if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream')) {
                 http_status_exit(403, 'Forbidden');
+            }
 
             $i = ZlibActivity::encode_item_collection($nitems, 'conversation/' . $item_id, 'OrderedCollection', true, count($nitems));
             if ($portable_id && (!intval($items[0]['item_private']))) {
                 ThreadListener::store(z_root() . '/activity/' . $item_id, $portable_id);
             }
 
-            if (!$i)
+            if (!$i) {
                 http_status_exit(404, 'Not found');
+            }
 
             $channel = channelx_by_n($items[0]['uid']);
             as_return_and_die($i, $channel);
-
         }
 
         goaway(z_root() . '/item/' . argv(1));

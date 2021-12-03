@@ -8,11 +8,9 @@ class _1154
     {
 
         $r = q("ALTER TABLE event ADD event_vdata text NOT NULL ");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

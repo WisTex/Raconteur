@@ -27,7 +27,8 @@ class Poster extends Controller
 
         $sql_extra = permissions_sql(intval($u['channel_id']));
 
-        $r = q("select content from attach where hash = '%s' and uid = %d and os_storage = 1 $sql_extra limit 1",
+        $r = q(
+            "select content from attach where hash = '%s' and uid = %d and os_storage = 1 $sql_extra limit 1",
             dbesc($hash),
             intval($u['channel_id'])
         );

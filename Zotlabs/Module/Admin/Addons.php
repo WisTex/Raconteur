@@ -226,7 +226,7 @@ class Addons
                         foreach ($git->git->tree('master') as $object) {
                             if ($object['type'] == 'blob' && (strtolower($object['file']) === 'readme.md' || strtolower($object['file']) === 'readme')) {
                                 $repo['readme'] = MarkdownExtra::defaultTransform($git->git->cat->blob($object['hash']));
-                            } else if ($object['type'] == 'blob' && strtolower($object['file']) === 'manifest.json') {
+                            } elseif ($object['type'] == 'blob' && strtolower($object['file']) === 'manifest.json') {
                                 $repo['manifest'] = $git->git->cat->blob($object['hash']);
                             }
                         }
@@ -297,8 +297,9 @@ class Addons
 
                 if ($pinstalled) {
                     @require_once("addon/$plugin/$plugin.php");
-                    if (function_exists($plugin . '_plugin_admin'))
+                    if (function_exists($plugin . '_plugin_admin')) {
                         goaway(z_root() . '/admin/addons/' . $plugin);
+                    }
                 }
                 goaway(z_root() . '/admin/addons');
             }
@@ -317,13 +318,14 @@ class Addons
             if (is_file("addon/$plugin/README.md")) {
                 $readme = file_get_contents("addon/$plugin/README.md");
                 $readme = MarkdownExtra::defaultTransform($readme);
-            } else if (is_file("addon/$plugin/README")) {
+            } elseif (is_file("addon/$plugin/README")) {
                 $readme = "<pre>" . file_get_contents("addon/$plugin/README") . "</pre>";
             }
 
             $admin_form = '';
 
-            $r = q("select * from addon where plugin_admin = 1 and aname = '%s' limit 1",
+            $r = q(
+                "select * from addon where plugin_admin = 1 and aname = '%s' limit 1",
                 dbesc($plugin)
             );
 
@@ -409,7 +411,8 @@ class Addons
         }
 
         $admin_plugins_add_repo_form = replace_macros(
-            get_markup_template('admin_plugins_addrepo.tpl'), array(
+            get_markup_template('admin_plugins_addrepo.tpl'),
+            array(
                 '$post' => 'admin/addons/addrepo',
                 '$desc' => t('Enter the public git repository URL of the addon repo.'),
                 '$repoURL' => array('repoURL', t('Addon repo git URL'), '', ''),
@@ -419,7 +422,8 @@ class Addons
         );
         $newRepoModalID = random_string(3);
         $newRepoModal = replace_macros(
-            get_markup_template('generic_modal.tpl'), array(
+            get_markup_template('generic_modal.tpl'),
+            array(
                 '$id' => $newRepoModalID,
                 '$title' => t('Install new repo'),
                 '$ok' => t('Install'),
@@ -480,5 +484,4 @@ class Addons
     {
         return (strcmp(strtolower($a[2]['name']), strtolower($b[2]['name'])));
     }
-
 }

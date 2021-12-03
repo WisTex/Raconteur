@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -23,21 +24,25 @@ class Notifications extends Controller
         $notif_content = '';
         $notifications_available = false;
 
-        $n = q("select count(*) as total from notify where uid = %d and seen = 0",
+        $n = q(
+            "select count(*) as total from notify where uid = %d and seen = 0",
             intval(local_channel())
         );
         if ($n && intval($n[0]['total']) > 49) {
-            $r = q("select * from notify where uid = %d
+            $r = q(
+                "select * from notify where uid = %d
 				and seen = 0 order by created desc limit 50",
                 intval(local_channel())
             );
         } else {
-            $r1 = q("select * from notify where uid = %d
+            $r1 = q(
+                "select * from notify where uid = %d
 				and seen = 0 order by created desc limit 50",
                 intval(local_channel())
             );
 
-            $r2 = q("select * from notify where uid = %d
+            $r2 = q(
+                "select * from notify where uid = %d
 				and seen = 1 order by created desc limit %d",
                 intval(local_channel()),
                 intval(50 - intval($n[0]['total']))
@@ -71,5 +76,4 @@ class Notifications extends Controller
 
         return $o;
     }
-
 }

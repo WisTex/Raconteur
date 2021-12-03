@@ -16,10 +16,9 @@ PRIMARY KEY ( `site_url` )
 
         $r2 = q("alter table site add index (site_flags), add index (site_update), add index (site_directory) ");
 
-        if ($r && $r2)
+        if ($r && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

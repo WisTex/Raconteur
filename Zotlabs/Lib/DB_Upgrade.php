@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Lib;
 
-
 use App;
 
 class DB_Upgrade
@@ -18,8 +17,9 @@ class DB_Upgrade
         $this->func_prefix = '_';
 
         $build = get_config('system', 'db_version', 0);
-        if (!intval($build))
+        if (!intval($build)) {
             $build = set_config('system', 'db_version', $db_revision);
+        }
 
         if ($build == $db_revision) {
             // Nothing to be done.
@@ -34,7 +34,6 @@ class DB_Upgrade
             $current = intval($db_revision);
 
             if ($stored < $current) {
-
                 // The last update we performed was $stored.
                 // Start at $stored + 1 and continue until we have completed $current
 
@@ -55,8 +54,9 @@ class DB_Upgrade
 
                     Config::Load('database');
 
-                    if (get_config('database', $s))
+                    if (get_config('database', $s)) {
                         break;
+                    }
                     set_config('database', $s, '1');
 
 
@@ -65,8 +65,6 @@ class DB_Upgrade
                     $retval = $c->run();
 
                     if ($retval != UPDATE_SUCCESS) {
-
-
                         $source = t('Source code of failed update: ') . "\n\n" . @file_get_contents('Zotlabs/Update/' . $s . '.php');
 
 
@@ -75,13 +73,15 @@ class DB_Upgrade
 
                         $lockfile = 'cache/mailsent';
 
-                        if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 86400)))
+                        if ((file_exists($lockfile)) && (filemtime($lockfile) > (time() - 86400))) {
                             return;
+                        }
                         @unlink($lockfile);
                         //send the administrator an e-mail
                         file_put_contents($lockfile, $x);
 
-                        $r = q("select account_language from account where account_email = '%s' limit 1",
+                        $r = q(
+                            "select account_language from account where account_email = '%s' limit 1",
                             dbesc(App::$config['system']['admin_email'])
                         );
                         push_lang(($r) ? $r[0]['account_language'] : 'en');
@@ -89,7 +89,8 @@ class DB_Upgrade
                             [
                                 'toEmail' => App::$config['system']['admin_email'],
                                 'messageSubject' => sprintf(t('Update Error at %s'), z_root()),
-                                'textVersion' => replace_macros(get_intltext_template('update_fail_eml.tpl'),
+                                'textVersion' => replace_macros(
+                                    get_intltext_template('update_fail_eml.tpl'),
                                     [
                                         '$sitename' => App::$config['system']['sitename'],
                                         '$siteurl' => z_root(),

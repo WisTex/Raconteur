@@ -8,10 +8,9 @@ class _1008
     {
         $r = q("alter table profile drop prv_keywords,  CHANGE `pub_keywords` `keywords` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL, drop index pub_keywords");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

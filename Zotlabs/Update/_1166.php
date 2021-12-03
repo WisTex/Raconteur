@@ -8,10 +8,9 @@ class _1166
     {
 
         $r = q("alter table source add src_tag text not null default '' ");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

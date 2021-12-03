@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -13,11 +14,11 @@ class Wall_attach extends Controller
 
     public function init()
     {
-//		logger('request_method: ' . $_SERVER['REQUEST_METHOD'],LOGGER_DATA,LOG_INFO);
-//		logger('wall_attach: ' . print_r($_REQUEST,true),LOGGER_DEBUG,LOG_INFO);
-//		logger('wall_attach files: ' . print_r($_FILES,true),LOGGER_DEBUG,LOG_INFO);
+//      logger('request_method: ' . $_SERVER['REQUEST_METHOD'],LOGGER_DATA,LOG_INFO);
+//      logger('wall_attach: ' . print_r($_REQUEST,true),LOGGER_DEBUG,LOG_INFO);
+//      logger('wall_attach files: ' . print_r($_FILES,true),LOGGER_DEBUG,LOG_INFO);
         // for testing without actually storing anything
-        //		http_status_exit(200,'OK');
+        //      http_status_exit(200,'OK');
     }
 
 
@@ -38,12 +39,14 @@ class Wall_attach extends Controller
                 $channel = channelx_by_n(api_user());
             }
         } else {
-            if (argc() > 1)
+            if (argc() > 1) {
                 $channel = channelx_by_nick(argv(1));
+            }
         }
 
-        if (!$channel)
+        if (!$channel) {
             killme();
+        }
 
         $matches = [];
         $partial = false;

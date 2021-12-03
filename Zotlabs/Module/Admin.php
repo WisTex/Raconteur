@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file Zotlabs/Module/Admin.php
  * @brief Hubzilla's admin controller.
@@ -12,7 +13,6 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\SubModule;
 use Zotlabs\Lib\Config;
-
 
 /**
  * @brief Admin area.
@@ -112,7 +112,8 @@ class Admin extends Controller
 
         // list total user accounts, expirations etc.
         $accounts = [];
-        $r = q("SELECT COUNT(CASE WHEN account_id > 0 THEN 1 ELSE NULL END) AS total, COUNT(CASE WHEN account_expires > %s THEN 1 ELSE NULL END) AS expiring, COUNT(CASE WHEN account_expires < %s AND account_expires > '%s' THEN 1 ELSE NULL END) AS expired, COUNT(CASE WHEN (account_flags & %d)>0 THEN 1 ELSE NULL END) AS blocked FROM account",
+        $r = q(
+            "SELECT COUNT(CASE WHEN account_id > 0 THEN 1 ELSE NULL END) AS total, COUNT(CASE WHEN account_expires > %s THEN 1 ELSE NULL END) AS expiring, COUNT(CASE WHEN account_expires < %s AND account_expires > '%s' THEN 1 ELSE NULL END) AS expired, COUNT(CASE WHEN (account_flags & %d)>0 THEN 1 ELSE NULL END) AS blocked FROM account",
             db_utcnow(),
             db_utcnow(),
             dbesc(NULL_DATE),
@@ -127,7 +128,8 @@ class Admin extends Controller
 
         // pending registrations
 
-        $pdg = q("SELECT account.*, register.hash from account left join register on account_id = register.uid where (account_flags & %d ) > 0 ",
+        $pdg = q(
+            "SELECT account.*, register.hash from account left join register on account_id = register.uid where (account_flags & %d ) > 0 ",
             intval(ACCOUNT_PENDING)
         );
 
@@ -189,5 +191,4 @@ class Admin extends Controller
             '$build' => Config::Get('system', 'db_version')
         ]);
     }
-
 }

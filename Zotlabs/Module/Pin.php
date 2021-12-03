@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 /*
@@ -17,11 +18,13 @@ class Pin extends Controller
     public function init()
     {
 
-        if (argc() !== 1)
+        if (argc() !== 1) {
             http_status_exit(400, 'Bad request');
+        }
 
-        if (!local_channel())
+        if (!local_channel()) {
             http_status_exit(403, 'Forbidden');
+        }
     }
 
 
@@ -35,7 +38,8 @@ class Pin extends Controller
         }
         $channel = App::get_channel();
 
-        $r = q("SELECT * FROM item WHERE id = %d AND id = parent AND uid = %d AND owner_xchan = '%s' AND item_private = 0 LIMIT 1",
+        $r = q(
+            "SELECT * FROM item WHERE id = %d AND id = parent AND uid = %d AND owner_xchan = '%s' AND item_private = 0 LIMIT 1",
             intval($item_id),
             intval($channel['channel_id']),
             dbesc($channel['channel_hash'])

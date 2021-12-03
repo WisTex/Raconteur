@@ -14,10 +14,9 @@ class _1013
 ) ENGINE = MYISAM DEFAULT CHARSET=utf8");
 
         $r2 = q("alter table xlink add index ( xlink_xchan ), add index ( xlink_link ), add index ( xlink_updated ) ");
-        if ($r && $r2)
+        if ($r && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

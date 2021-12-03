@@ -33,7 +33,6 @@ class JSalmon
                 'key_id' => base64url_encode($key_id, true)
             ]
         ]);
-
     }
 
     public static function verify($x)
@@ -64,13 +63,10 @@ class JSalmon
         }
 
         return $ret;
-
     }
 
     public static function unpack($data)
     {
         return json_decode(base64url_decode($data), true);
     }
-
-
 }

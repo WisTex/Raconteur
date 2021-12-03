@@ -20,6 +20,4 @@ class Clients extends Controller
         }
         goaway(z_root() . '/settings/oauth2');
     }
-
-
 }

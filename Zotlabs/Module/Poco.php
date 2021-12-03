@@ -1,10 +1,11 @@
 <?php
+
 namespace Zotlabs\Module;
 
 /*
  * Portable Contacts server
  */
- 
+
 
 use Zotlabs\Web\Controller;
 
@@ -17,5 +18,4 @@ class Poco extends Controller
     {
         poco();
     }
-
 }

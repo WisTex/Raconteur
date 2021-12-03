@@ -18,11 +18,9 @@ class _1173
             $r3 = q("ALTER TABLE notify CHANGE `type` `ntype` smallint(3) NOT NULL DEFAULT '0' ");
         }
 
-        if ($r1 && $r2 && $r3)
+        if ($r1 && $r2 && $r3) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

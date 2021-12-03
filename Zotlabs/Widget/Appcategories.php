@@ -8,8 +8,9 @@ class Appcategories
     public function widget($arr)
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return '';
+        }
 
         $selected = ((x($_REQUEST, 'cat')) ? htmlspecialchars($_REQUEST['cat'], ENT_COMPAT, 'UTF-8') : '');
 
@@ -19,13 +20,15 @@ class Appcategories
 
         // Leaving this line which negates the effect of the two invalid lines prior
         $srchurl = z_root() . '/apps';
-        if (argc() > 1 && argv(1) === 'available')
+        if (argc() > 1 && argv(1) === 'available') {
             $srchurl .= '/available';
+        }
 
 
         $terms = [];
 
-        $r = q("select distinct(term.term)
+        $r = q(
+            "select distinct(term.term)
 	        from term join app on term.oid = app.id
     	    where app_channel = %d
         	and term.uid = app_channel
@@ -38,8 +41,9 @@ class Appcategories
         );
 
         if ($r) {
-            foreach ($r as $rr)
+            foreach ($r as $rr) {
                 $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
+            }
 
             return replace_macros(get_markup_template('categories_widget.tpl'), array(
                 '$title' => t('Categories'),

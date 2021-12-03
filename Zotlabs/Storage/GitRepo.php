@@ -5,7 +5,6 @@ namespace Zotlabs\Storage;
 use PHPGit\Exception\GitException;
 use PHPGit\Git as PHPGit;
 
-
 /**
  * Wrapper class for PHPGit class for git repositories managed by Hubzilla
  *
@@ -80,7 +79,9 @@ class GitRepo
 
     public function initRepo()
     {
-        if (!$this->path) return false;
+        if (!$this->path) {
+            return false;
+        }
         try {
             return $this->git->init($this->path);
         } catch (GitException $ex) {
@@ -167,5 +168,4 @@ class GitRepo
             return null;
         }
     }
-
 }

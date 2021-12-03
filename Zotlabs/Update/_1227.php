@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Update;
 
-
 class _1227
 {
 
@@ -29,5 +28,4 @@ class _1227
         q("ROLLBACK");
         return UPDATE_FAILED;
     }
-
 }

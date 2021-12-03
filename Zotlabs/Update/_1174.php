@@ -23,11 +23,9 @@ class _1174
             $r6 = q("ALTER TABLE photo CHANGE `data` `content` mediumblob NOT NULL ");
         }
 
-        if ($r1 && $r2 && $r3 && $r4 && $r5 && $r6)
+        if ($r1 && $r2 && $r3 && $r4 && $r5 && $r6) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

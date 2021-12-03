@@ -1,9 +1,9 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-
 
 class Notify extends Controller
 {
@@ -20,7 +20,8 @@ class Notify extends Controller
         }
 
         if (argc() > 2 && argv(1) === 'view' && intval(argv(2))) {
-            $r = q("select * from notify where id = %d and uid = %d limit 1",
+            $r = q(
+                "select * from notify where id = %d and uid = %d limit 1",
                 intval(argv(2)),
                 intval(local_channel())
             );
@@ -28,7 +29,8 @@ class Notify extends Controller
                 $x = ['channel_id' => local_channel(), 'update' => 'unset'];
                 call_hooks('update_unseen', $x);
                 if ((!$_SESSION['sudo']) && ($x['update'] === 'unset' || intval($x['update']))) {
-                    q("update notify set seen = 1 where (( parent != '' and parent = '%s' and otype = '%s' ) or link = '%s' ) and uid = %d",
+                    q(
+                        "update notify set seen = 1 where (( parent != '' and parent = '%s' and otype = '%s' ) or link = '%s' ) and uid = %d",
                         dbesc($r[0]['parent']),
                         dbesc($r[0]['otype']),
                         dbesc($r[0]['link']),
@@ -40,8 +42,6 @@ class Notify extends Controller
             notice(sprintf(t('A notification with that id was not found for channel \'%s\''), $channel['channel_name']));
             goaway(z_root());
         }
-
-
     }
 
 
@@ -55,7 +55,8 @@ class Notify extends Controller
 
         $not_tpl = get_markup_template('notify.tpl');
 
-        $r = q("SELECT * from notify where uid = %d and seen = 0 order by created desc",
+        $r = q(
+            "SELECT * from notify where uid = %d and seen = 0 order by created desc",
             intval(local_channel())
         );
 
@@ -79,6 +80,5 @@ class Notify extends Controller
         ));
 
         return $o;
-
     }
 }

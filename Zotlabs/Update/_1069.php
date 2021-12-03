@@ -8,10 +8,9 @@ class _1069
     {
         $r = q("ALTER TABLE `site` ADD `site_sellpage` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD INDEX ( `site_sellpage` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

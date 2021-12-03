@@ -8,10 +8,9 @@ class _1121
     {
         $r = q("ALTER TABLE `site` ADD `site_realm` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD INDEX ( `site_realm` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

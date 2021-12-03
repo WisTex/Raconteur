@@ -18,20 +18,20 @@ class Affinity extends Controller
 
         if ($_POST['affinity-submit']) {
             $cmax = intval($_POST['affinity_cmax']);
-            if ($cmax < 0 || $cmax > 99)
+            if ($cmax < 0 || $cmax > 99) {
                 $cmax = 99;
+            }
             $cmin = intval($_POST['affinity_cmin']);
-            if ($cmin < 0 || $cmin > 99)
+            if ($cmin < 0 || $cmin > 99) {
                 $cmin = 0;
+            }
             set_pconfig(local_channel(), 'affinity', 'cmin', 0);
             set_pconfig(local_channel(), 'affinity', 'cmax', $cmax);
 
             info(t('Friend Zoom settings updated.') . EOL);
-
         }
 
         Libsync::build_sync_packet();
-
     }
 
 
@@ -52,12 +52,11 @@ class Affinity extends Controller
 
         $cmax = intval(get_pconfig(local_channel(), 'affinity', 'cmax'));
         $cmax = (($cmax) ? $cmax : 99);
-//		$setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
-//			'$field'    => array('affinity_cmax', t('Default maximum affinity level'), $cmax, t('0-99 default 99'))
-//		));
+//      $setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
+//          '$field'    => array('affinity_cmax', t('Default maximum affinity level'), $cmax, t('0-99 default 99'))
+//      ));
 
         if (Apps::system_app_installed(local_channel(), 'Friend Zoom')) {
-
             $labels = array(
                 0 => t('Me'),
                 20 => t('Family'),
@@ -90,6 +89,4 @@ class Affinity extends Controller
 
         return $s;
     }
-
-
 }

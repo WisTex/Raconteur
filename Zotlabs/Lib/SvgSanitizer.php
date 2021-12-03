@@ -7,9 +7,9 @@ use Zotlabs\Lib\Config;
 
 /**
  *  SVGSantiizer
- * 
+ *
  *  Allowlist-based PHP SVG sanitizer.
- * 
+ *
  *  @link https://github.com/alister-/SVG-Sanitizer}
  *  @author Alister Norris
  *  @copyright Copyright (c) 2013 Alister Norris
@@ -108,7 +108,6 @@ class SvgSanitizer
                 $total = $currentNode->attributes->length;
 
                 for ($x = 0; $x < $total; $x++) {
-
                     // get attributes name
                     $attrName = $currentNode->attributes->item($x)->nodeName;
 
@@ -119,8 +118,14 @@ class SvgSanitizer
                     if (!in_array($attrName, $allowlist_attr_arr)) {
                         $this->removedattrs[] = $attrName;
                     } // check for disallowed functions
-                    elseif (preg_match_all('/([a-zA-Z0-9]+)[\s]*\(/',
-                        $currentNode->attributes->item($x)->textContent, $matches, PREG_SET_ORDER)) {
+                    elseif (
+                        preg_match_all(
+                            '/([a-zA-Z0-9]+)[\s]*\(/',
+                            $currentNode->attributes->item($x)->textContent,
+                            $matches,
+                            PREG_SET_ORDER
+                        )
+                    ) {
                         if ($attrName === 'text') {
                             continue;
                         }
@@ -138,7 +143,6 @@ class SvgSanitizer
                         logger('removed: ' . $attr, LOGGER_DEBUG);
                     }
                 }
-
             } // else remove element
             else {
                 logger('remove_node: ' . print_r($currentNode, true));

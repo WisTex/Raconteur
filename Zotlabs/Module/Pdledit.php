@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
@@ -9,10 +10,12 @@ class Pdledit extends Controller
 
     public function post()
     {
-        if (!local_channel())
+        if (!local_channel()) {
             return;
-        if (!$_REQUEST['module'])
+        }
+        if (!$_REQUEST['module']) {
             return;
+        }
 
         if (!trim($_REQUEST['content'])) {
             del_pconfig(local_channel(), 'system', 'mod_' . $_REQUEST['module'] . '.pdl');
@@ -39,15 +42,16 @@ class Pdledit extends Controller
             goaway(z_root() . '/pdledit');
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $module = 'mod_' . argv(1) . '.pdl';
-        else {
+        } else {
             $o .= '<div class="generic-content-wrapper-styled">';
             $o .= '<h1>' . t('Edit System Page Description') . '</h1>';
 
             $edited = [];
 
-            $r = q("select k from pconfig where uid = %d and cat = 'system' and k like '%s' ",
+            $r = q(
+                "select k from pconfig where uid = %d and cat = 'system' and k like '%s' ",
                 intval(local_channel()),
                 dbesc('mod_%.pdl')
             );
@@ -86,8 +90,9 @@ class Pdledit extends Controller
         $s = @file_get_contents(theme_include($module));
         if (!$s) {
             $a = glob('addon/*/' . $module);
-            if ($a)
+            if ($a) {
                 $s = @file_get_contents($a[0]);
+            }
         }
         if (!$t) {
             $t = $s;
@@ -111,5 +116,4 @@ class Pdledit extends Controller
 
         return $o;
     }
-
 }

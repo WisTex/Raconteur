@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -47,13 +48,13 @@ class Home extends Controller
         }
 
         if (Libzot::is_zot_request()) {
-
             $channel = get_sys_channel();
             $sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
             if ($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
                 $data = json_encode(Libzot::zotinfo(['guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer']]));
-                $s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+                $s = q(
+                    "select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
                     dbesc($sigdata['signer'])
                 );
 
@@ -94,7 +95,8 @@ class Home extends Controller
         }
 
         if (remote_channel() && (!$splash) && $_SESSION['atoken']) {
-            $r = q("select * from atoken where atoken_id = %d",
+            $r = q(
+                "select * from atoken where atoken_id = %d",
                 intval($_SESSION['atoken'])
             );
             if ($r) {
@@ -109,7 +111,6 @@ class Home extends Controller
         if (get_account_id() && !$splash) {
             goaway(z_root() . '/new_channel');
         }
-
     }
 
 

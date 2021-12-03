@@ -4,7 +4,6 @@ namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Apps;
 
-
 class Oauth2
 {
 
@@ -17,15 +16,18 @@ class Oauth2
             $name = ((x($_POST, 'name')) ? escape_tags(trim($_POST['name'])) : '');
             logger("REMOVE! " . $name . " uid: " . local_channel());
             $key = $_POST['remove'];
-            q("DELETE FROM oauth_authorization_codes WHERE client_id='%s' AND user_id=%d",
+            q(
+                "DELETE FROM oauth_authorization_codes WHERE client_id='%s' AND user_id=%d",
                 dbesc($name),
                 intval(local_channel())
             );
-            q("DELETE FROM oauth_access_tokens WHERE client_id='%s' AND user_id=%d",
+            q(
+                "DELETE FROM oauth_access_tokens WHERE client_id='%s' AND user_id=%d",
                 dbesc($name),
                 intval(local_channel())
             );
-            q("DELETE FROM oauth_refresh_tokens WHERE client_id='%s' AND user_id=%d",
+            q(
+                "DELETE FROM oauth_refresh_tokens WHERE client_id='%s' AND user_id=%d",
                 dbesc($name),
                 intval(local_channel())
             );
@@ -34,7 +36,6 @@ class Oauth2
         }
 
         if ((argc() > 2) && (argv(2) === 'edit' || argv(2) === 'add') && x($_POST, 'submit')) {
-
             check_form_security_token_redirectOnErr('/settings/oauth2', 'settings_oauth2');
 
             $name = ((x($_POST, 'name')) ? escape_tags(trim($_POST['name'])) : '');
@@ -52,7 +53,8 @@ class Oauth2
 
             if ($ok) {
                 if ($_POST['submit'] == t("Update")) {
-                    $r = q("UPDATE oauth_clients SET
+                    $r = q(
+                        "UPDATE oauth_clients SET
 								client_name = '%s',
 								client_id = '%s',
 								client_secret = '%s',
@@ -69,9 +71,11 @@ class Oauth2
                         dbesc($scope),
                         intval(local_channel()),
                         dbesc($clid),
-                        intval(local_channel()));
+                        intval(local_channel())
+                    );
                 } else {
-                    $r = q("INSERT INTO oauth_clients (client_name, client_id, client_secret, redirect_uri, grant_types, scope, user_id)
+                    $r = q(
+                        "INSERT INTO oauth_clients (client_name, client_id, client_secret, redirect_uri, grant_types, scope, user_id)
 						VALUES ('%s','%s','%s','%s','%s','%s',%d)",
                         dbesc($name),
                         dbesc($clid),
@@ -81,7 +85,8 @@ class Oauth2
                         dbesc($scope),
                         intval(local_channel())
                     );
-                    $r = q("INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
+                    $r = q(
+                        "INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
                         dbesc($name),
                         intval(local_channel()),
                         dbesc('all')
@@ -118,7 +123,8 @@ class Oauth2
         }
 
         if ((argc() > 3) && (argv(2) === 'edit')) {
-            $r = q("SELECT * FROM oauth_clients WHERE client_id='%s' AND user_id= %d",
+            $r = q(
+                "SELECT * FROM oauth_clients WHERE client_id='%s' AND user_id= %d",
                 dbesc(argv(3)),
                 intval(local_channel())
             );
@@ -149,19 +155,23 @@ class Oauth2
         if ((argc() > 3) && (argv(2) === 'delete')) {
             check_form_security_token_redirectOnErr('/settings/oauth2', 'settings_oauth2', 't');
 
-            $r = q("DELETE FROM oauth_clients WHERE client_id = '%s' AND user_id = %d",
+            $r = q(
+                "DELETE FROM oauth_clients WHERE client_id = '%s' AND user_id = %d",
                 dbesc(argv(3)),
                 intval(local_channel())
             );
-            $r = q("DELETE FROM oauth_access_tokens WHERE client_id = '%s' AND user_id = %d",
+            $r = q(
+                "DELETE FROM oauth_access_tokens WHERE client_id = '%s' AND user_id = %d",
                 dbesc(argv(3)),
                 intval(local_channel())
             );
-            $r = q("DELETE FROM oauth_authorization_codes WHERE client_id = '%s' AND user_id = %d",
+            $r = q(
+                "DELETE FROM oauth_authorization_codes WHERE client_id = '%s' AND user_id = %d",
                 dbesc(argv(3)),
                 intval(local_channel())
             );
-            $r = q("DELETE FROM oauth_refresh_tokens WHERE client_id = '%s' AND user_id = %d",
+            $r = q(
+                "DELETE FROM oauth_refresh_tokens WHERE client_id = '%s' AND user_id = %d",
                 dbesc(argv(3)),
                 intval(local_channel())
             );
@@ -170,11 +180,13 @@ class Oauth2
         }
 
 
-        $r = q("SELECT * FROM oauth_clients WHERE user_id = %d ",
+        $r = q(
+            "SELECT * FROM oauth_clients WHERE user_id = %d ",
             intval(local_channel())
         );
 
-        $c = q("select client_id, access_token from oauth_access_tokens where user_id = %d",
+        $c = q(
+            "select client_id, access_token from oauth_access_tokens where user_id = %d",
             intval(local_channel())
         );
         if ($r && $c) {
@@ -204,7 +216,5 @@ class Oauth2
             '$apps' => $r,
         ));
         return $o;
-
     }
-
 }

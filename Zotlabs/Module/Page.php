@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Render\Comanche;
@@ -22,8 +22,9 @@ class Page extends Controller
         Libprofile::load($which, $profile);
 
 
-        if (App::$profile['profile_uid'])
+        if (App::$profile['profile_uid']) {
             head_set_icon(App::$profile['thumb']);
+        }
 
         // load the item here in the init function because we need to extract
         // the page layout and initialise the correct theme.
@@ -61,8 +62,9 @@ class Page extends Controller
                 $ignore_language = true;
                 continue;
             }
-            if ($page_name)
+            if ($page_name) {
                 $page_name .= '/';
+            }
             $page_name .= argv($x);
         }
 
@@ -73,7 +75,8 @@ class Page extends Controller
         $page_id = urlencode($page_name);
         $lang_page_id = urlencode(App::$language . '/' . $page_name);
 
-        $u = q("select channel_id from channel where channel_address = '%s' limit 1",
+        $u = q(
+            "select channel_id from channel where channel_address = '%s' limit 1",
             dbesc($channel_address)
         );
 
@@ -82,10 +85,11 @@ class Page extends Controller
             return;
         }
 
-        if ($_REQUEST['rev'])
+        if ($_REQUEST['rev']) {
             $revision = " and revision = " . intval($_REQUEST['rev']) . " ";
-        else
+        } else {
             $revision = " order by revision desc ";
+        }
 
         require_once('include/security.php');
         $sql_options = item_permissions_sql($u[0]['channel_id']);
@@ -93,7 +97,8 @@ class Page extends Controller
         $r = null;
 
         if (!$ignore_language) {
-            $r = q("select item.* from item left join iconfig on item.id = iconfig.iid
+            $r = q(
+                "select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
 				and iconfig.k = 'WEBPAGE' and item_type = %d  
 				$sql_options $revision limit 1",
@@ -103,7 +108,8 @@ class Page extends Controller
             );
         }
         if (!$r) {
-            $r = q("select item.* from item left join iconfig on item.id = iconfig.iid
+            $r = q(
+                "select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
 				and iconfig.k = 'WEBPAGE' and item_type = %d 
 				$sql_options $revision limit 1",
@@ -114,7 +120,8 @@ class Page extends Controller
         }
         if (!$r) {
             // no webpage by that name, but we do allow you to load/preview a layout using this module. Try that.
-            $r = q("select item.* from item left join iconfig on item.id = iconfig.iid
+            $r = q(
+                "select item.* from item left join iconfig on item.id = iconfig.iid
 				where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
 				and iconfig.k = 'PDL' AND item_type = %d $sql_options $revision limit 1",
                 intval($u[0]['channel_id']),
@@ -123,10 +130,10 @@ class Page extends Controller
             );
         }
         if (!$r) {
-
             // Check again with no permissions clause to see if it is a permissions issue
 
-            $x = q("select item.* from item left join iconfig on item.id = iconfig.iid
+            $x = q(
+                "select item.* from item left join iconfig on item.id = iconfig.iid
 			where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and item.item_delayed = 0 
 			and iconfig.k = 'WEBPAGE' and item_type = %d $revision limit 1",
                 intval($u[0]['channel_id']),
@@ -143,15 +150,17 @@ class Page extends Controller
             return;
         }
 
-        if ($r[0]['title'])
+        if ($r[0]['title']) {
             App::$page['title'] = escape_tags($r[0]['title']);
+        }
 
         if ($r[0]['item_type'] == ITEM_TYPE_PDL) {
             App::$comanche = new Comanche();
             App::$comanche->parse($r[0]['body']);
             App::$pdl = $r[0]['body'];
         } elseif ($r[0]['layout_mid']) {
-            $l = q("select body from item where mid = '%s' and uid = %d limit 1",
+            $l = q(
+                "select body from item where mid = '%s' and uid = %d limit 1",
                 dbesc($r[0]['layout_mid']),
                 intval($u[0]['channel_id'])
             );
@@ -164,32 +173,30 @@ class Page extends Controller
         }
 
         App::$data['webpage'] = $r;
-
     }
 
     public function get()
     {
 
         $r = App::$data['webpage'];
-        if (!$r)
+        if (!$r) {
             return;
+        }
 
         if ($r[0]['item_type'] == ITEM_TYPE_PDL) {
             $r[0]['body'] = t('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
             $r[0]['mimetype'] = 'text/plain';
             $r[0]['title'] = '';
-
         }
 
         xchan_query($r);
         $r = fetch_post_tags($r, true);
 
-        if ($r[0]['mimetype'] === 'application/x-pdl')
+        if ($r[0]['mimetype'] === 'application/x-pdl') {
             App::$page['pdl_content'] = true;
+        }
 
         $o .= prepare_page($r[0]);
         return $o;
-
     }
-
 }

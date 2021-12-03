@@ -1,7 +1,7 @@
 <?php
 
-	require_once('boot.php');
-	App::init();
+    require_once('boot.php');
+    App::init();
 
 $str = <<< EOT
 	error_reporting(E_ERROR | E_WARNING | E_PARSE );
@@ -9,6 +9,6 @@ $str = <<< EOT
 	ini_set('log_errors','0');
 EOT;
 
-	$str .= str_replace('<?php', '', file_get_contents($argv[1]));
-	
-	eval($str);
+    $str .= str_replace('<?php', '', file_get_contents($argv[1]));
+
+    eval($str);

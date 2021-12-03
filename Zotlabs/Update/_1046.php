@@ -8,10 +8,9 @@ class _1046
     {
         $r = q("ALTER TABLE `term` ADD `term_hash` CHAR( 255 ) NOT NULL DEFAULT '',
 ADD INDEX ( `term_hash` ) ");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

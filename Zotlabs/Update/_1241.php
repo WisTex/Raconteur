@@ -39,6 +39,4 @@ class _1241
 
         return false;
     }
-
-
 }

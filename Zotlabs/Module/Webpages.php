@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -26,13 +27,13 @@ class Webpages extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
 
@@ -104,7 +105,7 @@ class Webpages extends Controller
                 $_SESSION['export'] = null;
                 return $o;
 
-            default :
+            default:
                 $_SESSION['action'] = null;
                 break;
         }
@@ -121,7 +122,8 @@ class Webpages extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = q("select channel_id from channel where channel_address = '%s'",
+            $r = q(
+                "select channel_id from channel where channel_address = '%s'",
                 dbesc($which)
             );
             if ($r) {
@@ -187,12 +189,15 @@ class Webpages extends Controller
             'bbcode' => true
         );
 
-        if ($_REQUEST['title'])
+        if ($_REQUEST['title']) {
             $x['title'] = $_REQUEST['title'];
-        if ($_REQUEST['body'])
+        }
+        if ($_REQUEST['body']) {
             $x['body'] = $_REQUEST['body'];
-        if ($_REQUEST['pagetitle'])
+        }
+        if ($_REQUEST['pagetitle']) {
             $x['pagetitle'] = $_REQUEST['pagetitle'];
+        }
 
 
         // Get a list of webpages.  We can't display all them because endless scroll makes that unusable,
@@ -201,15 +206,17 @@ class Webpages extends Controller
 
         $sql_extra = item_permissions_sql($owner);
 
-        $r = q("select * from iconfig left join item on iconfig.iid = item.id 
+        $r = q(
+            "select * from iconfig left join item on iconfig.iid = item.id 
 			where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item_type = %d 
 			$sql_extra order by item.created desc",
             intval($owner),
             intval(ITEM_TYPE_WEBPAGE)
         );
 
-        if (!$r)
+        if (!$r) {
             $x['pagetitle'] = 'home';
+        }
 
         $editor = status_editor($x);
 
@@ -279,7 +286,6 @@ class Webpages extends Controller
         if ($action) {
             switch ($action) {
                 case 'scan':
-
                     // the state of this variable tracks whether website files have been scanned (null, true, false)
                     $cloud = null;
 
@@ -315,7 +321,6 @@ class Webpages extends Controller
 
                     // Website files are to be imported from the channel cloud files
                     if (($_POST) && array_key_exists('path', $_POST) && isset($_POST['cloudsubmit'])) {
-
                         $channel = App::get_channel();
                         $dirpath = get_dirpath_by_cloudpath($channel, $_POST['path']);
                         if (!$dirpath) {
@@ -323,7 +328,6 @@ class Webpages extends Controller
                             return null;
                         }
                         $cloud = true;
-
                     }
 
                     // If the website files were uploaded or specified in the cloud files, then $cloud
@@ -349,13 +353,12 @@ class Webpages extends Controller
                             notice(t('No webpage elements detected.') . EOL);
                             $_SESSION['action'] = null;
                         }
-
                     }
 
                     // If the website elements were imported from a zip file, delete the temporary decompressed files
                     if ($cloud === false && $website && $elements) {
                         $_SESSION['tempimportpath'] = $website;
-                        //rrmdir($website);	// Delete the temporary decompressed files
+                        //rrmdir($website); // Delete the temporary decompressed files
                     }
 
                     break;
@@ -430,7 +433,6 @@ class Webpages extends Controller
                     break;
 
                 case 'exportzipfile':
-
                     if (isset($_POST['w_download'])) {
                         $_SESSION['action'] = 'export_select_list';
                         $_SESSION['export'] = 'zipfile';
@@ -440,7 +442,6 @@ class Webpages extends Controller
                             $filename = 'website.zip';
                         }
                         $_SESSION['zipfilename'] = $filename;
-
                     }
 
                     break;
@@ -456,7 +457,6 @@ class Webpages extends Controller
 
                 case 'cloud':
                 case 'zipfile':
-
                     $channel = App::get_channel();
 
                     $tmp_folder_name = random_string(10);
@@ -474,7 +474,8 @@ class Webpages extends Controller
                     $blocks = [];
                     if (!empty($checkedblocks)) {
                         foreach ($checkedblocks as $mid) {
-                            $b = q("select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
+                            $b = q(
+                                "select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
 												left join item on item.id = iconfig.iid 
 												where mid = '%s' and item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'BUILDBLOCK' order by iconfig.v asc limit 1",
                                 dbesc($mid),
@@ -532,7 +533,8 @@ class Webpages extends Controller
                     $layouts = [];
                     if (!empty($checkedlayouts)) {
                         foreach ($checkedlayouts as $mid) {
-                            $l = q("select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
+                            $l = q(
+                                "select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
 												left join item on item.id = iconfig.iid 
 												where mid = '%s' and item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'PDL' order by iconfig.v asc limit 1",
                                 dbesc($mid),
@@ -576,8 +578,8 @@ class Webpages extends Controller
                     $pages = [];
                     if (!empty($checkedpages)) {
                         foreach ($checkedpages as $mid) {
-
-                            $p = q("select * from iconfig left join item on iconfig.iid = item.id 
+                            $p = q(
+                                "select * from iconfig left join item on iconfig.iid = item.id 
 												where item.uid = %d and item.mid = '%s' and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item_type = %d",
                                 intval($channel['channel_id']),
                                 dbesc($mid),
@@ -589,7 +591,8 @@ class Webpages extends Controller
                                     // Get the associated layout
                                     $layoutinfo = [];
                                     if ($pp['layout_mid']) {
-                                        $l = q("select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
+                                        $l = q(
+                                            "select iconfig.v, iconfig.k, mimetype, title, body from iconfig 
 																		left join item on item.id = iconfig.iid 
 																		where mid = '%s' and item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'PDL' order by iconfig.v asc limit 1",
                                             dbesc($pp['layout_mid']),
@@ -712,12 +715,9 @@ class Webpages extends Controller
                     killme();
 
                     break;
-                default :
+                default:
                     break;
             }
-
         }
-
     }
-
 }

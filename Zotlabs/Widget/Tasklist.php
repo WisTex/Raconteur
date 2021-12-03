@@ -31,7 +31,5 @@ class Tasklist
         $o .= '</div><form id="tasklist-new-form" action="" ><input class="form-control" id="tasklist-new-summary" type="text" name="summary" value="" /></form>';
         $o .= '</div>';
         return $o;
-
     }
 }
-

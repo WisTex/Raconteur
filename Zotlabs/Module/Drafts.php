@@ -27,6 +27,5 @@ class Drafts extends Controller
         if (!(local_channel() && Apps::system_app_installed(local_channel(), 'Drafts'))) {
             return $text;
         }
-
     }
 }

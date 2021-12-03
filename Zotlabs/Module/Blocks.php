@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -23,13 +24,13 @@ class Blocks extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
-
     }
 
 
@@ -64,7 +65,8 @@ class Blocks extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = q("select channel_id from channel where channel_address = '%s'",
+            $r = q(
+                "select channel_id from channel where channel_address = '%s'",
                 dbesc($which)
             );
             if ($r) {
@@ -109,17 +111,21 @@ class Blocks extends Controller
             'bbcode' => true
         );
 
-        if ($_REQUEST['title'])
+        if ($_REQUEST['title']) {
             $x['title'] = $_REQUEST['title'];
-        if ($_REQUEST['body'])
+        }
+        if ($_REQUEST['body']) {
             $x['body'] = $_REQUEST['body'];
-        if ($_REQUEST['pagetitle'])
+        }
+        if ($_REQUEST['pagetitle']) {
             $x['pagetitle'] = $_REQUEST['pagetitle'];
+        }
 
         $editor = status_editor($x);
 
 
-        $r = q("select iconfig.iid, iconfig.k, iconfig.v, mid, title, body, mimetype, created, edited from iconfig 
+        $r = q(
+            "select iconfig.iid, iconfig.k, iconfig.v, mid, title, body, mimetype, created, edited from iconfig 
 			left join item on iconfig.iid = item.id
 			where uid = %d and iconfig.cat = 'system' and iconfig.k = 'BUILDBLOCK' 
 			and item_type = %d order by item.created desc",
@@ -176,5 +182,4 @@ class Blocks extends Controller
 
         return $o;
     }
-
 }

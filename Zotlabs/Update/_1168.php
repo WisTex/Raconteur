@@ -15,10 +15,9 @@ class _1168
             $r2 = q("alter table obj add index ( obj_quantity ) ");
         }
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

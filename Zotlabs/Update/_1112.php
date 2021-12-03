@@ -22,10 +22,9 @@ class _1112
   KEY `target_type` (`target_type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

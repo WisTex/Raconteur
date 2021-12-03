@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -14,7 +15,8 @@ class Lockview extends Controller
         $atokens = [];
 
         if (local_channel()) {
-            $at = q("select * from atoken where atoken_uid = %d",
+            $at = q(
+                "select * from atoken where atoken_uid = %d",
                 intval(local_channel())
             );
             if ($at) {
@@ -32,11 +34,13 @@ class Lockview extends Controller
             $item_id = ((argc() > 2) ? intval(argv(2)) : 0);
         }
 
-        if (!$item_id)
+        if (!$item_id) {
             killme();
+        }
 
-        if (!in_array($type, array('item', 'photo', 'attach', 'event', 'menu_item', 'chatroom')))
+        if (!in_array($type, array('item', 'photo', 'attach', 'event', 'menu_item', 'chatroom'))) {
             killme();
+        }
 
         // we have different naming in in menu_item table and chatroom table
         switch ($type) {
@@ -51,13 +55,15 @@ class Lockview extends Controller
                 break;
         }
 
-        $r = q("SELECT * FROM %s WHERE $id = %d LIMIT 1",
+        $r = q(
+            "SELECT * FROM %s WHERE $id = %d LIMIT 1",
             dbesc($type),
             intval($item_id)
         );
 
-        if (!$r)
+        if (!$r) {
             killme();
+        }
 
         $item = $r[0];
 
@@ -102,9 +108,10 @@ class Lockview extends Controller
         }
 
 
-        if (intval($item['item_private']) && (!strlen($item['allow_cid'])) && (!strlen($item['allow_gid']))
-            && (!strlen($item['deny_cid'])) && (!strlen($item['deny_gid']))) {
-
+        if (
+            intval($item['item_private']) && (!strlen($item['allow_cid'])) && (!strlen($item['allow_gid']))
+            && (!strlen($item['deny_cid'])) && (!strlen($item['deny_gid']))
+        ) {
             if ($item['mid'] === $item['parent_mid']) {
                 echo '<div class="dropdown-item">' . translate_scope('specific') . '</div>';
                 killme();
@@ -127,15 +134,19 @@ class Lockview extends Controller
 
         if (count($allowed_groups)) {
             $r = q("SELECT gname FROM pgrp WHERE hash IN ( " . implode(', ', $allowed_groups) . " )");
-            if ($r)
-                foreach ($r as $rr)
+            if ($r) {
+                foreach ($r as $rr) {
                     $l[] = '<div class="dropdown-item"><b>' . $rr['gname'] . '</b></div>';
+                }
+            }
         }
         if (count($allowed_users)) {
             $r = q("SELECT xchan_name FROM xchan WHERE xchan_hash IN ( " . implode(', ', $allowed_users) . " )");
-            if ($r)
-                foreach ($r as $rr)
+            if ($r) {
+                foreach ($r as $rr) {
                     $l[] = '<div class="dropdown-item">' . $rr['xchan_name'] . '</div>';
+                }
+            }
             if ($atokens) {
                 foreach ($atokens as $at) {
                     if (in_array("'" . $at['xchan_hash'] . "'", $allowed_users)) {
@@ -147,15 +158,19 @@ class Lockview extends Controller
 
         if (count($deny_groups)) {
             $r = q("SELECT gname FROM pgrp WHERE hash IN ( " . implode(', ', $deny_groups) . " )");
-            if ($r)
-                foreach ($r as $rr)
+            if ($r) {
+                foreach ($r as $rr) {
                     $l[] = '<div class="dropdown-item"><b><strike>' . $rr['gname'] . '</strike></b></div>';
+                }
+            }
         }
         if (count($deny_users)) {
             $r = q("SELECT xchan_name FROM xchan WHERE xchan_hash IN ( " . implode(', ', $deny_users) . " )");
-            if ($r)
-                foreach ($r as $rr)
+            if ($r) {
+                foreach ($r as $rr) {
                     $l[] = '<div class="dropdown-item"><strike>' . $rr['xchan_name'] . '</strike></div>';
+                }
+            }
 
             if ($atokens) {
                 foreach ($atokens as $at) {
@@ -164,14 +179,9 @@ class Lockview extends Controller
                     }
                 }
             }
-
-
         }
 
         echo $o . implode($l);
         killme();
-
-
     }
-
 }

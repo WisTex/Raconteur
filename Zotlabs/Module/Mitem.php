@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -23,15 +24,17 @@ class Mitem extends Controller
             }
         }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             $which = argv(1);
-        else
+        } else {
             return;
+        }
 
         Libprofile::load($which);
 
-        if (argc() < 3)
+        if (argc() < 3) {
             return;
+        }
 
         $m = menu_fetch_id(intval(argv(2)), App::$profile['channel_id']);
         if (!$m) {
@@ -39,7 +42,6 @@ class Mitem extends Controller
             return '';
         }
         App::$data['menu'] = $m;
-
     }
 
     public function post()
@@ -60,12 +62,14 @@ class Mitem extends Controller
             App::$is_sys = true;
         }
 
-        if (!$uid)
+        if (!$uid) {
             return;
+        }
 
 
-        if (!App::$data['menu'])
+        if (!App::$data['menu']) {
             return;
+        }
 
         if (!$_REQUEST['mitem_desc'] || !$_REQUEST['mitem_link']) {
             notice(t('Unable to create element.') . EOL);
@@ -76,10 +80,12 @@ class Mitem extends Controller
         $_REQUEST['menu_id'] = App::$data['menu']['menu_id'];
 
         $_REQUEST['mitem_flags'] = 0;
-        if ($_REQUEST['usezid'])
+        if ($_REQUEST['usezid']) {
             $_REQUEST['mitem_flags'] |= MENU_ITEM_ZID;
-        if ($_REQUEST['newwin'])
+        }
+        if ($_REQUEST['newwin']) {
             $_REQUEST['mitem_flags'] |= MENU_ITEM_NEWWIN;
+        }
 
 
         $mitem_id = ((argc() > 3) ? intval(argv(3)) : 0);
@@ -90,9 +96,9 @@ class Mitem extends Controller
                 menu_sync_packet($uid, get_observer_hash(), $_REQUEST['menu_id']);
                 //info( t('Menu element updated.') . EOL);
                 goaway(z_root() . '/mitem/' . $which . '/' . $_REQUEST['menu_id'] . ((App::$is_sys) ? '?f=&sys=1' : ''));
-            } else
+            } else {
                 notice(t('Unable to update menu element.') . EOL);
-
+            }
         } else {
             $r = menu_add_item($_REQUEST['menu_id'], $uid, $_REQUEST);
             if ($r) {
@@ -104,11 +110,10 @@ class Mitem extends Controller
                 if ($_REQUEST['submit-more']) {
                     goaway(z_root() . '/mitem/' . $which . '/' . $_REQUEST['menu_id'] . '?f=&display=block' . ((App::$is_sys) ? '&sys=1' : ''));
                 }
-            } else
+            } else {
                 notice(t('Unable to add menu element.') . EOL);
-
+            }
         }
-
     }
 
 
@@ -147,8 +152,9 @@ class Mitem extends Controller
         $menu_list = menu_list($owner);
 
         foreach ($menu_list as $menus) {
-            if ($menus['menu_name'] != $m['menu']['menu_name'])
+            if ($menus['menu_name'] != $m['menu']['menu_name']) {
                 $menu_names[] = $menus['menu_name'];
+            }
         }
 
         $acl = new AccessControl($channel);
@@ -156,7 +162,8 @@ class Mitem extends Controller
         $lockstate = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock');
 
         if (argc() == 3) {
-            $r = q("select * from menu_item where mitem_menu_id = %d and mitem_channel_id = %d order by mitem_order asc, mitem_desc asc",
+            $r = q(
+                "select * from menu_item where mitem_menu_id = %d and mitem_channel_id = %d order by mitem_order asc, mitem_desc asc",
                 intval(App::$data['menu']['menu_id']),
                 intval($owner)
             );
@@ -215,10 +222,9 @@ class Mitem extends Controller
 
 
         if (argc() > 3) {
-
             if (intval(argv(3))) {
-
-                $m = q("select * from menu_item where mitem_id = %d and mitem_channel_id = %d limit 1",
+                $m = q(
+                    "select * from menu_item where mitem_id = %d and mitem_channel_id = %d limit 1",
                     intval(argv(3)),
                     intval($owner)
                 );
@@ -236,10 +242,11 @@ class Mitem extends Controller
                     menu_sync_packet($owner, get_observer_hash(), $mitem['mitem_menu_id']);
                     $r = menu_del_item($mitem['mitem_menu_id'], $owner, intval(argv(3)));
                     menu_sync_packet($owner, get_observer_hash(), $mitem['mitem_menu_id']);
-                    if ($r)
+                    if ($r) {
                         info(t('Menu item deleted.') . EOL);
-                    else
+                    } else {
                         notice(t('Menu item could not be deleted.') . EOL);
+                    }
 
                     goaway(z_root() . '/mitem/' . $which . '/' . $mitem['mitem_menu_id'] . ((App::$is_sys) ? '?f=&sys=1' : ''));
                 }
@@ -271,5 +278,4 @@ class Mitem extends Controller
             }
         }
     }
-
 }

@@ -26,7 +26,7 @@ require_once('include/event.php');
 class Activity
 {
 
-    static public $ACTOR_CACHE_DAYS = 3;
+    public static $ACTOR_CACHE_DAYS = 3;
 
     // $x (string|array)
     // if json string, decode it
@@ -39,7 +39,7 @@ class Activity
         if ($x) {
             if (is_string($x)) {
                 $tmp = json_decode($x, true);
-                if ($tmp !== NULL) {
+                if ($tmp !== null) {
                     $x = $tmp;
                 }
             }
@@ -56,7 +56,6 @@ class Activity
             return self::fetch_profile($x);
         }
         if (in_array($x['type'], [ACTIVITY_OBJ_NOTE, ACTIVITY_OBJ_ARTICLE])) {
-
             // Use Mastodon-specific note and media hacks if nomadic. Else HTML.
             // Eventually this needs to be passed in much further up the stack
             // and base the decision on whether or not we are encoding for ActivityPub or Zot6
@@ -70,7 +69,6 @@ class Activity
         call_hooks('encode_object', $x);
 
         return $x;
-
     }
 
 
@@ -138,15 +136,16 @@ class Activity
         }
 
         if ($x['success']) {
-
             $y = json_decode($x['body'], true);
             logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 
             $site_url = unparse_url(['scheme' => $parsed['scheme'], 'host' => $parsed['host'], 'port' => ((array_key_exists('port', $parsed) && intval($parsed['port'])) ? $parsed['port'] : 0)]);
-            q("update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
+            q(
+                "update site set site_update = '%s' where site_url = '%s' and site_update < %s - INTERVAL %s",
                 dbesc(datetime_convert()),
                 dbesc($site_url),
-                db_utcnow(), db_quoteinterval('1 DAY')
+                db_utcnow(),
+                db_quoteinterval('1 DAY')
             );
 
             // check for a valid signature, but only if this is not an actor object. If it is signed, it must be valid.
@@ -180,14 +179,15 @@ class Activity
 
     public static function fetch_profile($x)
     {
-        $r = q("select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
+        $r = q(
+            "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' limit 1",
             dbesc($x['id'])
         );
         if (!$r) {
-            $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+            $r = q(
+                "select * from xchan where xchan_hash = '%s' limit 1",
                 dbesc($x['id'])
             );
-
         }
         if (!$r) {
             return [];
@@ -199,7 +199,8 @@ class Activity
     public static function fetch_thing($x)
     {
 
-        $r = q("select * from obj where obj_type = %d and obj_obj = '%s' limit 1",
+        $r = q(
+            "select * from obj where obj_type = %d and obj_obj = '%s' limit 1",
             intval(TERM_OBJ_THING),
             dbesc($x['id'])
         );
@@ -218,7 +219,6 @@ class Activity
             $x['image'] = $r[0]['obj_image'];
         }
         return $x;
-
     }
 
     public static function fetch_item($x, $activitypub = false)
@@ -229,7 +229,8 @@ class Activity
             return $x;
         }
 
-        $r = q("select * from item where mid = '%s' limit 1",
+        $r = q(
+            "select * from item where mid = '%s' limit 1",
             dbesc($x['id'])
         );
         if ($r) {
@@ -258,7 +259,6 @@ class Activity
         $ret['last'] = z_root() . '/' . App::$query_string . '?page=' . $lastpage;
 
         return $ret;
-
     }
 
 
@@ -529,7 +529,8 @@ class Activity
         $r = false;
 
         if ($url) {
-            $r = q("select xchan_addr from xchan where ( xchan_url = '%s' OR xchan_hash = '%s' ) limit 1",
+            $r = q(
+                "select xchan_addr from xchan where ( xchan_url = '%s' OR xchan_hash = '%s' ) limit 1",
                 dbesc($url),
                 dbesc($url)
             );
@@ -539,13 +540,13 @@ class Activity
             }
         }
         if ($name) {
-            $r = q("select xchan_addr from xchan where xchan_name = '%s' limit 1",
+            $r = q(
+                "select xchan_addr from xchan where xchan_name = '%s' limit 1",
                 dbesc($name)
             );
             if ($r) {
                 return $r[0]['xchan_addr'];
             }
-
         }
 
         return EMPTY_STR;
@@ -558,7 +559,8 @@ class Activity
         // The xchan_url for mastodon is a text/html rendering. This is called from map_mentions where we need
         // to convert the mention url to an ActivityPub id. If this fails for any reason, return the url we have
 
-        $r = q("select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
+        $r = q(
+            "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
             dbesc($url),
             dbesc($url)
         );
@@ -645,19 +647,22 @@ class Activity
             }
             foreach ($ptr as $att) {
                 $entry = [];
-                if (array_key_exists('href', $att) && $att['href'])
+                if (array_key_exists('href', $att) && $att['href']) {
                     $entry['href'] = $att['href'];
-                elseif (array_key_exists('url', $att) && $att['url'])
+                } elseif (array_key_exists('url', $att) && $att['url']) {
                     $entry['href'] = $att['url'];
-                if (array_key_exists('mediaType', $att) && $att['mediaType'])
+                }
+                if (array_key_exists('mediaType', $att) && $att['mediaType']) {
                     $entry['type'] = $att['mediaType'];
-                elseif (array_key_exists('type', $att) && $att['type'] === 'Image')
+                } elseif (array_key_exists('type', $att) && $att['type'] === 'Image') {
                     $entry['type'] = 'image/jpeg';
+                }
                 if (array_key_exists('name', $att) && $att['name']) {
                     $entry['name'] = html2plain(purify_html($att['name']), 256);
                 }
-                if ($entry)
+                if ($entry) {
                     $ret[] = $entry;
+                }
             }
         } elseif (is_string($item['attachment'])) {
             btlogger('not an array: ' . $item['attachment']);
@@ -676,7 +681,6 @@ class Activity
         $reply = false;
 
         if (intval($i['item_deleted']) && (!$recurse)) {
-
             $is_response = ActivityStreams::is_response_activity($i['verb']);
 
             if ($is_response) {
@@ -689,10 +693,11 @@ class Activity
 
             $ret['id'] = str_replace('/item/', '/activity/', $i['mid']) . $fragment;
             $actor = self::encode_person($i['author'], false);
-            if ($actor)
+            if ($actor) {
                 $ret['actor'] = $actor;
-            else
+            } else {
                 return [];
+            }
 
             $obj = (($is_response) ? self::encode_activity($i, $activitypub, true) : self::encode_item($i, $activitypub));
             if ($obj) {
@@ -708,7 +713,6 @@ class Activity
 
             $ret['to'] = [ACTIVITY_PUBLIC_INBOX];
             return $ret;
-
         }
 
         $ret['type'] = self::activity_mapper($i['verb']);
@@ -803,10 +807,11 @@ class Activity
         }
 
         $actor = self::encode_person($i['author'], false);
-        if ($actor)
+        if ($actor) {
             $ret['actor'] = $actor;
-        else
+        } else {
             return [];
+        }
 
 
         $replyto = unserialise($i['replyto']);
@@ -862,15 +867,16 @@ class Activity
         if ($i['obj']) {
             if (is_string($i['obj'])) {
                 $tmp = json_decode($i['obj'], true);
-                if ($tmp !== NULL) {
+                if ($tmp !== null) {
                     $i['obj'] = $tmp;
                 }
             }
             $obj = self::encode_object($i['obj']);
-            if ($obj)
+            if ($obj) {
                 $ret['object'] = $obj;
-            else
+            } else {
                 return [];
+            }
         } else {
             $obj = self::encode_item($i, $activitypub);
             if ($obj) {
@@ -883,7 +889,7 @@ class Activity
         if ($i['target']) {
             if (is_string($i['target'])) {
                 $tmp = json_decode($i['target'], true);
-                if ($tmp !== NULL) {
+                if ($tmp !== null) {
                     $i['target'] = $tmp;
                 }
             }
@@ -901,7 +907,6 @@ class Activity
         // addressing madness
 
         if ($activitypub) {
-
             $parent_i = [];
             $public = (($i['item_private']) ? false : true);
             $top_level = (($reply) ? false : true);
@@ -928,7 +933,6 @@ class Activity
                     $ret['cc'] = array_values(array_unique(array_merge($ret['cc'], $parent_i['cc'])));
                 }
             } else {
-
                 // private activity
 
                 if ($top_level) {
@@ -945,7 +949,8 @@ class Activity
                     if ($ret['tag']) {
                         foreach ($ret['tag'] as $mention) {
                             if (is_array($mention) && array_key_exists('ttype', $mention) && in_array($mention['ttype'], [TERM_FORUM, TERM_MENTION]) && array_key_exists('href', $mention) && $mention['href']) {
-                                $h = q("select * from hubloc where hubloc_id_url = '%s' limit 1",
+                                $h = q(
+                                    "select * from hubloc where hubloc_id_url = '%s' limit 1",
                                     dbesc($mention['href'])
                                 );
                                 if ($h) {
@@ -962,7 +967,8 @@ class Activity
                         }
                     }
 
-                    $d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
+                    $d = q(
+                        "select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
                         dbesc($i['parent_mid']),
                         intval($i['uid'])
                     );
@@ -1006,7 +1012,8 @@ class Activity
     public static function nomadic_locations($item)
     {
         $synchubs = [];
-        $h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
+        $h = q(
+            "select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
 			where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
             dbesc($item['author_xchan'])
         );
@@ -1016,7 +1023,8 @@ class Activity
         }
 
         foreach ($h as $x) {
-            $y = q("select site_dead from site where site_url = '%s' limit 1",
+            $y = q(
+                "select site_dead from site where site_url = '%s' limit 1",
                 dbesc($x['hubloc_url'])
             );
 
@@ -1051,7 +1059,7 @@ class Activity
         if (isset($i['obj']) && $i['obj']) {
             if (is_string($i['obj'])) {
                 $tmp = json_decode($i['obj'], true);
-                if ($tmp !== NULL) {
+                if ($tmp !== null) {
                     $i['obj'] = $tmp;
                 }
             }
@@ -1084,15 +1092,15 @@ class Activity
 
         $ret['id'] = $i['mid'];
 
-//		$token = IConfig::get($i,'ocap','relay');
-//		if ($token) {
-//			if (defined('USE_BEARCAPS')) {
-//				$ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
-//			}
-//			else {
-//				$ret['id'] = $ret['id'] . '?token=' . $token;
-//			}
-//		}
+//      $token = IConfig::get($i,'ocap','relay');
+//      if ($token) {
+//          if (defined('USE_BEARCAPS')) {
+//              $ret['id'] = 'bear:?u=' . $ret['id'] . '&t=' . $token;
+//          }
+//          else {
+//              $ret['id'] = $ret['id'] . '?token=' . $token;
+//          }
+//      }
 
         $ret['published'] = datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME);
         if ($i['created'] !== $i['edited']) {
@@ -1151,7 +1159,8 @@ class Activity
             $reply = true;
 
             if ($i['item_private']) {
-                $d = q("select xchan_url, xchan_addr, xchan_name from item left join xchan on xchan_hash = author_xchan where id = %d limit 1",
+                $d = q(
+                    "select xchan_url, xchan_addr, xchan_name from item left join xchan on xchan_hash = author_xchan where id = %d limit 1",
                     intval($i['parent'])
                 );
                 if ($d) {
@@ -1331,7 +1340,6 @@ class Activity
         // addressing madness
 
         if ($activitypub) {
-
             $parent_i = [];
             $ret['to'] = [];
             $ret['cc'] = [];
@@ -1340,12 +1348,12 @@ class Activity
             $top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
 
             if (!$top_level) {
-
                 if (intval($i['parent'])) {
                     $recips = get_iconfig($i['parent'], 'activitypub', 'recips');
                 } else {
                     // if we are encoding this item for storage there won't be a parent.
-                    $p = q("select parent from item where parent_mid = '%s' and uid = %d",
+                    $p = q(
+                        "select parent from item where parent_mid = '%s' and uid = %d",
                         dbesc($i['parent_mid']),
                         intval($i['uid'])
                     );
@@ -1371,9 +1379,7 @@ class Activity
                 if (isset($parent_i['cc']) && is_array($parent_i['cc'])) {
                     $ret['cc'] = array_values(array_unique(array_merge($ret['cc'], $parent_i['cc'])));
                 }
-
             } else {
-
                 // private activity
 
                 if ($top_level) {
@@ -1389,7 +1395,8 @@ class Activity
                     if ($ret['tag']) {
                         foreach ($ret['tag'] as $mention) {
                             if (is_array($mention) && array_key_exists('ttype', $mention) && in_array($mention['ttype'], [TERM_FORUM, TERM_MENTION]) && array_key_exists('href', $mention) && $mention['href']) {
-                                $h = q("select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
+                                $h = q(
+                                    "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
                                     dbesc($mention['href']),
                                     dbesc($mention['href'])
                                 );
@@ -1408,7 +1415,8 @@ class Activity
                     }
 
 
-                    $d = q("select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
+                    $d = q(
+                        "select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
                         dbesc($i['parent_mid']),
                         intval($i['uid'])
                     );
@@ -1487,7 +1495,8 @@ class Activity
         }
 
         if ($i['mid'] !== $i['parent_mid']) {
-            $i = q("select * from item where parent_mid = '%s' and uid = %d",
+            $i = q(
+                "select * from item where parent_mid = '%s' and uid = %d",
                 dbesc($i['parent_mid']),
                 intval($i['uid'])
             );
@@ -1535,7 +1544,6 @@ class Activity
         }
 
         return array_values(array_unique($ret));
-
     }
 
 
@@ -1544,8 +1552,9 @@ class Activity
 
         $ret = [];
 
-        if (!$p['xchan_url'])
+        if (!$p['xchan_url']) {
             return $ret;
+        }
 
         if (!$extended) {
             return $p['xchan_url'];
@@ -1572,8 +1581,9 @@ class Activity
         } else {
             $ret['id'] = ((strpos($p['xchan_hash'], 'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
         }
-        if ($p['xchan_addr'] && strpos($p['xchan_addr'], '@'))
+        if ($p['xchan_addr'] && strpos($p['xchan_addr'], '@')) {
             $ret['preferredUsername'] = substr($p['xchan_addr'], 0, strpos($p['xchan_addr'], '@'));
+        }
         $ret['name'] = $p['xchan_name'];
         $ret['updated'] = datetime_convert('UTC', 'UTC', $p['xchan_name_date'], ATOM_TIME);
         $ret['icon'] = [
@@ -1592,7 +1602,6 @@ class Activity
         $ret['tag'] = [['type' => 'PropertyValue', 'name' => 'Protocol', 'value' => 'zot6']];
 
         if ($activitypub && get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) {
-
             if ($c) {
                 if (get_pconfig($c['channel_id'], 'system', 'activitypub', ACTIVITYPUB_ENABLED)) {
                     $ret['inbox'] = z_root() . '/inbox/' . $c['channel_address'];
@@ -1654,16 +1663,19 @@ class Activity
                 }
                 // only fill in profile information if the profile is publicly visible
                 if (perm_is_allowed($c['channel_id'], EMPTY_STR, 'view_profile')) {
-                    $dp = q("select * from profile where uid = %d and is_default = 1",
+                    $dp = q(
+                        "select * from profile where uid = %d and is_default = 1",
                         intval($c['channel_id'])
                     );
                     if ($dp) {
                         if ($dp[0]['about']) {
                             $ret['summary'] = bbcode($dp[0]['about'], ['export' => true]);
                         }
-                        foreach (['pdesc', 'address', 'locality', 'region', 'postal_code', 'country_name',
+                        foreach (
+                            ['pdesc', 'address', 'locality', 'region', 'postal_code', 'country_name',
                                      'hometown', 'gender', 'marital', 'sexual', 'politic', 'religion', 'pronouns',
-                                     'homepage', 'contact', 'dob'] as $k) {
+                                     'homepage', 'contact', 'dob'] as $k
+                        ) {
                             if ($dp[0][$k]) {
                                 $key = $k;
                                 if ($key === 'pdesc') {
@@ -1797,20 +1809,23 @@ class Activity
 
         // Reactions will just map to normal activities
 
-        if (strpos($verb, ACTIVITY_REACT) !== false)
+        if (strpos($verb, ACTIVITY_REACT) !== false) {
             return 'Create';
-        if (strpos($verb, ACTIVITY_MOOD) !== false)
+        }
+        if (strpos($verb, ACTIVITY_MOOD) !== false) {
             return 'Create';
+        }
 
-        if (strpos($verb, ACTIVITY_POKE) !== false)
+        if (strpos($verb, ACTIVITY_POKE) !== false) {
             return 'Activity';
+        }
 
         // We should return false, however this will trigger an uncaught exception  and crash
         // the delivery system if encountered by the JSON-LDSignature library
 
         logger('Unmapped activity: ' . $verb);
         return 'Create';
-        //	return false;
+        //  return false;
     }
 
 
@@ -1853,8 +1868,7 @@ class Activity
         logger('Unmapped activity object: ' . $obj);
         return 'Note';
 
-        //	return false;
-
+        //  return false;
     }
 
 
@@ -1870,11 +1884,11 @@ class Activity
         }
 
         /*
-		 *
-		 * if $act->type === 'Follow', actor is now following $channel
-		 * if $act->type === 'Accept', actor has approved a follow request from $channel
-		 *
-		 */
+         *
+         * if $act->type === 'Follow', actor is now following $channel
+         * if $act->type === 'Accept', actor has approved a follow request from $channel
+         *
+         */
 
         $person_obj = $act->actor;
 
@@ -1885,14 +1899,14 @@ class Activity
         }
 
         if (is_array($person_obj)) {
-
             // store their xchan and hubloc
 
             self::actor_store($person_obj['id'], $person_obj);
 
             // Find any existing abook record
 
-            $r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d limit 1",
+            $r = q(
+                "select * from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d limit 1",
                 dbesc($person_obj['id']),
                 intval($channel['channel_id'])
             );
@@ -1914,15 +1928,12 @@ class Activity
 
 
         if ($contact && $contact['abook_id']) {
-
             // A relationship of some form already exists on this site.
 
             switch ($act->type) {
-
                 case 'Follow':
                 case 'Invite':
                 case 'Join':
-
                     // A second Follow request, but we haven't approved the first one
 
                     if ($contact['abook_pending']) {
@@ -1938,7 +1949,6 @@ class Activity
                     return;
 
                 case 'Accept':
-
                     // They accepted our Follow request - set default permissions
 
                     set_abconfig($channel['channel_id'], $contact['abook_xchan'], 'system', 'their_perms', $their_perms);
@@ -1946,11 +1956,13 @@ class Activity
                     $abook_instance = $contact['abook_instance'];
 
                     if (strpos($abook_instance, z_root()) === false) {
-                        if ($abook_instance)
+                        if ($abook_instance) {
                             $abook_instance .= ',';
+                        }
                         $abook_instance .= z_root();
 
-                        $r = q("update abook set abook_instance = '%s', abook_not_here = 0 
+                        $r = q(
+                            "update abook set abook_instance = '%s', abook_not_here = 0 
 							where abook_id = %d and abook_channel = %d",
                             dbesc($abook_instance),
                             intval($contact['abook_id']),
@@ -1961,7 +1973,6 @@ class Activity
                     return;
                 default:
                     return;
-
             }
         }
 
@@ -1979,7 +1990,8 @@ class Activity
 
         // The xchan should have been created by actor_store() above
 
-        $r = q("select * from xchan where xchan_hash = '%s' and xchan_network = 'activitypub' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' and xchan_network = 'activitypub' limit 1",
             dbesc($person_obj['id'])
         );
 
@@ -2024,17 +2036,20 @@ class Activity
             ]
         );
 
-        if ($my_perms)
+        if ($my_perms) {
             AbConfig::Set($channel['channel_id'], $ret['xchan_hash'], 'system', 'my_perms', $my_perms);
+        }
 
-        if ($their_perms)
+        if ($their_perms) {
             AbConfig::Set($channel['channel_id'], $ret['xchan_hash'], 'system', 'their_perms', $their_perms);
+        }
 
 
         if ($r) {
             logger("New ActivityPub follower for {$channel['channel_name']}");
 
-            $new_connection = q("select * from abook left join xchan on abook_xchan = xchan_hash left join hubloc on hubloc_hash = xchan_hash where abook_channel = %d and abook_xchan = '%s' order by abook_created desc limit 1",
+            $new_connection = q(
+                "select * from abook left join xchan on abook_xchan = xchan_hash left join hubloc on hubloc_hash = xchan_hash where abook_channel = %d and abook_xchan = '%s' order by abook_created desc limit 1",
                 intval($channel['channel_id']),
                 dbesc($ret['xchan_hash'])
             );
@@ -2085,7 +2100,6 @@ class Activity
         }
 
         return;
-
     }
 
 
@@ -2099,8 +2113,8 @@ class Activity
         $person_obj = $act->actor;
 
         if (is_array($person_obj)) {
-
-            $r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d limit 1",
+            $r = q(
+                "select * from abook left join xchan on abook_xchan = xchan_hash where abook_xchan = '%s' and abook_channel = %d limit 1",
                 dbesc($person_obj['id']),
                 intval($channel['channel_id'])
             );
@@ -2121,7 +2135,7 @@ class Activity
             return;
         }
 
-//		logger('person_obj: ' . print_r($person_obj,true));
+//      logger('person_obj: ' . print_r($person_obj,true));
 
         if (array_key_exists('movedTo', $person_obj) && $person_obj['movedTo'] && !is_array($person_obj['movedTo'])) {
             $tgt = self::fetch($person_obj['movedTo']);
@@ -2173,10 +2187,12 @@ class Activity
         XConfig::Set($url, 'system', 'actor_record', $person_obj);
 
         $name = escape_tags($person_obj['name']);
-        if (!$name)
+        if (!$name) {
             $name = escape_tags($person_obj['preferredUsername']);
-        if (!$name)
+        }
+        if (!$name) {
             $name = escape_tags(t('Unknown'));
+        }
 
         $username = escape_tags($person_obj['preferredUsername']);
         $h = parse_url($url);
@@ -2186,9 +2202,9 @@ class Activity
 
         if ($person_obj['icon']) {
             if (is_array($person_obj['icon'])) {
-                if (array_key_exists('url', $person_obj['icon']))
+                if (array_key_exists('url', $person_obj['icon'])) {
                     $icon = $person_obj['icon']['url'];
-                else {
+                } else {
                     if (is_string($person_obj['icon'][0])) {
                         $icon = $person_obj['icon'][0];
                     } elseif (array_key_exists('url', $person_obj['icon'][0])) {
@@ -2309,7 +2325,8 @@ class Activity
         $xchan_type = self::get_xchan_type($person_obj['type']);
         $about = ((isset($person_obj['summary'])) ? html2bbcode(purify_html($person_obj['summary'])) : EMPTY_STR);
 
-        $p = q("select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
+        $p = q(
+            "select * from xchan where xchan_url = '%s' and xchan_network = 'zot6' limit 1",
             dbesc($url)
         );
         if ($p) {
@@ -2322,7 +2339,8 @@ class Activity
         // once extended xchan_type directory filtering is implemented.
         $censored = ((strpos($profile, 'instance_actor') || strpos($profile, '/internal/fetch')) ? 1 : 0);
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($url)
         );
         if (!$r) {
@@ -2350,7 +2368,6 @@ class Activity
                 ]
             );
         } else {
-
             // Record exists. Cache existing records for a set number of days
             // then refetch to catch updated profile photos, names, etc.
 
@@ -2359,7 +2376,8 @@ class Activity
             }
 
             // update existing record
-            $u = q("update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d, xchan_censored = %d where xchan_hash = '%s'",
+            $u = q(
+                "update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_pubkey = '%s', xchan_network = '%s', xchan_name_date = '%s', xchan_hidden = %d, xchan_type = %d, xchan_censored = %d where xchan_hash = '%s'",
                 dbesc(datetime_convert()),
                 dbesc($name),
                 dbesc($pubkey),
@@ -2372,7 +2390,8 @@ class Activity
             );
 
             if (strpos($username, '@') && ($r[0]['xchan_addr'] !== $username)) {
-                $r = q("update xchan set xchan_addr = '%s' where xchan_hash = '%s'",
+                $r = q(
+                    "update xchan set xchan_addr = '%s' where xchan_hash = '%s'",
                     dbesc($username),
                     dbesc($url)
                 );
@@ -2393,11 +2412,13 @@ class Activity
                 $version = ((array_path_exists('software/version', $ni)) ? $ni['software']['version'] : '');
                 $register = $ni['openRegistrations'];
 
-                $site = q("select * from site where site_url = '%s'",
+                $site = q(
+                    "select * from site where site_url = '%s'",
                     dbesc($site_url)
                 );
                 if ($site) {
-                    q("update site set site_project = '%s', site_update = '%s', site_version = '%s' where site_url = '%s'",
+                    q(
+                        "update site set site_project = '%s', site_update = '%s', site_version = '%s' where site_url = '%s'",
                         dbesc($software),
                         dbesc(datetime_convert()),
                         dbesc($version),
@@ -2405,7 +2426,8 @@ class Activity
                     );
                     // it may have been saved originally as an unknown type, but we now know what it is
                     if (intval($site[0]['site_type']) === SITE_TYPE_UNKNOWN) {
-                        q("update site set site_type = %d where site_url = '%s'",
+                        q(
+                            "update site set site_type = %d where site_url = '%s'",
                             intval(SITE_TYPE_NOTZOT),
                             dbesc($site_url)
                         );
@@ -2433,7 +2455,8 @@ class Activity
             set_xconfig($url, 'activitypub', 'collections', $collections);
         }
 
-        $h = q("select * from hubloc where hubloc_hash = '%s' limit 1",
+        $h = q(
+            "select * from hubloc where hubloc_hash = '%s' limit 1",
             dbesc($url)
         );
 
@@ -2461,24 +2484,28 @@ class Activity
             );
         } else {
             if (strpos($username, '@') && ($h[0]['hubloc_addr'] !== $username)) {
-                $r = q("update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
+                $r = q(
+                    "update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
                     dbesc($username),
                     dbesc($url)
                 );
             }
             if ($inbox !== $h[0]['hubloc_callback']) {
-                $r = q("update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
+                $r = q(
+                    "update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
                     dbesc($inbox),
                     dbesc($url)
                 );
             }
             if ($profile !== $h[0]['hubloc_id_url']) {
-                $r = q("update hubloc set hubloc_id_url = '%s' where hubloc_hash = '%s'",
+                $r = q(
+                    "update hubloc set hubloc_id_url = '%s' where hubloc_hash = '%s'",
                     dbesc($profile),
                     dbesc($url)
                 );
             }
-            $r = q("update hubloc set hubloc_updated = '%s' where hubloc_hash = '%s'",
+            $r = q(
+                "update hubloc set hubloc_updated = '%s' where hubloc_hash = '%s'",
                 dbesc(datetime_convert()),
                 dbesc($url)
             );
@@ -2493,7 +2520,8 @@ class Activity
         // and adding zot discovery urls to the actor record will cause federation to fail with the 20-30 projects which don't accept arrays in the url field.
 
         if (strpos($url, '/channel/') !== false) {
-            $zx = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6'",
+            $zx = q(
+                "select * from hubloc where hubloc_id_url = '%s' and hubloc_network = 'zot6'",
                 dbesc($url)
             );
             if (($username) && strpos($username, '@') && (!$zx)) {
@@ -2502,7 +2530,6 @@ class Activity
         }
 
         Run::Summon(['Xchan_photo', bin2hex($icon), bin2hex($url)]);
-
     }
 
     public static function update_protocols($xchan, $str)
@@ -2517,7 +2544,8 @@ class Activity
 
     public static function drop($channel, $observer, $act)
     {
-        $r = q("select * from item where mid = '%s' and uid = %d limit 1",
+        $r = q(
+            "select * from item where mid = '%s' and uid = %d limit 1",
             dbesc((is_array($act->obj)) ? $act->obj['id'] : $act->obj),
             intval($channel['channel_id'])
         );
@@ -2531,7 +2559,6 @@ class Activity
         } elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
             drop_item($r[0]['id'], false);
         }
-
     }
 
 
@@ -2539,8 +2566,9 @@ class Activity
 
     public static function vid_sort($a, $b)
     {
-        if ($a['width'] === $b['width'])
+        if ($a['width'] === $b['width']) {
             return 0;
+        }
         return (($a['width'] > $b['width']) ? -1 : 1);
     }
 
@@ -2567,7 +2595,8 @@ class Activity
     public static function get_actor_bbmention($id)
     {
 
-        $x = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' or hubloc_id_url = '%s' limit 1",
+        $x = q(
+            "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' or hubloc_id_url = '%s' limit 1",
             dbesc($id),
             dbesc($id)
         );
@@ -2581,7 +2610,6 @@ class Activity
             return sprintf('@[zrl=%s]%s[/zrl]', $x[0]['xchan_url'], $x[0]['xchan_name']);
         }
         return '@{' . $id . '}';
-
     }
 
     public static function update_poll($item, $post)
@@ -2602,7 +2630,8 @@ class Activity
             $multi = true;
         }
 
-        $r = q("select mid, title from item where parent_mid = '%s' and author_xchan = '%s' and mid != parent_mid ",
+        $r = q(
+            "select mid, title from item where parent_mid = '%s' and author_xchan = '%s' and mid != parent_mid ",
             dbesc($item['mid']),
             dbesc($post['author_xchan'])
         );
@@ -2675,7 +2704,8 @@ class Activity
 
         logger('updated_poll: ' . print_r($o, true), LOGGER_DATA);
         if ($answer_found && !$found) {
-            $x = q("update item set obj = '%s', edited = '%s' where id = %d",
+            $x = q(
+                "update item set obj = '%s', edited = '%s' where id = %d",
                 dbesc(json_encode($o)),
                 dbesc(datetime_convert()),
                 intval($item['id'])
@@ -2731,8 +2761,10 @@ class Activity
 
         // These activities should have been handled separately in the Inbox module and should not be turned into posts
 
-        if (in_array($act->type, ['Follow', 'Accept', 'Reject', 'Create', 'Update']) && is_array($act->obj) && array_key_exists('type', $act->obj)
-            && ($act->obj['type'] === 'Follow' || ActivityStreams::is_an_actor($act->obj['type']))) {
+        if (
+            in_array($act->type, ['Follow', 'Accept', 'Reject', 'Create', 'Update']) && is_array($act->obj) && array_key_exists('type', $act->obj)
+            && ($act->obj['type'] === 'Follow' || ActivityStreams::is_an_actor($act->obj['type']))
+        ) {
             return false;
         }
 
@@ -2794,7 +2826,6 @@ class Activity
         }
 
         if (ActivityStreams::is_response_activity($act->type)) {
-
             $response_activity = true;
 
             $s['mid'] = $act->id;
@@ -2970,8 +3001,10 @@ class Activity
             $generator = $act->get_property_obj('generator', $act->obj);
         }
 
-        if ($generator && array_key_exists('type', $generator)
-            && in_array($generator['type'], ['Application', 'Service']) && array_key_exists('name', $generator)) {
+        if (
+            $generator && array_key_exists('type', $generator)
+            && in_array($generator['type'], ['Application', 'Service']) && array_key_exists('name', $generator)
+        ) {
             $s['app'] = escape_tags($generator['name']);
         }
 
@@ -3041,7 +3074,6 @@ class Activity
 
         if (!$response_activity) {
             if ($act->obj['type'] === 'Video') {
-
                 $vtypes = [
                     'video/mp4',
                     'video/ogg',
@@ -3117,7 +3149,6 @@ class Activity
             }
 
             if ($act->obj['type'] === 'Audio') {
-
                 $atypes = [
                     'audio/mpeg',
                     'audio/ogg',
@@ -3152,7 +3183,6 @@ class Activity
             }
 
             if ($act->obj['type'] === 'Image' && strpos($s['body'], 'zrl=') === false) {
-
                 $ptr = null;
 
                 if (array_key_exists('url', $act->obj)) {
@@ -3178,7 +3208,6 @@ class Activity
 
 
             if ($act->obj['type'] === 'Page' && !$s['body']) {
-
                 $ptr = null;
                 $purl = EMPTY_STR;
 
@@ -3268,7 +3297,6 @@ class Activity
 
         if ($cacheable) {
             if ((!array_key_exists('mimetype', $s)) || (in_array($s['mimetype'], ['text/bbcode', 'text/x-multicode']))) {
-
                 // preserve the original purified HTML content *unless* we've modified $s['body']
                 // within this function (to add attachments or reaction descriptions or mention rewrites).
                 // This avoids/bypasses some markdown rendering issues which can occur when
@@ -3295,7 +3323,6 @@ class Activity
         $s = $hookinfo['s'];
 
         return $s;
-
     }
 
     public static function rewrite_mentions_sub(&$s, $pref, &$obj = null)
@@ -3306,7 +3333,8 @@ class Activity
                 $txt = EMPTY_STR;
                 if (intval($tag['ttype']) === TERM_MENTION) {
                     // some platforms put the identity url into href rather than the profile url. Accept either form.
-                    $x = q("select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
+                    $x = q(
+                        "select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
                         dbesc($tag['url']),
                         dbesc($tag['url'])
                     );
@@ -3331,43 +3359,75 @@ class Activity
                 }
 
                 if ($txt) {
-
                     // the Markdown filter will get tripped up and think this is a markdown link
                     // if $txt begins with parens so put it behind a zero-width space
                     if (substr($txt, 0, 1) === '(') {
                         $txt = htmlspecialchars_decode('&#8203;', ENT_QUOTES) . $txt;
                     }
-                    $s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/zrl\]/ism',
-                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]', $s['body']);
-                    $s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/url\]/ism',
-                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]', $s['body']);
-                    $s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_url'], '/') . '\]@(.*?)\[\/zrl\]/ism',
-                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]', $s['body']);
-                    $s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_url'], '/') . '\]@(.*?)\[\/url\]/ism',
-                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]', $s['body']);
+                    $s['body'] = preg_replace(
+                        '/\@\[zrl\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/zrl\]/ism',
+                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',
+                        $s['body']
+                    );
+                    $s['body'] = preg_replace(
+                        '/\@\[url\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/url\]/ism',
+                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',
+                        $s['body']
+                    );
+                    $s['body'] = preg_replace(
+                        '/\[zrl\=' . preg_quote($x[0]['xchan_url'], '/') . '\]@(.*?)\[\/zrl\]/ism',
+                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',
+                        $s['body']
+                    );
+                    $s['body'] = preg_replace(
+                        '/\[url\=' . preg_quote($x[0]['xchan_url'], '/') . '\]@(.*?)\[\/url\]/ism',
+                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',
+                        $s['body']
+                    );
 
                     // replace these just in case the sender (in this case Friendica) got it wrong
-                    $s['body'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_hash'], '/') . '\](.*?)\[\/zrl\]/ism',
-                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]', $s['body']);
-                    $s['body'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_hash'], '/') . '\](.*?)\[\/url\]/ism',
-                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]', $s['body']);
-                    $s['body'] = preg_replace('/\[zrl\=' . preg_quote($x[0]['xchan_hash'], '/') . '\]@(.*?)\[\/zrl\]/ism',
-                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]', $s['body']);
-                    $s['body'] = preg_replace('/\[url\=' . preg_quote($x[0]['xchan_hash'], '/') . '\]@(.*?)\[\/url\]/ism',
-                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]', $s['body']);
+                    $s['body'] = preg_replace(
+                        '/\@\[zrl\=' . preg_quote($x[0]['xchan_hash'], '/') . '\](.*?)\[\/zrl\]/ism',
+                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',
+                        $s['body']
+                    );
+                    $s['body'] = preg_replace(
+                        '/\@\[url\=' . preg_quote($x[0]['xchan_hash'], '/') . '\](.*?)\[\/url\]/ism',
+                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',
+                        $s['body']
+                    );
+                    $s['body'] = preg_replace(
+                        '/\[zrl\=' . preg_quote($x[0]['xchan_hash'], '/') . '\]@(.*?)\[\/zrl\]/ism',
+                        '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',
+                        $s['body']
+                    );
+                    $s['body'] = preg_replace(
+                        '/\[url\=' . preg_quote($x[0]['xchan_hash'], '/') . '\]@(.*?)\[\/url\]/ism',
+                        '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',
+                        $s['body']
+                    );
 
                     if ($obj && $txt) {
                         if (!is_array($obj)) {
                             $obj = json_decode($obj, true);
                         }
                         if (array_path_exists('source/content', $obj)) {
-                            $obj['source']['content'] = preg_replace('/\@\[zrl\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/zrl\]/ism',
-                                '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]', $obj['source']['content']);
-                            $obj['source']['content'] = preg_replace('/\@\[url\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/url\]/ism',
-                                '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]', $obj['source']['content']);
+                            $obj['source']['content'] = preg_replace(
+                                '/\@\[zrl\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/zrl\]/ism',
+                                '@[zrl=' . $x[0]['xchan_url'] . ']' . $txt . '[/zrl]',
+                                $obj['source']['content']
+                            );
+                            $obj['source']['content'] = preg_replace(
+                                '/\@\[url\=' . preg_quote($x[0]['xchan_url'], '/') . '\](.*?)\[\/url\]/ism',
+                                '@[url=' . $x[0]['xchan_url'] . ']' . $txt . '[/url]',
+                                $obj['source']['content']
+                            );
                         }
-                        $obj['content'] = preg_replace('/\@(.*?)\<a (.*?)href\=\"' . preg_quote($x[0]['xchan_url'], '/') . '\"(.*?)\>(.*?)\<\/a\>/ism',
-                            '@$1<a $2 href="' . $x[0]['xchan_url'] . '"$3>' . $txt . '</a>', $obj['content']);
+                        $obj['content'] = preg_replace(
+                            '/\@(.*?)\<a (.*?)href\=\"' . preg_quote($x[0]['xchan_url'], '/') . '\"(.*?)\>(.*?)\<\/a\>/ism',
+                            '@$1<a $2 href="' . $x[0]['xchan_url'] . '"$3>' . $txt . '</a>',
+                            $obj['content']
+                        );
                     }
                 }
             }
@@ -3448,7 +3508,8 @@ class Activity
         $permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system', 'permit_all_mentions') && i_am_mentioned($channel, $item));
 
         if ($is_child_node) {
-            $p = q("select * from item where mid = '%s' and uid = %d and item_wall = 1",
+            $p = q(
+                "select * from item where mid = '%s' and uid = %d and item_wall = 1",
                 dbesc($item['parent_mid']),
                 intval($channel['channel_id'])
             );
@@ -3498,7 +3559,6 @@ class Activity
                     $item['item_blocked'] = ITEM_MODERATED;
                 }
             } else {
-
                 // By default if we allow you to send_stream and comments and this is a comment, it is allowed.
                 // A side effect of this action is that if you take away send_stream permission, comments to those
                 // posts you previously allowed will still be accepted. It is possible but might be difficult to fix this.
@@ -3550,7 +3610,6 @@ class Activity
         }
 
         if ($is_sys_channel) {
-
             if (!check_pubstream_channelallowed($observer_hash)) {
                 $allowed = false;
                 $reason[] = 'pubstream channel blocked';
@@ -3558,7 +3617,8 @@ class Activity
 
             // don't allow pubstream posts if the sender even has a clone on a pubstream denied site
 
-            $h = q("select hubloc_url from hubloc where hubloc_hash = '%s'",
+            $h = q(
+                "select hubloc_url from hubloc where hubloc_hash = '%s'",
                 dbesc($observer_hash)
             );
             if ($h) {
@@ -3620,7 +3680,8 @@ class Activity
         // due to this channel's filtering rules for content
         // provided by either of these entities.
 
-        $abook = q("select * from abook where ( abook_xchan = '%s' OR abook_xchan  = '%s') and abook_channel = %d ",
+        $abook = q(
+            "select * from abook where ( abook_xchan = '%s' OR abook_xchan  = '%s') and abook_channel = %d ",
             dbesc($item['author_xchan']),
             dbesc($item['owner_xchan']),
             intval($channel['channel_id'])
@@ -3661,8 +3722,8 @@ class Activity
         $parent = null;
 
         if ($is_child_node) {
-
-            $parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+            $parent = q(
+                "select * from item where mid = '%s' and uid = %d limit 1",
                 dbesc($item['parent_mid']),
                 intval($item['uid'])
             );
@@ -3675,7 +3736,8 @@ class Activity
                         $fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $act, $item) : false);
                     }
                     if ($fetch) {
-                        $parent = q("select * from item where mid = '%s' and uid = %d limit 1",
+                        $parent = q(
+                            "select * from item where mid = '%s' and uid = %d limit 1",
                             dbesc($item['parent_mid']),
                             intval($item['uid'])
                         );
@@ -3698,11 +3760,11 @@ class Activity
             $item['parent_mid'] = $parent[0]['parent_mid'];
 
             /*
-			 *
-			 * Check for conversation privacy mismatches
-			 * We can only do this if we have a channel and we have fetched the parent
-			 *
-			 */
+             *
+             * Check for conversation privacy mismatches
+             * We can only do this if we have a channel and we have fetched the parent
+             *
+             */
 
             // public conversation, but this comment went rogue and was published privately
             // hide it from everybody except the channel owner
@@ -3721,12 +3783,12 @@ class Activity
             if (intval($parent[0]['item_private']) !== 0 && $act->recips && (in_array(ACTIVITY_PUBLIC_INBOX, $act->recips) || in_array('Public', $act->recips) || in_array('as:Public', $act->recips))) {
                 $item['item_restrict'] = $item['item_restrict'] | 2;
             }
-
         }
 
         self::rewrite_mentions($item);
 
-        $r = q("select id, created, edited from item where mid = '%s' and uid = %d limit 1",
+        $r = q(
+            "select id, created, edited from item where mid = '%s' and uid = %d limit 1",
             dbesc($item['mid']),
             intval($item['uid'])
         );
@@ -3747,30 +3809,30 @@ class Activity
 // can fetch the 'context'. For other platforms it's a wild guess. Additionally when we tested this, it started an infinite
 // recursion and has been disabled until the recursive behaviour is tracked down and fixed.
 
-//		if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
-//			logger('topfetch', LOGGER_DEBUG);
-//			// if the thread owner is a connnection, we will already receive any additional comments to their posts
-//			// but if they are not we can try to fetch others in the background
-//			$x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
-//				WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
-//				intval($channel['channel_id']),
-//				dbesc($parent[0]['owner_xchan'])
-//			);
-//			if (! $x) {
-//				// determine if the top-level post provides a replies collection
-//				if ($parent[0]['obj']) {
-//					$parent[0]['obj'] = json_decode($parent[0]['obj'],true);
-//				}
-//				logger('topfetch: ' . print_r($parent[0],true), LOGGER_ALL);
-//				$id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
-//				if (! $id) {
-//					$id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
-//				}
-//				if ($id) {
-//					Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
-//				}
-//			}
-//		}
+//      if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
+//          logger('topfetch', LOGGER_DEBUG);
+//          // if the thread owner is a connnection, we will already receive any additional comments to their posts
+//          // but if they are not we can try to fetch others in the background
+//          $x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
+//              WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+//              intval($channel['channel_id']),
+//              dbesc($parent[0]['owner_xchan'])
+//          );
+//          if (! $x) {
+//              // determine if the top-level post provides a replies collection
+//              if ($parent[0]['obj']) {
+//                  $parent[0]['obj'] = json_decode($parent[0]['obj'],true);
+//              }
+//              logger('topfetch: ' . print_r($parent[0],true), LOGGER_ALL);
+//              $id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
+//              if (! $id) {
+//                  $id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
+//              }
+//              if ($id) {
+//                  Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
+//              }
+//          }
+//      }
 
         if (is_array($x) && $x['item_id']) {
             if ($is_child_node) {
@@ -3778,7 +3840,8 @@ class Activity
                     // We are the owner of this conversation, so send all received comments back downstream
                     Run::Summon(['Notifier', 'comment-import', $x['item_id']]);
                 }
-                $r = q("select * from item where id = %d limit 1",
+                $r = q(
+                    "select * from item where id = %d limit 1",
                     intval($x['item_id'])
                 );
                 if ($r) {
@@ -3787,14 +3850,14 @@ class Activity
             }
             sync_an_item($channel['channel_id'], $x['item_id']);
         }
-
     }
 
 
     public static function find_best_identity($xchan)
     {
 
-        $r = q("select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
+        $r = q(
+            "select hubloc_hash from hubloc where hubloc_id_url = '%s' limit 1",
             dbesc($xchan)
         );
         if ($r) {
@@ -3821,8 +3884,10 @@ class Activity
             }
             // set client flag to convert objects to implied activities
             $a = new ActivityStreams($n, null, true);
-            if ($a->type === 'Announce' && is_array($a->obj)
-                && array_key_exists('object', $a->obj) && array_key_exists('actor', $a->obj)) {
+            if (
+                $a->type === 'Announce' && is_array($a->obj)
+                && array_key_exists('object', $a->obj) && array_key_exists('actor', $a->obj)
+            ) {
                 // This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
                 // Reparse the encapsulated Activity and use that instead
                 logger('relayed activity', LOGGER_DEBUG);
@@ -3856,7 +3921,6 @@ class Activity
             $item = $hookinfo['item'];
 
             if ($item) {
-
                 // don't leak any private conversations to the public stream
                 // even if they contain publicly addressed comments/reactions
 
@@ -3946,7 +4010,8 @@ class Activity
 
         $s_alt = htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
 
-        if ((strpos($body, ']' . $s . '[/img]') === false) &&
+        if (
+            (strpos($body, ']' . $s . '[/img]') === false) &&
             (strpos($body, ']' . $s . '[/zmg]') === false) &&
             (strpos($body, ']' . $s . '[/video]') === false) &&
             (strpos($body, ']' . $s . '[/zvideo]') === false) &&
@@ -3957,7 +4022,8 @@ class Activity
             (strpos($body, ']' . $s_alt . '[/video]') === false) &&
             (strpos($body, ']' . $s_alt . '[/zvideo]') === false) &&
             (strpos($body, ']' . $s_alt . '[/audio]') === false) &&
-            (strpos($body, ']' . $s_alt . '[/zaudio]') === false)) {
+            (strpos($body, ']' . $s_alt . '[/zaudio]') === false)
+        ) {
             return true;
         }
         return false;
@@ -4077,9 +4143,9 @@ class Activity
 
         $content = false;
 
-        if (array_key_exists($field, $act) && $act[$field])
+        if (array_key_exists($field, $act) && $act[$field]) {
             $content = (($binary) ? $act[$field] : purify_html($act[$field]));
-        elseif (array_key_exists($field . 'Map', $act) && $act[$field . 'Map']) {
+        } elseif (array_key_exists($field . 'Map', $act) && $act[$field . 'Map']) {
             foreach ($act[$field . 'Map'] as $k => $v) {
                 $content[escape_tags($k)] = (($binary) ? $v : purify_html($v));
             }
@@ -4090,7 +4156,8 @@ class Activity
     public static function send_rejection_activity($channel, $observer_hash, $item)
     {
 
-        $recip = q("select * from hubloc where hubloc_hash = '%s' limit 1",
+        $recip = q(
+            "select * from hubloc where hubloc_hash = '%s' limit 1",
             dbesc($observer_hash)
         );
         if (!$recip) {
@@ -4114,7 +4181,6 @@ class Activity
 
         $queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES), $channel, $recip[0]);
         do_delivery([$queue_id]);
-
     }
 
     // Find either an Authorization: Bearer token or 'token' request variable
@@ -4187,18 +4253,21 @@ class Activity
 
         switch (trim($options_arr[0])) {
             case 'activitypub':
-                $hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' $sql_options ",
+                $hublocs = q(
+                    "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' $sql_options ",
                     dbesc($url)
                 );
                 break;
             case 'zot6':
-                $hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' $sql_options ",
+                $hublocs = q(
+                    "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' $sql_options ",
                     dbesc($url)
                 );
                 break;
             case 'all':
             default:
-                $hublocs = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) $sql_options ",
+                $hublocs = q(
+                    "select * from hubloc left join xchan on hubloc_hash = xchan_hash where ( hubloc_id_url = '%s' OR hubloc_hash = '%s' ) $sql_options ",
                     dbesc($url),
                     dbesc($url)
                 );
@@ -4261,8 +4330,5 @@ class Activity
             'capabilities' => 'litepub:capabilities',
             'acceptsJoins' => 'litepub:acceptsJoins',
         ];
-
     }
-
-
 }

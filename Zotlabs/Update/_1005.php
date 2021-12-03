@@ -10,6 +10,4 @@ class _1005
         q("drop table `notify-threads`");
         return UPDATE_SUCCESS;
     }
-
-
 }

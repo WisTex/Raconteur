@@ -30,14 +30,16 @@ class Groups
 
         $xf = false;
 
-        $x1 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and not v like '%s'",
+        $x1 = q(
+            "select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and not v like '%s'",
             intval(local_channel()),
             dbesc('%send_stream%')
         );
         if ($x1) {
             $xc = ids_to_querystr($x1, 'xchan', true);
 
-            $x2 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") ",
+            $x2 = q(
+                "select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") ",
                 intval(local_channel()),
                 dbesc('%tag_deliver%')
             );
@@ -46,7 +48,8 @@ class Groups
                 $xf = ids_to_querystr($x2, 'xchan', true);
 
                 // private forums
-                $x3 = q("select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
+                $x3 = q(
+                    "select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") and not xchan in (" . $xf . ") ",
                     intval(local_channel()),
                     dbesc('%post_wall%')
                 );
@@ -59,7 +62,8 @@ class Groups
         // note: XCHAN_TYPE_GROUP = 1
         $sql_extra = (($xf) ? " and ( xchan_hash in (" . $xf . ") or xchan_type = 1 ) " : " and xchan_type = 1 ");
 
-        $r1 = q("select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 $sql_extra order by xchan_name $limit ",
+        $r1 = q(
+            "select abook_id, xchan_hash, xchan_name, xchan_url, xchan_photo_s from abook left join xchan on abook_xchan = xchan_hash where xchan_deleted = 0 and abook_channel = %d and abook_pending = 0 and abook_ignored = 0 and abook_blocked = 0 and abook_archived = 0 $sql_extra order by xchan_name $limit ",
             intval(local_channel())
         );
 
@@ -73,7 +77,8 @@ class Groups
         // There also should be a way to update this via ajax.
 
         for ($x = 0; $x < count($r1); $x++) {
-            $r = q("select sum(item_unseen) as unseen from item 
+            $r = q(
+                "select sum(item_unseen) as unseen from item 
 				where uid = %d and owner_xchan = '%s' and item_unseen = 1 $perms_sql ",
                 intval(local_channel()),
                 dbesc($r1[$x]['xchan_hash'])
@@ -109,7 +114,6 @@ class Groups
             $output .= '<h3>' . t('Groups') . '</h3><ul class="nav nav-pills flex-column">';
 
             foreach ($r1 as $rr) {
-
                 $link = 'stream?f=&pf=1&cid=' . $rr['abook_id'];
                 if ($x3) {
                     foreach ($x3 as $xx) {

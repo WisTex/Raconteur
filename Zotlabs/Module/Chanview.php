@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -19,27 +20,30 @@ class Chanview extends Controller
         $r = null;
 
         if ($_REQUEST['hash']) {
-            $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+            $r = q(
+                "select * from xchan where xchan_hash = '%s' limit 1",
                 dbesc($_REQUEST['hash'])
             );
         }
         if ($_REQUEST['address']) {
-            $r = q("select * from xchan where xchan_addr = '%s' limit 1",
+            $r = q(
+                "select * from xchan where xchan_addr = '%s' limit 1",
                 dbesc(punify($_REQUEST['address']))
             );
         } elseif (local_channel() && intval($_REQUEST['cid'])) {
-            $r = q("SELECT abook.*, xchan.* 
+            $r = q(
+                "SELECT abook.*, xchan.* 
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                 intval(local_channel()),
                 intval($_REQUEST['cid'])
             );
         } elseif ($_REQUEST['url']) {
-
             // if somebody re-installed they will have more than one xchan, use the most recent name date as this is
             // the most useful consistently ascending table item we have.
 
-            $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s' order by xchan_name_date desc limit 1",
+            $r = q(
+                "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s' order by xchan_name_date desc limit 1",
                 dbesc($_REQUEST['url']),
                 dbesc($_REQUEST['url'])
             );
@@ -72,7 +76,8 @@ class Chanview extends Controller
                 }
                 if (is_array($zf) && array_path_exists('signature/signer', $zf) && $zf['signature']['signer'] === $href && intval($zf['signature']['header_valid'])) {
                     $xc = Libzot::import_xchan($zf['data']);
-                    $r = q("select * from xchan where xchan_addr = '%s' limit 1",
+                    $r = q(
+                        "select * from xchan where xchan_addr = '%s' limit 1",
                         dbesc($_REQUEST['address'])
                     );
                     if ($r) {
@@ -81,7 +86,8 @@ class Chanview extends Controller
                 }
                 if (!$r) {
                     if (discover_by_webbie($_REQUEST['address'])) {
-                        $r = q("select * from xchan where xchan_addr = '%s' limit 1",
+                        $r = q(
+                            "select * from xchan where xchan_addr = '%s' limit 1",
                             dbesc($_REQUEST['address'])
                         );
                         if ($r) {
@@ -105,7 +111,8 @@ class Chanview extends Controller
             $is_zot = true;
         }
         if (local_channel()) {
-            $c = q("select abook_id, abook_pending from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
+            $c = q(
+                "select abook_id, abook_pending from abook where abook_channel = %d and abook_xchan = '%s' limit 1",
                 intval(local_channel()),
                 dbesc(App::$poi['xchan_hash'])
             );
@@ -130,9 +137,9 @@ class Chanview extends Controller
         if ($connected) {
             goaway($url);
         } else {
-
             $about = false;
-            $xprof = q("select * from xprof where xprof_hash = '%s'",
+            $xprof = q(
+                "select * from xprof where xprof_hash = '%s'",
                 dbesc(App::$poi['xchan_hash'])
             );
             if ($xprof) {
@@ -172,5 +179,4 @@ class Chanview extends Controller
             return $o;
         }
     }
-
 }

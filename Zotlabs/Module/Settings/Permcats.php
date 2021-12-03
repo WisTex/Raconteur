@@ -8,15 +8,15 @@ use Zotlabs\Access\Permissions;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Permcat;
 
-
 class Permcats
 {
 
     public function post()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
 
@@ -55,14 +55,16 @@ class Permcats
     public function get()
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         $channel = App::get_channel();
 
 
-        if (argc() > 2)
+        if (argc() > 2) {
             $name = hex2bin(argv(2));
+        }
 
         if (argc() > 3 && argv(3) === 'drop') {
             Permcat::delete(local_channel(), $name);
@@ -80,10 +82,12 @@ class Permcats
         $permcats = [];
         if ($pcatlist) {
             foreach ($pcatlist as $pc) {
-                if (($pc['name']) && ($name) && ($pc['name'] == $name))
+                if (($pc['name']) && ($name) && ($pc['name'] == $name)) {
                     $existing = $pc['perms'];
-                if (!$pc['system'])
+                }
+                if (!$pc['system']) {
                     $permcats[bin2hex($pc['name'])] = $pc['localname'];
+                }
             }
         }
 
@@ -93,8 +97,9 @@ class Permcats
             $thisperm = Permcat::find_permcat($existing, $k);
             $checkinherited = PermissionLimits::Get(local_channel(), $k);
 
-            if ($existing[$k])
+            if ($existing[$k]) {
                 $thisperm = "1";
+            }
 
             $perms[] = array('perms_' . $k, $v, '', $thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
         }
@@ -123,5 +128,4 @@ class Permcats
         ));
         return $o;
     }
-
 }

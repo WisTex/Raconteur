@@ -10,7 +10,6 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\HTTPSig;
-
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
@@ -102,7 +101,6 @@ class Channel extends Controller
         // fork of Zap; which disables ActivityPub connectivity by default.
 
         if (ActivityStreams::is_as_request()) {
-
             // Somebody may attempt an ActivityStreams fetch on one of our message permalinks
             // Make it do the right thing.
 
@@ -134,12 +132,12 @@ class Channel extends Controller
         // handle zot6 channel discovery
 
         if (Libzot::is_zot_request()) {
-
             $sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
             if ($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
                 $data = json_encode(Libzot::zotinfo(['guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer']]));
-                $s = q("select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
+                $s = q(
+                    "select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network = 'zot6' limit 1",
                     dbesc($sigdata['signer'])
                 );
 
@@ -168,7 +166,6 @@ class Channel extends Controller
         Libprofile::load($which, $profile);
 
         if (!$_REQUEST['mid']) {
-
             App::$meta->set('og:title', $channel['channel_name']);
             App::$meta->set('og:image', $channel['xchan_photo_l']);
             App::$meta->set('og:type', 'webpage');
@@ -223,7 +220,6 @@ class Channel extends Controller
 
 
         if ($this->loading && !$mid) {
-
             $_SESSION['loadtime_channel'] = datetime_convert();
             if ($is_owner) {
                 PConfig::Set(local_channel(), 'system', 'loadtime_channel', $_SESSION['loadtime_channel']);
@@ -243,7 +239,6 @@ class Channel extends Controller
 
 
         if (!$this->updating) {
-
             nav_set_selected('Channel Home');
 
             $static = channel_manual_conv_update(App::$profile['profile_uid']);
@@ -273,7 +268,6 @@ class Channel extends Controller
 
 
             if ($perms['post_wall']) {
-
                 $x = array(
                     'is_owner' => $is_owner,
                     'allow_location' => ((($is_owner || $observer) && (intval(get_pconfig(App::$profile['profile_uid'], 'system', 'use_browser_location')))) ? true : false),
@@ -310,8 +304,9 @@ class Channel extends Controller
         $item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_deleted = 0
 		    and item.item_unpublished = 0 and item.item_pending_remove = 0
 		    and item.item_blocked = 0 ";
-        if (!$is_owner)
+        if (!$is_owner) {
             $item_normal .= "and item.item_delayed = 0 ";
+        }
         $item_normal_update = item_normal_update();
         $sql_extra = item_permissions_sql(App::$profile['profile_uid']);
 
@@ -330,7 +325,8 @@ class Channel extends Controller
             if (strpos($search, '#') === 0) {
                 $sql_extra .= term_query('item', substr($search, 1), TERM_HASHTAG, TERM_COMMUNITYTAG);
             } else {
-                $sql_extra .= sprintf(" AND (item.body like '%s' OR item.title like '%s') ",
+                $sql_extra .= sprintf(
+                    " AND (item.body like '%s' OR item.title like '%s') ",
                     dbesc(protect_sprintf('%' . $search . '%')),
                     dbesc(protect_sprintf('%' . $search . '%'))
                 );
@@ -358,13 +354,15 @@ class Channel extends Controller
 
         if (($this->updating) && (!$this->loading)) {
             if ($mid) {
-                $r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal_update
+                $r = q(
+                    "SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal_update
 					AND item_wall = 1 $simple_update $sql_extra limit 1",
                     dbesc($mid . '%'),
                     intval(App::$profile['profile_uid'])
                 );
             } else {
-                $r = q("SELECT parent AS item_id from item
+                $r = q(
+                    "SELECT parent AS item_id from item
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					WHERE uid = %d $item_normal_update
 					AND item_wall = 1 $simple_update
@@ -375,7 +373,6 @@ class Channel extends Controller
                 );
             }
         } else {
-
             if (x($category)) {
                 $sql_extra2 .= protect_sprintf(term_item_parent_query(App::$profile['profile_uid'], 'item', $category, TERM_CATEGORY));
             }
@@ -407,7 +404,8 @@ class Channel extends Controller
 
             if ($noscript_content || $this->loading) {
                 if ($mid) {
-                    $r = q("SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal
+                    $r = q(
+                        "SELECT parent AS item_id from item where mid like '%s' and uid = %d $item_normal
 						AND item_wall = 1 $sql_extra limit 1",
                         dbesc($mid . '%'),
                         intval(App::$profile['profile_uid'])
@@ -416,7 +414,8 @@ class Channel extends Controller
                         notice(t('Permission denied.') . EOL);
                     }
                 } else {
-                    $r = q("SELECT DISTINCT item.parent AS item_id, $ordering FROM item 
+                    $r = q(
+                        "SELECT DISTINCT item.parent AS item_id, $ordering FROM item 
 						left join abook on ( item.author_xchan = abook.abook_xchan $abook_uids )
 						WHERE true and item.uid = %d $item_normal
 						AND (abook.abook_blocked = 0 or abook.abook_flags is null)
@@ -431,10 +430,10 @@ class Channel extends Controller
             }
         }
         if ($r) {
-
             $parents_str = ids_to_querystr($r, 'item_id');
 
-            $items = q("SELECT item.*, item.id AS item_id
+            $items = q(
+                "SELECT item.*, item.id AS item_id
 				FROM item
 				WHERE item.uid = %d $item_normal
 				AND item.parent IN ( %s )
@@ -452,19 +451,18 @@ class Channel extends Controller
                 // to view the parent item (or the item itself if it is toplevel)
                 notice(t('Permission denied.') . EOL);
             }
-
         } else {
             $items = [];
         }
 
         if ((!$this->updating) && (!$this->loading)) {
-
             // This is ugly, but we can't pass the profile_uid through the session to the ajax updater,
             // because browser prefetching might change it on us. We have to deliver it with the page.
 
             $maxheight = get_pconfig(App::$profile['profile_uid'], 'system', 'channel_divmore_height');
-            if (!$maxheight)
+            if (!$maxheight) {
                 $maxheight = 400;
+            }
 
             $o .= '<div id="live-channel"></div>' . "\r\n";
             $o .= "<script> var profile_uid = " . App::$profile['profile_uid']
@@ -503,7 +501,6 @@ class Channel extends Controller
                 '$dend' => $datequery,
                 '$dbegin' => $datequery2
             ));
-
         }
 
         $update_unseen = '';
@@ -531,7 +528,8 @@ class Channel extends Controller
             $x = ['channel_id' => local_channel(), 'update' => 'unset'];
             call_hooks('update_unseen', $x);
             if ($x['update'] === 'unset' || intval($x['update'])) {
-                $r = q("UPDATE item SET item_unseen = 0 where item_unseen = 1 and item_wall = 1 AND uid = %d $update_unseen",
+                $r = q(
+                    "UPDATE item SET item_unseen = 0 where item_unseen = 1 and item_wall = 1 AND uid = %d $update_unseen",
                     intval(local_channel())
                 );
             }
@@ -550,7 +548,6 @@ class Channel extends Controller
         if ($this->updating) {
             $o .= conversation($items, $mode, $this->updating, $page_mode);
         } else {
-
             $o .= '<noscript>';
             if ($noscript_content) {
                 $o .= conversation($items, $mode, $this->updating, 'traditional');
@@ -562,20 +559,19 @@ class Channel extends Controller
 
             $o .= conversation($items, $mode, $this->updating, $page_mode);
 
-            if ($mid && $items[0]['title'])
+            if ($mid && $items[0]['title']) {
                 App::$page['title'] = $items[0]['title'] . " - " . App::$page['title'];
-
+            }
         }
 
         // We reset $channel so that info can be obtained for unlogged visitors
         $channel = channelx_by_n(App::$profile['profile_uid']);
 
         if (isset($_REQUEST['mid']) && $_REQUEST['mid']) {
-
             if (preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
                 $ogimage = $matches[2];
-                //	Will we use og:image:type someday? We keep this just in case
-                //	$ogimagetype = guess_image_type($ogimage);
+                //  Will we use og:image:type someday? We keep this just in case
+                //  $ogimagetype = guess_image_type($ogimage);
             }
 
             // some work on post content to generate a description
@@ -594,8 +590,9 @@ class Channel extends Controller
             // shorten description
             $ogdesc = substr($ogdesc, 0, 300);
             $ogdesc = str_replace("\n", " ", $ogdesc);
-            while (strpos($ogdesc, "  ") !== false)
+            while (strpos($ogdesc, "  ") !== false) {
                 $ogdesc = str_replace("  ", " ", $ogdesc);
+            }
             $ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
 
             // we can now start loading content

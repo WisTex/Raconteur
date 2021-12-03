@@ -1,6 +1,6 @@
 <?php
 
-namespace Zotlabs\Module; 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -55,8 +55,9 @@ class Appman extends Controller
 
         if ($_POST['install']) {
             Apps::app_install(local_channel(), $papp);
-            if (Apps::app_installed(local_channel(), $papp))
+            if (Apps::app_installed(local_channel(), $papp)) {
                 info(t('App installed.') . EOL);
+            }
         }
 
         if ($_POST['delete']) {
@@ -106,14 +107,16 @@ class Appman extends Controller
         $app = null;
         $embed = null;
         if ($_REQUEST['appid']) {
-            $r = q("select * from app where app_id = '%s' and app_channel = %d limit 1",
+            $r = q(
+                "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($_REQUEST['appid']),
                 dbesc(local_channel())
             );
             if ($r) {
                 $app = $r[0];
 
-                $term = q("select * from term where otype = %d and oid = %d and uid = %d",
+                $term = q(
+                    "select * from term where otype = %d and oid = %d and uid = %d",
                     intval(TERM_OBJ_APP),
                     intval($r[0]['id']),
                     intval(local_channel())
@@ -146,7 +149,5 @@ class Appman extends Controller
             '$embed' => $embed,
             '$submit' => t('Submit')
         ]);
-
     }
-
 }

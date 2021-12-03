@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -25,12 +26,14 @@ class Manage extends Controller
 
         if (argc() > 2) {
             if (argv(2) === 'default') {
-                $r = q("select channel_id from channel where channel_id = %d and channel_account_id = %d limit 1",
+                $r = q(
+                    "select channel_id from channel where channel_id = %d and channel_account_id = %d limit 1",
                     intval($change_channel),
                     intval(get_account_id())
                 );
                 if ($r) {
-                    q("update account set account_default_channel = %d where account_id = %d",
+                    q(
+                        "update account set account_default_channel = %d where account_id = %d",
                         intval($change_channel),
                         intval(get_account_id())
                     );
@@ -41,12 +44,10 @@ class Manage extends Controller
                 PConfig::set($change_channel, 'system', 'include_in_menu', 1 - $state);
                 goaway(z_root() . '/manage');
             }
-
         }
 
 
         if ($change_channel) {
-
             $r = change_channel($change_channel);
 
             if ((argc() > 2) && !(argv(2) === 'default')) {
@@ -59,14 +60,14 @@ class Manage extends Controller
 
         $channels = null;
 
-        $r = q("select channel.*, xchan.* from channel left join xchan on channel.channel_hash = xchan.xchan_hash where channel.channel_account_id = %d and channel_removed = 0 order by channel_name ",
+        $r = q(
+            "select channel.*, xchan.* from channel left join xchan on channel.channel_hash = xchan.xchan_hash where channel.channel_account_id = %d and channel_removed = 0 order by channel_name ",
             intval(get_account_id())
         );
 
         $account = App::get_account();
 
         if ($r && count($r)) {
-
             $channels = ((is_site_admin()) ? array_merge([get_sys_channel()], $r) : $r);
             for ($x = 0; $x < count($channels); $x++) {
                 $channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
@@ -76,7 +77,8 @@ class Manage extends Controller
                 $channels[$x]['collections_label'] = t('Collection');
                 $channels[$x]['forum_label'] = t('Group');
 
-                $c = q("SELECT id, item_wall FROM item
+                $c = q(
+                    "SELECT id, item_wall FROM item
 					WHERE item_unseen = 1 and uid = %d " . item_normal(),
                     intval($channels[$x]['channel_id'])
                 );
@@ -92,7 +94,8 @@ class Manage extends Controller
                 }
 
 
-                $intr = q("SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
+                $intr = q(
+                    "SELECT COUNT(abook.abook_id) AS total FROM abook left join xchan on abook.abook_xchan = xchan.xchan_hash where abook_channel = %d and abook_pending = 1 and abook_self = 0 and abook_ignored = 0 and xchan_deleted = 0 and xchan_orphan = 0 ",
                     intval($channels[$x]['channel_id'])
                 );
 
@@ -100,7 +103,8 @@ class Manage extends Controller
                     $channels[$x]['intros'] = intval($intr[0]['total']);
                 }
 
-                $events = q("SELECT etype, dtstart, adjust FROM event
+                $events = q(
+                    "SELECT etype, dtstart, adjust FROM event
 					WHERE event.uid = %d AND dtstart < '%s' AND dtstart > '%s' and dismissed = 0
 					ORDER BY dtstart ASC ",
                     intval($channels[$x]['channel_id']),
@@ -133,10 +137,10 @@ class Manage extends Controller
                     }
                 }
             }
-
         }
 
-        $r = q("select count(channel_id) as total from channel where channel_account_id = %d and channel_removed = 0",
+        $r = q(
+            "select count(channel_id) as total from channel where channel_account_id = %d and channel_removed = 0",
             intval(get_account_id())
         );
         $limit = account_service_class_fetch(get_account_id(), 'total_identities');
@@ -152,7 +156,8 @@ class Manage extends Controller
         $delegates = null;
 
         if (local_channel()) {
-            $delegates = q("select * from abook left join xchan on abook_xchan = xchan_hash where 
+            $delegates = q(
+                "select * from abook left join xchan on abook_xchan = xchan_hash where 
 				abook_channel = %d and abook_xchan in ( select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' )",
                 intval(local_channel()),
                 intval(local_channel()),
@@ -168,7 +173,6 @@ class Manage extends Controller
                 $delegates[$x]['delegate'] = 1;
                 $delegates[$x]['collections_label'] = t('Collection');
                 $delegates[$x]['forum_label'] = t('Group');
-
             }
         } else {
             $delegates = null;
@@ -192,5 +196,4 @@ class Manage extends Controller
             '$delegates' => $delegates
         ]);
     }
-
 }

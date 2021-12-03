@@ -8,10 +8,9 @@ class _1083
     {
         $r = q("ALTER TABLE `notify` ADD `aid` INT NOT NULL AFTER `msg` ,
 ADD INDEX ( `aid` )");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

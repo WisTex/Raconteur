@@ -17,10 +17,9 @@ class _1060
   UNIQUE KEY `vote_vote` (`vote_poll`,`vote_element`,`vote_xchan`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

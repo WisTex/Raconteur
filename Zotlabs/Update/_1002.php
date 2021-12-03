@@ -12,10 +12,9 @@ class _1002
         q("drop table contact");
         q("drop table deliverq");
 
-        if ($r && $r2)
+        if ($r && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

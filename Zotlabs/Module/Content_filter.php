@@ -17,7 +17,6 @@ class Content_filter extends Controller
         }
 
         if ($_POST['content_filter-submit']) {
-
             $incl = ((x($_POST['message_filter_incl'])) ? htmlspecialchars_decode(trim($_POST['message_filter_incl']), ENT_QUOTES) : '');
             $excl = ((x($_POST['message_filter_excl'])) ? htmlspecialchars_decode(trim($_POST['message_filter_excl']), ENT_QUOTES) : '');
 
@@ -25,11 +24,9 @@ class Content_filter extends Controller
             set_pconfig(local_channel(), 'system', 'message_filter_excl', $excl);
 
             info(t('Content Filter settings updated.') . EOL);
-
         }
 
         Libsync::build_sync_packet();
-
     }
 
 
@@ -72,6 +69,4 @@ class Content_filter extends Controller
 
         return $s;
     }
-
-
 }

@@ -4,7 +4,6 @@ namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\LibBlock;
 
-
 class Activity
 {
 
@@ -25,7 +24,8 @@ class Activity
 
         $perms_sql = item_permissions_sql(local_channel()) . item_normal();
 
-        $r = q("select author_xchan from item where item_unseen = 1 and uid = %d $perms_sql",
+        $r = q(
+            "select author_xchan from item where item_unseen = 1 and uid = %d $perms_sql",
             intval(local_channel())
         );
 
@@ -64,6 +64,4 @@ class Activity
         }
         return $o;
     }
-
-}	
-
+}

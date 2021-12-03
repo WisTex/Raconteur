@@ -20,11 +20,9 @@ class _1172
             $r4 = q("ALTER TABLE profile CHANGE `with` `partner` char(255) NOT NULL DEFAULT '' ");
             $r5 = q("ALTER TABLE profile CHANGE `work` `employment` TEXT NOT NULL ");
         }
-        if ($r1 && $r2 && $r3 && $r4 && $r5)
+        if ($r1 && $r2 && $r3 && $r4 && $r5) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -17,9 +18,9 @@ class Block extends Controller
         $profile = 0;
         Libprofile::load($which, $profile);
 
-        if (App::$profile['profile_uid'])
+        if (App::$profile['profile_uid']) {
             head_set_icon(App::$profile['thumb']);
-
+        }
     }
 
 
@@ -39,7 +40,8 @@ class Block extends Controller
         $channel_address = argv(1);
         $page_id = argv(2);
 
-        $u = q("select channel_id from channel where channel_address = '%s' limit 1",
+        $u = q(
+            "select channel_id from channel where channel_address = '%s' limit 1",
             dbesc($channel_address)
         );
 
@@ -48,15 +50,17 @@ class Block extends Controller
             return;
         }
 
-        if ($_REQUEST['rev'])
+        if ($_REQUEST['rev']) {
             $revision = " and revision = " . intval($_REQUEST['rev']) . " ";
-        else
+        } else {
             $revision = " order by revision desc ";
+        }
 
         require_once('include/security.php');
         $sql_options = item_permissions_sql($u[0]['channel_id']);
 
-        $r = q("select item.* from item left join iconfig on item.id = iconfig.iid
+        $r = q(
+            "select item.* from item left join iconfig on item.id = iconfig.iid
 			where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and iconfig.k = 'BUILDBLOCK' and 
 			item_type = %d $sql_options $revision limit 1",
             intval($u[0]['channel_id']),
@@ -65,10 +69,10 @@ class Block extends Controller
         );
 
         if (!$r) {
-
             // Check again with no permissions clause to see if it is a permissions issue
 
-            $x = q("select item.* from item left join iconfig on item.id = iconfig.iid
+            $x = q(
+                "select item.* from item left join iconfig on item.id = iconfig.iid
 			where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' and iconfig.k = 'BUILDBLOCK' and 
 			item_type = %d $revision limit 1",
                 intval($u[0]['channel_id']),
@@ -89,7 +93,5 @@ class Block extends Controller
 
         $o .= prepare_page($r[0]);
         return $o;
-
     }
-
 }

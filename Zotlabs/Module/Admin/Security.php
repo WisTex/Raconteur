@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module\Admin;
 
-
 class Security
 {
 
@@ -19,13 +18,13 @@ class Security
         $anonymous_comments = ((x($_POST, 'anonymous_comments')) ? intval($_POST['anonymous_comments']) : 0);
         set_config('system', 'anonymous_comments', $anonymous_comments);
 
-        $block_public = ((x($_POST, 'block_public')) ? True : False);
+        $block_public = ((x($_POST, 'block_public')) ? true : false);
         set_config('system', 'block_public', $block_public);
 
         $block_public_search = ((x($_POST, 'block_public_search')) ? 1 : 0);
         set_config('system', 'block_public_search', $block_public_search);
 
-        $block_public_dir = ((x($_POST, 'block_public_directory')) ? True : False);
+        $block_public_dir = ((x($_POST, 'block_public_directory')) ? true : false);
         set_config('system', 'block_public_directory', $block_public_dir);
 
         $localdir_hide = ((x($_POST, 'localdir_hide')) ? 1 : 0);
@@ -67,7 +66,7 @@ class Security
         $bc = $this->trim_array_elems(explode("\n", $_POST['pubstream_denied_channels']));
         set_config('system', 'pubstream_denied_channels', $bc);
 
-        $embed_sslonly = ((x($_POST, 'embed_sslonly')) ? True : False);
+        $embed_sslonly = ((x($_POST, 'embed_sslonly')) ? true : false);
         set_config('system', 'embed_sslonly', $embed_sslonly);
 
         $we = $this->trim_array_elems(explode("\n", $_POST['embed_allow']));
@@ -76,10 +75,10 @@ class Security
         $be = $this->trim_array_elems(explode("\n", $_POST['embed_deny']));
         set_config('system', 'embed_deny', $be);
 
-        $ts = ((x($_POST, 'transport_security')) ? True : False);
+        $ts = ((x($_POST, 'transport_security')) ? true : false);
         set_config('system', 'transport_security_header', $ts);
 
-        $cs = ((x($_POST, 'content_security')) ? True : False);
+        $cs = ((x($_POST, 'content_security')) ? true : false);
         set_config('system', 'content_security_policy', $cs);
 
         goaway(z_root() . '/admin/security');
@@ -165,7 +164,7 @@ class Security
             '$embed_allow' => array('embed_allow', t('Allow unfiltered embedded HTML content only from these domains'), $allowedembeds_str, t('One site per line. By default embedded content is filtered.')),
             '$embed_deny' => array('embed_deny', t('Block embedded HTML from these domains'), $deniedembeds_str, ''),
 
-//	        '$embed_coop'     => array('embed_coop', t('Cooperative embed security'), $embed_coop, t('Enable to share embed security with other compatible sites/hubs')),
+//          '$embed_coop'     => array('embed_coop', t('Cooperative embed security'), $embed_coop, t('Enable to share embed security with other compatible sites/hubs')),
 
             '$submit' => t('Submit')
         ));
@@ -179,12 +178,11 @@ class Security
         if ($arr && is_array($arr)) {
             for ($x = 0; $x < count($arr); $x++) {
                 $y = trim($arr[$x]);
-                if ($y)
+                if ($y) {
                     $narr[] = $y;
+                }
             }
         }
         return $narr;
     }
-
-
 }

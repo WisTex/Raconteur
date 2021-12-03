@@ -16,13 +16,15 @@ class Rating
             return;
         }
 
-        if ($arr['target'])
+        if ($arr['target']) {
             $hash = $arr['target'];
-        else
+        } else {
             $hash = App::$poi['xchan_hash'];
+        }
 
-        if (!$hash)
+        if (!$hash) {
             return;
+        }
 
         $url = '';
         $remote = false;
@@ -44,8 +46,9 @@ class Rating
         if (local_channel()) {
             $channel = App::get_channel();
 
-            if ($hash == $channel['channel_hash'])
+            if ($hash == $channel['channel_hash']) {
                 $self = true;
+            }
 
             head_add_js('ratings.js');
         }
@@ -55,17 +58,16 @@ class Rating
         $o .= '<h3>' . t('Rating Tools') . '</h3>';
 
         if ((($remote) || (local_channel())) && (!$self)) {
-            if ($remote)
+            if ($remote) {
                 $o .= '<a class="btn btn-block btn-primary btn-sm" href="' . $url . '"><i class="fa fa-pencil"></i> ' . t('Rate Me') . '</a>';
-            else
+            } else {
                 $o .= '<div class="btn btn-block btn-primary btn-sm" onclick="doRatings(\'' . $hash . '\'); return false;"><i class="fa fa-pencil"></i> ' . t('Rate Me') . '</div>';
+            }
         }
 
         $o .= '<a class="btn btn-block btn-default btn-sm" href="ratings/' . $hash . '"><i class="fa fa-eye"></i> ' . t('View Ratings') . '</a>';
         $o .= '</div>';
 
         return $o;
-
     }
 }
-

@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Widget;
 
-
 use App;
 
 class Archive
@@ -19,11 +18,13 @@ class Archive
 
         $uid = App::$profile_uid;
 
-        if (!feature_enabled($uid, 'archives'))
+        if (!feature_enabled($uid, 'archives')) {
             return '';
+        }
 
-        if (!perm_is_allowed($uid, get_observer_hash(), 'view_stream'))
+        if (!perm_is_allowed($uid, get_observer_hash(), 'view_stream')) {
             return '';
+        }
 
         $wall = ((array_key_exists('wall', $arr)) ? intval($arr['wall']) : 0);
         $wall = ((array_key_exists('articles', $arr)) ? 2 : $wall);
@@ -37,8 +38,9 @@ class Archive
 
         $ret = list_post_dates($uid, $wall, $mindate);
 
-        if (!count($ret))
+        if (!count($ret)) {
             return '';
+        }
 
         $cutoff_year = intval(datetime_convert('', date_default_timezone_get(), 'now', 'Y')) - $visible_years;
         $cutoff = ((array_key_exists($cutoff_year, $ret)) ? true : false);
@@ -56,4 +58,3 @@ class Archive
         return $o;
     }
 }
-

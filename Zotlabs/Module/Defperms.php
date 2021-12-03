@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -28,7 +29,8 @@ class Defperms extends Controller
             return;
         }
 
-        $r = q("SELECT abook.*, xchan.*
+        $r = q(
+            "SELECT abook.*, xchan.*
 			FROM abook left join xchan on abook_xchan = xchan_hash
 			WHERE abook_self = 1 and abook_channel = %d LIMIT 1",
             intval(local_channel())
@@ -62,7 +64,8 @@ class Defperms extends Controller
 
         $channel = App::get_channel();
 
-        $orig_record = q("SELECT * FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
+        $orig_record = q(
+            "SELECT * FROM abook WHERE abook_id = %d AND abook_channel = %d LIMIT 1",
             intval($contact_id),
             intval(local_channel())
         );
@@ -105,7 +108,8 @@ class Defperms extends Controller
 
         // Refresh the structure in memory with the new data
 
-        $r = q("SELECT abook.*, xchan.*
+        $r = q(
+            "SELECT abook.*, xchan.*
 			FROM abook left join xchan on abook_xchan = xchan_hash
 			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
             intval(local_channel()),
@@ -120,7 +124,6 @@ class Defperms extends Controller
         goaway(z_root() . '/defperms');
 
         return;
-
     }
 
     /* @brief Clone connection
@@ -137,7 +140,8 @@ class Defperms extends Controller
 
         $channel = App::get_channel();
 
-        $r = q("SELECT abook.*, xchan.*
+        $r = q(
+            "SELECT abook.*, xchan.*
 				FROM abook left join xchan on abook_xchan = xchan_hash
 				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
             intval(local_channel()),
@@ -202,7 +206,6 @@ class Defperms extends Controller
         $o .= " }\n</script>\n";
 
         if (App::$poi) {
-
             $sections = [];
 
             $self = false;
@@ -267,7 +270,6 @@ class Defperms extends Controller
             call_hooks('contact_edit', $arr);
 
             return $arr['output'];
-
         }
     }
 }

@@ -17,10 +17,9 @@ class _1183
         }
         $r2 = q("create index priority_idx on hook (priority)");
 
-        if ($r1 && $r2)
+        if ($r1 && $r2) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

@@ -10,8 +10,9 @@ class Suggestedchats
     public function widget($arr)
     {
 
-        if (!feature_enabled(App::$profile['profile_uid'], 'ajaxchat'))
+        if (!feature_enabled(App::$profile['profile_uid'], 'ajaxchat')) {
             return '';
+        }
 
         // There are reports that this tool does not ever remove chatrooms on dead sites,
         // and also will happily link to private chats which you cannot enter.
@@ -24,8 +25,9 @@ class Suggestedchats
         // if you are logged in locally.
 
         $h = get_observer_hash();
-        if (!$h)
+        if (!$h) {
             return;
+        }
         $r = q("select xchat_url, xchat_desc, count(xchat_xchan) as total from xchat group by xchat_url, xchat_desc order by total desc, xchat_desc limit 24");
         if ($r) {
             for ($x = 0; $x < count($r); $x++) {
@@ -38,4 +40,3 @@ class Suggestedchats
         ));
     }
 }
-

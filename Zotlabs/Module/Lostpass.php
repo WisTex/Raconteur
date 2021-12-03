@@ -1,7 +1,6 @@
 <?php
+
 namespace Zotlabs\Module;
-
-
 
 use App;
 use Zotlabs\Web\Controller;
@@ -13,10 +12,12 @@ class Lostpass extends Controller
     {
 
         $loginame = notags(trim($_POST['login-name']));
-        if (!$loginame)
+        if (!$loginame) {
             goaway(z_root());
+        }
 
-        $r = q("SELECT * FROM account WHERE account_email = '%s' LIMIT 1",
+        $r = q(
+            "SELECT * FROM account WHERE account_email = '%s' LIMIT 1",
             dbesc($loginame)
         );
 
@@ -30,12 +31,14 @@ class Lostpass extends Controller
 
         $hash = random_string();
 
-        $r = q("UPDATE account SET account_reset = '%s' WHERE account_id = %d",
+        $r = q(
+            "UPDATE account SET account_reset = '%s' WHERE account_id = %d",
             dbesc($hash),
             intval($aid)
         );
-        if ($r)
+        if ($r) {
             info(t('Password reset request issued. Check your email.') . EOL);
+        }
 
         $email_tpl = get_intltext_template("lostpass_eml.tpl");
         $message = replace_macros($email_tpl, array(
@@ -67,7 +70,8 @@ class Lostpass extends Controller
         if (x($_GET, 'verify')) {
             $verify = $_GET['verify'];
 
-            $r = q("SELECT * FROM account WHERE account_reset = '%s' LIMIT 1",
+            $r = q(
+                "SELECT * FROM account WHERE account_reset = '%s' LIMIT 1",
                 dbesc($verify)
             );
             if (!$r) {
@@ -84,7 +88,8 @@ class Lostpass extends Controller
             $salt = random_string(32);
             $password_encoded = hash('whirlpool', $salt . $new_password);
 
-            $r = q("UPDATE account SET account_salt = '%s', account_password = '%s', account_reset = '', account_flags = (account_flags & ~%d) where account_id = %d",
+            $r = q(
+                "UPDATE account SET account_salt = '%s', account_password = '%s', account_reset = '', account_flags = (account_flags & ~%d) where account_id = %d",
                 dbesc($salt),
                 dbesc($password_encoded),
                 intval(ACCOUNT_UNVERIFIED),
@@ -114,8 +119,7 @@ class Lostpass extends Controller
                         '$username' => sprintf(t('Site Member (%s)'), $email),
                         '$email' => $email,
                         '$new_password' => $new_password,
-                        '$uid' => $newuid)
-                );
+                        '$uid' => $newuid));
 
                 $res = z_mail(
                     [
@@ -127,7 +131,6 @@ class Lostpass extends Controller
 
                 return $o;
             }
-
         } else {
             $tpl = get_markup_template('lostpass.tpl');
 
@@ -140,7 +143,5 @@ class Lostpass extends Controller
 
             return $o;
         }
-
     }
-
 }

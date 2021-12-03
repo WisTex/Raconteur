@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
@@ -26,5 +26,4 @@ class Hostxrd extends Controller
         echo $arr['xrd'];
         killme();
     }
-
 }

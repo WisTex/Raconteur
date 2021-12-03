@@ -9,10 +9,9 @@ class _1075
         $r = q("ALTER TABLE `channel` ADD `channel_a_republish` INT UNSIGNED NOT NULL DEFAULT '128',
 ADD INDEX ( `channel_a_republish` )");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

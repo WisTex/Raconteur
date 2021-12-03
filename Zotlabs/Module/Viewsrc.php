@@ -1,9 +1,9 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-
 
 class Viewsrc extends Controller
 {
@@ -31,15 +31,17 @@ class Viewsrc extends Controller
         $item_normal = item_normal_search();
 
         if (local_channel() && $item_id) {
-            $r = q("select id, item_flags, mimetype, item_obscured, body, llink, plink from item where uid in (%d , %d) and id = %d $item_normal limit 1",
+            $r = q(
+                "select id, item_flags, mimetype, item_obscured, body, llink, plink from item where uid in (%d , %d) and id = %d $item_normal limit 1",
                 intval(local_channel()),
                 intval($sys['channel_id']),
                 intval($item_id)
             );
 
             if ($r) {
-                if (intval($r[0]['item_obscured']))
+                if (intval($r[0]['item_obscured'])) {
                     $dload = true;
+                }
 
                 if ($dload) {
                     header('Content-type: ' . $r[0]['mimetype']);
@@ -67,6 +69,4 @@ class Viewsrc extends Controller
 
         return $o;
     }
-
-
 }

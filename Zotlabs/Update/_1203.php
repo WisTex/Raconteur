@@ -18,13 +18,12 @@ class _1203
 				ADD INDEX uid_item_retained (uid, item_retained)
 			");
 
-            if ($r)
+            if ($r) {
                 return UPDATE_SUCCESS;
+            }
             return UPDATE_FAILED;
         } else {
             return UPDATE_SUCCESS;
         }
-
     }
-
 }

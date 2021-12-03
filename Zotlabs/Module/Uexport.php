@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -16,7 +17,6 @@ class Uexport extends Controller
         $sections = (($_REQUEST['sections']) ? explode(',', $_REQUEST['sections']) : get_default_export_sections());
 
         if (argc() > 1) {
-
             $channel = App::get_channel();
 
             if (argc() > 1 && intval(argv(1)) > 1900) {
@@ -77,5 +77,4 @@ class Uexport extends Controller
         ));
         return $o;
     }
-
 }

@@ -4,18 +4,17 @@ namespace Zotlabs\Render;
 
 use App;
 
-
 class Theme
 {
 
-    static public $system_theme = null;
+    public static $system_theme = null;
 
-    static public $session_theme = null;
+    public static $session_theme = null;
 
     /**
      * @brief Array with base or fallback themes.
      */
-    static public $base_themes = array('redbasic');
+    public static $base_themes = array('redbasic');
 
 
     /**
@@ -38,7 +37,8 @@ class Theme
         // Find the theme that belongs to the channel whose stuff we are looking at
 
         if (App::$profile_uid) {
-            $r = q("select channel_theme from channel where channel_id = %d limit 1",
+            $r = q(
+                "select channel_theme from channel where channel_id = %d limit 1",
                 intval(App::$profile_uid)
             );
             if ($r) {
@@ -48,8 +48,9 @@ class Theme
 
         // Themes from Comanche layouts over-ride the channel theme
 
-        if (array_key_exists('theme', App::$layout) && App::$layout['theme'])
+        if (array_key_exists('theme', App::$layout) && App::$layout['theme']) {
             $page_theme = App::$layout['theme'];
+        }
 
         $chosen_theme = self::$session_theme;
 
@@ -57,8 +58,9 @@ class Theme
             $chosen_theme = $page_theme;
         }
 
-        if (array_key_exists('theme_preview', $_GET))
+        if (array_key_exists('theme_preview', $_GET)) {
             $chosen_theme = $_GET['theme_preview'];
+        }
 
         // Allow theme selection of the form 'theme_name:schema_name'
         $themepair = explode(':', $chosen_theme);
@@ -75,8 +77,10 @@ class Theme
         }
 
         foreach (self::$base_themes as $t) {
-            if (file_exists('view/theme/' . $t . '/css/style.css') ||
-                file_exists('view/theme/' . $t . '/php/style.php')) {
+            if (
+                file_exists('view/theme/' . $t . '/css/style.css') ||
+                file_exists('view/theme/' . $t . '/php/style.php')
+            ) {
                 return (array($t));
             }
         }
@@ -86,8 +90,9 @@ class Theme
         // Find any theme at all and use it.
 
         $fallback = array_merge(glob('view/theme/*/css/style.css'), glob('view/theme/*/php/style.php'));
-        if (count($fallback))
+        if (count($fallback)) {
             return (array(str_replace('view/theme/', '', substr($fallback[0], 0, -14))));
+        }
     }
 
 
@@ -103,8 +108,9 @@ class Theme
     public static function url($installing = false)
     {
 
-        if ($installing)
+        if ($installing) {
             return self::$base_themes[0];
+        }
 
         $theme = self::current();
 
@@ -115,13 +121,15 @@ class Theme
         $opts = ((App::$profile_uid) ? '?f=&puid=' . App::$profile_uid : '');
 
         $schema_str = ((x(App::$layout, 'schema')) ? '&schema=' . App::$layout['schema'] : '');
-        if (($s) && (!$schema_str))
+        if (($s) && (!$schema_str)) {
             $schema_str = '&schema=' . $s;
+        }
 
         $opts .= $schema_str;
 
-        if (file_exists('view/theme/' . $t . '/php/style.php'))
+        if (file_exists('view/theme/' . $t . '/php/style.php')) {
             return ('/view/theme/' . $t . '/php/style.pcss' . $opts);
+        }
 
         return ('/view/theme/' . $t . '/css/style.css');
     }
@@ -131,6 +139,4 @@ class Theme
         logger('system_theme: ' . self::$system_theme);
         logger('session_theme: ' . self::$session_theme);
     }
-
 }
-

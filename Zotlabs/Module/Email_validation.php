@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Module;
 
-
 use Zotlabs\Web\Controller;
 
 class Email_validation extends Controller
@@ -47,7 +46,5 @@ class Email_validation extends Controller
         ]);
 
         return $o;
-
     }
-
 }

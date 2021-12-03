@@ -156,13 +156,13 @@ App::$strings['I disagree'] = '';
 App::$strings['I abstain'] = '';
 App::$strings['View all'] = '';
 App::$strings['__ctx:noun__ Like'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Likes'] = '';
 App::$strings['__ctx:noun__ Dislike'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Dislikes'] = '';
 App::$strings['Save'] = '';
@@ -177,8 +177,8 @@ App::$strings['Repeat This'] = '';
 App::$strings['Share this'] = '';
 App::$strings['Delivery Report'] = '';
 App::$strings['%d comment'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['%d unseen'] = '';
 App::$strings["View %s's profile - %s"] = '';
@@ -444,12 +444,12 @@ App::$strings['New Password again'] = '';
 App::$strings['Account language (for emails)'] = '';
 App::$strings['Service class'] = '';
 App::$strings['%s account blocked/unblocked'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['%s account deleted'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['Account not found'] = '';
 App::$strings["Account '%s' deleted"] = '';
@@ -594,16 +594,16 @@ App::$strings['Default: profiles'] = '';
 App::$strings['Optional: site location'] = '';
 App::$strings['Region or country'] = '';
 App::$strings['%s channel censored/uncensored'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['%s channel code allowed/disallowed'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['%s channel deleted'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['Channel not found'] = '';
 App::$strings["Channel '%s' deleted"] = '';
@@ -1051,8 +1051,8 @@ App::$strings["Please join us on \$Projectname"] = '';
 App::$strings['Invitation limit exceeded. Please contact your site administrator.'] = '';
 App::$strings['%s : Message delivery failed.'] = '';
 App::$strings['%d message sent.'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['Send email invitations to join this network'] = '';
 App::$strings['You have no more invitations available'] = '';
@@ -1940,8 +1940,8 @@ App::$strings['Remove Item Tag'] = '';
 App::$strings['Select a tag to remove: '] = '';
 App::$strings['No default suggestions were found.'] = '';
 App::$strings['%d rating'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['Gender: '] = '';
 App::$strings['Status: '] = '';
@@ -2055,8 +2055,8 @@ App::$strings['Common Connections'] = '';
 App::$strings['View all %d common connections'] = '';
 App::$strings['Saved Folders'] = '';
 App::$strings['%d invitation available'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['Find Channels'] = '';
 App::$strings['Enter name or interest'] = '';
@@ -2247,32 +2247,32 @@ App::$strings['never'] = '';
 App::$strings['less than a second ago'] = '';
 App::$strings["__ctx:e.g. 22 hours ago, 1 minute ago__ %1\$d %2\$s ago"] = '';
 App::$strings['__ctx:relative_date__ year'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:relative_date__ month'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:relative_date__ week'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:relative_date__ day'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:relative_date__ hour'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:relative_date__ minute'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:relative_date__ second'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings["%1\$s's birthday"] = '';
 App::$strings["Happy Birthday %1\$s"] = '';
@@ -2579,17 +2579,17 @@ App::$strings['Block author'] = '';
 App::$strings['%s likes this.'] = '';
 App::$strings["%s doesn't like this."] = '';
 App::$strings["<span  %1\$s>%2\$d people</span> like this."] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings["<span  %1\$s>%2\$d people</span> don't like this."] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['and'] = '';
 App::$strings[', and %d other people'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['%s like this.'] = '';
 App::$strings["%s don't like this."] = '';
@@ -2626,28 +2626,28 @@ App::$strings['Find shareable objects (Zot)'] = '';
 App::$strings['Post to Collections'] = '';
 App::$strings['articles'] = '';
 App::$strings['__ctx:noun__ Attending'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Not Attending'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Undecided'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Agree'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Disagree'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['__ctx:noun__ Abstain'] = [
-	0 => '',
-	1 => '',
+    0 => '',
+    1 => '',
 ];
 App::$strings['Source channel not found.'] = '';
 App::$strings['Focus (Hubzilla default)'] = '';

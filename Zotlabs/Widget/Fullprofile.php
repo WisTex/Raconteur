@@ -5,7 +5,6 @@ namespace Zotlabs\Widget;
 use App;
 use Zotlabs\Lib\Libprofile;
 
-
 class Fullprofile
 {
 

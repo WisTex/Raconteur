@@ -18,5 +18,4 @@ class Userinfo extends Controller
         $s->handleUserInfoRequest($request)->send();
         killme();
     }
-
 }

@@ -48,8 +48,5 @@ class Expire extends Controller
             '$addon' => array('expire', t('Automatic Expiration Settings'), '', t('Submit')),
             '$content' => $setting_fields
         ]);
-
     }
-
-
 }

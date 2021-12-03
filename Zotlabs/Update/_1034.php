@@ -13,10 +13,9 @@ PRIMARY KEY ( `ud_hash` ),
 KEY `ud_date` ( `ud_date` )
 ) ENGINE = MYISAM DEFAULT CHARSET = utf8");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

@@ -19,11 +19,9 @@ class _1150
         $r3 = q("create index app_edited on app ( app_edited ) ");
 
         $r = $r1 && $r2 && $r3;
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
-
     }
-
-
 }

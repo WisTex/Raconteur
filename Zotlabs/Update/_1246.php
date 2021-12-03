@@ -15,12 +15,10 @@ class _1246
 
         q("delete from app where (app_id = '$network' OR app_id = '$affinity')");
         return UPDATE_SUCCESS;
-
     }
 
     public function verify()
     {
         return true;
     }
-
 }

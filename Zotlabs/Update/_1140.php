@@ -10,19 +10,20 @@ class _1140
         $x = false;
         if ($r) {
             foreach ($r as $rr) {
-                $m = q("INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
+                $m = q(
+                    "INSERT INTO xperm (xp_client, xp_channel, xp_perm) VALUES ('%s', %d, '%s') ",
                     dbesc($rr['client_id']),
                     intval($rr['uid']),
                     dbesc('all')
                 );
-                if (!$m)
+                if (!$m) {
                     $x = true;
+                }
             }
         }
-        if ($x)
+        if ($x) {
             return UPDATE_FAILED;
+        }
         return UPDATE_SUCCESS;
     }
-
-
 }

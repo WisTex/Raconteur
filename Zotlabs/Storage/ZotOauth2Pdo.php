@@ -4,9 +4,10 @@ namespace Zotlabs\Storage;
 
 use OAuth2\Storage\Pdo;
 
-class ZotOauth2Pdo extends Pdo {
-	public function getConfig()
+class ZotOauth2Pdo extends Pdo
+{
+    public function getConfig()
     {
-		return $this->config;
+        return $this->config;
     }
 }

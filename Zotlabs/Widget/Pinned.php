@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Widget;
 
 /*
@@ -51,7 +52,6 @@ class Pinned
 
         // logger('output: ' . $o);
         return '<hr>' . $o . '<hr>';
-
     }
 
 
@@ -94,7 +94,8 @@ class Pinned
         $item_normal = item_normal();
         $sql_extra = item_permissions_sql($this->uid);
 
-        $r = q("SELECT *, id as item_id FROM item WHERE parent_mid IN (" . protect_sprintf(stringify_array($mids_list, true)) . ") AND uid = %d AND id = parent $item_normal $sql_extra ORDER BY created DESC",
+        $r = q(
+            "SELECT *, id as item_id FROM item WHERE parent_mid IN (" . protect_sprintf(stringify_array($mids_list, true)) . ") AND uid = %d AND id = parent $item_normal $sql_extra ORDER BY created DESC",
             intval($this->uid)
         );
         if ($r) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file include/config.php
  * @brief Arbitrary configuration storage.
@@ -28,117 +29,144 @@
  *
  */
 
-
 use Zotlabs\Lib as Zlib;
 
-function load_config($family) {
-	Zlib\Config::Load($family);
+function load_config($family)
+{
+    Zlib\Config::Load($family);
 }
 
-function get_config($family, $key, $default = false) {
-	return Zlib\Config::Get($family,$key,$default);
+function get_config($family, $key, $default = false)
+{
+    return Zlib\Config::Get($family, $key, $default);
 }
 
-function set_config($family, $key, $value) {
-	return Zlib\Config::Set($family,$key,$value);
+function set_config($family, $key, $value)
+{
+    return Zlib\Config::Set($family, $key, $value);
 }
 
-function del_config($family, $key) {
-	return Zlib\Config::Delete($family,$key);
+function del_config($family, $key)
+{
+    return Zlib\Config::Delete($family, $key);
 }
 
-function load_pconfig($uid) {
-	Zlib\PConfig::Load($uid);
+function load_pconfig($uid)
+{
+    Zlib\PConfig::Load($uid);
 }
 
-function get_pconfig($uid, $family, $key, $default = false) {
-	return Zlib\PConfig::Get($uid,$family,$key,$default);
+function get_pconfig($uid, $family, $key, $default = false)
+{
+    return Zlib\PConfig::Get($uid, $family, $key, $default);
 }
 
-function set_pconfig($uid, $family, $key, $value) {
-	return Zlib\PConfig::Set($uid,$family,$key,$value);
+function set_pconfig($uid, $family, $key, $value)
+{
+    return Zlib\PConfig::Set($uid, $family, $key, $value);
 }
 
-function del_pconfig($uid, $family, $key) {
-	return Zlib\PConfig::Delete($uid,$family,$key);
+function del_pconfig($uid, $family, $key)
+{
+    return Zlib\PConfig::Delete($uid, $family, $key);
 }
 
-function load_xconfig($xchan) {
-	Zlib\XConfig::Load($xchan);
+function load_xconfig($xchan)
+{
+    Zlib\XConfig::Load($xchan);
 }
 
-function get_xconfig($xchan, $family, $key, $default = false) {
-	return Zlib\XConfig::Get($xchan,$family,$key, $default);
+function get_xconfig($xchan, $family, $key, $default = false)
+{
+    return Zlib\XConfig::Get($xchan, $family, $key, $default);
 }
 
-function set_xconfig($xchan, $family, $key, $value) {
-	return Zlib\XConfig::Set($xchan,$family,$key,$value);
+function set_xconfig($xchan, $family, $key, $value)
+{
+    return Zlib\XConfig::Set($xchan, $family, $key, $value);
 }
 
-function del_xconfig($xchan, $family, $key) {
-	return Zlib\XConfig::Delete($xchan,$family,$key);
+function del_xconfig($xchan, $family, $key)
+{
+    return Zlib\XConfig::Delete($xchan, $family, $key);
 }
 
-function load_aconfig($account_id) {
-	Zlib\AConfig::Load($account_id);
+function load_aconfig($account_id)
+{
+    Zlib\AConfig::Load($account_id);
 }
 
-function get_aconfig($account_id, $family, $key, $default = false) {
-	return Zlib\AConfig::Get($account_id, $family, $key, $default);
+function get_aconfig($account_id, $family, $key, $default = false)
+{
+    return Zlib\AConfig::Get($account_id, $family, $key, $default);
 }
 
-function set_aconfig($account_id, $family, $key, $value) {
-	return Zlib\AConfig::Set($account_id, $family, $key, $value);
+function set_aconfig($account_id, $family, $key, $value)
+{
+    return Zlib\AConfig::Set($account_id, $family, $key, $value);
 }
 
-function del_aconfig($account_id, $family, $key) {
-	return Zlib\AConfig::Delete($account_id, $family, $key);
+function del_aconfig($account_id, $family, $key)
+{
+    return Zlib\AConfig::Delete($account_id, $family, $key);
 }
 
-function load_abconfig($chan, $xhash, $family = '') {
-	return Zlib\AbConfig::Load($chan,$xhash,$family);
+function load_abconfig($chan, $xhash, $family = '')
+{
+    return Zlib\AbConfig::Load($chan, $xhash, $family);
 }
 
-function get_abconfig($chan,$xhash,$family,$key, $default = false) {
-	return Zlib\AbConfig::Get($chan,$xhash,$family,$key, $default);
+function get_abconfig($chan, $xhash, $family, $key, $default = false)
+{
+    return Zlib\AbConfig::Get($chan, $xhash, $family, $key, $default);
 }
 
-function set_abconfig($chan,$xhash,$family,$key,$value) {
-	return Zlib\AbConfig::Set($chan,$xhash,$family,$key,$value);
+function set_abconfig($chan, $xhash, $family, $key, $value)
+{
+    return Zlib\AbConfig::Set($chan, $xhash, $family, $key, $value);
 }
 
-function del_abconfig($chan,$xhash,$family,$key) {
-	return Zlib\AbConfig::Delete($chan,$xhash,$family,$key);
+function del_abconfig($chan, $xhash, $family, $key)
+{
+    return Zlib\AbConfig::Delete($chan, $xhash, $family, $key);
 }
 
-function load_iconfig(&$item) {
-	Zlib\IConfig::Load($item);
+function load_iconfig(&$item)
+{
+    Zlib\IConfig::Load($item);
 }
 
-function get_iconfig(&$item, $family, $key, $default = false) {
-	return Zlib\IConfig::Get($item, $family, $key, $default);
+function get_iconfig(&$item, $family, $key, $default = false)
+{
+    return Zlib\IConfig::Get($item, $family, $key, $default);
 }
 
-function set_iconfig(&$item, $family, $key, $value, $sharing = false) {
-	return Zlib\IConfig::Set($item, $family, $key, $value, $sharing);
+function set_iconfig(&$item, $family, $key, $value, $sharing = false)
+{
+    return Zlib\IConfig::Set($item, $family, $key, $value, $sharing);
 }
 
-function del_iconfig(&$item, $family, $key) {
-	return Zlib\IConfig::Delete($item, $family, $key);
+function del_iconfig(&$item, $family, $key)
+{
+    return Zlib\IConfig::Delete($item, $family, $key);
 }
 
-function load_sconfig($server_id) {
-	Zlib\SConfig::Load($server_id);
+function load_sconfig($server_id)
+{
+    Zlib\SConfig::Load($server_id);
 }
 
-function get_sconfig($server_id, $family, $key, $default = false) {
-	return Zlib\SConfig::Get($server_id, $family, $key, $default);
+function get_sconfig($server_id, $family, $key, $default = false)
+{
+    return Zlib\SConfig::Get($server_id, $family, $key, $default);
 }
 
-function set_sconfig($server_id, $family, $key, $value) {
-	return Zlib\SConfig::Set($server_id, $family, $key, $value);
+function set_sconfig($server_id, $family, $key, $value)
+{
+    return Zlib\SConfig::Set($server_id, $family, $key, $value);
 }
 
-function del_sconfig($server_id, $family, $key) {
-	return Zlib\SConfig::Delete($server_id, $family, $key);
+function del_sconfig($server_id, $family, $key)
+{
+    return Zlib\SConfig::Delete($server_id, $family, $key);
 }

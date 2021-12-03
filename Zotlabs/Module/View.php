@@ -1,5 +1,7 @@
 <?php
+
 namespace Zotlabs\Module;
+
 use Zotlabs\Web\Controller;
 
 /**
@@ -14,9 +16,9 @@ class View extends Controller
 
         $theme = argv(2);
         $THEMEPATH = "view/theme/$theme";
-        if (file_exists("view/theme/$theme/php/style.php"))
+        if (file_exists("view/theme/$theme/php/style.php")) {
             require_once("view/theme/$theme/php/style.php");
+        }
         killme();
     }
-
 }

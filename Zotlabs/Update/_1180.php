@@ -25,10 +25,9 @@ class _1180
         }
 
         $r = $r1 && $r2;
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

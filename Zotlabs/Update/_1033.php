@@ -22,10 +22,9 @@ KEY `share_xchan` (`share_xchan`)
         q("drop table gcontact");
         q("drop table glink");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

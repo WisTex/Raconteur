@@ -10,10 +10,9 @@ class _1088
 ADD `allow_gid` MEDIUMTEXT NOT NULL DEFAULT '',
 ADD `deny_cid` MEDIUMTEXT NOT NULL DEFAULT '',
 ADD `deny_gid` MEDIUMTEXT NOT NULL DEFAULT ''");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

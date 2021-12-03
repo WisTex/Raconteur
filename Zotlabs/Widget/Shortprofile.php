@@ -16,4 +16,3 @@ class Shortprofile
         return EMPTY_STR;
     }
 }
-

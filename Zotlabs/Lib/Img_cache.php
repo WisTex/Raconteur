@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Hashpath;
@@ -7,7 +8,7 @@ use Zotlabs\Daemon\Run;
 class Img_cache
 {
 
-    static public $cache_life = 18600 * 7;
+    public static $cache_life = 18600 * 7;
 
     public static function get_filename($url, $prefix = '.')
     {
@@ -79,12 +80,4 @@ class Img_cache
         logger('cache failed from  ' . $url);
         return false;
     }
-
 }
-
-
-
-
-
-
-

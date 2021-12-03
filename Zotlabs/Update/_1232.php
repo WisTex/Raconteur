@@ -27,7 +27,5 @@ class _1232
 
         q("ROLLBACK");
         return UPDATE_FAILED;
-
     }
-
 }

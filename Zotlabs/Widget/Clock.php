@@ -60,4 +60,3 @@ EOT;
         return $o;
     }
 }
-

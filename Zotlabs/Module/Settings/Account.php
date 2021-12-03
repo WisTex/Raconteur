@@ -19,32 +19,35 @@ class Account
 
         $account = App::get_account();
         if ($email != $account['account_email']) {
-            if (!validate_email($email))
+            if (!validate_email($email)) {
                 $errs[] = t('Not valid email.');
+            }
             $adm = trim(get_config('system', 'admin_email'));
             if (($adm) && (strcasecmp($email, $adm) == 0)) {
                 $errs[] = t('Protected email address. Cannot change to that email.');
                 $email = App::$account['account_email'];
             }
             if (!$errs) {
-                $r = q("update account set account_email = '%s' where account_id = %d",
+                $r = q(
+                    "update account set account_email = '%s' where account_id = %d",
                     dbesc($email),
                     intval($account['account_id'])
                 );
-                if (!$r)
+                if (!$r) {
                     $errs[] = t('System failure storing new email. Please try again.');
+                }
             }
         }
 
         if ($errs) {
-            foreach ($errs as $err)
+            foreach ($errs as $err) {
                 notice($err . EOL);
+            }
             $errs = [];
         }
 
 
         if ((x($_POST, 'npassword')) || (x($_POST, 'confirm'))) {
-
             $origpass = trim($_POST['origpass']);
 
             require_once('include/auth.php');
@@ -66,24 +69,27 @@ class Account
             if (!$errs) {
                 $salt = random_string(32);
                 $password_encoded = hash('whirlpool', $salt . $newpass);
-                $r = q("update account set account_salt = '%s', account_password = '%s', account_password_changed = '%s' 
+                $r = q(
+                    "update account set account_salt = '%s', account_password = '%s', account_password_changed = '%s' 
 					where account_id = %d",
                     dbesc($salt),
                     dbesc($password_encoded),
                     dbesc(datetime_convert()),
                     intval(get_account_id())
                 );
-                if ($r)
+                if ($r) {
                     info(t('Password changed.') . EOL);
-                else
+                } else {
                     $errs[] = t('Password update failed. Please try again.');
+                }
             }
         }
 
 
         if ($errs) {
-            foreach ($errs as $err)
+            foreach ($errs as $err) {
                 notice($err . EOL);
+            }
         }
         goaway(z_root() . '/settings/account');
     }
@@ -113,5 +119,4 @@ class Account
         ));
         return $o;
     }
-
 }

@@ -56,7 +56,8 @@ class Libsync
         unset($channel['channel_password']);
         unset($channel['channel_salt']);
 
-        $h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
+        $h = q(
+            "select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
 			where hubloc_hash = '%s' and hubloc_network = 'zot6' and hubloc_deleted = 0",
             dbesc(($keychange) ? $packet['keychange']['old_hash'] : $channel['channel_hash'])
         );
@@ -72,7 +73,8 @@ class Libsync
                 continue;
             }
 
-            $y = q("select site_dead from site where site_url = '%s' limit 1",
+            $y = q(
+                "select site_dead from site where site_url = '%s' limit 1",
                 dbesc($x['hubloc_url'])
             );
 
@@ -106,7 +108,6 @@ class Libsync
         if ($channel) {
             $info['channel'] = [];
             foreach ($channel as $k => $v) {
-
                 // filter out any joined tables like xchan
 
                 if (strpos($k, 'channel_') !== 0) {
@@ -132,14 +133,16 @@ class Libsync
         }
 
         if ($groups_changed) {
-            $r = q("select hash as collection, visible, deleted, rule, gname as name from pgrp where uid = %d ",
+            $r = q(
+                "select hash as collection, visible, deleted, rule, gname as name from pgrp where uid = %d ",
                 intval($uid)
             );
             if ($r) {
                 $info['collections'] = $r;
             }
 
-            $r = q("select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid 
+            $r = q(
+                "select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid 
 				where pgrp_member.uid = %d ",
                 intval($uid)
             );
@@ -203,7 +206,8 @@ class Libsync
             return;
         }
 
-        $l = q("select link from linkid where ident = '%s' and sigtype = 2",
+        $l = q(
+            "select link from linkid where ident = '%s' and sigtype = 2",
             dbesc($channel['channel_hash'])
         );
 
@@ -227,7 +231,8 @@ class Libsync
                 continue;
             }
 
-            $y = q("select site_dead from site where site_url = '%s' limit 1",
+            $y = q(
+                "select site_dead from site where site_url = '%s' limit 1",
                 dbesc($x['hubloc_url'])
             );
 
@@ -296,19 +301,22 @@ class Libsync
         foreach ($deliveries as $d) {
             $linked_channel = false;
 
-            $r = q("select * from channel where channel_hash = '%s' limit 1",
+            $r = q(
+                "select * from channel where channel_hash = '%s' limit 1",
                 dbesc($sender)
             );
 
             $DR = new DReport(z_root(), $sender, $d, 'sync');
 
             if (!$r) {
-                $l = q("select ident from linkid where link = '%s' and sigtype = 2 limit 1",
+                $l = q(
+                    "select ident from linkid where link = '%s' and sigtype = 2 limit 1",
                     dbesc($sender)
                 );
                 if ($l) {
                     $linked_channel = true;
-                    $r = q("select * from channel where channel_hash = '%s' limit 1",
+                    $r = q(
+                        "select * from channel where channel_hash = '%s' limit 1",
                         dbesc($l[0]['ident'])
                     );
                 }
@@ -342,7 +350,8 @@ class Libsync
             // if the clone is active, so are we
 
             if (substr($channel['channel_active'], 0, 10) !== substr(datetime_convert(), 0, 10)) {
-                q("UPDATE channel set channel_active = '%s' where channel_id = %d",
+                q(
+                    "UPDATE channel set channel_active = '%s' where channel_id = %d",
                     dbesc(datetime_convert()),
                     intval($channel['channel_id'])
                 );
@@ -421,19 +430,16 @@ class Libsync
             }
 
             if (array_key_exists('channel', $arr) && is_array($arr['channel']) && count($arr['channel'])) {
-
                 $remote_channel = $arr['channel'];
                 $remote_channel['channel_id'] = $channel['channel_id'];
 
                 if (array_key_exists('channel_pageflags', $arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
-
                     // Several pageflags are site-specific and cannot be sync'd.
                     // Only allow those bits which are shareable from the remote and then
                     // logically OR with the local flags
 
                     $arr['channel']['channel_pageflags'] = $arr['channel']['channel_pageflags'] & (PAGE_HIDDEN | PAGE_AUTOCONNECT | PAGE_APPLICATION | PAGE_PREMIUM | PAGE_ADULT);
                     $arr['channel']['channel_pageflags'] = $arr['channel']['channel_pageflags'] | $channel['channel_pageflags'];
-
                 }
 
                 $columns = db_columns('channel');
@@ -461,11 +467,11 @@ class Libsync
             }
 
             if (array_key_exists('abook', $arr) && is_array($arr['abook']) && count($arr['abook'])) {
-
                 $total_friends = 0;
                 $total_feeds = 0;
 
-                $r = q("select abook_id, abook_feed from abook where abook_channel = %d",
+                $r = q(
+                    "select abook_id, abook_feed from abook where abook_channel = %d",
                     intval($channel['channel_id'])
                 );
                 if ($r) {
@@ -484,7 +490,6 @@ class Libsync
                 $fields = db_columns('abook');
 
                 foreach ($arr['abook'] as $abook) {
-
                     // this is here for debugging so we can find the issue source
 
                     if (!is_array($abook)) {
@@ -503,7 +508,8 @@ class Libsync
                     if ($abook['abook_xchan'] && $abook['entry_deleted']) {
                         logger('Removing abook entry for ' . $abook['abook_xchan']);
 
-                        $r = q("select abook_id, abook_feed from abook where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 limit 1",
+                        $r = q(
+                            "select abook_id, abook_feed from abook where abook_xchan = '%s' and abook_channel = %d and abook_self = 0 limit 1",
                             dbesc($abook['abook_xchan']),
                             intval($channel['channel_id'])
                         );
@@ -546,7 +552,8 @@ class Libsync
                                 $xc[$k] = $v;
                             }
                         }
-                        $r = q("select * from xchan where xchan_hash = '%s'",
+                        $r = q(
+                            "select * from xchan where xchan_hash = '%s'",
                             dbesc($xc['xchan_hash'])
                         );
                         if (!$r) {
@@ -584,7 +591,8 @@ class Libsync
                         }
                     }
 
-                    $r = q("select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
+                    $r = q(
+                        "select * from abook where abook_xchan = '%s' and abook_channel = %d limit 1",
                         dbesc($clean['abook_xchan']),
                         intval($channel['channel_id'])
                     );
@@ -621,7 +629,6 @@ class Libsync
 
                             $r = dbq("UPDATE abook set " . dbesc($k) . " = '" . dbesc($v)
                                 . "' where abook_xchan = '" . dbesc($clean['abook_xchan']) . "' and abook_channel = " . intval($channel['channel_id']));
-
                         }
                     }
 
@@ -646,7 +653,8 @@ class Libsync
             // sync collections (privacy groups) oh joy...
 
             if (array_key_exists('collections', $arr) && is_array($arr['collections']) && count($arr['collections'])) {
-                $x = q("select * from pgrp where uid = %d ",
+                $x = q(
+                    "select * from pgrp where uid = %d ",
                     intval($channel['channel_id'])
                 );
                 foreach ($arr['collections'] as $cl) {
@@ -659,10 +667,13 @@ class Libsync
                             }
                         }
                         if ($found) {
-                            if (($y['gname'] != $cl['name'])
+                            if (
+                                ($y['gname'] != $cl['name'])
                                 || ($y['visible'] != $cl['visible'])
-                                || ($y['deleted'] != $cl['deleted'])) {
-                                q("update pgrp set gname = '%s', visible = %d, deleted = %d where hash = '%s' and uid = %d",
+                                || ($y['deleted'] != $cl['deleted'])
+                            ) {
+                                q(
+                                    "update pgrp set gname = '%s', visible = %d, deleted = %d where hash = '%s' and uid = %d",
                                     dbesc($cl['name']),
                                     intval($cl['visible']),
                                     intval($cl['deleted']),
@@ -671,14 +682,16 @@ class Libsync
                                 );
                             }
                             if (intval($cl['deleted']) && (!intval($y['deleted']))) {
-                                q("delete from pgrp_member where gid = %d",
+                                q(
+                                    "delete from pgrp_member where gid = %d",
                                     intval($y['id'])
                                 );
                             }
                         }
                     }
                     if (!$found) {
-                        $r = q("INSERT INTO pgrp ( hash, uid, visible, deleted, gname, rule )
+                        $r = q(
+                            "INSERT INTO pgrp ( hash, uid, visible, deleted, gname, rule )
 							VALUES( '%s', %d, %d, %d, '%s', '%s' ) ",
                             dbesc($cl['collection']),
                             intval($channel['channel_id']),
@@ -703,10 +716,12 @@ class Libsync
                                 }
                             }
                             if (!$found_local) {
-                                q("delete from pgrp_member where gid = %d",
+                                q(
+                                    "delete from pgrp_member where gid = %d",
                                     intval($y['id'])
                                 );
-                                q("update pgrp set deleted = 1 where id = %d and uid = %d",
+                                q(
+                                    "update pgrp set deleted = 1 where id = %d and uid = %d",
                                     intval($y['id']),
                                     intval($channel['channel_id'])
                                 );
@@ -716,16 +731,18 @@ class Libsync
                 }
 
                 // reload the group list with any updates
-                $x = q("select * from pgrp where uid = %d",
+                $x = q(
+                    "select * from pgrp where uid = %d",
                     intval($channel['channel_id'])
                 );
 
                 // now sync the members
 
-                if (array_key_exists('collection_members', $arr)
+                if (
+                    array_key_exists('collection_members', $arr)
                     && is_array($arr['collection_members'])
-                    && count($arr['collection_members'])) {
-
+                    && count($arr['collection_members'])
+                ) {
                     // first sort into groups keyed by the group hash
                     $members = [];
                     foreach ($arr['collection_members'] as $cm) {
@@ -739,12 +756,12 @@ class Libsync
                     // our group list is already synchronised
                     if ($x) {
                         foreach ($x as $y) {
-
                             // for each group, loop on members list we just received
                             if (isset($y['hash']) && isset($members[$y['hash']])) {
                                 foreach ($members[$y['hash']] as $member) {
                                     $found = false;
-                                    $z = q("select xchan from pgrp_member where gid = %d and uid = %d and xchan = '%s' limit 1",
+                                    $z = q(
+                                        "select xchan from pgrp_member where gid = %d and uid = %d and xchan = '%s' limit 1",
                                         intval($y['id']),
                                         intval($channel['channel_id']),
                                         dbesc($member)
@@ -756,7 +773,8 @@ class Libsync
                                     // if somebody is in the group that wasn't before - add them
 
                                     if (!$found) {
-                                        q("INSERT INTO pgrp_member (uid, gid, xchan)
+                                        q(
+                                            "INSERT INTO pgrp_member (uid, gid, xchan)
 											VALUES( %d, %d, '%s' ) ",
                                             intval($channel['channel_id']),
                                             intval($y['id']),
@@ -767,7 +785,8 @@ class Libsync
                             }
 
                             // now retrieve a list of members we have on this site
-                            $m = q("select xchan from pgrp_member where gid = %d and uid = %d",
+                            $m = q(
+                                "select xchan from pgrp_member where gid = %d and uid = %d",
                                 intval($y['id']),
                                 intval($channel['channel_id'])
                             );
@@ -775,7 +794,8 @@ class Libsync
                                 foreach ($m as $mm) {
                                     // if the local existing member isn't in the list we just received - remove them
                                     if (!in_array($mm['xchan'], $members[$y['hash']])) {
-                                        q("delete from pgrp_member where xchan = '%s' and gid = %d and uid = %d",
+                                        q(
+                                            "delete from pgrp_member where xchan = '%s' and gid = %d and uid = %d",
                                             dbesc($mm['xchan']),
                                             intval($y['id']),
                                             intval($channel['channel_id'])
@@ -789,12 +809,11 @@ class Libsync
             }
 
             if (array_key_exists('profile', $arr) && is_array($arr['profile']) && count($arr['profile'])) {
-
                 $disallowed = array('id', 'aid', 'uid', 'guid');
 
                 foreach ($arr['profile'] as $profile) {
-
-                    $x = q("select * from profile where profile_guid = '%s' and uid = %d limit 1",
+                    $x = q(
+                        "select * from profile where profile_guid = '%s' and uid = %d limit 1",
                         dbesc($profile['profile_guid']),
                         intval($channel['channel_id'])
                     );
@@ -807,7 +826,8 @@ class Libsync
                             ]
                         );
 
-                        $x = q("select * from profile where profile_guid = '%s' and uid = %d limit 1",
+                        $x = q(
+                            "select * from profile where profile_guid = '%s' and uid = %d limit 1",
                             dbesc($profile['profile_guid']),
                             intval($channel['channel_id'])
                         );
@@ -897,7 +917,8 @@ class Libsync
         // If a sender reports that the channel has been deleted, delete its hubloc
 
         if (isset($arr['deleted_locally']) && intval($arr['deleted_locally'])) {
-            q("UPDATE hubloc SET hubloc_deleted = 1, hubloc_updated = '%s' WHERE hubloc_hash = '%s' AND hubloc_url = '%s'",
+            q(
+                "UPDATE hubloc SET hubloc_deleted = 1, hubloc_updated = '%s' WHERE hubloc_hash = '%s' AND hubloc_url = '%s'",
                 dbesc(datetime_convert()),
                 dbesc($sender['hash']),
                 dbesc($sender['site']['url'])
@@ -905,8 +926,8 @@ class Libsync
         }
 
         if ($arr['locations']) {
-
-            $x = q("select * from xchan where xchan_hash = '%s'",
+            $x = q(
+                "select * from xchan where xchan_hash = '%s'",
                 dbesc($sender['hash'])
             );
             if ($x) {
@@ -917,7 +938,8 @@ class Libsync
                 Libzot::check_location_move($sender['hash'], $arr['locations']);
             }
 
-            $xisting = q("select * from hubloc where hubloc_hash = '%s'",
+            $xisting = q(
+                "select * from hubloc where hubloc_hash = '%s'",
                 dbesc($sender['hash'])
             );
 
@@ -937,8 +959,9 @@ class Libsync
 
             // Ensure that they have one primary hub
 
-            if (!$has_primary)
+            if (!$has_primary) {
                 $arr['locations'][0]['primary'] = true;
+            }
 
             foreach ($arr['locations'] as $location) {
                 if (!Libzot::verify($location['url'], $location['url_sig'], $sender['public_key'])) {
@@ -948,8 +971,10 @@ class Libsync
                 }
 
                 for ($x = 0; $x < count($xisting); $x++) {
-                    if (($xisting[$x]['hubloc_url'] === $location['url'])
-                        && ($xisting[$x]['hubloc_sitekey'] === $location['sitekey'])) {
+                    if (
+                        ($xisting[$x]['hubloc_url'] === $location['url'])
+                        && ($xisting[$x]['hubloc_sitekey'] === $location['sitekey'])
+                    ) {
                         $xisting[$x]['updated'] = true;
                     }
                 }
@@ -961,7 +986,8 @@ class Libsync
 
                 // match as many fields as possible in case anything at all changed.
 
-                $r = q("select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
+                $r = q(
+                    "select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
                     dbesc($sender['hash']),
                     dbesc($sender['id']),
                     dbesc($sender['id_sig']),
@@ -979,7 +1005,8 @@ class Libsync
                     // generate a new hubloc_site_id if it's wrong due to historical bugs 2021-11-30
 
                     if ($r[0]['hubloc_site_id'] !== $location['site_id']) {
-                        q("update hubloc set hubloc_site_id = '%s' where hubloc_id = %d",
+                        q(
+                            "update hubloc set hubloc_site_id = '%s' where hubloc_id = %d",
                             dbesc(Libzot::make_xchan_hash($location['url'], $location['sitekey'])),
                             intval($r[0]['hubloc_id'])
                         );
@@ -993,7 +1020,8 @@ class Libsync
                     $t = datetime_convert('UTC', 'UTC', 'now - 15 minutes');
 
                     if (array_key_exists('site', $arr) && $location['url'] == $arr['site']['url']) {
-                        q("update hubloc set hubloc_connected = '%s', hubloc_updated = '%s' where hubloc_id = %d and hubloc_updated < '%s'",
+                        q(
+                            "update hubloc set hubloc_connected = '%s', hubloc_updated = '%s' where hubloc_id = %d and hubloc_updated < '%s'",
                             dbesc(datetime_convert()),
                             dbesc(datetime_convert()),
                             intval($r[0]['hubloc_id']),
@@ -1003,15 +1031,18 @@ class Libsync
                     }
 
                     if ($current_site && (intval($r[0]['hubloc_error']) || intval($r[0]['hubloc_deleted']))) {
-                        q("update hubloc set hubloc_error = 0, hubloc_deleted = 0 where hubloc_id = %d",
+                        q(
+                            "update hubloc set hubloc_error = 0, hubloc_deleted = 0 where hubloc_id = %d",
                             intval($r[0]['hubloc_id'])
                         );
                         if (intval($r[0]['hubloc_orphancheck'])) {
-                            q("update hubloc set hubloc_orphancheck = 0 where hubloc_id = %d",
+                            q(
+                                "update hubloc set hubloc_orphancheck = 0 where hubloc_id = %d",
                                 intval($r[0]['hubloc_id'])
                             );
                         }
-                        q("update xchan set xchan_orphan = 0 where xchan_orphan = 1 and xchan_hash = '%s'",
+                        q(
+                            "update xchan set xchan_orphan = 0 where xchan_orphan = 1 and xchan_hash = '%s'",
                             dbesc($sender['hash'])
                         );
                     }
@@ -1019,7 +1050,8 @@ class Libsync
                     // Remove pure duplicates
                     if (count($r) > 1) {
                         for ($h = 1; $h < count($r); $h++) {
-                            q("delete from hubloc where hubloc_id = %d",
+                            q(
+                                "delete from hubloc where hubloc_id = %d",
                                 intval($r[$h]['hubloc_id'])
                             );
                             $what .= 'duplicate_hubloc_removed ';
@@ -1028,7 +1060,8 @@ class Libsync
                     }
 
                     if (intval($r[0]['hubloc_primary']) && (!$location['primary'])) {
-                        $m = q("update hubloc set hubloc_primary = 0, hubloc_updated = '%s' where hubloc_id = %d",
+                        $m = q(
+                            "update hubloc set hubloc_primary = 0, hubloc_updated = '%s' where hubloc_id = %d",
                             dbesc(datetime_convert()),
                             intval($r[0]['hubloc_id'])
                         );
@@ -1037,7 +1070,8 @@ class Libsync
                         $what .= 'primary_hub ';
                         $changed = true;
                     } elseif ((!intval($r[0]['hubloc_primary'])) && ($location['primary'])) {
-                        $m = q("update hubloc set hubloc_primary = 1, hubloc_updated = '%s' where hubloc_id = %d",
+                        $m = q(
+                            "update hubloc set hubloc_primary = 1, hubloc_updated = '%s' where hubloc_id = %d",
                             dbesc(datetime_convert()),
                             intval($r[0]['hubloc_id'])
                         );
@@ -1062,7 +1096,8 @@ class Libsync
                     }
 
                     if (intval($r[0]['hubloc_deleted']) && (!intval($location['deleted']))) {
-                        $n = q("update hubloc set hubloc_deleted = 0, hubloc_updated = '%s' where hubloc_id = %d",
+                        $n = q(
+                            "update hubloc set hubloc_deleted = 0, hubloc_updated = '%s' where hubloc_id = %d",
                             dbesc(datetime_convert()),
                             intval($r[0]['hubloc_id'])
                         );
@@ -1070,7 +1105,8 @@ class Libsync
                         $changed = true;
                     } elseif ((!intval($r[0]['hubloc_deleted'])) && (intval($location['deleted']))) {
                         logger('deleting hubloc: ' . $r[0]['hubloc_addr']);
-                        $n = q("update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
+                        $n = q(
+                            "update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
                             dbesc(datetime_convert()),
                             intval($r[0]['hubloc_id'])
                         );
@@ -1084,7 +1120,8 @@ class Libsync
                 // New hub claiming to be primary. Make it so by removing any existing primaries.
 
                 if (intval($location['primary'])) {
-                    $r = q("update hubloc set hubloc_primary = 0, hubloc_updated = '%s' where hubloc_hash = '%s' and hubloc_primary = 1",
+                    $r = q(
+                        "update hubloc set hubloc_primary = 0, hubloc_updated = '%s' where hubloc_hash = '%s' and hubloc_primary = 1",
                         dbesc(datetime_convert()),
                         dbesc($sender['hash'])
                     );
@@ -1116,12 +1153,14 @@ class Libsync
                 $changed = true;
 
                 if ($location['primary']) {
-                    $r = q("select * from hubloc where hubloc_addr = '%s' and hubloc_sitekey = '%s' limit 1",
+                    $r = q(
+                        "select * from hubloc where hubloc_addr = '%s' and hubloc_sitekey = '%s' limit 1",
                         dbesc($location['address']),
                         dbesc($location['sitekey'])
                     );
-                    if ($r)
+                    if ($r) {
                         hubloc_change_primary($r[0]);
+                    }
                 }
             }
 
@@ -1131,7 +1170,8 @@ class Libsync
                 foreach ($xisting as $x) {
                     if (!array_key_exists('updated', $x)) {
                         logger('Deleting unreferenced hub location ' . $x['hubloc_addr']);
-                        $r = q("update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
+                        $r = q(
+                            "update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
                             dbesc(datetime_convert()),
                             intval($x['hubloc_id'])
                         );
@@ -1164,7 +1204,8 @@ class Libsync
         $hash = Libzot::make_xchan_hash($channel['channel_guid'], $arr['channel']['channel_pubkey']);
 
 
-        $r = q("update channel set channel_prvkey = '%s', channel_pubkey = '%s', channel_guid_sig = '%s',
+        $r = q(
+            "update channel set channel_prvkey = '%s', channel_pubkey = '%s', channel_guid_sig = '%s',
 			channel_hash = '%s' where channel_id = %d",
             dbesc($arr['channel']['channel_prvkey']),
             dbesc($arr['channel']['channel_pubkey']),
@@ -1177,7 +1218,8 @@ class Libsync
             return;
         }
 
-        $r = q("select * from channel where channel_id = %d",
+        $r = q(
+            "select * from channel where channel_id = %d",
             intval($channel['channel_id'])
         );
 
@@ -1188,7 +1230,8 @@ class Libsync
 
         $channel = $r[0];
 
-        $h = q("select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+        $h = q(
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
             dbesc($arr['keychange']['old_hash']),
             dbesc(z_root())
         );
@@ -1202,11 +1245,13 @@ class Libsync
             }
         }
 
-        $x = q("select * from xchan where xchan_hash = '%s' ",
+        $x = q(
+            "select * from xchan where xchan_hash = '%s' ",
             dbesc($arr['keychange']['old_hash'])
         );
 
-        $check = q("select * from xchan where xchan_hash = '%s'",
+        $check = q(
+            "select * from xchan where xchan_hash = '%s'",
             dbesc($hash)
         );
 
@@ -1222,19 +1267,19 @@ class Libsync
             }
         }
 
-        $a = q("select * from abook where abook_xchan = '%s' and abook_self = 1",
+        $a = q(
+            "select * from abook where abook_xchan = '%s' and abook_self = 1",
             dbesc($arr['keychange']['old_hash'])
         );
 
         if ($a) {
-            q("update abook set abook_xchan = '%s' where abook_id = %d",
+            q(
+                "update abook set abook_xchan = '%s' where abook_id = %d",
                 dbesc($hash),
                 intval($a[0]['abook_id'])
             );
         }
 
         xchan_change_key($oldxchan, $newxchan, $arr['keychange']);
-
     }
-
 }

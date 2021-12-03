@@ -38,5 +38,4 @@ class _1249
     {
         return true;
     }
-
 }

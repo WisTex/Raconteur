@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libsync;
@@ -28,7 +29,8 @@ class Chatroom
             return $ret;
         }
 
-        $r = q("select cr_id from chatroom where cr_uid = %d and cr_name = '%s' limit 1",
+        $r = q(
+            "select cr_id from chatroom where cr_uid = %d and cr_name = '%s' limit 1",
             intval($channel['channel_id']),
             dbesc($name)
         );
@@ -37,23 +39,27 @@ class Chatroom
             return $ret;
         }
 
-        $r = q("select count(cr_id) as total from chatroom where cr_aid = %d",
+        $r = q(
+            "select count(cr_id) as total from chatroom where cr_aid = %d",
             intval($channel['channel_account_id'])
         );
-        if ($r)
+        if ($r) {
             $limit = service_class_fetch($channel['channel_id'], 'chatrooms');
+        }
 
         if (($r) && ($limit !== false) && ($r[0]['total'] >= $limit)) {
             $ret['message'] = upgrade_message();
             return $ret;
         }
 
-        if (!array_key_exists('expire', $arr))
+        if (!array_key_exists('expire', $arr)) {
             $arr['expire'] = 120;  // minutes, e.g. 2 hours
+        }
 
         $created = datetime_convert();
 
-        $x = q("insert into chatroom ( cr_aid, cr_uid, cr_name, cr_created, cr_edited, cr_expire, allow_cid, allow_gid, deny_cid, deny_gid )
+        $x = q(
+            "insert into chatroom ( cr_aid, cr_uid, cr_name, cr_created, cr_edited, cr_expire, allow_cid, allow_gid, deny_cid, deny_gid )
 			values ( %d, %d , '%s', '%s', '%s', %d, '%s', '%s', '%s', '%s' ) ",
             intval($channel['channel_account_id']),
             intval($channel['channel_id']),
@@ -67,8 +73,9 @@ class Chatroom
             dbesc($arr['deny_gid'])
         );
 
-        if ($x)
+        if ($x) {
             $ret['success'] = true;
+        }
 
         return $ret;
     }
@@ -79,16 +86,17 @@ class Chatroom
 
         $ret = array('success' => false);
 
-        if (intval($arr['cr_id']))
+        if (intval($arr['cr_id'])) {
             $sql_extra = " and cr_id = " . intval($arr['cr_id']) . " ";
-        elseif (trim($arr['cr_name']))
+        } elseif (trim($arr['cr_name'])) {
             $sql_extra = " and cr_name = '" . protect_sprintf(dbesc(trim($arr['cr_name']))) . "' ";
-        else {
+        } else {
             $ret['message'] = t('Invalid room specifier.');
             return $ret;
         }
 
-        $r = q("select * from chatroom where cr_uid = %d $sql_extra limit 1",
+        $r = q(
+            "select * from chatroom where cr_uid = %d $sql_extra limit 1",
             intval($channel['channel_id'])
         );
         if (!$r) {
@@ -98,14 +106,17 @@ class Chatroom
 
         Libsync::build_sync_packet($channel['channel_id'], array('chatroom' => $r));
 
-        q("delete from chatroom where cr_id = %d",
+        q(
+            "delete from chatroom where cr_id = %d",
             intval($r[0]['cr_id'])
         );
         if ($r[0]['cr_id']) {
-            q("delete from chatpresence where cp_room = %d",
+            q(
+                "delete from chatpresence where cp_room = %d",
                 intval($r[0]['cr_id'])
             );
-            q("delete from chat where chat_room = %d",
+            q(
+                "delete from chat where chat_room = %d",
                 intval($r[0]['cr_id'])
             );
         }
@@ -118,10 +129,12 @@ class Chatroom
     public static function enter($observer_xchan, $room_id, $status, $client)
     {
 
-        if (!$room_id || !$observer_xchan)
+        if (!$room_id || !$observer_xchan) {
             return;
+        }
 
-        $r = q("select * from chatroom where cr_id = %d limit 1",
+        $r = q(
+            "select * from chatroom where cr_id = %d limit 1",
             intval($room_id)
         );
         if (!$r) {
@@ -131,7 +144,8 @@ class Chatroom
         require_once('include/security.php');
         $sql_extra = permissions_sql($r[0]['cr_uid']);
 
-        $x = q("select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
+        $x = q(
+            "select * from chatroom where cr_id = %d and cr_uid = %d $sql_extra limit 1",
             intval($room_id),
             intval($r[0]['cr_uid'])
         );
@@ -142,7 +156,8 @@ class Chatroom
 
         $limit = service_class_fetch($r[0]['cr_uid'], 'chatters_inroom');
         if ($limit !== false) {
-            $y = q("select count(*) as total from chatpresence where cp_room = %d",
+            $y = q(
+                "select count(*) as total from chatpresence where cp_room = %d",
                 intval($room_id)
             );
             if ($y && $y[0]['total'] > $limit) {
@@ -152,19 +167,22 @@ class Chatroom
         }
 
         if (intval($x[0]['cr_expire'])) {
-            $r = q("delete from chat where created < %s - INTERVAL %s and chat_room = %d",
+            $r = q(
+                "delete from chat where created < %s - INTERVAL %s and chat_room = %d",
                 db_utcnow(),
                 db_quoteinterval(intval($x[0]['cr_expire']) . ' MINUTE'),
                 intval($x[0]['cr_id'])
             );
         }
 
-        $r = q("select * from chatpresence where cp_xchan = '%s' and cp_room = %d limit 1",
+        $r = q(
+            "select * from chatpresence where cp_xchan = '%s' and cp_room = %d limit 1",
             dbesc($observer_xchan),
             intval($room_id)
         );
         if ($r) {
-            q("update chatpresence set cp_last = '%s' where cp_id = %d and cp_client = '%s'",
+            q(
+                "update chatpresence set cp_last = '%s' where cp_id = %d and cp_client = '%s'",
                 dbesc(datetime_convert()),
                 intval($r[0]['cp_id']),
                 dbesc($client)
@@ -172,7 +190,8 @@ class Chatroom
             return true;
         }
 
-        $r = q("insert into chatpresence ( cp_room, cp_xchan, cp_last, cp_status, cp_client )
+        $r = q(
+            "insert into chatpresence ( cp_room, cp_xchan, cp_last, cp_status, cp_client )
 			values ( %d, '%s', '%s', '%s', '%s' )",
             intval($room_id),
             dbesc($observer_xchan),
@@ -187,16 +206,19 @@ class Chatroom
 
     public function leave($observer_xchan, $room_id, $client)
     {
-        if (!$room_id || !$observer_xchan)
+        if (!$room_id || !$observer_xchan) {
             return;
+        }
 
-        $r = q("select * from chatpresence where cp_xchan = '%s' and cp_room = %d and cp_client = '%s' limit 1",
+        $r = q(
+            "select * from chatpresence where cp_xchan = '%s' and cp_room = %d and cp_client = '%s' limit 1",
             dbesc($observer_xchan),
             intval($room_id),
             dbesc($client)
         );
         if ($r) {
-            q("delete from chatpresence where cp_id = %d",
+            q(
+                "delete from chatpresence where cp_id = %d",
                 intval($r[0]['cp_id'])
             );
         }
@@ -210,7 +232,8 @@ class Chatroom
         require_once('include/security.php');
         $sql_extra = permissions_sql($uid);
 
-        $r = q("select allow_cid, allow_gid, deny_cid, deny_gid, cr_name, cr_expire, cr_id, count(cp_id) as cr_inroom from chatroom left join chatpresence on cr_id = cp_room where cr_uid = %d $sql_extra group by cr_name, cr_id order by cr_name",
+        $r = q(
+            "select allow_cid, allow_gid, deny_cid, deny_gid, cr_name, cr_expire, cr_id, count(cp_id) as cr_inroom from chatroom left join chatpresence on cr_id = cp_room where cr_uid = %d $sql_extra group by cr_name, cr_id order by cr_name",
             intval($uid)
         );
 
@@ -222,7 +245,8 @@ class Chatroom
         require_once('include/security.php');
         $sql_extra = permissions_sql($uid);
 
-        $r = q("select count(*) as total from chatroom where cr_uid = %d $sql_extra",
+        $r = q(
+            "select count(*) as total from chatroom where cr_uid = %d $sql_extra",
             intval($uid)
         );
 
@@ -245,17 +269,20 @@ class Chatroom
 
         $ret = array('success' => false);
 
-        if (!$text)
+        if (!$text) {
             return;
+        }
 
         $sql_extra = permissions_sql($uid);
 
-        $r = q("select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
+        $r = q(
+            "select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
             intval($uid),
             intval($room_id)
         );
-        if (!$r)
+        if (!$r) {
             return $ret;
+        }
 
         $arr = [
             'chat_room' => $room_id,
@@ -271,7 +298,8 @@ class Chatroom
          */
         call_hooks('chat_message', $arr);
 
-        $x = q("insert into chat ( chat_room, chat_xchan, created, chat_text )
+        $x = q(
+            "insert into chat ( chat_room, chat_xchan, created, chat_text )
 			values( %d, '%s', '%s', '%s' )",
             intval($room_id),
             dbesc($xchan),

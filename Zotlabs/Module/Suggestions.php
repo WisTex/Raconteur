@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
@@ -13,11 +13,13 @@ class Suggestions extends Controller
 
     public function init()
     {
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         if (x($_GET, 'ignore')) {
-            q("insert into xign ( uid, xchan ) values ( %d, '%s' ) ",
+            q(
+                "insert into xign ( uid, xchan ) values ( %d, '%s' ) ",
                 intval(local_channel()),
                 dbesc($_GET['ignore'])
             );
@@ -42,7 +44,5 @@ class Suggestions extends Controller
         $desc = t('This app (when installed) displays a small number of friend suggestions on selected pages or you can run the app to display a full list of channel suggestions.');
 
         return '<div class="section-content-info-wrapper">' . $desc . '</div>';
-
     }
-
 }

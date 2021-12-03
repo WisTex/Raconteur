@@ -15,7 +15,8 @@ class Follow
         }
 
         $uid = App::$channel['channel_id'];
-        $r = q("select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
+        $r = q(
+            "select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
             intval($uid)
         );
 
@@ -39,4 +40,3 @@ class Follow
         ]);
     }
 }
-

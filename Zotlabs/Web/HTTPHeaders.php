@@ -30,7 +30,6 @@ class HTTPHeaders
                         $this->in_progress['v'] = ltrim(substr($line, strpos($line, ':') + 1));
                     }
                 }
-
             }
             if (isset($this->in_progress['k'])) {
                 $this->parsed[] = [$this->in_progress['k'] => $this->in_progress['v']];
@@ -56,9 +55,4 @@ class HTTPHeaders
         }
         return $ret;
     }
-
-
 }
-
-
-

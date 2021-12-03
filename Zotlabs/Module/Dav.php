@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 /**
@@ -7,7 +8,6 @@ namespace Zotlabs\Module;
  *
  * Module for accessing the DAV storage area from a DAV client.
  */
-
 
 use App;
 use Sabre\DAV as SDAV;
@@ -36,7 +36,6 @@ class Dav extends Controller
     {
 
         foreach (['REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION'] as $head) {
-
             /* Basic authentication */
 
             if (array_key_exists($head, $_SERVER) && substr(trim($_SERVER[$head]), 0, 5) === 'Basic') {
@@ -61,7 +60,8 @@ class Dav extends Controller
                 if ($sigblock) {
                     $keyId = str_replace('acct:', '', $sigblock['keyId']);
                     if ($keyId) {
-                        $r = q("select * from hubloc where ( hubloc_addr = '%s' OR hubloc_id_url = '%s' OR hubloc_hash = '%s') limit 1",
+                        $r = q(
+                            "select * from hubloc where ( hubloc_addr = '%s' OR hubloc_id_url = '%s' OR hubloc_hash = '%s') limit 1",
                             dbesc($keyId),
                             dbesc($keyId),
                             dbesc($keyId)
@@ -69,7 +69,8 @@ class Dav extends Controller
                         if ($r) {
                             $c = channelx_by_hash($r[0]['hubloc_hash']);
                             if ($c) {
-                                $a = q("select * from account where account_id = %d limit 1",
+                                $a = q(
+                                    "select * from account where account_id = %d limit 1",
                                     intval($c['channel_account_id'])
                                 );
                                 if ($a) {
@@ -100,15 +101,17 @@ class Dav extends Controller
             }
         }
 
-        if (!is_dir('store'))
+        if (!is_dir('store')) {
             os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
+        }
 
-        if (argc() > 1)
+        if (argc() > 1) {
             Libprofile::load(argv(1), 0);
+        }
 
 
         $auth = new BasicAuth();
-//		$auth->observer = get_observer_hash();
+//      $auth->observer = get_observer_hash();
 
         $auth->setRealm(ucfirst(System::get_platform_name()) . ' ' . 'WebDAV');
 
@@ -140,5 +143,4 @@ class Dav extends Controller
 
         killme();
     }
-
 }

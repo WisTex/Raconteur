@@ -8,8 +8,9 @@ class Mailmenu
     public function widget($arr)
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
         return replace_macros(get_markup_template('message_side.tpl'), array(
             '$title' => t('Private Mail Menu'),

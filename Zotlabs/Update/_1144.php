@@ -10,12 +10,14 @@ class _1144
         if ($r) {
             foreach ($r as $rr) {
                 if ($rr['flags'] & 1) {
-                    q("update attach set is_dir = 1 where id = %d",
+                    q(
+                        "update attach set is_dir = 1 where id = %d",
                         intval($rr['id'])
                     );
                 }
                 if ($rr['flags'] & 2) {
-                    q("update attach set os_storage = 1 where id = %d",
+                    q(
+                        "update attach set os_storage = 1 where id = %d",
                         intval($rr['id'])
                     );
                 }
@@ -24,6 +26,4 @@ class _1144
 
         return UPDATE_SUCCESS;
     }
-
-
 }

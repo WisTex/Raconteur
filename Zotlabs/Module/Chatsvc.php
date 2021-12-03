@@ -1,6 +1,8 @@
-<?php /** @file */
+<?php
 
-namespace Zotlabs\Module; 
+/** @file */
+
+namespace Zotlabs\Module;
 
 require_once('include/security.php');
 
@@ -19,18 +21,19 @@ class Chatsvc extends Controller
         $ret = array('success' => false);
 
         App::$data['chat']['room_id'] = intval($_REQUEST['room_id']);
-        $x = q("select cr_uid from chatroom where cr_id = %d and cr_id != 0 limit 1",
+        $x = q(
+            "select cr_uid from chatroom where cr_id = %d and cr_id != 0 limit 1",
             intval(App::$data['chat']['room_id'])
         );
-        if (!$x)
+        if (!$x) {
             json_return_and_die($ret);
+        }
 
         App::$data['chat']['uid'] = $x[0]['cr_uid'];
 
         if (!perm_is_allowed(App::$data['chat']['uid'], get_observer_hash(), 'chat')) {
             json_return_and_die($ret);
         }
-
     }
 
     public function post()
@@ -40,17 +43,20 @@ class Chatsvc extends Controller
 
         $room_id = App::$data['chat']['room_id'];
         $text = escape_tags($_REQUEST['chat_text']);
-        if (!$text)
+        if (!$text) {
             return;
+        }
 
         $sql_extra = permissions_sql(App::$data['chat']['uid']);
 
-        $r = q("select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
+        $r = q(
+            "select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
             intval(App::$data['chat']['uid']),
             intval(App::$data['chat']['room_id'])
         );
-        if (!$r)
+        if (!$r) {
             json_return_and_die($ret);
+        }
 
         $arr = array(
             'chat_room' => App::$data['chat']['room_id'],
@@ -60,7 +66,8 @@ class Chatsvc extends Controller
 
         call_hooks('chat_post', $arr);
 
-        $x = q("insert into chat ( chat_room, chat_xchan, created, chat_text )
+        $x = q(
+            "insert into chat ( chat_room, chat_xchan, created, chat_text )
 			values( %d, '%s', '%s', '%s' )",
             intval(App::$data['chat']['room_id']),
             dbesc(get_observer_hash()),
@@ -80,12 +87,13 @@ class Chatsvc extends Controller
         $stopped = ((x($_REQUEST, 'stopped') && intval($_REQUEST['stopped'])) ? true : false);
 
         if ($status && $room_id) {
-
-            $x = q("select channel_address from channel where channel_id = %d limit 1",
+            $x = q(
+                "select channel_address from channel where channel_id = %d limit 1",
                 intval(App::$data['chat']['uid'])
             );
 
-            $r = q("update chatpresence set cp_status = '%s', cp_last = '%s' where cp_room = %d and cp_xchan = '%s' and cp_client = '%s'",
+            $r = q(
+                "update chatpresence set cp_status = '%s', cp_last = '%s' where cp_room = %d and cp_xchan = '%s' and cp_client = '%s'",
                 dbesc($status),
                 dbesc(datetime_convert()),
                 intval($room_id),
@@ -97,23 +105,25 @@ class Chatsvc extends Controller
         }
 
         if (!$stopped) {
-
             $lastseen = intval($_REQUEST['last']);
 
             $ret = array('success' => false);
 
             $sql_extra = permissions_sql(App::$data['chat']['uid']);
 
-            $r = q("select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
+            $r = q(
+                "select * from chatroom where cr_uid = %d and cr_id = %d $sql_extra",
                 intval(App::$data['chat']['uid']),
                 intval(App::$data['chat']['room_id'])
             );
-            if (!$r)
+            if (!$r) {
                 json_return_and_die($ret);
+            }
 
             $inroom = [];
 
-            $r = q("select * from chatpresence left join xchan on xchan_hash = cp_xchan where cp_room = %d order by xchan_name",
+            $r = q(
+                "select * from chatpresence left join xchan on xchan_hash = cp_xchan where cp_room = %d order by xchan_name",
                 intval(App::$data['chat']['room_id'])
             );
             if ($r) {
@@ -129,7 +139,6 @@ class Chatsvc extends Controller
                         $rv['xchan_photo_l'] = z_root() . '/' . get_default_profile_photo(300);
                         $rv['xchan_photo_m'] = z_root() . '/' . get_default_profile_photo(80);
                         $rv['xchan_photo_s'] = z_root() . '/' . get_default_profile_photo(48);
-
                     }
 
                     switch ($rv['cp_status']) {
@@ -150,7 +159,8 @@ class Chatsvc extends Controller
 
             $chats = [];
 
-            $r = q("select * from chat left join xchan on chat_xchan = xchan_hash where chat_room = %d and chat_id > %d order by created",
+            $r = q(
+                "select * from chat left join xchan on chat_xchan = xchan_hash where chat_room = %d and chat_id > %d order by created",
                 intval(App::$data['chat']['room_id']),
                 intval($lastseen)
             );
@@ -170,7 +180,8 @@ class Chatsvc extends Controller
             }
         }
 
-        $r = q("update chatpresence set cp_last = '%s' where cp_room = %d and cp_xchan = '%s' and cp_client = '%s'",
+        $r = q(
+            "update chatpresence set cp_last = '%s' where cp_room = %d and cp_xchan = '%s' and cp_client = '%s'",
             dbesc(datetime_convert()),
             intval(App::$data['chat']['room_id']),
             dbesc(get_observer_hash()),
@@ -183,8 +194,5 @@ class Chatsvc extends Controller
             $ret['chats'] = $chats;
         }
         json_return_and_die($ret);
-
     }
-
-
 }

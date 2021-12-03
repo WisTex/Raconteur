@@ -8,10 +8,9 @@ class _1080
     {
         $r = q("ALTER TABLE `mail` ADD `expires` DATETIME NOT NULL DEFAULT '0001-01-01 00:00:00',
 ADD INDEX ( `expires` ) ");
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

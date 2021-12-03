@@ -11,8 +11,9 @@ class Settings_menu
     public function widget($arr)
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return;
+        }
 
 
         $channel = App::get_channel();
@@ -23,13 +24,16 @@ class Settings_menu
 
         $role = get_pconfig(local_channel(), 'system', 'permissions_role');
 
-        $abk = q("select abook_id from abook where abook_channel = %d and abook_self = 1 limit 1",
+        $abk = q(
+            "select abook_id from abook where abook_channel = %d and abook_self = 1 limit 1",
             intval(local_channel())
         );
-        if ($abk)
+        if ($abk) {
             $abook_self_id = $abk[0]['abook_id'];
+        }
 
-        $x = q("select count(*) as total from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
+        $x = q(
+            "select count(*) as total from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
             dbesc($channel['channel_hash'])
         );
 
@@ -77,13 +81,13 @@ class Settings_menu
             'selected' => ''
         );
 
-//		if(feature_enabled(local_channel(),'oauth_clients')) {
-//			$tabs[] =	array(
-//				'label' => t('OAuth1 apps'),
-//				'url' => z_root() . '/settings/oauth',
-//				'selected' => ((argv(1) === 'oauth') ? 'active' : ''),
-//			);
-//		}
+//      if(feature_enabled(local_channel(),'oauth_clients')) {
+//          $tabs[] =   array(
+//              'label' => t('OAuth1 apps'),
+//              'url' => z_root() . '/settings/oauth',
+//              'selected' => ((argv(1) === 'oauth') ? 'active' : ''),
+//          );
+//      }
 
         if (Apps::system_app_installed(local_channel(), 'Clients')) {
             $tabs[] = array(
@@ -93,38 +97,38 @@ class Settings_menu
             );
         }
 
-//		if(feature_enabled(local_channel(),'access_tokens')) {
-//			$tabs[] =	array(
-//				'label' => t('Guest Access Tokens'),
-//				'url' => z_root() . '/settings/tokens',
-//				'selected' => ((argv(1) === 'tokens') ? 'active' : ''),
-//			);
-//		}
+//      if(feature_enabled(local_channel(),'access_tokens')) {
+//          $tabs[] =   array(
+//              'label' => t('Guest Access Tokens'),
+//              'url' => z_root() . '/settings/tokens',
+//              'selected' => ((argv(1) === 'tokens') ? 'active' : ''),
+//          );
+//      }
 
-//		if(feature_enabled(local_channel(),'permcats')) {
-//			$tabs[] = array(
-//				'label' => t('Permission Categories'),
-//				'url' => z_root() . '/settings/permcats',
-//				'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
-//			);
-//		}
+//      if(feature_enabled(local_channel(),'permcats')) {
+//          $tabs[] = array(
+//              'label' => t('Permission Categories'),
+//              'url' => z_root() . '/settings/permcats',
+//              'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
+//          );
+//      }
 
 
-//		if($role === false || $role === 'custom') {
-//			$tabs[] = array(
-//				'label' => t('Connection Default Permissions'),
-//				'url' => z_root() . '/defperms',
-//				'selected' => ''
-//			);
-//		}
+//      if($role === false || $role === 'custom') {
+//          $tabs[] = array(
+//              'label' => t('Connection Default Permissions'),
+//              'url' => z_root() . '/defperms',
+//              'selected' => ''
+//          );
+//      }
 
-//		if(feature_enabled(local_channel(),'channel_sources')) {
-//			$tabs[] = array(
-//				'label' => t('Channel Sources'),
-//				'url' => z_root() . '/sources',
-//				'selected' => ''
-//			);
-//		}
+//      if(feature_enabled(local_channel(),'channel_sources')) {
+//          $tabs[] = array(
+//              'label' => t('Channel Sources'),
+//              'url' => z_root() . '/sources',
+//              'selected' => ''
+//          );
+//      }
 
         $tabtpl = get_markup_template("generic_links_widget.tpl");
         return replace_macros($tabtpl, array(
@@ -133,5 +137,4 @@ class Settings_menu
             '$items' => $tabs,
         ));
     }
-
 }

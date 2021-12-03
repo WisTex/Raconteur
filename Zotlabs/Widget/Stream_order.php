@@ -11,8 +11,9 @@ class Stream_order
     public function widget($arr)
     {
 
-        if (!local_channel())
+        if (!local_channel()) {
             return '';
+        }
 
         $module = 'mod_' . App::$module;
 
@@ -71,23 +72,29 @@ class Stream_order
 
         $filter = '';
 
-        if (x($_GET, 'cid'))
+        if (x($_GET, 'cid')) {
             $filter .= '&cid=' . $_GET['cid'];
+        }
 
-        if (x($_GET, 'gid'))
+        if (x($_GET, 'gid')) {
             $filter .= '&gid=' . $_GET['gid'];
+        }
 
-        if (x($_GET, 'star'))
+        if (x($_GET, 'star')) {
             $filter .= '&star=' . $_GET['star'];
+        }
 
-        if (x($_GET, 'conv'))
+        if (x($_GET, 'conv')) {
             $filter .= '&conv=' . $_GET['conv'];
+        }
 
-        if (x($_GET, 'file'))
+        if (x($_GET, 'file')) {
             $filter .= '&file=' . $_GET['file'];
+        }
 
-        if (x($_GET, 'pf'))
+        if (x($_GET, 'pf')) {
             $filter .= '&pf=' . $_GET['pf'];
+        }
 
 
         // tabs
@@ -133,7 +140,5 @@ class Stream_order
         }
 
         return $o;
-
     }
-
 }

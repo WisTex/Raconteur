@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use App;
@@ -30,20 +31,23 @@ class Subthread extends Controller
             $activity = ACTIVITY_IGNORE;
         }
 
-        $i = q("select * from item where id = %d and uid = %d",
+        $i = q(
+            "select * from item where id = %d and uid = %d",
             intval($item_id),
             intval(local_channel())
         );
 
         if (!$i) {
             // try the global public stream
-            $i = q("select * from item where id = %d and uid = %d",
+            $i = q(
+                "select * from item where id = %d and uid = %d",
                 intval($postid),
                 intval($sys['channel_id'])
             );
             // try the local public stream
             if (!$i) {
-                $i = q("select * from item where id = %d and item_wall = 1 and item_private = 0",
+                $i = q(
+                    "select * from item where id = %d and item_wall = 1 and item_private = 0",
                     intval($postid)
                 );
             }
@@ -58,7 +62,8 @@ class Subthread extends Controller
             return;
         }
 
-        $r = q("select * from item where id = parent and id = %d limit 1",
+        $r = q(
+            "select * from item where id = parent and id = %d limit 1",
             dbesc($i[0]['parent'])
         );
 
@@ -93,7 +98,8 @@ class Subthread extends Controller
             killme();
         }
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($item['owner_xchan'])
         );
         if ($r) {
@@ -102,7 +108,8 @@ class Subthread extends Controller
             killme();
         }
 
-        $r = q("select * from xchan where xchan_hash = '%s' limit 1",
+        $r = q(
+            "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($item['author_xchan'])
         );
         if ($r) {
@@ -124,8 +131,9 @@ class Subthread extends Controller
         $obj = Activity::fetch_item(['id' => $item['mid']]);
         $objtype = $obj['type'];
 
-        if (!intval($item['item_thread_top']))
+        if (!intval($item['item_thread_top'])) {
             $post_type = 'comment';
+        }
 
         if ($activity === ACTIVITY_FOLLOW) {
             $bodyverb = t('%1$s is following %2$s\'s %3$s');

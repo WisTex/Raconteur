@@ -11,8 +11,9 @@ class Chatroom_list
     public function widget($arr)
     {
 
-        if (!App::$profile)
+        if (!App::$profile) {
             return '';
+        }
 
         $r = Chatroom::roomlist(App::$profile['profile_uid']);
 

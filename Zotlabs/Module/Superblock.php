@@ -49,8 +49,8 @@ class Superblock extends Controller
         if ($blocked) {
             $handled = true;
             if ($type === BLOCKTYPE_CHANNEL) {
-
-                $r = q("select * from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
+                $r = q(
+                    "select * from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
                     dbesc($blocked),
                     dbesc($blocked),
                     dbesc($blocked)
@@ -69,10 +69,10 @@ class Superblock extends Controller
                     }
 
                     if ($wf) {
-
                         // something was discovered - find the record which was just created.
 
-                        $r = q("select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
+                        $r = q(
+                            "select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
                             dbesc(($wf) ? $wf : $blocked),
                             dbesc($blocked),
                             dbesc($blocked)
@@ -100,21 +100,25 @@ class Superblock extends Controller
             $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blocked)];
 
             if ($type === BLOCKTYPE_CHANNEL) {
-                $z = q("insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
+                $z = q(
+                    "insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
                     intval(local_channel()),
                     dbesc($blocked)
                 );
-                $ab = q("select * from abook where abook_channel = %d and abook_xchan = '%s'",
+                $ab = q(
+                    "select * from abook where abook_channel = %d and abook_xchan = '%s'",
                     intval(local_channel()),
                     dbesc($blocked)
                 );
                 if (($ab) && (!intval($ab['abook_blocked']))) {
-                    q("update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
+                    q(
+                        "update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
                         intval(local_channel()),
                         dbesc($blocked)
                     );
 
-                    $r = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
+                    $r = q(
+                        "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
                         intval(local_channel()),
                         dbesc($blocked)
                     );
@@ -158,12 +162,14 @@ class Superblock extends Controller
                         'deleted' => true,
                     ]];
                     if ($type === BLOCKTYPE_CHANNEL) {
-                        $ab = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_xchan = '%s'",
+                        $ab = q(
+                            "select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_xchan = '%s'",
                             intval(local_channel()),
                             dbesc($unblocked)
                         );
                         if (($ab) && (intval($ab['abook_blocked']))) {
-                            q("update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
+                            q(
+                                "update abook set abook_blocked = 1 where abook_channel = %d and abook_xchan = '%s'",
                                 intval(local_channel()),
                                 dbesc($unblocked)
                             );
@@ -178,7 +184,8 @@ class Superblock extends Controller
                             $sync['abook'] = [$ab];
                         }
 
-                        $z = q("delete from xign where uid = %d  and xchan = '%s' ",
+                        $z = q(
+                            "delete from xign where uid = %d  and xchan = '%s' ",
                             intval(local_channel()),
                             dbesc($unblocked)
                         );
@@ -189,7 +196,6 @@ class Superblock extends Controller
         }
 
         if ($handled) {
-
             info(t('superblock settings updated') . EOL);
 
             if ($unblocked || $inline) {
@@ -198,7 +204,6 @@ class Superblock extends Controller
 
             killme();
         }
-
     }
 
     public function get()
@@ -252,6 +257,5 @@ class Superblock extends Controller
         ]);
 
         return $s;
-
     }
 }

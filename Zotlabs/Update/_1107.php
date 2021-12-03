@@ -26,10 +26,9 @@ class _1107
   KEY `app_channel` (`app_channel`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-        if ($r)
+        if ($r) {
             return UPDATE_SUCCESS;
+        }
         return UPDATE_FAILED;
     }
-
-
 }

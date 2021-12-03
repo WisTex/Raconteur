@@ -1,6 +1,6 @@
 <?php
-namespace Zotlabs\Module;
 
+namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 
@@ -27,5 +27,4 @@ class Pretheme extends Controller
         }
         killme();
     }
-
 }

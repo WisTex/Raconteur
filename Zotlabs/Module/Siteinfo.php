@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Lib\System;
@@ -27,7 +28,8 @@ class Siteinfo extends Controller
 
         call_hooks('federated_transports', $federated);
 
-        $siteinfo = replace_macros(get_markup_template('siteinfo.tpl'),
+        $siteinfo = replace_macros(
+            get_markup_template('siteinfo.tpl'),
             [
                 '$title' => t('About this site'),
                 '$url' => z_root(),
@@ -58,8 +60,5 @@ class Siteinfo extends Controller
         call_hooks('about_hook', $siteinfo);
 
         return $siteinfo;
-
     }
-
-
 }

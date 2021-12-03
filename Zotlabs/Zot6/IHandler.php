@@ -12,6 +12,4 @@ interface IHandler
     public function Refresh($sender, $recipients, $hub, $force);
 
     public function Purge($sender, $recipients, $hub);
-
 }
-
