@@ -274,7 +274,7 @@ class ThreadItem
         $this->check_wall_to_wall();
 
         if ($this->is_toplevel()) {
-            if (local_channel() && $conv->get_profile_owner() == local_channel() && (! array_key_exists('real_uid', $item))) {
+            if (local_channel() && ($conv->get_profile_owner() == local_channel() || intval($item['item_private']) === 0)) {
                 $star = [
                     'toggle' => t('Save'),
                     'isstarred' => ((intval($item['item_starred'])) ? true : false),

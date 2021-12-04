@@ -27,9 +27,6 @@ class Like extends Controller
         $allow_cid = $allow_gid = $deny_cid = $deny_gid = '';
         $output = EMPTY_STR;
 
-        $sys_channel = get_sys_channel();
-        $sys_channel_id = (($sys_channel) ? $sys_channel['channel_id'] : 0);
-
         $observer = App::get_observer();
 
         // Figure out what action we're performing
