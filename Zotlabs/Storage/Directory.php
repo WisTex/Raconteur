@@ -2,7 +2,6 @@
 
 namespace Zotlabs\Storage;
 
-use;
 use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;

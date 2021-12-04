@@ -1,7 +1,7 @@
 <?php
 namespace Zotlabs\Storage;
 
-use;
+
 use App;
 use Sabre\DAV;
 use Sabre\DAV\INode;

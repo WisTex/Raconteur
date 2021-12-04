@@ -574,7 +574,7 @@ class Notifier
         // Now we have collected recipients (except for external mentions, @FIXME)
         // Let's reduce this to a set of hubs; checking that the site is not dead.
 
-		if (self::recipients) {
+		if (self::$recipients) {
 	        $hubs = q("select hubloc.*, site.site_crypto, site.site_flags from hubloc left join site on site_url = hubloc_url 
 				where hubloc_hash in (" . protect_sprintf(implode(',', self::$recipients)) . ") 
 				and hubloc_error = 0 and hubloc_deleted = 0 ");
