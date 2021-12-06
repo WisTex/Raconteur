@@ -1221,13 +1221,13 @@ class Activity
             $ret['name'] = $i['title'];
         }
 
-        if ($i['mimetype'] === 'text/bbcode') {
+        if (in_array($i['mimetype'], [ 'text/bbcode', 'text/x-multicode' ])) {
             if ($i['summary']) {
                 $ret['summary'] = bbcode($i['summary'], [$bbopts => true]);
             }
             $opts = [$bbopts => true];
             $ret['content'] = bbcode($i['body'], $opts);
-            $ret['source'] = ['content' => $i['body'], 'mediaType' => 'text/bbcode'];
+            $ret['source'] = ['content' => $i['body'], 'mediaType' => 'text/x-multicode'];
             if (isset($ret['summary'])) {
                 $ret['source']['summary'] = $i['summary'];
             }
@@ -1774,7 +1774,7 @@ class Activity
 
         $ret['summary'] = bbcode(get_config('system', 'siteinfo', ''), ['export' => true]);
         $ret['source'] = [
-            'mediaType' => 'text/bbcode',
+            'mediaType' => 'text/x-multicode',
             'summary' => get_config('system', 'siteinfo', '')
         ];
 

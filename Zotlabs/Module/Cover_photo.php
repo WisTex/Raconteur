@@ -298,7 +298,7 @@ class Cover_photo extends Controller
             'updated' => datetime_convert('UTC', 'UTC', $photo['edited'], ATOM_TIME),
             'id' => $arr['mid'],
             'url' => ['type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7'],
-            'source' => ['content' => $arr['body'], 'mediaType' => 'text/bbcode'],
+            'source' => ['content' => $arr['body'], 'mediaType' => 'text/x-multicode'],
             'content' => bbcode($arr['body']),
             'actor' => Activity::encode_person($channel, false),
         ];
