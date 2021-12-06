@@ -4768,7 +4768,7 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 		'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
 		'id'        => $arr['mid'],
 		'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'] ],
-		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/x-multicode' ],
+		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/bbcode' ],
 		'content'   => bbcode($arr['body']),
 		'actor'     => Activity::encode_person($channel,false),
 	];
