@@ -2,33 +2,34 @@
 
 namespace Zotlabs\Update;
 
-class _1234 {
+class _1234
+{
 
-	function run() {
-	
-	    q("START TRANSACTION");
+    public function run()
+    {
 
-		$r = q("ALTER TABLE oauth_clients ADD client_name VARCHAR(80) ");
+        q("START TRANSACTION");
 
-		if($r) {
-			q("COMMIT");
-			return UPDATE_SUCCESS;
-		}
+        $r = q("ALTER TABLE oauth_clients ADD client_name VARCHAR(80) ");
 
-		q("ROLLBACK");
-		return UPDATE_FAILED;
+        if ($r) {
+            q("COMMIT");
+            return UPDATE_SUCCESS;
+        }
 
-	}
+        q("ROLLBACK");
+        return UPDATE_FAILED;
+    }
 
-	function verify() {
+    public function verify()
+    {
 
-		$columns = db_columns('oauth_clients');
+        $columns = db_columns('oauth_clients');
 
-		if(in_array('client_name',$columns)) {
-			return true;
-		}
+        if (in_array('client_name', $columns)) {
+            return true;
+        }
 
-		return false;
-	}
-
+        return false;
+    }
 }

@@ -2,10 +2,12 @@
 
 namespace Zotlabs\Update;
 
-class _1060 {
-function run() {
+class _1060
+{
+    public function run()
+    {
 
-	$r = q("CREATE TABLE IF NOT EXISTS `vote` (
+        $r = q("CREATE TABLE IF NOT EXISTS `vote` (
   `vote_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `vote_poll` int(11) NOT NULL DEFAULT '0',
   `vote_element` int(11) NOT NULL DEFAULT '0',
@@ -15,10 +17,9 @@ function run() {
   UNIQUE KEY `vote_vote` (`vote_poll`,`vote_element`,`vote_xchan`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
+        if ($r) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

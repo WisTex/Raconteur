@@ -4,38 +4,39 @@ namespace Zotlabs\Widget;
 
 use App;
 
-class Follow {
+class Follow
+{
 
-	function widget($args) {
+    public function widget($args)
+    {
 
-		if (! local_channel()) {
-			return EMPTY_STR;
-		}
-		
-		$uid = App::$channel['channel_id'];
-		$r = q("select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
-			intval($uid)
-		);
+        if (!local_channel()) {
+            return EMPTY_STR;
+        }
 
-		if ($r) {
-			$total_channels = $r[0]['total'];
-		}
+        $uid = App::$channel['channel_id'];
+        $r = q(
+            "select count(*) as total from abook where abook_channel = %d and abook_self = 0 ",
+            intval($uid)
+        );
 
-		$limit = service_class_fetch($uid,'total_channels');
-		if ($limit !== false) {
-			$abook_usage_message = sprintf( t("You have %1$.0f of %2$.0f allowed connections."), $total_channels, $limit);
-		}
-		else {
-			$abook_usage_message = EMPTY_STR;
- 		}
-	
-		return replace_macros(get_markup_template('follow.tpl'), [
-			'$connect'             => t('Add New Connection'),
-			'$desc'                => t('Enter channel address'),
-			'$hint'                => t('Examples: bob@example.com, https://example.com/barbara'),
-			'$follow'              => t('Connect'),
-			'$abook_usage_message' => $abook_usage_message
-		]);
-	}
+        if ($r) {
+            $total_channels = $r[0]['total'];
+        }
+
+        $limit = service_class_fetch($uid, 'total_channels');
+        if ($limit !== false) {
+            $abook_usage_message = sprintf(t("You have %1$.0f of %2$.0f allowed connections."), $total_channels, $limit);
+        } else {
+            $abook_usage_message = EMPTY_STR;
+        }
+
+        return replace_macros(get_markup_template('follow.tpl'), [
+            '$connect' => t('Add New Connection'),
+            '$desc' => t('Enter channel address'),
+            '$hint' => t('Examples: bob@example.com, https://example.com/barbara'),
+            '$follow' => t('Connect'),
+            '$abook_usage_message' => $abook_usage_message
+        ]);
+    }
 }
-

@@ -12,25 +12,25 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Webfinger;
 
-class Finger extends Controller {
+class Finger extends Controller
+{
 
-	function get() {
+    public function get()
+    {
 
-		$o = replace_macros(get_markup_template('finger.tpl'), [
-			'$page_title' => t('Webfinger Diagnostic'),
-			'$resource'   => [ 'resource', t('Lookup address or URL') , $_GET['resource'], EMPTY_STR ],
-			'$submit'     => t('Submit')
-		]);
-		
-		if($_GET['resource']) {
+        $o = replace_macros(get_markup_template('finger.tpl'), [
+            '$page_title' => t('Webfinger Diagnostic'),
+            '$resource' => ['resource', t('Lookup address or URL'), $_GET['resource'], EMPTY_STR],
+            '$submit' => t('Submit')
+        ]);
 
-			$resource = trim(escape_tags($_GET['resource']));
+        if ($_GET['resource']) {
+            $resource = trim(escape_tags($_GET['resource']));
 
-			$result = Webfinger::exec($resource);
-			
-			$o .= '<pre>' . str_replace("\n",'<br>',print_array($result)) . '</pre>';
-		}
-		return $o;
-	}
-	
+            $result = Webfinger::exec($resource);
+
+            $o .= '<pre>' . str_replace("\n", '<br>', print_array($result)) . '</pre>';
+        }
+        return $o;
+    }
 }

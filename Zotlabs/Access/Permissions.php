@@ -31,252 +31,266 @@ use Zotlabs\Lib as Zlib;
  * something different for a specific permission within the given role.
  *
  */
-class Permissions {
+class Permissions
+{
 
-	/**
-	 * @brief Permissions version.
-	 *
-	 * This must match the version in PermissionRoles.php before permission updates can run.
-	 *
-	 * @return number
-	 */
-	static public function version() {
-		return 3;
-	}
+    /**
+     * @brief Permissions version.
+     *
+     * This must match the version in PermissionRoles.php before permission updates can run.
+     *
+     * @return number
+     */
+    public static function version()
+    {
+        return 3;
+    }
 
-	/**
-	 * @brief Return an array with Permissions.
-	 *
-	 * @param string $filter (optional) only passed to hook permissions_list
-	 * @return array Associative array with permissions and short description.
-	 */
-	static public function Perms($filter = '') {
+    /**
+     * @brief Return an array with Permissions.
+     *
+     * @param string $filter (optional) only passed to hook permissions_list
+     * @return array Associative array with permissions and short description.
+     */
+    public static function Perms($filter = '')
+    {
 
-		$perms = [
-			'view_stream'   => t('Grant viewing access to and delivery of your channel stream and posts'),
-			'view_profile'  => t('Grant viewing access to your default channel profile'),
-			'view_contacts' => t('Grant viewing access to your address book (connections)'),
-			'view_storage'  => t('Grant viewing access to your file storage and photos'),
-			'post_wall'     => t('Grant permission to post on your channel (wall) page'),
-			'post_mail'     => t('Accept delivery of direct messages and personal mail'),
-			'send_stream'   => t('Accept delivery of their posts and all comments to their posts'),
-			'post_comments' => t('Accept delivery of their comments and likes on your posts'),
-			'write_storage' => t('Grant upload permissions to your file storage and photos'),
-			'republish'     => t('Grant permission to republish/mirror your posts'),
-			'moderated'     => t('Accept comments and wall posts only after approval (moderation)'),
-			'delegate'      => t('Grant channel administration (delegation) permission')
-		];
+        $perms = [
+            'view_stream'   => t('Grant viewing access to and delivery of your channel stream and posts'),
+            'view_profile'  => t('Grant viewing access to your default channel profile'),
+            'view_contacts' => t('Grant viewing access to your address book (connections)'),
+            'view_storage'  => t('Grant viewing access to your file storage and photos'),
+            'post_wall'     => t('Grant permission to post on your channel (wall) page'),
+            'post_mail'     => t('Accept delivery of direct messages and personal mail'),
+            'send_stream'   => t('Accept delivery of their posts and all comments to their posts'),
+            'post_comments' => t('Accept delivery of their comments and likes on your posts'),
+            'write_storage' => t('Grant upload permissions to your file storage and photos'),
+            'republish'     => t('Grant permission to republish/mirror your posts'),
+            'moderated'     => t('Accept comments and wall posts only after approval (moderation)'),
+            'delegate'      => t('Grant channel administration (delegation) permission')
+        ];
 
-		$x = [
-			'permissions' => $perms,
-			'filter' => $filter
-		];
-		/**
-		 * @hooks permissions_list
-		 *   * \e array \b permissions
-		 *   * \e string \b filter
-		 */
-		call_hooks('permissions_list', $x);
+        $x = [
+            'permissions' => $perms,
+            'filter' => $filter
+        ];
+        /**
+         * @hooks permissions_list
+         *   * \e array \b permissions
+         *   * \e string \b filter
+         */
+        call_hooks('permissions_list', $x);
 
-		return($x['permissions']);
-	}
+        return($x['permissions']);
+    }
 
-	/**
-	 * @brief Perms from the above list that are blocked from anonymous observers.
-	 *
-	 * e.g. you must be authenticated.
-	 *
-	 * @return array Associative array with permissions and short description.
-	 */
-	static public function BlockedAnonPerms() {
+    /**
+     * @brief Perms from the above list that are blocked from anonymous observers.
+     *
+     * e.g. you must be authenticated.
+     *
+     * @return array Associative array with permissions and short description.
+     */
+    public static function BlockedAnonPerms()
+    {
 
-		$res = [];
-		$perms = PermissionLimits::Std_limits();
-		foreach($perms as $perm => $limit) {
-			if($limit != PERMS_PUBLIC) {
-				$res[] = $perm;
-			}
-		}
+        $res = [];
+        $perms = PermissionLimits::Std_limits();
+        foreach ($perms as $perm => $limit) {
+            if ($limit != PERMS_PUBLIC) {
+                $res[] = $perm;
+            }
+        }
 
-		$x = ['permissions' => $res];
-		/**
-		 * @hooks write_perms
-		 *   * \e array \b permissions
-		 */
-		call_hooks('write_perms', $x);
+        $x = ['permissions' => $res];
+        /**
+         * @hooks write_perms
+         *   * \e array \b permissions
+         */
+        call_hooks('write_perms', $x);
 
-		return($x['permissions']);
-	}
+        return($x['permissions']);
+    }
 
-	/**
-	 * @brief Converts indexed perms array to associative perms array.
-	 *
-	 * Converts [ 0 => 'view_stream', ... ]
-	 * to [ 'view_stream' => 1 ] for any permissions in $arr;
-	 * Undeclared permissions which exist in Perms() are added and set to 0.
- 	 *
-	 * @param array $arr
-	 * @return array
-	 */
-	static public function FilledPerms($arr) {
-		if(is_null($arr) || (! is_array($arr))) {
-			btlogger('FilledPerms: ' . print_r($arr,true));
-			$arr = [];
-		}
+    /**
+     * @brief Converts indexed perms array to associative perms array.
+     *
+     * Converts [ 0 => 'view_stream', ... ]
+     * to [ 'view_stream' => 1 ] for any permissions in $arr;
+     * Undeclared permissions which exist in Perms() are added and set to 0.
+     *
+     * @param array $arr
+     * @return array
+     */
+    public static function FilledPerms($arr)
+    {
+        if (is_null($arr) || (! is_array($arr))) {
+            btlogger('FilledPerms: ' . print_r($arr, true));
+            $arr = [];
+        }
 
-		$everything = self::Perms();
-		$ret = [];
-		foreach($everything as $k => $v) {
-			if(in_array($k, $arr))
-				$ret[$k] = 1;
-			else
-				$ret[$k] = 0;
-		}
+        $everything = self::Perms();
+        $ret = [];
+        foreach ($everything as $k => $v) {
+            if (in_array($k, $arr)) {
+                $ret[$k] = 1;
+            } else {
+                $ret[$k] = 0;
+            }
+        }
 
-		return $ret;
-	}
+        return $ret;
+    }
 
-	/**
-	 * @brief Convert perms array to indexed array.
-	 *
-	 * Converts [ 'view_stream' => 1 ] for any permissions in $arr
-	 * to [ 0 => ['name' => 'view_stream', 'value' => 1], ... ]
-	 *
-	 * @param array $arr associative perms array 'view_stream' => 1
-	 * @return array Indexed array with elements that look like
-	 *   * \e string \b name the perm name (e.g. view_stream)
-	 *   * \e int \b value the value of the perm (e.g. 1)
-	 */
-	static public function OPerms($arr) {
-		$ret = [];
-		if($arr) {
-			foreach($arr as $k => $v) {
-				$ret[] = [ 'name' => $k, 'value' => $v ];
-			}
-		}
-		return $ret;
-	}
+    /**
+     * @brief Convert perms array to indexed array.
+     *
+     * Converts [ 'view_stream' => 1 ] for any permissions in $arr
+     * to [ 0 => ['name' => 'view_stream', 'value' => 1], ... ]
+     *
+     * @param array $arr associative perms array 'view_stream' => 1
+     * @return array Indexed array with elements that look like
+     *   * \e string \b name the perm name (e.g. view_stream)
+     *   * \e int \b value the value of the perm (e.g. 1)
+     */
+    public static function OPerms($arr)
+    {
+        $ret = [];
+        if ($arr) {
+            foreach ($arr as $k => $v) {
+                $ret[] = [ 'name' => $k, 'value' => $v ];
+            }
+        }
+        return $ret;
+    }
 
-	/**
-	 * @brief
-	 *
-	 * @param int $channel_id
-	 * @return boolean|array
-	 */
-	static public function FilledAutoperms($channel_id) {
-		if(! intval(get_pconfig($channel_id,'system','autoperms')))
-			return false;
+    /**
+     * @brief
+     *
+     * @param int $channel_id
+     * @return bool|array
+     */
+    public static function FilledAutoperms($channel_id)
+    {
+        if (! intval(get_pconfig($channel_id, 'system', 'autoperms'))) {
+            return false;
+        }
 
-		$arr = [];
-		$r = q("select * from pconfig where uid = %d and cat = 'autoperms'",
-			intval($channel_id)
-		);
-		if($r) {
-			foreach($r as $rr) {
-				$arr[$rr['k']] = intval($rr['v']);
-			}
-		}
-		return $arr;
-	}
+        $arr = [];
+        $r = q(
+            "select * from pconfig where uid = %d and cat = 'autoperms'",
+            intval($channel_id)
+        );
+        if ($r) {
+            foreach ($r as $rr) {
+                $arr[$rr['k']] = intval($rr['v']);
+            }
+        }
+        return $arr;
+    }
 
-	/**
-	 * @brief Compares that all Permissions from $p1 exist also in $p2.
-	 *
-	 * @param array $p1 The perms that have to exist in $p2
-	 * @param array $p2 The perms to compare against
-	 * @return boolean true if all perms from $p1 exist also in $p2
-	 */
-	static public function PermsCompare($p1, $p2) {
-		foreach($p1 as $k => $v) {
-			if(! array_key_exists($k, $p2))
-				return false;
+    /**
+     * @brief Compares that all Permissions from $p1 exist also in $p2.
+     *
+     * @param array $p1 The perms that have to exist in $p2
+     * @param array $p2 The perms to compare against
+     * @return bool true if all perms from $p1 exist also in $p2
+     */
+    public static function PermsCompare($p1, $p2)
+    {
+        foreach ($p1 as $k => $v) {
+            if (! array_key_exists($k, $p2)) {
+                return false;
+            }
 
-			if($p1[$k] != $p2[$k])
-				return false;
-		}
+            if ($p1[$k] != $p2[$k]) {
+                return false;
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * @brief
-	 *
-	 * @param int $channel_id A channel id
-	 * @return array Associative array with
-	 *   * \e array \b perms Permission array
-	 *   * \e int \b automatic 0 or 1
-	 */
-	static public function connect_perms($channel_id) {
+    /**
+     * @brief
+     *
+     * @param int $channel_id A channel id
+     * @return array Associative array with
+     *   * \e array \b perms Permission array
+     *   * \e int \b automatic 0 or 1
+     */
+    public static function connect_perms($channel_id)
+    {
 
-		$my_perms = [];
-		$permcat = null;
-		$automatic = 0;
+        $my_perms = [];
+        $permcat = null;
+        $automatic = 0;
 
-		// If a default permcat exists, use that
+        // If a default permcat exists, use that
 
-		$pc = ((feature_enabled($channel_id,'permcats')) ? get_pconfig($channel_id,'system','default_permcat') : 'default');
-		if(! in_array($pc, [ '','default' ])) {
-			$pcp = new Zlib\Permcat($channel_id);
-			$permcat = $pcp->fetch($pc);
-			if($permcat && $permcat['perms']) {
-				foreach($permcat['perms'] as $p) {
-					$my_perms[$p['name']] = $p['value'];
-				}
-			}
-		}
+        $pc = ((feature_enabled($channel_id, 'permcats')) ? get_pconfig($channel_id, 'system', 'default_permcat') : 'default');
+        if (! in_array($pc, [ '','default' ])) {
+            $pcp = new Zlib\Permcat($channel_id);
+            $permcat = $pcp->fetch($pc);
+            if ($permcat && $permcat['perms']) {
+                foreach ($permcat['perms'] as $p) {
+                    $my_perms[$p['name']] = $p['value'];
+                }
+            }
+        }
 
-		$automatic = intval(get_pconfig($channel_id,'system','autoperms'));
+        $automatic = intval(get_pconfig($channel_id, 'system', 'autoperms'));
 
-		// look up the permission role to see if it specified auto-connect
-		// and if there was no permcat or a default permcat, set the perms
-		// from the role
+        // look up the permission role to see if it specified auto-connect
+        // and if there was no permcat or a default permcat, set the perms
+        // from the role
 
-		$role = get_pconfig($channel_id,'system','permissions_role');
-		if($role) {
-			$xx = PermissionRoles::role_perms($role);
+        $role = get_pconfig($channel_id, 'system', 'permissions_role');
+        if ($role) {
+            $xx = PermissionRoles::role_perms($role);
 
-			if((! $my_perms) && ($xx['perms_connect'])) {
-				$default_perms = $xx['perms_connect'];
-				$my_perms = Permissions::FilledPerms($default_perms);
-			}
-		}
+            if ((! $my_perms) && ($xx['perms_connect'])) {
+                $default_perms = $xx['perms_connect'];
+                $my_perms = Permissions::FilledPerms($default_perms);
+            }
+        }
 
-		// If we reached this point without having any permission information,
-		// it is likely a custom permissions role. First see if there are any
-		// automatic permissions.
+        // If we reached this point without having any permission information,
+        // it is likely a custom permissions role. First see if there are any
+        // automatic permissions.
 
-		if(! $my_perms) {
-			$m = Permissions::FilledAutoperms($channel_id);
-			if($m) {
-				$my_perms = $m;
-			}
-		}
+        if (! $my_perms) {
+            $m = Permissions::FilledAutoperms($channel_id);
+            if ($m) {
+                $my_perms = $m;
+            }
+        }
 
-		// If we reached this point with no permissions, the channel is using
-		// custom perms but they are not automatic. They will be stored in abconfig with
-		// the channel's channel_hash (the 'self' connection).
+        // If we reached this point with no permissions, the channel is using
+        // custom perms but they are not automatic. They will be stored in abconfig with
+        // the channel's channel_hash (the 'self' connection).
 
-		if(! $my_perms) {
-			$c = channelx_by_n($channel_id);
-			if($c) {
-				$my_perms = Permissions::FilledPerms(explode(',',get_abconfig($channel_id,$c['channel_hash'],'system','my_perms',EMPTY_STR)));
-			}
-		}
+        if (! $my_perms) {
+            $c = channelx_by_n($channel_id);
+            if ($c) {
+                $my_perms = Permissions::FilledPerms(explode(',', get_abconfig($channel_id, $c['channel_hash'], 'system', 'my_perms', EMPTY_STR)));
+            }
+        }
 
-		return ( [ 'perms' => $my_perms, 'automatic' => $automatic ] );
-	}
+        return ( [ 'perms' => $my_perms, 'automatic' => $automatic ] );
+    }
 
 
-	static public function serialise($p) {
-		$n = [];
-		if($p) {
-			foreach($p as $k => $v) {
-				if(intval($v)) {
-					$n[] = $k;
-				}
-			}
-		}
-		return implode(',',$n);
-	}
-
+    public static function serialise($p)
+    {
+        $n = [];
+        if ($p) {
+            foreach ($p as $k => $v) {
+                if (intval($v)) {
+                    $n[] = $k;
+                }
+            }
+        }
+        return implode(',', $n);
+    }
 }

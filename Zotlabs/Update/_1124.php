@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1124 {
-function run() {
-	$r1 = q("CREATE TABLE IF NOT EXISTS `sign` (
+class _1124
+{
+    public function run()
+    {
+        $r1 = q("CREATE TABLE IF NOT EXISTS `sign` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `iid` int(10) unsigned NOT NULL DEFAULT '0',
   `retract_iid` int(10) unsigned NOT NULL DEFAULT '0',
@@ -16,7 +18,7 @@ function run() {
   KEY `retract_iid` (`retract_iid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ");
 
-	$r2 = q("CREATE TABLE IF NOT EXISTS `conv` (
+        $r2 = q("CREATE TABLE IF NOT EXISTS `conv` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `guid` char(255) NOT NULL,
   `recips` mediumtext NOT NULL,
@@ -30,12 +32,9 @@ function run() {
   KEY `updated` (`updated`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ");
 
-	if($r1 && $r2)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-
-
-}
-
-
+        if ($r1 && $r2) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

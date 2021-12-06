@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1119 {
-function run() {
-	$r1 = q("CREATE TABLE IF NOT EXISTS `profdef` (
+class _1119
+{
+    public function run()
+    {
+        $r1 = q("CREATE TABLE IF NOT EXISTS `profdef` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `field_name` char(255) NOT NULL DEFAULT '',
   `field_type` char(16) NOT NULL DEFAULT '',
@@ -14,7 +16,7 @@ function run() {
   KEY `field_name` (`field_name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	$r2 = q("CREATE TABLE IF NOT EXISTS `profext` (
+        $r2 = q("CREATE TABLE IF NOT EXISTS `profext` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `channel_id` int(10) unsigned NOT NULL DEFAULT '0',
   `hash` char(255) NOT NULL DEFAULT '',
@@ -26,10 +28,9 @@ function run() {
   KEY `k` (`k`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	if($r1 && $r2)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
+        if ($r1 && $r2) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1112 {
-function run() {
-	$r = q("CREATE TABLE IF NOT EXISTS `likes` (
+class _1112
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE IF NOT EXISTS `likes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `liker` char(128) NOT NULL DEFAULT '',
   `likee` char(128) NOT NULL DEFAULT '',
@@ -20,10 +22,9 @@ function run() {
   KEY `target_type` (`target_type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
+        if ($r) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

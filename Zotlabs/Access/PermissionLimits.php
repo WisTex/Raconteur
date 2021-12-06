@@ -26,78 +26,83 @@ use Zotlabs\Lib\PConfig;
  *
  * @see Permissions
  */
-class PermissionLimits {
+class PermissionLimits
+{
 
-	/**
-	 * @brief Get standard permission limits.
-	 *
-	 * Viewing permissions and post_comments permission are set to 'anybody',
-	 * other permissions are set to 'those I allow'.
-	 *
-	 * The list of permissions comes from Permissions::Perms().
-	 *
-	 * @return array
-	 */
-	static public function Std_Limits() {
-		$limits = [];
-		$perms = Permissions::Perms();
+    /**
+     * @brief Get standard permission limits.
+     *
+     * Viewing permissions and post_comments permission are set to 'anybody',
+     * other permissions are set to 'those I allow'.
+     *
+     * The list of permissions comes from Permissions::Perms().
+     *
+     * @return array
+     */
+    public static function Std_Limits()
+    {
+        $limits = [];
+        $perms = Permissions::Perms();
 
-		foreach($perms as $k => $v) {
-			if(strstr($k, 'view'))
-				$limits[$k] = PERMS_PUBLIC;
-			else
-				$limits[$k] = PERMS_SPECIFIC;
-		}
+        foreach ($perms as $k => $v) {
+            if (strstr($k, 'view')) {
+                $limits[$k] = PERMS_PUBLIC;
+            } else {
+                $limits[$k] = PERMS_SPECIFIC;
+            }
+        }
 
-		return $limits;
-	}
+        return $limits;
+    }
 
-	/**
-	 * @brief Sets a permission limit for a channel.
-	 *
-	 * @param int $channel_id
-	 * @param string $perm
-	 * @param int $perm_limit one of PERMS_* constants
-	 */
-	static public function Set($channel_id, $perm, $perm_limit) {
-		PConfig::Set($channel_id, 'perm_limits', $perm, $perm_limit);
-	}
+    /**
+     * @brief Sets a permission limit for a channel.
+     *
+     * @param int $channel_id
+     * @param string $perm
+     * @param int $perm_limit one of PERMS_* constants
+     */
+    public static function Set($channel_id, $perm, $perm_limit)
+    {
+        PConfig::Set($channel_id, 'perm_limits', $perm, $perm_limit);
+    }
 
-	/**
-	 * @brief Get a channel's permission limits.
-	 *
-	 * Return a channel's permission limits from PConfig. If $perm is set just
-	 * return this permission limit, if not set, return an array with all
-	 * permission limits.
-	 *
-	 * @param int $channel_id
-	 * @param string $perm (optional)
-	 * @return
-	 *   * \b false if no perm_limits set for this channel
-	 *   * \b int if $perm is set, return one of PERMS_* constants for this permission, default 0
-	 *   * \b array with all permission limits, if $perm is not set
-	 */
-	static public function Get($channel_id, $perm = '') {
+    /**
+     * @brief Get a channel's permission limits.
+     *
+     * Return a channel's permission limits from PConfig. If $perm is set just
+     * return this permission limit, if not set, return an array with all
+     * permission limits.
+     *
+     * @param int $channel_id
+     * @param string $perm (optional)
+     * @return
+     *   * \b false if no perm_limits set for this channel
+     *   * \b int if $perm is set, return one of PERMS_* constants for this permission, default 0
+     *   * \b array with all permission limits, if $perm is not set
+     */
+    public static function Get($channel_id, $perm = '')
+    {
 
-		if (! intval($channel_id)) {
-			return false;
-		}
-		
-		if($perm) {
-			$x = PConfig::Get($channel_id, 'perm_limits', $perm);
-			if($x === false) {
-				$a = [ 'channel_id' => $channel_id, 'permission' => $perm, 'value' => $x ];
-				call_hooks('permission_limits_get',$a);
-				return intval($a['value']);
-			}
-			return intval($x);
-		}
+        if (! intval($channel_id)) {
+            return false;
+        }
+        
+        if ($perm) {
+            $x = PConfig::Get($channel_id, 'perm_limits', $perm);
+            if ($x === false) {
+                $a = [ 'channel_id' => $channel_id, 'permission' => $perm, 'value' => $x ];
+                call_hooks('permission_limits_get', $a);
+                return intval($a['value']);
+            }
+            return intval($x);
+        }
 
-		PConfig::Load($channel_id);
-		if(array_key_exists($channel_id, App::$config) && array_key_exists('perm_limits', App::$config[$channel_id])) {
-			return App::$config[$channel_id]['perm_limits'];
-		}
+        PConfig::Load($channel_id);
+        if (array_key_exists($channel_id, App::$config) && array_key_exists('perm_limits', App::$config[$channel_id])) {
+            return App::$config[$channel_id]['perm_limits'];
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

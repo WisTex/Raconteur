@@ -26,7 +26,7 @@ EndOfOutput;
 }
 
 if($argc == 1) {
-	$r = q("select account_id, account_roles, account_email from account");
+	$r = q('select account_id, account_roles, account_email from account');
 	if($r) {
 		foreach($r as $rr) {
 			echo sprintf('%4u %s %s', $rr['account_id'], $rr['account_email'],(($rr['account_roles'] & 4096) ? '*' : '')) . PHP_EOL;
@@ -37,7 +37,7 @@ if($argc == 1) {
 
 
 if($argc > 1 && $argv[1] === 'list') {
-	$r = q("select account_id, account_roles, account_email from account where (account_roles & 4096) > 0");
+	$r = q('select account_id, account_roles, account_email from account where (account_roles & 4096) > 0');
 	if($r) {
 		foreach($r as $rr) {
 			echo sprintf('%4u %s %s', $rr['account_id'], $rr['account_email'],(($rr['account_roles'] & 4096) ? '*' : '')) . PHP_EOL;
@@ -47,13 +47,13 @@ if($argc > 1 && $argv[1] === 'list') {
 
 
 if($argc > 2 && $argv[1] === 'add' && intval($argv[2])) {
-	$r = q("update account set account_roles = (account_roles | 4096) where account_id = %d",
+	$r = q('update account set account_roles = (account_roles | 4096) where account_id = %d',
 		intval($argv[2])
 	);
 }
 
 if($argc > 2 && $argv[1] === 'remove' && intval($argv[2])) {
-	$r = q("update account set account_roles = (account_roles - 4096) where account_id = %d and (account_roles & 4096) > 0",
+	$r = q('update account set account_roles = (account_roles - 4096) where account_id = %d and (account_roles & 4096) > 0',
 		intval($argv[2])
 	);
 }

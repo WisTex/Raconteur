@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (c) 2016 Hubzilla
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,6 +34,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @author Klaus Weidenbach
  */
-abstract class UnitTestCase extends TestCase {
-	// when needed we can define functionality here which is used in UnitTests.
+abstract class UnitTestCase extends TestCase
+{
+    // when needed we can define functionality here which is used in UnitTests.
 }
