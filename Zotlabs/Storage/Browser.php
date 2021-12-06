@@ -1,11 +1,14 @@
 <?php
 namespace Zotlabs\Storage;
 
+
 use App;
 use Sabre\DAV;
+use Sabre\DAV\INode;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Render\Theme;
+use function Sabre\HTTP\encodePath;
 
 //require_once('include/conversation.php');
 //require_once('include/text.php');
@@ -19,7 +22,7 @@ require_once('include/acl_selectors.php');
  * Browser is a SabreDAV server-plugin to provide a view to the DAV storage
  * for the webbrowser.
  *
- * @extends \\Sabre\\DAV\\Browser\\Plugin
+ * @extends \Sabre\\DAV\\Browser\\Plugin
  *
  * @link http://framagit.org/hubzilla/core/
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
@@ -112,7 +115,7 @@ class Browser extends DAV\Browser\Plugin {
 		// only show parent if not leaving /cloud/; TODO how to improve this?
 		if ($path && $path != "cloud") {
 			list($parentUri) = \Sabre\Uri\split($path);
-			$fullPath = \Sabre\HTTP\encodePath($this->server->getBaseUri() . $parentUri);
+			$fullPath = encodePath($this->server->getBaseUri() . $parentUri);
 
 			$parentpath['icon'] = $this->enableAssets ? '<a href="' . $fullPath . '"><img src="' . $this->getAssetUrl('icons/parent' . $this->iconExtension) . '" width="24" alt="' . t('parent') . '"></a>' : '';
 			$parentpath['path'] = $fullPath;
@@ -182,7 +185,7 @@ class Browser extends DAV\Browser\Plugin {
 			$size = isset($file[200]['{DAV:}getcontentlength']) ? (int)$file[200]['{DAV:}getcontentlength'] : '';
 			$lastmodified = ((isset($file[200]['{DAV:}getlastmodified'])) ? $file[200]['{DAV:}getlastmodified']->getTime()->format('Y-m-d H:i:s') : '');
 
-			$fullPath = \Sabre\HTTP\encodePath('/' . trim($this->server->getBaseUri() . ($path ? $path . '/' : '') . $name, '/'));
+			$fullPath = encodePath('/' . trim($this->server->getBaseUri() . ($path ? $path . '/' : '') . $name, '/'));
 
 			$displayName = isset($file[200]['{DAV:}displayname']) ? $file[200]['{DAV:}displayname'] : $name;
 
@@ -343,11 +346,11 @@ class Browser extends DAV\Browser\Plugin {
 	/**
 	 * @brief Creates a form to add new folders and upload files.
 	 *
-	 * @param \Sabre\DAV\INode $node
+	 * @param INode $node
 	 * @param[in,out] string &$output
 	 * @param string $path
 	 */
-	public function htmlActionsPanel(DAV\INode $node, &$output, $path) {
+	public function htmlActionsPanel(INode $node, &$output, $path) {
 		if (! $node instanceof DAV\ICollection) {
 			return;
 		}

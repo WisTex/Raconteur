@@ -19,7 +19,7 @@ cli_startup();
 $dstfile = $argv[1];
 
 if($argc != 2) {
-	echo "Usage: " . $argv[0] . ' directory' . "\n";
+	echo 'Usage: ' . $argv[0] . ' directory' . "\n";
 	echo 'Always run from the toplevel web directory.' . "\n";
 	echo 'directory should begin with store/$nickname/desired/path or $nickname/desired/path' . "\n";
 	echo 'Example: util/dmkdir store/bob/photos/2017' . "\n";

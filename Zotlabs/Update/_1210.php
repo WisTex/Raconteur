@@ -2,11 +2,13 @@
 
 namespace Zotlabs\Update;
 
-class _1210 {
+class _1210
+{
 
-	function run() {
+    public function run()
+    {
 
-	$sql = "CREATE TABLE oauth_clients (
+        $sql = "CREATE TABLE oauth_clients (
   client_id             VARCHAR(80)   NOT NULL,
   client_secret         VARCHAR(80),
   redirect_uri          VARCHAR(2000),
@@ -58,21 +60,20 @@ CREATE TABLE oauth_jwt (
 );
 ";
 
-		$arr = explode(';', $sql);
-		$errors = 0;
-		foreach($arr as $a) {
-			if(strlen(trim($a))) {
-				$r = dbq(trim($a));
-				if(! $r) {
-					$errors ++;
-				}
-			}
-		}
+        $arr = explode(';', $sql);
+        $errors = 0;
+        foreach ($arr as $a) {
+            if (strlen(trim($a))) {
+                $r = dbq(trim($a));
+                if (!$r) {
+                    $errors++;
+                }
+            }
+        }
 
-		if(! $errors)
-			return UPDATE_SUCCESS;
-		return UPDATE_FAILED;
-
-	}
-
+        if (!$errors) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

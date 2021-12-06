@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file Zotlabs/Module/Zot.php
  *
@@ -16,10 +17,10 @@ use Zotlabs\Zot6\Zot6Handler;
  * @brief Zot module.
  *
  */
-
-class Zot extends Controller {
-
-	function init() {
+class Zot extends Controller
+{
+	public function init()
+	{
 		$zot = new Receiver(new Zot6Handler());
 		json_return_and_die($zot->run(),'application/x-nomad+json');
 	}

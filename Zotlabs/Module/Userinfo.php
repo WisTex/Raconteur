@@ -8,13 +8,14 @@ use Zotlabs\Identity\OAuth2Storage;
 use Zotlabs\Identity\OAuth2Server;
 use OAuth2\Request;
 
-class Userinfo extends Controller {
+class Userinfo extends Controller
+{
 
-	function init() {
-		$s = new OAuth2Server(new OAuth2Storage(DBA::$dba->db));
-		$request = Request::createFromGlobals();
-		$s->handleUserInfoRequest($request)->send();
-		killme();
-	}
-
+    public function init()
+    {
+        $s = new OAuth2Server(new OAuth2Storage(DBA::$dba->db));
+        $request = Request::createFromGlobals();
+        $s->handleUserInfoRequest($request)->send();
+        killme();
+    }
 }

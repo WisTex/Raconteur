@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -10,153 +11,163 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\ThreadListener;
 use App;
 
-class Conversation extends Controller {
+class Conversation extends Controller
+{
 
-	function init() {
+    public function init()
+    {
 
-		if (ActivityStreams::is_as_request()) {
+        if (ActivityStreams::is_as_request()) {
+            $item_id = argv(1);
 
-			$item_id = argv(1);
+            if (!$item_id) {
+                http_status_exit(404, 'Not found');
+            }
 
-			if (! $item_id)
-				http_status_exit(404, 'Not found');
+            $portable_id = EMPTY_STR;
 
-			$portable_id = EMPTY_STR;
+            $item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Ignore' ) ";
 
-			$item_normal = " and item.item_hidden = 0 and item.item_type = 0 and item.item_unpublished = 0 and item.item_delayed = 0 and item.item_blocked = 0 and not verb in ( 'Follow', 'Ignore' ) ";
+            $i = null;
 
-			$i = null;
+            // do we have the item (at all)?
 
-			// do we have the item (at all)?
+            $r = q(
+                "select * from item where mid = '%s' $item_normal limit 1",
+                dbesc(z_root() . '/activity/' . $item_id)
+            );
 
-			$r = q("select * from item where mid = '%s' $item_normal limit 1",
-				dbesc(z_root() . '/activity/' . $item_id)
-			);
+            if (!$r) {
+                $r = q(
+                    "select * from item where mid = '%s' $item_normal limit 1",
+                    dbesc(z_root() . '/item/' . $item_id)
+                );
+                if (!$r) {
+                    http_status_exit(404, 'Not found');
+                }
+            }
 
-			if (! $r) {
-				$r = q("select * from item where mid = '%s' $item_normal limit 1",
-					dbesc(z_root() . '/item/' . $item_id)
-				);
-				if (! $r) {
-					http_status_exit(404,'Not found');
-				}
-			}
+            // process an authenticated fetch
 
-			// process an authenticated fetch
+            $sigdata = HTTPSig::verify(EMPTY_STR);
+            if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+                $portable_id = $sigdata['portable_id'];
+                observer_auth($portable_id);
 
-			$sigdata = HTTPSig::verify(EMPTY_STR);
-			if($sigdata['portable_id'] && $sigdata['header_valid']) {
-				$portable_id = $sigdata['portable_id'];
-				observer_auth($portable_id);
+                // first see if we have a copy of this item's parent owned by the current signer
+                // include xchans for all zot-like networks - these will have the same guid and public key
 
-				// first see if we have a copy of this item's parent owned by the current signer
-				// include xchans for all zot-like networks - these will have the same guid and public key
+                $x = q(
+                    "select * from xchan where xchan_hash = '%s'",
+                    dbesc($sigdata['portable_id'])
+                );
 
-				$x = q("select * from xchan where xchan_hash = '%s'",
-					dbesc($sigdata['portable_id'])
-				);
+                if ($x) {
+                    $xchans = q(
+                        "select xchan_hash from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
+                        dbesc($sigdata['portable_id']),
+                        dbesc($x[0]['xchan_guid']),
+                        dbesc($x[0]['xchan_pubkey'])
+                    );
 
-				if ($x) {
-					$xchans = q("select xchan_hash from xchan where xchan_hash = '%s' OR ( xchan_guid = '%s' AND xchan_pubkey = '%s' ) ",
-						dbesc($sigdata['portable_id']),
-						dbesc($x[0]['xchan_guid']),
-						dbesc($x[0]['xchan_pubkey'])
-					);
+                    if ($xchans) {
+                        $hashes = ids_to_querystr($xchans, 'xchan_hash', true);
+                        $i = q(
+                            "select id as item_id from item where mid = '%s' $item_normal and owner_xchan in ( " . protect_sprintf($hashes) . " ) limit 1",
+                            dbesc($r[0]['parent_mid'])
+                        );
+                    }
+                }
+            }
 
-					if ($xchans) {
-						$hashes = ids_to_querystr($xchans,'xchan_hash',true);
-						$i = q("select id as item_id from item where mid = '%s' $item_normal and owner_xchan in ( " . protect_sprintf($hashes) . " ) limit 1",
-							dbesc($r[0]['parent_mid'])
-						);
-					}
-				}
-			}
+            // if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
+            // with a bias towards those items owned by channels on this site (item_wall = 1)
 
-			// if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
-			// with a bias towards those items owned by channels on this site (item_wall = 1)
+            $sql_extra = item_permissions_sql(0);
 
-			$sql_extra = item_permissions_sql(0);
+            if (!$i) {
+                $i = q(
+                    "select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+                    dbesc($r[0]['parent_mid'])
+                );
+            }
 
-			if (! $i) {
-				$i = q("select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
-					dbesc($r[0]['parent_mid'])
-				);
-			}
+            if (!$i) {
+                http_status_exit(403, 'Forbidden');
+            }
 
-			if(! $i) {
-				http_status_exit(403,'Forbidden');
-			}
+            $parents_str = ids_to_querystr($i, 'item_id');
 
-			$parents_str = ids_to_querystr($i,'item_id');
+            $items = q(
+                "SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal ",
+                dbesc($parents_str)
+            );
 
-			$items = q("SELECT item.*, item.id AS item_id FROM item WHERE item.parent IN ( %s ) $item_normal ",
-				dbesc($parents_str)
-			);
+            if (!$items) {
+                http_status_exit(404, 'Not found');
+            }
 
-			if(! $items) {
-				http_status_exit(404, 'Not found');
-			}
+            xchan_query($items, true);
+            $items = fetch_post_tags($items, true);
 
-			xchan_query($items,true);
-			$items = fetch_post_tags($items,true);
+            $observer = App::get_observer();
+            $parent = $items[0];
+            $recips = (($parent['owner']['xchan_network'] === 'activitypub') ? get_iconfig($parent['id'], 'activitypub', 'recips', []) : []);
+            $to = (($recips && array_key_exists('to', $recips) && is_array($recips['to'])) ? $recips['to'] : null);
+            $nitems = [];
+            foreach ($items as $i) {
+                $mids = [];
 
-			$observer = App::get_observer();
-			$parent = $items[0];
-			$recips = (($parent['owner']['xchan_network'] === 'activitypub') ? get_iconfig($parent['id'],'activitypub','recips', []) : []);
-			$to = (($recips && array_key_exists('to',$recips) && is_array($recips['to'])) ? $recips['to'] : null);
-			$nitems = [];
-			foreach($items as $i) {
+                if (intval($i['item_private'])) {
+                    if (!$observer) {
+                        continue;
+                    }
+                    // ignore private reshare, possibly from hubzilla
+                    if ($i['verb'] === 'Announce') {
+                        if (!in_array($i['thr_parent'], $mids)) {
+                            $mids[] = $i['thr_parent'];
+                        }
+                        continue;
+                    }
+                    // also ignore any children of the private reshares
+                    if (in_array($i['thr_parent'], $mids)) {
+                        continue;
+                    }
 
-				$mids = [];
+                    if ((!$to) || (!in_array($observer['xchan_url'], $to))) {
+                        continue;
+                    }
+                }
+                $nitems[] = $i;
+            }
 
-				if(intval($i['item_private'])) {
-					if(! $observer) {
-						continue;
-					}
-					// ignore private reshare, possibly from hubzilla
-					if($i['verb'] === 'Announce') {
-						if(! in_array($i['thr_parent'],$mids)) {
-							$mids[] = $i['thr_parent'];
-						}
-						continue;
-					}
-					// also ignore any children of the private reshares
-					if(in_array($i['thr_parent'],$mids)) {
-						continue;
-					}
+            if (!$nitems) {
+                http_status_exit(404, 'Not found');
+            }
 
-					if((! $to) || (! in_array($observer['xchan_url'],$to))) {
-						continue;
-					}
+            $chan = channelx_by_n($nitems[0]['uid']);
 
-				}
-				$nitems[] = $i;
-			}
+            if (!$chan) {
+                http_status_exit(404, 'Not found');
+            }
 
-			if(! $nitems)
-				http_status_exit(404, 'Not found');
+            if (!perm_is_allowed($chan['channel_id'], get_observer_hash(), 'view_stream')) {
+                http_status_exit(403, 'Forbidden');
+            }
 
-			$chan = channelx_by_n($nitems[0]['uid']);
+            $i = ZlibActivity::encode_item_collection($nitems, 'conversation/' . $item_id, 'OrderedCollection', true, count($nitems));
+            if ($portable_id && (!intval($items[0]['item_private']))) {
+                ThreadListener::store(z_root() . '/activity/' . $item_id, $portable_id);
+            }
 
-			if(! $chan)
-				http_status_exit(404, 'Not found');
+            if (!$i) {
+                http_status_exit(404, 'Not found');
+            }
 
-			if(! perm_is_allowed($chan['channel_id'],get_observer_hash(),'view_stream'))
-				http_status_exit(403, 'Forbidden');
+            $channel = channelx_by_n($items[0]['uid']);
+            as_return_and_die($i, $channel);
+        }
 
-			$i = ZlibActivity::encode_item_collection($nitems,'conversation/' . $item_id,'OrderedCollection',true, count($nitems));
-			if ($portable_id && (! intval($items[0]['item_private']))) {
-				ThreadListener::store(z_root() . '/activity/' . $item_id,$portable_id);
-			}
-
-			if(! $i)
-				http_status_exit(404, 'Not found');
-
-			$channel = channelx_by_n($items[0]['uid']);
-			as_return_and_die($i,$channel);
-
-		}
-		
-		goaway(z_root() . '/item/' . argv(1));
-	}
+        goaway(z_root() . '/item/' . argv(1));
+    }
 }

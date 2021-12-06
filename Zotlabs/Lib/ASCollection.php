@@ -9,150 +9,143 @@ use Zotlabs\Lib\Activity;
  * Class for dealing with fetching ActivityStreams collections (ordered or unordered, normal or paged).
  * Construct with either an existing object or url and an optional channel to sign requests.
  * $direction is 0 (default) to fetch from the beginning, and 1 to fetch from the end and reverse order the resultant array.
- * An optional limit to the number of records returned may also be specified. 
+ * An optional limit to the number of records returned may also be specified.
  * Use $class->get() to return an array of collection members.
  */
- 
+class ASCollection
+{
+
+    private $channel = null;
+    private $nextpage = null;
+    private $limit = 0;
+    private $direction = 0;  // 0 = forward, 1 = reverse
+    private $data = [];
+    private $history = [];
 
 
+    public function __construct($obj, $channel = null, $direction = 0, $limit = 0)
+    {
 
-class ASCollection {
+        $this->channel = $channel;
+        $this->direction = $direction;
+        $this->limit = $limit;
 
-	private $channel   = null;
-	private $nextpage  = null;
-	private $limit     = 0;
-	private $direction = 0;  // 0 = forward, 1 = reverse
-	private $data      = [];
-	private $history   = [];
+        if (is_array($obj)) {
+            $data = $obj;
+        }
 
+        if (is_string($obj)) {
+            $data = Activity::fetch($obj, $channel);
+            $this->history[] = $obj;
+        }
 
-	function __construct($obj, $channel = null, $direction = 0, $limit = 0) {
+        if (!is_array($data)) {
+            return;
+        }
 
-		$this->channel   = $channel;
-		$this->direction = $direction;
-		$this->limit     = $limit;
-		
-		if (is_array($obj)) {
-			$data = $obj;
-		}
+        if (!in_array($data['type'], ['Collection', 'OrderedCollection'])) {
+            return false;
+        }
 
-		if (is_string($obj)) {
-			$data = Activity::fetch($obj,$channel);
-			$this->history[] = $obj;
-		}
-		
-		if (! is_array($data)) {
-			return;
-		}
+        if ($this->direction) {
+            if (array_key_exists('last', $data) && $data['last']) {
+                $this->nextpage = $data['last'];
+            }
+        } else {
+            if (array_key_exists('first', $data) && $data['first']) {
+                $this->nextpage = $data['first'];
+            }
+        }
 
-		if (! in_array($data['type'], ['Collection','OrderedCollection'])) {
-			return false;
-		}
+        if (isset($data['items']) && is_array($data['items'])) {
+            $this->data = (($this->direction) ? array_reverse($data['items']) : $data['items']);
+        } elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
+            $this->data = (($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']);
+        }
 
-		if ($this->direction) {
-			if (array_key_exists('last',$data) && $data['last']) {
-				$this->nextpage = $data['last'];
-			}
-		}
-		else {
-			if (array_key_exists('first',$data) && $data['first']) {
-				$this->nextpage = $data['first'];
-			}
-		}
+        if ($limit) {
+            if (count($this->data) > $limit) {
+                $this->data = array_slice($this->data, 0, $limit);
+                return;
+            }
+        }
 
-		if (isset($data['items']) && is_array($data['items'])) {
-			$this->data = (($this->direction) ? array_reverse($data['items']) : $data['items']);			
-		}
-		elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
-			$this->data = (($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']);			
-		}
+        do {
+            $x = $this->next();
+        } while ($x);
+    }
 
-		if ($limit) {
-			if (count($this->data) > $limit) {
-				$this->data = array_slice($this->data,0,$limit);
-				return;
-			}
-		}
+    public function get()
+    {
+        return $this->data;
+    }
 
-		do {
-			$x = $this->next();
-		} while ($x);
-	}
+    public function next()
+    {
 
-	function get() {
-		return $this->data;
-	}
+        if (!$this->nextpage) {
+            return false;
+        }
 
-	function next() {
+        if (is_array($this->nextpage)) {
+            $data = $this->nextpage;
+        }
 
-		if (! $this->nextpage) {
-			return false;
-		}
-				
-		if (is_array($this->nextpage)) {
-			$data = $this->nextpage;
-		}
-		
-		if (is_string($this->nextpage)) {
-			if (in_array($this->nextpage,$this->history)) {
-				// recursion detected
-				return false;
-			}
-			$data = Activity::fetch($this->nextpage,$this->channel);
-			$this->history[] = $this->nextpage;
-		}
+        if (is_string($this->nextpage)) {
+            if (in_array($this->nextpage, $this->history)) {
+                // recursion detected
+                return false;
+            }
+            $data = Activity::fetch($this->nextpage, $this->channel);
+            $this->history[] = $this->nextpage;
+        }
 
-		if (! is_array($data)) {
-			return false;
-		}
-		
-		if (! in_array($data['type'], ['CollectionPage','OrderedCollectionPage'])) {
-			return false;
-		}
+        if (!is_array($data)) {
+            return false;
+        }
 
-		$this->setnext($data);
+        if (!in_array($data['type'], ['CollectionPage', 'OrderedCollectionPage'])) {
+            return false;
+        }
 
-		if (isset($data['items']) && is_array($data['items'])) {
-			$this->data = array_merge($this->data,(($this->direction) ? array_reverse($data['items']) : $data['items']));			
-		}
-		elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
-			$this->data = array_merge($this->data,(($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']));			
-		}
+        $this->setnext($data);
 
-		if ($limit) {
-			if (count($this->data) > $limit) {
-				$this->data = array_slice($this->data,0,$limit);
-				$this->nextpage = false;
-				return true;
-			}
-		}
+        if (isset($data['items']) && is_array($data['items'])) {
+            $this->data = array_merge($this->data, (($this->direction) ? array_reverse($data['items']) : $data['items']));
+        } elseif (isset($data['orderedItems']) && is_array($data['orderedItems'])) {
+            $this->data = array_merge($this->data, (($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']));
+        }
 
-		return true;
-	}
+        if ($limit) {
+            if (count($this->data) > $limit) {
+                $this->data = array_slice($this->data, 0, $limit);
+                $this->nextpage = false;
+                return true;
+            }
+        }
 
-	function setnext($data) {
-		if ($this->direction) {
-			if (array_key_exists('prev',$data) && $data['prev']) {
-				$this->nextpage = $data['prev'];
-			}
-			elseif (array_key_exists('first',$data) && $data['first']) {
-				$this->nextpage = $data['first'];
-			}
-			else {
-				$this->nextpage = false;
-			}
-		}
-		else {
-			if (array_key_exists('next',$data) && $data['next']) {
-				$this->nextpage = $data['next'];
-			}
-			elseif (array_key_exists('last',$data) && $data['last']) {
-				$this->nextpage = $data['last'];
-			}
-			else {
-				$this->nextpage = false;
-			}
-		}
-		logger('nextpage: ' . $this->nextpage, LOGGER_DEBUG);
-	}
+        return true;
+    }
+
+    public function setnext($data)
+    {
+        if ($this->direction) {
+            if (array_key_exists('prev', $data) && $data['prev']) {
+                $this->nextpage = $data['prev'];
+            } elseif (array_key_exists('first', $data) && $data['first']) {
+                $this->nextpage = $data['first'];
+            } else {
+                $this->nextpage = false;
+            }
+        } else {
+            if (array_key_exists('next', $data) && $data['next']) {
+                $this->nextpage = $data['next'];
+            } elseif (array_key_exists('last', $data) && $data['last']) {
+                $this->nextpage = $data['last'];
+            } else {
+                $this->nextpage = false;
+            }
+        }
+        logger('nextpage: ' . $this->nextpage, LOGGER_DEBUG);
+    }
 }

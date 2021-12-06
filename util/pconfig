@@ -82,7 +82,7 @@ if($argc == 3) {
 }
 
 if($argc == 2) {
-	$r = q("select * from pconfig where uid = " . intval($argv[1]));
+	$r = q('select * from pconfig where uid = ' . intval($argv[1]));
 	if($r) {
 		foreach($r as $rr) {
 			echo "pconfig[{$rr['uid']}][{$rr['cat']}][{$rr['k']}] = " . printable_config($rr['v']) . "\n";
@@ -91,7 +91,7 @@ if($argc == 2) {
 }
 
 if($argc == 1) {
-	$r = q("select channel_id, channel_name from channel where channel_removed = 0");
+	$r = q('select channel_id, channel_name from channel where channel_removed = 0');
 	if($r) {
 		foreach($r as $rr) {
 			echo sprintf('%4u %s', $rr['channel_id'], $rr['channel_name']) . PHP_EOL;

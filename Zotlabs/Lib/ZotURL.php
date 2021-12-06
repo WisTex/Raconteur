@@ -4,123 +4,124 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Web\HTTPSig;
 
+class ZotURL
+{
 
-class ZotURL {
+    public static function fetch($url, $channel, $hub = null)
+    {
 
-	static public function fetch($url,$channel,$hub = null) {
+        $ret = [ 'success' => false ];
 
-		$ret = [ 'success' => false ];
-
-		if(strpos($url,'x-zot:') !== 0) {
-			return $ret;
-		}
+        if (strpos($url, 'x-zot:') !== 0) {
+            return $ret;
+        }
 
 
-		if(! $url) {
-			return $ret;
-		}
+        if (! $url) {
+            return $ret;
+        }
 
-		$portable_url = substr($url,6);
-		$u = explode('/',$portable_url);		
-		$portable_id = $u[0];
+        $portable_url = substr($url, 6);
+        $u = explode('/', $portable_url);
+        $portable_id = $u[0];
 
-		$hosts = self::lookup($portable_id,$hub);
+        $hosts = self::lookup($portable_id, $hub);
 
-		if(! $hosts) {
-			return $ret;
-		}
+        if (! $hosts) {
+            return $ret;
+        }
 
-		foreach($hosts as $h) {
-			$newurl = $h . '/id/' . $portable_url;
+        foreach ($hosts as $h) {
+            $newurl = $h . '/id/' . $portable_url;
 
-			$m = parse_url($newurl);
+            $m = parse_url($newurl);
 
-			$data = json_encode([ 'zot_token' => random_string() ]);
+            $data = json_encode([ 'zot_token' => random_string() ]);
 
-			if($channel && $m) {
-
-				$headers = [ 
+            if ($channel && $m) {
+                $headers = [
 					'Accept'           => 'application/x-nomad+json, application/x-zot+json', 
 					'Content-Type'     => 'application/x-nomad+json',
-					'X-Zot-Token'      => random_string(),
-					'Digest'           => HTTPSig::generate_digest_header($data),
-					'Host'             => $m['host'],
-					'(request-target)' => 'post ' . get_request_string($newurl)
-				];
-				$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false);
-			}
-			else {
-				$h = [ 'Accept: application/x-nomad+json' ]; 
-			}
-				
-			$result = [];
+                    'X-Zot-Token'      => random_string(),
+                    'Digest'           => HTTPSig::generate_digest_header($data),
+                    'Host'             => $m['host'],
+                    '(request-target)' => 'post ' . get_request_string($newurl)
+                ];
+                $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
+            } else {
+                $h = [ 'Accept: application/x-nomad+json, application/x-zot+json' ];
+            }
 
-			$redirects = 0;
-			$x = z_post_url($newurl,$data,$redirects, [ 'headers' => $h  ] );
-			if($x['success']) {
-				return $x;
-			}
-		}
+            $result = [];
 
-		return $ret;
+            $redirects = 0;
+            $x = z_post_url($newurl, $data, $redirects, [ 'headers' => $h  ]);
+            if ($x['success']) {
+                return $x;
+            }
+        }
 
-	}
+        return $ret;
+    }
 
-	static public function is_zoturl($s) {
+    public static function is_zoturl($s)
+    {
 
-		if(strpos($url,'x-zot:') === 0) {
-			return true;
-		}
-		return false;
-	}
-
-
-	static public function lookup($portable_id,$hub) {
-
-		$r = q("select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
-			dbesc($portable_id)
-		);
-
-		if(! $r) {
-
-			// extend to network lookup
-
-			$path = '/q/' . $portable_id;			
-
-			// first check sending hub since they have recently communicated with this object
-
-			$redirects = 0;
-
-			if($hub) {
-				$x = z_fetch_url($hub['hubloc_url'] . $path, false, $redirects);
-				$u = self::parse_response($x);
-				if($u) {
-					return $u;
-				}
-			}
-
-			// If this fails, fallback on directory servers
-
-			return false;
-		}
-		return ids_to_array($r,'hubloc_url');
-	}
+        if (strpos($url, 'x-zot:') === 0) {
+            return true;
+        }
+        return false;
+    }
 
 
-	static public function parse_response($arr) {
-		if(! $arr['success']) {
-			return false;
-		}
-		$a = json_decode($arr['body'],true);
-		if($a['success'] && array_key_exists('results', $a) && is_array($a['results']) && count($a['results'])) {
-			foreach($a['results'] as $b) {
-				$m = discover_by_webbie($b);
-				if($m) {
-					return([ $b ]);
-				}
-			}
-		}
-		return false;
-	}
+    public static function lookup($portable_id, $hub)
+    {
 
+        $r = q(
+            "select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
+            dbesc($portable_id)
+        );
+
+        if (! $r) {
+            // extend to network lookup
+
+            $path = '/q/' . $portable_id;
+
+            // first check sending hub since they have recently communicated with this object
+
+            $redirects = 0;
+
+            if ($hub) {
+                $x = z_fetch_url($hub['hubloc_url'] . $path, false, $redirects);
+                $u = self::parse_response($x);
+                if ($u) {
+                    return $u;
+                }
+            }
+
+            // If this fails, fallback on directory servers
+
+            return false;
+        }
+        return ids_to_array($r, 'hubloc_url');
+    }
+
+
+    public static function parse_response($arr)
+    {
+        if (! $arr['success']) {
+            return false;
+        }
+        $a = json_decode($arr['body'], true);
+        if ($a['success'] && array_key_exists('results', $a) && is_array($a['results']) && count($a['results'])) {
+            foreach ($a['results'] as $b) {
+                $m = discover_by_webbie($b);
+                if ($m) {
+                    return([ $b ]);
+                }
+            }
+        }
+        return false;
+    }
 }
+

@@ -2,15 +2,16 @@
 
 namespace Zotlabs\Update;
 
-class _1185 {
-function run() {
+class _1185
+{
+    public function run()
+    {
 
-	$r1 = q("alter table app add app_plugin text not null default '' ");
+        $r1 = q("alter table app add app_plugin text not null default '' ");
 
-	if($r1)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
+        if ($r1) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

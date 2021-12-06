@@ -21,157 +21,168 @@ use Zotlabs\Access\Permissions;
  * These answer the question "Can Joe view *this* album/photo?".
  */
 
-class Permcat {
+class Permcat
+{
 
-	/**
-	 * @var array
-	 */
-	private $permcats = [];
+    /**
+     * @var array
+     */
+    private $permcats = [];
 
-	/**
-	 * @brief Permcat constructor.
-	 *
-	 * @param int $channel_id
-	 */
-	public function __construct($channel_id) {
+    /**
+     * @brief Permcat constructor.
+     *
+     * @param int $channel_id
+     */
+    public function __construct($channel_id)
+    {
 
-		$perms = [];
+        $perms = [];
 
-		// first check role perms for a perms_connect setting
+        // first check role perms for a perms_connect setting
 
-		$role = get_pconfig($channel_id,'system','permissions_role');
-		if($role) {
-			$x = PermissionRoles::role_perms($role);
-			if($x['perms_connect']) {
-				$perms = Permissions::FilledPerms($x['perms_connect']);
-			}
-		}
+        $role = get_pconfig($channel_id, 'system', 'permissions_role');
+        if ($role) {
+            $x = PermissionRoles::role_perms($role);
+            if ($x['perms_connect']) {
+                $perms = Permissions::FilledPerms($x['perms_connect']);
+            }
+        }
 
-		// if no role perms it may be a custom role, see if there any autoperms
+        // if no role perms it may be a custom role, see if there any autoperms
 
-		if(! $perms) {
-			$perms = Permissions::FilledAutoPerms($channel_id);
-		}
+        if (! $perms) {
+            $perms = Permissions::FilledAutoPerms($channel_id);
+        }
 
-		// if no autoperms it may be a custom role with manual perms
+        // if no autoperms it may be a custom role with manual perms
 
-		if(! $perms) {
-			$c = channelx_by_n($channel_id);
-			if($c) {
-				$perms = Permissions::FilledPerms(get_abconfig($channel_id,$c['channel_hash'],'system','my_perms',EMPTY_STR));
-			}
-		}
+        if (! $perms) {
+            $c = channelx_by_n($channel_id);
+            if ($c) {
+                $perms = Permissions::FilledPerms(get_abconfig($channel_id, $c['channel_hash'], 'system', 'my_perms', EMPTY_STR));
+            }
+        }
 
-		// nothing was found - create a filled permission array where all permissions are 0
+        // nothing was found - create a filled permission array where all permissions are 0
 
-		if(! $perms) {
-			$perms = Permissions::FilledPerms([]);
-		}
+        if (! $perms) {
+            $perms = Permissions::FilledPerms([]);
+        }
 
-		$this->permcats[] = [
-			'name'      => 'default',
-			'localname' => t('default','permcat'),
-			'perms'     => Permissions::Operms($perms),
-			'system'    => 1
-		];
+        $this->permcats[] = [
+            'name'      => 'default',
+            'localname' => t('default', 'permcat'),
+            'perms'     => Permissions::Operms($perms),
+            'system'    => 1
+        ];
 
 
-		$p = $this->load_permcats($channel_id);
-		if($p) {
-			for($x = 0; $x < count($p); $x++) {
-				$this->permcats[] = [
-					'name'      => $p[$x][0],
-					'localname' => $p[$x][1],
-					'perms'     => Permissions::Operms(Permissions::FilledPerms($p[$x][2])),
-					'system'    => intval($p[$x][3])
-				];
-			}
-		}
-	}
+        $p = $this->load_permcats($channel_id);
+        if ($p) {
+            for ($x = 0; $x < count($p); $x++) {
+                $this->permcats[] = [
+                    'name'      => $p[$x][0],
+                    'localname' => $p[$x][1],
+                    'perms'     => Permissions::Operms(Permissions::FilledPerms($p[$x][2])),
+                    'system'    => intval($p[$x][3])
+                ];
+            }
+        }
+    }
 
-	/**
-	 * @brief Return array with permcats.
-	 *
-	 * @return array
-	 */
-	public function listing() {
-		return $this->permcats;
-	}
+    /**
+     * @brief Return array with permcats.
+     *
+     * @return array
+     */
+    public function listing()
+    {
+        return $this->permcats;
+    }
 
-	/**
-	 * @brief
-	 *
-	 * @param string $name
-	 * @return array
-	 *   * \e array with permcats
-	 *   * \e bool \b error if $name not found in permcats true
-	 */
-	public function fetch($name) {
-		if($name && $this->permcats) {
-			foreach($this->permcats as $permcat) {
-				if(strcasecmp($permcat['name'], $name) === 0) {
-					return $permcat;
-				}
-			}
-		}
+    /**
+     * @brief
+     *
+     * @param string $name
+     * @return array
+     *   * \e array with permcats
+     *   * \e bool \b error if $name not found in permcats true
+     */
+    public function fetch($name)
+    {
+        if ($name && $this->permcats) {
+            foreach ($this->permcats as $permcat) {
+                if (strcasecmp($permcat['name'], $name) === 0) {
+                    return $permcat;
+                }
+            }
+        }
 
-		return ['error' => true];
-	}
+        return ['error' => true];
+    }
 
-	public function load_permcats($uid) {
+    public function load_permcats($uid)
+    {
 
-		$permcats = [
-			[ 'follower', t('follower','permcat'),
-				[ 'view_stream','view_profile','view_contacts','view_storage','view_pages','view_wiki',
-				  'post_like' ], 1
-			],
-			[ 'contributor', t('contributor','permcat'),
-				[ 'view_stream','view_profile','view_contacts','view_storage','view_pages','view_wiki',
-				  'post_wall','post_comments','write_wiki','post_like','tag_deliver','chat' ], 1
-			],
-			[ 'publisher', t('publisher','permcat'),
-				[ 'view_stream','view_profile','view_contacts','view_storage','view_pages',
-				  'write_storage','post_wall','write_pages','write_wiki','post_comments','post_like','tag_deliver',
-				  'chat', 'republish' ], 1
-			]
-		];
+        $permcats = [
+            [ 'follower', t('follower', 'permcat'),
+                [ 'view_stream','view_profile','view_contacts','view_storage','view_pages','view_wiki',
+                  'post_like' ], 1
+            ],
+            [ 'contributor', t('contributor', 'permcat'),
+                [ 'view_stream','view_profile','view_contacts','view_storage','view_pages','view_wiki',
+                  'post_wall','post_comments','write_wiki','post_like','tag_deliver','chat' ], 1
+            ],
+            [ 'publisher', t('publisher', 'permcat'),
+                [ 'view_stream','view_profile','view_contacts','view_storage','view_pages',
+                  'write_storage','post_wall','write_pages','write_wiki','post_comments','post_like','tag_deliver',
+                  'chat', 'republish' ], 1
+            ]
+        ];
 
-		if($uid) {
-			$x = q("select * from pconfig where uid = %d and cat = 'permcat'",
-				intval($uid)
-			);
-			if($x) {
-				foreach($x as $xv) {
-					$value = ((preg_match('|^a:[0-9]+:{.*}$|s', $xv['v'])) ? unserialize($xv['v']) : $xv['v']);
-					$permcats[] = [ $xv['k'], $xv['k'], $value, 0 ];
-				}
-			}
-		}
+        if ($uid) {
+            $x = q(
+                "select * from pconfig where uid = %d and cat = 'permcat'",
+                intval($uid)
+            );
+            if ($x) {
+                foreach ($x as $xv) {
+                    $value = ((preg_match('|^a:[0-9]+:{.*}$|s', $xv['v'])) ? unserialize($xv['v']) : $xv['v']);
+                    $permcats[] = [ $xv['k'], $xv['k'], $value, 0 ];
+                }
+            }
+        }
 
-		/**
-		 * @hooks permcats
-		 *   * \e array
-		 */
-		call_hooks('permcats', $permcats);
+        /**
+         * @hooks permcats
+         *   * \e array
+         */
+        call_hooks('permcats', $permcats);
 
-		return $permcats;
-	}
+        return $permcats;
+    }
 
-	static public function find_permcat($arr, $name) {
-		if((! $arr) || (! $name))
-			return false;
+    public static function find_permcat($arr, $name)
+    {
+        if ((! $arr) || (! $name)) {
+            return false;
+        }
 
-		foreach($arr as $p)
-			if($p['name'] == $name)
-				return $p['value'];
-	}
+        foreach ($arr as $p) {
+            if ($p['name'] == $name) {
+                return $p['value'];
+            }
+        }
+    }
 
-	static public function update($channel_id, $name, $permarr) {
-		PConfig::Set($channel_id, 'permcat', $name, $permarr);
-	}
+    public static function update($channel_id, $name, $permarr)
+    {
+        PConfig::Set($channel_id, 'permcat', $name, $permarr);
+    }
 
-	static public function delete($channel_id, $name) {
-		PConfig::Delete($channel_id, 'permcat', $name);
-	}
-
+    public static function delete($channel_id, $name)
+    {
+        PConfig::Delete($channel_id, 'permcat', $name);
+    }
 }
