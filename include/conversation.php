@@ -931,13 +931,17 @@ function thread_author_menu($item, $mode = '')
     $can_dm = false;
 
     if ($local_channel && $contact) {
-        $can_dm = perm_is_allowed($local_channel, $item['author_xchan'], 'send_stream');
+        $can_dm = perm_is_allowed($local_channel, $item['author_xchan'], 'post_mail') && intval($contact['xchan_type']) !== XCHAN_TYPE_GROUP ;
     } elseif ($item['author']['xchan_network'] === 'activitypub') {
         $can_dm = true;
     }
-//  if ($can_dm) {
-//      $pm_url = z_root() . '/rpost?to=' . urlencode($item['author_xchan']);
-//  }
+    if ($can_dm) {
+        $pm_url = z_root()
+		. '/rpost?to='
+		. urlencode($item['author_xchan'])
+		. '&body='
+		. urlencode('@!{' . $contact['xchan_addr'] ? $contact['xchan_addr'] : $contact['xchan_url'] . '}');
+    }
 
     if ($profile_link) {
         $menu[] = [
