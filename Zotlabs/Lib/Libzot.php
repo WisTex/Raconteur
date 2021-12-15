@@ -801,13 +801,14 @@ class Libzot
                 $deleted_changed = 1;
             }
 
-            if ($arr['channel_type'] === 'collection') {
-                $px = 2;
-            } elseif ($arr['channel_type'] === 'group') {
-                $px = 1;
-            } else {
-                $px = 0;
-            }
+			$px = 0;
+			if (isset($arr['channel_type'])) {
+	            if ($arr['channel_type'] === 'collection') {
+    	            $px = 2;
+        	    } elseif ($arr['channel_type'] === 'group') {
+                	$px = 1;
+				}
+			}
             if (array_key_exists('public_forum', $arr) && intval($arr['public_forum'])) {
                 $px = 1;
             }
@@ -3587,7 +3588,7 @@ class Libzot
     public static function is_zot_request()
     {
 
-        $x = getBestSupportedMimeType(['application/x-zot+json', 'application/x-nomad']);
+        $x = getBestSupportedMimeType(['application/x-zot+json', 'application/x-nomad+json']);
         return (($x) ? true : false);
     }
 
