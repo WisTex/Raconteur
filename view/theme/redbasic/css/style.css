@@ -908,6 +908,12 @@ div.jGrowl div.jGrowl-notification {
 }
 
 
+.dimmer {
+	opacity: 0.5;
+	filter:alpha(opacity=50);
+}
+
+
 .profile-match-connect { margin-top: 5px; }
 
 .reshared-content { margin-left: 20px; }
