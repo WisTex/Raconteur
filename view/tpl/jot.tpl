@@ -195,6 +195,9 @@
 						{{if $feature_expire}}
 						<a class="dropdown-item" href="#" onclick="jotGetExpiry(); return false;"><i class="fa fa-eraser"></i>&nbsp;{{$expires}}</a>
 						{{/if}}
+						{{if $feature_comment_control}}
+						<a class="dropdown-item" href="#" onclick="jotGetCommCtrl();return false;"><i class="fa fa-comment-o"></i>&nbsp;{{$commctrl}}</a>
+						{{/if}}	
 						{{if $feature_future}}
 						<a class="dropdown-item" href="#" onclick="jotGetPubDate();return false;"><i class="fa fa-clock-o"></i>&nbsp;{{$future_txt}}</a>
 						{{/if}}

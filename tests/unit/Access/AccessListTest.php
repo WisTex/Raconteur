@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2017 Hubzilla
  *
@@ -31,161 +32,170 @@ use Zotlabs\Access\AccessControl;
  *
  * @covers Zotlabs\Access\AccessControl
  */
-class AccessListTest extends UnitTestCase {
+class AccessListTest extends UnitTestCase
+{
 
-	/**
-	 * @brief Expected result for most tests.
-	 * @var array
-	 */
-	protected $expectedResult = [
-			'allow_cid' => '<acid><acid2>',
-			'allow_gid' => '<agid>',
-			'deny_cid'  => '',
-			'deny_gid'  => '<dgid><dgid2>'
-	];
-
-
-
-	public function testConstructor() {
-		$channel = [
-				'channel_allow_cid' => '<acid><acid2>',
-				'channel_allow_gid' => '<agid>',
-				'channel_deny_cid' => '',
-				'channel_deny_gid' => '<dgid><dgid2>'
-		];
-
-		$accessList = new AccessControl($channel);
-
-		$this->assertEquals($this->expectedResult, $accessList->get());
-		$this->assertFalse($accessList->get_explicit());
-	}
-
-	/**
-	 * @expectedException PHPUnit\Framework\Error\Error
-	 */
-	public function testPHPErrorOnInvalidConstructor() {
-		$accessList = new AccessControl('invalid');
-		// Causes: "Illegal string offset 'channel_allow_cid'"
-	}
-
-	public function testDefaultGetExplicit() {
-		$accessList = new AccessControl([]);
-
-		$this->assertFalse($accessList->get_explicit());
-	}
-
-	public function testDefaultGet() {
-		$arr = [
-				'allow_cid' => '',
-				'allow_gid' => '',
-				'deny_cid'  => '',
-				'deny_gid'  => ''
-		];
-
-		$accessList = new AccessControl([]);
-
-		$this->assertEquals($arr, $accessList->get());
-	}
-
-	public function testSet() {
-		$arr = [
-				'allow_cid' => '<acid><acid2>',
-				'allow_gid' => '<agid>',
-				'deny_cid'  => '',
-				'deny_gid'  => '<dgid><dgid2>'
-		];
-		$accessList = new AccessControl([]);
-
-		// default explicit true
-		$accessList->set($arr);
-
-		$this->assertEquals($this->expectedResult, $accessList->get());
-		$this->assertTrue($accessList->get_explicit());
-
-		// set explicit false
-		$accessList->set($arr, false);
-
-		$this->assertEquals($this->expectedResult, $accessList->get());
-		$this->assertFalse($accessList->get_explicit());
-	}
-
-	/**
-	 * @expectedException PHPUnit\Framework\Error\Error
-	 */
-	public function testPHPErrorOnInvalidSet() {
-		$accessList = new AccessControl([]);
-
-		$accessList->set('invalid');
-		// Causes: "Illegal string offset 'allow_cid'"
-	}
-
-	/**
-	 * set_from_[] calls some other functions, too which are not yet unit tested.
-	 * @uses ::perms2str
-	 * @uses ::sanitise_acl
-	 * @uses ::notags
-	 */
-	public function testSetFromArray() {
-		// array
-		$arraySetFromArray = [
-				'contact_allow' => ['acid', 'acid2'],
-				'group_allow'   => ['agid'],
-				'contact_deny'  => [],
-				'group_deny'    => ['dgid', 'dgid2']
-		];
-		$accessList = new AccessControl([]);
-		$accessList->set_from_array($arraySetFromArray);
-
-		$this->assertEquals($this->expectedResult, $accessList->get());
-		$this->assertTrue($accessList->get_explicit());
+    /**
+     * @brief Expected result for most tests.
+     * @var array
+     */
+    protected $expectedResult = [
+            'allow_cid' => '<acid><acid2>',
+            'allow_gid' => '<agid>',
+            'deny_cid'  => '',
+            'deny_gid'  => '<dgid><dgid2>'
+    ];
 
 
-		// string
-		$stringSetFromArray = [
-				'contact_allow' => 'acid,acid2',
-				'group_allow'   => 'agid',
-				'contact_deny'  => '',
-				'group_deny'    => 'dgid, dgid2'
-		];
-		$accessList2 = new AccessControl([]);
-		$accessList2->set_from_array($stringSetFromArray, false);
 
-		$this->assertEquals($this->expectedResult, $accessList2->get());
-		$this->assertFalse($accessList2->get_explicit());
-	}
+    public function testConstructor()
+    {
+        $channel = [
+                'channel_allow_cid' => '<acid><acid2>',
+                'channel_allow_gid' => '<agid>',
+                'channel_deny_cid' => '',
+                'channel_deny_gid' => '<dgid><dgid2>'
+        ];
 
-	/**
-	 * @dataProvider isprivateProvider
-	 */
-	public function testIsPrivate($channel) {
-		$accessListPublic = new AccessControl([]);
-		$this->assertFalse($accessListPublic->is_private());
+        $accessList = new AccessControl($channel);
 
-		$accessListPrivate = new AccessControl($channel);
-		$this->assertTrue($accessListPrivate->is_private());
-	}
+        $this->assertEquals($this->expectedResult, $accessList->get());
+        $this->assertFalse($accessList->get_explicit());
+    }
 
-	public function isprivateProvider() {
-		return [
-				'all set' => [[
-						'channel_allow_cid' => '<acid>',
-						'channel_allow_gid' => '<agid>',
-						'channel_deny_cid'  => '<dcid>',
-						'channel_deny_gid'  => '<dgid>'
-				]],
-				'only one set' => [[
-						'channel_allow_cid' => '<acid>',
-						'channel_allow_gid' => '',
-						'channel_deny_cid'  => '',
-						'channel_deny_gid'  => ''
-				]],
-				'acid+null' => [[
-						'channel_allow_cid' => '<acid>',
-						'channel_allow_gid' => null,
-						'channel_deny_cid'  => '',
-						'channel_deny_gid'  => ''
-				]]
-		];
-	}
+    /**
+     * @expectedException PHPUnit\Framework\Error\Error
+     */
+    public function testPHPErrorOnInvalidConstructor()
+    {
+        $accessList = new AccessControl('invalid');
+        // Causes: "Illegal string offset 'channel_allow_cid'"
+    }
 
+    public function testDefaultGetExplicit()
+    {
+        $accessList = new AccessControl([]);
+
+        $this->assertFalse($accessList->get_explicit());
+    }
+
+    public function testDefaultGet()
+    {
+        $arr = [
+                'allow_cid' => '',
+                'allow_gid' => '',
+                'deny_cid'  => '',
+                'deny_gid'  => ''
+        ];
+
+        $accessList = new AccessControl([]);
+
+        $this->assertEquals($arr, $accessList->get());
+    }
+
+    public function testSet()
+    {
+        $arr = [
+                'allow_cid' => '<acid><acid2>',
+                'allow_gid' => '<agid>',
+                'deny_cid'  => '',
+                'deny_gid'  => '<dgid><dgid2>'
+        ];
+        $accessList = new AccessControl([]);
+
+        // default explicit true
+        $accessList->set($arr);
+
+        $this->assertEquals($this->expectedResult, $accessList->get());
+        $this->assertTrue($accessList->get_explicit());
+
+        // set explicit false
+        $accessList->set($arr, false);
+
+        $this->assertEquals($this->expectedResult, $accessList->get());
+        $this->assertFalse($accessList->get_explicit());
+    }
+
+    /**
+     * @expectedException PHPUnit\Framework\Error\Error
+     */
+    public function testPHPErrorOnInvalidSet()
+    {
+        $accessList = new AccessControl([]);
+
+        $accessList->set('invalid');
+        // Causes: "Illegal string offset 'allow_cid'"
+    }
+
+    /**
+     * set_from_[] calls some other functions, too which are not yet unit tested.
+     * @uses ::perms2str
+     * @uses ::sanitise_acl
+     * @uses ::notags
+     */
+    public function testSetFromArray()
+    {
+        // array
+        $arraySetFromArray = [
+                'contact_allow' => ['acid', 'acid2'],
+                'group_allow'   => ['agid'],
+                'contact_deny'  => [],
+                'group_deny'    => ['dgid', 'dgid2']
+        ];
+        $accessList = new AccessControl([]);
+        $accessList->set_from_array($arraySetFromArray);
+
+        $this->assertEquals($this->expectedResult, $accessList->get());
+        $this->assertTrue($accessList->get_explicit());
+
+
+        // string
+        $stringSetFromArray = [
+                'contact_allow' => 'acid,acid2',
+                'group_allow'   => 'agid',
+                'contact_deny'  => '',
+                'group_deny'    => 'dgid, dgid2'
+        ];
+        $accessList2 = new AccessControl([]);
+        $accessList2->set_from_array($stringSetFromArray, false);
+
+        $this->assertEquals($this->expectedResult, $accessList2->get());
+        $this->assertFalse($accessList2->get_explicit());
+    }
+
+    /**
+     * @dataProvider isprivateProvider
+     */
+    public function testIsPrivate($channel)
+    {
+        $accessListPublic = new AccessControl([]);
+        $this->assertFalse($accessListPublic->is_private());
+
+        $accessListPrivate = new AccessControl($channel);
+        $this->assertTrue($accessListPrivate->is_private());
+    }
+
+    public function isprivateProvider()
+    {
+        return [
+                'all set' => [[
+                        'channel_allow_cid' => '<acid>',
+                        'channel_allow_gid' => '<agid>',
+                        'channel_deny_cid'  => '<dcid>',
+                        'channel_deny_gid'  => '<dgid>'
+                ]],
+                'only one set' => [[
+                        'channel_allow_cid' => '<acid>',
+                        'channel_allow_gid' => '',
+                        'channel_deny_cid'  => '',
+                        'channel_deny_gid'  => ''
+                ]],
+                'acid+null' => [[
+                        'channel_allow_cid' => '<acid>',
+                        'channel_allow_gid' => null,
+                        'channel_deny_cid'  => '',
+                        'channel_deny_gid'  => ''
+                ]]
+        ];
+    }
 }

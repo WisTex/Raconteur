@@ -2,47 +2,44 @@
 
 namespace Zotlabs\Update;
 
-class _1243 {
+class _1243
+{
 
-	function run() {
-	
-	    q("START TRANSACTION");
+    public function run()
+    {
 
-		if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-			$r1 = q("ALTER TABLE profile ADD pronouns text NOT NULL DEFAULT '' ");
- 			$r2 = q("ALTER TABLE xprof ADD xprof_pronouns text NOT NULL DEFAULT '' ");
+        q("START TRANSACTION");
 
-			$r = ($r1 && $r2);
-		}
-		else {
-			$r1 = q("ALTER TABLE `profile` ADD `pronouns` char(191) NOT NULL DEFAULT '' ");
-			$r2 = q("ALTER TABLE `xprof` ADD `xprof_pronouns` char(191) NOT NULL DEFAULT '' ");
-			$r = ($r1 && $r2);
-		}
+        if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
+            $r1 = q("ALTER TABLE profile ADD pronouns text NOT NULL DEFAULT '' ");
+            $r2 = q("ALTER TABLE xprof ADD xprof_pronouns text NOT NULL DEFAULT '' ");
 
-		if($r) {
-			q("COMMIT");
-			return UPDATE_SUCCESS;
-		}
+            $r = ($r1 && $r2);
+        } else {
+            $r1 = q("ALTER TABLE `profile` ADD `pronouns` char(191) NOT NULL DEFAULT '' ");
+            $r2 = q("ALTER TABLE `xprof` ADD `xprof_pronouns` char(191) NOT NULL DEFAULT '' ");
+            $r = ($r1 && $r2);
+        }
 
-		q("ROLLBACK");
-		return UPDATE_FAILED;
+        if ($r) {
+            q("COMMIT");
+            return UPDATE_SUCCESS;
+        }
 
-	}
+        q("ROLLBACK");
+        return UPDATE_FAILED;
+    }
 
-	function verify() {
+    public function verify()
+    {
 
-		$columns = db_columns('profile');
-		$columns2 = db_columns('xprof');
-		
-		if(in_array('pronouns',$columns) && in_array('xprof_pronouns',$columns2)) {
-			return true;
-		}
+        $columns = db_columns('profile');
+        $columns2 = db_columns('xprof');
 
-		return false;
-	}
+        if (in_array('pronouns', $columns) && in_array('xprof_pronouns', $columns2)) {
+            return true;
+        }
 
-
-
-
+        return false;
+    }
 }

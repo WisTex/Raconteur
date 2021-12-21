@@ -2,11 +2,11 @@
 
 namespace Zotlabs\Widget;
 
+class Dirtags
+{
 
-class Dirtags {
-
-	function widget($arr) {
-		return dir_tagblock(z_root() . '/directory', null);
-	}
-
+    public function widget($arr)
+    {
+        return dir_tagblock(z_root() . '/directory', null);
+    }
 }

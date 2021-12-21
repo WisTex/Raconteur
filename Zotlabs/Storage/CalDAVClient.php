@@ -2,76 +2,80 @@
 
 namespace Zotlabs\Storage;
 
-// The Hubzilla CalDAV client will store calendar information in the 'cal' DB table. 
+// The Hubzilla CalDAV client will store calendar information in the 'cal' DB table.
 // Event information will remain in the 'event' table. In order to implement CalDAV on top of our
 // existing system, there is an event table column called vdata. This will hold the "one true record"
 // of the event in VCALENDAR format. When we receive a foreign event, we will pick out the fields
-// of this entry that are important to us and use it to populate the other event table fields. 
+// of this entry that are important to us and use it to populate the other event table fields.
 // When we make an event change, it is required that we load this entry as a vobject, make the changes on the
 // vobject, and then store the result back in event.vdata. This will preserve foreign keys which we
 // know nothing about. Then we sync this back to the DAV server.
 
-// We still need a DB update to create a 'cal' table entry for our existing events and link these together. 
-// I'm currently anticipating separating tasks/to-do items from events, so each new account wil get two default calendars.  
+// We still need a DB update to create a 'cal' table entry for our existing events and link these together.
+// I'm currently anticipating separating tasks/to-do items from events, so each new account wil get two default calendars.
 
-// We will eventually provide for magic-auth or cookie login of the CURL process so we won't be required to 
-// store our hubzilla password. Currently for testing we are using HTTP BASIC-AUTH and must initialise the 
-// username/password correctly to make the connection. 
+// We will eventually provide for magic-auth or cookie login of the CURL process so we won't be required to
+// store our hubzilla password. Currently for testing we are using HTTP BASIC-AUTH and must initialise the
+// username/password correctly to make the connection.
 
-// Repeating events will be awkward because every instance has the same UUID. This would make it difficult to 
-// search for upcoming events if the initial instance was created (for instance) a few years ago. So the current plan is 
-// to create event instances for a prescribed time limit from now (perhaps 5-10 years for annual events). 
+// Repeating events will be awkward because every instance has the same UUID. This would make it difficult to
+// search for upcoming events if the initial instance was created (for instance) a few years ago. So the current plan is
+// to create event instances for a prescribed time limit from now (perhaps 5-10 years for annual events).
 // This plan may change. The repurcussions of this decision mean that an edit to a recurring event must
 // edit all existing instances of the event, and only one unique instance can be used for sync.
-// Sabre vobject provides a function to automatically expand recurring events into individual event instances.  
+// Sabre vobject provides a function to automatically expand recurring events into individual event instances.
 
 
+class CalDAVClient
+{
 
-class CalDAVClient {
+    private $username;
+    private $password;
 
-	private $username;
-	private $password;
+    private $url;
 
-	private $url;
+    public $filepos = 0;
+    public $request_data = '';
 
-	public $filepos = 0;
-	public $request_data = '';	
+    public function __construct($user, $pass, $url)
+    {
+        $this->username = $user;
+        $this->password = $pass;
+        $this->url = $url;
+    }
 
-	function __construct($user,$pass,$url) {
-		$this->username = $user;
-		$this->password = $pass;
-		$this->url = $url;
+    private function set_data($s)
+    {
+        $this->request_data = $s;
+        $this->filepos = 0;
+    }
 
-	}
+    public function curl_read($ch, $fh, $size)
+    {
 
-	private function set_data($s) {
-		$this->request_data = $s;
-		$this->filepos = 0;
-	}
+        if ($this->filepos < 0) {
+            unset($fh);
+            return '';
+        }
 
-	public function curl_read($ch,$fh,$size) {
+        $s = substr($this->request_data, $this->filepos, $size);
 
-		if($this->filepos < 0) {
-			unset($fh);
-			return '';
-		}
+        if (strlen($s) < $size) {
+            $this->filepos = (-1);
+        } else {
+            $this->filepos = $this->filepos + $size;
+        }
 
-		$s = substr($this->request_data,$this->filepos,$size);
+        return $s;
+    }
 
-		if(strlen($s) < $size)
-			$this->filepos = (-1);
-		else
-			$this->filepos = $this->filepos + $size;
+    public function ctag_fetch()
+    {
+        $headers = ['Depth: 0', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
 
-		return $s;
-	} 
+        // recommended ctag fetch by sabre
 
-	function ctag_fetch() {
-		$headers = [ 'Depth: 0', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
-
-		// recommended ctag fetch by sabre
-
-		$this->set_data('<?xml version="1.0"?>
+        $this->set_data('<?xml version="1.0"?>
 <d:propfind xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/">
   <d:prop>
      <d:displayname />
@@ -80,10 +84,10 @@ class CalDAVClient {
   </d:prop>
 </d:propfind>');
 
-		// thunderbird uses this - it's a bit more verbose on what capabilities
-		// are provided by the server
+        // thunderbird uses this - it's a bit more verbose on what capabilities
+        // are provided by the server
 
-		$this->set_data('<?xml version="1.0" encoding="UTF-8"?>
+        $this->set_data('<?xml version="1.0" encoding="UTF-8"?>
 <D:propfind xmlns:D="DAV:" xmlns:CS="http://calendarserver.org/ns/" xmlns:C="urn:ietf:params:xml:ns:caldav">
 <D:prop>
     <D:resourcetype/>
@@ -96,33 +100,36 @@ class CalDAVClient {
 </D:propfind>');
 
 
+        $auth = $this->username . ':' . $this->password;
 
-		$auth = $this->username . ':' . $this->password;
+        $recurse = 0;
 
-		$recurse = 0;
+        $x = z_fetch_url(
+            $this->url,
+            true,
+            $recurse,
+            ['headers' => $headers,
+                'http_auth' => $auth,
+                'custom' => 'PROPFIND',
+                'upload' => true,
+                'infile' => 3,
+                'infilesize' => strlen($this->request_data),
+                'readfunc' => [$this, 'curl_read']
+            ]
+        );
 
-		$x = z_fetch_url($this->url,true,$recurse,
-			[   'headers' => $headers, 
-				'http_auth' => $auth, 
-				'custom' => 'PROPFIND', 
-				'upload' => true,
-				'infile' => 3, 
-				'infilesize' => strlen($this->request_data), 
-				'readfunc' => [ $this, 'curl_read' ] 
-			]);
-
-		return $x;
-
-	}
+        return $x;
+    }
 
 
-	function detail_fetch() {
-		$headers = [ 'Depth: 1', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
+    public function detail_fetch()
+    {
+        $headers = ['Depth: 1', 'Prefer: return-minimal', 'Content-Type: application/xml; charset=utf-8'];
 
-		// this query should return all objects in the given calendar, you can filter it appropriately 
-		// using filter options
+        // this query should return all objects in the given calendar, you can filter it appropriately
+        // using filter options
 
-		$this->set_data('<?xml version="1.0"?>
+        $this->set_data('<?xml version="1.0"?>
 <c:calendar-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav" xmlns:cs="http://calendarserver.org/ns/">
   <d:prop>
      <d:getetag />
@@ -133,25 +140,26 @@ class CalDAVClient {
     </c:filter>
 </c:calendar-query>');
 
-		$auth = $this->username . ':' . $this->password;
+        $auth = $this->username . ':' . $this->password;
 
-		$recurse = 0;
-		$x = z_fetch_url($this->url,true,$recurse,
-			[   'headers' => $headers, 
-				'http_auth' => $auth, 
-				'custom' => 'REPORT', 
-				'upload' => true,
-				'infile' => 3, 
-				'infilesize' => strlen($this->request_data), 
-				'readfunc' => [ $this, 'curl_read' ] 
-			]);
+        $recurse = 0;
+        $x = z_fetch_url(
+            $this->url,
+            true,
+            $recurse,
+            ['headers' => $headers,
+                'http_auth' => $auth,
+                'custom' => 'REPORT',
+                'upload' => true,
+                'infile' => 3,
+                'infilesize' => strlen($this->request_data),
+                'readfunc' => [$this, 'curl_read']
+            ]
+        );
 
 
-		return $x;
-
-	}
-
-
+        return $x;
+    }
 }
 
 

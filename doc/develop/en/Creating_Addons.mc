@@ -123,7 +123,7 @@ Let's go ahead and add some code to implement our post_local hook handler.
 	    $cities = [];
     	$zones = timezone_identifiers_list();
 	    foreach ($zones as $zone) {
-    	    if ((strpos($zone,'/')) &amp;&amp; (! stristr($zone,'US/')) &amp;&amp; (! stristr($zone,'Etc/'))) {
+    	    if ((strpos($zone,'/')) &amp;&amp; (stristr($zone,'US/') === false) &amp;&amp; (stristr($zone,'Etc/') === false)) {
         	    $cities[] = str_replace('_', ' ',substr($zone,strrpos($zone,'/') + 1));
 			}
 	    }

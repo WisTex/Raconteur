@@ -1,4 +1,5 @@
 <?php
+
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
@@ -15,42 +16,42 @@ use Zotlabs\Lib\AccessList;
  */
 
 
-class Contactgroup extends Controller {
+class Contactgroup extends Controller
+{
 
-	function get() {
-	
-		if (! local_channel()) {
-			killme();
-		}
-	
-		if ((argc() > 2) && (intval(argv(1))) && (argv(2))) {
-			$r = abook_by_hash(local_channel(), base64url_decode(argv(2)));
-			if ($r) {
-				$change = $r['abook_xchan'];
-			}
-		}
-	
-		if ((argc() > 1) && (intval(argv(1)))) {
-	
-			$group = AccessList::by_id(local_channel(),argv(1));
+    public function get()
+    {
 
-			if (! $group) {
-				killme();
-			}
-	
-			$members = AccessList::members(local_channel(),$group['id']);
-			$preselected = ids_to_array($members,'xchan_hash');
-	
-			if ($change) {
-				if (in_array($change,$preselected)) {
-					AccessList::member_remove(local_channel(),$group['gname'],$change);
-				}
-				else {
-					AccessList::member_add(local_channel(),$group['gname'],$change);
-				}
-			}
-		}
-	
-		killme();
-	}
+        if (!local_channel()) {
+            killme();
+        }
+
+        if ((argc() > 2) && (intval(argv(1))) && (argv(2))) {
+            $r = abook_by_hash(local_channel(), base64url_decode(argv(2)));
+            if ($r) {
+                $change = $r['abook_xchan'];
+            }
+        }
+
+        if ((argc() > 1) && (intval(argv(1)))) {
+            $group = AccessList::by_id(local_channel(), argv(1));
+
+            if (!$group) {
+                killme();
+            }
+
+            $members = AccessList::members(local_channel(), $group['id']);
+            $preselected = ids_to_array($members, 'xchan_hash');
+
+            if ($change) {
+                if (in_array($change, $preselected)) {
+                    AccessList::member_remove(local_channel(), $group['gname'], $change);
+                } else {
+                    AccessList::member_add(local_channel(), $group['gname'], $change);
+                }
+            }
+        }
+
+        killme();
+    }
 }

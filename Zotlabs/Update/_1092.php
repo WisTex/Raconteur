@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1092 {
-function run() {
-	$r1 = q("CREATE TABLE IF NOT EXISTS `chat` (
+class _1092
+{
+    public function run()
+    {
+        $r1 = q("CREATE TABLE IF NOT EXISTS `chat` (
   `chat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `chat_room` int(10) unsigned NOT NULL DEFAULT '0',
   `chat_xchan` char(255) NOT NULL DEFAULT '',
@@ -16,7 +18,7 @@ function run() {
   KEY `created` (`created`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	$r2 = q("CREATE TABLE IF NOT EXISTS `chatpresence` (
+        $r2 = q("CREATE TABLE IF NOT EXISTS `chatpresence` (
   `cp_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cp_room` int(10) unsigned NOT NULL DEFAULT '0',
   `cp_xchan` char(255) NOT NULL DEFAULT '',
@@ -29,7 +31,7 @@ function run() {
   KEY `cp_status` (`cp_status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	$r3 = q("CREATE TABLE IF NOT EXISTS `chatroom` (
+        $r3 = q("CREATE TABLE IF NOT EXISTS `chatroom` (
   `cr_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `cr_aid` int(10) unsigned NOT NULL DEFAULT '0',
   `cr_uid` int(10) unsigned NOT NULL DEFAULT '0',
@@ -49,13 +51,9 @@ function run() {
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
 
-	if($r1 && $r2 && $r3)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
-
-
-
+        if ($r1 && $r2 && $r3) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

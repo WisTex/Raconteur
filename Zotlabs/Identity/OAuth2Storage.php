@@ -2,8 +2,10 @@
 
 namespace Zotlabs\Identity;
 
+use OAuth2\Storage\Pdo;
 
-class OAuth2Storage extends \OAuth2\Storage\Pdo {
+class OAuth2Storage extends Pdo
+{
 
     /**
      * @param string $username
@@ -38,9 +40,8 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
     protected function checkPassword($user, $password)
     {
 
-		$x = account_verify_password($user,$password);
-		return((array_key_exists('channel',$x) && ! empty($x['channel'])) ? true : false);
-
+        $x = account_verify_password($user, $password);
+        return((array_key_exists('channel', $x) && ! empty($x['channel'])) ? true : false);
     }
 
     /**
@@ -50,77 +51,80 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
     public function getUser($username)
     {
 
-		$x = channelx_by_n($username);
-		if (! $x) {
-			return false;
-		}
+        $x = channelx_by_n($username);
+        if (! $x) {
+            return false;
+        }
 
-		$a = q("select * from account where account_id = %d",
-			intval($x['channel_account_id'])
-		);
+        $a = q(
+            "select * from account where account_id = %d",
+            intval($x['channel_account_id'])
+        );
 
-		$n = explode(' ', $x['channel_name']);
+        $n = explode(' ', $x['channel_name']);
 
-		return( [
-			'webfinger'   => channel_reddress($x),
-			'portable_id' => $x['channel_hash'],
-			'email'       => $a[0]['account_email'],
-			'username'    => $x['channel_address'],
-			'user_id'     => $x['channel_id'],
-			'name'        => $x['channel_name'],
-			'firstName'   => ((count($n) > 1) ? $n[1] : $n[0]),
-			'lastName'    => ((count($n) > 2) ? $n[count($n) - 1] : ''),
-			'picture'     => $x['xchan_photo_l']
-		] );
+        return( [
+            'webfinger'   => channel_reddress($x),
+            'portable_id' => $x['channel_hash'],
+            'email'       => $a[0]['account_email'],
+            'username'    => $x['channel_address'],
+            'user_id'     => $x['channel_id'],
+            'name'        => $x['channel_name'],
+            'firstName'   => ((count($n) > 1) ? $n[1] : $n[0]),
+            'lastName'    => ((count($n) > 2) ? $n[count($n) - 1] : ''),
+            'picture'     => $x['xchan_photo_l']
+        ] );
     }
 
-    public function scopeExists($scope) {
+    public function scopeExists($scope)
+    {
       // Report that the scope is valid even if it's not.
       // We will only return a very small subset no matter what.
       // @TODO: Truly validate the scope
       //    see vendor/bshaffer/oauth2-server-php/src/OAuth2/Storage/ScopeInterface.php and
       //        vendor/bshaffer/oauth2-server-php/src/OAuth2/Storage/Pdo.php
       //    for more info.
-      return true;
+        return true;
     }
 
-    public function getDefaultScope($client_id=null) {
+    public function getDefaultScope($client_id = null)
+    {
       // Do not REQUIRE a scope
       //    see vendor/bshaffer/oauth2-server-php/src/OAuth2/Storage/ScopeInterface.php and
       //    for more info.
-      return null;
+        return null;
     }
 
-    public function getUserClaims ($user_id, $claims) {
-		// Populate the CLAIMS requested (if any).
-		// @TODO: create a more reasonable/comprehensive list.
-		// @TODO: present claims on the AUTHORIZATION screen
+    public function getUserClaims($user_id, $claims)
+    {
+        // Populate the CLAIMS requested (if any).
+        // @TODO: create a more reasonable/comprehensive list.
+        // @TODO: present claims on the AUTHORIZATION screen
 
         $userClaims = [];
-        $claims = explode (' ', trim($claims));
+        $claims = explode(' ', trim($claims));
         $validclaims = [ "name", "preferred_username", "webfinger", "portable_id", "email", "picture", "firstName", "lastName" ];
         $claimsmap = [
-			"webfinger"          => 'webfinger',
-			"portable_id"        => 'portable_id',
-			"name"               => 'name',
-			"email"              => 'email',
-			"preferred_username" => 'username',
-			"picture"            => 'picture',
-			"given_name"         => 'firstName',
-			"family_name"        => 'lastName'
-		];
+            "webfinger"          => 'webfinger',
+            "portable_id"        => 'portable_id',
+            "name"               => 'name',
+            "email"              => 'email',
+            "preferred_username" => 'username',
+            "picture"            => 'picture',
+            "given_name"         => 'firstName',
+            "family_name"        => 'lastName'
+        ];
         $userinfo = $this->getUser($user_id);
         foreach ($validclaims as $validclaim) {
-            if (in_array($validclaim,$claims)) {
-              $claimkey = $claimsmap[$validclaim];
-              $userClaims[$validclaim] = $userinfo[$claimkey];
-            }
-			else {
-              $userClaims[$validclaim] = $validclaim;
+            if (in_array($validclaim, $claims)) {
+                $claimkey = $claimsmap[$validclaim];
+                $userClaims[$validclaim] = $userinfo[$claimkey];
+            } else {
+                $userClaims[$validclaim] = $validclaim;
             }
         }
-        $userClaims["sub"]=$user_id;
-        return $userClaims; 
+        $userClaims["sub"] = $user_id;
+        return $userClaims;
     }
 
     /**
@@ -163,5 +167,4 @@ class OAuth2Storage extends \OAuth2\Storage\Pdo {
         // if grant_types are not defined, then none are restricted
         return true;
     }
-
 }

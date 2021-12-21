@@ -2,12 +2,12 @@
 
 namespace Zotlabs\Daemon;
 
+class Addon
+{
 
-class Addon {
+    public static function run($argc, $argv)
+    {
 
-	static public function run($argc,$argv) {
-
-		call_hooks('daemon_addon',$argv);
-
-	}
+        call_hooks('daemon_addon', $argv);
+    }
 }

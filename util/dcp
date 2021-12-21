@@ -3,6 +3,8 @@
 
 // file import to DAV utility
 
+use Zotlabs\Daemon\Run;
+
 if(!file_exists('include/cli_startup.php')) {
 	echo 'Run dcp from the top level Hubzilla web directory, as util/dcp <args>' . PHP_EOL;
 	exit(1);
@@ -15,7 +17,7 @@ cli_startup();
 
 
 if($argc < 3) {
-	echo "Usage: " . $argv[0] . ' src dstdir' . "\n";
+	echo 'Usage: ' . $argv[0] . ' src dstdir' . "\n";
 	echo 'Always run from the toplevel web directory.' . "\n";
 	echo 'destination should begin with store/$nickname/desired/path or $nickname/desired/path' . "\n";
 	echo 'Example: util/dcp /etc/motd store/joe/etc' . "\n";
@@ -106,7 +108,7 @@ if($argc < 3) {
 		else {
 			$dstname = (($isadir) ? '' : basename($dstfile));
 			$cmd = [ 'Importfile', $channel['channel_id'], $argv[$x], $folder, $dstname ];
-			\Zotlabs\Daemon\Run::Summon($cmd);
+			Run::Summon($cmd);
 		}
 	}
 
@@ -147,7 +149,7 @@ if($argc < 3) {
 				}
 				else {
 					$cmd = [ 'Importfile', $channel['channel_id'], $src . '/' . $entry, $folder ];
-					\Zotlabs\Daemon\Run::Summon($cmd);
+					Run::Summon($cmd);
 				}
 			}
 			closedir($dir);

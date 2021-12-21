@@ -2,13 +2,15 @@
 
 namespace Zotlabs\Widget;
 
-class Clock {
+class Clock
+{
 
-	function widget($arr) {
+    public function widget($arr)
+    {
 
-		$miltime =  ((isset($arr['military']) && $arr['military']) ? intval($arr['military']) : false);
+        $miltime = ((isset($arr['military']) && $arr['military']) ? intval($arr['military']) : false);
 
-		$o = <<< EOT
+        $o = <<< EOT
 <div class="widget">
 <h3 class="clockface"></h3>
 <script>
@@ -55,7 +57,6 @@ $(document).ready(function() {
 </div>
 EOT;
 
-	return $o;
-	}
+        return $o;
+    }
 }
-

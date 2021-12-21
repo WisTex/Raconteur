@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Update;
 
-class _1099 {
-function run() {
-	$r = q("CREATE TABLE IF NOT EXISTS `xchat` (
+class _1099
+{
+    public function run()
+    {
+        $r = q("CREATE TABLE IF NOT EXISTS `xchat` (
   `xchat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `xchat_url` char(255) NOT NULL DEFAULT '',
   `xchat_desc` char(255) NOT NULL DEFAULT '',
@@ -15,10 +17,9 @@ function run() {
   KEY `xchat_xchan` (`xchat_xchan`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
 
-	if($r)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
+        if ($r) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

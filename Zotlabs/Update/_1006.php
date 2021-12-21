@@ -2,10 +2,12 @@
 
 namespace Zotlabs\Update;
 
-class _1006 {
-function run() {
+class _1006
+{
+    public function run()
+    {
 
-	$r = q("CREATE TABLE IF NOT EXISTS `xprof` (
+        $r = q("CREATE TABLE IF NOT EXISTS `xprof` (
   `xprof_hash` char(255) NOT NULL,
   `xprof_desc` char(255) NOT NULL DEFAULT '',
   `xprof_dob` char(12) NOT NULL DEFAULT '',
@@ -28,18 +30,16 @@ function run() {
   KEY `xprof_country` (`xprof_country`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	$r2 = q("CREATE TABLE IF NOT EXISTS `xtag` (
+        $r2 = q("CREATE TABLE IF NOT EXISTS `xtag` (
   `xtag_hash` char(255) NOT NULL,
   `xtag_term` char(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`xtag_hash`),
   KEY `xtag_term` (`xtag_term`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8");
 
-	if($r && $r2)
-		return UPDATE_SUCCESS;
-	return UPDATE_FAILED;
-}
-
-
-
+        if ($r && $r2) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

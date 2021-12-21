@@ -126,7 +126,7 @@ define ( 'PNG_QUALITY',             8  );
 /**
  * Language detection parameters
  */
-define ( 'LANGUAGE_DETECT_MIN_LENGTH',     128 );
+define ( 'LANGUAGE_DETECT_MIN_LENGTH',     64 );
 define ( 'LANGUAGE_DETECT_MIN_CONFIDENCE', 0.01 );
 
 
@@ -654,6 +654,9 @@ function sys_boot() {
 
 	App::$install = ((file_exists('.htconfig.php') && filesize('.htconfig.php')) ? false : true);
 
+    $db_host = $db_user = $db_pass = $db_data = EMPTY_STR;
+    $db_port = $db_type = 0;
+
 	@include('.htconfig.php');
 
 	// allow somebody to set some initial settings 
@@ -662,7 +665,7 @@ function sys_boot() {
 		@include('.htpreconfig.php');
 	}
 
-	if (array_key_exists('default_timezone',get_defined_vars())) {
+	if (isset($default_timezone)) {
 		App::$config['system']['timezone'] = $default_timezone;
 	}
 
@@ -890,11 +893,11 @@ class App {
 
 		// normally self::$hostname (also scheme and port) will be filled in during startup.
 		// Set it manually from $_SERVER variables only if it wasn't.
-		
+
 		if (! self::$hostname) {
 			self::$hostname = punify(get_host());
 			self::$scheme = 'http';
-			
+
 			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
 				self::$scheme = 'https';
 			}
@@ -919,7 +922,7 @@ class App {
 		// Rewrite rules on the server will convert incoming paths to a request parameter.
 		// Strip this path information from our stored copy of the query_string, in case
 		// we need to re-use the rest of the original query.
-		
+
 		if (isset($_SERVER['QUERY_STRING']) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
 			// removing leading '/' - maybe a nginx problem
@@ -933,7 +936,7 @@ class App {
 		// Here is where start breaking out the URL path information to both route the
 		// web request based on the leading path component, and also to use remaining
 		// path components as C-style arguments to our individual controller modules.
-		
+
 		if (isset($_GET['req'])) {
 			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
 		}
@@ -1006,7 +1009,7 @@ class App {
 		 * register template engines (probably just smarty, but this can be extended)
 		 */
 
-		self::register_template_engine(get_class(new SmartyTemplate));
+		self::register_template_engine(get_class(new SmartyTemplate()));
 
 	}
 
@@ -1254,7 +1257,7 @@ class App {
 			}
 		}
 		if (! $name) {
-			echo "template engine <tt>$class</tt> cannot be registered without a name.\n";
+			echo "template engine <b>$class</b> cannot be registered without a name.\n";
 			killme();
 		}
 		self::$template_engines[$name] = $class;
@@ -1267,7 +1270,7 @@ class App {
 	*
 	* @param string $name Template engine name
 	*
-	* @return object Template Engine instance
+	* @return void Template Engine instance
 	*/
 	public static function template_engine($name = '') {
 		if ($name !== '') {
@@ -1286,7 +1289,7 @@ class App {
 			}
 			else {
 				$class = self::$template_engines[$template_engine];
-				$obj = new $class;
+				$obj = new $class();
 				self::$template_engine_instance[$template_engine] = $obj;
 				return $obj;
 			}
@@ -1294,7 +1297,7 @@ class App {
 
 		// If we fell through to this step, it is considered fatal.
 		
-		echo "template engine <tt>$template_engine</tt> is not registered!\n";
+		echo "template engine <b>$template_engine</b> is not registered!\n";
 		killme();
 	}
 
@@ -1415,8 +1418,9 @@ function z_root() {
  * @return string
  */
 function absurl($path) {
-	if (strpos($path, '/') === 0)
+	if (strpos($path, '/') === 0) {
 		return z_path() . $path;
+	}
 
 	return $path;
 }
@@ -1433,7 +1437,7 @@ function os_mkdir($path, $mode = 0777, $recursive = false) {
  * @brief Recursively delete a directory.
  *
  * @param string $path
- * @return boolean
+ * @return bool
  */
 function rrmdir($path) {
 	if (is_dir($path) === true) {
@@ -1454,7 +1458,7 @@ function rrmdir($path) {
 /**
  * @brief Function to check if request was an AJAX (xmlhttprequest) request.
  *
- * @return boolean
+ * @return bool
  */
 function is_ajax() {
 	return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
@@ -1658,10 +1662,10 @@ function fix_system_urls($oldurl, $newurl) {
  * on the value of App::$config['system']['register_policy'].
  * Returns the complete html for inserting into the page
  *
- * @param boolean $register (optional) default false
+ * @param bool $register (optional) default false
  * @param string $form_id (optional) default \e main-login
- * @param boolean $hiddens (optional) default false
- * @param boolean $login_page (optional) default true
+ * @param bool $hiddens (optional) default false
+ * @param bool $login_page (optional) default true
  * @return string Parsed HTML code.
  */
 function login($register = false, $form_id = 'main-login', $hiddens = false, $login_page = true) {
@@ -1998,7 +2002,6 @@ function check_php_cli() {
 
 	logger('PHP command line interpreter not found.');
 	throw new Exception('interpreter not  found.');
-	return false;
 }
 
 
@@ -2069,7 +2072,7 @@ function load_contact_links($uid) {
 
 //	logger('load_contact_links');
 
-	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
+	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_addr, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
 		intval($uid)
 	);
 	if($r) {
@@ -2185,6 +2188,7 @@ function get_custom_nav($navname) {
 	if (! $navname)
 		return App::$page['nav'];
 	// load custom nav menu by name here
+    return EMPTY_STR;
 }
 
 /**
@@ -2505,7 +2509,7 @@ function z_get_temp_dir() {
 	if(! $temp_dir)
 		$temp_dir = sys_get_temp_dir();
 
-	return $upload_dir;
+	return $temp_dir;
 }
 
 
@@ -2567,19 +2571,19 @@ function check_cron_broken() {
 	if(! $t) {
 		// never checked before. Start the timer.
 		set_config('system','lastcroncheck',datetime_convert());
-		return;
+		return true;
 	}
 
 	if($t > datetime_convert('UTC','UTC','now - 3 days')) {
 		// Wait for 3 days before we do anything so as not to swamp the admin with messages
-		return;
+		return true;
 	}
 
 	set_config('system','lastcroncheck',datetime_convert());
 
 	if(($d) && ($d > datetime_convert('UTC','UTC','now - 3 days'))) {
 		// Scheduled tasks have run successfully in the last 3 days.
-		return;
+		return true;
 	}
 
 	return z_mail(
@@ -2602,8 +2606,8 @@ function check_cron_broken() {
 /**
  * @brief
  *
- * @param boolean $allow_account (optional) default false
- * @return boolean
+ * @param bool $allow_account (optional) default false
+ * @return bool
  */
 function observer_prohibited($allow_account = false) {
 	if($allow_account) {

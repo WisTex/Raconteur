@@ -56,12 +56,10 @@
 							{{/if}}
 						</div>
 					</div>
-					{{if $item.lock}}
 					<div class="wall-item-lock dropdown">
-						<i class="fa {{if $item.locktype == 2}}fa-envelope{{else}}fa-lock{{/if}} lockview{{if $item.privacy_warning}} text-warning{{/if}}" data-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
+						<i class="fa {{if $item.locktype == 2}}fa-envelope{{elseif $item.locktype == 1}}fa-lock dimmer{{else}}fa-globe dimmer{{/if}} lockview{{if $item.privacy_warning}} text-warning{{/if}}" data-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
 						<div id="panel-{{$item.id}}" class="dropdown-menu"></div>
 					</div>
-					{{/if}}
 					<div class="wall-item-author">
 						{{if $item.previewing}}<span class="preview-indicator"><i class="fa fa-eye" title="{{$item.preview_lbl}}"></i></span>&nbsp;{{/if}}
 						<a href="{{$item.profile_url}}" title="{{$item.linktitle}}" class="wall-item-name-link u-url"><span class="wall-item-name{{$item.sparkle}}" id="wall-item-name-{{$item.id}}" >{{$item.name}}</span></a>{{if $item.owner_url}}&nbsp;{{$item.via}}&nbsp;<a href="{{$item.owner_url}}" title="{{$item.olinktitle}}" class="wall-item-name-link"><span class="wall-item-name{{$item.osparkle}}" id="wall-item-ownername-{{$item.id}}">{{$item.owner_name}}</span></a>{{/if}}

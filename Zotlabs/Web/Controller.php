@@ -7,11 +7,18 @@ namespace Zotlabs\Web;
  *
  */
 
-class Controller {
+class Controller
+{
 
-	function init() {}
-	function post() {}
-	function get() {}
+    public function init()
+    {
+    }
 
+    public function post()
+    {
+    }
+
+    public function get()
+    {
+    }
 }
-

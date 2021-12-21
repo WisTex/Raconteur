@@ -29,11 +29,11 @@ if($argc == 2) {
 	echo 'Current storage set to: ' . ($storage ? 'filesystem' : 'SQL database') . PHP_EOL;
 	switch($argv[1]) {
 		case 'stats':
-			$x = q("SELECT COUNT(resource_id) AS qty FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0");
+			$x = q('SELECT COUNT(resource_id) AS qty FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0');
 			echo 'Local images: ' . $x[0]['qty'] . PHP_EOL;
-			$x = q("SELECT COUNT(id) AS qty FROM photo WHERE resource_id IN (SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 and os_storage = 1) AND imgscale > 0");
+			$x = q('SELECT COUNT(id) AS qty FROM photo WHERE resource_id IN (SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 and os_storage = 1) AND imgscale > 0');
 			echo 'Thumbnails total: ' . $x[0]['qty'] . PHP_EOL;
-			$x = q("SELECT COUNT(id) AS qty FROM photo WHERE resource_id IN (SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 and os_storage = 1) AND os_storage != %d AND imgscale > 0",
+			$x = q('SELECT COUNT(id) AS qty FROM photo WHERE resource_id IN (SELECT DISTINCT resource_id FROM photo WHERE photo_usage = 0 and os_storage = 1) AND os_storage != %d AND imgscale > 0',
 				$storage
 			);
 			echo 'Thumbnails to convert: ' . $x[0]['qty'] . PHP_EOL;
@@ -45,7 +45,7 @@ if($argc == 2) {
 				break;
 			}
 
-			$x = q("SELECT resource_id, content FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0");
+			$x = q('SELECT resource_id, content FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0');
 			
 			if($x) {
 				foreach($x as $xx) {
@@ -88,7 +88,7 @@ if($argc == 2) {
 				break;
 			}
 
-			$x = q("SELECT resource_id FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0");
+			$x = q('SELECT resource_id FROM photo WHERE photo_usage = 0 AND os_storage = 1 AND imgscale = 0');
 			
 			if($x) {
 				foreach($x as $xx) {

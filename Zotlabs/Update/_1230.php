@@ -2,18 +2,18 @@
 
 namespace Zotlabs\Update;
 
-class _1230 {
+class _1230
+{
 
-	function run() {
+    public function run()
+    {
 
-		$r1 = q("ALTER TABLE " . TQUOT . 'xchan' . TQUOT . " DROP COLUMN xchan_instance_url ");
-		$r2 = q("ALTER TABLE " . TQUOT . 'xchan' . TQUOT . " DROP COLUMN xchan_flags ");
+        $r1 = q("ALTER TABLE " . TQUOT . 'xchan' . TQUOT . " DROP COLUMN xchan_instance_url ");
+        $r2 = q("ALTER TABLE " . TQUOT . 'xchan' . TQUOT . " DROP COLUMN xchan_flags ");
 
-		if($r1 && $r2) {
-			return UPDATE_SUCCESS;
-		}
-		return UPDATE_FAILED;
-
-	}
-
+        if ($r1 && $r2) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

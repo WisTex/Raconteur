@@ -62,7 +62,7 @@ if($argc == 3) {
 	$r = '';
 	$k = fopen('php://stdin', 'r');
 	while($r != 'y' && $r != 'n') {
-		echo "Are you sure? (y/n)";
+		echo 'Are you sure? (y/n)';
 		$r = substr(fgets($k), 0, 1);
 	}
 	if($r == 'n')
