@@ -291,93 +291,92 @@ function is_item_normal($item) {
  * @param array $item
  * @return boolean
  */
-function can_comment_on_post($observer_xchan, $item) {
+function can_comment_on_post($observer_xchan, $item)
+{
 
-//	logger('Comment_policy: ' . $item['comment_policy'], LOGGER_DEBUG);
+//  logger('Comment_policy: ' . $item['comment_policy'], LOGGER_DEBUG);
 
-	$x = [
-		'observer_hash' => $observer_xchan,
-		'item'          => $item,
-		'allowed'       => 'unset'
-	];
+    $x = [
+        'observer_hash' => $observer_xchan,
+        'item'          => $item,
+        'allowed'       => 'unset'
+    ];
 
-	/**
-	 * @hooks can_comment_on_post
-	 *   Called when deciding whether or not to present a comment box for a post.
-	 *   * \e string \b observer_hash
-	 *   * \e array \b item
-	 *   * \e boolean \b allowed - return value
-	 */
+    /**
+     * @hooks can_comment_on_post
+     *   Called when deciding whether or not to present a comment box for a post.
+     *   * \e string \b observer_hash
+     *   * \e array \b item
+     *   * \e boolean \b allowed - return value
+     */
 
-	call_hooks('can_comment_on_post', $x);
+    call_hooks('can_comment_on_post', $x);
 
-	if ($x['allowed'] !== 'unset') {
-		return $x['allowed'];
-	}
+    if ($x['allowed'] !== 'unset') {
+        return $x['allowed'];
+    }
 
-	if (! $observer_xchan) {
-		return false;
-	}
+    if (! $observer_xchan) {
+        return false;
+    }
 
-	if ($item['comment_policy'] === 'none') {
-		return false;
-	}
+    if ($item['comment_policy'] === 'none') {
+        return false;
+    }
 
-	if (intval($item['item_nocomment'])) {
-		return false;
-	}
+    if (intval($item['item_nocomment'])) {
+        return false;
+    }
 
-	if (comments_are_now_closed($item)) {
-		return false;
-	}
+    if (comments_are_now_closed($item)) {
+        return false;
+    }
 
-	if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
-		return true;
-	}
+    if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
+        return true;
+    }
 
-	switch ($item['comment_policy']) {
-		case 'self':
-			if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
-				return true;
-			}
-			break;
-		case 'public':
-		case 'authenticated':
-			// Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
-			// This means the viewer has an xchan and we can identify them.
-			return true;
-			break;
-		case 'any connections':
-		case 'specific':
-		case 'contacts':
-		case '':
+    switch ($item['comment_policy']) {
+        case 'self':
+            if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
+                return true;
+            }
+            break;
+        case 'public':
+        case 'authenticated':
+            // Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
+            // This means the viewer has an xchan and we can identify them.
+            return true;
+            break;
+        case 'any connections':
+        case 'specific':
+        case 'contacts':
+        case '':
+            // local posts only - check if the post owner granted me comment permission
+            if (local_channel() && array_key_exists('owner', $item) && their_perms_contains(local_channel(), $item['owner']['abook_xchan'], 'post_comments')) {
+                    return true;
+            }
 
-			// local posts only - check if the post owner granted me 
-			// comment permission
-			if (local_channel() && array_key_exists('owner',$item) && their_perms_contains(local_channel(),$item['owner']['abook_xchan'],'post_comments')) {
-					return true;
-			}
+            if (intval($item['item_wall']) && perm_is_allowed($item['uid'], $observer_xchan, 'post_comments')) {
+                return true;
+            }
+            break;
+        default:
+            break;
+    }
+    if (strstr($item['comment_policy'], 'network:') && strstr($item['comment_policy'], 'red')) {
+        return true;
+    }
 
-			if (intval($item['item_wall']) && perm_is_allowed($item['uid'],$observer_xchan,'post_comments')) {
-				return true;
-			}
-			break;
-		default:
-			break;
-	}
-	if (strstr($item['comment_policy'],'network:') && strstr($item['comment_policy'],'red')) {
-		return true;
-	}
-	
-	if (strstr($item['comment_policy'],'network:') && strstr($item['comment_policy'],'activitypub')) {
-		return true;
-	}
+    if (strstr($item['comment_policy'], 'network:') && strstr($item['comment_policy'], 'activitypub')) {
+        return true;
+    }
 
-	if (strstr($item['comment_policy'],'site:') && strstr($item['comment_policy'],App::get_hostname())) {
-		return true;
-	}
+    if (strstr($item['comment_policy'], 'site:') && strstr($item['comment_policy'], App::get_hostname())) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 

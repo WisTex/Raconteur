@@ -2997,7 +2997,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
         }
 
         // is the link already in str_tags?
-        if (! stristr($str_tags, $newtag)) {
+        if (is_string($newtag) && ! stristr($str_tags, $newtag)) {
             // append or set str_tags
             if (strlen($str_tags)) {
                 $str_tags .= ',';

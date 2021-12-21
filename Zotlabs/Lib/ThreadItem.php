@@ -113,12 +113,15 @@ class ThreadItem
         $conv = $this->get_conversation();
         $observer = $conv->get_observer();
 
-        $lock = (((intval($item['item_private'])) || (($item['uid'] == local_channel()) && (strlen($item['allow_cid']) || strlen($item['allow_gid'])
-            || strlen($item['deny_cid']) || strlen($item['deny_gid']))))
-            ? t('Private Message')
-            : false);
+        $lock = t('Public visibility');
+		if (intval($item['item_private']) === 2) {
+			$lock = t('Direct message (private mail)');
+		}
+		if (intval($item['item_private']) === 1) {
+			$lock = t('Restricted visibility');
+		}
 
-        $locktype = $item['item_private'];
+        $locktype = intval($item['item_private']);
 
         $shareable = ((($conv->get_profile_owner() == local_channel() && local_channel()) && (! intval($item['item_private']))) ? true : false);
 
