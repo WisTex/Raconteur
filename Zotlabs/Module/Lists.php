@@ -158,57 +158,18 @@ class Lists extends Controller
 
         $change = false;
 
-        logger('mod_lists: ' . App::$cmd, LOGGER_DEBUG);
-
-
-        if (argc() > 2 && argv(1) === 'view') {
-            $grp = argv(2);
-            if ($grp) {
-                $r = q(
-                    "select * from pgrp where hash = '%s' and deleted = 0",
-                    dbesc($grp)
-                );
-                if ($r) {
-                    $uid = $r[0]['uid'];
-                    if (local_channel() && local_channel() == $uid) {
-                        goaway(z_root() . '/lists/' . $r[0]['id']);
-                    }
-                    if (!($r[0]['visible'] && perm_is_allowed($uid, get_observer_hash(), 'view_contacts'))) {
-                        notice(t('Permission denied') . EOL);
-                        return;
-                    }
-                    $members = [];
-                    $memberlist = AccessList::members($uid, $r[0]['id']);
-
-                    if ($memberlist) {
-                        foreach ($memberlist as $member) {
-                            $members[] = micropro($member, true, 'mpgroup', 'card');
-                        }
-                    }
-                    $o = replace_macros(get_markup_template('listmembers.tpl'), [
-                        '$title' => t('List members'),
-                        '$members' => $members
-                    ]);
-                    return $o;
-                } else {
-                    notice(t('List not found') . EOL);
-                    return;
-                }
-            }
-        }
-
-
-        if (!local_channel()) {
-            notice(t('Permission denied') . EOL);
-            return;
-        }
-
+        // logger('mod_lists: ' . App::$cmd, LOGGER_DEBUG);
 
         // Switch to text mode interface if we have more than 'n' contacts or group members, else loading avatars will lead to poor interactivity
 
         $switchtotext = get_pconfig(local_channel(), 'system', 'listedit_image_limit', get_config('system', 'listedit_image_limit', 1000));
 
         if ((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
+	        if (!local_channel()) {
+    	        notice(t('Permission denied') . EOL);
+        	    return;
+        	}
+
             $new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
 
             $groups = q(
@@ -250,7 +211,13 @@ class Lists extends Controller
         $tpl = get_markup_template('group_edit.tpl');
 
         if ((argc() == 3) && (argv(1) === 'drop')) {
-            check_form_security_token_redirectOnErr('/lists', 'group_drop', 't');
+	        if (!local_channel()) {
+    	        notice(t('Permission denied') . EOL);
+        	    return;
+        	}
+
+
+			check_form_security_token_redirectOnErr('/lists', 'group_drop', 't');
 
             if (intval(argv(2))) {
                 $r = q(
@@ -273,6 +240,11 @@ class Lists extends Controller
 
 
         if ((argc() > 2) && intval(argv(1)) && argv(2)) {
+		    if (!local_channel()) {
+            	notice(t('Permission denied') . EOL);
+            	return;
+        	}
+
             check_form_security_token_ForbiddenOnErr('group_member_change', 't');
 
             $r = q(
@@ -290,31 +262,45 @@ class Lists extends Controller
 
             if (strlen(argv(1)) <= 11 && intval(argv(1))) {
                 $r = q(
-                    "SELECT * FROM pgrp WHERE id = %d AND uid = %d AND deleted = 0 LIMIT 1",
-                    intval(argv(1)),
-                    intval(local_channel())
+                    "SELECT * FROM pgrp WHERE id = %d AND deleted = 0 LIMIT 1",
+                    intval(argv(1))
                 );
             } else {
                 $r = q(
-                    "SELECT * FROM pgrp WHERE hash = '%s' AND uid = %d AND deleted = 0 LIMIT 1",
-                    dbesc(argv(1)),
-                    intval(local_channel())
+                    "SELECT * FROM pgrp WHERE hash = '%s' AND deleted = 0 LIMIT 1",
+                    dbesc(argv(1))
                 );
             }
 
-            if (!$r) {
-                $r = q(
-                    "SELECT * FROM pgrp WHERE id = %d AND deleted = 0 LIMIT 1",
-                    intval(argv(1)),
-                );
-                if ($r) {
-                    notice(t('Permission denied.') . EOL);
-                } else {
-                    notice(t('Access list not found.') . EOL);
+			if (! $r) {
+                notice(t('Access list not found.') . EOL);
+				return;
+			}
+
+			$group = array_shift($r);
+            $uid = $group['uid'];
+			$owner = (local_channel() && intval(local_channel()) === intval($group['uid']));
+
+			if (!$owner) {
+				// public view of group members if permitted
+				if (!($group['visible'] && perm_is_allowed($uid, get_observer_hash(), 'view_contacts'))) {
+                    notice(t('Permission denied') . EOL);
+                    return;
                 }
-                goaway(z_root() . '/connections');
-            }
-            $group = $r[0];
+                $members = [];
+                $memberlist = AccessList::members($uid, $group['id']);
+
+                if ($memberlist) {
+                    foreach ($memberlist as $member) {
+                        $members[] = micropro($member, true, 'mpgroup', 'card');
+                    }
+                }
+                $o = replace_macros(get_markup_template('listmembers.tpl'), [
+                    '$title' => t('List members'),
+                    '$members' => $members
+                ]);
+                return $o;
+			}
 
             $members = AccessList::members(local_channel(), $group['id']);
 

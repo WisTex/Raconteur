@@ -1007,6 +1007,6 @@ function micropro($contact, $redirect = false, $class = '', $mode = false)
         '$name' => $contact['xchan_name'],
         '$addr' => $contact['xchan_addr'],
         '$title' => $contact['xchan_name'] . ' [' . $contact['xchan_addr'] . ']',
-        '$network' => sprintf(t('Network: %s'), $contact['xchan_network'])
+        '$network' => sprintf(t('Network: %s'), network_to_name($contact['xchan_network']))
     ));
 }

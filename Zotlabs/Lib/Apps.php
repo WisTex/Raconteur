@@ -649,6 +649,16 @@ class Apps
         $app['uid'] = $uid;
 
         if (self::app_installed($uid, $app, true)) {
+			// preserve the existing deleted status across app updates
+			if (isset($app['guid'])) {
+				$check = q("select * from app where app_id = '%s' and app_channel = %d",
+					dbesc($app['guid']),
+					intval($uid)
+				);
+				if ($check) {
+					$app['deleted'] = intval($check[0]['app_deleted']);
+				}
+			}
             $x = self::app_update($app);
         } else {
             $x = self::app_store($app);
@@ -703,16 +713,25 @@ class Apps
     public static function app_destroy($uid, $app)
     {
 
+		if (! $uid) {
+			return;
+		}
+
+		// permit the system channel to delete system apps (app_channel = 0).
+		// We will use targe_uid where needed to access the correct app record
+
+		$target_uid = ((is_sys_channel($uid)) ? 0 : $uid);
+
         if ($uid && $app['guid']) {
             $x = q(
                 "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($app['guid']),
-                intval($uid)
+                intval($target_uid)
             );
             if ($x) {
                 if (!intval($x[0]['app_deleted'])) {
                     $x[0]['app_deleted'] = 1;
-                    if (self::can_delete($uid, $app)) {
+                    if (self::can_delete($target_uid, $app)) {
                         $r = q(
                             "delete from app where app_id = '%s' and app_channel = %d",
                             dbesc($app['guid']),
@@ -728,7 +747,7 @@ class Apps
                         $r = q(
                             "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
                             dbesc($app['guid']),
-                            intval($uid)
+                            intval($target_uid)
                         );
                     }
                     if (intval($x[0]['app_system'])) {

@@ -48,6 +48,10 @@ class Apps extends Controller
         foreach ($syslist as $app) {
             $apps[] = Zlib\Apps::app_render($app, (($available) ? 'install' : $mode));
         }
+		
+		// @TODO not ready for prime time. The manage url redirects to installed apps
+		// and we need to edit available apps
+		$sys_edit = false; // (local_channel() && is_sys_channel(local_channel()));
 
         return replace_macros(get_markup_template('myapps.tpl'), array(
             '$sitename' => get_config('system', 'sitename'),
@@ -55,7 +59,7 @@ class Apps extends Controller
             '$title' => (($available) ? t('Available Apps') : t('Installed Apps')),
             '$apps' => $apps,
             '$authed' => ((local_channel()) ? true : false),
-            '$manage' => (($available) ? EMPTY_STR : t('Manage apps')),
+            '$manage' => (($available && ! $sys_edit) ? EMPTY_STR : t('Manage apps')),
             '$create' => (($mode == 'edit') ? t('Create Custom App') : '')
         ));
     }

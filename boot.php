@@ -892,11 +892,11 @@ class App {
 
 		// normally self::$hostname (also scheme and port) will be filled in during startup.
 		// Set it manually from $_SERVER variables only if it wasn't.
-		
+
 		if (! self::$hostname) {
 			self::$hostname = punify(get_host());
 			self::$scheme = 'http';
-			
+
 			if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']) {
 				self::$scheme = 'https';
 			}
@@ -921,7 +921,7 @@ class App {
 		// Rewrite rules on the server will convert incoming paths to a request parameter.
 		// Strip this path information from our stored copy of the query_string, in case
 		// we need to re-use the rest of the original query.
-		
+
 		if (isset($_SERVER['QUERY_STRING']) && substr($_SERVER['QUERY_STRING'], 0, 4) === "req=") {
 			self::$query_string = str_replace(['<','>'],['&lt;','&gt;'],substr($_SERVER['QUERY_STRING'], 4));
 			// removing leading '/' - maybe a nginx problem
@@ -935,7 +935,7 @@ class App {
 		// Here is where start breaking out the URL path information to both route the
 		// web request based on the leading path component, and also to use remaining
 		// path components as C-style arguments to our individual controller modules.
-		
+
 		if (isset($_GET['req'])) {
 			self::$cmd = escape_tags(trim($_GET['req'],'/\\'));
 		}
@@ -1417,8 +1417,9 @@ function z_root() {
  * @return string
  */
 function absurl($path) {
-	if (strpos($path, '/') === 0)
+	if (strpos($path, '/') === 0) {
 		return z_path() . $path;
+	}
 
 	return $path;
 }
@@ -2070,7 +2071,7 @@ function load_contact_links($uid) {
 
 //	logger('load_contact_links');
 
-	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
+	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_addr, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
 		intval($uid)
 	);
 	if($r) {
