@@ -13,7 +13,8 @@ use Zotlabs\Lib\Libprofile;
 class Followers extends Controller
 {
 
-
+	private $results = [];
+	
     public function init()
     {
 
@@ -29,10 +30,6 @@ class Followers extends Controller
         if (!$channel) {
             http_status_exit(404, 'Not found');
         }
-
-//      if (intval($channel['channel_system'])) {
-//          http_status_exit(403,'Permission denied');
-//      }
 
         Libprofile::load(argv(1));
 
@@ -69,11 +66,26 @@ class Followers extends Controller
                 dbesc($channel['channel_hash'])
             );
 
-            $ret = Activity::encode_follow_collection($r, App::$query_string, 'OrderedCollection', $t[0]['total']);
+            $this->results = $r;
+			$ret = Activity::encode_follow_collection($r, App::$query_string, 'OrderedCollection', $t[0]['total']);
         }
 
         if (ActivityStreams::is_as_request()) {
             as_return_and_die($ret, $channel);
         }
     }
+
+	function get() {
+
+		if ($this->results) {
+            foreach ($this->results as $member) {
+                $members[] = micropro($member, true, 'mpgroup', 'card');
+            }
+        }
+        $o = replace_macros(get_markup_template('listmembers.tpl'), [
+            '$title' => t('List members'),
+            '$members' => $members
+        ]);
+        return $o;
+	}
 }
