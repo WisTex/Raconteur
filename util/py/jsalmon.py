@@ -26,7 +26,7 @@ class JSalmon:
 
     def verify(x,key):
         if x['signed'] != True:
-            return false
+            return False
 
         signed_data = re.sub(r'\s+','', x['data'] + "." + base64urlnopad_encode(x['data_type'].encode("utf-8")) + "." + base64urlnopad_encode(x['encoding'].encode("utf-8")) + "." + base64urlnopad_encode(x['alg'].encode("utf-8")))
 

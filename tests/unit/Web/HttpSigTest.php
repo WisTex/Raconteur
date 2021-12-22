@@ -33,93 +33,104 @@ use Zotlabs\Web\HTTPSig;
  *
  * @covers Zotlabs\Web\HTTPSig
  */
-class PermissionDescriptionTest extends UnitTestCase {
+class PermissionDescriptionTest extends UnitTestCase
+{
 
-	use PHPMock;
+    use PHPMock;
 
-	/**
-	 * @dataProvider generate_digestProvider
-	 */
-	function testGenerate_digest($text, $digest) {
-		$this->assertSame(
-				$digest,
-				HTTPSig::generate_digest($text, false)
-		);
-	}
-	public function generate_digestProvider() {
-		return [
-				'empty body text' => [
-						'',
-						'47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
-				],
-				'sample body text' => [
-						'body text',
-						'2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI='
-				],
-				'NULL body text' => [
-						null,
-						'47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
-				],
-		];
-	}
+    /**
+     * @dataProvider generate_digestProvider
+     */
+    public function testGenerate_digest($text, $digest)
+    {
+        $this->assertSame(
+            $digest,
+            HTTPSig::generate_digest($text, false)
+        );
+    }
 
-	function testGeneratedDigestsOfDifferentTextShouldNotBeEqual() {
-		$this->assertNotSame(
-				HTTPSig::generate_digest('text1', false),
-				HTTPSig::generate_digest('text2', false)
-		);
-	}
+    public function generate_digestProvider()
+    {
+        return [
+            'empty body text' => [
+                '',
+                '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+            ],
+            'sample body text' => [
+                'body text',
+                '2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI='
+            ],
+            'NULL body text' => [
+                null,
+                '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+            ],
+        ];
+    }
 
-	/**
-	 * Process separation needed for header() check.
-	 * @runInSeparateProcess
-	 */
-	function testGenerate_digestSendsHttpHeader() {
-		$ret = HTTPSig::generate_digest('body text', true);
+    public function testGeneratedDigestsOfDifferentTextShouldNotBeEqual()
+    {
+        $this->assertNotSame(
+            HTTPSig::generate_digest('text1', false),
+            HTTPSig::generate_digest('text2', false)
+        );
+    }
 
-		$this->assertSame('2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI=', $ret);
-		$this->assertContains(
-				'Digest: SHA-256=2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI=',
-				xdebug_get_headers(),
-				'HTTP header Digest does not match'
-		);
-	}
+    /**
+     * Process separation needed for header() check.
+     * @runInSeparateProcess
+     */
+    public function testGenerate_digestSendsHttpHeader()
+    {
+        $ret = HTTPSig::generate_digest('body text', true);
 
-	/**
-	 * @uses ::crypto_unencapsulate
-	 */
-	function testDecrypt_sigheader() {
-		$header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';
-		$result = [
-				'iv' => 'value_iv',
-				'key' => 'value_key',
-				'alg' => 'value_alg',
-				'data' => 'value_data'
-		];
+        $this->assertSame('2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI=', $ret);
+        $this->assertContains(
+            'Digest: SHA-256=2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI=',
+            xdebug_get_headers(),
+            'HTTP header Digest does not match'
+        );
+    }
 
-		$this->assertSame($result, HTTPSig::decrypt_sigheader($header, 'site private key'));
-	}
-	/**
-	 * @uses ::crypto_unencapsulate
-	 */
-	function testDecrypt_sigheaderUseSitePrivateKey() {
-		// Create a stub for global function get_config() with expectation
-		$t = $this->getFunctionMock('Zotlabs\Web', 'get_config');
-		$t->expects($this->once())->willReturn('system.prvkey');
+    /**
+     * @uses ::crypto_unencapsulate
+     */
+    public function testDecrypt_sigheader()
+    {
+        $header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';
+        $result = [
+            'iv' => 'value_iv',
+            'key' => 'value_key',
+            'alg' => 'value_alg',
+            'data' => 'value_data'
+        ];
 
-		$header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';
-		$result = [
-				'iv' => 'value_iv',
-				'key' => 'value_key',
-				'alg' => 'value_alg',
-				'data' => 'value_data'
-		];
+        $this->assertSame($result, HTTPSig::decrypt_sigheader($header, 'site private key'));
+    }
 
-		$this->assertSame($result, HTTPSig::decrypt_sigheader($header));
-	}
-	function testDecrypt_sigheaderIncompleteHeaderShouldReturnEmptyString() {
-		$header = 'Header: iv="value_iv" key="value_key"';
+    /**
+     * @uses ::crypto_unencapsulate
+     */
+    public function testDecrypt_sigheaderUseSitePrivateKey()
+    {
+        // Create a stub for global function get_config() with expectation
+        $t = $this->getFunctionMock('Zotlabs\Web', 'get_config');
+        $t->expects($this->once())->willReturn('system.prvkey');
 
-		$this->assertEmpty(HTTPSig::decrypt_sigheader($header, 'site private key'));
-	}
+        $header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';
+        $result = [
+            'iv' => 'value_iv',
+            'key' => 'value_key',
+            'alg' => 'value_alg',
+            'data' => 'value_data'
+        ];
+
+        $this->assertSame($result, HTTPSig::decrypt_sigheader($header));
+    }
+
+    public function testDecrypt_sigheaderIncompleteHeaderShouldReturnEmptyString()
+    {
+        $header = 'Header: iv="value_iv" key="value_key"';
+
+        $this->assertEmpty(HTTPSig::decrypt_sigheader($header, 'site private key'));
+    }
 }

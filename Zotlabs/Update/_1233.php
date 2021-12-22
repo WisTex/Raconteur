@@ -2,33 +2,34 @@
 
 namespace Zotlabs\Update;
 
-class _1233 {
+class _1233
+{
 
-	function run() {
-	
-	    q("START TRANSACTION");
+    public function run()
+    {
 
-		$r = q("ALTER TABLE abook ADD abook_censor INT UNSIGNED NOT NULL DEFAULT '0' ");
+        q("START TRANSACTION");
 
-		if($r) {
-			q("COMMIT");
-			return UPDATE_SUCCESS;
-		}
+        $r = q("ALTER TABLE abook ADD abook_censor INT UNSIGNED NOT NULL DEFAULT '0' ");
 
-		q("ROLLBACK");
-		return UPDATE_FAILED;
+        if ($r) {
+            q("COMMIT");
+            return UPDATE_SUCCESS;
+        }
 
-	}
+        q("ROLLBACK");
+        return UPDATE_FAILED;
+    }
 
-	function verify() {
+    public function verify()
+    {
 
-		$columns = db_columns('abook');
+        $columns = db_columns('abook');
 
-		if(in_array('abook_censor',$columns)) {
-			return true;
-		}
+        if (in_array('abook_censor', $columns)) {
+            return true;
+        }
 
-		return false;
-	}
-
+        return false;
+    }
 }

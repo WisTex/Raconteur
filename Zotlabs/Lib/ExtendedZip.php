@@ -8,50 +8,56 @@
 
 namespace Zotlabs\Lib;
 
+use ZipArchive;
+
 /**
  * Description of ExtendedZip
  *
  * @author andrew
  */
-class ExtendedZip extends \ZipArchive {
-		
-		// Member function to add a whole file system subtree to the archive
-		public function addTree($dirname, $localname = '') {
-				if ($localname)
-						$this->addEmptyDir($localname);
-				$this->_addTree($dirname, $localname);
-		}
+class ExtendedZip extends ZipArchive
+{
 
-		// Internal function, to recurse
-		protected function _addTree($dirname, $localname) {
-				$dir = opendir($dirname);
-				while ($filename = readdir($dir)) {
-						// Discard . and ..
-						if ($filename == '.' || $filename == '..')
-								continue;
+        // Member function to add a whole file system subtree to the archive
+    public function addTree($dirname, $localname = '')
+    {
+        if ($localname) {
+                $this->addEmptyDir($localname);
+        }
+            $this->_addTree($dirname, $localname);
+    }
 
-						// Proceed according to type
-						$path = $dirname . '/' . $filename;
-						$localpath = $localname ? ($localname . '/' . $filename) : $filename;
-						if (is_dir($path)) {
-								// Directory: add & recurse
-								$this->addEmptyDir($localpath);
-								$this->_addTree($path, $localpath);
-						}
-						else if (is_file($path)) {
-								// File: just add
-								$this->addFile($path, $localpath);
-						}
-				}
-				closedir($dir);
-		}
+        // Internal function, to recurse
+    protected function _addTree($dirname, $localname)
+    {
+            $dir = opendir($dirname);
+        while ($filename = readdir($dir)) {
+                // Discard . and ..
+            if ($filename == '.' || $filename == '..') {
+                    continue;
+            }
 
-		// Helper function
-		public static function zipTree($dirname, $zipFilename, $flags = 0, $localname = '') {
-				$zip = new self();
-				$zip->open($zipFilename, $flags);
-				$zip->addTree($dirname, $localname);
-				$zip->close();
-		}
-		
+                // Proceed according to type
+                $path = $dirname . '/' . $filename;
+                $localpath = $localname ? ($localname . '/' . $filename) : $filename;
+            if (is_dir($path)) {
+                // Directory: add & recurse
+                $this->addEmptyDir($localpath);
+                $this->_addTree($path, $localpath);
+            } elseif (is_file($path)) {
+                    // File: just add
+                    $this->addFile($path, $localpath);
+            }
+        }
+            closedir($dir);
+    }
+
+        // Helper function
+    public static function zipTree($dirname, $zipFilename, $flags = 0, $localname = '')
+    {
+            $zip = new self();
+            $zip->open($zipFilename, $flags);
+            $zip->addTree($dirname, $localname);
+            $zip->close();
+    }
 }

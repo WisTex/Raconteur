@@ -291,92 +291,92 @@ function is_item_normal($item) {
  * @param array $item
  * @return boolean
  */
-function can_comment_on_post($observer_xchan, $item) {
+function can_comment_on_post($observer_xchan, $item)
+{
 
-//	logger('Comment_policy: ' . $item['comment_policy'], LOGGER_DEBUG);
+//  logger('Comment_policy: ' . $item['comment_policy'], LOGGER_DEBUG);
 
-	$x = [
-		'observer_hash' => $observer_xchan,
-		'item'          => $item,
-		'allowed'       => 'unset'
-	];
+    $x = [
+        'observer_hash' => $observer_xchan,
+        'item'          => $item,
+        'allowed'       => 'unset'
+    ];
 
-	/**
-	 * @hooks can_comment_on_post
-	 *   Called when deciding whether or not to present a comment box for a post.
-	 *   * \e string \b observer_hash
-	 *   * \e array \b item
-	 *   * \e boolean \b allowed - return value
-	 */
+    /**
+     * @hooks can_comment_on_post
+     *   Called when deciding whether or not to present a comment box for a post.
+     *   * \e string \b observer_hash
+     *   * \e array \b item
+     *   * \e boolean \b allowed - return value
+     */
 
-	call_hooks('can_comment_on_post', $x);
+    call_hooks('can_comment_on_post', $x);
 
-	if ($x['allowed'] !== 'unset') {
-		return $x['allowed'];
-	}
+    if ($x['allowed'] !== 'unset') {
+        return $x['allowed'];
+    }
 
-	if (! $observer_xchan) {
-		return false;
-	}
+    if (! $observer_xchan) {
+        return false;
+    }
 
-	if ($item['comment_policy'] === 'none') {
-		return false;
-	}
+    if ($item['comment_policy'] === 'none') {
+        return false;
+    }
 
-	if (intval($item['item_nocomment'])) {
-		return false;
-	}
+    if (intval($item['item_nocomment'])) {
+        return false;
+    }
 
-	if (comments_are_now_closed($item)) {
-		return false;
-	}
+    if (comments_are_now_closed($item)) {
+        return false;
+    }
 
-	if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
-		return true;
-	}
+    if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
+        return true;
+    }
 
-	switch ($item['comment_policy']) {
-		case 'self':
-			if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
-				return true;
-			}
-			break;
-		case 'public':
-		case 'authenticated':
-			// Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
-			// This means the viewer has an xchan and we can identify them.
-			return true;
-			break;
-		case 'any connections':
-		case 'contacts':
-		case '':
+    switch ($item['comment_policy']) {
+        case 'self':
+            if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
+                return true;
+            }
+            break;
+        case 'public':
+        case 'authenticated':
+            // Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
+            // This means the viewer has an xchan and we can identify them.
+            return true;
+            break;
+        case 'any connections':
+        case 'specific':
+        case 'contacts':
+        case '':
+            // local posts only - check if the post owner granted me comment permission
+            if (local_channel() && array_key_exists('owner', $item) && their_perms_contains(local_channel(), $item['owner']['abook_xchan'], 'post_comments')) {
+                    return true;
+            }
 
-			// local posts only - check if the post owner granted me 
-			// comment permission
-			if (local_channel() && array_key_exists('owner',$item) && their_perms_contains(local_channel(),$item['owner']['abook_xchan'],'post_comments')) {
-					return true;
-			}
+            if (intval($item['item_wall']) && perm_is_allowed($item['uid'], $observer_xchan, 'post_comments')) {
+                return true;
+            }
+            break;
+        default:
+            break;
+    }
+    if (strstr($item['comment_policy'], 'network:') && strstr($item['comment_policy'], 'red')) {
+        return true;
+    }
 
-			if (intval($item['item_wall']) && perm_is_allowed($item['uid'],$observer_xchan,'post_comments')) {
-				return true;
-			}
-			break;
-		default:
-			break;
-	}
-	if (strstr($item['comment_policy'],'network:') && strstr($item['comment_policy'],'red')) {
-		return true;
-	}
-	
-	if (strstr($item['comment_policy'],'network:') && strstr($item['comment_policy'],'activitypub')) {
-		return true;
-	}
+    if (strstr($item['comment_policy'], 'network:') && strstr($item['comment_policy'], 'activitypub')) {
+        return true;
+    }
 
-	if (strstr($item['comment_policy'],'site:') && strstr($item['comment_policy'],App::get_hostname())) {
-		return true;
-	}
+    if (strstr($item['comment_policy'], 'site:') && strstr($item['comment_policy'], App::get_hostname())) {
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 
@@ -1194,6 +1194,9 @@ function map_scope($scope, $strip = false) {
 			return 'site: ' . App::get_hostname();
 		case PERMS_PENDING:
 			return 'any connections';
+// uncomment a few releases after the corresponding changes are made in can_comment_on_post. Here it was done on 2021-11-18 			
+//		case PERMS_SPECIFIC:
+//			return 'specific';
 		case PERMS_CONTACTS:
 		default:
 			return 'contacts';
@@ -2420,17 +2423,7 @@ function item_update_parent_commented($item) {
 
 
 	$update_parent = true;
-	$update_changed = true;
 	
-	$c = channelx_by_n($item['uid']);
-
-	// don't modify the changed time on the parent if we commented on it.
-	// This messes up the notification system, which ignores changes made by us
-	
-	if ($c && $item['author_xchan'] === $c['channel_hash']) {
-		$update_changed = false;
-	}
-
 	// update the commented timestamp on the parent 
 	// - unless this is a moderated comment or a potential clone of an older item
 	// which we don't wish to bring to the surface. As the queue only holds deliveries 
@@ -2449,16 +2442,11 @@ function item_update_parent_commented($item) {
 			intval($item['uid'])
 		);
 
-		q("UPDATE item set commented = '%s' WHERE id = %d",
+		q("UPDATE item set commented = '%s', changed = '%s' WHERE id = %d",
 			dbesc(($z) ? $z[0]['commented'] : datetime_convert()),
+			dbesc(datetime_convert()),
 			intval($item['parent'])
 		);
-		if ($update_changed) {
-			q("UPDATE item set changed = '%s' WHERE id = %d",
-				dbesc(datetime_convert()),
-				intval($item['parent'])
-			);
-		}
 	}
 }
 
@@ -3496,13 +3484,24 @@ function post_is_importable($channel_id,$item,$abook) {
 	if (! $abook) {
 		return true;
 	}
+	
+	foreach ($abook  as  $ab) {
+		// check eligibility
+		if (intval($ab['abook_self'])) {
+			continue;
+		}
+		if (! ($ab['abook_incl'] || $ab['abook_excl']) ) {
+			continue;
+		}
 
-	if (! ($abook['abook_incl'] || $abook['abook_excl'])) {
-		return true;
+		$evaluator = MessageFilter::evaluate($item,$ab['abook_incl'],$ab['abook_excl']);
+		// A negative assessment for any individual connections
+		// is an instant fail
+		if (! $evaluater) {
+			return false;
+		}
 	}
-
-	return MessageFilter::evaluate($item,$abook['abook_incl'],$abook['abook_excl']);
-
+	return true;	
 }
 
 

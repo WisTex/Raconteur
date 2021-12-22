@@ -2,21 +2,21 @@
 
 namespace Zotlabs\Update;
 
+class _1226
+{
 
-class _1226 {
-	
-	function run() {
+    public function run()
+    {
 
-		if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
-			$r = q("alter table item add item_level bigint NOT NULL DEFAULT '0'");
-		}
-		else {
-			$r = q("alter table item add item_level int(10) NOT NULL DEFAULT 0 ");
-		}
+        if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
+            $r = q("alter table item add item_level bigint NOT NULL DEFAULT '0'");
+        } else {
+            $r = q("alter table item add item_level int(10) NOT NULL DEFAULT 0 ");
+        }
 
-		if($r) {
-			return UPDATE_SUCCESS;
-		}
-		return UPDATE_FAILED;
-	}
+        if ($r) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

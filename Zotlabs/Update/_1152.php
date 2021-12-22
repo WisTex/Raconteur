@@ -2,12 +2,13 @@
 
 namespace Zotlabs\Update;
 
-class _1152 {
-function run() {
+class _1152
+{
+    public function run()
+    {
 
-	if(ACTIVE_DBTYPE == DBTYPE_POSTGRES) { 
-
-		$r1 = q("CREATE TABLE IF NOT EXISTS \"dreport\" (
+        if (ACTIVE_DBTYPE == DBTYPE_POSTGRES) {
+            $r1 = q("CREATE TABLE IF NOT EXISTS \"dreport\" (
   \"dreport_id\" serial NOT NULL,
   \"dreport_channel\" int(11) NOT NULL DEFAULT '0',
   \"dreport_mid\" char(255) NOT NULL DEFAULT '',
@@ -18,17 +19,15 @@ function run() {
   \"dreport_xchan\" char(255) NOT NULL DEFAULT '',
   PRIMARY KEY (\"dreport_id\") ");
 
-	$r2 = q("create index \"dreport_mid\" on dreport (\"dreport_mid\") ");
-	$r3 = q("create index \"dreport_site\" on dreport (\"dreport_site\") ");
-	$r4 = q("create index \"dreport_time\" on dreport (\"dreport_time\") ");
-	$r5 = q("create index \"dreport_xchan\" on dreport (\"dreport_xchan\") ");
-	$r6 = q("create index \"dreport_channel\" on dreport (\"dreport_channel\") ");
+            $r2 = q("create index \"dreport_mid\" on dreport (\"dreport_mid\") ");
+            $r3 = q("create index \"dreport_site\" on dreport (\"dreport_site\") ");
+            $r4 = q("create index \"dreport_time\" on dreport (\"dreport_time\") ");
+            $r5 = q("create index \"dreport_xchan\" on dreport (\"dreport_xchan\") ");
+            $r6 = q("create index \"dreport_channel\" on dreport (\"dreport_channel\") ");
 
-	$r = $r1 && $r2 && $r3 && $r4 && $r5 && $r6;
-
-	}
-	else {
-		$r = q("CREATE TABLE IF NOT EXISTS `dreport` (
+            $r = $r1 && $r2 && $r3 && $r4 && $r5 && $r6;
+        } else {
+            $r = q("CREATE TABLE IF NOT EXISTS `dreport` (
   `dreport_id` int(11) NOT NULL AUTO_INCREMENT,
   `dreport_channel` int(11) NOT NULL DEFAULT '0',
   `dreport_mid` char(255) NOT NULL DEFAULT '',
@@ -44,14 +43,11 @@ function run() {
   KEY `dreport_xchan` (`dreport_xchan`),
   KEY `dreport_channel` (`dreport_channel`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ");
+        }
 
-	}
-
-    if($r)
-        return UPDATE_SUCCESS;
-    return UPDATE_FAILED;
-
-}
-
-
+        if ($r) {
+            return UPDATE_SUCCESS;
+        }
+        return UPDATE_FAILED;
+    }
 }

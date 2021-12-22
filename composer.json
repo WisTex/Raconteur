@@ -44,8 +44,9 @@
 		"masterminds/html5": "^2.6",
 		"forkawesome/fork-awesome": "^1.1",
 		"p3k/emoji-detector": "^0.2.1",
-		"phpseclib/phpseclib": "^2.0"
-	},
+		"phpseclib/phpseclib": "^2.0",
+      "ext-json": "*"
+    },
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
 		"behat/behat" : "@stable",

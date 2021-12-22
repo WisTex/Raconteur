@@ -1,17 +1,20 @@
 <?php
+
 namespace Zotlabs\Module;
 
+use Zotlabs\Web\Controller;
 
+class Randprof extends Controller
+{
 
-class Randprof extends \Zotlabs\Web\Controller {
+    public function init()
+    {
+        $x = random_profile();
+        if ($x) {
+            goaway(chanlink_hash($x));
+        }
 
-	function init() {
-		$x = random_profile();
-		if($x)
-			goaway(chanlink_hash($x));
-	
-		/** FIXME this doesn't work at the moment as a fallback */
-		goaway(z_root() . '/profile');
-	}
-	
+        /** FIXME this doesn't work at the moment as a fallback */
+        goaway(z_root() . '/profile');
+    }
 }
