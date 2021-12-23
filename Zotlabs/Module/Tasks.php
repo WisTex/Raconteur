@@ -27,7 +27,7 @@ class Tasks extends Controller
             $x['html'] = '';
             if (isset($x['tasks']) && is_array($x['tasks'])) {
                 foreach ($x['tasks'] as $y) {
-                    $x['html'] .= '<div class="tasklist-item"><input type="checkbox" onchange="taskComplete(' . $y['id'] . ') return false;" /> ' . $y['summary'] . '</div>';
+                    $x['html'] .= '<div class="tasklist-item"><input type="checkbox" onchange="taskComplete(' . $y['id'] . '); return false;" /> ' . $y['summary'] . '</div>';
                 }
             }
             json_return_and_die($x);
