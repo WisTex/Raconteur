@@ -1523,6 +1523,7 @@ blockquote {
 
 .wall-item-lock .dropdown-menu {
 	min-width: 20rem;
+	padding: 5px;
 }
 
 
