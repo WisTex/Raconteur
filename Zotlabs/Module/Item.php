@@ -1369,6 +1369,12 @@ class Item extends Controller
             $datarray['obj']['id'] = $mid;
         }
 
+		if ($private && !$parent) {
+			if ( intval($private) === 1 && (!$str_group_allow)) {
+				$private = 2;
+			}
+		}
+
         $datarray['aid'] = $channel['channel_account_id'];
         $datarray['uid'] = $profile_uid;
         $datarray['uuid'] = $uuid;
