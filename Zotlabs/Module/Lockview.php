@@ -98,11 +98,13 @@ class Lockview extends Controller
                     $l = array_merge($l, $recips['cc']);
                 }
                 for ($x = 0; $x < count($l); $x++) {
-                    if ($l[$x] !== ACTIVITY_PUBLIC_INBOX) {
+                    if ($l[$x] === ACTIVITY_PUBLIC_INBOX) {
+						$l[$x] = '<strong><em>' . t('Everybody') . '</em></strong>';
+					} else {
                         $l[$x] = '<a href="' . $l[$x] . '">' . $l[$x] . '</a>';
                     }
                 }
-                echo $o . implode(', ', $l);
+                echo $o . implode('<br>', $l);
                 killme();
             }
         }

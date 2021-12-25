@@ -3042,9 +3042,11 @@ class Libzot
             return EMPTY_STR;
         }
 
-        $parsed = parse_url($observer['xchan_url']);
-
-        return $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '') . '/rpost?f=';
+		if ($observer['xchan_network'] === 'zot6') {
+	        $parsed = parse_url($observer['xchan_url']);
+	    	return $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '') . '/rpost?f=';
+		}
+		return EMPTY_STR;
     }
 
     /**

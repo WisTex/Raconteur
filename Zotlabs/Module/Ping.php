@@ -349,7 +349,7 @@ class Ping extends Controller
                 "SELECT * FROM item 
 				WHERE uid = %d
 				AND author_xchan != '%s'
-				AND changed > '%s'
+				AND edited > '%s'
 				$seenstr
 				$item_normal_moderate
 				$sql_extra
@@ -386,7 +386,7 @@ class Ping extends Controller
                 "SELECT * FROM item 
 				WHERE uid = %d
 				AND author_xchan != '%s'
-				AND changed > '%s'
+				AND edited > '%s'
 				$seenstr
 				$item_normal_moderate
 				$sql_extra
@@ -600,7 +600,7 @@ class Ping extends Controller
             $loadtime = get_loadtime('stream');
             $r = q(
                 "SELECT id, author_xchan FROM item 
-				WHERE uid = %d and changed > '%s' 
+				WHERE uid = %d and edited > '%s' 
 				$seenstr
 				$item_normal
 				$sql_extra ",
@@ -629,7 +629,7 @@ class Ping extends Controller
             $loadtime = get_loadtime('channel');
             $r = q(
                 "SELECT id, author_xchan FROM item 
-				WHERE item_wall = 1 and uid = %d and changed > '%s'
+				WHERE item_wall = 1 and uid = %d and edited > '%s'
 				$seenstr 
 				$item_normal
 				$sql_extra ",
