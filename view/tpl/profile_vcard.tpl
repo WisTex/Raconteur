@@ -5,6 +5,9 @@
 	{{if $connect}}
 	<div class="connect-btn-wrapper"><a href="{{$connect_url}}" class="btn btn-block btn-success btn-sm"><i class="fa fa-plus"></i> {{$connect}}</a></div>
 	{{/if}}
+	{{if $profdm}}
+	<div class="profdm-btn-wrapper"><a href="{{$profdm_url}}" class="btn btn-block btn-success btn-sm"><i class="fa fa-envelope"></i> {{$profdm}}</a></div>
+	{{/if}}
 	{{if ! $zcard}}
 	{{if $editmenu.multi}}
 	<div class="dropdown float-right">
