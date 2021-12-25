@@ -280,6 +280,23 @@ class Libprofile
          */
         call_hooks('profile_sidebar_enter', $profile);
 
+		$profdm = EMPTY_STR;
+		$profdm_url = EMPTY_STR;
+		
+        $can_dm = perm_is_allowed($profile['uid'], (is_array($observer)) ? $observer['xchan_hash'] : EMPTY_STR, 'post_mail') && intval($observer['xchan_type']) !== XCHAN_TYPE_GROUP ;
+		
+	    if ($can_dm) {			
+			$dm_path = Libzot::get_rpost_path($observer);
+			if ($dm_path) {
+				$profdm = t('Direct Message');
+				$profdm_url = $dm_path
+				. '&to='
+				. urlencode($profile['channel_hash'])
+				. '&body='
+				. urlencode('@!{' . $profile['channel_address'] . '@' . App::get_hostname() . '}');
+			}
+	  	}
+
         if ($show_connect) {
             // This will return an empty string if we're already connected.
 
@@ -364,7 +381,9 @@ class Libprofile
             '$profile' => $profile,
             '$connect' => $connect,
             '$connect_url' => $connect_url,
-            '$location' => $location,
+			'$profdm' => $profdm,
+			'$profdm_url' => $profdm_url,
+			'$location' => $location,
             '$gender' => $gender,
             '$pronouns' => $pronouns,
             '$pdesc' => $pdesc,
