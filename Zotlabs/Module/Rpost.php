@@ -194,6 +194,15 @@ class Rpost extends Controller
                     'allow_gid' => EMPTY_STR,
                     'deny_cid' => EMPTY_STR,
                     'deny_gid' => EMPTY_STR]);
+			if (! (isset($_REQUEST['body']) && $_REQUEST['body'])) {
+				$xchan = q("select * from xchan where xchan_hash = '%s'",
+					dbesc($_REQUEST['to'])
+				);
+			
+				if ($xchan) {
+					$_REQUEST['body'] = '@!{' . ($xchan[0]['xchan_addr']) ? $xchan[0]['xchan_addr'] : $xchan[0]['xchan_url'] . '} ' ;
+				}
+			}
         }
 
         $channel_acl = $acl->get();
