@@ -945,10 +945,6 @@ function thread_author_menu($item, $mode = '')
         $pm_url = z_root()
 		. '/rpost?to='
 		. urlencode($item['author_xchan']);
-
-		if ($contact) {
-			$pm_url .= '&body=' . urlencode('@!{' . $contact['xchan_addr'] ? $contact['xchan_addr'] : $contact['xchan_url'] . '}');
-    	}
 	}
 
     if ($profile_link) {

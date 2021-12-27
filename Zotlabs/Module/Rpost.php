@@ -200,7 +200,7 @@ class Rpost extends Controller
 				);
 			
 				if ($xchan) {
-					$_REQUEST['body'] = '@!{' . ($xchan[0]['xchan_addr']) ? $xchan[0]['xchan_addr'] : $xchan[0]['xchan_url'] . '} ' ;
+					$_REQUEST['body'] .= '@!{' . (($xchan[0]['xchan_addr']) ? $xchan[0]['xchan_addr'] : $xchan[0]['xchan_url']) . '} ' ;
 				}
 			}
         }
