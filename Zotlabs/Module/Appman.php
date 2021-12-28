@@ -12,9 +12,13 @@ class Appman extends Controller
     public function post()
     {
 
-        if (!local_channel()) {
+		$channel_id = local_channel();
+        if (! $channel_id) {
             return;
         }
+		if (is_sys_channel($channel_id)) {
+			$channel_id = 0;
+		}
 
         if ($_POST['url']) {
             $arr = [
@@ -36,9 +40,9 @@ class Appman extends Controller
                 'categories' => escape_tags($_REQUEST['categories'])
             ];
 
-            $_REQUEST['appid'] = Apps::app_install(local_channel(), $arr);
+            $_REQUEST['appid'] = Apps::app_install($channel_id, $arr);
 
-            if (Apps::app_installed(local_channel(), $arr)) {
+            if (Apps::app_installed($channel_id, $arr)) {
                 info(t('App installed.') . EOL);
             }
 
@@ -54,14 +58,14 @@ class Appman extends Controller
         }
 
         if ($_POST['install']) {
-            Apps::app_install(local_channel(), $papp);
-            if (Apps::app_installed(local_channel(), $papp)) {
+            Apps::app_install($channel_id, $papp);
+            if (Apps::app_installed($channel_id, $papp)) {
                 info(t('App installed.') . EOL);
             }
         }
 
         if ($_POST['delete']) {
-            Apps::app_destroy(local_channel(), $papp);
+            Apps::app_destroy($channel_id, $papp);
         }
 
         if ($_POST['edit']) {
@@ -69,11 +73,11 @@ class Appman extends Controller
         }
 
         if ($_POST['feature']) {
-            Apps::app_feature(local_channel(), $papp, $_POST['feature']);
+            Apps::app_feature($channel_id, $papp, $_POST['feature']);
         }
 
         if ($_POST['pin']) {
-            Apps::app_feature(local_channel(), $papp, $_POST['pin']);
+            Apps::app_feature($channel_id, $papp, $_POST['pin']);
         }
 
         if ($_SESSION['return_url']) {
@@ -87,19 +91,25 @@ class Appman extends Controller
     public function get()
     {
 
-        if (!local_channel()) {
+		$channel_id = local_channel();
+		
+        if (!$channel_id) {
             notice(t('Permission denied.') . EOL);
             return;
         }
 
+		if (is_sys_channel($channel_id)) {
+			$channel_id = 0;
+		}
+		
         $channel = App::get_channel();
 
         if (argc() > 3) {
             if (argv(2) === 'moveup') {
-                Apps::moveup(local_channel(), argv(1), argv(3));
+                Apps::moveup($channel_id, argv(1), argv(3));
             }
             if (argv(2) === 'movedown') {
-                Apps::movedown(local_channel(), argv(1), argv(3));
+                Apps::movedown($channel_id, argv(1), argv(3));
             }
             goaway(z_root() . '/apporder');
         }
@@ -110,7 +120,7 @@ class Appman extends Controller
             $r = q(
                 "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($_REQUEST['appid']),
-                dbesc(local_channel())
+                dbesc($channel_id)
             );
             if ($r) {
                 $app = $r[0];
@@ -119,7 +129,7 @@ class Appman extends Controller
                     "select * from term where otype = %d and oid = %d and uid = %d",
                     intval(TERM_OBJ_APP),
                     intval($r[0]['id']),
-                    intval(local_channel())
+                    intval($channel_id)
                 );
                 if ($term) {
                     $app['categories'] = array_elm_to_str($term, 'term');
