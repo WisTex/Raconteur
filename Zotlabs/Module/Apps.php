@@ -30,7 +30,7 @@ class Apps extends Controller
             Zlib\Apps::import_system_apps();
             $syslist = [];
             $cat = ((array_key_exists('cat', $_GET) && $_GET['cat']) ? [escape_tags($_GET['cat'])] : '');
-            $list = Zlib\Apps::app_list((($available) ? 0 : local_channel()), (($mode == 'edit') ? true : false), $cat);
+            $list = Zlib\Apps::app_list(($available || is_sys_channel(local_channel()) ? 0 : local_channel()), (($mode == 'edit') ? true : false), $cat);
             if ($list) {
                 foreach ($list as $x) {
                     $syslist[] = Zlib\Apps::app_encode($x);
@@ -49,17 +49,13 @@ class Apps extends Controller
             $apps[] = Zlib\Apps::app_render($app, (($available) ? 'install' : $mode));
         }
 		
-		// @TODO not ready for prime time. The manage url redirects to installed apps
-		// and we need to edit available apps
-		$sys_edit = false; // (local_channel() && is_sys_channel(local_channel()));
-
         return replace_macros(get_markup_template('myapps.tpl'), array(
             '$sitename' => get_config('system', 'sitename'),
             '$cat' => $cat,
             '$title' => (($available) ? t('Available Apps') : t('Installed Apps')),
             '$apps' => $apps,
             '$authed' => ((local_channel()) ? true : false),
-            '$manage' => (($available && ! $sys_edit) ? EMPTY_STR : t('Manage apps')),
+            '$manage' => (($available) ? EMPTY_STR : t('Manage apps')),
             '$create' => (($mode == 'edit') ? t('Create Custom App') : '')
         ));
     }

@@ -42,10 +42,6 @@ class Rpost extends Controller
         if (!local_channel()) {
             if (remote_channel()) {
                 // redirect to your own site.
-                // We can only do this with a GET request so you'll need to keep the text short or risk getting truncated
-                // by the wretched beast called 'suhosin'. All the browsers now allow long GET requests, but suhosin
-                // blocks them.
-
                 $url = Libzot::get_rpost_path(App::get_observer());
                 // make sure we're not looping to our own hub
                 if (($url) && (!stristr($url, App::get_hostname()))) {
@@ -198,6 +194,15 @@ class Rpost extends Controller
                     'allow_gid' => EMPTY_STR,
                     'deny_cid' => EMPTY_STR,
                     'deny_gid' => EMPTY_STR]);
+			if (! (isset($_REQUEST['body']) && $_REQUEST['body'])) {
+				$xchan = q("select * from xchan where xchan_hash = '%s'",
+					dbesc($_REQUEST['to'])
+				);
+			
+				if ($xchan) {
+					$_REQUEST['body'] .= '@!{' . (($xchan[0]['xchan_addr']) ? $xchan[0]['xchan_addr'] : $xchan[0]['xchan_url']) . '} ' ;
+				}
+			}
         }
 
         $channel_acl = $acl->get();

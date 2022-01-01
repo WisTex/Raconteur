@@ -454,7 +454,7 @@ footer {
 	margin-bottom: 0px;
 }
 
-.connect-btn-wrapper {
+.connect-btn-wrapper, .profdm-btn-wrapper {
 	margin-bottom: 10px;
 
 }
@@ -1541,6 +1541,7 @@ blockquote {
 
 .wall-item-lock .dropdown-menu {
 	min-width: 20rem;
+	padding: 5px;
 }
 
 
