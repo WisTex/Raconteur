@@ -580,6 +580,12 @@ function alt_pager($i, $more = '', $less = '')
     $stripped = trim($stripped, '/');
     //$pagenum = App::$pager['page'];
     $url = z_root() . '/' . $stripped;
+    // the template adds params with '&' so we need to supply a query param
+    // with '?'. Use a dummy argument f= if there are no other query params.
+ 
+    if (! strpos($url,'?')) {
+       $url = $url . '?f=';
+    }
 
     return replace_macros(get_markup_template('alt_pager.tpl'), array(
         '$has_less' => ((App::$pager['page'] > 1) ? true : false),
