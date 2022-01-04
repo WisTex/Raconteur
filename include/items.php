@@ -363,7 +363,7 @@ function can_comment_on_post($observer_xchan, $item)
         case '':
             // local posts only - check if the post owner granted me
             // comment permission
-            if (local_channel() && array_key_exists('owner', $item) && their_perms_contains(local_channel(), $item['owner']['abook_xchan'], 'post_comments')) {
+            if (local_channel() && their_perms_contains(local_channel(), $item['owner_xchan'], 'post_comments')) {
                     return true;
             }
 
