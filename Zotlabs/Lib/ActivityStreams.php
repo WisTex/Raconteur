@@ -317,12 +317,30 @@ class ActivityStreams
         return Activity::fetch($url, $channel, $hub);
     }
 
-    public static function is_an_actor($s)
+    /**
+     * @brief given a type, determine if this object represents an actor
+	 *
+	 * If $type is an array, recurse through each element and return true if any
+	 * of the elements are a known actor type
+	 *
+	 * @param string|array $type
+	 * @return boolean
+	 */
+
+    public static function is_an_actor($type)
     {
-        if (!$s) {
+        if (!$type) {
             return false;
         }
-        return (in_array($s, ['Application', 'Group', 'Organization', 'Person', 'Service']));
+		if (is_array($type)) {
+			foreach ($type as $x) {
+				if (self::is_an_actor($x)) {
+					return true;
+				}
+			}
+			return false;
+		}
+        return (in_array($type, ['Application', 'Group', 'Organization', 'Person', 'Service']));
     }
 
     public static function is_response_activity($s)

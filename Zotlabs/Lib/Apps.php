@@ -446,6 +446,9 @@ class Apps
          *    nav: render apps for app-bin
          */
 
+		$channel_id = local_channel();
+		$sys_channel = is_sys_channel($channel_id);
+
         $installed = false;
 
         if (!$papp) {
@@ -469,7 +472,7 @@ class Apps
 
 
         if (strpos($papp['url'], '$baseurl') !== false || strpos($papp['url'], '$nick') !== false || strpos($papp['photo'], '$baseurl') !== false || strpos($papp['photo'], '$nick') !== false) {
-            $view_channel = local_channel();
+            $view_channel = $channel_id;
             if (!$view_channel) {
                 $sys = get_sys_channel();
                 $view_channel = $sys['channel_id'];
@@ -490,7 +493,7 @@ class Apps
 
         foreach ($papp as $k => $v) {
             if (strpos($v, 'http') === 0 && $k != 'papp') {
-                if (!(local_channel() && strpos($v, z_root()) === 0)) {
+                if (!($channel_id && strpos($v, z_root()) === 0)) {
                     $papp[$k] = zid($v);
                 }
             }
@@ -513,17 +516,17 @@ class Apps
 
                     switch ($require) {
                         case 'nologin':
-                            if (local_channel()) {
+                            if ($channel_id) {
                                 return '';
                             }
                             break;
                         case 'admin':
-                            if (!is_site_admin()) {
+                            if (!(is_site_admin() || $sys_channel)) {
                                 return '';
                             }
                             break;
                         case 'local_channel':
-                            if (!local_channel()) {
+                            if (!$channel_id) {
                                 return '';
                             }
                             break;
@@ -538,7 +541,7 @@ class Apps
                             }
                             break;
                         case 'custom_role':
-                            if (get_pconfig(local_channel(), 'system', 'permissions_role') != 'custom') {
+                            if (get_pconfig($channel_id, 'system', 'permissions_role') != 'custom') {
                                 return '';
                             }
                             break;
@@ -552,7 +555,7 @@ class Apps
                             if ($config) {
                                 $unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
                             } else {
-                                $unset = ((local_channel() && feature_enabled(local_channel(), $require)) ? false : true);
+                                $unset = (($channel_id && feature_enabled($channnel_id, $require)) ? false : true);
                             }
                             if ($unset) {
                                 return '';
@@ -565,14 +568,13 @@ class Apps
 
         $hosturl = '';
 
-        if (local_channel()) {
-            if (self::app_installed(local_channel(), $papp) && (!(isset($papp['deleted']) && intval($papp['deleted'])))) {
+        if ($channel_id || $sys_channel) {
+            if (self::app_installed(($sys_channel) ? 0 : $channel_id, $papp)) {
                 $installed = true;
                 if ($mode === 'install') {
                     return '';
                 }
             }
-
             $hosturl = z_root() . '/';
         } elseif (remote_channel()) {
             $observer = App::get_observer();
@@ -612,10 +614,10 @@ class Apps
             '$purchase' => ((isset($papp['page']) && $papp['page'] && (!$installed)) ? t('Purchase') : ''),
             '$installed' => $installed,
             '$action_label' => (($hosturl && in_array($mode, ['view', 'install'])) ? $install_action : ''),
-            '$edit' => ((local_channel() && $installed && $mode === 'edit') ? t('Edit') : ''),
-            '$delete' => ((local_channel() && $installed && $mode === 'edit') ? t('Delete') : ''),
-            '$undelete' => ((local_channel() && $installed && $mode === 'edit') ? t('Undelete') : ''),
-            '$settings_url' => ((local_channel() && $installed && $mode === 'list' && isset($papp['settings_url'])) ? $papp['settings_url'] : ''),
+            '$edit' => (($channel_id && $installed && $mode === 'edit') ? t('Edit') : ''),
+            '$delete' => (($channel_id && $installed && $mode === 'edit') ? t('Delete') : ''),
+            '$undelete' => (($channel_id && $installed && $mode === 'edit') ? t('Undelete') : ''),
+            '$settings_url' => (($channel_id && $installed && $mode === 'list' && isset($papp['settings_url'])) ? $papp['settings_url'] : ''),
             '$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
             '$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
             '$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
@@ -649,6 +651,16 @@ class Apps
         $app['uid'] = $uid;
 
         if (self::app_installed($uid, $app, true)) {
+			// preserve the existing deleted status across app updates
+			if (isset($app['guid'])) {
+				$check = q("select * from app where app_id = '%s' and app_channel = %d",
+					dbesc($app['guid']),
+					intval($uid)
+				);
+				if ($check) {
+					$app['deleted'] = intval($check[0]['app_deleted']);
+				}
+			}
             $x = self::app_update($app);
         } else {
             $x = self::app_store($app);
@@ -684,6 +696,8 @@ class Apps
 
     public static function can_delete($uid, $app)
     {
+		// $uid 0 cannot delete, only archive
+
         if (!$uid) {
             return false;
         }
@@ -703,11 +717,11 @@ class Apps
     public static function app_destroy($uid, $app)
     {
 
-        if ($uid && $app['guid']) {
+        if ($app['guid']) {
             $x = q(
                 "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($app['guid']),
-                intval($uid)
+                intval($target_uid)
             );
             if ($x) {
                 if (!intval($x[0]['app_deleted'])) {
@@ -728,14 +742,16 @@ class Apps
                         $r = q(
                             "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
                             dbesc($app['guid']),
-                            intval($uid)
+                            intval($target_uid)
                         );
                     }
-                    if (intval($x[0]['app_system'])) {
-                        Libsync::build_sync_packet($uid, array('sysapp' => $x));
-                    } else {
-                        Libsync::build_sync_packet($uid, array('app' => $x));
-                    }
+					if ($uid) {
+	                    if (intval($x[0]['app_system'])) {
+    	                    Libsync::build_sync_packet($uid, array('sysapp' => $x));
+        	            } else {
+            	            Libsync::build_sync_packet($uid, array('app' => $x));
+                	    }
+					}
                 } else {
                     self::app_undestroy($uid, $app);
                 }
@@ -748,7 +764,7 @@ class Apps
 
         // undelete a system app
 
-        if ($uid && $app['guid']) {
+        if ($app['guid']) {
             $x = q(
                 "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($app['guid']),
@@ -795,7 +811,6 @@ class Apps
 
     public static function app_installed($uid, $app, $bypass_filter = false)
     {
-
         $r = q(
             "select id from app where app_id = '%s' and app_channel = %d limit 1",
             dbesc((array_key_exists('guid', $app)) ? $app['guid'] : ''),

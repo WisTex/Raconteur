@@ -801,13 +801,14 @@ class Libzot
                 $deleted_changed = 1;
             }
 
-            if ($arr['channel_type'] === 'collection') {
-                $px = 2;
-            } elseif ($arr['channel_type'] === 'group') {
-                $px = 1;
-            } else {
-                $px = 0;
-            }
+			$px = 0;
+			if (isset($arr['channel_type'])) {
+	            if ($arr['channel_type'] === 'collection') {
+    	            $px = 2;
+        	    } elseif ($arr['channel_type'] === 'group') {
+                	$px = 1;
+				}
+			}
             if (array_key_exists('public_forum', $arr) && intval($arr['public_forum'])) {
                 $px = 1;
             }
@@ -1451,17 +1452,16 @@ class Libzot
                     $arr['item_verified'] = true;
 
                     if (!array_key_exists('comment_policy', $arr)) {
-                        // set comment policy depending on source hub. Unknown or osada is ActivityPub.
-                        // Anything else we'll say is zot - which could have a range of project names
+                        // set comment policy based on type of site.
                         $s = q(
-                            "select site_project from site where site_url = '%s' limit 1",
+                            "select site_type from site where site_url = '%s' limit 1",
                             dbesc($r[0]['hubloc_url'])
                         );
 
-                        if ((!$s) || (in_array($s[0]['site_project'], ['', 'osada']))) {
-                            $arr['comment_policy'] = 'authenticated';
-                        } else {
+                        if ($s && intval($s[0]['site_type']) === SITE_TYPE_ZOT) {
                             $arr['comment_policy'] = 'contacts';
+                        } else {
+                            $arr['comment_policy'] = 'authenticated';
                         }
                     }
                 }
@@ -3020,9 +3020,11 @@ class Libzot
             return EMPTY_STR;
         }
 
-        $parsed = parse_url($observer['xchan_url']);
-
-        return $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '') . '/rpost?f=';
+		if ($observer['xchan_network'] === 'zot6') {
+	        $parsed = parse_url($observer['xchan_url']);
+	    	return $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '') . '/rpost?f=';
+		}
+		return EMPTY_STR;
     }
 
     /**
@@ -3587,7 +3589,7 @@ class Libzot
     public static function is_zot_request()
     {
 
-        $x = getBestSupportedMimeType(['application/x-zot+json', 'application/x-nomad']);
+        $x = getBestSupportedMimeType(['application/x-zot+json', 'application/x-nomad+json']);
         return (($x) ? true : false);
     }
 

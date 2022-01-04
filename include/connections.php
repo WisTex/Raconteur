@@ -163,12 +163,36 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
         : $xchan['xchan_url']
     );
 
+
+	$profdm = EMPTY_STR;
+	$profdm_url = EMPTY_STR;
+
+	if (local_channel()) {
+	
+		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && $xchan['xchan_type'] !== XCHAN_TYPE_GROUP;
+
+	    if ($can_dm) {
+			$profdm = t('Direct Message');
+			$profdm_url = z_root() . '/rpost?f='
+				. '&to='
+				. urlencode($xchan['xchan_hash'])
+				. '&body='
+				. urlencode('@!{' . $xchan['xchan_addr'] ? $xchan['xchan_addr'] : $xchan['xchan_url'] . '}');
+		}
+	}
+
+
+
+
+
     return replace_macros(get_markup_template('xchan_vcard.tpl'), [
         '$name'    => $xchan['xchan_name'],
         '$photo'   => ((is_array(App::$profile) && array_key_exists('photo', App::$profile)) ? App::$profile['photo'] : $xchan['xchan_photo_l']),
         '$follow'  => urlencode(($xchan['xchan_addr']) ? $xchan['xchan_addr'] : $xchan['xchan_url']),
         '$link'    => zid($xchan['xchan_url']),
         '$connect' => $connect,
+		'$profdm'  => $profdm,
+		'$profdm_url' => $profdm_url,
         '$newwin'  => (($mode === 'chanview') ? t('New window') : EMPTY_STR),
         '$newtit'  => t('Open the selected location in a different window or browser tab'),
         '$url'     => $url,
@@ -1007,6 +1031,6 @@ function micropro($contact, $redirect = false, $class = '', $mode = false)
         '$name' => $contact['xchan_name'],
         '$addr' => $contact['xchan_addr'],
         '$title' => $contact['xchan_name'] . ' [' . $contact['xchan_addr'] . ']',
-        '$network' => sprintf(t('Network: %s'), $contact['xchan_network'])
+        '$network' => sprintf(t('Network: %s'), network_to_name($contact['xchan_network']))
     ));
 }

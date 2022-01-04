@@ -454,7 +454,7 @@ footer {
 	margin-bottom: 0px;
 }
 
-.connect-btn-wrapper {
+.connect-btn-wrapper, .profdm-btn-wrapper {
 	margin-bottom: 10px;
 
 }
@@ -905,6 +905,12 @@ div.jGrowl div.jGrowl-notification {
 .contact-block-img.archived, .app-deleted, .dim {
 	opacity: 0.3;
 	filter:alpha(opacity=30);
+}
+
+
+.dimmer {
+	opacity: 0.5;
+	filter:alpha(opacity=50);
 }
 
 
@@ -1517,6 +1523,7 @@ blockquote {
 
 .wall-item-lock .dropdown-menu {
 	min-width: 20rem;
+	padding: 5px;
 }
 
 
