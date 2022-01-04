@@ -1186,6 +1186,31 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
         }
     }
 
+	if (strpos($webbie, 'http') === 0 && !$x) {
+        $record = Zotfinger::exec($webbie, null, $verify);
+
+        // Check the HTTP signature
+
+		if ($record) {
+            if ($verify) {
+                $hsig = $record['signature'];
+                if ($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $webbie) && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+                    $hsig_valid = true;
+                }
+
+                if (! $hsig_valid) {
+                    logger('http signature not valid: ' . print_r($hsig, true));
+                    return false;
+                }
+            }
+
+            $x = Libzot::import_xchan($record['data']);
+            if ($x['success']) {
+                return $x['hash'];
+            }
+		}
+	}
+
     if (strpos($webbie, 'http') === 0) {
         $ap = ActivityPub::discover($webbie);
         if ($ap) {
