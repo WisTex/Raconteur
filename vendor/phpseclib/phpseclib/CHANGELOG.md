@@ -1,5 +1,37 @@
 # Changelog
 
+## 2.0.35 - 2021-11-28
+
+- SSH2: add "smart multi factor" login mode (enabled by default) (#1648)
+- SSH2: error out when no data is received from the server (#1647)
+- SFTP: don't attempt to parse unsupported attributes (#1708)
+- SFTP: getSupportedVersions() call didn't work
+
+## 2.0.34 - 2021-10-26
+
+- SSH2: add support for zlib and zlib@openssh.com compression
+- SFTP: add support for SFTPv4/5/6
+- SFTP: add option to allow arbitrary length packets (#1691)
+- RSA: ssh-keygen -yf private.key fails if \r is present (#1698)
+
+## 2.0.33 - 2021-08-15
+
+- SFTP: don't check SFTP packet size after SFTP initialization (#1606)
+- SFTP: timeout during SFTP init should return false (#1684)
+- SFTP: return false if get_channel_packet returns false (#1678)
+- ASN1: return false when not enough bytes are available (#1676)
+
+## 2.0.32 - 2021-06-13
+
+- SSH2: add getAuthMethodsToContinue() method (#1648)
+- SSH2: timeout would occasionally infinitely loop
+- SSH2: fix PHP7.4 errors about accessing bool as string (#1656)
+- SSH2: fix issue with key re-exchange (#1644)
+- SFTP: reopen channel on channel closure (#1654)
+- X509: extra characters before cert weren't being removed (#1659)
+- ASN1: fix timezone issue when non-utc time is given (#1562)
+- RSA: OAEP decryption didn't check labels correctly (#1669)
+
 ## 2.0.31 - 2021-04-06
 
 - X509: always parse the first cert of a bundle (#1568)

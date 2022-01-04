@@ -1063,7 +1063,128 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "lucaspetter",
+      "name": "lucaspetter",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/13027535?v=4",
+      "profile": "https://www.lucaspetter.com",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "dyamon",
+      "name": "Federico Igne",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/6771224?v=4",
+      "profile": "https://github.com/dyamon",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "qwazix",
+      "name": "qwazix",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1202892?v=4",
+      "profile": "https://github.com/qwazix",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "Bertbk",
+      "name": "Bertrand Thierry",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5602767?v=4",
+      "profile": "http://bthierry.pages.math.cnrs.fr/",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "xxsimoxx",
+      "name": "SIMONE FIORAVANTI",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/29772709?v=4",
+      "profile": "https://github.com/xxsimoxx",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "SamuelRiversMoore",
+      "name": "Samuel Rivers-Moore",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2640748?v=4",
+      "profile": "http://samuelriversmoore.net",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "pattishih",
+      "name": "Patti",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/16858138?v=4",
+      "profile": "https://github.com/pattishih",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "feld",
+      "name": "Mark Felder",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/40271278?v=4",
+      "profile": "https://blog.feld.me",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "Calinou",
+      "name": "Hugo Locurcio",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/180032?v=4",
+      "profile": "https://hugo.pro",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tintincastro",
+      "name": "tintincastro",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/25725603?v=4",
+      "profile": "https://github.com/tintincastro",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "diondresschers",
+      "name": "diondresschers",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3883936?v=4",
+      "profile": "https://github.com/diondresschers",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "panigrc",
+      "name": "Nikos Papagiannopoulos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/645895?v=4",
+      "profile": "https://nikospapagiannopoulos.com",
+      "contributions": [
+        "review"
+      ]
+    },
+    {
+      "login": "thomasbnt",
+      "name": "Thomasbnt.dev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14293805?v=4",
+      "profile": "https://thomasbnt.dev",
+      "contributions": [
+        "design"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "commitConvention": "none",
+  "skipCi": true
 }
