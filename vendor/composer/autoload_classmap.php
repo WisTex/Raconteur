@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'CommerceGuys\\Intl\\Calculator' => $vendorDir . '/commerceguys/intl/src/Calculator.php',
     'CommerceGuys\\Intl\\Country\\Country' => $vendorDir . '/commerceguys/intl/src/Country/Country.php',
     'CommerceGuys\\Intl\\Country\\CountryEntityInterface' => $vendorDir . '/commerceguys/intl/src/Country/CountryEntityInterface.php',
@@ -279,6 +280,7 @@ return array(
     'HTMLPurifier_VarParser_Flexible' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Flexible.php',
     'HTMLPurifier_VarParser_Native' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/VarParser/Native.php',
     'HTMLPurifier_Zipper' => $vendorDir . '/ezyang/htmlpurifier/library/HTMLPurifier/Zipper.php',
+    'JsonException' => $vendorDir . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
     'League\\HTMLToMarkdown\\Configuration' => $vendorDir . '/league/html-to-markdown/src/Configuration.php',
     'League\\HTMLToMarkdown\\ConfigurationAwareInterface' => $vendorDir . '/league/html-to-markdown/src/ConfigurationAwareInterface.php',
     'League\\HTMLToMarkdown\\Converter\\BlockquoteConverter' => $vendorDir . '/league/html-to-markdown/src/Converter/BlockquoteConverter.php',
@@ -1018,6 +1020,7 @@ return array(
     'Smarty_Template_Source' => $vendorDir . '/smarty/smarty/libs/sysplugins/smarty_template_source.php',
     'Smarty_Undefined_Variable' => $vendorDir . '/smarty/smarty/libs/sysplugins/smarty_undefined_variable.php',
     'Smarty_Variable' => $vendorDir . '/smarty/smarty/libs/sysplugins/smarty_variable.php',
+    'Stringable' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
     'Symfony\\Component\\OptionsResolver\\Debug\\OptionsResolverIntrospector' => $vendorDir . '/symfony/options-resolver/Debug/OptionsResolverIntrospector.php',
     'Symfony\\Component\\OptionsResolver\\Exception\\AccessException' => $vendorDir . '/symfony/options-resolver/Exception/AccessException.php',
     'Symfony\\Component\\OptionsResolver\\Exception\\ExceptionInterface' => $vendorDir . '/symfony/options-resolver/Exception/ExceptionInterface.php',
@@ -1061,10 +1064,14 @@ return array(
     'Symfony\\Component\\Yaml\\Unescaper' => $vendorDir . '/symfony/yaml/Unescaper.php',
     'Symfony\\Component\\Yaml\\Yaml' => $vendorDir . '/symfony/yaml/Yaml.php',
     'Symfony\\Polyfill\\Ctype\\Ctype' => $vendorDir . '/symfony/polyfill-ctype/Ctype.php',
+    'Symfony\\Polyfill\\Php73\\Php73' => $vendorDir . '/symfony/polyfill-php73/Php73.php',
+    'Symfony\\Polyfill\\Php80\\Php80' => $vendorDir . '/symfony/polyfill-php80/Php80.php',
     'TPC_yyStackEntry' => $vendorDir . '/smarty/smarty/libs/sysplugins/smarty_internal_configfileparser.php',
     'TP_yyStackEntry' => $vendorDir . '/smarty/smarty/libs/sysplugins/smarty_internal_templateparser.php',
     'URLify' => $vendorDir . '/jbroadway/urlify/URLify.php',
+    'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
     'UploadHandler' => $vendorDir . '/blueimp/jquery-file-upload/server/php/UploadHandler.php',
+    'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
     'Zotlabs\\Access\\AccessControl' => $baseDir . '/Zotlabs/Access/AccessControl.php',
     'Zotlabs\\Access\\PermissionLimits' => $baseDir . '/Zotlabs/Access/PermissionLimits.php',
     'Zotlabs\\Access\\PermissionRoles' => $baseDir . '/Zotlabs/Access/PermissionRoles.php',
