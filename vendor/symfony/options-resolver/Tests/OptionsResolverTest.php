@@ -13,6 +13,7 @@ namespace Symfony\Component\OptionsResolver\Tests;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
 use Symfony\Component\OptionsResolver\Debug\OptionsResolverIntrospector;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\Exception\InvalidArgumentException;
@@ -26,6 +27,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OptionsResolverTest extends TestCase
 {
+    use ExpectDeprecationTrait;
+
     /**
      * @var OptionsResolver
      */
@@ -449,7 +452,7 @@ class OptionsResolverTest extends TestCase
         $this->resolver
             ->setDefault('bar', 'baz')
             ->setDefault('foo', function (Options $options) {
-                $options->setDeprecated('bar', 'vendor/package', '1.1');
+                $options->setDeprecated('bar');
             })
             ->resolve()
         ;
@@ -458,7 +461,17 @@ class OptionsResolverTest extends TestCase
     public function testSetDeprecatedFailsIfUnknownOption()
     {
         $this->expectException(UndefinedOptionsException::class);
-        $this->resolver->setDeprecated('foo', 'vendor/package', '1.1');
+        $this->resolver->setDeprecated('foo');
+    }
+
+    public function testSetDeprecatedFailsIfInvalidDeprecationMessageType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid type for deprecation message argument, expected string or \Closure, but got "bool".');
+        $this->resolver
+            ->setDefined('foo')
+            ->setDeprecated('foo', 'vendor/package', '1.1', true)
+        ;
     }
 
     public function testLazyDeprecationFailsIfInvalidDeprecationMessageType()
@@ -2479,6 +2492,19 @@ class OptionsResolverTest extends TestCase
         ;
 
         $this->resolver->resolve(['expires' => new \DateTime('-1 hour')]);
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testSetDeprecatedWithoutPackageAndVersion()
+    {
+        $this->expectDeprecation('Since symfony/options-resolver 5.1: The signature of method "Symfony\Component\OptionsResolver\OptionsResolver::setDeprecated()" requires 2 new arguments: "string $package, string $version", not defining them is deprecated.');
+
+        $this->resolver
+            ->setDefined('foo')
+            ->setDeprecated('foo')
+        ;
     }
 
     public function testInvalidValueForPrototypeDefinition()
