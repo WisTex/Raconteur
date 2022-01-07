@@ -39,7 +39,7 @@ class ProcessTest extends TestCase
 
         ob_start();
         phpinfo(\INFO_GENERAL);
-        self::$sigchild = false !== strpos(ob_get_clean(), '--enable-sigchild');
+        self::$sigchild = str_contains(ob_get_clean(), '--enable-sigchild');
     }
 
     protected function tearDown(): void
@@ -114,7 +114,7 @@ class ProcessTest extends TestCase
         $p = $this->getProcess([self::$phpBin, __DIR__.'/NonStopableProcess.php', 30]);
         $p->start();
 
-        while ($p->isRunning() && false === strpos($p->getOutput(), 'received')) {
+        while ($p->isRunning() && !str_contains($p->getOutput(), 'received')) {
             usleep(1000);
         }
 
@@ -143,7 +143,7 @@ class ProcessTest extends TestCase
 
         $completeOutput = '';
         $result = $p->waitUntil(function ($type, $output) use (&$completeOutput) {
-            return false !== strpos($completeOutput .= $output, 'One more');
+            return str_contains($completeOutput .= $output, 'One more');
         });
         $this->assertTrue($result);
         $this->assertLessThan(20, microtime(true) - $start);
@@ -276,7 +276,7 @@ class ProcessTest extends TestCase
     public function testSetInputWhileRunningThrowsAnException()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Input can not be set while the process is running.');
+        $this->expectExceptionMessage('Input cannot be set while the process is running.');
         $process = $this->getProcessForCode('sleep(30);');
         $process->start();
         try {
@@ -409,7 +409,7 @@ class ProcessTest extends TestCase
         $p->start();
 
         foreach (['foo', 'bar'] as $s) {
-            while (false === strpos($p->$getOutput(), $s)) {
+            while (!str_contains($p->$getOutput(), $s)) {
                 usleep(1000);
             }
 
@@ -772,7 +772,8 @@ class ProcessTest extends TestCase
         $start = microtime(true);
         try {
             $process->start();
-            foreach ($process as $buffer);
+            foreach ($process as $buffer) {
+            }
             $this->fail('A RuntimeException should have been raised');
         } catch (RuntimeException $e) {
         }
@@ -842,7 +843,7 @@ class ProcessTest extends TestCase
         $process->setTimeout(1);
         $process->start();
 
-        while (false === strpos($process->getOutput(), 'foo')) {
+        while (!str_contains($process->getOutput(), 'foo')) {
             usleep(1000);
         }
 
@@ -907,7 +908,7 @@ class ProcessTest extends TestCase
         $process = $this->getProcess([self::$phpBin, __DIR__.'/SignalListener.php']);
         $process->start();
 
-        while (false === strpos($process->getOutput(), 'Caught')) {
+        while (!str_contains($process->getOutput(), 'Caught')) {
             usleep(1000);
         }
         $process->signal(\SIGUSR1);
@@ -938,7 +939,7 @@ class ProcessTest extends TestCase
     public function testSignalProcessNotRunning()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Can not send signal on a non running process.');
+        $this->expectExceptionMessage('Cannot send signal on a non running process.');
         $process = $this->getProcess('foo');
         $process->signal(1); // SIGHUP
     }
@@ -1057,7 +1058,7 @@ class ProcessTest extends TestCase
     public function testDisableOutputWhileIdleTimeoutIsSet()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Output can not be disabled while an idle timeout is set.');
+        $this->expectExceptionMessage('Output cannot be disabled while an idle timeout is set.');
         $process = $this->getProcess('foo');
         $process->setIdleTimeout(1);
         $process->disableOutput();
@@ -1066,7 +1067,7 @@ class ProcessTest extends TestCase
     public function testSetIdleTimeoutWhileOutputIsDisabled()
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('timeout can not be set while the output is disabled.');
+        $this->expectExceptionMessage('timeout cannot be set while the output is disabled.');
         $process = $this->getProcess('foo');
         $process->disableOutput();
         $process->setIdleTimeout(1);
@@ -1520,6 +1521,18 @@ class ProcessTest extends TestCase
         $process->setTimeout(2);
         $process->wait();
         $this->assertFalse($process->isRunning());
+    }
+
+    public function testEnvCaseInsensitiveOnWindows()
+    {
+        $p = $this->getProcessForCode('print_r([$_SERVER[\'PATH\'] ?? 1, $_SERVER[\'Path\'] ?? 2]);', null, ['PATH' => 'bar/baz']);
+        $p->run(null, ['Path' => 'foo/bar']);
+
+        if ('\\' === \DIRECTORY_SEPARATOR) {
+            $this->assertSame('Array ( [0] => 1 [1] => foo/bar )', preg_replace('/\s++/', ' ', trim($p->getOutput())));
+        } else {
+            $this->assertSame('Array ( [0] => bar/baz [1] => foo/bar )', preg_replace('/\s++/', ' ', trim($p->getOutput())));
+        }
     }
 
     /**
