@@ -7,6 +7,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Yaml;
+
 
 class Ap_probe extends Controller
 {
@@ -36,6 +38,7 @@ class Ap_probe extends Controller
 
             if ($x) {
                 $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($x, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(Yaml::encode($x))) . '</pre>';
             }
         }
 

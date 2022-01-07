@@ -440,9 +440,17 @@ class Linkinfo extends Controller
         $body = mb_convert_encoding($body, 'UTF-8', $cp);
         $body = mb_convert_encoding($body, 'HTML-ENTITIES', "UTF-8");
 
-        $doc = new DOMDocument();
-        @$doc->loadHTML($body);
+		if (! $body) {
+			return $siteinfo;
+		}
 
+		try {
+		    $doc = new DOMDocument();
+			$doc->loadHTML($body);
+		} catch (Exception $e) {
+			return $siteinfo;
+		}
+		
         self::deletexnode($doc, 'style');
         self::deletexnode($doc, 'script');
         self::deletexnode($doc, 'option');
@@ -457,13 +465,11 @@ class Linkinfo extends Controller
 
         $xpath = new DomXPath($doc);
 
-        //$list = $xpath->query("head/title");
         $list = $xpath->query("//title");
         foreach ($list as $node) {
             $siteinfo["title"] = html_entity_decode($node->nodeValue, ENT_QUOTES, "UTF-8");
         }
 
-        //$list = $xpath->query("head/meta[@name]");
         $list = $xpath->query("//meta[@name]");
         foreach ($list as $node) {
             $attr = [];
@@ -517,7 +523,6 @@ class Linkinfo extends Controller
             }
         }
 
-        //$list = $xpath->query("head/meta[@property]");
         $list = $xpath->query("//meta[@property]");
         foreach ($list as $node) {
             $attr = [];

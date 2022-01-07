@@ -2546,7 +2546,7 @@ function item_update_parent_commented($item)
 
     if ($update_parent) {
         $z = q(
-            "select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
+            "select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 and item_deleted = 0",
             dbesc($item['parent_mid']),
             intval($item['uid'])
         );
@@ -4964,7 +4964,7 @@ function sync_an_item($channel_id, $item_id)
     if ($r) {
         xchan_query($r);
         $sync_item = fetch_post_tags($r);
-        Libsync::build_sync_packet($channel_d, array('item' => array(encode_item($sync_item[0], true))));
+        Libsync::build_sync_packet($channel_id, array('item' => array(encode_item($sync_item[0], true))));
     }
 }
 
