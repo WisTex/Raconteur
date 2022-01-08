@@ -76,7 +76,7 @@ composer.phar
 !composer.lock
 # vendor/ is managed by composer, no need to include in our repository
 # requires new deployment and needs discussion first
-#vendor/
+vendor/
 # Exclude at least some vendor test files, examples, etc. so far
 vendor/**/tests/
 vendor/**/Test/

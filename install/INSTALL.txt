@@ -2,9 +2,9 @@ Software Installation
 
 We've tried very hard to ensure that this software will run on commodity
 hosting platforms - such as those used to host Wordpress blogs and Drupal 
-websites. It will run on most any Linux VPS system. Windows LAMP platforms
-such as XAMPP and WAMP are not officially supported at this time - however 
-we welcome patches if you manage to get it working. 
+websites. It will run on most any Linux VPS system or LAMP container.
+Windows LAMP platforms such as XAMPP and WAMP are not officially supported
+at this time - however we welcome patches if you manage to get it working. 
 
 Be aware that this software is more than a simple web application. It is a 
 complex communications and content management system which more closely 
@@ -15,17 +15,6 @@ host system than the typical blog. Not every PHP/MySQL hosting provider will
 be able to support these requirements. Many will - but please review the
 requirements and confirm these with your hosting provider prior to 
 installation. (And preferably before entering into a long-term contract.)
-
-If you encounter installation issues, please let us know via the issue 
-tracker at https://codeberg.org/streams/streams where you downloaded the software.
-Please be as clear as you can about your operating environment and provide as
-much detail as possible about any error messages you may see, so that we can
-prevent it from happening in the future. Due to the large variety of operating
-systems and PHP platforms in existence we may have only limited ability to
-debug your PHP installation or acquire any missing modules - but we will do
-our best to solve any general code issues.
-
-
 
 **Before you begin** 
 
@@ -65,11 +54,13 @@ web server platforms.
 	Example config scripts are available for these platforms in the install 
 	directory. Apache and nginx have the most support. 
 
-    - PHP 7.2 or later. 
+    - PHP 7.4 or later. 
 
     - PHP *command line* access with register_argc_argv set to true in the 
     php.ini file - and with no hosting provider restrictions on the use of 
     exec() and proc_open(). 
+
+	- Composer - visit getcomposer.org and follow the instructions.
 
     - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
     xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY
@@ -101,27 +92,30 @@ web server platforms.
 
         git clone https://codeberg.org/streams/streams.git mywebsite
 
+	- Pull in external libraries with composer. Leave off the --no-dev
+    option if you are a developer and wish to install addditional CI/CD tools.
+
+		composer install --no-dev
+
     - and then you can pick up the latest changes at any time with
 
         git pull
+        composer update --no-dev
 
     - make sure the folders "cache/smarty3" and "store" exist and are 
     writable by the webserver.
 
 		mkdir -p "store"
         mkdir -p "cache/smarty3"
-		
-        chmod -R 777 store cache
 
-        [This permission (777) is very dangerous and if you have sufficient
-        privilege and knowledge you should make these directories writeable
-        only by the webserver and, if different, the user that will run the
-        cron job (see below). In many shared hosting environments this may be
-        difficult without opening a trouble ticket with your provider. The
-        above permissions will allow the software to work, but are not
-        optimal.]
- 
-    - For installing addons
+        chmod -R 700 store cache
+
+        This permission (700) should be used if you are logged in with the
+        same system uid that starts webserver processes. If this is not the
+        case, the object of this command is to allow full read/write access
+        to this directory only by the webserver.
+
+	- For installing addons
 
         - First you should be **on** your website folder
 
@@ -222,7 +216,7 @@ You should also be sure that App::$config['system']['php_path'] is set
 correctly in your .htconfig.php file, it should look like (changing it to the
 correct PHP location):
 
-App::$config['system']['php_path'] = '/usr/local/php72/bin/php';
+App::$config['system']['php_path'] = '/usr/local/php74/bin/php';
   
  
 #####################################################################
