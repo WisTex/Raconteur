@@ -4,7 +4,7 @@ if [ ! -d .git ]; then
 	exit
 fi
 git pull
-
+composer update --no-dev
 if [ -d extend ] ; then
 	for a in  theme addon widget ; do
 		if [ -d extend/$a ]; then
