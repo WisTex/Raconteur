@@ -4,7 +4,11 @@ if [ ! -d .git ]; then
 	exit
 fi
 git pull
-composer update --no-dev
+# use composer install so that the current composer.lock
+# is always used. If this was an update command, it would
+# update composer.lock and create an unintentional local file
+# modification.
+composer install --no-dev
 if [ -d extend ] ; then
 	for a in  theme addon widget ; do
 		if [ -d extend/$a ]; then
