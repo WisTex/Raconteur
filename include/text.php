@@ -15,9 +15,7 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Activity;
 use Michelf\MarkdownExtra;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
-
+use Symfony\Component\Uid\Uuid;
 /**
  * @brief This is our template processor.
  *
@@ -610,7 +608,7 @@ function item_message_id()
 {
 
     try {
-        $hash = Uuid::uuid4()->toString();
+        $hash = Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -631,7 +629,7 @@ function photo_new_resource()
 {
 
     try {
-        $hash = Uuid::uuid4()->toString();
+        $hash = Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -666,7 +664,7 @@ function new_uuid()
 {
 
     try {
-        $hash = Uuid::uuid4()->toString();
+        $hash = Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
