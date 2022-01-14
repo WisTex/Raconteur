@@ -1,12 +1,12 @@
 <div class="widget">
 	<h3>
     <div class="cursor-pointer" onclick="openClose('{{$content_id}}'); if ($('#{{$content_id}}').is(':visible')) {
-    	$('#{{$content_id}}-caret').removeClass('fa-caret-down').addClass('fa-caret-up');
+    	$('#{{$content_id}}-chevron').removeClass('fa-chevron-down').addClass('fa-chevron-up');
     } else {
-    	$('#{{$content_id}}-caret').removeClass('fa-caret-up').addClass('fa-caret-down');
+    	$('#{{$content_id}}-chevron').removeClass('fa-chevron-up').addClass('fa-chevron-down');
 	} return false;" >
 	{{$title}}
-    <i id="{{$content_id}}-caret" class="fa fa-fw fa-caret-down fakelink"></i>
+    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink"></i>
     </div>
 	</h3>
     <div id="{{$content_id}}" style="display:none;">
