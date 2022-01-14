@@ -995,6 +995,11 @@ function gps2Num($coordPart)
         return $parts[0];
     }
 
+    // prevent divide by zero
+    if (! $parts[1]) {
+    	return 0;
+    }
+    
     return floatval($parts[0]) / floatval($parts[1]);
 }
 
