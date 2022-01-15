@@ -3311,8 +3311,8 @@ msgid "Your account on %s will expire in a few days."
 msgstr "Ваш аккаунт на %s перестанет работать через несколько дней."
 
 #: ../../extend/addon/hzaddons/testdrive/testdrive.php:105
-msgid "Your $Productname test account is about to expire."
-msgstr "Ваш тестовый аккаунт в $Productname близок к окончанию срока действия."
+msgid "Your $Projectname test account is about to expire."
+msgstr "Ваш тестовый аккаунт в $Projectname близок к окончанию срока действия."
 
 #: ../../boot.php:1595
 msgid "Create an account to access services and applications"

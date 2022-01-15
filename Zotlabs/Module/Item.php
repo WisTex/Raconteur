@@ -1109,7 +1109,7 @@ class Item extends Controller
                 }
             }
 
-            if (($str_contact_allow) && (!$str_group_allow)) {
+            if (in_array(substr_count($str_contact_allow,'<'), [ 1, 2 ]) && (!$str_group_allow)) {
                 // direct message - private between individual channels but not groups
                 $private = 2;
             }
@@ -1370,7 +1370,7 @@ class Item extends Controller
         }
 
 		if ($private && !$parent) {
-			if ( intval($private) === 1 && (!$str_group_allow)) {
+			if ( intval($private) === 1 && (!$str_group_allow) && in_array(substr_count($str_contact_allow,'<'), [ 1, 2 ])) {
 				$private = 2;
 			}
 		}
