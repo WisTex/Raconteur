@@ -9949,7 +9949,7 @@ msgid "Your account on %s will expire in a few days."
 msgstr ""
 
 #: ../../addon/testdrive/testdrive.php:105
-msgid "Your $Productname test account is about to expire."
+msgid "Your $Projectname test account is about to expire."
 msgstr ""
 
 #: ../../addon/rainbowtag/rainbowtag.php:81

@@ -10218,8 +10218,8 @@ msgid "Your account on %s will expire in a few days."
 msgstr "Jouw account op %s verloopt over een paar dagen. "
 
 #: ../../addon/testdrive/testdrive.php:105
-msgid "Your $Productname test account is about to expire."
-msgstr "Jouw $Productname-testaccount staat op het punt om te verlopen."
+msgid "Your $Projectname test account is about to expire."
+msgstr "Jouw $Projectname-testaccount staat op het punt om te verlopen."
 
 #: ../../addon/rainbowtag/rainbowtag.php:81
 msgid "Enable Rainbowtag"
