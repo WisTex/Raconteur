@@ -4844,7 +4844,6 @@ function list_attached_local_files($body) {
 	return $files;
 }
 
-
 function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
 
 	$files = list_attached_local_files($body);
@@ -4885,7 +4884,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
 
 		if ($new_public === false) {
 		
-			$item_private = (($str_group_allow) ? 1 : 2);
+            $item_private = (($str_group_allow || ($str_contact_allow && substr_count($str_contact_allow,'<') > 2)) ? 1 : 2);
 
 			// preserve any existing tokens that may have been set for this file
 			$token_matches = null;
