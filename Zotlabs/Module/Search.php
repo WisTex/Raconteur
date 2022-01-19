@@ -79,6 +79,14 @@ class Search extends Controller
 
         if (local_channel() && strpos($search, 'https://') === 0 && (!$this->updating) && (!$this->loading)) {
             logger('searching for ActivityPub');
+            if (($pos = strpos($search,'b64.')) !== false) {
+                $search = substr($search,$pos + 4);
+                if (($pos2 = strpos($search,'?')) !== false) {
+                    $search = substr($search,0,$pos2);
+                }
+                $search = base64_decode($search);
+            }
+            logger('Search: ' . $search);
             $channel = App::get_channel();
             $hash = EMPTY_STR;
             $j = Activity::fetch($search, $channel);
@@ -168,11 +176,14 @@ class Search extends Controller
                             // It wasn't a Collection object and wasn't an Actor object,
                             // so let's see if it decodes. The boolean flag enables html
                             // cache of the item
-
                             $item = Activity::decode_note($AS, true);
                             if ($item) {
                                 Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
                                 goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+                            }
+                            else {
+                                notice( t('Item not found.') . EOL);
+                                return EMPTY_STR;
                             }
                         }
                     }
@@ -292,17 +303,17 @@ class Search extends Controller
                 if (local_channel()) {
                     $r = q(
                         "SELECT mid, MAX(id) as item_id from item where uid = %d
-						$item_normal
-						$sql_extra
-						group by mid, created order by created desc $pager_sql ",
+                        $item_normal
+                        $sql_extra
+                        group by mid, created order by created desc $pager_sql ",
                         intval(local_channel())
                     );
                 }
                 if (!$r) {
                     $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
-						$item_normal
-						$sql_extra 
-						group by mid, created order by created desc $pager_sql");
+                        $item_normal
+                        $sql_extra
+                        group by mid, created order by created desc $pager_sql");
                 }
                 if ($r) {
                     $str = ids_to_querystr($r, 'item_id');
