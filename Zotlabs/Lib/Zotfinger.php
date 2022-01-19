@@ -42,6 +42,35 @@ class Zotfinger
         $redirects = 0;
         $x = z_post_url($resource, $data, $redirects, ['headers' => $h]);
 
+        if (intval($x['return_code'] === 404)) {
+
+            // if this resource returns "not found", mark any corresponding hubloc deleted and
+            // change the primary if needed. We need to catch it at this level because we
+            // can't really sync the locations if we've got no data to work with. 
+        
+            $h = Activity::get_actor_hublocs($resource, 'zot6,not_deleted');
+            if ($h) {
+                $primary = intval($h[0]['hubloc_primary']);
+
+                q("update hubloc set hubloc_deleted = 1, hubloc_primary = 0 where hubloc_id = %d",
+                    intval($h[0]['hubloc_id'])
+                );
+                if ($primary) {
+                    // find another hub that can act as primary since this one cannot. If this
+                    // fails, it may be that there are no other instances of the channel known
+                    // to this site. In that case, we'll just leave the entry without a primary
+                    // until/id we hear from them again at a new location. 
+                    $a = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
+                        dbesc($h[0]['hubloc_hash'])
+                    );
+                    if ($a) {
+                        hubloc_change_primary(array_shift($a));
+                    }
+               }
+            }
+        }
+
+    
         if ($x['success']) {
             if ($verify) {
                 $result['signature'] = HTTPSig::verify($x, EMPTY_STR, 'zot6');
