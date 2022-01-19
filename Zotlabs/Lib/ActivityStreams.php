@@ -134,10 +134,10 @@ class ActivityStreams
 
             // Enumerate and store actors in referenced objects
 
-            if ($this->obj && is_array($this->obj) && $this->obj['actor']) {
+            if ($this->obj && is_array($this->obj) && isset($this->obj['actor'])) {
                 $this->obj['actor'] = $this->get_actor('actor', $this->obj);
             }
-            if ($this->tgt && is_array($this->tgt) && $this->tgt['actor']) {
+            if ($this->tgt && is_array($this->tgt) && isset($this->tgt['actor'])) {
                 $this->tgt['actor'] = $this->get_actor('actor', $this->tgt);
             }
 

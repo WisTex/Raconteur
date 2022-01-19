@@ -4,7 +4,16 @@ if [ ! -d .git ]; then
 	exit
 fi
 git pull
-
+# use composer install so that the current composer.lock
+# is always used. If this was an update command, it would
+# update composer.lock and create an unintentional local file
+# modification. Set COMPOSER_ALLOW_SUPERUSER to prevent composer
+# from going interactive if this script is run from cron by the
+# site admin. 
+if [ `id -u` -eq 0 ]; then
+    export COMPOSER_ALLOW_SUPERUSER=1
+fi
+composer install --no-dev
 if [ -d extend ] ; then
 	for a in  theme addon widget ; do
 		if [ -d extend/$a ]; then

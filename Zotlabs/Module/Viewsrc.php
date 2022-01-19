@@ -55,12 +55,12 @@ class Viewsrc extends Controller
             }
         }
 
-        $inspect = ((is_site_admin()) ? '| <a href="' . z_root() . '/inspect/item/' . $r[0]['id'] . '" target="_blank">' . t('inspect') . '</a>' : EMPTY_STR);
+        $inspect = ((is_site_admin()) ? '| <a href="' . z_root() . '/inspect/item/' . $r[0]['id'] . '" target="_blank">' . t('Inspect') . '</a>' : EMPTY_STR);
 
 
         if (is_ajax()) {
             echo '<div class="p-1">';
-            echo '<div>id: ' . $r[0]['id'] . ' | <a href="' . $r[0]['plink'] . '" target="_blank">plink</a> | <a href="' . $r[0]['llink'] . '" target="_blank">llink</a>' . $inspect . '</div>';
+            echo '<div>' . t('Local id:') . ' ' . $r[0]['id'] . ' | <a href="' . $r[0]['plink'] . '" target="_blank">' . t('Permanent link') . '</a> | <a href="' . $r[0]['llink'] . '" target="_blank">' . t('Local link') . '</a>' . $inspect . '</div>';
             echo '<hr>';
             echo '<pre class="p-1">' . $o . '</pre>';
             echo '</div>';

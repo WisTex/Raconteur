@@ -2437,7 +2437,7 @@ function item_update_parent_commented($item) {
 		$update_parent = false;
 
 	if($update_parent) {
-		$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 ",
+		$z = q("select max(created) as commented from item where parent_mid = '%s' and uid = %d and item_delayed = 0 and item_deleted = 0",
 			dbesc($item['parent_mid']),
 			intval($item['uid'])
 		);
@@ -4799,7 +4799,7 @@ function sync_an_item($channel_id,$item_id) {
 	if($r) {
 		xchan_query($r);
 		$sync_item = fetch_post_tags($r);
-		Libsync::build_sync_packet($channel_d,array('item' => array(encode_item($sync_item[0],true))));
+		Libsync::build_sync_packet($channel_id,array('item' => array(encode_item($sync_item[0],true))));
 	}
 }
 
@@ -4844,7 +4844,6 @@ function list_attached_local_files($body) {
 	return $files;
 }
 
-
 function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow,$str_contact_deny,$str_group_deny,$token = EMPTY_STR) {
 
 	$files = list_attached_local_files($body);
@@ -4885,7 +4884,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
 
 		if ($new_public === false) {
 		
-			$item_private = (($str_group_allow) ? 1 : 2);
+            $item_private = (($str_group_allow || ($str_contact_allow && substr_count($str_contact_allow,'<') > 2)) ? 1 : 2);
 
 			// preserve any existing tokens that may have been set for this file
 			$token_matches = null;

@@ -1,40 +1,29 @@
 Software Installation
 
 We've tried very hard to ensure that this software will run on commodity
-hosting platforms - such as those used to host Wordpress blogs and Drupal 
-websites. It will run on most any Linux VPS system. Windows LAMP platforms
-such as XAMPP and WAMP are not officially supported at this time - however 
-we welcome patches if you manage to get it working. 
+hosting platforms - such as those used to host Wordpress blogs and Drupal
+websites. It will run on most any Linux VPS system or LAMP container.
+Windows LAMP platforms such as XAMPP and WAMP are not officially supported
+at this time - however we welcome patches if you manage to get it working.
 
-Be aware that this software is more than a simple web application. It is a 
-complex communications and content management system which more closely 
-resembles an email server than a web server. For reliability and performance, 
-messages are delivered in the background and are queued for later delivery 
+Be aware that this software is more than a simple web application. It is a
+complex communications and content management system which more closely
+resembles an email server than a web server. For reliability and performance,
+messages are delivered in the background and are queued for later delivery
 when sites are down. This kind of functionality requires a bit more of the
 host system than the typical blog. Not every PHP/MySQL hosting provider will
 be able to support these requirements. Many will - but please review the
-requirements and confirm these with your hosting provider prior to 
+requirements and confirm these with your hosting provider prior to
 installation. (And preferably before entering into a long-term contract.)
-
-If you encounter installation issues, please let us know via the issue 
-tracker at https://codeberg.org/streams/streams where you downloaded the software.
-Please be as clear as you can about your operating environment and provide as
-much detail as possible about any error messages you may see, so that we can
-prevent it from happening in the future. Due to the large variety of operating
-systems and PHP platforms in existence we may have only limited ability to
-debug your PHP installation or acquire any missing modules - but we will do
-our best to solve any general code issues.
-
-
 
 **Before you begin** 
 
 Choose a domain name or subdomain name for your server.
 
 The software can only be installed into the root of a domain or
-sub-domain, and can not be installed using alternate TCP ports. These 
+sub-domain, and can not be installed using alternate TCP ports. These
 restrictions may be relaxed in the future, but will be inconvenient to work
-with, so we still STRONGLY recommend you abide by them. 
+with, so we still STRONGLY recommend you abide by them.
 
 SSL is REQUIRED and you MUST use a "browser-valid" certificate. You MUST NOT
 use self-signed certificates!
@@ -42,15 +31,15 @@ use self-signed certificates!
 Please test your certificate prior to installation. A web tool for testing your
 certificate is available at "http://www.digicert.com/help/". When visiting your
 site for the first time, please use the SSL ("https://") URL. This will avoid
-problems later. 
+problems later.
 
 Free "browser-valid" certificates are available from providers such as StartSSL
-and LetsEncrypt. 
+and LetsEncrypt.
 
-If you use LetsEncrypt to provide certificates and create a file under 
+If you use LetsEncrypt to provide certificates and create a file under
 .well-known/acme-challenge so that LetsEncrypt can verify your domain
 ownership, please remove or rename the .well-known directory as soon as the
-certificate is generated. The software will provide its own handler for 
+certificate is generated. The software will provide its own handler for
 ".well-known" services when it is installed, and an existing directory in this
 location may prevent some of these services from working correctly. This
 should not be a problem with Apache, but may be an issue with nginx or other
@@ -60,137 +49,142 @@ web server platforms.
 
 1. Requirements
 
-    - Apache with mod-rewrite enabled and "AllowOverride All" so you can use a 
+    - Apache with mod-rewrite enabled and "AllowOverride All" so you can use a
     local .htaccess file. Some folks have successfully used nginx and lighttpd.
-	Example config scripts are available for these platforms in the install 
-	directory. Apache and nginx have the most support. 
+    Example config scripts are available for these platforms in the install
+    directory. Apache and nginx have the most support.
 
-    - PHP 7.2 or later. 
+    - PHP 7.4 or later.
 
-    - PHP *command line* access with register_argc_argv set to true in the 
-    php.ini file - and with no hosting provider restrictions on the use of 
-    exec() and proc_open(). 
+    - PHP *command line* access with register_argc_argv set to true in the
+    php.ini file - and with no hosting provider restrictions on the use of
+    exec() and proc_open().
 
-    - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml, 
+    - Composer - visit getcomposer.org and follow the instructions.
+
+    - curl, gd (with at least jpeg and png support), mysqli, mbstring, xml,
     xmlreader (FreeBSD), zip and openssl extensions. The imagick extension MAY
-    be used instead of gd, but is not required and MAY also be disabled via 
-    configuration option. 
+    be used instead of gd, but is not required and MAY also be disabled via
+    configuration option.
 
     - some form of email server or email gateway such that PHP mail() works.
 
     - Mysql 5.5.3 or later or MariaDB or postgres database server.
-	Case-insensitive search is not supported on postgres. This is not harmful,
-	but postgres nodes should probably not be used as directory servers due
-	to this limitation. 
-    
+    Case-insensitive search is not supported on postgres. This is not harmful,
+    but postgres nodes should probably not be used as directory servers due
+    to this limitation.
+
     - ability to schedule jobs with cron.
 
-    - Installation into a top-level domain or sub-domain (without a 
+    - Installation into a top-level domain or sub-domain (without a
     directory/path component in the URL) is REQUIRED.
 
 2. Unpack the project files into the root of your web server document area.
-    
-     If you copy the directory tree to your webserver, make sure that you 
-    also copy .htaccess - as "dot" files are often hidden and aren't normally 
+
+    If you copy the directory tree to your webserver, make sure that you
+    also copy .htaccess - as "dot" files are often hidden and aren't normally
     copied.
 
-    - If you are able to do so, we recommend using git to clone the source 
-    repository rather than to use a packaged tar or zip file.  This makes the 
-    software much easier to update. The Linux command to clone the repository 
+    - If you are able to do so, we recommend using git to clone the source
+    repository rather than to use a packaged tar or zip file.  This makes the
+    software much easier to update. The Linux command to clone the repository
     into a directory "mywebsite" would be
 
         git clone https://codeberg.org/streams/streams.git mywebsite
 
+    - Pull in external libraries with composer. Leave off the --no-dev
+    option if you are a developer and wish to install addditional CI/CD tools.
+
+        composer install --no-dev
+
     - and then you can pick up the latest changes at any time with
 
         git pull
+        composer install --no-dev
 
-    - make sure the folders "cache/smarty3" and "store" exist and are 
+    - make sure the folders "cache/smarty3" and "store" exist and are
     writable by the webserver.
 
-		mkdir -p "store"
+        mkdir -p "store"
         mkdir -p "cache/smarty3"
-		
-        chmod -R 777 store cache
 
-        [This permission (777) is very dangerous and if you have sufficient
-        privilege and knowledge you should make these directories writeable
-        only by the webserver and, if different, the user that will run the
-        cron job (see below). In many shared hosting environments this may be
-        difficult without opening a trouble ticket with your provider. The
-        above permissions will allow the software to work, but are not
-        optimal.]
- 
+        chmod -R 700 store cache
+
+        This permission (700) should be used if you are logged in with the
+        same system uid that starts webserver processes. If this is not the
+        case, the object of this command is to allow full read/write access
+        to this directory only by the webserver.
+
     - For installing addons
 
         - First you should be **on** your website folder
 
             cd mywebsite
 
-    - Then you should clone the addon repository (separately). We'll give this repository
-         a nickname of 'zaddons'. You can pull in other addon repositories by 
-         giving them different nicknames.
+        - Then you should clone the addon repository (separately). We'll give this repository
+          a nickname of 'zaddons'. You can pull in other addon repositories by
+          giving them different nicknames.
 
             util/add_addon_repo https://codeberg.org/streams/streams-addons.git zaddons
 
-    - For keeping the addon tree updated, you should be on your top level website 
-		directory and issue an update command for that repository.
+    - For keeping the addon tree updated, you should be on your top level website
+        directory and issue an update command for that repository.
 
             cd mywebsite
             util/update_addon_repo zaddons
 
 
-3. Create an empty database and note the access details (hostname, username, 
-password, database name). The PDO database libraries will fallback to socket 
+3. Create an empty database and note the access details (hostname, username,
+password, database name). The PDO database libraries will fallback to socket
 communication if the hostname is 'localhost' and some people have reported
-issues with the socket implementation. Use it if your requirements mandate. 
+issues with the socket implementation. Use it if your requirements mandate.
 Otherwise if the database is served on the local server, use '127.0.0.1' for
 the hostname. When using MySQL or MariaDB, please set the database character
 encoding to utf8mb4 to avoid encoding issues with emojis. All the internal
-tables are created with utf8mb4_general_ci encoding, but issues have been 
+tables are created with utf8mb4_general_ci encoding, but issues have been
 encountered when using these in a database that was configured for 'utf8'
-and not utf8mb4.   
+and not utf8mb4.
 
-Internally we now use the PDO library for database connections. If you 
+Internally we now use the PDO library for database connections. If you
 encounter a database configuration which cannot be expressed on the setup form
 (for instance using MySQL with an unusual socket location); you can supply
 the PDO connection string as the database hostname. For instance
-	
-	mysql:unix_socket=/my/special/socket_path
 
-You should still fill in all other applicable form values as needed.  
+    mysql:unix_socket=/my/special/socket_path
+
+You should still fill in all other applicable form values as needed.
 
 
-4. If you know in advance that it will be impossible for the web server to 
-write or create files in your web directory, create an empty file called 
+4. If you know in advance that it will be impossible for the web server to
+write or create files in your web directory, create an empty file called
 .htconfig.php and make it writable by the web server.
 
-5. Visit your website with a web browser and follow the instructions. Please 
+5. Visit your website with a web browser and follow the instructions. Please
 note any error messages and correct these before continuing. If you are using
 SSL with a known signature authority, use the https: link to your
-website. 
+website.
 
 6. *If* the automated installation fails for any reason, check the following:
 
-    - ".htconfig.php" exists 
-        If not, edit htconfig.php and change system settings. Rename 
+    - ".htconfig.php" exists
+        If not, edit htconfig.php and change system settings. Rename
     to .htconfig.php
-	-  Database is populated.
-        If not, import the contents of "install/schema_xxxxx.sql" with phpmyadmin 
+    -  Database is populated.
+        If not, import the contents of "install/schema_xxxxx.sql" with phpmyadmin
         or mysql command line (replace 'xxxxx' with your DB type).
 
-7. At this point visit your website again, and register your personal account. 
-Registration errors should all be recoverable automatically. 
+7. At this point visit your website again, and register your personal account.
+Registration errors should all be recoverable automatically.
 If you get any *critical* failure at this point, it generally indicates the
-database was not installed correctly. You might wish to move/rename 
-.htconfig.php to another name and empty (called 'dropping') the database 
+database was not installed correctly. You might wish to move/rename
+.htconfig.php to another name and empty (called 'dropping') the database
 tables, so that you can start fresh.
 
 In order for your account to be given administrator access, it should be the
 first account created, and the email address provided during registration
-must match the "administrator email" address you provided during 
+must match the "administrator email" address you provided during
 installation. Otherwise to give an account administrator access,
-add 4096 to the account_roles for that account in the database. 
+add 4096 to the account_roles for that account in the database.
 
 For your site security there is no way to provide administrator access
 using web forms.
@@ -201,20 +195,20 @@ using web forms.
 ****************************************************************************
 ****************************************************************************
 
-8. Set up a cron job or scheduled task to run the Cron manager once every 10-15 
+8. Set up a cron job or scheduled task to run the Cron manager once every 10-15
 minutes to perform background processing and maintenance. Example:
 
-	cd /base/directory; /path/to/php Zotlabs/Daemon/Run.php Cron
+    cd /base/directory; /path/to/php Zotlabs/Daemon/Run.php Cron
 
 Change "/base/directory", and "/path/to/php" as appropriate for your situation.
 
-If you are using a Linux server, run "crontab -e" and add a line like the 
+If you are using a Linux server, run "crontab -e" and add a line like the
 one shown, substituting for your unique paths and settings:
 
-*/10 * * * *	cd /home/myname/mywebsite; /usr/bin/php Zotlabs/Daemon/Run.php Cron > /dev/null 2>&1
+*/10 * * * *    cd /home/myname/mywebsite; /usr/bin/php Zotlabs/Daemon/Run.php Cron > /dev/null 2>&1
 
-You can generally find the location of PHP by executing "which php". If you 
-have troubles with this section please contact your hosting provider for 
+You can generally find the location of PHP by executing "which php". If you
+have troubles with this section please contact your hosting provider for
 assistance. The software will not work correctly if you cannot perform this
 step.
 
@@ -222,96 +216,96 @@ You should also be sure that App::$config['system']['php_path'] is set
 correctly in your .htconfig.php file, it should look like (changing it to the
 correct PHP location):
 
-App::$config['system']['php_path'] = '/usr/local/php72/bin/php';
-  
- 
-#####################################################################
-
-		If things don't work...
-
-#####################################################################
+App::$config['system']['php_path'] = '/usr/local/php74/bin/php';
 
 
 #####################################################################
-- If you get the message 
-	"System is currently unavailable. Please try again later"
+
+        If things don't work...
+
 #####################################################################
-	
-Check your database settings. It usually means your database could not be 
+
+
+#####################################################################
+- If you get the message
+    "System is currently unavailable. Please try again later"
+#####################################################################
+
+Check your database settings. It usually means your database could not be
 opened or accessed. If the database resides on the same machine, check that
-the database server name is "127.0.0.1" or the word "localhost". 
+the database server name is "127.0.0.1" or the word "localhost".
 
 #####################################################################
 - 500 Internal Error
 #####################################################################
 
-This could be the result of one of our Apache directives not being 
+This could be the result of one of our Apache directives not being
 supported by your version of Apache. Examine your apache server logs.
-Also check your file permissions. Your website and all contents must generally 
+Also check your file permissions. Your website and all contents must generally
 be world-readable.
 
 It is likely that your web server reported the source of the problem in
-its error log files. Please review these system error logs to determine what 
+its error log files. Please review these system error logs to determine what
 caused the problem. Often this will need to be resolved with your hosting
-provider or (if self-hosted) your web server configuration. 
+provider or (if self-hosted) your web server configuration.
 
 #####################################################################
 - 400 and 4xx "File not found" errors
 #####################################################################
 
-First check your file permissions. Your website and all contents must 
+First check your file permissions. Your website and all contents must
 generally be world-readable.
 
 Ensure that mod-rewite is installed and working, and that your
 .htaccess file is being used. To verify the latter, create a file test.out
-containing the word "test" in the top web directory, make it world 
+containing the word "test" in the top web directory, make it world
 readable and point your web browser to
 
 http://yoursitenamehere.com/test.out
 
 This file should be blocked. You should get a permission denied message.
 
-If you see the word "test" your Apache configuration is not allowing your 
+If you see the word "test" your Apache configuration is not allowing your
 .htaccess file to be used (there are rules in this file to block access
 to any file with .out at the end, as these are typically used for system logs).
 
-Make certain the .htaccess file exists and is readable by everybody, then 
-look for the existence of "AllowOverride None" in the Apache server 
-configuration for your site. This will need to be changed to 
-"AllowOverride All".  
+Make certain the .htaccess file exists and is readable by everybody, then
+look for the existence of "AllowOverride None" in the Apache server
+configuration for your site. This will need to be changed to
+"AllowOverride All".
 
-	If you do not see the word "test", your .htaccess is working, but it is 
+    If you do not see the word "test", your .htaccess is working, but it is
 likely that mod-rewrite is not installed in your web server or is not working.
 
-	On most flavours of Linux,
+    On most flavours of Linux,
 
 % a2enmod rewrite
 % service apache2 restart
 
-Consult your hosting provider, experts on your particular Linux 
-distribution or (if Windows) the provider of your Apache server software if 
-you need to change either of these and can not figure out how. There is 
-a lot of help available on the web. Google "mod-rewrite" along with the 
+Consult your hosting provider, experts on your particular Linux
+distribution or (if Windows) the provider of your Apache server software if
+you need to change either of these and can not figure out how. There is
+a lot of help available on the web. Google "mod-rewrite" along with the
 name of your operating system distribution or Apache package.
 
-  
+
 #####################################################################
 - If you see an error during database setup that DNS lookup failed
 #####################################################################
 
-This is a known issue on some versions of FreeBSD, because 
-dns_get_record() fails for some lookups. Create a file in your top webserver 
+This is a known issue on some versions of FreeBSD, because
+dns_get_record() fails for some lookups. Create a file in your top webserver
 folder called '.htpreconfig.php' and inside it put the following:
 
 <?php
 App::$config['system']['do_not_check_dns'] = 1;
 
 This should allow installation to proceed. Once the database has been
-installed, add the same config statement (but not the '<?php' line) to the 
-.htconfig.php file which was created during installation. 
+installed, add the same config statement (but not the '<?php' line) to the
+.htconfig.php file which was created during installation.
 
 #####################################################################
-- If you are unable to write the file .htconfig.php during installation 
+- If you are unable to write the file .htconfig.php during installation
 due to permissions issues:
 #####################################################################
 
@@ -321,7 +315,7 @@ For Linux:
 % touch .htconfig.php
 % chmod 777 .htconfig.php
 
-Retry the installation. As soon as the database has been created, 
+Retry the installation. As soon as the database has been created,
 
 ******* this is important *********
 
@@ -372,5 +366,5 @@ Here you can read more about Apache performance tuning:
 https://httpd.apache.org/docs/2.4/misc/perf-tuning.html
 
 There are tons of scripts to help you with fine-tuning your Apache
-installation. Just search with your favorite search engine 
+installation. Just search with your favorite search engine
 'apache fine-tuning script'.

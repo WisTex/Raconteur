@@ -1,9 +1,13 @@
 <div class="widget">
 	<h3 class="d-flex justify-content-between align-items-center">
-		<div class="cursor-pointer" onclick="openClose('actfilt'); return true;">
+        <div class="cursor-pointer" onclick="openClose('{{$content_id}}'); if ($('#{{$content_id}}').is(':visible')) {
+    		$('#{{$content_id}}-chevron').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+	    } else {
+    		$('#{{$content_id}}-chevron').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+		} return false;" >
 		{{$title}}
 		{{if ! $reset}}
-		<i class="fa fa-fw fa-caret-down fakelink"></i>
+	    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink"></i>
 		{{/if}}
 		</div>
 		{{if $reset}}
@@ -12,7 +16,7 @@
 		</a>
 		{{/if}}
 	</h3>
-	<div id="actfilt" style="display: none;">
+	<div id="{{$content_id}}" style="display: none;">
 	{{if $name}}
 	<div class="notifications-textinput">
 		<form method="get" action="{{$name.url}}" role="search">

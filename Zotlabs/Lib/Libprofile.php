@@ -284,6 +284,10 @@ class Libprofile
 		$profdm_url = EMPTY_STR;
 		
         $can_dm = perm_is_allowed($profile['uid'], (is_array($observer)) ? $observer['xchan_hash'] : EMPTY_STR, 'post_mail') && intval($observer['xchan_type']) !== XCHAN_TYPE_GROUP ;
+
+		if (intval($profile['uid']) === local_channel()) {
+			$can_dm = false;
+		}
 		
 	    if ($can_dm) {			
 			$dm_path = Libzot::get_rpost_path($observer);

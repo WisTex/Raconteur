@@ -135,6 +135,7 @@ class Stream_order
 
             $o = replace_macros(get_markup_template('common_widget.tpl'), [
                 '$title' => t('Stream Order'),
+    			'$content_id' => 'widget-stream-order',
                 '$content' => $content,
             ]);
         }

@@ -67,14 +67,16 @@ class Session
         // cookie. If you use a hostname it will create a .domain.com wildcard which will
         // have some nasty side effects if you have any other subdomains running hubzilla.
 
-        session_set_cookie_params(
-            ((isset($arr['lifetime']))   ? $arr['lifetime'] : 0),
-            ((isset($arr['path']))      ? $arr['path']     : '/'),
-            (($arr['domain'])    ? $arr['domain']   : false),
-            ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
-            ((isset($arr['httponly']))  ? $arr['httponly'] : true)
-        );
+		session_set_cookie_params([
+			'lifetime' => ((isset($arr['lifetime'])) ? $arr['lifetime'] : 0),
+			'path' => ((isset($arr['path'])) ? $arr['path'] : '/'),
+			'domain' => (($arr['domain']) ? $arr['domain'] : false),
+			'secure' => ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
+			'httponly' => ((isset($arr['httponly'])) ? $arr['httponly'] : true),
+			'samesite' => 'None'
+		]);
 
+    
         register_shutdown_function('session_write_close');
     }
 
@@ -122,9 +124,32 @@ class Session
         }
 
         if (x($_COOKIE, 'jsdisabled')) {
-            setcookie('jsdisabled', $_COOKIE['jsdisabled'], $newxtime, '/', false, ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false), ((isset($arr['httponly']))  ? $arr['httponly'] : true));
-        }
-        setcookie(session_name(), session_id(), $newxtime, '/', false, ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false), ((isset($arr['httponly']))  ? $arr['httponly'] : true));
+			setcookie(
+				'jsdisabled',
+				$_COOKIE['jsdisabled'],
+				[
+					'expires' => $newxtime,
+					'path' => '/',
+					'domain' => false,
+					'secure' => ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
+					'httponly' => ((isset($arr['httponly'])) ? $arr['httponly'] : true),
+					'samesite' => 'None'
+				]
+			);
+		}    
+
+		setcookie(
+			session_name(),
+			session_id(),
+			[
+				'expires' => $newxtime,
+				'path' => '/',
+				'domain' => false,
+				'secure' => ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
+				'httponly' => ((isset($arr['httponly'])) ? $arr['httponly'] : true),
+				'samesite' => 'None'
+			]
+		);
 
         $arr = array('expire' => $xtime);
         call_hooks('new_cookie', $arr);
@@ -140,8 +165,20 @@ class Session
         $xtime = (($_SESSION['remember_me']) ? (60 * 60 * 24 * 365) : 0 );
 
         if ($xtime) {
-            setcookie(session_name(), session_id(), (time() + $xtime), '/', false, ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false), ((isset($arr['httponly']))  ? $arr['httponly'] : true));
-        }
+			setcookie(
+				session_name(),
+				session_id(),
+				[
+					'expires' => time() + $xtime,
+					'path' => '/',
+					'domain' => false,
+					'secure' => ((isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? true : false),
+					'httponly' => ((isset($arr['httponly'])) ? $arr['httponly'] : true),
+					'samesite' => 'None'
+				]
+			);
+		}
+
         $arr = array('expire' => $xtime);
         call_hooks('extend_cookie', $arr);
     }

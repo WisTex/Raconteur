@@ -3,26 +3,29 @@
 	"type" : "application",
 	"description" : "Zot social server",
 	"keywords" : [
-		"identity",
-		"decentralisation",
-		"permission",
-		"SSO",
-		"ZOT",
-		"ZOT6"
+	        "identity",
+	        "decentralisation",
+	        "permission",
+	        "SSO",
+	        "ZOT",
+	        "ZOT6",
+	        "Nomad",
+	        "Fediverse",
+	        "activitypub"
 	],
 	"homepage" : "http://codeberg.org/zot/zap/",
-	"license" : "MIT",
+	"license" : "Unlicense",
 	"authors" : [{
 			"name" : "Mike Macgirvin",
 			"role" : "founder"
 		}
 	],
 	"support" : {
-		"issues" : "https://codeberg.org/zot/zap/issues",
+	        "issues" : "https://z.macgirvin.com/channel/zap",
 		"source" : "https://codeberg.org/zot/zap/"
 	},
 	"require" : {
-		"php" : ">=7.0",
+		"php" : ">=7.4",
 		"ext-curl" : "*",
 		"ext-gd" : "*",
 		"ext-mbstring" : "*",
@@ -45,8 +48,10 @@
 		"forkawesome/fork-awesome": "^1.1",
 		"p3k/emoji-detector": "^0.2.1",
 		"phpseclib/phpseclib": "^2.0",
-      "ext-json": "*"
-    },
+	        "ext-json": "*",
+		"symfony/yaml": "^5.4",
+		"symfony/uid": "^5.4"
+        },
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
 		"behat/behat" : "@stable",
@@ -67,7 +72,8 @@
 		}
 	},
 	"minimum-stability" : "stable",
-	"config" : {
+        "config" : {
+	        "platform": { "php": "7.4" },
 		"notify-on-install" : false,
 		"optimize-autoloader" : true
 	}

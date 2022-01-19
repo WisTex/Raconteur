@@ -4428,7 +4428,7 @@ msgstr "Egal, welche Option Du wählst – bitte lege fest, ob dieser Server die
 
 #: ../../Zotlabs/Module/Import.php:523
 msgid "Make this hub my primary location"
-msgstr "Dieser $Pojectname-Hub ist mein primärer Hub."
+msgstr "Dieser \$Projectname-Hub ist mein primärer Hub."
 
 #: ../../Zotlabs/Module/Import.php:524
 msgid "Move this channel (disable all previous locations)"
@@ -10235,8 +10235,8 @@ msgid "Your account on %s will expire in a few days."
 msgstr "Dein Konto auf %s wird in ein paar Tagen ablaufen."
 
 #: ../../addon/testdrive/testdrive.php:105
-msgid "Your $Productname test account is about to expire."
-msgstr "Dein $Productname Test-Konto wird bald auslaufen."
+msgid "Your $Projectname test account is about to expire."
+msgstr "Dein $Projectname Test-Konto wird bald auslaufen."
 
 #: ../../addon/rainbowtag/rainbowtag.php:81
 msgid "Enable Rainbowtag"

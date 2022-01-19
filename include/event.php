@@ -9,8 +9,7 @@ use Sabre\VObject;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Access\AccessControl;
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
+use Symfony\Component\Uid\Uuid;
 
 require_once('include/bbcode.php');
 
@@ -584,7 +583,7 @@ function event_store_event($arr)
             $hash = $arr['event_hash'];
         } else {
             try {
-                $hash = Uuid::uuid4()->toString();
+                $hash = Uuid::v4();
             } catch (UnsatisfiedDependencyException $e) {
                 $hash = random_string(48);
             }
