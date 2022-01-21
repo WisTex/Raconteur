@@ -117,27 +117,27 @@ class Dreport extends Controller
                     $r[$x]['dreport_result'] = t('site dead');
                     break;
                 case 'site deferred':
-                    $r[$x]['gravity'] = 3;
+                    $r[$x]['gravity'] = 4;
                     $r[$x]['dreport_result'] = t('site might be dead - deferred');
                     break;
                 case 'posted':
-                    $r[$x]['gravity'] = 3;
+                    $r[$x]['gravity'] = 5;
                     $r[$x]['dreport_result'] = t('posted');
                     break;
                 case 'accepted for delivery':
-                    $r[$x]['gravity'] = 4;
+                    $r[$x]['gravity'] = 6;
                     $r[$x]['dreport_result'] = t('accepted for delivery');
                     break;
                 case 'updated':
-                    $r[$x]['gravity'] = 5;
+                    $r[$x]['gravity'] = 7;
                     $r[$x]['dreport_result'] = t('updated');
                 case 'update ignored':
-                    $r[$x]['gravity'] = 6;
+                    $r[$x]['gravity'] = 8;
                     $r[$x]['dreport_result'] = t('update ignored');
                     break;
                 case 'permission denied':
                     $r[$x]['dreport_result'] = t('permission denied');
-                    $r[$x]['gravity'] = 6;
+                    $r[$x]['gravity'] = 9;
                     break;
                 case 'recipient not found':
                     $r[$x]['dreport_result'] = t('recipient not found');
