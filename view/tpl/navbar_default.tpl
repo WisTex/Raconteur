@@ -84,15 +84,15 @@
 		<i class="fa fa-question-circle"></i>
 	</button>
 	{{/if}}
-	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1">
+	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1" title="{{$asidetitle}}">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
 	{{if $localuser || $nav.pubs}}
-	<button id="notifications-btn-1" type="button" class="navbar-toggler border-0 notifications-btn">
+	<button id="notifications-btn-1" type="button" class="navbar-toggler border-0 notifications-btn" title="{{$notificationstitle}}">
 		<i id="notifications-btn-icon-1" class="fa fa-exclamation-circle notifications-btn-icon"></i>
 	</button>
 	{{/if}}
-	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar-collapse-2">
+	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar-collapse-2" title="{{$appstitle}}">
 		<i class="fa fa-bars"></i>
 	</button>
 </div>

@@ -304,6 +304,7 @@ function nav($template = 'default')
         '$is_owner' => $is_owner,
         '$sel' => App::$nav_sel,
         '$powered_by' => $powered_by,
+        '$asidetitle' => t('Side Panel'),
         '$help' => t('@name, #tag, ?doc, content'),
         '$pleasewait' => t('Please wait...'),
         '$nav_apps' => ((isset($nav_apps)) ? $nav_apps : []),
