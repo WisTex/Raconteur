@@ -64,7 +64,12 @@ class Zotfinger
                         dbesc($h[0]['hubloc_hash'])
                     );
                     if ($a) {
-                        hubloc_change_primary(array_shift($a));
+                        $new_primary = array_shift($a);
+                        q("update hubloc set hubloc_primary = 1 where hubloc_id = %d",
+                            intval($new_primary['hubloc_id'])
+                        );
+                        $new_primary['hubloc_primary'] = 1;
+                        hubloc_change_primary($new_primary);
                     }
                }
             }
