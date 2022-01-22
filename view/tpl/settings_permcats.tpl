@@ -20,25 +20,29 @@
 	<div class="panel">
 		<div class="section-subtitle-wrapper" role="tab" id="perms-tool">
 			<h3>
-				<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
+				<a data-toggle="collapse" data-target="#perms-tool-collapse" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
 				{{$permlbl}}
 				</a>
 			</h3>
 		</div>
-		<div id="perms-tool-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="perms-tool">
+		<div id="perms-tool-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="perms-tool" style="display:block;">
 			<div class="section-content-tools-wrapper">
 				<div class="section-content-warning-wrapper">
 				{{$permnote}}
 				</div>
 
-				<table id="perms-tool-table" class=form-group>
-					<tr>
-						<td></td><td colspan="2" class="abook-me">{{$me}}</td>
-					</tr>
-						{{foreach $perms as $prm}}
-						{{include file="field_acheckbox.tpl" field=$prm}}
-						{{/foreach}}
-				</table>
+
+        		<div class="defperms-edit">
+    				{{foreach $perms as $prm}}
+	    			{{include file="field_checkbox.tpl" field=$prm}}
+		    		{{/foreach}}
+				</div>
+
+				{{if $hidden_perms}}
+				{{foreach $hidden_perms as $prm}}
+					<input type="hidden" name="{{$prm.0}}" value="{{$prm.1}}" >
+					{{/foreach}}
+				{{/if}}
 
 				<div class="settings-submit-wrapper" >
 					<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>

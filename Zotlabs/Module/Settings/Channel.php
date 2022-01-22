@@ -3,6 +3,7 @@
 namespace Zotlabs\Module\Settings;
 
 use App;
+use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Access\Permissions;
@@ -670,7 +671,7 @@ class Channel
             '$permissions_role' => $permissions_role,
             '$role' => array('permissions_role', t('Channel type and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'),
             '$defpermcat' => ['defpermcat', t('Default Permissions Group'), $default_permcat, '', $permcats],
-            '$permcat_enable' => feature_enabled(local_channel(), 'permcats'),
+            '$permcat_enable' => Apps::system_app_installed(local_channel(), 'Roles'),
             '$profile_in_dir' => $profile_in_dir,
             '$hide_friends' => $hide_friends,
             '$hide_wall' => $hide_wall,

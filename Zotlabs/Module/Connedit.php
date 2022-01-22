@@ -768,7 +768,7 @@ class Connedit extends Controller
                     $thisperm = "1";
                 }
 
-                $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
+                $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, $yes_no, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
             }
 
             $pcat = new Permcat(local_channel());
@@ -806,7 +806,7 @@ class Connedit extends Controller
                 '$autoperms' => array('autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no),
                 '$permcat' => ['permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
                 '$permcat_new' => t('Add permission role'),
-                '$permcat_enable' => feature_enabled(local_channel(), 'permcats'),
+                '$permcat_enable' => Apps::system_app_installed(local_channel(),'Roles'),
                 '$addr' => unpunify($contact['xchan_addr']),
                 '$primeurl' => unpunify($contact['xchan_url']),
                 '$block_announce' => ['block_announce', t('Ignore shares and repeats this connection posts'), get_abconfig(local_channel(), $contact['xchan_hash'], 'system', 'block_announce', false), t('Note: This is not recommended for Groups.'), [t('No'), t('Yes')]],
@@ -840,7 +840,7 @@ class Connedit extends Controller
                 '$pending_label' => t('Connection Pending Approval'),
                 '$is_pending' => (intval($contact['abook_pending']) ? 1 : ''),
                 '$unapproved' => $unapproved,
-                '$inherited' => t('inherited'),
+                '$inherited' => '', // t('inherited'),
                 '$submit' => t('Submit'),
                 '$lbl_vis2' => sprintf(t('Please choose the profile you would like to display to %s when viewing your profile securely.'), $contact['xchan_name']),
                 '$close' => (($contact['abook_closeness']) ? $contact['abook_closeness'] : 80),
@@ -848,8 +848,8 @@ class Connedit extends Controller
                 '$me' => t('My Settings'),
                 '$perms' => $perms,
                 '$permlbl' => t('Individual Permissions'),
-                '$permnote' => t('Some permissions may be inherited from your channel\'s <a href="settings"><strong>privacy settings</strong></a>, which have higher priority than individual settings. You can <strong>not</strong> change those settings here.'),
-                '$permnote_self' => t('Some permissions may be inherited from your channel\'s <a href="settings"><strong>privacy settings</strong></a>, which have higher priority than individual settings. You can change those settings here but they wont have any impact unless the inherited setting changes.'),
+                '$permnote' => t('Some individual permissions may have been preset or locked based on your channel type and privacy settings.'),
+                '$permnote_self' => t('Some individual permissions may have been preset or locked based on your channel type and privacy settings.'),
                 '$lastupdtext' => t('Last update:'),
                 '$last_update' => relative_date($contact['abook_connected']),
                 '$profile_select' => contact_profile_assign($contact['abook_profile']),

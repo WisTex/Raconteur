@@ -13,7 +13,8 @@ class Permcats
 
     public function post()
     {
-
+        //logger('$_REQUEST: ' . print_r($_REQUEST,true));
+    
         if (!local_channel()) {
             return;
         }
@@ -46,7 +47,7 @@ class Permcats
 
         Libsync::build_sync_packet();
 
-        info(t('Permission category saved.') . EOL);
+        info(t('Permission role saved.') . EOL);
 
         return;
     }
@@ -91,24 +92,39 @@ class Permcats
             }
         }
 
+        $hidden_perms = [];
         $global_perms = Permissions::Perms();
 
         foreach ($global_perms as $k => $v) {
             $thisperm = Permcat::find_permcat($existing, $k);
+
             $checkinherited = PermissionLimits::Get(local_channel(), $k);
 
-            if ($existing[$k]) {
-                $thisperm = "1";
+            $inherited = (($checkinherited & PERMS_SPECIFIC) ? false : true);
+
+            $thisperm = 0;
+            if ($existing) {
+                foreach ($existing as $ex) {
+                    if ($ex['name'] === $k) {
+                        $thisperm = $ex['value'];
+                        break;
+                    }
+                }
             }
 
-            $perms[] = array('perms_' . $k, $v, '', $thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
+            $perms[] = [ 'perms_' . $k, $v, $inherited ? 1 : intval($thisperm), '', [ t('No'), t('Yes') ], (($inherited) ? ' disabled="disabled" ' : '' )];
+
+            if ($inherited) {
+                $hidden_perms[] = ['perms_' . $k, 1 ];
+            }
+
         }
 
-
+    
         $tpl = get_markup_template("settings_permcats.tpl");
         $o .= replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_permcats"),
-            '$title' => t('Permission Categories'),
+            '$title' => t('Permission Roles'),
             '$desc' => $desc,
             '$desc2' => $desc2,
             '$tokens' => $t,
@@ -116,14 +132,15 @@ class Permcats
             '$atoken' => $atoken,
             '$url1' => z_root() . '/channel/' . $channel['channel_address'],
             '$url2' => z_root() . '/photos/' . $channel['channel_address'],
-            '$name' => array('name', t('Permission Name') . ' <span class="required">*</span>', (($name) ? $name : ''), ''),
+            '$name' => array('name', t('Role name') . ' <span class="required">*</span>', (($name) ? $name : ''), ''),
             '$me' => t('My Settings'),
             '$perms' => $perms,
+            '$hidden_perms' => $hidden_perms,
             '$inherited' => t('inherited'),
             '$notself' => 0,
             '$self' => 1,
             '$permlbl' => t('Individual Permissions'),
-            '$permnote' => t('Some permissions may be inherited from your channel\'s <a href="settings"><strong>privacy settings</strong></a>, which have higher priority than individual settings. You can <strong>not</strong> change those settings here.'),
+            '$permnote' => t('Some individual permissions may have been preset or locked based on your channel type and privacy settings.'),
             '$submit' => t('Submit')
         ));
         return $o;
