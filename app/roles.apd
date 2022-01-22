@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/settings/permcats
+requires: local_channel
+name: Roles
+photo: icon:users
+categories: Networking

@@ -228,7 +228,7 @@ class Permissions
 
         // If a default permcat exists, use that
 
-        $pc = ((feature_enabled($channel_id, 'permcats')) ? get_pconfig($channel_id, 'system', 'default_permcat') : 'default');
+        $pc = ((Zlib\Apps::system_app_installed($channel_id, 'Roles')) ? get_pconfig($channel_id, 'system', 'default_permcat') : 'default');
         if (! in_array($pc, [ '','default' ])) {
             $pcp = new Zlib\Permcat($channel_id);
             $permcat = $pcp->fetch($pc);

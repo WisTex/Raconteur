@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Permcat;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
@@ -248,7 +249,7 @@ class Defperms extends Controller
                 '$autoperms' => array('autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no),
                 '$permcat' => ['permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
                 '$permcat_new' => t('Add permission role'),
-                '$permcat_enable' => feature_enabled(local_channel(), 'permcats'),
+                '$permcat_enable' => Apps::system_app_installed($channel_id, 'Roles'),
                 '$section' => $section,
                 '$sections' => $sections,
                 '$autolbl' => t('The permissions indicated on this page will be applied to all new connections.'),

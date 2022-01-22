@@ -395,6 +395,7 @@ class Apps
             'Random Channel' => t('Random Channel'),
             'Remote Diagnostics' => t('Remote Diagnostics'),
             'Report Bug' => t('Report Bug'),
+            'Roles' => t('Roles'),
             'Search' => t('Search'),
             'Secrets' => t('Secrets'),
             'Settings' => t('Settings'),

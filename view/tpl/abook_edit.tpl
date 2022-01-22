@@ -238,7 +238,7 @@
 						{{include file="field_select.tpl" field=$permcat}}
 						{{/if}}
 
-						<table id="perms-tool-table" class=form-group>
+						<table id="perms-tool-table" class="form-group">
 							<tr>
 								<td></td>
 								{{if $notself}}

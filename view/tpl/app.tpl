@@ -38,8 +38,8 @@
 <a class="dropdown-item{{if $app.active}} active{{/if}}" href="{{$app.url}}">{{if $icon}}<i class="generic-icons-nav fa fa-fw fa-{{$icon}}"></i>{{else}}<img src="{{$app.photo}}" width="16" height="16" style="margin-right:9px;"/>{{/if}}{{$app.name}}</a>
 {{/if}}
 {{if $order}}
-<a href="{{$hosturl}}appman/{{$app.guid}}/moveup{{if $mode == 'nav-order-pinned'}}/nav_pinned_app{{else}}/nav_featured_app{{/if}}" class="btn btn-outline-secondary btn-sm" style="margin-bottom: 5px;"><i class="generic-icons-nav fa fa-fw fa-arrow-up"></i></a>
-<a href="{{$hosturl}}appman/{{$app.guid}}/movedown{{if $mode == 'nav-order-pinned'}}/nav_pinned_app{{else}}/nav_featured_app{{/if}}" class="btn btn-outline-secondary btn-sm" style="margin-bottom: 5px;"><i class="generic-icons-nav fa fa-fw fa-arrow-down"></i></a>
+<a href="{{$hosturl}}appman/{{$app.guid}}/moveup{{if $mode == 'nav-order-pinned'}}/nav_pinned_app{{else}}/nav_featured_app{{/if}}" class="btn btn-outline-secondary btn-sm" style="margin-bottom: 5px;"><i class="generic-icons-nav fa fa-fw fa-arrow-up" style="margin: auto;"></i></a>
+<a href="{{$hosturl}}appman/{{$app.guid}}/movedown{{if $mode == 'nav-order-pinned'}}/nav_pinned_app{{else}}/nav_featured_app{{/if}}" class="btn btn-outline-secondary btn-sm" style="margin-bottom: 5px;"><i class="generic-icons-nav fa fa-fw fa-arrow-down" style="margin: auto;"></i></a>
 {{if $icon}}<i class="generic-icons-nav fa fa-fw fa-{{$icon}}"></i>{{else}}<img src="{{$app.photo}}" width="16" height="16" style="margin-right:9px;"/>{{/if}}{{$app.name}}<br>
 {{/if}}
 
