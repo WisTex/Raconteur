@@ -51,7 +51,7 @@ class Zotfinger
             // obtain the nomadic identity hash. Then use that to find any additional
             // nomadic locations.
     
-            $h = Activity::get_actor_hublocs($resource, 'zot6');
+            $h = Activity::get_actor_hublocs($resource, 'nomad');
             if ($h) {
                 // mark this location deleted
                 hubloc_delete($h[0]);
