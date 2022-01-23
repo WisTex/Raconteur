@@ -7,7 +7,7 @@ use Zotlabs\Web\HTTPSig;
 class Zotfinger
 {
 
-    public static function exec($resource, $channel = null, $verify = true)
+    public static function exec($resource, $channel = null, $verify = true, $recurse = true)
     {
 
         if (!$resource) {
@@ -42,39 +42,29 @@ class Zotfinger
         $redirects = 0;
         $x = z_post_url($resource, $data, $redirects, ['headers' => $h]);
 
-        if (intval($x['return_code'] === 404)) {
+        if (in_array(intval($x['return_code']), [ 404, 410 ]) && $recurse) {
 
-            // if this resource returns "not found", mark any corresponding hubloc deleted and
-            // change the primary if needed. We need to catch it at this level because we
-            // can't really sync the locations if we've got no data to work with. 
-        
-            $h = Activity::get_actor_hublocs($resource, 'zot6,not_deleted');
+            // The resource has been deleted or doesn't exist at this location.
+            // Try to find another nomadic resource for this channel and return that.
+
+            // First, see if there's a hubloc for this site. Fetch that record to
+            // obtain the nomadic identity hash. Then use that to find any additional
+            // nomadic locations.
+    
+            $h = Activity::get_actor_hublocs($resource, 'zot6');
             if ($h) {
-                $primary = intval($h[0]['hubloc_primary']);
-
-                q("update hubloc set hubloc_deleted = 1, hubloc_primary = 0 where hubloc_id = %d",
-                    intval($h[0]['hubloc_id'])
-                );
-                if ($primary) {
-                    // find another hub that can act as primary since this one cannot. If this
-                    // fails, it may be that there are no other instances of the channel known
-                    // to this site. In that case, we'll just leave the entry without a primary
-                    // until/id we hear from them again at a new location. 
-                    $a = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
-                        dbesc($h[0]['hubloc_hash'])
-                    );
-                    if ($a) {
-                        $new_primary = array_shift($a);
-                        q("update hubloc set hubloc_primary = 1 where hubloc_id = %d",
-                            intval($new_primary['hubloc_id'])
-                        );
-                        $new_primary['hubloc_primary'] = 1;
-                        hubloc_change_primary($new_primary);
+                // mark this location deleted
+                hubloc_delete($h[0]);
+                $hubs = Activity::get_actor_hublocs($h[0]['hubloc_hash']);
+                if ($hubs) {
+                    foreach ($hubs as $hub) {
+                        if ($hub['hubloc_id_url'] !== $resource and !$hub['hubloc_deleted']) {
+                            return $self::exec($hub['hubloc_id_url'],$channel,$verify);
+                        }
                     }
-               }
+                }
             }
         }
-
     
         if ($x['success']) {
             if ($verify) {

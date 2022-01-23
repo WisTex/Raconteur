@@ -390,32 +390,21 @@ function remove_all_xchan_resources($xchan, $channel_id = 0)
             dbesc($xchan)
         );
 
-        if ($dirmode === false || $dirmode == DIRECTORY_MODE_NORMAL) {
-            $r = q(
-                "delete from xchan where xchan_hash = '%s'",
-                dbesc($xchan)
-            );
-            $r = q(
-                "delete from hubloc where hubloc_hash = '%s'",
-                dbesc($xchan)
-            );
-            $r = q(
-                "delete from xprof where xprof_hash = '%s'",
-                dbesc($xchan)
-            );
-        } else {
-            // directory servers need to keep the record around for sync purposes - mark it deleted
+        $r = q(
+            "update hubloc set hubloc_deleted = 1 where hubloc_hash = '%s'",
+            dbesc($xchan)
+        );
 
-            $r = q(
-                "update hubloc set hubloc_deleted = 1 where hubloc_hash = '%s'",
-                dbesc($xchan)
-            );
+        $r = q(
+            "update xchan set xchan_deleted = 1 where xchan_hash = '%s'",
+             dbesc($xchan)
+        );
+    
+        $r = q(
+            "delete from xprof where xprof_hash = '%s'",
+            dbesc($xchan)
+        );
 
-            $r = q(
-                "update xchan set xchan_deleted = 1 where xchan_hash = '%s'",
-                dbesc($xchan)
-            );
-        }
     }
 }
 
