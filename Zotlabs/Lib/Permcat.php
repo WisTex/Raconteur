@@ -52,7 +52,7 @@ class Permcat
         // if no role perms it may be a custom role, see if there any autoperms
 
         if (! $perms) {
-            $perms = Permissions::FilledAutoPerms($channel_id);
+            $perms = Permissions::FilledAutoperms($channel_id);
         }
 
         // if no autoperms it may be a custom role with manual perms
@@ -60,7 +60,7 @@ class Permcat
         if (! $perms) {
             $c = channelx_by_n($channel_id);
             if ($c) {
-                $perms = Permissions::FilledPerms(get_abconfig($channel_id, $c['channel_hash'], 'system', 'my_perms', EMPTY_STR));
+                $perms = Permissions::FilledPerms(explode(',',get_abconfig($channel_id, $c['channel_hash'], 'system', 'my_perms', EMPTY_STR)));
             }
         }
 
@@ -148,7 +148,7 @@ class Permcat
             );
             if ($x) {
                 foreach ($x as $xv) {
-                    $value = ((preg_match('|^a:[0-9]+:{.*}$|s', $xv['v'])) ? unserialize($xv['v']) : $xv['v']);
+                    $value = unserialise($xv['v']);
                     $permcats[] = [ $xv['k'], $xv['k'], $value, 0 ];
                 }
             }

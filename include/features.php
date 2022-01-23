@@ -247,14 +247,14 @@ function get_features($filtered = true, $level = (-1))
 //          ],
 
 
-//          [
-//              'permcats',
-//              t('Permission Categories'),
-//              t('Create custom connection permission limits'),
-//              false,
-//              get_config('feature_lock','permcats'),
-//              feature_level('permcats',2),
-//          ],
+          [
+              'permcats',
+              t('Permission Categories'),
+              t('Create custom connection permission limits'),
+              true,
+              get_config('feature_lock','permcats'),
+              feature_level('permcats',2),
+          ],
 
 //          [
 //              'oauth_clients',

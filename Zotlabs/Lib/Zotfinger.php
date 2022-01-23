@@ -7,7 +7,7 @@ use Zotlabs\Web\HTTPSig;
 class Zotfinger
 {
 
-    public static function exec($resource, $channel = null, $verify = true)
+    public static function exec($resource, $channel = null, $verify = true, $recurse = true)
     {
 
         if (!$resource) {
@@ -42,6 +42,30 @@ class Zotfinger
         $redirects = 0;
         $x = z_post_url($resource, $data, $redirects, ['headers' => $h]);
 
+        if (in_array(intval($x['return_code']), [ 404, 410 ]) && $recurse) {
+
+            // The resource has been deleted or doesn't exist at this location.
+            // Try to find another nomadic resource for this channel and return that.
+
+            // First, see if there's a hubloc for this site. Fetch that record to
+            // obtain the nomadic identity hash. Then use that to find any additional
+            // nomadic locations.
+    
+            $h = Activity::get_actor_hublocs($resource, 'zot6');
+            if ($h) {
+                // mark this location deleted
+                hubloc_delete($h[0]);
+                $hubs = Activity::get_actor_hublocs($h[0]['hubloc_hash']);
+                if ($hubs) {
+                    foreach ($hubs as $hub) {
+                        if ($hub['hubloc_id_url'] !== $resource and !$hub['hubloc_deleted']) {
+                            return $self::exec($hub['hubloc_id_url'],$channel,$verify);
+                        }
+                    }
+                }
+            }
+        }
+    
         if ($x['success']) {
             if ($verify) {
                 $result['signature'] = HTTPSig::verify($x, EMPTY_STR, 'zot6');

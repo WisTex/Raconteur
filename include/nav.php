@@ -304,6 +304,7 @@ function nav($template = 'default')
         '$is_owner' => $is_owner,
         '$sel' => App::$nav_sel,
         '$powered_by' => $powered_by,
+        '$asidetitle' => t('Side Panel'),
         '$help' => t('@name, #tag, ?doc, content'),
         '$pleasewait' => t('Please wait...'),
         '$nav_apps' => ((isset($nav_apps)) ? $nav_apps : []),
@@ -312,9 +313,11 @@ function nav($template = 'default')
         '$channel_thumb' => ((App::$profile) ? App::$profile['thumb'] : ''),
         '$channel_apps' => ((isset($channel_apps)) ? $channel_apps : []),
         '$manageapps' => t('Installed Apps'),
+        '$appstitle' => t('Apps'),
         '$addapps' => t('Available Apps'),
         '$orderapps' => t('Arrange Apps'),
         '$sysapps_toggle' => t('Toggle System Apps'),
+        '$notificationstitle' => t('Notifications'),
         '$url' => ((isset($url) && $url) ? $url : App::$cmd)
     ));
 
