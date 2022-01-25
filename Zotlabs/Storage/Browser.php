@@ -8,6 +8,7 @@ use Sabre\DAV\INode;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Render\Theme;
+use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use function Sabre\HTTP\encodePath;
@@ -379,7 +380,7 @@ class Browser extends DAV\Browser\Plugin {
 			}
 
 			// Storage and quota for the account (all channels of the owner of this directory)!
-			$limit = engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
+			$limit = engr_units_to_bytes(ServiceClass::fetch($this->auth->owner_id, 'attach_upload_limit'));
 		}
 
 		if ((! $limit) && get_config('system','cloud_report_disksize')) {
