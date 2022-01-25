@@ -120,7 +120,7 @@ class Directory extends Controller
         $active = Libzotdir::get_directory_setting($observer, 'activedir');
 
         $o = '';
-        nav_set_selected('Directory');
+        Navbar::set_selected('Directory');
 
         if (x($_POST, 'search')) {
             $search = notags(trim($_POST['search']));

@@ -909,7 +909,7 @@ class Cdav extends Controller
         }
 
         if (argv(1) === 'calendar') {
-            nav_set_selected('Calendar');
+            Navbar::set_selected('Calendar');
             $caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
             $calendars = $caldavBackend->getCalendarsForUser($principalUri);
         }
@@ -1207,7 +1207,7 @@ class Cdav extends Controller
 
 
         if (argv(1) === 'addressbook') {
-            nav_set_selected('CardDAV');
+            Navbar::set_selected('CardDAV');
             $carddavBackend = new PDO($pdo);
             $addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
         }

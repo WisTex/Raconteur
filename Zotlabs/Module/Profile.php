@@ -32,7 +32,7 @@ class Profile extends Controller
             return;
         }
 
-        nav_set_selected('Profile');
+        Navbar::set_selected('Profile');
 
         $profile = '';
         $channel = App::get_channel();

@@ -65,7 +65,7 @@ class Rpost extends Controller
             return login();
         }
 
-        nav_set_selected('Post');
+        Navbar::set_selected('Post');
 
         if (local_channel() && array_key_exists('userfile', $_FILES)) {
             $channel = App::get_channel();

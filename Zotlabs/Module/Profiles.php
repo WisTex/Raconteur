@@ -18,7 +18,7 @@ class Profiles extends Controller
     public function init()
     {
 
-        nav_set_selected('Profiles');
+        Navbar::set_selected('Profiles');
 
         if (!local_channel()) {
             return;

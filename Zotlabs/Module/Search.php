@@ -48,7 +48,7 @@ class Search extends Controller
         if ($this->loading) {
             $_SESSION['loadtime'] = datetime_convert();
         }
-        nav_set_selected('Search');
+        Navbar::set_selected('Search');
 
         $format = (($_REQUEST['format']) ? $_REQUEST['format'] : '');
         if ($format !== '') {

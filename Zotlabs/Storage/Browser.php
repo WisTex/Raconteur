@@ -326,7 +326,7 @@ class Browser extends DAV\Browser\Plugin {
 
 		$a = false;
 
-		nav_set_selected('Files');
+		Navbar::set_selected('Files');
 
 		App::$page['content'] = $html;
 		load_pdl();

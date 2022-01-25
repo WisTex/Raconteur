@@ -644,7 +644,7 @@ class Photos extends Controller
         $sql_extra = permissions_sql($owner_uid, get_observer_hash(), 'photo');
         $sql_attach = permissions_sql($owner_uid, get_observer_hash(), 'attach');
 
-        nav_set_selected('Photos');
+        Navbar::set_selected('Photos');
 
         $o = '<script src="vendor/blueimp/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
 			<script src="vendor/blueimp/jquery-file-upload/js/jquery.iframe-transport.js"></script>

@@ -14,7 +14,7 @@ class Apps extends Controller
     public function get()
     {
 
-        nav_set_selected('Apps');
+        Navbar::set_selected('Apps');
 
         if (argc() == 2 && argv(1) == 'edit') {
             $mode = 'edit';

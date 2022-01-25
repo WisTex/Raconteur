@@ -103,7 +103,7 @@ class Chat extends Controller
 
         if (local_channel()) {
             $channel = App::get_channel();
-            nav_set_selected('Chatrooms');
+            Navbar::set_selected('Chatrooms');
         }
 
         $ob = App::get_observer();

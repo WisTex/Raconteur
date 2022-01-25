@@ -19,7 +19,7 @@ class Notifications extends Controller
         }
 
 
-        nav_set_selected('Notifications');
+        Navbar::set_selected('Notifications');
 
         $o = '';
         $notif_content = '';

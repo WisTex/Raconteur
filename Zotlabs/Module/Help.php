@@ -17,7 +17,7 @@ class Help extends Controller
 
     public function get()
     {
-        nav_set_selected('Help');
+        Navbar::set_selected('Help');
 
         if ($_REQUEST['search']) {
             $o .= '<div id="help-content" class="generic-content-wrapper">';

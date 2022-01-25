@@ -56,7 +56,7 @@ class Webpages extends Controller
             return $o;
         }
 
-        nav_set_selected('Webpages');
+        Navbar::set_selected('Webpages');
 
         $which = argv(1);
 

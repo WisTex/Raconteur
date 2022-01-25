@@ -94,7 +94,7 @@ class Pubstream extends Controller
         }
 
         if (!$this->updating && !$this->loading) {
-            nav_set_selected(t('Public Stream'));
+            Navbar::set_selected(t('Public Stream'));
 
             if (!$mid) {
                 $_SESSION['loadtime_pubstream'] = datetime_convert();

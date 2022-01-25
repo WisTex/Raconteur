@@ -110,7 +110,7 @@ class Invite extends Controller
             return $o;
         }
 
-        nav_set_selected('Invite');
+        Navbar::set_selected('Invite');
 
         $tpl = get_markup_template('invite.tpl');
         $invonly = false;

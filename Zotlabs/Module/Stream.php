@@ -220,7 +220,7 @@ class Stream extends Controller
 
             $body = EMPTY_STR;
 
-            nav_set_selected('Stream');
+            Navbar::set_selected('Stream');
 
             $channel_acl = [
                 'allow_cid' => $channel['channel_allow_cid'],

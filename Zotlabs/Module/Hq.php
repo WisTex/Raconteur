@@ -166,7 +166,7 @@ class Hq extends Controller
         }
 
         if (!$this->updating && !$this->loading) {
-            nav_set_selected('HQ');
+            Navbar::set_selected('HQ');
 
             $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 1);
 

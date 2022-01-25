@@ -2283,7 +2283,7 @@ function construct_page() {
 		$installing = true;
 	}
 	else {
-		nav($navbar);
+		Navbar::render($navbar);
 	}
 
 
