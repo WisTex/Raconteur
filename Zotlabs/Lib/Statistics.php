@@ -40,7 +40,7 @@ class Statistics {
         );
         $total = ($r) ? count($r) : 0;
         Config::Set('system', 'channels_active_monthly_stat', $total);
-        return $total'
+        return $total;
     }
 
     function get_posts()
