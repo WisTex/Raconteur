@@ -19,7 +19,7 @@ class Archive
 
         $uid = App::$profile_uid;
 
-        if (!feature_enabled($uid, 'archives')) {
+        if (!Features::enabled($uid, 'archives')) {
             return '';
         }
 

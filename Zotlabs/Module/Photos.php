@@ -1131,7 +1131,7 @@ class Photos extends Controller
                     'lockstate' => $lockstate[0],
                     'help_tags' => t('Example: @bob, @Barbara_Jensen, @jim@example.com'),
                     'item_id' => ((count($linked_items)) ? $link_item['id'] : 0),
-                    'adult_enabled' => feature_enabled($owner_uid, 'adult_photo_flagging'),
+                    'adult_enabled' => Features::enabled($owner_uid, 'adult_photo_flagging'),
                     'adult' => array('adult', t('Flag as adult in album view'), intval($ph[0]['is_nsfw']), ''),
                     'submit' => t('Submit'),
                     'delete' => t('Delete Photo'),

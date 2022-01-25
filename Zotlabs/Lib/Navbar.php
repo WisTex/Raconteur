@@ -122,7 +122,7 @@ class Navbar {
             // user menu
             $nav['usermenu'][] = ['profile/' . $channel['channel_address'], t('View Profile'), ((App::$nav_sel['raw_name'] == 'Profile') ? 'active' : ''), t('Your profile page'),'profile_nav_btn'];
 
-            if (feature_enabled(local_channel(), 'multi_profiles')) {
+            if (Features::enabled(local_channel(), 'multi_profiles')) {
                 $nav['usermenu'][]   = ['profiles', t('Edit Profiles'), ((App::$nav_sel['raw_name'] == 'Profiles') ? 'active' : '') , t('Manage/Edit profiles'),'profiles_nav_btn'];
             } else {
                 $nav['usermenu'][]   = ['profiles/' . $prof[0]['id'], t('Edit Profile'), ((App::$nav_sel['raw_name'] == 'Profiles') ? 'active' : ''), t('Edit your profile'),'profiles_nav_btn'];

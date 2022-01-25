@@ -55,7 +55,6 @@ require_once('include/text.php');
 require_once('include/datetime.php');
 require_once('include/language.php');
 require_once('include/permissions.php');
-require_once('include/features.php');
 require_once('include/taxonomy.php');
 require_once('include/connections.php');
 require_once('include/zid.php');

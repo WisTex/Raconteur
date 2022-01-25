@@ -661,7 +661,7 @@ class Channel
             '$permdesc' => t("(click to open/close)"),
             '$aclselect' => Libacl::populate($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
             '$profseltxt' => t('Profile to assign new connections'),
-            '$profselect' => ((feature_enabled(local_channel(), 'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(), 'system', 'profile_assign', '')) : ''),
+            '$profselect' => ((Features::enabled(local_channel(), 'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(), 'system', 'profile_assign', '')) : ''),
 
             '$allow_cid' => acl2json($perm_defaults['allow_cid']),
             '$allow_gid' => acl2json($perm_defaults['allow_gid']),

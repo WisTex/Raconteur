@@ -1012,7 +1012,7 @@ class Cdav extends Controller
 
             $sources = rtrim($sources, ', ');
 
-            $first_day = feature_enabled(local_channel(), 'cal_first_day');
+            $first_day = Features::enabled(local_channel(), 'cal_first_day');
             $first_day = (($first_day) ? $first_day : 0);
 
             $title = ['title', t('Event title')];

@@ -82,7 +82,7 @@ class Settings_menu
             'selected' => ''
         );
 
-//      if(feature_enabled(local_channel(),'oauth_clients')) {
+//      if(Features::enabled(local_channel(),'oauth_clients')) {
 //          $tabs[] =   array(
 //              'label' => t('OAuth1 apps'),
 //              'url' => z_root() . '/settings/oauth',
@@ -98,7 +98,7 @@ class Settings_menu
             );
         }
 
-//      if(feature_enabled(local_channel(),'access_tokens')) {
+//      if(Features::enabled(local_channel(),'access_tokens')) {
 //          $tabs[] =   array(
 //              'label' => t('Guest Access Tokens'),
 //              'url' => z_root() . '/settings/tokens',
@@ -123,7 +123,7 @@ class Settings_menu
 //          );
 //      }
 
-//      if(feature_enabled(local_channel(),'channel_sources')) {
+//      if(Features::enabled(local_channel(),'channel_sources')) {
 //          $tabs[] = array(
 //              'label' => t('Channel Sources'),
 //              'url' => z_root() . '/sources',

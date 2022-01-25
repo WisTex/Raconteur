@@ -465,10 +465,10 @@ class ThreadItem
             'embed'     => $embed,
             'rawmid'    => $item['mid'],
             'plink'     => get_plink($item),
-            'edpost'    => $edpost, // ((feature_enabled($conv->get_profile_owner(),'edit_posts')) ? $edpost : ''),
+            'edpost'    => $edpost, // ((Features::enabled($conv->get_profile_owner(),'edit_posts')) ? $edpost : ''),
             'star'      => $star,
-            'tagger'    => ((feature_enabled($conv->get_profile_owner(), 'commtag')) ? $tagger : ''),
-            'filer'     => ((feature_enabled($conv->get_profile_owner(), 'filing')) ? $filer : ''),
+            'tagger'    => ((Features::enabled($conv->get_profile_owner(), 'commtag')) ? $tagger : ''),
+            'filer'     => ((Features::enabled($conv->get_profile_owner(), 'filing')) ? $filer : ''),
             'pinned'    => ($pinned ? t('Pinned post') : ''),
             'pinnable'  => (($this->is_toplevel() && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0 && $item['item_delayed'] == 0) ? '1' : ''),
             'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),
@@ -477,7 +477,7 @@ class ThreadItem
             'bookmark'  => (($conv->get_profile_owner() == local_channel() && local_channel() && $has_bookmarks) ? t('Save Bookmarks') : ''),
             'addtocal'  => (($has_event && ! $item['resource_id']) ? t('Add to Calendar') : ''),
             'drop'      => $drop,
-            'multidrop' => ((feature_enabled($conv->get_profile_owner(), 'multi_delete')) ? $multidrop : ''),
+            'multidrop' => ((Features::enabled($conv->get_profile_owner(), 'multi_delete')) ? $multidrop : ''),
             'dropdown_extras' => $dropdown_extras,
 
             // end toolbar buttons
@@ -930,7 +930,7 @@ class ThreadItem
         call_hooks('comment_buttons', $arr);
         $comment_buttons = $arr['comment_buttons'];
 
-        $feature_auto_save_draft = ((feature_enabled($conv->get_profile_owner(), 'auto_save_draft')) ? "true" : "false");
+        $feature_auto_save_draft = ((Features::enabled($conv->get_profile_owner(), 'auto_save_draft')) ? "true" : "false");
         $permanent_draft = ((intval($conv->get_profile_owner()) === intval(local_channel()) && Apps::system_app_installed($conv->get_profile_owner(), 'Drafts')) ? ('Save draft') : EMPTY_STR);
 
 

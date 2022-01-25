@@ -102,7 +102,7 @@ event_created
 event_store_event
 event_updated
 extend_cookie
-feature_enabled
+Features::enabled
 feature_settings
 feature_settings_post
 federated_transports
@@ -118,7 +118,7 @@ get_all_perms
 get_base_apps
 get_best_language
 get_default_export_sections
-get_features
+Features::get
 get_profile_photo
 get_role_perms
 get_system_apps

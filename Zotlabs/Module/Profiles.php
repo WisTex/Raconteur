@@ -180,8 +180,8 @@ class Profiles extends Controller
             killme();
         }
 
-        if (((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(), 'multi_profiles')) {
-            if (feature_enabled(local_channel(), 'multi_profiles')) {
+        if (((argc() > 1) && (intval(argv(1)))) || !Features::enabled(local_channel(), 'multi_profiles')) {
+            if (Features::enabled(local_channel(), 'multi_profiles')) {
                 $id = argv(1);
             } else {
                 $x = q(
@@ -444,7 +444,7 @@ class Profiles extends Controller
 
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
-            $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
+            $advanced = ((Features::enabled(local_channel(), 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -683,8 +683,8 @@ class Profiles extends Controller
         $profile_fields_basic = Channel::get_profile_fields_basic();
         $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-        if (((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(), 'multi_profiles')) {
-            if (feature_enabled(local_channel(), 'multi_profiles')) {
+        if (((argc() > 1) && (intval(argv(1)))) || !Features::enabled(local_channel(), 'multi_profiles')) {
+            if (Features::enabled(local_channel(), 'multi_profiles')) {
                 $id = argv(1);
             } else {
                 $x = q(
@@ -712,7 +712,7 @@ class Profiles extends Controller
                 '$editselect' => $editselect,
             ));
 
-            $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
+            $advanced = ((Features::enabled(local_channel(), 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -760,7 +760,7 @@ class Profiles extends Controller
 
             $tpl = get_markup_template("profile_edit.tpl");
             $o .= replace_macros($tpl, array(
-                '$multi_profiles' => ((feature_enabled(local_channel(), 'multi_profiles')) ? true : false),
+                '$multi_profiles' => ((Features::enabled(local_channel(), 'multi_profiles')) ? true : false),
                 '$form_security_token' => get_form_security_token("profile_edit"),
                 '$profile_clone_link' => 'profiles/clone/' . $r[0]['id'] . '?t=' . get_form_security_token("profile_clone"),
                 '$profile_drop_link' => 'profiles/drop/' . $r[0]['id'] . '?t=' . get_form_security_token("profile_drop"),
@@ -782,7 +782,7 @@ class Profiles extends Controller
                 '$location' => t('Location'),
                 '$relation' => t('Relationship'),
                 '$miscellaneous' => t('Miscellaneous'),
-                '$exportable' => feature_enabled(local_channel(), 'profile_export'),
+                '$exportable' => Features::enabled(local_channel(), 'profile_export'),
                 '$lbl_import' => t('Import profile from file'),
                 '$lbl_export' => t('Export profile to file'),
                 '$lbl_gender' => t('Your gender'),

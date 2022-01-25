@@ -534,7 +534,7 @@ class Events extends Controller
                 '$allow_gid' => acl2json($permissions['allow_gid']),
                 '$deny_cid' => acl2json($permissions['deny_cid']),
                 '$deny_gid' => acl2json($permissions['deny_gid']),
-                '$tz_choose' => feature_enabled(local_channel(), 'event_tz_select'),
+                '$tz_choose' => Features::enabled(local_channel(), 'event_tz_select'),
                 '$timezone' => array('timezone_select', t('Timezone:'), date_default_timezone_get(), '', get_timezones()),
 
                 '$lockstate' => (($acl->is_private()) ? 'lock' : 'unlock'),

@@ -316,7 +316,7 @@ class Apps
                         if ($config) {
                             $unset = ((get_config('system', $require[0]) == $require[1]) ? false : true);
                         } else {
-                            $unset = ((local_channel() && feature_enabled(local_channel(), $require)) ? false : true);
+                            $unset = ((local_channel() && Features::enabled(local_channel(), $require)) ? false : true);
                         }
                         if ($unset) {
                             unset($ret);
@@ -558,7 +558,7 @@ class Apps
                             if ($config) {
                                 $unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
                             } else {
-                                $unset = (($channel_id && feature_enabled($channnel_id, $require)) ? false : true);
+                                $unset = (($channel_id && Features::enabled($channnel_id, $require)) ? false : true);
                             }
                             if ($unset) {
                                 return '';
