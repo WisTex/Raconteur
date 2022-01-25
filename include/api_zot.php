@@ -1,6 +1,7 @@
 <?php
 
 use Zotlabs\Lib\MastAPI;
+use Zotlabs\Lib\Channel;
 
 function zot_api_init()
 {
@@ -62,7 +63,7 @@ function api_verify($type)
         logger('no channel');
         return false;
     }
-    $channel = channelx_by_n(api_user());
+    $channel = Channel::from_id(api_user());
     // logger('channel: ' . print_r($channel,true));
 
     json_return_and_die($channel);
@@ -102,11 +103,11 @@ function api_export_basic($type)
     }
     $sections = (($_REQUEST['sections']) ? explode(',', $_REQUEST['sections']) : '');
     if ($_REQUEST['posts']) {
-        $sections = get_default_export_sections();
+        $sections = Channel::get_default_export_sections();
         $sections[] = 'items';
     }
 
-    json_return_and_die(identity_basic_export(api_user(), $sections));
+    json_return_and_die(Channel::basic_export(api_user(), $sections));
 }
 
 function api_item_export_page($type)
@@ -127,7 +128,7 @@ function api_item_export_page($type)
     }
     $finish = datetime_convert(date_default_timezone_get(), 'UTC', (($_REQUEST['until']) ? $_REQUEST['until'] : 'now'));
 
-    json_return_and_die(channel_export_items_page(api_user(), $start, $finish, $page, $records));
+    json_return_and_die($Channel::export_items_page(api_user(), $start, $finish, $page, $records));
 }
 
 
@@ -138,7 +139,7 @@ function api_network_stream($type)
         return false;
     }
 
-    $channel = channelx_by_n(api_user());
+    $channel = Channel::from_id(api_user());
     if (! $channel) {
         return false;
     }
@@ -174,7 +175,7 @@ function api_channel_list($type)
         return false;
     }
 
-    $channel = channelx_by_n(api_user());
+    $channel = Channel::from_id(api_user());
     if (! $channel) {
         return false;
     }
@@ -203,7 +204,7 @@ function api_channel_stream($type)
         return false;
     }
 
-    $channel = channelx_by_n(api_user());
+    $channel = Channel::from_id(api_user());
     if (! $channel) {
         return false;
     }
@@ -327,7 +328,7 @@ function api_file_export($type)
         return false;
     }
 
-    $channel = channelx_by_n(api_user());
+    $channel = Channel::from_id(api_user());
 
     $ret = attach_export_data($channel, $_REQUEST['file_id']);
 

@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Zot6\Receiver;
 use Zotlabs\Zot6\Zot6Handler;
 
@@ -281,7 +282,7 @@ class Queue
         }
 
         if ($outq['outq_driver'] === 'asfetch') {
-            $channel = channelx_by_n($outq['outq_channel']);
+            $channel = Channel::from_id($outq['outq_channel']);
             if (!$channel) {
                 logger('missing channel: ' . $outq['outq_channel']);
                 return;
@@ -341,7 +342,7 @@ class Queue
         }
 
         if ($outq['outq_driver'] === 'activitypub') {
-            $channel = channelx_by_n($outq['outq_channel']);
+            $channel = Channel::from_id($outq['outq_channel']);
             if (!$channel) {
                 logger('missing channel: ' . $outq['outq_channel']);
                 return;
@@ -360,7 +361,7 @@ class Queue
             $headers['Host'] = $m['host'];
             $headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
 
-            $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel));
+            $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
             if (strpos($outq['outq_posturl'], 'http') !== 0) {
                 logger('bad url: ' . $outq['outq_posturl']);
                 self::remove($outq['outq_hash']);
@@ -470,7 +471,7 @@ class Queue
             $channel = null;
 
             if ($outq['outq_channel']) {
-                $channel = channelx_by_n($outq['outq_channel'], true);
+                $channel = Channel::from_id($outq['outq_channel'], true);
             }
 
             $host_crypto = null;

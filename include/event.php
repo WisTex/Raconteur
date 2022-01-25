@@ -8,6 +8,7 @@
 use Sabre\VObject;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Access\AccessControl;
 use Symfony\Component\Uid\Uuid;
 
@@ -1183,7 +1184,7 @@ function event_store_item($arr, $event)
     }
 
     if ($event['etype'] === 'birthday') {
-        if (! is_sys_channel($arr['uid'])) {
+        if (! Channel::is_system($arr['uid'])) {
             $prefix =  t('This event has been added to your calendar.');
         }
 //      $birthday = true;
@@ -1285,7 +1286,7 @@ function event_store_item($arr, $event)
 
         return $item_id;
     } else {
-        $z = channelx_by_n($arr['uid']);
+        $z = Channel::from_id($arr['uid']);
 
         $private = (($arr['allow_cid'] || $arr['allow_gid'] || $arr['deny_cid'] || $arr['deny_gid']) ? 1 : 0);
 

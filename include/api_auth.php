@@ -6,6 +6,7 @@ use Zotlabs\Identity\OAuth2Server;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\System;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 require_once('include/oauth.php');
 require_once('include/auth.php');
@@ -124,7 +125,7 @@ function api_login()
 
                     if ($r) {
                         $r = Libzot::zot_record_preferred($r);
-                        $c = channelx_by_hash($r['hubloc_hash']);
+                        $c = Channel::from_hash($r['hubloc_hash']);
                         if ($c) {
                             $a = q(
                                 "select * from account where account_id = %d limit 1",

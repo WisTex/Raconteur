@@ -5,7 +5,9 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Queue;
+use Zotlabs\Lib\Channel;    
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\ServiceClass;    
 use Zotlabs\Lib\DReport;
 use Zotlabs\Daemon\Run;
 
@@ -45,7 +47,7 @@ class Libsync
             return;
         }
 
-        $channel = channelx_by_n($uid);
+        $channel = Channel::from_id($uid);
         if (!$channel) {
             return;
         }
@@ -200,7 +202,7 @@ class Libsync
             return;
         }
 
-        $channel = channelx_by_n($uid);
+        $channel = Channel::from_id($uid);
         if (!$channel) {
             return;
         }
@@ -329,10 +331,10 @@ class Libsync
 
             $channel = $r[0];
 
-            $DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+            $DR->set_name($channel['channel_name'] . ' <' . Channel::get_webfinger($channel) . '>');
 
-            $max_friends = service_class_fetch($channel['channel_id'], 'total_channels');
-            $max_feeds = account_service_class_fetch($channel['channel_account_id'], 'total_feeds');
+            $max_friends = ServiceClass::fetch($channel['channel_id'], 'total_channels');
+            $max_feeds = ServiceClass::account_fetch($channel['channel_account_id'], 'total_feeds');
 
             if ($channel['channel_hash'] != $sender && (!$linked_channel)) {
                 logger('Possible forgery. Sender ' . $sender . ' is not ' . $channel['channel_hash']);
@@ -817,7 +819,7 @@ class Libsync
                         intval($channel['channel_id'])
                     );
                     if (!$x) {
-                        profile_store_lowlevel(
+                        Channel::profile_store_lowlevel(
                             [
                                 'aid' => $channel['channel_account_id'],
                                 'uid' => $channel['channel_id'],
@@ -889,7 +891,7 @@ class Libsync
 
             $DR = new DReport(z_root(), $d, $d, 'sync', 'channel sync delivered');
 
-            $DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+            $DR->set_name($channel['channel_name'] . ' <' . Channel::get_webfinger($channel) . '>');
 
             $result[] = $DR->get();
         }

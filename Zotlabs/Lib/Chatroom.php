@@ -3,7 +3,8 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libsync;
-
+use Zotlabs\Lib\ServiceClass;
+    
 /**
  * @brief A class with chatroom related static methods.
  */
@@ -44,11 +45,11 @@ class Chatroom
             intval($channel['channel_account_id'])
         );
         if ($r) {
-            $limit = service_class_fetch($channel['channel_id'], 'chatrooms');
+            $limit = ServiceClass::fetch($channel['channel_id'], 'chatrooms');
         }
 
         if (($r) && ($limit !== false) && ($r[0]['total'] >= $limit)) {
-            $ret['message'] = upgrade_message();
+            $ret['message'] = ServiceClass::upgrade_message();
             return $ret;
         }
 
@@ -154,7 +155,7 @@ class Chatroom
             return false;
         }
 
-        $limit = service_class_fetch($r[0]['cr_uid'], 'chatters_inroom');
+        $limit = ServiceClass::fetch($r[0]['cr_uid'], 'chatters_inroom');
         if ($limit !== false) {
             $y = q(
                 "select count(*) as total from chatpresence where cp_room = %d",

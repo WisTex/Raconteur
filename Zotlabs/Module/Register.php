@@ -2,7 +2,9 @@
 
 namespace Zotlabs\Module;
 
+use Zotlabs\Lib\Account;    
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Access\PermissionRoles;
 
 require_once('include/security.php');
@@ -27,13 +29,13 @@ class Register extends Controller
 
         switch ($cmd) {
             case 'invite_check.json':
-                $result = check_account_invite($_REQUEST['invite_code']);
+                $result = Account::check_invite($_REQUEST['invite_code']);
                 break;
             case 'email_check.json':
-                $result = check_account_email($_REQUEST['email']);
+                $result = Account::check_email($_REQUEST['email']);
                 break;
             case 'password_check.json':
-                $result = check_account_password($_REQUEST['password1']);
+                $result = Account::check_password($_REQUEST['password1']);
                 break;
             default:
                 break;
@@ -104,7 +106,7 @@ class Register extends Controller
         $arr = $_POST;
         $arr['account_flags'] = $flags;
 
-        $result = create_account($arr);
+        $result = Account::create($arr);
 
         if (!$result['success']) {
             notice($result['message']);
@@ -142,9 +144,9 @@ class Register extends Controller
 
         if ($policy == REGISTER_OPEN) {
             if ($email_verify) {
-                $res = verify_email_address($result);
+                $res = Account::verify_email_address($result);
             } else {
-                $res = send_register_success_email($result['email'], $result['password']);
+                $res = Account::send_register_success_email($result['email'], $result['password']);
             }
             if ($res) {
                 if ($invite_code) {
@@ -154,7 +156,7 @@ class Register extends Controller
                 }
             }
         } elseif ($policy == REGISTER_APPROVE) {
-            $res = send_reg_approval_email($result);
+            $res = Account::send_reg_approval_email($result);
             if ($res) {
                 info(t('Your registration is pending approval by the site owner.') . EOL);
             } else {
@@ -175,7 +177,7 @@ class Register extends Controller
         $next_page = 'new_channel';
 
         if (get_config('system', 'auto_channel_create')) {
-            $new_channel = auto_channel_create($result['account']['account_id']);
+            $new_channel = Channel::auto_create($result['account']['account_id']);
             if ($new_channel['success']) {
                 $channel_id = $new_channel['channel']['channel_id'];
                 change_channel($channel_id);

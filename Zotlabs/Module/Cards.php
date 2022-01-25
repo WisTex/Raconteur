@@ -7,8 +7,8 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Lib\Channel;
 
-require_once('include/channel.php');
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
@@ -89,7 +89,7 @@ class Cards extends Controller
 
         $is_owner = ($uid && $uid == $owner);
 
-        $channel = channelx_by_n($owner);
+        $channel = Channel::from_id($owner);
 
         if ($channel) {
             $channel_acl = [

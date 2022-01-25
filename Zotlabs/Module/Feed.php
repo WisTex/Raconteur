@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/feedutils.php');
 
@@ -34,7 +35,7 @@ class Feed extends Controller
                 killme();
             }
 
-            $channel = channelx_by_nick(argv(1));
+            $channel = Channel::from_username(argv(1));
             if (!$channel) {
                 killme();
             }

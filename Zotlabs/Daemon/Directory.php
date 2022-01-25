@@ -5,6 +5,7 @@ namespace Zotlabs\Daemon;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Queue;
+use Zotlabs\Lib\Channel;
 
 class Directory
 {
@@ -30,7 +31,7 @@ class Directory
 
         logger('directory update', LOGGER_DEBUG);
 
-        $channel = channelx_by_n($argv[1]);
+        $channel = Channel::from_id($argv[1]);
         if (! $channel) {
             return;
         }

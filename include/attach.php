@@ -15,6 +15,7 @@
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Channel;
 
 require_once('include/permissions.php');
 require_once('include/security.php');
@@ -828,7 +829,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
             );
             if (($r) &&  (($r[0]['total'] + $filesize) > ($limit - $existing_size))) {
                 logger('service_class limit exceeded');
-                $ret['message'] = upgrade_message(true) . sprintf(t("You have reached your limit of %1$.0f Mbytes attachment storage."), $limit / 1024000);
+                $ret['message'] = ServiceClass::upgrade_message(true) . sprintf(t("You have reached your limit of %1$.0f Mbytes attachment storage."), $limit / 1024000);
                 if ($remove_when_processed) {
                     @unlink($src);
                 }
@@ -1451,7 +1452,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null)
 function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gid, $deny_cid, $deny_gid, $recurse = false, $sync = false)
 {
 
-    $channel = channelx_by_n($channel_id);
+    $channel = Channel::from_id($channel_id);
     if (! $channel) {
         return;
     }
@@ -2493,7 +2494,7 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
 function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
 {
 
-    $c = channelx_by_n($channel_id);
+    $c = Channel::from_id($channel_id);
     if (! ($c && $resource_id)) {
         return false;
     }

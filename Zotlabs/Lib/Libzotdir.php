@@ -6,7 +6,8 @@ use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
-
+use Zotlabs\Lib\Channel;
+    
 require_once('include/permissions.php');
 
 
@@ -246,7 +247,7 @@ class Libzotdir
             $arr = ['channel_id' => $uid, 'hash' => $hash, 'profile' => $profile];
             call_hooks('local_dir_update', $arr);
 
-            $address = channel_reddress($p[0]);
+            $address = Channel::get_webfinger($p[0]);
 
             if (perm_is_allowed($uid, '', 'view_profile')) {
                 self::import_directory_profile($hash, $arr['profile'], $address, 0);
@@ -264,7 +265,7 @@ class Libzotdir
         }
 
         $ud_hash = random_string() . '@' . App::get_hostname();
-        self::update_modtime($hash, $ud_hash, channel_reddress($p[0]), (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
+        self::update_modtime($hash, $ud_hash, Channel::get_webfinger($p[0]), (($force) ? UPDATE_FLAGS_FORCED : UPDATE_FLAGS_UPDATED));
     }
 
 

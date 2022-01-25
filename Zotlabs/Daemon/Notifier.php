@@ -8,7 +8,8 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\LDSignatures;
-
+use Zotlabs\Lib\Channel;
+    
 require_once('include/html2plain.php');
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -110,7 +111,7 @@ class Notifier
         self::$channel      = null;
         self::$private      = false;
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         $top_level = false;
 
@@ -123,7 +124,7 @@ class Notifier
                 return;
             }
 
-            self::$channel = channelx_by_n($item_id);
+            self::$channel = Channel::from_id($item_id);
 
             self::$private = true;
             self::$recipients[] = $xchan;
@@ -132,7 +133,7 @@ class Notifier
             self::$encoding = 'zot';
             $normal_mode = false;
         } elseif ($cmd === 'keychange') {
-            self::$channel = channelx_by_n($item_id);
+            self::$channel = Channel::from_id($item_id);
             $r = q(
                 "select abook_xchan from abook where abook_channel = %d",
                 intval($item_id)
@@ -158,7 +159,7 @@ class Notifier
                 $recip = array_shift($r);
                 $uid = $recip['abook_channel'];
                 // Get the sender
-                self::$channel = channelx_by_n($uid);
+                self::$channel = Channel::from_id($uid);
                 if (self::$channel) {
                     $perm_update = [ 'sender' => self::$channel, 'recipient' => $recip, 'success' => false, 'deliveries' => '' ];
 
@@ -197,7 +198,7 @@ class Notifier
         } elseif ($cmd === 'refresh_all') {
             logger('notifier: refresh_all: ' . $item_id);
 
-            self::$channel = channelx_by_n($item_id, true);
+            self::$channel = Channel::from_id($item_id, true);
             $r = q(
                 "select abook_xchan from abook where abook_channel = %d",
                 intval($item_id)
@@ -217,13 +218,13 @@ class Notifier
                 return;
             }
             
-            self::$channel     = channelx_by_n($item_id, true);
+            self::$channel     = Channel::from_id($item_id, true);
             self::$recipients  = [ $xchan ];
             self::$private     = true;
             self::$packet_type = 'purge';
         } elseif ($cmd === 'purge_all') {
             logger('notifier: purge_all: ' . $item_id);
-            self::$channel = channelx_by_n($item_id, true);
+            self::$channel = Channel::from_id($item_id, true);
 
             self::$recipients = [];
             $r = q(
@@ -421,7 +422,7 @@ class Notifier
                 $upstream = true;
                 self::$packet_type = 'response';
                 $is_moderated = their_perms_contains($parent_item['uid'], $sendto, 'moderated');
-                if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! is_group($parent_item['uid']))) {
+                if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! Channel::is_group($parent_item['uid']))) {
                     if (get_pconfig($target_item['uid'], 'system', 'hyperdrive', true)) {
                         Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
                     }

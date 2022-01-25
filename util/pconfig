@@ -1,9 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-// Red pconfig utility
+// personal config utility
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 
 if(!file_exists('include/cli_startup.php')) {

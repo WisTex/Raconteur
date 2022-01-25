@@ -8,6 +8,7 @@ use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Lib\Channel;
 
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
@@ -253,7 +254,7 @@ class Stream extends Controller
             $status_editor = status_editor($x);
             $o .= $status_editor;
 
-            $static = channel_manual_conv_update(local_channel());
+            $static = Channel::manual_conv_update(local_channel());
         }
 
 

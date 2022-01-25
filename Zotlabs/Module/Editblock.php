@@ -6,8 +6,9 @@ use App;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
-require_once('include/channel.php');
+
 require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
@@ -18,7 +19,7 @@ class Editblock extends Controller
     {
 
         if (argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 App::$is_sys = true;
             }
@@ -52,7 +53,7 @@ class Editblock extends Controller
         $channel = App::get_channel();
 
         if (App::$is_sys && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 $uid = $owner = intval($sys['channel_id']);
                 $channel = $sys;

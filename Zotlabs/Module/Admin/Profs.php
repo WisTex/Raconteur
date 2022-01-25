@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Lib\Channel;
+    
 class Profs
 {
 
@@ -123,10 +125,10 @@ class Profs
 
         $basic = '';
         $barr = [];
-        $fields = get_profile_fields_basic();
+        $fields = Channel::get_profile_fields_basic();
 
         if (!$fields) {
-            $fields = get_profile_fields_basic(1);
+            $fields = Channel::get_profile_fields_basic(1);
         }
         if ($fields) {
             foreach ($fields as $k => $v) {
@@ -139,9 +141,9 @@ class Profs
         }
 
         $advanced = '';
-        $fields = get_profile_fields_advanced();
+        $fields = Channel::get_profile_fields_advanced();
         if (!$fields) {
-            $fields = get_profile_fields_advanced(1);
+            $fields = Channel::get_profile_fields_advanced(1);
         }
         if ($fields) {
             foreach ($fields as $k => $v) {
@@ -156,7 +158,7 @@ class Profs
         }
 
         $all = '';
-        $fields = get_profile_fields_advanced(1);
+        $fields = Channel::get_profile_fields_advanced(1);
         if ($fields) {
             foreach ($fields as $k => $v) {
                 if ($all) {

@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Starred extends Controller
 {
@@ -31,7 +32,7 @@ class Starred extends Controller
 		
 
         if ($r) {
-            if (! is_sys_channel(local_channel())) {
+            if (! Channel::is_system(local_channel())) {
                 $r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
             }
         }

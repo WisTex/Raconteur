@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib as Zlib;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
@@ -290,7 +291,7 @@ class Channel
         if ($username != $channel['channel_name']) {
             $name_change = true;
             require_once('include/channel.php');
-            $err = validate_channelname($username);
+            $err = Zlib\Channel::validate_channelname($username);
             if ($err) {
                 notice($err);
                 return;
@@ -384,7 +385,7 @@ class Channel
                 dbesc($username),
                 intval($channel['channel_id'])
             );
-            if (is_sys_channel($channel['channel_id'])) {
+            if (Zlib\Channel::is_system($channel['channel_id'])) {
                 set_config('system', 'sitename', $username);
             }
         }

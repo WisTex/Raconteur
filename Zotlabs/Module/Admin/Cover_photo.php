@@ -7,7 +7,8 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Channel;
+    
 /*
    @file cover_photo.php
    @brief Module-file with functions for handling of cover-photos
@@ -35,7 +36,7 @@ class Cover_photo
             return;
         }
 
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         Libprofile::load($channel['channel_address']);
     }
 
@@ -53,7 +54,7 @@ class Cover_photo
             return;
         }
 
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
 
         check_form_security_token_redirectOnErr('/admin/cover_photo', 'cover_photo');
 
@@ -280,7 +281,7 @@ class Cover_photo
             return;
         }
 
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
 
         $newuser = false;
 
@@ -367,7 +368,7 @@ class Cover_photo
                 '$user' => $channel['channel_address'],
                 '$channel_id' => $channel['channel_id'],
                 '$info' => t('Your cover photo may be visible to anybody on the internet'),
-                '$existing' => get_cover_photo($channel['channel_id'], 'array', PHOTO_RES_COVER_850),
+                '$existing' => Channel::get_cover_photo($channel['channel_id'], 'array', PHOTO_RES_COVER_850),
                 '$lbl_upfile' => t('Upload File:'),
                 '$lbl_profiles' => t('Select a profile:'),
                 '$title' => t('Change Cover Photo'),

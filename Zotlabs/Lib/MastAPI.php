@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Channel;
 
 class MastAPI
 {
@@ -34,7 +35,7 @@ class MastAPI
             dbesc($channel['channel_hash'])
         );
 
-        $cover_photo = get_cover_photo($channel['channel_id'], 'array');
+        $cover_photo = Channel::get_cover_photo($channel['channel_id'], 'array');
 
         $item_normal = item_normal();
 
@@ -56,7 +57,7 @@ class MastAPI
         $ret['discoverable'] = ((1 - intval($channel['xchan_hidden'])) ? true : false);
         $ret['created_at'] = datetime_convert('UTC', 'UTC', $a[0]['account_created'], ATOM_TIME);
         $ret['note'] = bbcode($p[0]['about'], ['export' => true]);
-        $ret['url'] = channel_url($channel);
+        $ret['url'] = Channel::url($channel);
         $ret['avatar'] = $channel['xchan_photo_l'];
         $ret['avatar_static'] = $channel['xchan_photo_l'];
         if ($cover_photo) {
@@ -82,7 +83,7 @@ class MastAPI
         $s = q("select count(site_url) as total from site");
 
         $admins = q("select * from channel left join account on account_id = channel_account_id where ( account_roles & 4096 ) > 0 and account_default_channel = channel_id");
-        $adminsx = channelx_by_n($admins[0]['channel_id']);
+        $adminsx = Channel::from_id($admins[0]['channel_id']);
 
 
         $ret = [];

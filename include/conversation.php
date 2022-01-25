@@ -7,6 +7,7 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\ThreadStream;
 use Zotlabs\Lib\ThreadItem;
 use Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 
@@ -1181,7 +1182,7 @@ function z_status_editor($x, $popup = false)
 
     $o = '';
 
-    $c = channelx_by_n($x['profile_uid']);
+    $c = Channel::from_id($x['profile_uid']);
     if ($c && $c['channel_moved']) {
         return $o;
     }
@@ -1256,7 +1257,7 @@ function z_status_editor($x, $popup = false)
 
     if (array_key_exists('channel_select', $x) && $x['channel_select']) {
         require_once('include/channel.php');
-        $id_select = identity_selector();
+        $id_select = Channel::identity_selector();
     } else {
         $id_select = '';
     }
@@ -1531,8 +1532,8 @@ function jot_collections($channel, $collections)
     $output .= t('Post to Collections');
     $output .= '<select size="' . $size . '" class="form-control" name="collections[]" multiple>';
     foreach ($r as $rv) {
-        $selected = ((is_array($collections) && in_array(channel_reddress($rv), $collections)) ? " selected " : "");
-        $output .= '<option value="' . channel_reddress($rv) . '"' . $selected . '>' . $rv['channel_name'] . '</option>';
+        $selected = ((is_array($collections) && in_array(Channel::get_webfinger($rv), $collections)) ? " selected " : "");
+        $output .= '<option value="' . Channel::get_webfinger($rv) . '"' . $selected . '>' . $rv['channel_name'] . '</option>';
     }
     $output .= '</select>';
 

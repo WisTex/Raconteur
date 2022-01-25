@@ -13,6 +13,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\SubModule;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
 
 /**
  * @brief Admin area.

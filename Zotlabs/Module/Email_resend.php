@@ -3,7 +3,8 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
-
+use Zotabs\Lib\Account;
+    
 class Email_resend extends Controller
 {
 
@@ -11,7 +12,7 @@ class Email_resend extends Controller
     {
 
         if ($_POST['token']) {
-            if (!account_approve(trim($_POST['token']))) {
+            if (!Account::approve(trim($_POST['token']))) {
                 notice(t('Token verification failed.'));
             }
         }
@@ -26,7 +27,7 @@ class Email_resend extends Controller
             $email = hex2bin(argv(1));
 
             if ($email) {
-                $result = verify_email_address(['resend' => true, 'email' => $email]);
+                $result = Account::verify_email_address(['resend' => true, 'email' => $email]);
             }
 
             if ($result) {

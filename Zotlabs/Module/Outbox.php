@@ -11,6 +11,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
 
 /**
  * Implements an ActivityPub outbox.
@@ -24,7 +25,7 @@ class Outbox extends Controller
             killme();
         }
 
-        $channel = channelx_by_nick(argv(1));
+        $channel = Channel::from_username(argv(1));
         if (!$channel) {
             killme();
         }
@@ -205,7 +206,7 @@ class Outbox extends Controller
             killme();
         }
 
-        $channel = channelx_by_nick(argv(1));
+        $channel = Channel::from_username(argv(1));
         if (!$channel) {
             killme();
         }

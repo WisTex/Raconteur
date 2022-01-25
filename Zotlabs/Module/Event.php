@@ -6,6 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Web\HTTPSig;
 
 class Event extends Controller
@@ -46,7 +47,7 @@ class Event extends Controller
             xchan_query($r, true);
             $items = fetch_post_tags($r, true);
 
-            $channel = channelx_by_n($items[0]['uid']);
+            $channel = Channel::from_id($items[0]['uid']);
 
             if (!is_array($items[0]['obj'])) {
                 $obj = json_decode($items[0]['obj'], true);

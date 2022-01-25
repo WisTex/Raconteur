@@ -15,7 +15,7 @@ use DBA;
 use PDO;
 use Zotlabs\Lib\System;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Channel;
 /**
  * @brief Initialisation for the setup module.
  *
@@ -802,7 +802,7 @@ class Setup extends Controller
 
         // Create a system channel
 
-        create_sys_channel();
+        Channel::create_system();
 
         $register_link = '<a href="' . z_root() . '/register">' . t('registration page') . '</a>';
 

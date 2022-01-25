@@ -5,6 +5,7 @@ namespace Zotlabs\Widget;
 use App;
 use DBA;
 use Sabre\CardDAV\Backend\PDO;
+use Zotlabs\Lib\Channel;
 
 class Cdav
 {
@@ -75,7 +76,7 @@ class Cdav
 
                 foreach ($invites as $invite) {
                     if (strpos($invite->href, 'mailto:') !== false) {
-                        $sharee = channelx_by_nick(substr($invite->principal, 11));
+                        $sharee = Channel::from_username(substr($invite->principal, 11));
                         $sharees[] = [
                             'name' => $sharee['channel_name'],
                             'access' => (($invite->access == 3) ? ' (RW)' : ' (R)'),

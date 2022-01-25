@@ -5,6 +5,7 @@
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 
 if (! file_exists('include/cli_startup.php')) {
@@ -23,10 +24,10 @@ cli_startup();
 	}
 
 	if (ctype_digit($argv[1])) {
-		$c = channelx_by_n($argv[1]);
+		$c = Channel::from_id($argv[1]);
 	}
 	else {
-		$c = channelx_by_nick($argv[1]);
+		$c = Channel::from_username($argv[1]);
 	}
 
 	if (! $c) {

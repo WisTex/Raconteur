@@ -5,7 +5,9 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PConfig;
-
+use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Lib\Channel;
+    
 require_once('include/security.php');
 
 class Manage extends Controller
@@ -68,7 +70,7 @@ class Manage extends Controller
         $account = App::get_account();
 
         if ($r && count($r)) {
-            $channels = ((is_site_admin()) ? array_merge([get_sys_channel()], $r) : $r);
+            $channels = ((is_site_admin()) ? array_merge([Channel::get_system()], $r) : $r);
             for ($x = 0; $x < count($channels); $x++) {
                 $channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
                 $channels[$x]['include_in_menu'] = intval(PConfig::get($channels[$x]['channel_id'], 'system', 'include_in_menu', 0));
@@ -143,7 +145,7 @@ class Manage extends Controller
             "select count(channel_id) as total from channel where channel_account_id = %d and channel_removed = 0",
             intval(get_account_id())
         );
-        $limit = account_service_class_fetch(get_account_id(), 'total_identities');
+        $limit = ServiceClass::account_fetch(get_account_id(), 'total_identities');
         if ($limit !== false) {
             $channel_usage_message = sprintf(t("You have created %1$.0f of %2$.0f allowed channels."), $r[0]['total'], $limit);
         } else {

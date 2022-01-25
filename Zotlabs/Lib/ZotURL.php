@@ -3,6 +3,7 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 class ZotURL
 {
@@ -47,7 +48,7 @@ class ZotURL
                     'Host'             => $m['host'],
                     '(request-target)' => 'post ' . get_request_string($newurl)
                 ];
-                $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
+                $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
             } else {
                 $h = [ 'Accept: application/x-nomad+json, application/x-zot+json' ];
             }

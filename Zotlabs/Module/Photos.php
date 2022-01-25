@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
@@ -36,7 +37,7 @@ class Photos extends Controller
 
             Libprofile::load($nick);
 
-            $channelx = channelx_by_nick($nick);
+            $channelx = Channel::from_username($nick);
 
             $profile_uid = 0;
 

@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Verify;
+use Zotlabs\Lib\Channel;
 
 function is_matrix_url($url)
 {
@@ -57,8 +58,8 @@ function zid($s, $address = '')
 
     $achar = strpos($s, '?') ? '&' : '?';
 
-    $mine = get_my_url();
-    $myaddr = (($address) ? $address : get_my_address());
+    $mine = Channel::get_my_url();
+    $myaddr = (($address) ? $address : Channel::get_my_address());
 
     $mine_parsed = parse_url($mine);
     $s_parsed = parse_url($s);

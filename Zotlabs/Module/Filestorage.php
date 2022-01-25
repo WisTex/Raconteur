@@ -12,6 +12,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Lib\Channel;
 
 class Filestorage extends Controller
 {
@@ -92,7 +93,7 @@ class Filestorage extends Controller
     {
 
         if (argc() > 1) {
-            $channel = channelx_by_nick(argv(1));
+            $channel = Channel::from_username(argv(1));
         }
         if (!$channel) {
             notice(t('Channel unavailable.') . EOL);

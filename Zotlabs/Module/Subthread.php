@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -20,7 +21,7 @@ class Subthread extends Controller
             return;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
         $channel = App::get_channel();
 
         $item_id = ((argc() > 2) ? notags(trim(argv(2))) : 0);
@@ -52,7 +53,7 @@ class Subthread extends Controller
                 );
             }
 
-            if ($i && local_channel() && (!is_sys_channel(local_channel()))) {
+            if ($i && local_channel() && (!Channel::is_system(local_channel()))) {
                 $i = [copy_of_pubitem($channel, $i[0]['mid'])];
                 $item_id = (($i) ? $i[0]['id'] : 0);
             }
@@ -82,7 +83,7 @@ class Subthread extends Controller
             return;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         $owner_uid = $item['uid'];
         $owner_aid = $item['aid'];

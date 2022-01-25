@@ -8,6 +8,7 @@ use Sabre\DAV\INode;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Render\Theme;
+use Zotlabs\Lib\Channel;
 use function Sabre\HTTP\encodePath;
 
 //require_once('include/conversation.php');
@@ -367,7 +368,7 @@ class Browser extends DAV\Browser\Plugin {
 		$limit = 0;
 
 		if ($this->auth->owner_id) {
-			$channel = channelx_by_n($this->auth->owner_id);
+			$channel = Channel::from_id($this->auth->owner_id);
 			if ($channel) {
 				$acl = new AccessControl($channel);
 				$channel_acl = $acl->get();

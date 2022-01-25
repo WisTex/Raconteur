@@ -5,6 +5,7 @@ namespace Zotlabs\Daemon;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\ASCollection;
+use Zotlabs\Lib\Channel;
 
 class Convo
 {
@@ -22,7 +23,7 @@ class Convo
         $channel_id = intval($argv[2]);
         $contact_hash = $argv[3];
 
-        $channel = channelx_by_n($channel_id);
+        $channel = Channel::from_id($channel_id);
         if (! $channel) {
             killme();
         }

@@ -5,8 +5,9 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 
-require_once('include/channel.php');
+
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
 
@@ -17,7 +18,7 @@ class Layouts extends Controller
     {
 
         if (argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 App::$is_sys = true;
             }
@@ -53,7 +54,7 @@ class Layouts extends Controller
         $channel = App::get_channel();
 
         if (App::$is_sys && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 $uid = $owner = intval($sys['channel_id']);
                 $channel = $sys;

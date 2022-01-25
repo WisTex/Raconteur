@@ -9,6 +9,7 @@ use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\Channel;
 
 class ActivityPub
 {
@@ -51,10 +52,10 @@ class ActivityPub
 
         if ($purge_all) {
             $ti = [
-                'id' => channel_url($arr['channel']) . '?operation=delete',
-                'actor' => channel_url($arr['channel']),
+                'id' => Channel::url($arr['channel']) . '?operation=delete',
+                'actor' => Channel::url($arr['channel']),
                 'type' => 'Delete',
-                'object' => channel_url($arr['channel']),
+                'object' => Channel::url($arr['channel']),
                 'to' => ['https://www.w3.org/ns/activitystreams#Public']
             ];
 
@@ -395,7 +396,7 @@ class ActivityPub
             return;
         }
 
-        $channel = channelx_by_n($recip[0]['abook_channel']);
+        $channel = Channel::from_id($recip[0]['abook_channel']);
         if (!$channel) {
             return;
         }

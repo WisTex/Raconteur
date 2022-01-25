@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\ThreadListener;
+use Zotlabs\Lib\Channel;
 use App;
 
 class Activity extends Controller
@@ -105,7 +106,7 @@ class Activity extends Controller
                 }
             }
 
-            $channel = channelx_by_n($items[0]['uid']);
+            $channel = Channel::from_id($items[0]['uid']);
 
             as_return_and_die(ZlibActivity::encode_activity($items[0], true), $channel);
         }
@@ -258,7 +259,7 @@ class Activity extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            $chan = channelx_by_n($nitems[0]['uid']);
+            $chan = Channel::from_id($nitems[0]['uid']);
 
             if (!$chan) {
                 http_status_exit(404, 'Not found');
@@ -289,7 +290,7 @@ class Activity extends Controller
             $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
             $headers['Digest'] = HTTPSig::generate_digest_header($ret);
             $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], channel_url($chan));
+            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], Channel::url($chan));
             HTTPSig::set_headers($h);
             echo $ret;
             killme();

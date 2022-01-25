@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Channel;
 
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');
@@ -101,7 +102,7 @@ class Pubstream extends Controller
                 }
             }
 
-            $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
+            $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 1);
 
             $maxheight = get_config('system', 'home_divmore_height');
             if (!$maxheight) {
@@ -165,7 +166,7 @@ class Pubstream extends Controller
         if ($public_stream_mode === PUBLIC_STREAM_SITE) {
             $uids = " and item_private = 0  and item_wall = 1 ";
         } else {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $uids = " and item_private = 0 and item_wall = 0 and item.uid  = " . intval($sys['channel_id']) . " ";
             $sql_extra = item_permissions_sql($sys['channel_id']);
             App::$data['firehose'] = intval($sys['channel_id']);

@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Web\HTTPSig;
 
 require_once("include/bbcode.php");
@@ -76,7 +77,7 @@ class Profile extends Controller
 
 
         if (ActivityStreams::is_as_request()) {
-            $chan = channelx_by_nick(argv(1));
+            $chan = Channel::from_username(argv(1));
             if (!$chan) {
                 http_status_exit(404, 'Not found');
             }

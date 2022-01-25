@@ -6,6 +6,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 
@@ -55,7 +56,7 @@ class Photo extends Controller
             if (!$allowed) {
                 http_status_exit(404, 'Permission denied.');
             }
-            $channel = channelx_by_n($r[0]['uid']);
+            $channel = Channel::from_id($r[0]['uid']);
 
             $obj = json_decode($r[0]['obj'], true);
 
@@ -84,7 +85,7 @@ class Photo extends Controller
         $token = ((isset($_REQUEST['token'])) ? $_REQUEST['token'] : EMPTY_STR);
         $observer_xchan = get_observer_hash();
 
-        $default = z_root() . '/' . get_default_profile_photo();
+        $default = z_root() . '/' . Channel::get_default_profile_photo();
 
         if (isset($type)) {
 
@@ -97,11 +98,11 @@ class Photo extends Controller
                 switch ($res) {
                     case 'm':
                         $resolution = 5;
-                        $default = z_root() . '/' . get_default_profile_photo(80);
+                        $default = z_root() . '/' . Channel::get_default_profile_photo(80);
                         break;
                     case 's':
                         $resolution = 6;
-                        $default = z_root() . '/' . get_default_profile_photo(48);
+                        $default = z_root() . '/' . Channel::get_default_profile_photo(48);
                         break;
                     case 'l':
                     default:
@@ -210,7 +211,7 @@ class Photo extends Controller
                     $allowed = attach_can_view($r[0]['uid'], $observer_xchan, $photo, $bear);
                 }
 
-                $channel = channelx_by_n($r[0]['uid']);
+                $channel = Channel::from_id($r[0]['uid']);
 
                 // Now we'll see if we can access the photo
                 $e = q(
@@ -246,13 +247,13 @@ class Photo extends Controller
             if (isset($resolution)) {
                 switch ($resolution) {
                     case 4:
-                        $data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(), $mimetype);
+                        $data = fetch_image_from_url(z_root() . '/' . Channel::get_default_profile_photo(), $mimetype);
                         break;
                     case 5:
-                        $data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(80), $mimetype);
+                        $data = fetch_image_from_url(z_root() . '/' . Channel::get_default_profile_photo(80), $mimetype);
                         break;
                     case 6:
-                        $data = fetch_image_from_url(z_root() . '/' . get_default_profile_photo(48), $mimetype);
+                        $data = fetch_image_from_url(z_root() . '/' . Channel::get_default_profile_photo(48), $mimetype);
                         break;
                     default:
                         killme();

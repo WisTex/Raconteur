@@ -14,6 +14,7 @@ use Zotlabs\Lib\Img_cache;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
 /**
@@ -1545,7 +1546,7 @@ function theme_attachments(&$item)
                 continue;
             }
 
-            if (is_foreigner($item['author_xchan'])) {
+            if (Channel::is_foreigner($item['author_xchan'])) {
                 $url = $r['href'];
             } else {
                 $url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . ((isset($r['revision']) ? '/' . $r['revision'] : '')));
@@ -2215,7 +2216,7 @@ function mimetype_select($channel_id, $current = 'text/x-multicode', $choices = 
         'application/x-pdl' => t('Comanche Layout')
     ]);
 
-    if ((App::$is_sys) || (channel_codeallowed($channel_id) && $channel_id == local_channel())) {
+    if ((App::$is_sys) || (Channel::codeallowed($channel_id) && $channel_id == local_channel())) {
         $x['application/x-php'] = t('PHP');
     }
 
@@ -2837,12 +2838,12 @@ function jindent($json)
 function design_tools()
 {
 
-    $channel  = channelx_by_n(App::$profile['profile_uid']);
+    $channel  = Channel::from_id(App::$profile['profile_uid']);
     $sys = false;
 
     if (App::$is_sys && is_site_admin()) {
         require_once('include/channel.php');
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         $sys = true;
     }
 
@@ -2872,7 +2873,7 @@ function website_portation_tools()
 
     if (App::$is_sys && is_site_admin()) {
         require_once('include/channel.php');
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         $sys = true;
     }
 

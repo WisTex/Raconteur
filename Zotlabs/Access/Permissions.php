@@ -3,6 +3,7 @@
 namespace Zotlabs\Access;
 
 use Zotlabs\Lib as Zlib;
+use Zotlabs\Lib\Channel;
 
 /**
  * @brief Extensible permissions.
@@ -271,7 +272,7 @@ class Permissions
         // the channel's channel_hash (the 'self' connection).
 
         if (! $my_perms) {
-            $c = channelx_by_n($channel_id);
+            $c = Channel::from_id($channel_id);
             if ($c) {
                 $my_perms = Permissions::FilledPerms(explode(',', get_abconfig($channel_id, $c['channel_hash'], 'system', 'my_perms', EMPTY_STR)));
             }

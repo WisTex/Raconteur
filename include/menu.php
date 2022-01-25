@@ -3,6 +3,7 @@
 /** @file */
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -97,7 +98,7 @@ function menu_render($menu, $class = '', $edit = false, $var = [])
         $channel_id = local_channel();
     }
 
-    $chan = channelx_by_n($channel_id);
+    $chan = Channel::from_id($channel_id);
     if (! $chan) {
         return '';
     }
@@ -455,7 +456,7 @@ function menu_del_item($menu_id, $uid, $item_id)
 function menu_sync_packet($uid, $observer_hash, $menu_id, $delete = false)
 {
     $r = menu_fetch_id($menu_id, $uid);
-    $c = channelx_by_n($uid);
+    $c = Channel::from_id($uid);
     if ($r) {
         $m = menu_fetch($r['menu_name'], $uid, $observer_hash);
         if ($m) {

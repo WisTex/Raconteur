@@ -3,7 +3,8 @@
 namespace Zotlabs\Lib;
 
 use App;
-
+use Zotlabs\Lib\Channel;
+    
 class Libprofile
 {
 
@@ -29,7 +30,7 @@ class Libprofile
 
         //  logger('Libprofile::load: ' . $nickname . (($profile) ? ' profile: ' . $profile : ''));
 
-        $channel = channelx_by_nick($nickname);
+        $channel = Channel::from_username($nickname);
 
         if (!$channel) {
             logger('profile error: ' . App::$query_string, LOGGER_DEBUG);
@@ -106,8 +107,8 @@ class Libprofile
         if ($q) {
             $extra_fields = [];
 
-            $profile_fields_basic = get_profile_fields_basic();
-            $profile_fields_advanced = get_profile_fields_advanced();
+            $profile_fields_basic = Channel::get_profile_fields_basic();
+            $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
             $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
             if ($advanced) {
@@ -162,12 +163,12 @@ class Libprofile
 
         App::$profile = $p[0];
         App::$profile_uid = $p[0]['profile_uid'];
-        App::$page['title'] = App::$profile['channel_name'] . " - " . unpunify(channel_reddress(App::$profile));
+        App::$page['title'] = App::$profile['channel_name'] . " - " . unpunify(Channel::get_webfinger(App::$profile));
 
         App::$profile['permission_to_view'] = $can_view_profile;
 
         if ($can_view_profile) {
-            $online = get_online_status($nickname);
+            $online = Channel::get_online_status($nickname);
             App::$profile['online_status'] = $online['result'];
         }
 
@@ -268,7 +269,7 @@ class Libprofile
 
         head_set_icon($profile['thumb']);
 
-        if (is_sys_channel($profile['uid'])) {
+        if (Channel::is_system($profile['uid'])) {
             $show_connect = false;
         }
 
@@ -307,7 +308,7 @@ class Libprofile
             $connect_url = rconnect_url($profile['uid'], get_observer_hash());
             $connect = (($connect_url) ? t('Connect') : '');
             if ($connect_url) {
-                $connect_url = sprintf($connect_url, urlencode(channel_reddress($profile)));
+                $connect_url = sprintf($connect_url, urlencode(Channel::get_webfinger($profile)));
             }
 
             // premium channel - over-ride
@@ -480,8 +481,8 @@ class Libprofile
         }
 
         if (App::$profile['fullname']) {
-            $profile_fields_basic = get_profile_fields_basic();
-            $profile_fields_advanced = get_profile_fields_advanced();
+            $profile_fields_basic = Channel::get_profile_fields_basic();
+            $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
             $advanced = ((feature_enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
             if ($advanced) {

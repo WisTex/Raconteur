@@ -27,7 +27,9 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ThreadListener;
+use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Enotify;
@@ -141,7 +143,7 @@ class Item extends Controller
             xchan_query($r, true);
             $items = fetch_post_tags($r, false);
 
-            $chan = channelx_by_n($items[0]['uid']);
+            $chan = Channel::from_id($items[0]['uid']);
 
             if (!$chan) {
                 http_status_exit(404, 'Not found');
@@ -270,7 +272,7 @@ class Item extends Controller
             if (!$items) {
                 http_status_exit(404, 'Not found');
             }
-            $chan = channelx_by_n($items[0]['uid']);
+            $chan = Channel::from_id($items[0]['uid']);
 
             if (!$chan) {
                 http_status_exit(404, 'Not found');
@@ -300,7 +302,7 @@ class Item extends Controller
             $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
             $headers['Digest'] = HTTPSig::generate_digest_header($ret);
             $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], channel_url($chan));
+            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], Channel::url($chan));
             HTTPSig::set_headers($h);
             echo $ret;
             killme();
@@ -320,7 +322,7 @@ class Item extends Controller
             if ($x) {
                 foreach ($x as $xv) {
                     if (intval($xv['item_wall'])) {
-                        $c = channelx_by_n($xv['uid']);
+                        $c = Channel::from_id($xv['uid']);
                         if ($c) {
                             goaway($c['xchan_url'] . '?mid=' . gen_link_id($xv['mid']));
                         }
@@ -406,7 +408,7 @@ class Item extends Controller
         // Comments and replies are excluded because further below we also check for sys channel ownership and
         // will make a copy of the parent that you can interact with in your own stream
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
         if ($sys && $profile_uid && ($sys['channel_id'] == $profile_uid) && is_site_admin() && !$parent) {
             $uid = intval($sys['channel_id']);
             $channel = $sys;
@@ -556,7 +558,7 @@ class Item extends Controller
 
                 // $r may have changed. Check it again before trying to use it.
 
-                if ($r && local_channel() && (!is_sys_channel(local_channel()))) {
+                if ($r && local_channel() && (!Channel::is_system(local_channel()))) {
                     $old_id = $r[0]['id'];
                     $r = [copy_of_pubitem(App::get_channel(), $r[0]['mid'])];
                     if ($r[0]['id'] !== $old_id) {
@@ -599,7 +601,7 @@ class Item extends Controller
             $observer = App::get_observer();
             if (!$observer) {
                 // perhaps we're allowing moderated comments from anonymous viewers
-                $observer = anon_identity_init($_REQUEST);
+                $observer = Channel::anon_identity_init($_REQUEST);
                 if ($observer) {
                     $moderated = true;
                     $remote_xchan = $remote_observer = $observer;
@@ -1303,7 +1305,7 @@ class Item extends Controller
 
         if ($obj) {
             $obj['url'] = $obj['id'] = $mid;
-            $obj['attributedTo'] = channel_url($channel);
+            $obj['attributedTo'] = Channel::url($channel);
             $datarray['obj'] = $obj;
             $obj_type = 'Question';
             if ($obj['endTime']) {
@@ -1814,7 +1816,7 @@ class Item extends Controller
 
                 if ($i[0]['resource_type'] === 'photo') {
                     attach_delete($i[0]['uid'], $i[0]['resource_id'], true);
-                    $ch = channelx_by_n($i[0]['uid']);
+                    $ch = Channel::from_id($i[0]['uid']);
                     if ($ch && $regular_delete) {
                         $sync = attach_export_data($ch, $i[0]['resource_id'], true);
                         if ($sync) {
@@ -1881,15 +1883,15 @@ class Item extends Controller
 
 
         if (!$iswebpage) {
-            $max = engr_units_to_bytes(service_class_fetch($channel_id, 'total_items'));
-            if (!service_class_allows($channel_id, 'total_items', $r[0]['total'])) {
-                $result['message'] .= upgrade_message() . sprintf(t('You have reached your limit of %1$.0f top level posts.'), $max);
+            $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'total_items'));
+            if (!ServiceClass::allows($channel_id, 'total_items', $r[0]['total'])) {
+                $result['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f top level posts.'), $max);
                 return $result;
             }
         } else {
-            $max = engr_units_to_bytes(service_class_fetch($channel_id, 'total_pages'));
-            if (!service_class_allows($channel_id, 'total_pages', $r[0]['total'])) {
-                $result['message'] .= upgrade_message() . sprintf(t('You have reached your limit of %1$.0f webpages.'), $max);
+            $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'total_pages'));
+            if (!ServiceClass::allows($channel_id, 'total_pages', $r[0]['total'])) {
+                $result['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f webpages.'), $max);
                 return $result;
             }
         }
