@@ -49,7 +49,7 @@ class Network
         return $o;
     }
 
-    public function Features::get()
+    public function get_features()
     {
         $arr = [
 
