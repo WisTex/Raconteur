@@ -195,11 +195,6 @@ class Poller
             }
         }
 
-        // migrate a few photos - eventually we'll migrate them all but without killing somebody's site
-        // trying to do them all at once
-
-        migrate_xchan_photos(5);
-
         set_config('system', 'lastpoll', datetime_convert());
 
         //All done - clear the lockfile
