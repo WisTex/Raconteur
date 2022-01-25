@@ -6,11 +6,8 @@ use App;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
-    
-
+  
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
-
 
 class Blocks extends Controller
 {

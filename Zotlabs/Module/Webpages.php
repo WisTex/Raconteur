@@ -10,10 +10,11 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\ExtendedZip;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+    
 use ZipArchive;
 
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 class Webpages extends Controller
 {
@@ -173,7 +174,7 @@ class Webpages extends Controller
             'is_owner' => true,
             'nickname' => App::$profile['channel_address'],
             'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-            'acl' => (($is_owner) ? populate_acl($channel_acl, false, PermissionDescription::fromGlobalPermission('view_pages')) : ''),
+            'acl' => (($is_owner) ? Libacl::populate($channel_acl, false, PermissionDescription::fromGlobalPermission('view_pages')) : ''),
             'permissions' => $channel_acl,
             'showacl' => (($is_owner) ? true : false),
             'visitor' => true,

@@ -13,7 +13,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Channel;
-
+use Zotlabs\Lib\Libacl;
+    
 class Filestorage extends Controller
 {
 
@@ -192,7 +193,6 @@ class Filestorage extends Controller
 
 
         if (argc() > 3 && argv(3) === 'edit') {
-            require_once('include/acl_selectors.php');
             if (!$perms['write_storage']) {
                 notice(t('Permission denied.') . EOL);
                 return;
@@ -212,7 +212,7 @@ class Filestorage extends Controller
 
             $cloudpath = get_cloudpath($f);
 
-            $aclselect_e = populate_acl($f, false, PermissionDescription::fromGlobalPermission('view_storage'));
+            $aclselect_e = Libacl::populate($f, false, PermissionDescription::fromGlobalPermission('view_storage'));
             $is_a_dir = (intval($f['is_dir']) ? true : false);
 
             $lockstate = (($f['allow_cid'] || $f['allow_gid'] || $f['deny_cid'] || $f['deny_gid']) ? 'lock' : 'unlock');

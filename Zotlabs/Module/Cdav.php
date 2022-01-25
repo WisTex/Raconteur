@@ -31,7 +31,8 @@ use Zotlabs\Storage\BasicAuth;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
-
+use Zotlabs\Lib\Libacl;
+    
 require_once('include/event.php');
 require_once('include/auth.php');
 require_once('include/security.php');
@@ -1021,12 +1022,11 @@ class Cdav extends Controller
 
             $catsenabled = Apps::system_app_installed(local_channel(), 'Categories');
 
-            require_once('include/acl_selectors.php');
 
             $accesslist = new AccessControl($channel);
             $perm_defaults = $accesslist->get();
 
-            $acl = populate_acl($perm_defaults, false, PermissionDescription::fromGlobalPermission('view_stream'));
+            $acl = Libacl::populate($perm_defaults, false, PermissionDescription::fromGlobalPermission('view_stream'));
 
             $permissions = $perm_defaults;
 

@@ -7,8 +7,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\PermissionDescription;
-
-require_once('include/acl_selectors.php');
+use Zotlabs\Lib\Libacl;
+    
 require_once('include/taxonomy.php');
 require_once('include/conversation.php');
 
@@ -130,7 +130,7 @@ class Editpost extends Controller
             'category' => $category,
             'showacl' => ((intval($item['item_unpublished'])) ? true : false),
             'lockstate' => (($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) ? 'lock' : 'unlock'),
-            'acl' => populate_acl($item, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+            'acl' => Libacl::populate($item, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
             'bang' => EMPTY_STR,
             'permissions' => $item,
             'profile_uid' => $owner_uid,

@@ -9,7 +9,6 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 
 
-require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
 class Editblock extends Controller

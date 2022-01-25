@@ -7,8 +7,8 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Libacl;
 
-require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
 class Card_edit extends Controller
@@ -113,7 +113,7 @@ class Card_edit extends Controller
             'hide_location' => false,
             'hide_expire' => false,
             'showacl' => true,
-            'acl' => populate_acl($itm[0], false, PermissionDescription::fromGlobalPermission('view_pages')),
+            'acl' => Libacl::populate($itm[0], false, PermissionDescription::fromGlobalPermission('view_pages')),
             'permissions' => $itm[0],
             'lockstate' => (($itm[0]['allow_cid'] || $itm[0]['allow_gid'] || $itm[0]['deny_cid'] || $itm[0]['deny_gid']) ? 'lock' : 'unlock'),
             'ptyp' => $itm[0]['type'],

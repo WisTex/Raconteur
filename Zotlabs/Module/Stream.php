@@ -10,10 +10,9 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
-
 
 class Stream extends Controller
 {
@@ -235,7 +234,7 @@ class Stream extends Controller
                 'default_location' => $channel['channel_location'],
                 'nickname' => $channel['channel_address'],
                 'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-                'acl' => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+                'acl' => Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
                 'permissions' => $channel_acl,
                 'bang' => EMPTY_STR,
                 'body' => $body,

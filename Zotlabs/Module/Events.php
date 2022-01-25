@@ -11,7 +11,8 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
-
+use Zotlabs\Lib\Libacl;
+    
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
 require_once('include/datetime.php');
@@ -482,8 +483,6 @@ class Events extends Controller
                 }
             }
 
-            require_once('include/acl_selectors.php');
-
             $acl = new AccessControl($channel);
             $perm_defaults = $acl->get();
 
@@ -528,7 +527,7 @@ class Events extends Controller
                 '$perms_label' => t('Permission settings'),
                 // populating the acl dialog was a permission description from view_stream because Cal.php, which
                 // displays events, says "since we don't currently have an event permission - use the stream permission"
-                '$acl' => (($orig_event['event_xchan']) ? '' : populate_acl(((x($orig_event)) ? $orig_event : $perm_defaults), false, PermissionDescription::fromGlobalPermission('view_stream'))),
+                '$acl' => (($orig_event['event_xchan']) ? '' : Libacl::populate(((x($orig_event)) ? $orig_event : $perm_defaults), false, PermissionDescription::fromGlobalPermission('view_stream'))),
 
                 '$allow_cid' => acl2json($permissions['allow_cid']),
                 '$allow_gid' => acl2json($permissions['allow_gid']),

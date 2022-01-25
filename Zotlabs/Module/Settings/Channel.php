@@ -14,6 +14,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Permcat;
+use Zotlabs\Lib\Libacl;
 
 class Channel
 {
@@ -408,7 +409,6 @@ class Channel
     public function get()
     {
 
-        require_once('include/acl_selectors.php');
         require_once('include/permissions.php');
 
 
@@ -658,7 +658,7 @@ class Channel
             '$maxreq' => array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']), t('May reduce spam activity')),
             '$permissions' => t('Default Access List'),
             '$permdesc' => t("(click to open/close)"),
-            '$aclselect' => populate_acl($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
+            '$aclselect' => Libacl::populate($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
             '$profseltxt' => t('Profile to assign new connections'),
             '$profselect' => ((feature_enabled(local_channel(), 'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(), 'system', 'profile_assign', '')) : ''),
 

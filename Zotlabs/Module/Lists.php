@@ -260,7 +260,6 @@ class Lists extends Controller
         }
 
         if (argc() > 1) {
-            require_once('include/acl_selectors.php');
 
             if (strlen(argv(1)) <= 11 && intval(argv(1))) {
                 $r = q(

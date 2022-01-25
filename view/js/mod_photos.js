@@ -8,12 +8,12 @@ $(document).ready(function() {
 		UploadInit();
 	}
 
-	$("#photo-edit-newtag").contact_autocomplete(baseurl + '/acl', 'a', false, function(data) {
+	$("#photo-edit-newtag").contact_autocomplete(baseurl + '/acloader', 'a', false, function(data) {
 		$("#photo-edit-newtag").val('@' + data.name);
 	});
 	
-	$(".comment-edit-form  textarea").editor_autocomplete(baseurl+"/acl?f=&n=1");
-	$('textarea').editor_autocomplete(baseurl+"/acl");
+	$(".comment-edit-form  textarea").editor_autocomplete(baseurl+"/acloader?f=&n=1");
+	$('textarea').editor_autocomplete(baseurl+"/acloader");
 	$('textarea').bbco_autocomplete('bbcode');
 	showHideBodyTextarea();
 

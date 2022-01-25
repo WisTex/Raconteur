@@ -7,9 +7,9 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
-
+use Zotlabs\Lib\Libacl;
+    
 require_once('include/menu.php');
-require_once('include/acl_selectors.php');
 
 
 class Mitem extends Controller
@@ -179,7 +179,7 @@ class Mitem extends Controller
                 '$menu_id' => App::$data['menu']['menu_id'],
                 '$permissions' => t('Menu Item Permissions'),
                 '$permdesc' => t("\x28click to open/close\x29"),
-                '$aclselect' => populate_acl($acl->get(), false),
+                '$aclselect' => Libacl::populate($acl->get(), false),
                 '$allow_cid' => acl2json($acl->get()['allow_cid']),
                 '$allow_gid' => acl2json($acl->get()['allow_gid']),
                 '$deny_cid' => acl2json($acl->get()['deny_cid']),
@@ -258,7 +258,7 @@ class Mitem extends Controller
                     '$menu_id' => App::$data['menu']['menu_id'],
                     '$permissions' => t('Menu Item Permissions'),
                     '$permdesc' => t("\x28click to open/close\x29"),
-                    '$aclselect' => populate_acl($mitem, false),
+                    '$aclselect' => Libacl::populate($mitem, false),
                     '$allow_cid' => acl2json($mitem['allow_cid']),
                     '$allow_gid' => acl2json($mitem['allow_gid']),
                     '$deny_cid' => acl2json($mitem['deny_cid']),

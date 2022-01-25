@@ -8,11 +8,11 @@ use Zotlabs\Lib\System;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Libacl;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 
 class Display extends Controller
@@ -85,7 +85,7 @@ class Display extends Controller
                 'default_location' => $channel['channel_location'],
                 'nickname' => $channel['channel_address'],
                 'lockstate' => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-                'acl' => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+                'acl' => Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
                 'permissions' => $channel_acl,
                 'bang' => '',
                 'visitor' => true,

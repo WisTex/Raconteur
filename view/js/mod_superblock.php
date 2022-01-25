@@ -1,4 +1,4 @@
 $(document).ready(function() {
-	$("#follow_input").discover_autocomplete(baseurl + '/acl', 'x', true);
+	$("#follow_input").discover_autocomplete(baseurl + '/acloader', 'x', true);
 }); 
 

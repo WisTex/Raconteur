@@ -16,11 +16,11 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Widget\Pinned;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 
 require_once('include/items.php');
 require_once('include/security.php');
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 
 /**
@@ -276,7 +276,7 @@ class Channel extends Controller
                     'default_location' => (($is_owner) ? App::$profile['channel_location'] : ''),
                     'nickname' => App::$profile['channel_address'],
                     'lockstate' => (((strlen(App::$profile['channel_allow_cid'])) || (strlen(App::$profile['channel_allow_gid'])) || (strlen(App::$profile['channel_deny_cid'])) || (strlen(App::$profile['channel_deny_gid']))) ? 'lock' : 'unlock'),
-                    'acl' => (($is_owner) ? populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post') : ''),
+                    'acl' => (($is_owner) ? Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post') : ''),
                     'permissions' => $channel_acl,
                     'showacl' => (($is_owner) ? 'yes' : ''),
                     'bang' => '',

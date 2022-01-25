@@ -7,14 +7,13 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Libsync;
-
+use Zotlabs\Lib\Libacl;
+    
 /**
  * @file Zotlabs/Module/Thing.php
  */
 
 require_once('include/security.php');
-
-require_once('include/acl_selectors.php');
 
 
 class Thing extends Controller
@@ -353,7 +352,7 @@ class Thing extends Controller
                 '$img_lbl' => t('URL for photo of thing (optional)'),
                 '$imgurl' => $r[0]['obj_imgurl'],
                 '$permissions' => t('Permissions'),
-                '$aclselect' => populate_acl($channel_acl, false),
+                '$aclselect' => Libacl::populate($channel_acl, false),
                 '$allow_cid' => acl2json($channel_acl['allow_cid']),
                 '$allow_gid' => acl2json($channel_acl['allow_gid']),
                 '$deny_cid' => acl2json($channel_acl['deny_cid']),
@@ -408,7 +407,7 @@ class Thing extends Controller
             '$url_lbl' => t('URL of thing (optional)'),
             '$img_lbl' => t('URL for photo of thing (optional)'),
             '$permissions' => t('Permissions'),
-            '$aclselect' => populate_acl($channel_acl, false),
+            '$aclselect' => Libacl::populate($channel_acl, false),
             '$allow_cid' => acl2json($channel_acl['allow_cid']),
             '$allow_gid' => acl2json($channel_acl['allow_gid']),
             '$deny_cid' => acl2json($channel_acl['deny_cid']),

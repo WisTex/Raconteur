@@ -8,9 +8,9 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Libacl;
 
 
-require_once('include/acl_selectors.php');
 require_once('include/conversation.php');
 
 
@@ -163,7 +163,7 @@ class Editwebpage extends Controller
             'body' => undo_post_tagging($content),
             'post_id' => $post_id,
             'visitor' => ($is_owner) ? true : false,
-            'acl' => populate_acl($itm[0], false, PermissionDescription::fromGlobalPermission('view_pages')),
+            'acl' => Libacl::populate($itm[0], false, PermissionDescription::fromGlobalPermission('view_pages')),
             'permissions' => $itm[0],
             'showacl' => ($is_owner) ? true : false,
             'mimetype' => $mimetype,

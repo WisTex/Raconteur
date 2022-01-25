@@ -11,12 +11,8 @@ use Zotlabs\Render\Theme;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 use function Sabre\HTTP\encodePath;
-
-//require_once('include/conversation.php');
-//require_once('include/text.php');
-
-require_once('include/acl_selectors.php');
 
 
 /**
@@ -376,7 +372,7 @@ class Browser extends DAV\Browser\Plugin {
 				$channel_acl = $acl->get();
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
 
-				$aclselect = ((local_channel() == $this->auth->owner_id) ? populate_acl($channel_acl,false,PermissionDescription::fromGlobalPermission('view_storage')) : '');
+				$aclselect = ((local_channel() == $this->auth->owner_id) ? Libacl::populate($channel_acl,false,PermissionDescription::fromGlobalPermission('view_storage')) : '');
 			}
 
 			// Storage and quota for the account (all channels of the owner of this directory)!

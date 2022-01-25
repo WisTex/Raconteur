@@ -13,10 +13,10 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
-require_once('include/acl_selectors.php');
 require_once('include/bbcode.php');
 require_once('include/security.php');
 require_once('include/attach.php');
@@ -694,7 +694,7 @@ class Photos extends Controller
                 $lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
             }
 
-            $aclselect = (($_is_owner) ? populate_acl($channel_acl, false, PermissionDescription::fromGlobalPermission('view_storage')) : '');
+            $aclselect = (($_is_owner) ? Libacl::populate($channel_acl, false, PermissionDescription::fromGlobalPermission('view_storage')) : '');
 
             // this is wrong but is to work around an issue with js_upload wherein it chokes if these variables
             // don't exist. They really should be set to a parseable representation of the channel's default permissions
@@ -1097,7 +1097,7 @@ class Photos extends Controller
             if ($can_post) {
                 $album_e = $ph[0]['album'];
                 $caption_e = $ph[0]['description'];
-                $aclselect_e = (($_is_owner) ? populate_acl($ph[0], true, PermissionDescription::fromGlobalPermission('view_storage')) : '');
+                $aclselect_e = (($_is_owner) ? Libacl::populate($ph[0], true, PermissionDescription::fromGlobalPermission('view_storage')) : '');
                 $albums = ((array_key_exists('albums', App::$data)) ? App::$data['albums'] : photos_albums_list(App::$data['channel'], App::$data['observer']));
 
                 $_SESSION['album_return'] = bin2hex($ph[0]['album']);

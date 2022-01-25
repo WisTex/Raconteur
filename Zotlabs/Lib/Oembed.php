@@ -421,7 +421,7 @@ class Oembed
         if ($stopoembed == true) {
             return preg_replace("/\[embed\](.+?)\[\/embed\]/is", "<!-- oembed $1 --><i>" . t('Embedding disabled') . " : $1</i><!-- /oembed $1 -->", $text);
         }
-        return preg_replace_callback("/\[embed\](.+?)\[\/embed\]/is", ['self','replacecb'], $text);
+        return preg_replace_callback("/\[embed\](.+?)\[\/embed\]/is", ['\\Zotlabs\\Lib\\Oembed','replacecb'], $text);
     }
 
 

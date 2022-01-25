@@ -26,7 +26,7 @@
 		</form>
 	</div>
 	<script>
-		$("#xchan-filter").name_autocomplete(baseurl + '/acl', 'z', true, function(data) {
+		$("#xchan-filter").name_autocomplete(baseurl + '/acloader', 'z', true, function(data) {
 			$("#xchan").val(data.xid);
 		});
 	</script>
