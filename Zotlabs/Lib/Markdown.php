@@ -12,7 +12,6 @@ use League\HTMLToMarkdown\Environment;
 use League\HTMLToMarkdown\Converter\ConverterInterface;
 use League\HTMLToMarkdown\ElementInterface;
 
-require_once("include/oembed.php");
 require_once("include/event.php");
 require_once("include/html2bbcode.php");
 require_once("include/bbcode.php");

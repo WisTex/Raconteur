@@ -26,9 +26,6 @@ use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 
-
-
-require_once('include/oembed.php');
 require_once('include/feedutils.php');
 require_once('include/photo_factory.php');
 

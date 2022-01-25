@@ -10,6 +10,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Oembed;
 use Zotlabs\Lib as Zlib;
 
 require_once('include/security.php');
@@ -195,7 +196,7 @@ class Linkinfo extends Controller
         }
 
         if ($process_oembed) {
-            $x = oembed_process($url);
+            $x = Oembed::process($url);
             if ($x) {
                 echo $x;
                 killme();
