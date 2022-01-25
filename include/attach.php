@@ -16,7 +16,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
-
+use Zotlabs\Lib\ServiceClass;
 require_once('include/permissions.php');
 require_once('include/security.php');
 
@@ -820,7 +820,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
             return $ret;
         }
 
-        $limit = engr_units_to_bytes(service_class_fetch($channel_id, 'attach_upload_limit'));
+        $limit = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'attach_upload_limit'));
 
         if ($limit !== false) {
             $r = q(

@@ -5,6 +5,7 @@ namespace Zotlabs\Module\Settings;
 use App;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libsync;
 
@@ -35,7 +36,7 @@ class Tokens
             } else {
                 $expires = NULL_DATE;
             }
-            $max_atokens = service_class_fetch(local_channel(), 'access_tokens');
+            $max_atokens = ServiceClass::fetch(local_channel(), 'access_tokens');
             if ($max_atokens) {
                 $r = q(
                     "select count(atoken_id) as total where atoken_uid = %d",

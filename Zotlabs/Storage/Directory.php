@@ -7,6 +7,7 @@ use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;
 
 
 require_once('include/photos.php');
@@ -354,7 +355,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         }
 
         // check against service class quota
-        $limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
+        $limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
         if ($limit !== false) {
             $z = q("SELECT SUM(filesize) AS total FROM attach WHERE aid = %d ",
                 intval($channel['channel_account_id'])
@@ -924,7 +925,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
                     intval($channel['channel_account_id'])
                 );
                 $used = (($r) ? (float)$r[0]['total'] : 0);
-                $limit = (float)engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
+                $limit = (float)engr_units_to_bytes(ServiceClass::fetch($this->auth->owner_id, 'attach_upload_limit'));
                 if ($limit) {
                     // Don't let the result go negative
                     $free = (($limit > $used) ? $limit - $used : 0);

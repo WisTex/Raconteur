@@ -3,7 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
-
+use Zotlabs\Lib\ServiceClass;
+    
 class Follow
 {
 
@@ -24,7 +25,7 @@ class Follow
             $total_channels = $r[0]['total'];
         }
 
-        $limit = service_class_fetch($uid, 'total_channels');
+        $limit = ServiceClass::fetch($uid, 'total_channels');
         if ($limit !== false) {
             $abook_usage_message = sprintf(t("You have %1$.0f of %2$.0f allowed connections."), $total_channels, $limit);
         } else {

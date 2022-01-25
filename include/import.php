@@ -7,6 +7,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
@@ -1446,7 +1447,7 @@ function sync_files($channel, $files)
     require_once('include/attach.php');
 
     if ($channel && $files) {
-        $limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
+        $limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
 
         foreach ($files as $f) {
             if (! $f) {
