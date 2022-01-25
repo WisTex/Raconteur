@@ -13,7 +13,8 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
-
+use Zotlabs\Lib\Stringsjs;
+    
 /**
  * @file boot.php
  *
@@ -1229,7 +1230,7 @@ class App {
 				'$head_css'        => head_get_css(),
 				'$head_js'         => head_get_js(),
 				'$linkrel'         => head_get_links(),
-				'$js_strings'      => js_strings(),
+				'$js_strings'      => Stringsjs::strings(),
 				'$zid'             => Channel::get_my_address(),
 				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
 			]
@@ -2296,8 +2297,6 @@ function construct_page() {
 
 	if (($p = theme_include('mod_' . App::$module . '.php')) != '')
 		require_once($p);
-
-	require_once('include/js_strings.php');
 
 	if (isset(App::$page['template_style']))
 		head_add_css(App::$page['template_style'] . '.css');
