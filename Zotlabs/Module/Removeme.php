@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Removeme extends Controller
 {
@@ -50,7 +51,7 @@ class Removeme extends Controller
             }
         }
 
-        channel_remove(local_channel(), true, true);
+        Channel::channel_remove(local_channel(), true, true);
     }
 
 

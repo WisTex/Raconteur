@@ -5,6 +5,7 @@ namespace Zotlabs\Module\Admin;
 use App;
 use Zotlabs\Lib\System;
 use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Lib\Channel;
 
 class Site
 {
@@ -24,7 +25,7 @@ class Site
             return;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         check_form_security_token_redirectOnErr('/admin/site', 'admin_site');
 

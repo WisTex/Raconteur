@@ -1,5 +1,7 @@
 <?php
 
+use Zotlabs\Lib\Channel;
+        
 /**
  * @file include/security.php
  *
@@ -99,7 +101,7 @@ function atoken_login($atoken)
         return false;
     }
     if (App::$cmd === 'channel' && argv(1)) {
-        $channel = channelx_by_nick(argv(1));
+        $channel = Channel::from_username(argv(1));
         if (perm_is_allowed($channel['channel_id'], $atoken['xchan_hash'], 'delegate')) {
             $_SESSION['delegate_channel'] = $channel['channel_id'];
             $_SESSION['delegate'] = $atoken['xchan_hash'];
@@ -127,7 +129,7 @@ function atoken_login($atoken)
 function atoken_xchan($atoken)
 {
 
-    $c = channelx_by_n($atoken['atoken_uid']);
+    $c = Channel::from_id($atoken['atoken_uid']);
     if ($c) {
         return [
             'atoken_id' => $atoken['atoken_id'],
@@ -138,9 +140,9 @@ function atoken_xchan($atoken)
             'xchan_url' => z_root() . '/guest/' . substr($c['channel_hash'], 0, 16) . '.' . $atoken['atoken_guid'],
             'xchan_hidden' => 1,
             'xchan_photo_mimetype' => 'image/png',
-            'xchan_photo_l' => z_root() . '/' . get_default_profile_photo(300),
-            'xchan_photo_m' => z_root() . '/' . get_default_profile_photo(80),
-            'xchan_photo_s' => z_root() . '/' . get_default_profile_photo(48)
+            'xchan_photo_l' => z_root() . '/' . Channel::get_default_profile_photo(300),
+            'xchan_photo_m' => z_root() . '/' . Channel::get_default_profile_photo(80),
+            'xchan_photo_s' => z_root() . '/' . Channel::get_default_profile_photo(48)
         ];
     }
 
@@ -323,7 +325,7 @@ function change_channel($change_channel)
         $x = xchan_match([ 'xchan_hash' => $hash ]);
         if ($x) {
             $_SESSION['my_url'] = $x['xchan_url'];
-            $_SESSION['my_address'] = channel_reddress($r[0]);
+            $_SESSION['my_address'] = Channel::get_webfinger($r[0]);
 
             App::set_observer($x);
             App::set_perms(get_all_perms(local_channel(), $hash));

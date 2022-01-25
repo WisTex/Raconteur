@@ -233,7 +233,7 @@ thread_action_menu
 thread_author_menu
 thumbnail
 update_unseen
-validate_channelname
+Channel::validate_channelname
 webfinger
 well_known
 write_perms

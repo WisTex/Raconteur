@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 
@@ -95,7 +96,7 @@ class Oep extends Controller
             return;
         }
 
-        $c = channelx_by_n($p[0]['uid']);
+        $c = Channel::from_id($p[0]['uid']);
 
 
         if (!($c && $res)) {
@@ -178,7 +179,7 @@ class Oep extends Controller
             return $ret;
         }
 
-        $channel = channelx_by_nick($nick);
+        $channel = Channel::from_username($nick);
 
         if (!$channel) {
             return $ret;
@@ -268,7 +269,7 @@ class Oep extends Controller
             return $ret;
         }
 
-        $channel = channelx_by_nick($nick);
+        $channel = Channel::from_username($nick);
 
         if (!$channel) {
             return $ret;
@@ -440,7 +441,7 @@ class Oep extends Controller
             return;
         }
 
-        $c = channelx_by_nick($chn);
+        $c = Channel::from_username($chn);
 
         if (!$c) {
             return;
@@ -469,7 +470,7 @@ class Oep extends Controller
         $ret['width'] = intval($width);
         $ret['height'] = intval($height);
 
-        $ret['html'] = get_zcard_embed($c, get_observer_hash(), array('width' => $width, 'height' => $height));
+        $ret['html'] = Channel::get_zcard_embed($c, get_observer_hash(), array('width' => $width, 'height' => $height));
 
         return $ret;
     }

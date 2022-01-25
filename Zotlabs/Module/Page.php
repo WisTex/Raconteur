@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Render\Comanche;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 
 require_once('include/conversation.php');
 
@@ -37,7 +38,7 @@ class Page extends Controller
         // perm_is_allowed is denied unconditionally when 'site blocked to unauthenticated members'.
         // This bypasses that restriction for sys channel (public) content
 
-        if ((!perm_is_allowed(App::$profile['profile_uid'], $ob_hash, 'view_pages')) && (!is_sys_channel(App::$profile['profile_uid']))) {
+        if ((!perm_is_allowed(App::$profile['profile_uid'], $ob_hash, 'view_pages')) && (!Channel::is_system(App::$profile['profile_uid']))) {
             notice(t('Permission denied.') . EOL);
             return;
         }

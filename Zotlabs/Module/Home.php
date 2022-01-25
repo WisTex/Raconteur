@@ -10,6 +10,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/conversation.php');
 
@@ -48,7 +49,7 @@ class Home extends Controller
         }
 
         if (Libzot::is_zot_request()) {
-            $channel = get_sys_channel();
+            $channel = Channel::get_system();
             $sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
             if ($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
@@ -100,7 +101,7 @@ class Home extends Controller
                 intval($_SESSION['atoken'])
             );
             if ($r) {
-                $x = channelx_by_n($r[0]['atoken_uid']);
+                $x = Channel::from_id($r[0]['atoken_uid']);
                 if ($x) {
                     goaway(z_root() . '/channel/' . $x['channel_address']);
                 }

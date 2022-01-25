@@ -4,9 +4,9 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/attach.php');
-require_once('include/channel.php');
 require_once('include/photos.php');
 
 
@@ -19,7 +19,7 @@ class File_upload extends Controller
         logger('file upload: ' . print_r($_REQUEST, true));
         logger('file upload: ' . print_r($_FILES, true));
 
-        $channel = (($_REQUEST['channick']) ? channelx_by_nick($_REQUEST['channick']) : null);
+        $channel = (($_REQUEST['channick']) ? Channel::from_username($_REQUEST['channick']) : null);
 
         if (!$channel) {
             logger('channel not found');

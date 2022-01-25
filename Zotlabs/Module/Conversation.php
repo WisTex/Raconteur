@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\ThreadListener;
+use Zotlabs\Lib\Channel;
 use App;
 
 class Conversation extends Controller
@@ -145,7 +146,7 @@ class Conversation extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            $chan = channelx_by_n($nitems[0]['uid']);
+            $chan = Channel::from_id($nitems[0]['uid']);
 
             if (!$chan) {
                 http_status_exit(404, 'Not found');
@@ -164,7 +165,7 @@ class Conversation extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            $channel = channelx_by_n($items[0]['uid']);
+            $channel = Channel::from_id($items[0]['uid']);
             as_return_and_die($i, $channel);
         }
 

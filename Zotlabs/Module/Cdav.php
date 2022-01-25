@@ -29,6 +29,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Storage\BasicAuth;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Channel;
 
 require_once('include/event.php');
 require_once('include/auth.php');
@@ -74,7 +75,7 @@ class Cdav extends Controller
                                 dbesc($keyId)
                             );
                             if ($r) {
-                                $c = channelx_by_hash($r[0]['hubloc_hash']);
+                                $c = Channel::from_hash($r[0]['hubloc_hash']);
                                 if ($c) {
                                     $a = q(
                                         "select * from account where account_id = %d limit 1",
@@ -480,7 +481,7 @@ class Cdav extends Controller
 
                 $hash = $_REQUEST['sharee'];
 
-                $sharee_arr = channelx_by_hash($hash);
+                $sharee_arr = Channel::from_hash($hash);
 
                 $sharee = new Sharee();
 
@@ -1191,7 +1192,7 @@ class Cdav extends Controller
                 killme();
             }
 
-            $sharee_arr = channelx_by_hash($hash);
+            $sharee_arr = Channel::from_hash($hash);
 
             $sharee = new Sharee();
 

@@ -14,6 +14,7 @@ use Zotlabs\Lib\Apps;
 
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Lib\Enotify;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Lib\MessageFilter;
 use Zotlabs\Lib\IConfig;
@@ -137,7 +138,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			// We've determined it is public. If it is also a wall post and not owned by the sys channel,
 			// send this also to followers of the sys_channel
 			
-			$sys = get_sys_channel();
+			$sys = Channel::get_system();
 			if ($sys && intval($item['uid']) !== intval($sys['channel_id']) && intval($item['item_wall'])) {
 				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
 					intval($sys['channel_id'])
@@ -2582,7 +2583,7 @@ function tag_deliver($uid, $item_id) {
 	 * Fetch stuff we need - a channel and an item
 	 */
 
-	$u = channelx_by_n($uid);
+	$u = Channel::from_id($uid);
 	if (! $u) {
 		return;
 	}
@@ -2939,7 +2940,7 @@ function tgroup_check($uid, $item) {
 		}
 	}
 
-	$u = channelx_by_n($uid);
+	$u = Channel::from_id($uid);
 	if (! $u) {
 		return false;
 	}
@@ -3366,7 +3367,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		intval($item_nocomment),
 		intval($flag_bits),
 		dbesc($channel['channel_hash']),
-		dbesc(channel_url($channel)),
+		dbesc(Channel::url($channel)),
 		dbesc($channel['channel_allow_cid']),
 		dbesc($channel['channel_allow_gid']),
 		dbesc($channel['channel_deny_cid']),
@@ -4207,7 +4208,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		return $result;
 	}
 
-	if(! is_sys_channel($uid))
+	if(! Channel::is_system($uid))
 		$sql_extra = item_permissions_sql($uid,$observer_hash);
 
 	$limit = " LIMIT 5000 ";
@@ -4230,7 +4231,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 
 	$item_normal = item_normal();
 
-	if(is_sys_channel($uid)) {
+	if(Channel::is_system($uid)) {
 
 		$nonsys_uids = q("SELECT channel_id FROM channel WHERE channel_system = 0");
 		$nonsys_uids_str = ids_to_querystr($nonsys_uids,'channel_id');
@@ -4264,7 +4265,7 @@ function zot_feed($uid, $observer_hash, $arr) {
 		}
 
 		$parents_str = ids_to_querystr($parents,'parent');
-		$sys_query = ((is_sys_channel($uid)) ? $sql_extra : '');
+		$sys_query = ((Channel::is_system($uid)) ? $sql_extra : '');
 		$item_normal = item_normal();
 
 		$items = q("SELECT item.*, item.id AS item_id FROM item
@@ -5017,7 +5018,7 @@ function item_create_edit_activity($post) {
 function copy_of_pubitem($channel,$mid) {
 
 	$result = null;
-	$syschan = get_sys_channel();
+	$syschan = Channel::get_system();
 
 	logger('copy_of_pubitem: ' . $channel['channel_id'] . ' mid: ' . $mid);
 

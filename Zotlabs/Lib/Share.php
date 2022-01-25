@@ -5,6 +5,7 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 class Share
 {
@@ -70,7 +71,7 @@ class Share
         $owner_uid = $this->item['uid'];
         $owner_aid = $this->item['aid'];
 
-        $channel = channelx_by_n($this->item['uid']);
+        $channel = Channel::from_id($this->item['uid']);
         $observer = App::get_observer();
 
         $can_comment = false;

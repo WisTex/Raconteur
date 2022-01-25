@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 
 require_once('include/menu.php');
 
@@ -17,7 +18,7 @@ class Menu extends Controller
     {
 
         if (argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 App::$is_sys = true;
             }
@@ -46,7 +47,7 @@ class Menu extends Controller
         $uid = App::$profile['channel_id'];
 
         if (array_key_exists('sys', $_REQUEST) && $_REQUEST['sys'] && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $uid = intval($sys['channel_id']);
             App::$is_sys = true;
         }
@@ -111,7 +112,7 @@ class Menu extends Controller
         $channel = App::get_channel();
 
         if (App::$is_sys && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 $uid = $owner = intval($sys['channel_id']);
                 $channel = $sys;
@@ -121,7 +122,7 @@ class Menu extends Controller
 
         if (!$owner) {
             // Figure out who the page owner is.
-            $r = channelx_by_nick($which);
+            $r = Channel::from_username($which);
             if ($r) {
                 $owner = intval($r['channel_id']);
             }
@@ -148,7 +149,7 @@ class Menu extends Controller
         }
 
         if (argc() == 2) {
-            $channel = (($sys) ? $sys : channelx_by_n($owner));
+            $channel = (($sys) ? $sys : Channel::from_id($owner));
 
             // list menus
             $x = menu_list($owner);

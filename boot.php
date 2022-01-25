@@ -11,13 +11,12 @@ use Zotlabs\Lib\System;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
-
+use Zotlabs\Lib\Channel;
 /**
  * @file boot.php
  *
  * @brief This file defines some global constants and includes the central App class.
  */
-
 
 require_once('version.php');
 
@@ -56,9 +55,7 @@ require_once('include/nav.php');
 require_once('include/permissions.php');
 require_once('include/features.php');
 require_once('include/taxonomy.php');
-require_once('include/channel.php');
 require_once('include/connections.php');
-require_once('include/account.php');
 require_once('include/zid.php');
 require_once('include/xchan.php');
 require_once('include/hubloc.php');
@@ -1232,7 +1229,7 @@ class App {
 				'$head_js'         => head_get_js(),
 				'$linkrel'         => head_get_links(),
 				'$js_strings'      => js_strings(),
-				'$zid'             => get_my_address(),
+				'$zid'             => Channel::get_my_address(),
 				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
 			]
 		) . self::$page['htmlhead'];
@@ -1510,7 +1507,7 @@ function check_config() {
 	// Ensure the site has a system channel and that it has been upgraded.
 	// This function will only do work if work is required.
 	
-	create_sys_channel();
+	Channel::create_system();
 	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 

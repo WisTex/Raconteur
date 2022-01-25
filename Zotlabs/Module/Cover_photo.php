@@ -7,6 +7,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 /*
    @file cover_photo.php

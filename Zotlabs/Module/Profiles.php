@@ -7,6 +7,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 use Sabre\VObject\Reader;
 
@@ -57,7 +58,7 @@ class Profiles extends Controller
             // also add deleted flag to profile structure
             // profiles_build_sync is just here as a placeholder - it doesn't work at all here
 
-            // profiles_build_sync(local_channel());
+            // Channel::profiles_build_sync(local_channel());
 
             goaway(z_root() . '/profiles');
             return; // NOTREACHED
@@ -80,7 +81,7 @@ class Profiles extends Controller
                 intval(local_channel())
             );
 
-            $r2 = profile_store_lowlevel(
+            $r2 = Channel::profile_store_lowlevel(
                 [
                     'aid' => intval(get_account_id()),
                     'uid' => intval(local_channel()),
@@ -141,7 +142,7 @@ class Profiles extends Controller
             );
             info(t('New profile created.') . EOL);
 
-            profiles_build_sync(local_channel());
+            Channel::profiles_build_sync(local_channel());
 
             if (($r3) && (count($r3) == 1)) {
                 goaway(z_root() . '/profiles/' . $r3[0]['id']);
@@ -226,7 +227,7 @@ class Profiles extends Controller
                 $j = @json_decode(@file_get_contents($src), true);
                 @unlink($src);
                 if ($j) {
-                    $fields = get_profile_fields_advanced();
+                    $fields = Channel::get_profile_fields_advanced();
                     if ($fields) {
                         foreach ($j as $jj => $v) {
                             foreach ($fields as $f => $n) {
@@ -291,7 +292,7 @@ class Profiles extends Controller
             if ($orig[0]['fullname'] != $name) {
                 $namechanged = true;
 
-                $v = validate_channelname($name);
+                $v = Channel::validate_channelname($name);
                 if ($v) {
                     notice($v);
                     $namechanged = false;
@@ -439,8 +440,8 @@ class Profiles extends Controller
                 }
             }
 
-            $profile_fields_basic = get_profile_fields_basic();
-            $profile_fields_advanced = get_profile_fields_advanced();
+            $profile_fields_basic = Channel::get_profile_fields_basic();
+            $profile_fields_advanced = Channel::get_profile_fields_advanced();
             $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
@@ -632,7 +633,7 @@ class Profiles extends Controller
                 Libsync::build_sync_packet(local_channel(), array('profile' => $sync));
             }
 
-            if (is_sys_channel(local_channel())) {
+            if (Channel::is_system(local_channel())) {
                 set_config('system', 'siteinfo', $about);
             }
 
@@ -650,7 +651,7 @@ class Profiles extends Controller
                     dbesc($name),
                     dbesc($channel['xchan_hash'])
                 );
-                if (is_sys_channel(local_channel())) {
+                if (Channel::is_system(local_channel())) {
                     set_config('system', 'sitename', $name);
                 }
             }
@@ -677,8 +678,8 @@ class Profiles extends Controller
 
         require_once('include/channel.php');
 
-        $profile_fields_basic = get_profile_fields_basic();
-        $profile_fields_advanced = get_profile_fields_advanced();
+        $profile_fields_basic = Channel::get_profile_fields_basic();
+        $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
         if (((argc() > 1) && (intval(argv(1)))) || !feature_enabled(local_channel(), 'multi_profiles')) {
             if (feature_enabled(local_channel(), 'multi_profiles')) {

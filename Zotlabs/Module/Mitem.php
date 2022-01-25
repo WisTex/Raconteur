@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 
 require_once('include/menu.php');
 require_once('include/acl_selectors.php');
@@ -18,7 +19,7 @@ class Mitem extends Controller
     {
 
         if (argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 App::$is_sys = true;
             }
@@ -57,7 +58,7 @@ class Mitem extends Controller
         $uid = App::$profile['channel_id'];
 
         if (array_key_exists('sys', $_REQUEST) && $_REQUEST['sys'] && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $uid = intval($sys['channel_id']);
             App::$is_sys = true;
         }
@@ -122,7 +123,7 @@ class Mitem extends Controller
 
         $uid = local_channel();
         $owner = App::$profile['channel_id'];
-        $channel = channelx_by_n($owner);
+        $channel = Channel::from_id($owner);
         $observer = App::get_observer();
 
         $which = argv(1);
@@ -130,7 +131,7 @@ class Mitem extends Controller
         $ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
         if (App::$is_sys && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $uid = intval($sys['channel_id']);
             $channel = $sys;
             $ob_hash = $sys['xchan_hash'];

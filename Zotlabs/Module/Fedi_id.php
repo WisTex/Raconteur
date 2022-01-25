@@ -3,13 +3,14 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Channel;
+    
 class Fedi_id extends Controller
 {
 
     public function post()
     {
-        $channel = channelx_by_n(argv(1));
+        $channel = Channel::from_id(argv(1));
         if (!$channel) {
             return;
         }
@@ -23,14 +24,14 @@ class Fedi_id extends Controller
                 );
                 if ($ab) {
                     notice(t('You are already connected with this channel.'));
-                    goaway(channel_url($channel));
+                    goaway(Channel::url($channel));
                 }
                 $r = q(
                     "select * from xchan where xchan_hash = '%s'",
                     dbesc($x)
                 );
                 if ($r && $r[0]['xchan_follow']) {
-                    goaway(sprintf($r[0]['xchan_follow'], urlencode(channel_reddress($channel))));
+                    goaway(sprintf($r[0]['xchan_follow'], urlencode(Channel::get_webfinger($channel))));
                 }
             }
 

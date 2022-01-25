@@ -3,7 +3,8 @@
 namespace Zotlabs\Identity;
 
 use OAuth2\Storage\Pdo;
-
+use Zotlabs\Lib\Channel;
+    
 class OAuth2Storage extends Pdo
 {
 
@@ -51,7 +52,7 @@ class OAuth2Storage extends Pdo
     public function getUser($username)
     {
 
-        $x = channelx_by_n($username);
+        $x = Channel::from_id($username);
         if (! $x) {
             return false;
         }
@@ -64,7 +65,7 @@ class OAuth2Storage extends Pdo
         $n = explode(' ', $x['channel_name']);
 
         return( [
-            'webfinger'   => channel_reddress($x),
+            'webfinger'   => Channel::get_webfinger($x),
             'portable_id' => $x['channel_hash'],
             'email'       => $a[0]['account_email'],
             'username'    => $x['channel_address'],

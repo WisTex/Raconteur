@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 
@@ -19,7 +20,7 @@ class Poster extends Controller
             return;
         }
 
-        $u = channelx_by_nick($nick);
+        $u = Channel::from_username($nick);
 
         if (!$u) {
             return;

@@ -4,6 +4,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\ServiceClass;
+    
 class Poller
 {
 
@@ -106,7 +108,7 @@ class Poller
                 $c = $contact['abook_connected'];
 
                 if (intval($contact['abook_feed'])) {
-                    $min = service_class_fetch($contact['abook_channel'], 'minimum_feedcheck_minutes');
+                    $min = ServiceClass::fetch($contact['abook_channel'], 'minimum_feedcheck_minutes');
                     if (! $min) {
                         $min = intval(get_config('system', 'minimum_feedcheck_minutes'));
                     }

@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use Exception;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;
 
 require_once('library/jsonld/jsonld.php');
 
@@ -36,7 +37,7 @@ class LDSignatures
         $options = [
             'type' => 'RsaSignature2017',
             'nonce' => random_string(64),
-            'creator' => channel_url($channel),
+            'creator' => Channel::url($channel),
             'created' => datetime_convert('UTC', 'UTC', 'now', 'Y-m-d\TH:i:s\Z')
         ];
 
@@ -115,7 +116,7 @@ class LDSignatures
         $data_type = 'application/activity+json';
         $encoding = 'base64url';
         $algorithm = 'RSA-SHA256';
-        $keyhash = base64url_encode(channel_url($channel));
+        $keyhash = base64url_encode(Channel::url($channel));
 
         $data = str_replace(array(" ", "\t", "\r", "\n"), array("", "", "", ""), $data);
 
@@ -131,7 +132,7 @@ class LDSignatures
             'meDataType' => $data_type,
             'meEncoding' => $encoding,
             'meAlgorithm' => $algorithm,
-            'meCreator' => channel_url($channel),
+            'meCreator' => Channel::url($channel),
             'meSignatureValue' => $signature
         ]);
     }

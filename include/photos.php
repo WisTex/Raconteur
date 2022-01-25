@@ -11,6 +11,7 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Web\HTTPHeaders;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\ServiceClass;
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
@@ -181,10 +182,10 @@ function photo_upload($channel, $observer, $args)
         intval($account_id)
     );
 
-    $limit = engr_units_to_bytes(service_class_fetch($channel_id, 'photo_upload_limit'));
+    $limit = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'photo_upload_limit'));
 
     if (($r) && ($limit !== false) && (($r[0]['total'] + strlen($imagedata)) > $limit)) {
-        $ret['message'] = upgrade_message();
+        $ret['message'] = ServiceClass::upgrade_message();
         @unlink($src);
         /**
          * @hooks photo_post_end

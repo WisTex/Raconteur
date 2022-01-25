@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Channel;
 
 class Appman extends Controller
 {
@@ -16,7 +17,7 @@ class Appman extends Controller
         if (! $channel_id) {
             return;
         }
-		if (is_sys_channel($channel_id)) {
+		if (Channel::is_system($channel_id)) {
 			$channel_id = 0;
 		}
 
@@ -98,7 +99,7 @@ class Appman extends Controller
             return;
         }
 
-		if (is_sys_channel($channel_id)) {
+		if (Channel::is_system($channel_id)) {
 			$channel_id = 0;
 		}
 		

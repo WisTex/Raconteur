@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Channel;
 
 class React extends Controller
 {
@@ -17,7 +18,7 @@ class React extends Controller
             return;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
         $channel = App::get_channel();
 
         $postid = $_REQUEST['postid'];
@@ -51,7 +52,7 @@ class React extends Controller
                     );
                 }
 
-                if ($i && local_channel() && (!is_sys_channel(local_channel()))) {
+                if ($i && local_channel() && (!Channel::is_system(local_channel()))) {
                     $i = [copy_of_pubitem($channel, $i[0]['mid'])];
                     $postid = (($i) ? $i[0]['id'] : 0);
                 }

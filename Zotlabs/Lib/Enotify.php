@@ -5,7 +5,8 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\System;
-
+use Zotlabs\Lib\Channel;
+    
 /**
  * @brief File with functions and a class for generating system and email notifications.
  */
@@ -677,7 +678,7 @@ class Enotify
             // use $_SESSION['zid_override'] to force zid() to use
             // the recipient address instead of the current observer
 
-            $_SESSION['zid_override'] = channel_reddress($recip);
+            $_SESSION['zid_override'] = Channel::get_webfinger($recip);
             $_SESSION['zrl_override'] = z_root() . '/channel/' . $recip['channel_address'];
 
             $textversion = zidify_links($textversion);

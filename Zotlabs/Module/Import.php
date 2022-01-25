@@ -8,9 +8,10 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Import\Friendica;
-
+use Zotlabs\Lib\ServiceClass;
 require_once('include/import.php');
 require_once('include/photo_factory.php');
 
@@ -37,8 +38,8 @@ class Import extends Controller
             return;
         }
 
-        $max_friends = account_service_class_fetch($account_id, 'total_channels');
-        $max_feeds = account_service_class_fetch($account_id, 'total_feeds');
+        $max_friends = ServiceClass::account_fetch($account_id, 'total_channels');
+        $max_feeds = ServiceClass::account_fetch($account_id, 'total_feeds');
         $data = null;
         $seize = ((x($_REQUEST, 'make_primary')) ? intval($_REQUEST['make_primary']) : 0);
         $import_posts = ((x($_REQUEST, 'import_posts')) ? intval($_REQUEST['import_posts']) : 0);
@@ -149,7 +150,7 @@ class Import extends Controller
         $relocate = ((array_key_exists('relocate', $data)) ? $data['relocate'] : null);
 
         if (array_key_exists('channel', $data)) {
-            $max_identities = account_service_class_fetch($account_id, 'total_identities');
+            $max_identities = ServiceClass::account_fetch($account_id, 'total_identities');
 
             if ($max_identities !== false) {
                 $r = q(
@@ -227,7 +228,7 @@ class Import extends Controller
                     'xchan_photo_l' => z_root() . "/photo/profile/l/" . $channel['channel_id'],
                     'xchan_photo_m' => z_root() . "/photo/profile/m/" . $channel['channel_id'],
                     'xchan_photo_s' => z_root() . "/photo/profile/s/" . $channel['channel_id'],
-                    'xchan_addr' => channel_reddress($channel),
+                    'xchan_addr' => Channel::get_webfinger($channel),
                     'xchan_url' => z_root() . '/channel/' . $channel['channel_address'],
                     'xchan_connurl' => z_root() . '/poco/' . $channel['channel_address'],
                     'xchan_follow' => z_root() . '/follow?f=&url=%s',
@@ -321,9 +322,9 @@ class Import extends Controller
                 [
                     'hubloc_guid' => $channel['channel_guid'],
                     'hubloc_guid_sig' => $channel['channel_guid_sig'],
-                    'hubloc_id_url' => channel_url($channel),
+                    'hubloc_id_url' => Channel::url($channel),
                     'hubloc_hash' => $channel['channel_hash'],
-                    'hubloc_addr' => channel_reddress($channel),
+                    'hubloc_addr' => Channel::get_webfinger($channel),
                     'hubloc_network' => 'nomad',
                     'hubloc_primary' => (($seize) ? 1 : 0),
                     'hubloc_url' => z_root(),
@@ -540,7 +541,7 @@ class Import extends Controller
         $addon = array('channel' => $channel, 'data' => $data);
         call_hooks('import_channel', $addon);
 
-        $saved_notification_flags = notifications_off($channel['channel_id']);
+        $saved_notification_flags = Channel::notifications_off($channel['channel_id']);
         if ($import_posts && array_key_exists('item', $data) && $data['item']) {
             import_items($channel, $data['item'], false, $relocate);
         }
@@ -564,7 +565,7 @@ class Import extends Controller
                     '(request-target)' => 'get /api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page,
                 ];
 
-                $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), true, 'sha512');
+                $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
                 $x = z_fetch_url($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page, false, $redirects, ['headers' => $headers]);
 
@@ -599,7 +600,7 @@ class Import extends Controller
                 '(request-target)' => 'get /api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until),
             ];
 
-            $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), true, 'sha512');
+            $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
             $x = z_fetch_url($hz_server . '/api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until), false, $redirects, ['headers' => $headers]);
 
@@ -633,7 +634,7 @@ class Import extends Controller
             notice(t('Files and Posts imported.') . EOL);
         }
 
-        notifications_on($channel['channel_id'], $saved_notification_flags);
+        Channel::notifications_on($channel['channel_id'], $saved_notification_flags);
 
 
         // send out refresh requests

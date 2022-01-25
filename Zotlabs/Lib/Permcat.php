@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\Permissions;
+use Zotlabs\Lib\Channel;
 
 /**
  * @brief Permission Categories. Permission rules for various classes of connections.
@@ -58,7 +59,7 @@ class Permcat
         // if no autoperms it may be a custom role with manual perms
 
         if (! $perms) {
-            $c = channelx_by_n($channel_id);
+            $c = Channel::from_id($channel_id);
             if ($c) {
                 $perms = Permissions::FilledPerms(explode(',',get_abconfig($channel_id, $c['channel_hash'], 'system', 'my_perms', EMPTY_STR)));
             }

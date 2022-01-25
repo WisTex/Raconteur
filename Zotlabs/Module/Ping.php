@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Channel;
 
 require_once('include/bbcode.php');
 
@@ -147,7 +148,7 @@ class Ping extends Controller
             $notify_pubs = false;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         $seenstr = EMPTY_STR;
 
@@ -451,7 +452,7 @@ class Ping extends Controller
                         'name' => $rr['account_email'],
                         'addr' => $rr['account_email'],
                         'url' => '',
-                        'photo' => z_root() . '/' . get_default_profile_photo(48),
+                        'photo' => z_root() . '/' . Channel::get_default_profile_photo(48),
                         'when' => relative_date($rr['account_created']),
                         'hclass' => ('notify-unseen'),
                         'message' => t('requires approval')

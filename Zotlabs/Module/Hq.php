@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Lib\Channel;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -117,7 +118,7 @@ class Hq extends Controller
                 $simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
             }
 
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $sql_extra = item_permissions_sql($sys['channel_id']);
 
             $sys_item = false;
@@ -166,7 +167,7 @@ class Hq extends Controller
         if (!$this->updating && !$this->loading) {
             nav_set_selected('HQ');
 
-            $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
+            $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 1);
 
             if ($target_item) {
                 // if the target item is not a post (eg a like) we want to address its thread parent

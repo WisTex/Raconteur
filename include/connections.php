@@ -6,6 +6,7 @@ use Sabre\VObject\Component\VCard;
 use Sabre\VObject\Reader;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 function abook_store_lowlevel($arr)
 {
@@ -463,7 +464,7 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false)
         if ($xchan && strpos($xchan[0]['xchan_addr'], 'guest:') === 0 && strpos($abook['abook_xchan'], '.')) {
             $atoken_guid = substr($abook['abook_xchan'], strrpos($abook['abook_xchan'], '.') + 1);
             if ($atoken_guid) {
-                atoken_delete_and_sync($channel_id, $atoken_guid);
+                Channel::atoken_delete_and_sync($channel_id, $atoken_guid);
             }
         }
     }

@@ -3,6 +3,7 @@
 namespace Zotlabs\Web;
 
 use App;
+use Zotlabs\Lib\Channel;
 
 class WebServer
 {
@@ -130,14 +131,14 @@ class WebServer
                     $_SESSION['my_address'] = $_GET['zid'];
                     $_SESSION['authenticated'] = 0;
                 }
-                zid_init();
+                Channel::zid_init();
             }
         }
 
         if ((x($_GET, 'zat')) && (! App::$install)) {
             App::$query_string = strip_zats(App::$query_string);
             if (! local_channel()) {
-                zat_init();
+                Channel::zat_init();
             }
         }
 

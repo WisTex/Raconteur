@@ -4,6 +4,7 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Channel;
 
 class Cover_photo
 {
@@ -24,7 +25,7 @@ class Cover_photo
         $site_banner = false;
 
         if (App::$module === 'home') {
-            $channel = get_sys_channel();
+            $channel = Channel::get_system();
             $channel_id = $channel['channel_id'];
             $site_banner = System::get_site_name();
         }
@@ -49,7 +50,7 @@ class Cover_photo
         }
         $_SESSION['channels_visited'][] = $channel_id;
 
-        $channel = channelx_by_n($channel_id);
+        $channel = Channel::from_id($channel_id);
 
         if (array_key_exists('style', $arr) && isset($arr['style'])) {
             $style = $arr['style'];
@@ -82,7 +83,7 @@ class Cover_photo
             $subtitle = '';
         }
 
-        $c = get_cover_photo($channel_id, 'html');
+        $c = Channel::get_cover_photo($channel_id, 'html');
 
         if ($c) {
             $c = str_replace('src=', 'data-src=', $c);

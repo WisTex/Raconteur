@@ -4,6 +4,7 @@
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\System;
 
 require_once('include/security.php');
@@ -42,7 +43,7 @@ function nav($template = 'default')
                 "select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
                 intval(get_account_id())
             );
-            $q = get_sys_channel();
+            $q = Channel::get_system();
             if (is_site_admin() && intval(get_pconfig($q['channel_id'], 'system', 'include_in_menu'))) {
                 $chans = array_merge([$q], $chans);
             }
@@ -91,7 +92,7 @@ function nav($template = 'default')
             'name' => $observer['xchan_addr'],
         ];
     } elseif (! $_SESSION['authenticated']) {
-        $nav['remote_login'] = remote_login();
+        $nav['remote_login'] = Channel::remote_login();
         $nav['loginmenu'][] = array('rmagic',t('Remote authentication'),'',t('Click to authenticate to your home hub'),'rmagic_nav_btn');
     }
 
@@ -142,7 +143,7 @@ function nav($template = 'default')
         }
     }
 
-    $my_url = get_my_url();
+    $my_url = Channel::get_my_url();
     if (! $my_url) {
         $observer = App::get_observer();
         $my_url = (($observer) ? $observer['xchan_url'] : '');

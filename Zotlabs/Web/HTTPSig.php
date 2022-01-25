@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;    
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Libzot;

@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Xp extends Controller
 {
@@ -17,13 +18,13 @@ class Xp extends Controller
                 if ($resolution && substr($resolution, 0, 1) === '-') {
                     switch (substr($resolution, 1, 1)) {
                         case '4':
-                            $path = get_default_profile_photo();
+                            $path = Channel::get_default_profile_photo();
                             break;
                         case '5':
-                            $path = get_default_profile_photo(80);
+                            $path = Channel::get_default_profile_photo(80);
                             break;
                         case '6':
-                            $path = get_default_profile_photo(48);
+                            $path = Channel::get_default_profile_photo(48);
                             break;
                         default:
                             break;

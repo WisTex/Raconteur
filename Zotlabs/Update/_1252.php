@@ -2,12 +2,14 @@
 
 namespace Zotlabs\Update;
 
+use Zotlabs\Lib\Channel;
+    
 class _1252
 {
 
     public function run()
     {
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
         if ($sys) {
             $sitename = get_config('system', 'sitename');
             $siteinfo = get_config('system', 'siteinfo');

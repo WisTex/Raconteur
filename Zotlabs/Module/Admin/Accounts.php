@@ -3,7 +3,9 @@
 namespace Zotlabs\Module\Admin;
 
 use App;
-
+use Zotlabs\Lib\Account;
+use Zotlabs\Lib\Channel;
+    
 class Accounts
 {
 
@@ -43,7 +45,7 @@ class Accounts
         // account delete button was submitted
         if (x($_POST, 'page_accounts_delete')) {
             foreach ($users as $uid) {
-                account_remove($uid, true, false);
+                Account::remove($uid, true, false);
             }
             notice(sprintf(tt("%s account deleted", "%s accounts deleted", count($users)), count($users)));
         }
@@ -51,14 +53,14 @@ class Accounts
         // registration approved button was submitted
         if (x($_POST, 'page_accounts_approve')) {
             foreach ($pending as $hash) {
-                account_allow($hash);
+                Account::allow($hash);
             }
         }
 
         // registration deny button was submitted
         if (x($_POST, 'page_accounts_deny')) {
             foreach ($pending as $hash) {
-                account_deny($hash);
+                Account::deny($hash);
             }
         }
 
@@ -94,7 +96,7 @@ class Accounts
             switch (argv(2)) {
                 case 'delete':
                     // delete user
-                    account_remove($uid, true, false);
+                    Account::remove($uid, true, false);
 
                     notice(sprintf(t("Account '%s' deleted"), $account[0]['account_email']) . EOL);
                     break;

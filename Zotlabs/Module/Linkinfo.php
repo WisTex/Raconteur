@@ -9,6 +9,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib as Zlib;
 
 require_once('include/security.php');
@@ -397,7 +398,7 @@ class Linkinfo extends Controller
 
         // get the channel to check permissions
 
-        $u = channelx_by_nick($nick);
+        $u = Channel::from_username($nick);
 
         if ($u && $p) {
             $sql_extra = permissions_sql(intval($u['channel_id']));

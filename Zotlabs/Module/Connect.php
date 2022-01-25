@@ -6,14 +6,15 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libprofile;
-
+use Zotlabs\Lib\Channel;
+    
 class Connect extends Controller
 {
 
     public function init()
     {
         if (argc() > 1) {
-            App::$data['channel'] = channelx_by_nick(argv(1));
+            App::$data['channel'] = Channel::from_username(argv(1));
             Libprofile::load(argv(1), EMPTY_STR);
         } else {
             notice(t('Requested profile is not available.') . EOL);
@@ -55,7 +56,7 @@ class Connect extends Controller
         $observer = App::get_observer();
         if (($observer) && ($_POST['submit'] === t('Continue'))) {
             if ($observer['xchan_follow']) {
-                $url = sprintf($observer['xchan_follow'], urlencode(channel_reddress(App::$data['channel'])));
+                $url = sprintf($observer['xchan_follow'], urlencode(Channel::get_webfinger(App::$data['channel'])));
             }
             if (!$url) {
                 $r = q(
@@ -63,7 +64,7 @@ class Connect extends Controller
                     dbesc($observer['xchan_hash'])
                 );
                 if ($r) {
-                    $url = $r[0]['hubloc_url'] . '/follow?f=&url=' . urlencode(channel_reddress(App::$data['channel']));
+                    $url = $r[0]['hubloc_url'] . '/follow?f=&url=' . urlencode(Channel::get_webfinger(App::$data['channel']));
                 }
             }
         }

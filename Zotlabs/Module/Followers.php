@@ -9,6 +9,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 
 class Followers extends Controller
 {
@@ -26,7 +27,7 @@ class Followers extends Controller
             http_status_exit(404, 'Not found');
         }
 
-        $channel = channelx_by_nick(argv(1));
+        $channel = Channel::from_username(argv(1));
         if (!$channel) {
             http_status_exit(404, 'Not found');
         }

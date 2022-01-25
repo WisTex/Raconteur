@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Channel;
 use App;
 
 class Webfinger extends Controller
@@ -52,7 +53,7 @@ class Webfinger extends Controller
             $arr = explode(':', $resource);
             if (count($arr) > 3 && $arr[2] === 'zotid') {
                 $hash = $arr[3];
-                $channel_target = channelx_by_hash($hash);
+                $channel_target = Channel::from_hash($hash);
             }
         }
 
@@ -74,7 +75,7 @@ class Webfinger extends Controller
         }
 
         if ($channel_nickname) {
-            $channel_target = channelx_by_nick($channel_nickname);
+            $channel_target = Channel::from_username($channel_nickname);
         }
 
         if ($channel_target || $site_query) {

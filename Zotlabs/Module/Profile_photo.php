@@ -12,6 +12,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 
 require_once('include/photo_factory.php');
@@ -190,7 +191,7 @@ class Profile_photo extends Controller
                     // set $send to false in profiles_build_sync() to return the data
                     // so that we only send one sync packet.
 
-                    $sync_profiles = profiles_build_sync(local_channel(), false);
+                    $sync_profiles = Channel::profiles_build_sync(local_channel(), false);
 
                     // We'll set the updated profile-photo timestamp even if it isn't the default profile,
                     // so that browsers will do a cache update unconditionally

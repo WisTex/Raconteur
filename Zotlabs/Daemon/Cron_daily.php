@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\ServiceClass;    
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libzot;
 
@@ -98,7 +99,7 @@ class Cron_daily
         }
 
         // expire any expired accounts
-        downgrade_accounts();
+        ServiceClass::downgrade_accounts();
 
         Run::Summon([ 'Expire' ]);
 

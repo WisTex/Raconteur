@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Channel;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -30,7 +31,7 @@ class Cal extends Controller
 
             Libprofile::load($nick);
 
-            $channelx = channelx_by_nick($nick);
+            $channelx = Channel::from_username($nick);
 
             if (!$channelx) {
                 return;
@@ -62,7 +63,7 @@ class Cal extends Controller
         $channel = null;
 
         if (argc() > 1) {
-            $channel = channelx_by_nick(argv(1));
+            $channel = Channel::from_username(argv(1));
         }
 
 

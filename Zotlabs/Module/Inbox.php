@@ -12,6 +12,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Lib\Channel;
 
 class Inbox extends Controller
 {
@@ -44,7 +45,7 @@ class Inbox extends Controller
         if (argc() == 1 || argv(1) === '[public]') {
             $is_public = true;
         } else {
-            $c = channelx_by_nick(argv(1));
+            $c = Channel::from_username(argv(1));
             if (!$c) {
                 http_status_exit(410, 'Gone');
             }
@@ -238,7 +239,7 @@ class Inbox extends Controller
 
 
                 if (!$sys_disabled) {
-                    $channels[] = get_sys_channel();
+                    $channels[] = Channel::get_system();
                 }
             }
         }

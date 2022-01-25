@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Rmagic extends Controller
 {
@@ -15,7 +16,7 @@ class Rmagic extends Controller
             goaway(z_root());
         }
 
-        $me = get_my_address();
+        $me = Channel::get_my_address();
         if ($me) {
             $r = q(
                 "select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",

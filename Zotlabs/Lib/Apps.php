@@ -4,7 +4,8 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Libsync;
-
+use Zotlabs\Lib\Channel;
+    
 /**
  * Apps
  *
@@ -237,7 +238,7 @@ class Apps
         }
 
         if (!$ret['photo']) {
-            $ret['photo'] = $baseurl . '/' . get_default_profile_photo(80);
+            $ret['photo'] = $baseurl . '/' . Channel::get_default_profile_photo(80);
         }
 
         $ret['type'] = 'system';
@@ -291,7 +292,7 @@ class Apps
                         }
                         break;
                     case 'public_profile':
-                        if (!is_public_profile()) {
+                        if (!Channel::is_public_profile()) {
                             unset($ret);
                         }
                         break;
@@ -448,7 +449,7 @@ class Apps
          */
 
 		$channel_id = local_channel();
-		$sys_channel = is_sys_channel($channel_id);
+		$sys_channel = Channel::is_system($channel_id);
 
         $installed = false;
 
@@ -475,7 +476,7 @@ class Apps
         if (strpos($papp['url'], '$baseurl') !== false || strpos($papp['url'], '$nick') !== false || strpos($papp['photo'], '$baseurl') !== false || strpos($papp['photo'], '$nick') !== false) {
             $view_channel = $channel_id;
             if (!$view_channel) {
-                $sys = get_sys_channel();
+                $sys = Channel::get_system();
                 $view_channel = $sys['channel_id'];
             }
             self::app_macros($view_channel, $papp);
@@ -532,7 +533,7 @@ class Apps
                             }
                             break;
                         case 'public_profile':
-                            if (!is_public_profile()) {
+                            if (!Channel::is_public_profile()) {
                                 return '';
                             }
                             break;
@@ -1099,7 +1100,7 @@ class Apps
         }
 
         $baseurl = z_root();
-        $channel = channelx_by_n($uid);
+        $channel = Channel::from_id($uid);
         $address = (($channel) ? $channel['channel_address'] : '');
 
         // future expansion
@@ -1119,7 +1120,7 @@ class Apps
         $darray = [];
         $ret = ['success' => false];
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         self::app_macros($arr['uid'], $arr);
 
@@ -1148,7 +1149,7 @@ class Apps
         $darray['app_author'] = ((x($arr, 'author')) ? $arr['author'] : get_observer_hash());
         $darray['app_name'] = ((x($arr, 'name')) ? escape_tags($arr['name']) : t('Unknown'));
         $darray['app_desc'] = ((x($arr, 'desc')) ? escape_tags($arr['desc']) : '');
-        $darray['app_photo'] = ((x($arr, 'photo')) ? $arr['photo'] : z_root() . '/' . get_default_profile_photo(80));
+        $darray['app_photo'] = ((x($arr, 'photo')) ? $arr['photo'] : z_root() . '/' . Channel::get_default_profile_photo(80));
         $darray['app_version'] = ((x($arr, 'version')) ? escape_tags($arr['version']) : '');
         $darray['app_addr'] = ((x($arr, 'addr')) ? escape_tags($arr['addr']) : '');
         $darray['app_price'] = ((x($arr, 'price')) ? escape_tags($arr['price']) : '');
@@ -1240,7 +1241,7 @@ class Apps
         $darray['app_author'] = ((x($arr, 'author')) ? $arr['author'] : get_observer_hash());
         $darray['app_name'] = ((x($arr, 'name')) ? escape_tags($arr['name']) : t('Unknown'));
         $darray['app_desc'] = ((x($arr, 'desc')) ? escape_tags($arr['desc']) : '');
-        $darray['app_photo'] = ((x($arr, 'photo')) ? $arr['photo'] : z_root() . '/' . get_default_profile_photo(80));
+        $darray['app_photo'] = ((x($arr, 'photo')) ? $arr['photo'] : z_root() . '/' . Channel::get_default_profile_photo(80));
         $darray['app_version'] = ((x($arr, 'version')) ? escape_tags($arr['version']) : '');
         $darray['app_addr'] = ((x($arr, 'addr')) ? escape_tags($arr['addr']) : '');
         $darray['app_price'] = ((x($arr, 'price')) ? escape_tags($arr['price']) : '');

@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 
 require_once('include/conversation.php');

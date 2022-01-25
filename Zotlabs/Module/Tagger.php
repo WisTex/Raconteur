@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -20,7 +21,7 @@ class Tagger extends Controller
             return;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         $observer_hash = get_observer_hash();
         //strip html-tags
@@ -52,7 +53,7 @@ class Tagger extends Controller
                     intval($item_id)
                 );
             }
-            if ($r && local_channel() && (!is_sys_channel(local_channel()))) {
+            if ($r && local_channel() && (!Channel::is_system(local_channel()))) {
                 $r = [copy_of_pubitem($channel, $i[0]['mid'])];
                 $item_id = (($r) ? $r[0]['id'] : 0);
             }

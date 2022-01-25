@@ -5,6 +5,7 @@ use Zotlabs\Photo\PhotoGd;
 use Zotlabs\Photo\PhotoImagick;
 use Zotlabs\Lib\Img_cache;
 use Zotlabs\Lib\Hashpath;
+use Zotlabs\Lib\Channel;
 
 /**
  * @brief Return a PhotoDriver object.
@@ -317,10 +318,10 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false)
     }
 
     if ($failed) {
-        $default  = get_default_profile_photo();
+        $default  = Channel::get_default_profile_photo();
         $photo    = z_root() . '/' . $default;
-        $thumb    = z_root() . '/' . get_default_profile_photo(80);
-        $micro    = z_root() . '/' . get_default_profile_photo(48);
+        $thumb    = z_root() . '/' . Channel::get_default_profile_photo(80);
+        $micro    = z_root() . '/' . Channel::get_default_profile_photo(48);
         $type     = 'image/png';
         $modified = gmdate('Y-m-d H:i:s', filemtime($default));
     }
@@ -456,10 +457,10 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
     }
 
     if ($failed) {
-        $default  = get_default_profile_photo();
+        $default  = Channel::get_default_profile_photo();
         $photo    = z_root() . '/' . $default;
-        $thumb    = z_root() . '/' . get_default_profile_photo(80);
-        $micro    = z_root() . '/' . get_default_profile_photo(48);
+        $thumb    = z_root() . '/' . Channel::get_default_profile_photo(80);
+        $micro    = z_root() . '/' . Channel::get_default_profile_photo(48);
         $type     = 'image/png';
         $modified = filemtime($default);
     }

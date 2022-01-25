@@ -15,6 +15,7 @@ use Sabre\DAV\Auth\Plugin;
 use Zotlabs\Lib\System;
 use Zotlabs\Storage;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Storage\BasicAuth;
 use Zotlabs\Storage\Browser;
 use Zotlabs\Web\Controller;
@@ -67,7 +68,7 @@ class Dav extends Controller
                             dbesc($keyId)
                         );
                         if ($r) {
-                            $c = channelx_by_hash($r[0]['hubloc_hash']);
+                            $c = Channel::from_hash($r[0]['hubloc_hash']);
                             if ($c) {
                                 $a = q(
                                     "select * from account where account_id = %d limit 1",

@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\PermissionDescription;
 
 require_once('include/acl_selectors.php');
@@ -48,7 +49,7 @@ class Editpost extends Controller
         $item = array_shift($item);
 
         $owner_uid = intval($item['uid']);
-        $owner = channelx_by_n($owner_uid);
+        $owner = Channel::from_id($owner_uid);
 
         if ($item['resource_type'] === 'photo' && $item['resource_id'] && $owner) {
             goaway(z_root() . '/photos/' . $owner['channel_address'] . '/image/' . $item['resource_id'] . '?expandform=1');

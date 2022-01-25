@@ -7,6 +7,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -219,7 +220,7 @@ class Display extends Controller
         }
 
         if ((!$this->updating) && (!$this->loading)) {
-            $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
+            $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 1);
 
             // if the target item is not a post (eg a like) we want to address its thread parent
 
@@ -284,7 +285,7 @@ class Display extends Controller
             $r = null;
 
             require_once('include/channel.php');
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $sysid = $sys['channel_id'];
 
             if (local_channel()) {
@@ -308,7 +309,7 @@ class Display extends Controller
             $r = null;
 
             require_once('include/channel.php');
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $sysid = $sys['channel_id'];
 
             if (local_channel()) {

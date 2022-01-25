@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 function xchan_store_lowlevel($arr)
 {
@@ -79,7 +80,7 @@ function xchan_store($arr)
             $arr['url'] = z_root();
         }
         if (! $arr['photo']) {
-            $arr['photo'] = z_root() . '/' . get_default_profile_photo();
+            $arr['photo'] = z_root() . '/' . Channel::get_default_profile_photo();
         }
 
 		if (in_array($arr['network'], [ 'nomad','zot6' ])) {

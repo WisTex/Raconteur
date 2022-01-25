@@ -6,8 +6,9 @@ use App;
 use URLify;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Lib\Channel;
 
-require_once('include/channel.php');
 require_once('include/permissions.php');
 
 
@@ -123,7 +124,7 @@ class New_channel extends Controller
             return;
         }
 
-        $result = create_identity($arr);
+        $result = Channel::create($arr);
 
         if (!$result['success']) {
             notice($result['message']);
@@ -159,7 +160,7 @@ class New_channel extends Controller
                 $default_role = get_config('system', 'default_permissions_role', 'social');
             }
 
-            $limit = account_service_class_fetch(get_account_id(), 'total_identities');
+            $limit = ServiceClass::account_fetch(get_account_id(), 'total_identities');
 
             if ($r && ($limit !== false)) {
                 $channel_usage_message = sprintf(t("You have created %1$.0f of %2$.0f allowed channels."), $r[0]['total'], $limit);

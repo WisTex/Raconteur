@@ -10,6 +10,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\LDSignatures;
 
 class Lists extends Controller
@@ -52,7 +53,7 @@ class Lists extends Controller
                 http_status_exit(403, 'Permission denied');
             }
 
-            $channel = channelx_by_n($group['uid']);
+            $channel = Channel::from_id($group['uid']);
 
             if (!$channel) {
                 http_status_exit(404, 'Not found');

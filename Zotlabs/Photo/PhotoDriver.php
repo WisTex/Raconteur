@@ -4,6 +4,7 @@ namespace Zotlabs\Photo;
 
 use App;
 use Imagick;
+use Zotlabs\Lib\Channel;
 
 /**
  * @brief Abstract photo driver class.
@@ -560,7 +561,7 @@ abstract class PhotoDriver
         $arr['imgscale'] = $scale;
 
         if (boolval(get_config('system', 'filesystem_storage_thumbnails', 1)) && $scale > 0) {
-            $channel = channelx_by_n($arr['uid']);
+            $channel = Channel::from_id($arr['uid']);
             $arr['os_storage'] = 1;
             $arr['os_syspath'] = 'store/' . $channel['channel_address'] . '/' . $arr['os_path'] . '-' . $scale;
             if (! $this->saveImage($arr['os_syspath'], $animated)) {

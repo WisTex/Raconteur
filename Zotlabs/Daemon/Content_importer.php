@@ -3,6 +3,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 require_once('include/cli_startup.php');
 require_once('include/attach.php');
@@ -23,7 +24,7 @@ class Content_importer
 
         $m = parse_url($hz_server);
 
-        $channel = channelx_by_nick($channel_address);
+        $channel = Channel::from_username($channel_address);
         if (! $channel) {
             logger('itemhelper: channel not found');
             killme();
@@ -36,7 +37,7 @@ class Content_importer
             '(request-target)' => 'get /api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page ,
         ];
 
-        $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), true, 'sha512');
+        $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
         $x = z_fetch_url($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page, false, $redirects, [ 'headers' => $headers ]);
 
