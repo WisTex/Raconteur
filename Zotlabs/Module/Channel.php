@@ -69,7 +69,7 @@ class Channel extends Controller
             $profile = argv(1);
         }
 
-        $channel = Channel::from_username($which, true);
+        $channel = Zlib\Channel::from_username($which, true);
         if (!$channel) {
             http_status_exit(404, 'Not found');
         }
@@ -155,7 +155,7 @@ class Channel extends Controller
                 'Digest' => HTTPSig::generate_digest_header($data),
                 '(request-target)' => strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI']
             ];
-            $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
+            $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Zlib\Channel::url($channel));
             HTTPSig::set_headers($h);
             echo $data;
             killme();
@@ -171,7 +171,7 @@ class Channel extends Controller
             App::$meta->set('og:title', $channel['channel_name']);
             App::$meta->set('og:image', $channel['xchan_photo_l']);
             App::$meta->set('og:type', 'webpage');
-            App::$meta->set('og:url:secure_url', Channel::url($channel));
+            App::$meta->set('og:url:secure_url', Zlib\Channel::url($channel));
             if (App::$profile['about'] && perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_profile')) {
                 App::$meta->set('og:description', App::$profile['about']);
             } else {
@@ -567,7 +567,7 @@ class Channel extends Controller
         }
 
         // We reset $channel so that info can be obtained for unlogged visitors
-        $channel = Channel::from_id(App::$profile['profile_uid']);
+        $channel = Zlib\Channel::from_id(App::$profile['profile_uid']);
 
         if (isset($_REQUEST['mid']) && $_REQUEST['mid']) {
             if (preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
@@ -602,7 +602,7 @@ class Channel extends Controller
             App::$meta->set('og:title', ($items[0]['title'] ? $items[0]['title'] : $channel['channel_name']));
             App::$meta->set('og:image', ($ogimage ? $ogimage : $channel['xchan_photo_l']));
             App::$meta->set('og:type', 'article');
-            App::$meta->set('og:url:secure_url', Channel::url($channel));
+            App::$meta->set('og:url:secure_url', Zlib\Channel::url($channel));
             App::$meta->set('og:description', ($ogdesc ? $ogdesc : sprintf(t('This post was published on the home page of %s.'), $channel['channel_name'])));
         }
 

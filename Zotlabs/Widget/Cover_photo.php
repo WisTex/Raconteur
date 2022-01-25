@@ -12,9 +12,7 @@ class Cover_photo
     public function widget($arr)
     {
 
-        require_once('include/channel.php');
         $o = '';
-
 
         if (App::$module == 'channel' && $_REQUEST['mid']) {
             return '';
