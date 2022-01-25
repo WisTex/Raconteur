@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Features;
 use Zotlabs\Daemon\Run;
 use Sabre\VObject\Reader;
 

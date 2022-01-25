@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
     
 class Libprofile
 {

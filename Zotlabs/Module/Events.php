@@ -12,6 +12,7 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
     
 require_once('include/conversation.php');
 require_once('include/bbcode.php');

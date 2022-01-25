@@ -14,6 +14,7 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');

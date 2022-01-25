@@ -15,6 +15,7 @@ use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Permcat;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
 
 class Channel
 {

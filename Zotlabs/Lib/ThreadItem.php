@@ -5,6 +5,7 @@
 namespace Zotlabs\Lib;
 
 use App;
+use Zotlabs\Lib\Features;
 
 require_once('include/text.php');
 

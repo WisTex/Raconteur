@@ -4,6 +4,7 @@ namespace Zotlabs\Module\Settings;
 
 use App;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Features;
 
 class Display
 {

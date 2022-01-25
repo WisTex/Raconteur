@@ -7,6 +7,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Features;
 
 require_once('include/security.php');
 require_once('include/menu.php');

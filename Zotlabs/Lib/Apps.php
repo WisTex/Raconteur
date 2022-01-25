@@ -5,6 +5,7 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
     
 /**
  * Apps

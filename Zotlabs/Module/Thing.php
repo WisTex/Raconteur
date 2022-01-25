@@ -8,6 +8,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
     
 /**
  * @file Zotlabs/Module/Thing.php

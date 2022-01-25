@@ -32,6 +32,7 @@ use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
     
 require_once('include/event.php');
 require_once('include/auth.php');

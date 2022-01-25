@@ -4,6 +4,7 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Features;
 
 class Settings_menu
 {

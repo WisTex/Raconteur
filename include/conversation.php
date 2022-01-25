@@ -8,6 +8,7 @@ use Zotlabs\Lib\ThreadStream;
 use Zotlabs\Lib\ThreadItem;
 use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 

@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
 
 require_once('include/attach.php');
 require_once('include/photos.php');

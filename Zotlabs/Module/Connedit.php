@@ -13,6 +13,7 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\Permcat;
+use Zotlabs\Lib\Features;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Web\HTTPHeaders;
 use Sabre\VObject\Reader;

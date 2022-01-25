@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Theme;
 
+use Zotlabs\Lib\Features;
+
 class RedbasicConfig {
 
 	function get_schemas() {

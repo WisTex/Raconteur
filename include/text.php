@@ -15,6 +15,8 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
+    
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
 /**

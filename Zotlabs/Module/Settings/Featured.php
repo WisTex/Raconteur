@@ -3,6 +3,7 @@
 namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Features;
 
 class Featured
 {
