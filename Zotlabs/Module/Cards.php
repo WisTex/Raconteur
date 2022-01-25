@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/conversation.php');
 require_once('include/acl_selectors.php');

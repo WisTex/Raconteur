@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Navbar;
 
 class Apporder extends Controller
 {

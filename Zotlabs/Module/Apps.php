@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 class Apps extends Controller
 {

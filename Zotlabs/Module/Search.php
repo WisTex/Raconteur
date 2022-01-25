@@ -10,6 +10,7 @@ use Zotlabs\Lib\ASCollection;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
     
 require_once("include/bbcode.php");
 require_once('include/security.php');

@@ -9,6 +9,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Render\Theme;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 use function Sabre\HTTP\encodePath;
 
 //require_once('include/conversation.php');

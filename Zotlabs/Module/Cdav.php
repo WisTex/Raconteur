@@ -30,6 +30,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Storage\BasicAuth;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/event.php');
 require_once('include/auth.php');

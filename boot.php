@@ -12,6 +12,8 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+
 /**
  * @file boot.php
  *

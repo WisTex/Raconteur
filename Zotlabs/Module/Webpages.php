@@ -9,6 +9,7 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\ExtendedZip;
+use Zotlabs\Lib\Navbar;
 use ZipArchive;
 
 require_once('include/conversation.php');

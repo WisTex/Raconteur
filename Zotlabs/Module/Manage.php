@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
     
 require_once('include/security.php');
 

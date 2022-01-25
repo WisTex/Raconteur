@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');

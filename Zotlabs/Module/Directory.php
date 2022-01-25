@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');

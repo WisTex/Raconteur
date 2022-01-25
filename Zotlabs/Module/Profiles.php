@@ -8,6 +8,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 use Zotlabs\Daemon\Run;
 use Sabre\VObject\Reader;
 

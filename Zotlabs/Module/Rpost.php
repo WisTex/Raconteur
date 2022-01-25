@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/acl_selectors.php');
 require_once('include/items.php');

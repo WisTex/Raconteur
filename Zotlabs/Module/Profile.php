@@ -10,6 +10,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Navbar;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');

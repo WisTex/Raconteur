@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\SubModule;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/security.php');
 

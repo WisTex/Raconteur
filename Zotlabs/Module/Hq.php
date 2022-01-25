@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');

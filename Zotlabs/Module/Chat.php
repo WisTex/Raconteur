@@ -11,6 +11,7 @@ use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Lib\Navbar;
 
 class Chat extends Controller
 {

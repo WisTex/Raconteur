@@ -12,6 +12,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Navbar;
 
 class Lists extends Controller
 {

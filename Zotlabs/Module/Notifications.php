@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/bbcode.php');
 
