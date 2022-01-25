@@ -7,6 +7,7 @@ namespace Zotlabs\Lib;
  * @brief Some account related functions.
  */
 
+use App;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
@@ -169,8 +170,8 @@ public static function create($arr)
 
     // allow the admin_email account to be admin, but only if it's the first account.
 
-    $c = $self::account_total();
-    if (($c === 0) && ($self::check_admin($arr))) {
+    $c = self::account_total();
+    if (($c === 0) && (self::check_admin($arr))) {
         $roles |= ACCOUNT_ROLE_ADMIN;
     }
 
@@ -205,7 +206,7 @@ public static function create($arr)
     $salt = random_string(32);
     $password_encoded = hash('whirlpool', $salt . $password);
 
-    $r = $self::account_store_lowlevel(
+    $r = self::account_store_lowlevel(
         [
             'account_parent'        => intval($parent),
             'account_salt'          => $salt,

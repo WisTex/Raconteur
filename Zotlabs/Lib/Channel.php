@@ -7,6 +7,7 @@ namespace Zotlabs\Lib;
  * @brief Channel related functions.
  */
 
+use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
@@ -83,7 +84,7 @@ public static function create_system()
         set_config('system', 'prvkey', $hostkey['prvkey']);
     }
 
-    $sys = $self::get_system();
+    $sys = self::get_system();
 
     if ($sys) {
         if (isset($sys['channel_pubkey']) && $sys['channel_pubkey'] && $sys['channel_pubkey'] === get_config('system', 'pubkey')) {
@@ -140,7 +141,7 @@ public static function create_system()
         }
     }
 
-    $self::create([
+    self::create([
             'account_id'       => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
             'nickname'         => 'sys',
             'name'             => 'System',
@@ -184,7 +185,7 @@ public static function get_system()
  */
 public static function is_system($channel_id)
 {
-    $s = $self::get_system();
+    $s = self::get_system();
     if ($s) {
         return (intval($s['channel_id']) === intval($channel_id));
     }
@@ -254,7 +255,7 @@ public static function create($arr)
     $name = escape_tags($arr['name']);
     $pageflags = ((x($arr, 'pageflags')) ? intval($arr['pageflags']) : PAGE_NORMAL);
     $system = ((x($arr, 'system')) ? intval($arr['system']) : 0);
-    $name_error = $self::validate_channelname($arr['name']);
+    $name_error = self::validate_channelname($arr['name']);
     if ($name_error) {
         $ret['message'] = $name_error;
         return $ret;
@@ -311,7 +312,7 @@ public static function create($arr)
 
     $expire = 0;
 
-    $r = $self::channel_store_lowlevel(
+    $r = self::channel_store_lowlevel(
         [
             'channel_account_id'  => intval($arr['account_id']),
             'channel_primary'     => intval($primary),
@@ -383,7 +384,7 @@ public static function create($arr)
     $ret['channel'] = $r[0];
 
     if (intval($arr['account_id'])) {
-        $self::set_default($arr['account_id'], $ret['channel']['channel_id'], false);
+        self::set_default($arr['account_id'], $ret['channel']['channel_id'], false);
     }
 
     // Create a verified hub location pointing to this site.
@@ -394,7 +395,7 @@ public static function create($arr)
             'hubloc_guid_sig' => $sig,
             'hubloc_id_url'   => (($system) ? z_root() : Channel::url($ret['channel'])),
             'hubloc_hash'     => $hash,
-            'hubloc_addr'     => $self::get_webfinger($ret['channel']),
+            'hubloc_addr'     => self::get_webfinger($ret['channel']),
             'hubloc_primary'  => intval($primary),
             'hubloc_url'      => z_root(),
             'hubloc_url_sig'  => Libzot::sign(z_root(), $ret['channel']['channel_prvkey']),
@@ -422,7 +423,7 @@ public static function create($arr)
             'xchan_photo_l'    => z_root() . "/photo/profile/l/{$newuid}",
             'xchan_photo_m'    => z_root() . "/photo/profile/m/{$newuid}",
             'xchan_photo_s'    => z_root() . "/photo/profile/s/{$newuid}",
-            'xchan_addr'       => $self::get_webfinger($ret['channel']),
+            'xchan_addr'       => self::get_webfinger($ret['channel']),
             'xchan_url'        => (($system) ? z_root() : Channel::url($ret['channel'])),
             'xchan_follow'     => z_root() . '/follow?f=&url=%s',
             'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
@@ -438,7 +439,7 @@ public static function create($arr)
     // Not checking return value.
     // It's ok for this to fail if it's an imported channel, and therefore the hash is a duplicate
 
-    $r = $self::profile_store_lowlevel(
+    $r = self::profile_store_lowlevel(
         [
             'aid'          => intval($ret['channel']['channel_account_id']),
             'uid'          => intval($newuid),
@@ -515,9 +516,9 @@ public static function create($arr)
         // If this channel has a parent, auto follow them.
 
         if ($parent_channel_hash) {
-            $ch = $self::from_hash($parent_channel_hash);
+            $ch = self::from_hash($parent_channel_hash);
             if ($ch) {
-                $self::connect_and_sync($ret['channel'], $self::get_webfinger($ch), true);
+                self::connect_and_sync($ret['channel'], self::get_webfinger($ch), true);
             }
         }
 
@@ -534,7 +535,7 @@ public static function create($arr)
 
             foreach ($accts as $acct) {
                 if (trim($acct)) {
-                    $f = $self::connect_and_sync($ret['channel'], trim($acct));
+                    $f = self::connect_and_sync($ret['channel'], trim($acct));
                     if ($f['success']) {
                         $can_view_stream = their_perms_contains($ret['channel']['channel_id'], $f['abook']['abook_xchan'], 'view_stream');
 
@@ -873,7 +874,7 @@ public static function basic_export($channel_id, $sections = null)
      */
 
     if (! $sections) {
-        $sections = $self::get_default_export_sections();
+        $sections = self::get_default_export_sections();
     }
 
     $ret = [];
@@ -1185,7 +1186,7 @@ public static function export_year($channel_id, $year, $month = 0)
         $maxdate = datetime_convert('UTC', 'UTC', $year + 1 . '-01-01 00:00:00');
     }
 
-    return $self::export_items_date($channel_id, $mindate, $maxdate);
+    return self::export_items_date($channel_id, $mindate, $maxdate);
 }
 
 /**
@@ -1215,7 +1216,7 @@ public static function export_items_date($channel_id, $start, $finish)
 
     $ret = [];
 
-    $ch = $self::from_id($channel_id);
+    $ch = self::from_id($channel_id);
     if ($ch) {
         $ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
     }
@@ -1284,7 +1285,7 @@ public static function export_items_page($channel_id, $start, $finish, $page = 0
 
     $ret = [];
 
-    $ch = $self::from_id($channel_id);
+    $ch = self::from_id($channel_id);
     if ($ch) {
         $ret['relocate'] = [ 'channel_address' => $ch['channel_address'], 'url' => z_root()];
     }
@@ -1349,7 +1350,7 @@ public static function get_my_address()
  */
 public static function zid_init()
 {
-    $tmp_str = $self::get_my_address();
+    $tmp_str = self::get_my_address();
     if (validate_email($tmp_str)) {
         $arr = [
                 'zid' => $tmp_str,
@@ -1443,7 +1444,7 @@ public static function get_theme_uid()
         }
     }
     if (! $uid) {
-        $x = $self::get_system();
+        $x = self::get_system();
         if ($x) {
             return $x['channel_id'];
         }
@@ -1501,7 +1502,7 @@ public static function is_foreigner($s)
  */
 public static function is_member($s)
 {
-    return(($self::is_foreigner($s)) ? false : true);
+    return((self::is_foreigner($s)) ? false : true);
 }
 
 /**
@@ -1770,7 +1771,7 @@ public static function auto_create($account_id)
         $arr['permissions_role'] = 'social';
     }
 
-    if ($self::validate_channelname($arr['name'])) {
+    if (self::validate_channelname($arr['name'])) {
         return false;
     }
     if ($arr['nickname'] === 'sys') {
@@ -1779,7 +1780,7 @@ public static function auto_create($account_id)
 
     $arr['nickname'] = check_webbie(array($arr['nickname'], $arr['nickname'] . mt_rand(1000, 9999)));
 
-    return $self::create($arr);
+    return self::create($arr);
 }
 
 public static function get_cover_photo($channel_id, $format = 'bbcode', $res = PHOTO_RES_COVER_1200)
@@ -1866,7 +1867,7 @@ public static function get_zcard($channel, $observer_hash = '', $args = [])
 //  $scale = (float) $maxwidth / $width;
 //  $translate = intval(($scale / 1.0) * 100);
 
-    $channel['channel_addr'] = $self::get_webfinger($channel);
+    $channel['channel_addr'] = self::get_webfinger($channel);
     $zcard = array('chan' => $channel);
 
     $r = q(
@@ -1939,7 +1940,7 @@ public static function get_zcard_embed($channel, $observer_hash = '', $args = []
         $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'],  'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l']);
     }
 
-    $channel['channel_addr'] = $self::get_webfinger($channel);
+    $channel['channel_addr'] = self::get_webfinger($channel);
     $zcard = array('chan' => $channel);
 
     $r = q(
@@ -2403,7 +2404,7 @@ public static function codeallowed($channel_id)
         return false;
     }
 
-    $x = $self::from_id($channel_id);
+    $x = self::from_id($channel_id);
     if (($x) && ($x['channel_pageflags'] & PAGE_ALLOWCODE)) {
         return true;
     }
@@ -2481,7 +2482,7 @@ public static function anon_identity_init($reqvars)
             dbesc($hash)
         );
 
-        $photo = z_root() . '/' . $self::get_default_profile_photo(300);
+        $photo = z_root() . '/' . self::get_default_profile_photo(300);
         $photos = import_remote_xchan_photo($photo, $hash);
         if ($photos) {
             $r = q(

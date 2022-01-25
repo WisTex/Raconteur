@@ -2,6 +2,7 @@
 
 namespace Zotlabs\Lib;
 
+use App;
 use Zotlabs\Lib\Channel;
 
 class ServiceClass {        
@@ -36,8 +37,8 @@ public static function identity_check_service_class($account_id)
 
     $ret['total_identities'] = intval($r[0]['total']);
 
-    if (! $self::account_allows($account_id, 'total_identities', $r[0]['total'])) {
-        $ret['message'] .= $self::upgrade_message();
+    if (! self::account_allows($account_id, 'total_identities', $r[0]['total'])) {
+        $ret['message'] .= self::upgrade_message();
         return $ret;
     }
 
@@ -130,7 +131,7 @@ public static function downgrade_accounts()
  */
 public static function allows($uid, $property, $usage = false)
 {
-    $limit = $self::fetch($uid, $property);
+    $limit = self::fetch($uid, $property);
 
     if ($limit === false) {
         return true; // No service class set => everything is allowed
@@ -169,7 +170,7 @@ public static function allows($uid, $property, $usage = false)
 public static function account_allows($aid, $property, $usage = false)
 {
 
-    $limit = $self::account_fetch($aid, $property);
+    $limit = self::account_fetch($aid, $property);
 
     if ($limit === false) {
         return true; // No service class is set => everything is allowed
@@ -284,13 +285,13 @@ public static function upgrade_link($bbcode = false)
 
 public static function upgrade_message($bbcode = false)
 {
-    $x = $self::upgrade_link($bbcode);
+    $x = self::upgrade_link($bbcode);
     return t('This action exceeds the limits set by your subscription plan.') . (($x) ? ' ' . $x : '') ;
 }
 
 public static function upgrade_bool_message($bbcode = false)
 {
-    $x = $self::upgrade_link($bbcode);
+    $x = self::upgrade_link($bbcode);
     return t('This action is not available under your subscription plan.') . (($x) ? ' ' . $x : '') ;
 }
 }
