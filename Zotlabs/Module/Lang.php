@@ -23,7 +23,7 @@ class Lang extends Controller
             }
         }
 
-        nav_set_selected('Language');
+        Navbar::set_selected('Language');
         return lang_selector();
     }
 }

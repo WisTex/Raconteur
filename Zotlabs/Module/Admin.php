@@ -80,7 +80,7 @@ class Admin extends Controller
          * Page content
          */
 
-        nav_set_selected('Admin');
+        Navbar::set_selected('Admin');
 
         $o = '';
 

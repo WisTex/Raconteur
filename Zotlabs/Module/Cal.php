@@ -79,7 +79,7 @@ class Cal extends Controller
             return;
         }
 
-        nav_set_selected('Calendar');
+        Navbar::set_selected('Calendar');
 
         $sql_extra = permissions_sql($channel['channel_id'], get_observer_hash(), 'event');
 

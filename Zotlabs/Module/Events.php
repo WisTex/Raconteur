@@ -308,7 +308,7 @@ class Events extends Controller
 
         $channel = App::get_channel();
 
-        nav_set_selected('Events');
+        Navbar::set_selected('Events');
 
         if ((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
             $r = q(

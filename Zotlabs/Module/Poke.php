@@ -122,7 +122,7 @@ class Poke extends Controller
             return $o;
         }
 
-        nav_set_selected('Poke');
+        Navbar::set_selected('Poke');
 
         $name = '';
         $id = '';

@@ -64,7 +64,7 @@ class Settings extends Controller
     public function get()
     {
 
-        nav_set_selected('Settings');
+        Navbar::set_selected('Settings');
 
         if ((!local_channel()) || ($_SESSION['delegate'])) {
             notice(t('Permission denied.') . EOL);

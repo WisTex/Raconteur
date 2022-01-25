@@ -16,7 +16,7 @@ class Apporder extends Controller
             return;
         }
 
-        nav_set_selected('Order Apps');
+        Navbar::set_selected('Order Apps');
 
         foreach (['nav_featured_app', 'nav_pinned_app'] as $l) {
             $syslist = [];

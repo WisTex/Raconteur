@@ -21,7 +21,7 @@ class Manage extends Controller
             return;
         }
 
-        nav_set_selected('Manage');
+        Navbar::set_selected('Manage');
 
 
         $change_channel = ((argc() > 1) ? intval(argv(1)) : 0);

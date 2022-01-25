@@ -53,7 +53,7 @@ class Cards extends Controller
             return $o;
         }
 
-        nav_set_selected('Cards');
+        Navbar::set_selected('Cards');
 
         head_add_link([
             'rel' => 'alternate',

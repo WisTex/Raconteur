@@ -240,7 +240,7 @@ class Channel extends Controller
 
 
         if (!$this->updating) {
-            nav_set_selected('Channel Home');
+            Navbar::set_selected('Channel Home');
 
             $static = Zlib\Channel::manual_conv_update(App::$profile['profile_uid']);
 

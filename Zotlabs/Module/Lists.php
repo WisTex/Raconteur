@@ -87,7 +87,7 @@ class Lists extends Controller
         }
 
         App::$profile_uid = local_channel();
-        nav_set_selected('Access Lists');
+        Navbar::set_selected('Access Lists');
     }
 
     public function post()

@@ -142,7 +142,7 @@ class Mood extends Controller
             return $o;
         }
 
-        nav_set_selected('Mood');
+        Navbar::set_selected('Mood');
 
         $parent = ((x($_GET, 'parent')) ? intval($_GET['parent']) : '0');
 

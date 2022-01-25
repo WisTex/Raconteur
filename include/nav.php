@@ -340,7 +340,7 @@ function nav($template = 'default')
  * Set a menu item in navbar as selected
  *
  */
-function nav_set_selected($item)
+function Navbar::set_selected($item)
 {
     App::$nav_sel['raw_name'] = $item;
     $item = ['name' => $item];

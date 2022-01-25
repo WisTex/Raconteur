@@ -12,6 +12,8 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+
 /**
  * @file boot.php
  *
@@ -2281,7 +2283,7 @@ function construct_page() {
 		$installing = true;
 	}
 	else {
-		nav($navbar);
+		Navbar::render($navbar);
 	}
 
 

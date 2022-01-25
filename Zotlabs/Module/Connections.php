@@ -37,7 +37,7 @@ class Connections extends Controller
             return login();
         }
 
-        nav_set_selected('Connections');
+        Navbar::set_selected('Connections');
 
         $active = false;
         $blocked = false;
