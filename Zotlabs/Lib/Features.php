@@ -16,7 +16,7 @@ class Features {
             if ($x === false) {
                 $x = get_config('feature', $feature);
                 if ($x === false) {
-                    $x = self::default($feature);
+                    $x = self::get_default($feature);
                 }
             }
         }
