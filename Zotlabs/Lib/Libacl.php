@@ -57,7 +57,7 @@ class Libacl
             array_walk($allow_cid, ['\\Zotlabs\\Lib\\Libacl', 'fixacl']);
             array_walk($allow_gid, ['\\Zotlabs\\Lib\\Libacl', 'fixacl']);
             array_walk($deny_cid, ['\\Zotlabs\\Lib\\Libacl','fixacl']);
-            array_walk($deny_gid, ['\\Zotlabs\\Lib\\Libacl','fixacl');
+            array_walk($deny_gid, ['\\Zotlabs\\Lib\\Libacl','fixacl']);
         }
 
         $channel = ((local_channel()) ? App::get_channel() : '');
