@@ -70,7 +70,7 @@ class Embedphotos extends Controller
 
         $output = EMPTY_STR;
         if ($channel) {
-            $resolution = ((feature_enabled($channel['channel_id'], 'large_photos')) ? 1 : 2);
+            $resolution = ((Features::enabled($channel['channel_id'], 'large_photos')) ? 1 : 2);
             $r = q(
                 "select mimetype, height, width, title from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
                 dbesc($resource),

@@ -496,7 +496,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     $page_dropping = ((local_channel() && local_channel() == $profile_owner) ? true : false);
 
-    if (! feature_enabled($profile_owner, 'multi_delete')) {
+    if (! Features::enabled($profile_owner, 'multi_delete')) {
         $page_dropping = false;
     }
 
@@ -698,7 +698,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'owner_photo' => $owner_photo,
                     'plink' => get_plink($item, false),
                     'edpost' => false,
-                    'star' => ((feature_enabled(local_channel(), 'star_posts')) ? $star : ''),
+                    'star' => ((Features::enabled(local_channel(), 'star_posts')) ? $star : ''),
                     'drop' => $drop,
                     'vote' => $likebuttons,
                     'like' => '',
@@ -1266,7 +1266,7 @@ function z_status_editor($x, $popup = false)
 
     $reset = ((x($x, 'reset')) ? $x['reset'] : '');
 
-    $feature_auto_save_draft = ((feature_enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
+    $feature_auto_save_draft = ((Features::enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
 
     $tpl = get_markup_template('jot-header.tpl');
 
@@ -2024,7 +2024,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
     }
 
 
-    if ($p['chat'] && feature_enabled($uid, 'ajaxchat')) {
+    if ($p['chat'] && Features::enabled($uid, 'ajaxchat')) {
         $has_chats = Chatroom::list_count($uid);
         if ($has_chats) {
             $tabs[] = array(
@@ -2052,7 +2052,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         );
     }
 
-    if (feature_enabled($uid, 'cards')) {
+    if (Features::enabled($uid, 'cards')) {
         $tabs[] = array(
             'label' => t('Cards'),
             'url'   => z_root() . '/cards/' . $nickname,
@@ -2063,7 +2063,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         );
     }
 
-    if (feature_enabled($uid, 'articles')) {
+    if (Features::enabled($uid, 'articles')) {
         $tabs[] = array(
             'label' => t('articles'),
             'url'   => z_root() . '/articles/' . $nickname,
@@ -2074,7 +2074,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         );
     }
 
-    if ($has_webpages && feature_enabled($uid, 'webpages')) {
+    if ($has_webpages && Features::enabled($uid, 'webpages')) {
         $tabs[] = array(
             'label' => t('Webpages'),
             'url'   => z_root() . '/page/' . $nickname . '/home',
@@ -2087,7 +2087,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
 
 
     if ($p['view_wiki']) {
-        if (feature_enabled($uid, 'wiki')) {
+        if (Features::enabled($uid, 'wiki')) {
             $tabs[] = array(
                 'label' => t('Wikis'),
                 'url'   => z_root() . '/wiki/' . $nickname,

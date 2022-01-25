@@ -43,7 +43,7 @@ class Featured
             $settings_addons = t('No feature settings configured');
         }
 
-        if (feature_enabled(local_channel(), 'affinity')) {
+        if (Features::enabled(local_channel(), 'affinity')) {
             $cmax = intval(get_pconfig(local_channel(), 'affinity', 'cmax'));
             $cmax = (($cmax) ? $cmax : 99);
             $setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(

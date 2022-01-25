@@ -85,7 +85,7 @@ class RedbasicConfig {
 
 	function form($arr) {
 
-		if(feature_enabled(local_channel(),'advanced_theming')) 
+		if(Features::enabled(local_channel(),'advanced_theming')) 
 			$expert = 1;
 					
 

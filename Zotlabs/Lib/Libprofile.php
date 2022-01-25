@@ -110,7 +110,7 @@ class Libprofile
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
+            $advanced = ((Features::enabled(local_channel(), 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -198,7 +198,7 @@ class Libprofile
                 'entries' => [],
             );
 
-            $multi_profiles = feature_enabled(local_channel(), 'multi_profiles');
+            $multi_profiles = Features::enabled(local_channel(), 'multi_profiles');
             if ($multi_profiles) {
                 $ret['multi'] = 1;
                 $ret['edit'] = [z_root() . '/profiles', t('Edit Profiles'), '', t('Edit')];
@@ -484,7 +484,7 @@ class Libprofile
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((feature_enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
+            $advanced = ((Features::enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {

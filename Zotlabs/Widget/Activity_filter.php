@@ -211,7 +211,7 @@ class Activity_filter
             ];
         }
 
-        if (feature_enabled(local_channel(), 'filing')) {
+        if (Features::enabled(local_channel(), 'filing')) {
             $terms = q(
                 "select distinct term from term where uid = %d and ttype = %d order by term asc",
                 intval(local_channel()),

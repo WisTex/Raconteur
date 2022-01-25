@@ -338,7 +338,7 @@ class Thing extends Controller
 
             $o .= replace_macros(get_markup_template('thing_edit.tpl'), array(
                 '$thing_hdr' => t('Edit Thing'),
-                '$multiprof' => feature_enabled(local_channel(), 'multi_profiles'),
+                '$multiprof' => Features::enabled(local_channel(), 'multi_profiles'),
                 '$profile_lbl' => t('Select a profile'),
                 '$profile_select' => contact_profile_assign($r[0]['obj_page']),
                 '$verb_lbl' => $channel['channel_name'],
@@ -397,7 +397,7 @@ class Thing extends Controller
 
         $o .= replace_macros(get_markup_template('thing_input.tpl'), array(
             '$thing_hdr' => t('Add Thing to your Profile'),
-            '$multiprof' => feature_enabled(local_channel(), 'multi_profiles'),
+            '$multiprof' => Features::enabled(local_channel(), 'multi_profiles'),
             '$profile_lbl' => t('Select a profile'),
             '$profile_select' => contact_profile_assign(''),
             '$verb_lbl' => $channel['channel_name'],

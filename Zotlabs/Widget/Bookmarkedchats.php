@@ -10,7 +10,7 @@ class Bookmarkedchats
     public function widget($arr)
     {
 
-        if (!feature_enabled(App::$profile['profile_uid'], 'ajaxchat')) {
+        if (!Features::enabled(App::$profile['profile_uid'], 'ajaxchat')) {
             return '';
         }
 

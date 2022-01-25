@@ -731,7 +731,7 @@ class Connedit extends Controller
 
             $unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'), t('Yes')));
 
-            $multiprofs = ((feature_enabled(local_channel(), 'multi_profiles')) ? true : false);
+            $multiprofs = ((Features::enabled(local_channel(), 'multi_profiles')) ? true : false);
 
             if ($slide && !$multiprofs) {
                 $affinity = t('Set Friend Zoom');

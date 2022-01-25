@@ -588,7 +588,7 @@ function update_birthdays()
                 'event_xchan' => $rr['xchan_hash'],
                 'dtstart'     => datetime_convert('UTC', 'UTC', $rr['abook_dob']),
                 'dtend'       => datetime_convert('UTC', 'UTC', $rr['abook_dob'] . ' + 1 day '),
-                'adjust'      => intval(feature_enabled($rr['abook_channel'], 'smart_birthdays')),
+                'adjust'      => intval(Features::enabled($rr['abook_channel'], 'smart_birthdays')),
                 'summary'     => sprintf(t('%1$s\'s birthday'), $rr['xchan_name']),
                 'description' => sprintf(t('Happy Birthday %1$s'), '[zrl=' . $rr['xchan_url'] . ']' . $rr['xchan_name'] . '[/zrl]'),
                 'etype'       => 'birthday',

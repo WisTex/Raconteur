@@ -1046,7 +1046,7 @@ function search($s, $id = 'search-box', $url = '/search', $save = false)
         '$action_url' => z_root() . $url,
         '$search_label' => t('Search'),
         '$save_label' => t('Save'),
-        '$savedsearch' => feature_enabled(local_channel(), 'savedsearch')
+        '$savedsearch' => Features::enabled(local_channel(), 'savedsearch')
     ));
 }
 
@@ -1059,7 +1059,7 @@ function searchbox($s, $id = 'search-box', $url = '/search', $save = false)
         '$action_url' => z_root() . '/' . $url,
         '$search_label' => t('Search'),
         '$save_label' => t('Save'),
-        '$savedsearch' => ($save && feature_enabled(local_channel(), 'savedsearch'))
+        '$savedsearch' => ($save && Features::enabled(local_channel(), 'savedsearch'))
     ));
 }
 
