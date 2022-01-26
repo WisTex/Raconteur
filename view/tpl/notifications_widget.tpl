@@ -131,7 +131,7 @@
 	}
 </script>
 
-<div id="notifications_wrapper" class="widget" style="display:none;">
+<div id="notifications_wrapper" class="widget">
 	<div id="no_notifications" class="d-xl-none">
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
