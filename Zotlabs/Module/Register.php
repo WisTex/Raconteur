@@ -48,8 +48,8 @@ class Register extends Controller
 
     public function post()
     {
-
-        check_form_security_token_redirectOnErr('/register', 'register');
+        // security token is session_id() based and we have a transient session, so we can't use it here.
+        //check_form_security_token_redirectOnErr('/register', 'register');
 
         $max_dailies = intval(get_config('system', 'max_daily_registrations'));
         if ($max_dailies) {
