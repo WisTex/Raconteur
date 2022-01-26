@@ -6,9 +6,9 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
-
-require_once('include/menu.php');
-
+use Zotlabs\Lib as Zlib;
+use Zotlabs\Lib\MenuItem;
+    
 
 class Menu extends Controller
 {
@@ -68,18 +68,18 @@ class Menu extends Controller
         $menu_id = ((argc() > 1) ? intval(argv(1)) : 0);
         if ($menu_id) {
             $_REQUEST['menu_id'] = intval(argv(1));
-            $r = menu_edit($_REQUEST);
+            $r = Zlib\Menu::edit($_REQUEST);
             if ($r) {
-                menu_sync_packet($uid, get_observer_hash(), $menu_id);
+                Zlib\Menu::sync_packet($uid, get_observer_hash(), $menu_id);
                 //info( t('Menu updated.') . EOL);
                 goaway(z_root() . '/mitem/' . $which . '/' . $menu_id . ((App::$is_sys) ? '?f=&sys=1' : ''));
             } else {
                 notice(t('Unable to update menu.') . EOL);
             }
         } else {
-            $r = menu_create($_REQUEST);
+            $r = Zlib\Menu::create($_REQUEST);
             if ($r) {
-                menu_sync_packet($uid, get_observer_hash(), $r);
+                Zlib\Menu::sync_packet($uid, get_observer_hash(), $r);
 
                 //info( t('Menu created.') . EOL);
                 goaway(z_root() . '/mitem/' . $which . '/' . $r . ((App::$is_sys) ? '?f=&sys=1' : ''));
@@ -152,7 +152,7 @@ class Menu extends Controller
             $channel = (($sys) ? $sys : Channel::from_id($owner));
 
             // list menus
-            $x = menu_list($owner);
+            $x = Zlib\Menu::list($owner);
             if ($x) {
                 for ($y = 0; $y < count($x); $y++) {
                     $m = menu_fetch($x[$y]['menu_name'], $owner, get_observer_hash());
@@ -199,8 +199,8 @@ class Menu extends Controller
         if (argc() > 2) {
             if (intval(argv(2))) {
                 if (argc() == 4 && argv(3) == 'drop') {
-                    menu_sync_packet($owner, get_observer_hash(), intval(argv(1)), true);
-                    $r = menu_delete_id(intval(argv(2)), $owner);
+                    Zlib\Menu::sync_packet($owner, get_observer_hash(), intval(argv(1)), true);
+                    $r = Zlib\Menu::delete_id(intval(argv(2)), $owner);
                     if (!$r) {
                         notice(t('Menu could not be deleted.') . EOL);
                     }
@@ -208,7 +208,7 @@ class Menu extends Controller
                     goaway(z_root() . '/menu/' . $which . ((App::$is_sys) ? '?f=&sys=1' : ''));
                 }
 
-                $m = menu_fetch_id(intval(argv(2)), $owner);
+                $m = Zlib\Menu::fetch_id(intval(argv(2)), $owner);
 
                 if (!$m) {
                     notice(t('Menu not found.') . EOL);

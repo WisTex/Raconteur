@@ -20,8 +20,7 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\System;
 use Zotlabs\Render\Comanche;
 use Zotlabs\Lib\ServiceClass;
-    
-require_once('include/menu.php');
+  
 require_once('include/photo_factory.php');
 
 require_once('include/security.php');

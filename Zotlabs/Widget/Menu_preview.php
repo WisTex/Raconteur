@@ -3,8 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Menu;
 
-require_once('include/menu.php');
 
 class Menu_preview
 {
@@ -15,6 +15,6 @@ class Menu_preview
             return;
         }
 
-        return menu_render(App::$data['menu_item']);
+        return Menu::render(App::$data['menu_item']);
     }
 }

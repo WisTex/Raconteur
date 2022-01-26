@@ -6,9 +6,10 @@ namespace Zotlabs\Render;
 
 use App;
 use Zotlabs\Extend\Widget;
+use Zotlabs\Lib\Menu;
 
 require_once('include/security.php');
-require_once('include/menu.php');
+
 
 /**
  * @brief Comanche Page Description Language.
@@ -343,8 +344,8 @@ class Comanche
         }
 
         if ($channel_id) {
-            $m = menu_fetch($name, $channel_id, get_observer_hash());
-            return menu_render($m, $class, $edit = false, $var);
+            $m = Menu::fetch($name, $channel_id, get_observer_hash());
+            return Menu::render($m, $class, $edit = false, $var);
         }
     }
 

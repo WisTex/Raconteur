@@ -11,9 +11,8 @@ use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
-
-require_once('include/menu.php');
-
+use Zotlabs\Lib\Menu;
+use Zotlabs\Lib\MenuItem;
 
 /**
  * @brief Import a channel.
@@ -1176,7 +1175,7 @@ function import_menus($channel, $menus)
                 }
             }
 
-            $menu_id = menu_create($m);
+            $menu_id = Menu::create($m);
 
             if ($menu_id) {
                 if (is_array($menu['items'])) {
@@ -1202,7 +1201,7 @@ function import_menus($channel, $menus)
                                 $mitem['mitem_flags'] |= MENU_ITEM_CHATROOM;
                             }
                         }
-                        menu_add_item($menu_id, $channel['channel_id'], $mitem);
+                        MenuItem::add($menu_id, $channel['channel_id'], $mitem);
                     }
                 }
             }
@@ -1253,19 +1252,19 @@ function sync_menus($channel, $menus)
                     continue;
                 }
                 if ($menu['menu_deleted']) {
-                    menu_delete_id($r[0]['menu_id'], $channel['channel_id']);
+                    Menu::delete_id($r[0]['menu_id'], $channel['channel_id']);
                     continue;
                 }
                 $menu_id = $r[0]['menu_id'];
                 $m['menu_id'] = $r[0]['menu_id'];
-                $x = menu_edit($m);
+                $x = Menu::edit($m);
                 if (! $x) {
                     continue;
                 }
                 $editing = true;
             }
             if (! $editing) {
-                $menu_id = menu_create($m);
+                $menu_id = Menu::create($m);
             }
             if ($menu_id) {
                 if ($editing) {
@@ -1299,7 +1298,7 @@ function sync_menus($channel, $menus)
                                 $mitem['mitem_flags'] |= MENU_ITEM_CHATROOM;
                             }
                         }
-                        menu_add_item($menu_id, $channel['channel_id'], $mitem);
+                        MenuItem::add($menu_id, $channel['channel_id'], $mitem);
                     }
                 }
             }

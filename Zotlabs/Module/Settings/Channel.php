@@ -16,7 +16,8 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Permcat;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
-
+use Zotlabs\Lib\Menu;
+    
 class Channel
 {
 
@@ -559,8 +560,8 @@ class Channel
 
         $group_select = AccessList::select(local_channel(), $channel['channel_default_group']);
 
-        require_once('include/menu.php');
-        $m1 = menu_list(local_channel());
+
+        $m1 = Menu::list(local_channel());
         $menu = false;
         if ($m1) {
             $menu = [];

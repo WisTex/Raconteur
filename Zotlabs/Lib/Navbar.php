@@ -8,9 +8,9 @@ use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Features;
-
+use Zotlabs\Lib\Menu;
+    
 require_once('include/security.php');
-require_once('include/menu.php');
 
 
 class Navbar {
@@ -472,7 +472,7 @@ class Navbar {
             }
         }
 
-        $has_bookmarks = menu_list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
+        $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
         if ($is_owner && $has_bookmarks) {
             $tabs[] = [
                 'label' => t('Bookmarks'),

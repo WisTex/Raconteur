@@ -9,6 +9,7 @@ use Zotlabs\Lib\ThreadItem;
 use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
+use Zotlabs\Lib\Menu;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 
@@ -2039,8 +2040,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         }
     }
 
-    require_once('include/menu.php');
-    $has_bookmarks = menu_list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
+    $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
 
     if ($is_owner && $has_bookmarks) {
         $tabs[] = array(

@@ -5,7 +5,8 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
-    
+use Zotlabs\Lib\Menu;
+        
 class Libprofile
 {
 
@@ -364,10 +365,9 @@ class Libprofile
         $channel_menu = false;
         $menu = get_pconfig($profile['uid'], 'system', 'channel_menu');
         if ($menu && !$block) {
-            require_once('include/menu.php');
-            $m = menu_fetch($menu, $profile['uid'], $observer['xchan_hash']);
+            $m = Menu::fetch($menu, $profile['uid'], $observer['xchan_hash']);
             if ($m) {
-                $channel_menu = menu_render($m);
+                $channel_menu = Menu::render($m);
             }
         }
         $menublock = get_pconfig($profile['uid'], 'system', 'channel_menublock');
