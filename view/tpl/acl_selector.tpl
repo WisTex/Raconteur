@@ -60,7 +60,7 @@
 
 	if(typeof acl=="undefined"){
 		acl = new ACL(
-			baseurl+"/acl"
+			baseurl+"/acloader"
 		);
 	}
 </script>
