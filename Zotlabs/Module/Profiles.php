@@ -678,8 +678,6 @@ class Profiles extends Controller
             return;
         }
 
-        require_once('include/channel.php');
-
         $profile_fields_basic = Channel::get_profile_fields_basic();
         $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
