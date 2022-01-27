@@ -65,7 +65,7 @@ class Session
 
         // Note when setting cookies: set the domain to false which creates a single domain
         // cookie. If you use a hostname it will create a .domain.com wildcard which will
-        // have some nasty side effects if you have any other subdomains running hubzilla.
+        // have some nasty side effects if you have any other subdomains running the same software.
 
 		session_set_cookie_params([
 			'lifetime' => ((isset($arr['lifetime'])) ? $arr['lifetime'] : 0),
