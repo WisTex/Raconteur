@@ -472,7 +472,7 @@ class Navbar {
             }
         }
 
-        $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
+        $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + Menu::list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
         if ($is_owner && $has_bookmarks) {
             $tabs[] = [
                 'label' => t('Bookmarks'),
