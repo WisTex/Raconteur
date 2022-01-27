@@ -3800,6 +3800,18 @@ function cleanup_bbcode($body)
 {
 
     /**
+     * fix image alt tags containing braces and angle chars from confusing the parser. 
+     */ 
+
+    $matches = null;
+    $c = preg_match('/alt\=\"(.*?)\"/ism',$body,$matches);
+    if ($c) {
+        $alt_tag = str_replace([ '[', ']', '<', '>' ], ['%5B', '%5D', '&lt;', '&gt;'], $matches[1]);
+        $body = str_replace($matches[1],$alt_tag,$body);
+    }
+
+
+    /**
      * fix naked links by passing through a callback to see if this is a zot site of some kind
      * (already known to us) which will get a zrl, otherwise link with url, add bookmark tag to both.
      * First protect any url inside certain bbcode tags so we don't double link it.
