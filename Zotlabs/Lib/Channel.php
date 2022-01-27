@@ -1642,7 +1642,7 @@ class Channel
 
     public static function get_profile_fields_advanced($filter = 0)
     {
-        $basic = get_profile_fields_basic($filter);
+        $basic = self::get_profile_fields_basic($filter);
         $profile_fields_advanced = (($filter == 0) ? get_config('system', 'profile_fields_advanced') : null);
         if (! $profile_fields_advanced) {
             $profile_fields_advanced = array('comms', 'address','locality','postal_code','advanced_gender', 'partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education');
