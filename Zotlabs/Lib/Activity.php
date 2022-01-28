@@ -1755,10 +1755,10 @@ class Activity
         $ret['preferredUsername'] = 'sys';
         $ret['name'] = System::get_site_name();
 
-//        $ret['icon'] = [
-//            'type' => 'Image',
-//            'url' => System::get_site_icon(),
-//        ];
+        $ret['icon'] = [
+            'type' => 'Image',
+            'url' => System::get_site_icon(),
+        ];
 
         $ret['generator'] = ['type' => 'Application', 'name' => System::get_platform_name()];
 

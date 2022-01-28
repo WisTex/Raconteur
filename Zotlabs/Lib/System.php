@@ -3,6 +3,7 @@
 namespace Zotlabs\Lib;
 
 use App;
+use Zotlabs\Lib\Channel;
 
 class System
 {
@@ -34,6 +35,10 @@ class System
 
     public static function get_project_icon()
     {
+        $sys = Channel::get_system();
+        if ($sys) {
+            return z_root() . '/photo/profile/l/' . $sys['channel_id'];
+        }
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon', App::$config['system'])) {
             return App::$config['system']['icon'];
         }
