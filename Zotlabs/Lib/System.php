@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Channel;
+use URLify;
 
 class System
 {
@@ -26,14 +27,14 @@ class System
 
     public static function get_project_name()
     {
-        $name = get_site_name();
+        $name = self::get_site_name();
         if ($name) {
             $words = explode(' ', $name);
+            $project = strtolower(URLify::transliterate($words[0]));
         }
         else {
-            $words = [ self::get_platform_name() ];
+            $project = self::get_platform_name();
         }
-        $project = strtolower(URLify::transliterate($words[0]));
         return $project;
     }
 
