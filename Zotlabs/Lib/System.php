@@ -27,12 +27,13 @@ class System
 
     public static function get_project_name()
     {
+        $project = EMPTY_STR;
         $name = self::get_site_name();
         if ($name) {
             $words = explode(' ', $name);
             $project = strtolower(URLify::transliterate($words[0]));
         }
-        else {
+        if (!$project) {
             $project = self::get_platform_name();
         }
         return $project;
