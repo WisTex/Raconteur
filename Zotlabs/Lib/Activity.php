@@ -1578,10 +1578,7 @@ class Activity
             if (strpos($role, 'forum') !== false) {
                 $ret['type'] = 'Group';
             }
-            $role_permissions = PermissionRoles::role_perms($role);
-            if (is_array($role_permissions) && isset($role_permissions['perms_auto'])) {
-                $auto_follow = intval($role_permissions['perms_auto']);
-            }
+            $auto_follow = intval(PConfig::Get($c['channel_id'],'system','autoperms'));
         }
 
         if ($c) {

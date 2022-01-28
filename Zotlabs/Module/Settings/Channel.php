@@ -32,7 +32,7 @@ class Channel
         call_hooks('settings_post', $_POST);
 
         $set_perms = '';
-
+    
         $role = ((x($_POST, 'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
         $oldrole = get_pconfig(local_channel(), 'system', 'permissions_role');
 
@@ -189,8 +189,8 @@ class Channel
         } else {
             set_pconfig(local_channel(), 'system', 'close_comments', EMPTY_STR);
         }
+    
         // allow a permission change to over-ride the autoperms setting from the form
-
         if (!isset($autoperms)) {
             $autoperms = ((x($_POST, 'autoperms')) ? intval($_POST['autoperms']) : 0);
         }
@@ -582,12 +582,10 @@ class Channel
             $permissions_role = 'custom';
         }
 
-        if (in_array($permissions_role, ['forum', 'repository'])) {
-            $autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
-                '$field' => ['autoperms', t('Automatic membership approval'), ((get_pconfig(local_channel(), 'system', 'autoperms', 0)) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no]]);
-        } else {
-            $autoperms = '<input type="hidden" name="autoperms"  value="' . intval(get_pconfig(local_channel(), 'system', 'autoperms')) . '" />';
-        }
+        $autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
+                '$field' => ['autoperms', t('Automatic connection approval'), ((get_pconfig(local_channel(), 'system', 'autoperms', 0)) ? 1 : 0),
+                t('If enabled, connection requests will be approved without your interaction'), $yes_no]
+        ]);
 
         $hyperdrive = ['hyperdrive', t('Friend-of-friend conversations'), ((get_pconfig(local_channel(), 'system', 'hyperdrive', true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no];
 
