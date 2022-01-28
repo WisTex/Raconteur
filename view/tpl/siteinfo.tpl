@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper-styled">
 <h2>{{$title}}</h2>
 
-<img src="{{$prj_icon}}" alt="project icon" /><br><br>
+<img src="{{$prj_icon}}" alt="project icon" style="height: 300px; width: 300px;"/><br><br>
 
 <h3>{{$sitenametxt}}</h3>
 

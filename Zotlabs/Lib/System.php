@@ -23,6 +23,20 @@ class System
         return '';
     }
 
+    public static function get_project_name()
+    {
+        $name = get_site_name();
+        if ($name) {
+            $words = explode(' ', $name);
+        }
+        else {
+            $words = [ self::get_platform_name() ];
+        }
+        $project = strtolower(URLify::transliterate($words[0]));
+        return $project;
+    }
+
+    
     public static function get_banner()
     {
 
