@@ -86,7 +86,7 @@ class Channel
         $sys = self::get_system();
 
         if ($sys) {
-            if (isset($sys['channel_pubkey']) && $sys['channel_pubkey'] && $sys['channel_pubkey'] === get_config('system', 'pubkey')) {
+            if (isset($sys['channel_pubkey']) && $sys['channel_pubkey'] === get_config('system', 'pubkey')) {
                 return;
             } else {
                 // upgrade the sys channel and return
@@ -361,9 +361,13 @@ class Channel
          *   * \e string \b photo_url - Return value
          */
         call_hooks('create_channel_photo', $z);
-
-        if ($z['photo_url']) {
-            $photo_type = import_channel_photo_from_url($z['photo_url'], $arr['account_id'], $r[0]['channel_id']);
+    
+        // The site channel gets the project logo as a profile photo.
+        if ($arr['account_id'] === 'xxx') {
+            $photo_type = import_channel_photo_from_url(z_root() . '/images/' . PLATFORM_NAME . '.png', 0, $r[0]['channel_id']);
+        }
+        elseif ($z['photo_url']) {
+            $photo_type = import_channel_photo_from_url($z['photo_url'], $arr['account_id'], $r[0]['channel_id']);    
         }
 
         if ($role_permissions && array_key_exists('limits', $role_permissions)) {
@@ -1404,7 +1408,6 @@ class Channel
         );
         if ($r) {
             $xchan = atoken_xchan($r[0]);
-    //      atoken_create_xchan($xchan);
             atoken_login($xchan);
         }
     }
@@ -1863,8 +1866,8 @@ class Channel
             $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l'] . '?rev=' . strtotime($channel['xchan_photo_date']));
         }
 
-    //  $scale = (float) $maxwidth / $width;
-    //  $translate = intval(($scale / 1.0) * 100);
+        //  $scale = (float) $maxwidth / $width;
+        //  $translate = intval(($scale / 1.0) * 100);
 
         $channel['channel_addr'] = self::get_webfinger($channel);
         $zcard = array('chan' => $channel);
