@@ -1194,7 +1194,7 @@ class Item extends Controller
                     if (! is_array($attachments)) {
                         $attachments = [];
                     }
-                    $attachments = array_merge($attachments,$reshare->attach);
+                    $attachments = array_merge($attachments,$reshare->get_attach());
                     $i++;
                 }
             }

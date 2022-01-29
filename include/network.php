@@ -1433,7 +1433,7 @@ function get_site_info()
 
     $data = [
         'url'                          => z_root(),
-        'platform'                     => System::get_platform_name(),
+        'platform'                     => System::get_project_name(),
         'site_name'                    => (($site_name) ? $site_name : ''),
         'version'                      => $version,
 //      'version_tag'                  => $tag,
@@ -1441,9 +1441,9 @@ function get_site_info()
         'commit'                       => $commit,
         'protocols'                    => $protocols,
         'plugins'                      => $visible_plugins,
-        'register_policy'              =>  $register_policy[get_config('system', 'register_policy')],
+        'register_policy'              => $register_policy[get_config('system', 'register_policy')],
         'invitation_only'              => (bool) (defined('INVITE_WORKING') && intval(get_config('system', 'invitation_only'))),
-        'directory_mode'               =>  $directory_mode[get_config('system', 'directory_mode')],
+        'directory_mode'               => $directory_mode[get_config('system', 'directory_mode')],
 //      'directory_server'             => get_config('system','directory_server'),
         'language'                     => get_config('system', 'language'),
 //      'rss_connections'              => (bool) intval(get_config('system','feed_contacts')),

@@ -111,9 +111,9 @@ class Share
         }
     
         $this->attach[] = [
-            'href' => $this->item['message_id'],
+            'href' => $this->item['mid'],
             'type' => 'application/activity+json',
-            'title' => $this->item['message_id']            
+            'title' => $this->item['mid']            
         ];
     
         if ($item_author['network'] === 'activitypub') {
@@ -190,7 +190,7 @@ class Share
         return $obj;
     }
 
-    public function attach()
+    public function get_attach()
     {
         return $this->attach;
     }
