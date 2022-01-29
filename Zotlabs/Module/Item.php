@@ -26,6 +26,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Share;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Config;
@@ -1188,8 +1189,12 @@ class Item extends Controller
 
                 $i = 0;
                 foreach ($match[2] as $mtch) {
-                    $reshare = new \Zotlabs\Lib\Share($mtch);
+                    $reshare = new Share($mtch);
                     $body = str_replace($match[1][$i], $reshare->bbcode(), $body);
+                    if (! is_array($attachments)) {
+                        $attachments = [];
+                    }
+                    $attachments = array_merge($attachments,$reshare->attach);
                     $i++;
                 }
             }

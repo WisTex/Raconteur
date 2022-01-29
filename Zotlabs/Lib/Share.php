@@ -11,7 +11,7 @@ class Share
 {
 
     private $item = null;
-
+    private $attach = null;
 
     public function __construct($post_id)
     {
@@ -106,6 +106,16 @@ class Share
             return;
         }
 
+        if (! $this->attach) {
+            $this->attach = [];
+        }
+    
+        $this->attach[] = [
+            'href' => $this->item['message_id'],
+            'type' => 'application/activity+json',
+            'title' => $this->item['message_id']            
+        ];
+    
         if ($item_author['network'] === 'activitypub') {
             // for Mastodon compatibility, send back an ActivityPub Announce activity.
             // We don't need or want these on our own network as there is no mechanism for providing
@@ -180,6 +190,11 @@ class Share
         return $obj;
     }
 
+    public function attach()
+    {
+        return $this->attach;
+    }
+    
     public function bbcode()
     {
         $bb = EMPTY_STR;
