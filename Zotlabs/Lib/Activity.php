@@ -1757,7 +1757,7 @@ class Activity
             'url' => System::get_site_icon(),
         ];
 
-        $ret['generator'] = ['type' => 'Application', 'name' => System::get_platform_name()];
+        $ret['generator'] = ['type' => 'Application', 'name' => System::get_project_name()];
 
         $ret['url'] = z_root();
 

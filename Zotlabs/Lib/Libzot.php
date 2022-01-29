@@ -3490,7 +3490,7 @@ class Libzot
             $ret['site']['realm'] = get_directory_realm();
             $ret['site']['sitename'] = System::get_site_name();
             $ret['site']['logo'] = System::get_site_icon();
-            $ret['site']['project'] = System::get_platform_name();
+            $ret['site']['project'] = System::get_project_name();
             $ret['site']['version'] = System::get_project_version();
         }
 
