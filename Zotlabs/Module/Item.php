@@ -847,6 +847,7 @@ class Item extends Controller
             $created = ((intval($orig_post['item_unpublished'])) ? $created : $orig_post['created']);
             $expires = ((intval($orig_post['item_unpublished'])) ? NULL_DATE : $orig_post['expires']);
             $mid = $orig_post['mid'];
+            $thr_parent = $orig_post['thr_parent'];
             $parent_mid = $orig_post['parent_mid'];
             $plink = $orig_post['plink'];
         } else {
