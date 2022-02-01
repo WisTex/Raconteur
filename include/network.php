@@ -1725,10 +1725,10 @@ function get_repository_version($branch = 'release')
 {
 
 	if (PLATFORM_NAME === 'streams') {
-		$path = "https://codeberg.org/streams/" . PLATFORM_NAME . "/raw/$branch/boot.php";
+		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/raw/@$branch/boot.php";
 	}
 	else {
-		$path = "https://codeberg.org/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/raw/$branch/boot.php";
+        $path = "https://raw.codeberg.page/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/@$branch/version.php";
 	}
 
     $x = z_fetch_url($path);

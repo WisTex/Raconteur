@@ -912,6 +912,12 @@ class Activity
             $ret['tag'] = $t;
         }
 
+        $a = self::encode_attachment($i);
+        if ($a) {
+            $ret['attachment'] = $a;
+        }
+
+    
         // addressing madness
 
         if ($activitypub) {
@@ -2923,6 +2929,32 @@ class Activity
                 if ($e) {
                     $content['content'] = $t;
                 }
+            }
+
+            $a = self::decode_taxonomy($act->data);
+            if ($a) {
+                $s['term'] = $a;
+                foreach ($a as $b) {
+                    if ($b['ttype'] === TERM_EMOJI) {
+                        $s['summary'] = str_replace($b['term'], '[img=16x16]' . $b['url'] . '[/img]', $s['summary']);
+
+                        // @todo - @bug
+                        // The emoji reference in the body might be inside a code block. In that case we shouldn't replace it.
+                        // Currently we do.
+
+                        $s['body'] = str_replace($b['term'], '[img=16x16]' . $b['url'] . '[/img]', $s['body']);
+                    }
+                }
+            }
+
+            $a = self::decode_attachment($act->data);
+            if ($a) {
+                $s['attach'] = $a;
+            }
+
+            $a = self::decode_iconfig($act->data);
+            if ($a) {
+                $s['iconfig'] = $a;
             }
         }
 
