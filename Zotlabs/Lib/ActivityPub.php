@@ -56,7 +56,8 @@ class ActivityPub
                 'actor' => Channel::url($arr['channel']),
                 'type' => 'Delete',
                 'object' => Channel::url($arr['channel']),
-                'to' => ['https://www.w3.org/ns/activitystreams#Public']
+                'to' => ['https://www.w3.org/ns/activitystreams#Public'],
+                'cc' => []
             ];
 
             $msg = array_merge(['@context' => [
@@ -282,7 +283,8 @@ class ActivityPub
                 'type' => (($orig_follow_type) ? $orig_follow_type : 'Follow'),
                 'actor' => $p,
                 'object' => $x['recipient']['xchan_hash'],
-                'to' => [$x['recipient']['xchan_hash']]
+                'to' => [$x['recipient']['xchan_hash']],
+                'cc' => []
             ]
         );
 
@@ -361,7 +363,8 @@ class ActivityPub
                     'actor' => $x['recipient']['xchan_hash'],
                     'object' => z_root() . '/channel/' . $x['sender']['channel_address']
                 ],
-                'to' => [$x['recipient']['xchan_hash']]
+                'to' => [$x['recipient']['xchan_hash']],
+                'cc' => []
             ]
         );
 
@@ -429,7 +432,8 @@ class ActivityPub
                         'actor' => $recip[0]['xchan_hash'],
                         'object' => $p
                     ],
-                    'to' => [$recip[0]['xchan_hash']]
+                    'to' => [$recip[0]['xchan_hash']],
+                    'cc' => []
                 ]
             );
             del_abconfig($recip[0]['abook_channel'], $recip[0]['xchan_hash'], 'activitypub', 'follow_id');
@@ -452,7 +456,8 @@ class ActivityPub
                         'actor' => $p,
                         'object' => $recip[0]['xchan_hash']
                     ],
-                    'to' => [$recip[0]['xchan_hash']]
+                    'to' => [$recip[0]['xchan_hash']],
+                    'cc' => []
                 ]
             );
         }

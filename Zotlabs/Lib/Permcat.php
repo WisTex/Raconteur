@@ -35,7 +35,7 @@ class Permcat
      *
      * @param int $channel_id
      */
-    public function __construct($channel_id)
+    public function __construct($channel_id, $abook_id = 0)
     {
 
         $perms = [];
@@ -79,7 +79,7 @@ class Permcat
         ];
 
 
-        $p = $this->load_permcats($channel_id);
+        $p = $this->load_permcats($channel_id, $abook_id);
         if ($p) {
             for ($x = 0; $x < count($p); $x++) {
                 $this->permcats[] = [
@@ -92,6 +92,32 @@ class Permcat
         }
     }
 
+    public function match($current) {
+        if ($current) {
+            $perms = Permissions::FilledPerms($current);
+            $operms = Permissions::Operms($perms);
+        }
+        
+        if ($this->permcats && $operms) {
+            foreach($this->permcats as $permcat) {
+                $pp = $permcat['perms'];
+                $matching = 0;
+                foreach ($pp as $rp) {
+                    foreach ($operms as $op) {
+                        if ($rp['name'] === $op['name'] && intval($rp['value']) === intval($op['value'])) {
+                            $matching ++;
+                            break;
+                        }
+                    }
+                }
+                if ($matching === count($pp)) {
+                    return $permcat['name'];
+                }
+            }
+        }
+        return 'custom';
+    }
+    
     /**
      * @brief Return array with permcats.
      *
@@ -118,12 +144,11 @@ class Permcat
                     return $permcat;
                 }
             }
-        }
-
+        }    
         return ['error' => true];
     }
 
-    public function load_permcats($uid)
+    public function load_permcats($uid, $abook_id = 0)
     {
 
         $permcats = [
@@ -155,6 +180,17 @@ class Permcat
             }
         }
 
+        if ($abook_id) {
+            $r = q("select * from abook left join xchan on abook_xchan = xchan_hash where abook_id = %d and abook_channel = %d",
+                intval($abook_id),
+                intval($uid)
+            );
+            if ($r) {
+                $my_perms = explode(',', get_abconfig($uid, $r[0]['xchan_hash'], 'system', 'my_perms', EMPTY_STR));
+                $permcats[] = [ 'custom', t('custom'), $my_perms, 1];
+            }
+            
+        }
         /**
          * @hooks permcats
          *   * \e array

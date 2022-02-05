@@ -354,7 +354,7 @@ class Connedit extends Controller
 		});\n\n";
         foreach ($connect_perms['perms'] as $p => $v) {
             if ($v) {
-                $o .= "\$('#me_id_perms_" . $p . "').prop('checked', true); \n";
+                $o .= "\$('#id_perms_" . $p . "').prop('checked', true); \n";
             }
         }
         $o .= " }\n</script>\n";
@@ -772,13 +772,19 @@ class Connedit extends Controller
                 $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, $yes_no, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
             }
 
-            $pcat = new Permcat(local_channel());
-            $pcatlist = $pcat->listing();
-            $permcats = [];
-            if ($pcatlist) {
-                foreach ($pcatlist as $pc) {
-                    $permcats[$pc['name']] = $pc['localname'];
+            $current_permcat = EMPTY_STR;
+
+            if (Apps::System_app_installed(local_channel(),'Roles')) {
+                $pcat = new Permcat(local_channel(), $contact['abook_id']);
+                $pcatlist = $pcat->listing();
+                $permcats = [];
+                if ($pcatlist) {
+                    foreach ($pcatlist as $pc) {
+                        $permcats[$pc['name']] = $pc['localname'];
+                    }
                 }
+
+                $current_permcat = $pcat->match($my_perms);
             }
 
             $locstr = locations_by_netid($contact['xchan_hash']);
@@ -805,7 +811,7 @@ class Connedit extends Controller
             $o .= replace_macros($tpl, [
                 '$header' => (($self) ? t('Connection Default Permissions') : sprintf(t('Connection: %s'), $contact['xchan_name']) . (($contact['abook_alias']) ? ' &lt;' . $contact['abook_alias'] . '&gt;' : '')),
                 '$autoperms' => array('autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no),
-                '$permcat' => ['permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
+                '$permcat' => ['permcat', t('Permission role'), $current_permcat, '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
                 '$permcat_new' => t('Add permission role'),
                 '$permcat_enable' => Apps::system_app_installed(local_channel(),'Roles'),
                 '$addr' => unpunify($contact['xchan_addr']),
