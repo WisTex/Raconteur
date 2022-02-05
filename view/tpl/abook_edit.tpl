@@ -73,7 +73,7 @@
 
 		<form id="abook-edit-form" action="connedit/{{$contact_id}}" method="post" >
 
-		<input type="hidden" name="contact_id" value="{{$contact_id}}">
+		<input type="hidden" id="contact_id" name="contact_id" value="{{$contact_id}}">
 		<input type="hidden" name="section" value="{{$section}}">
 
 		<div class="panel-group" id="contact-edit-tools" role="tablist" aria-multiselectable="true">

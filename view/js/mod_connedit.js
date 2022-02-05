@@ -1,6 +1,6 @@
 $(document).ready(function() {
 
-	// Warn member about unsaved settings
+	// Warn members about unsaved settings
 	$('form').areYouSure({'addRemoveFieldsMarksDirty':true, 'message': aStr['leavethispage'] }); 
 
 	if(typeof(after_following) !== 'undefined' && after_following) {
@@ -17,14 +17,21 @@ $(document).ready(function() {
 			connectFullShare();
 	});
 
+    let abookId = $("#contact_id").val();
 
 	$('#id_permcat').change(function() {
-		$('.loading').toggleClass('invisible');
-		var permName = $('#id_permcat').val();
-		loadAbookRole(permName);
-	});
+		let permName = $('#id_permcat').val();
+        if (typeof(permName) !== 'undefined') {
+	        $('.loading').toggleClass('invisible');
+	        loadAbookRole(permName, abookId);
+        }
+    });
 
-
+	let permName = $('#id_permcat').val();
+    if (typeof(permName) !== 'undefined') {
+        $('.loading').toggleClass('invisible');
+        loadAbookRole(permName, abookId);
+    }
 
 	$(document).on('click', '.vcard-header, .vcard-cancel-btn', updateView);
 	$(document).on('click', '.add-field', doAdd);
@@ -98,35 +105,32 @@ function connectFullShare() {
 		if(! $(this).is(':disabled'))
 			$(this).removeAttr('checked');
 	});
-	$('#me_id_perms_view_stream').attr('checked','checked');
-	$('#me_id_perms_view_profile').attr('checked','checked');
-	$('#me_id_perms_view_contacts').attr('checked','checked');
-	$('#me_id_perms_view_storage').attr('checked','checked');
-	$('#me_id_perms_view_pages').attr('checked','checked');
-	$('#me_id_perms_send_stream').attr('checked','checked');
-	$('#me_id_perms_post_wall').attr('checked','checked');
-	$('#me_id_perms_post_comments').attr('checked','checked');
-	$('#me_id_perms_post_mail').attr('checked','checked');
-	$('#me_id_perms_chat').attr('checked','checked');
-	$('#me_id_perms_view_storage').attr('checked','checked');
-	$('#me_id_perms_republish').attr('checked','checked');
-	$('#me_id_perms_post_like').attr('checked','checked');
+	$('#id_perms_view_stream').attr('checked','checked');
+	$('#id_perms_view_profile').attr('checked','checked');
+	$('#id_perms_view_contacts').attr('checked','checked');
+	$('#id_perms_view_storage').attr('checked','checked');
+	$('#id_perms_view_pages').attr('checked','checked');
+	$('#id_perms_send_stream').attr('checked','checked');
+	$('#id_perms_post_wall').attr('checked','checked');
+	$('#id_perms_post_comments').attr('checked','checked');
+	$('#id_perms_post_mail').attr('checked','checked');
+	$('#id_perms_chat').attr('checked','checked');
+	$('#id_perms_view_storage').attr('checked','checked');
+	$('#id_perms_republish').attr('checked','checked');
+	$('#id_perms_post_like').attr('checked','checked');
 }
 
-function loadAbookRole(name) {
-
-	if(! name)
-		name = 'default';
+function loadAbookRole(name, abookId) {
 
 	$('.abook-edit-me').each(function() {
 		if(! $(this).is(':disabled'))
 			$(this).removeAttr('checked');
 	});
 
-	$.get('permcat/' + name, function(data) {
+	$.get('permcat/' + name + '/' + abookId, function(data) {
 		$(data.perms).each(function() {
 			if(this.value)
-				$('#me_id_perms_' + this.name).attr('checked','checked');
+				$('#id_perms_' + this.name).attr('checked','checked');
 		});
 		$('.loading').toggleClass('invisible');
 	});
