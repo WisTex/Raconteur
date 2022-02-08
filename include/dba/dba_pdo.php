@@ -27,7 +27,12 @@ class dba_pdo extends dba_driver
         }
 
         $dsn .= ';dbname=' . $db;
-
+        if ($this->driver_dbtype === 'mysql') {
+            $dsn .= ';charset=utf8mb4';
+        }
+        else {
+            $dsn .= ";options='--client_encoding=UTF8'";
+        }
         try {
             $this->db = new PDO($dsn, $user, $pass);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
