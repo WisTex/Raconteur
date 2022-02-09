@@ -3,6 +3,7 @@
 namespace Zotlabs\Module\Admin;
 
 use App;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 
 /**
@@ -48,7 +49,7 @@ class Channels
         }
         if (x($_POST, 'page_channels_delete')) {
             foreach ($channels as $uid) {
-                channel_remove($uid, true);
+                Channel::channel_remove($uid, true);
             }
             notice(sprintf(tt("%s channel deleted", "%s channels deleted", count($channels)), count($channels)));
         }
@@ -80,7 +81,7 @@ class Channels
                     {
                         check_form_security_token_redirectOnErr('/admin/channels', 'admin_channels', 't');
                         // delete channel
-                        channel_remove($uid, true);
+                        Channel::channel_remove($uid, true);
 
                         notice(sprintf(t("Channel '%s' deleted"), $channel[0]['channel_name']) . EOL);
                 }

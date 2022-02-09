@@ -7,6 +7,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -53,7 +54,7 @@ class Plike extends Controller
         $allow_cid = $allow_gid = $deny_cid = $deny_gid = '';
         $output = EMPTY_STR;
 
-        $sys_channel = get_sys_channel();
+        $sys_channel = Channel::get_system();
         $sys_channel_id = (($sys_channel) ? $sys_channel['channel_id'] : 0);
 
         $observer = App::get_observer();
@@ -144,13 +145,13 @@ class Plike extends Controller
                 killme();
             }
 
-            $channel = channelx_by_n($owner_uid);
+            $channel = Channel::from_id($owner_uid);
 
             if (! $channel) {
                 killme();
             }
 
-            $object = json_encode(Activity::fetch_profile([ 'id' => channel_url($channel) ]));
+            $object = json_encode(Activity::fetch_profile([ 'id' => Channel::url($channel) ]));
 
             // second like of the same thing is "undo" for the first like
 

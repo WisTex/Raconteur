@@ -7,10 +7,11 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
-
-require_once('include/channel.php');
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+    
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 class Cards extends Controller
 {
@@ -53,7 +54,7 @@ class Cards extends Controller
             return $o;
         }
 
-        nav_set_selected('Cards');
+        Navbar::set_selected('Cards');
 
         head_add_link([
             'rel' => 'alternate',
@@ -89,7 +90,7 @@ class Cards extends Controller
 
         $is_owner = ($uid && $uid == $owner);
 
-        $channel = channelx_by_n($owner);
+        $channel = Channel::from_id($owner);
 
         if ($channel) {
             $channel_acl = [
@@ -112,7 +113,7 @@ class Cards extends Controller
                 'nickname' => $channel['channel_address'],
                 'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid']
                     || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-                'acl' => (($is_owner) ? populate_acl(
+                'acl' => (($is_owner) ? Libacl::populate(
                     $channel_acl,
                     false,
                     PermissionDescription::fromGlobalPermission('view_pages')

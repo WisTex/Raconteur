@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Features;
 
 class Archive
 {
@@ -18,7 +19,7 @@ class Archive
 
         $uid = App::$profile_uid;
 
-        if (!feature_enabled($uid, 'archives')) {
+        if (!Features::enabled($uid, 'archives')) {
             return '';
         }
 

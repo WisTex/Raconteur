@@ -3,6 +3,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/bbcode.php');
 
@@ -18,7 +19,7 @@ class Notifications extends Controller
         }
 
 
-        nav_set_selected('Notifications');
+        Navbar::set_selected('Notifications');
 
         $o = '';
         $notif_content = '';

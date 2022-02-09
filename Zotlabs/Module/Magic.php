@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SConfig;
+use Zotlabs\Lib\Channel;
 
 class Magic extends Controller
 {
@@ -110,7 +111,7 @@ class Magic extends Controller
                 $headers['Host'] = $parsed['host'];
                 $headers['(request-target)'] = 'post ' . '/owa';
 
-                $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), true, 'sha512');
+                $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
                 $x = z_post_url($owapath, $data, $redirects, ['headers' => $headers]);
                 logger('owa fetch returned: ' . print_r($x, true), LOGGER_DATA);
                 if ($x['success']) {

@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Features;
 
 class Sources extends Controller
 {
@@ -15,7 +16,7 @@ class Sources extends Controller
             return;
         }
 
-        if (!feature_enabled(local_channel(), 'channel_sources')) {
+        if (!Features::enabled(local_channel(), 'channel_sources')) {
             return;
         }
 
@@ -90,7 +91,7 @@ class Sources extends Controller
             return EMPTY_STR;
         }
 
-        if (!feature_enabled(local_channel(), 'channel_sources')) {
+        if (!Features::enabled(local_channel(), 'channel_sources')) {
             return EMPTY_STR;
         }
 

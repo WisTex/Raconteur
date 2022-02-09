@@ -3,6 +3,7 @@
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Webfinger;
+use Zotlabs\Lib\Channel;    
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityPub;
@@ -535,7 +536,7 @@ function as_return_and_die($obj, $channel)
     $headers['Digest'] = HTTPSig::generate_digest_header($ret);
     $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
 
-    $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel));
+    $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
     HTTPSig::set_headers($h);
 
     echo $ret;
@@ -1359,12 +1360,12 @@ function get_site_info()
         $admin = [];
         foreach ($r as $rr) {
             if ($rr['channel_pageflags'] & PAGE_HUBADMIN) {
-                $admin[] = array( 'name' => $rr['channel_name'], 'address' => channel_reddress($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
+                $admin[] = array( 'name' => $rr['channel_name'], 'address' => Channel::get_webfinger($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
             }
         }
         if (! $admin) {
             foreach ($r as $rr) {
-                $admin[] = array( 'name' => $rr['channel_name'], 'address' => channel_reddress($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
+                $admin[] = array( 'name' => $rr['channel_name'], 'address' => Channel::get_webfinger($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
             }
         }
     } else {
@@ -1724,10 +1725,10 @@ function get_repository_version($branch = 'release')
 {
 
 	if (PLATFORM_NAME === 'streams') {
-		$path = "https://codeberg.org/streams/" . PLATFORM_NAME . "/raw/$branch/boot.php";
+		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/raw/@$branch/boot.php";
 	}
 	else {
-		$path = "https://codeberg.org/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/raw/$branch/boot.php";
+        $path = "https://raw.codeberg.page/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/@$branch/version.php";
 	}
 
     $x = z_fetch_url($path);

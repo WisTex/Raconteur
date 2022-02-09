@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use DBA;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Web\Controller;
 use Zotlabs\Identity\OAuth2Server;
 use Zotlabs\Identity\OAuth2Storage;
@@ -83,7 +84,7 @@ class Authorize extends Controller
         $response = new Response();
 
         // Note, "sub" field must match type and content. $user_id is used to populate - make sure it's a string.
-        $channel = channelx_by_n(local_channel());
+        $channel = Channel::from_id(local_channel());
         $user_id = $channel['channel_id'];
 
         $client_found = false;

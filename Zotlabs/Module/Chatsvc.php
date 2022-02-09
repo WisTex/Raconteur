@@ -4,11 +4,13 @@
 
 namespace Zotlabs\Module;
 
-require_once('include/security.php');
 
 use App;
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
+
+require_once('include/security.php');
 
 class Chatsvc extends Controller
 {
@@ -136,9 +138,9 @@ class Chatsvc extends Controller
                         $rv['xchan_url'] = z_root();
                         $rv['xchan_hidden'] = 1;
                         $rv['xchan_photo_mimetype'] = 'image/png';
-                        $rv['xchan_photo_l'] = z_root() . '/' . get_default_profile_photo(300);
-                        $rv['xchan_photo_m'] = z_root() . '/' . get_default_profile_photo(80);
-                        $rv['xchan_photo_s'] = z_root() . '/' . get_default_profile_photo(48);
+                        $rv['xchan_photo_l'] = z_root() . '/' . Channel::get_default_profile_photo(300);
+                        $rv['xchan_photo_m'] = z_root() . '/' . Channel::get_default_profile_photo(80);
+                        $rv['xchan_photo_s'] = z_root() . '/' . Channel::get_default_profile_photo(48);
                     }
 
                     switch ($rv['cp_status']) {

@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Zot6\Receiver;
 use Zotlabs\Zot6\Zot6Handler;
 
@@ -281,7 +282,7 @@ class Queue
         }
 
         if ($outq['outq_driver'] === 'asfetch') {
-            $channel = channelx_by_n($outq['outq_channel']);
+            $channel = Channel::from_id($outq['outq_channel']);
             if (!$channel) {
                 logger('missing channel: ' . $outq['outq_channel']);
                 return;
@@ -341,7 +342,7 @@ class Queue
         }
 
         if ($outq['outq_driver'] === 'activitypub') {
-            $channel = channelx_by_n($outq['outq_channel']);
+            $channel = Channel::from_id($outq['outq_channel']);
             if (!$channel) {
                 logger('missing channel: ' . $outq['outq_channel']);
                 return;
@@ -360,7 +361,7 @@ class Queue
             $headers['Host'] = $m['host'];
             $headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
 
-            $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel));
+            $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
             if (strpos($outq['outq_posturl'], 'http') !== 0) {
                 logger('bad url: ' . $outq['outq_posturl']);
                 self::remove($outq['outq_hash']);
@@ -405,31 +406,34 @@ class Queue
                         do_delivery($piled_up, true);
                     }
                 }
-            } else {
-                if ($result['return_code'] >= 300) {
+            }
+            elseif ($result['return_code'] >= 400 && $result['return_code'] < 500) {
+                q(
+                    "update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
+                    dbesc('delivery rejected' . ' ' . $result['return_code']),
+                    dbesc(datetime_convert()),
+                    dbesc($outq['outq_hash'])
+                );
+                self::remove($outq['outq_hash']);
+
+            }
+            else {
+                $dr = q(
+                    "select * from dreport where dreport_queue = '%s'",
+                    dbesc($outq['outq_hash'])
+                );
+                if ($dr) {
+                    // update every queue entry going to this site with the most recent communication error
                     q(
-                        "update dreport set dreport_result = '%s', dreport_time = '%s' where dreport_queue = '%s'",
-                        dbesc('delivery rejected' . ' ' . $result['return_code']),
-                        dbesc(datetime_convert()),
-                        dbesc($outq['outq_hash'])
+                        "update dreport set dreport_log = '%s' where dreport_site = '%s'",
+                         dbesc(z_curl_error($result)),
+                        dbesc($dr[0]['dreport_site'])
                     );
-                } else {
-                    $dr = q(
-                        "select * from dreport where dreport_queue = '%s'",
-                        dbesc($outq['outq_hash'])
-                    );
-                    if ($dr) {
-                        // update every queue entry going to this site with the most recent communication error
-                        q(
-                            "update dreport set dreport_log = '%s' where dreport_site = '%s'",
-                            dbesc(z_curl_error($result)),
-                            dbesc($dr[0]['dreport_site'])
-                        );
-                    }
                 }
-                logger('deliver: queue post returned ' . $result['return_code'] . ' from ' . $outq['outq_posturl'], LOGGER_DEBUG);
                 self::update($outq['outq_hash'], 10);
             }
+    
+            logger('deliver: queue post returned ' . $result['return_code'] . ' from ' . $outq['outq_posturl'], LOGGER_DEBUG);
             return;
         }
 
@@ -467,7 +471,7 @@ class Queue
             $channel = null;
 
             if ($outq['outq_channel']) {
-                $channel = channelx_by_n($outq['outq_channel'], true);
+                $channel = Channel::from_id($outq['outq_channel'], true);
             }
 
             $host_crypto = null;

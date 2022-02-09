@@ -10,7 +10,10 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
-
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
+    
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
 require_once('include/datetime.php');
@@ -308,7 +311,7 @@ class Events extends Controller
 
         $channel = App::get_channel();
 
-        nav_set_selected('Events');
+        Navbar::set_selected('Events');
 
         if ((argc() > 2) && (argv(1) === 'ignore') && intval(argv(2))) {
             $r = q(
@@ -481,8 +484,6 @@ class Events extends Controller
                 }
             }
 
-            require_once('include/acl_selectors.php');
-
             $acl = new AccessControl($channel);
             $perm_defaults = $acl->get();
 
@@ -527,13 +528,13 @@ class Events extends Controller
                 '$perms_label' => t('Permission settings'),
                 // populating the acl dialog was a permission description from view_stream because Cal.php, which
                 // displays events, says "since we don't currently have an event permission - use the stream permission"
-                '$acl' => (($orig_event['event_xchan']) ? '' : populate_acl(((x($orig_event)) ? $orig_event : $perm_defaults), false, PermissionDescription::fromGlobalPermission('view_stream'))),
+                '$acl' => (($orig_event['event_xchan']) ? '' : Libacl::populate(((x($orig_event)) ? $orig_event : $perm_defaults), false, PermissionDescription::fromGlobalPermission('view_stream'))),
 
                 '$allow_cid' => acl2json($permissions['allow_cid']),
                 '$allow_gid' => acl2json($permissions['allow_gid']),
                 '$deny_cid' => acl2json($permissions['deny_cid']),
                 '$deny_gid' => acl2json($permissions['deny_gid']),
-                '$tz_choose' => feature_enabled(local_channel(), 'event_tz_select'),
+                '$tz_choose' => Features::enabled(local_channel(), 'event_tz_select'),
                 '$timezone' => array('timezone_select', t('Timezone:'), date_default_timezone_get(), '', get_timezones()),
 
                 '$lockstate' => (($acl->is_private()) ? 'lock' : 'unlock'),

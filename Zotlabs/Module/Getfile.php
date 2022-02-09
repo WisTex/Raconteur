@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 /**
  * module: getfile
@@ -79,7 +80,7 @@ class Getfile extends Controller
             http_status_exit(403, 'Permission denied');
         }
 
-        $channel = channelx_by_hash($hash);
+        $channel = Channel::from_hash($hash);
 
         if (!$channel) {
             logger('error: missing info');

@@ -3,13 +3,14 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Channel;
 
 class Zcard
 {
 
     public function widget($args)
     {
-        $channel = channelx_by_n(App::$profile_uid);
-        return get_zcard($channel, get_observer_hash(), array('width' => 875));
+        $channel = Channel::from_id(App::$profile_uid);
+        return Channel::get_zcard($channel, get_observer_hash(), array('width' => 875));
     }
 }

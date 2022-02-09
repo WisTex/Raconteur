@@ -20,6 +20,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ThreadListener;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Lib\Enotify;
+use Zotlabs\Lib\Channel;
 use App;
 
 require_once('include/attach.php');
@@ -48,7 +49,7 @@ class Id extends Controller
                 $portable_id = $sigdata['portable_id'];
             }
 
-            $chan = channelx_by_hash($request_portable_id);
+            $chan = Channel::from_hash($request_portable_id);
 
             if ($chan) {
                 $channel_id = $chan['channel_id'];
@@ -109,7 +110,7 @@ class Id extends Controller
             $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
             $headers['Digest'] = HTTPSig::generate_digest_header($ret);
             $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
-            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], channel_url($chan));
+            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], Channel::url($chan));
             HTTPSig::set_headers($h);
             echo $ret;
             killme();

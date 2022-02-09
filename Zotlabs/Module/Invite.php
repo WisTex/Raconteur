@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Navbar;
 
 /**
  * module: invite.php
@@ -109,7 +110,7 @@ class Invite extends Controller
             return $o;
         }
 
-        nav_set_selected('Invite');
+        Navbar::set_selected('Invite');
 
         $tpl = get_markup_template('invite.tpl');
         $invonly = false;

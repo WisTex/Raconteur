@@ -14,6 +14,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;    
 use Zotlabs\Lib\ASCollection;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Daemon\Run;
@@ -127,7 +128,7 @@ class Libzot
         }
 
         if ($msg) {
-            $actor = channel_url($channel);
+            $actor = Channel::url($channel);
             if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && is_string($msg['actor']) && $actor === $msg['actor']) {
                 $msg = JSalmon::sign($msg, $actor, $channel['channel_prvkey']);
             }
@@ -238,7 +239,7 @@ class Libzot
             $h = HTTPSig::create_sig(
                 $headers,
                 $channel['channel_prvkey'],
-                channel_url($channel),
+                Channel::url($channel),
                 false,
                 'sha512',
                 (($crypto) ? ['key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto'])] : false)
@@ -262,7 +263,7 @@ class Libzot
 				'(request-target)' => 'post ' . get_request_string($url)
 			];
 
-			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],channel_url($channel),false,'sha512', 
+			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],Channel::url($channel),false,'sha512', 
 				(($crypto) ? [ 'key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto']) ] : false));
 		}
 		else {
@@ -1487,9 +1488,9 @@ class Libzot
                         }
                     }
                 }
-                if ($AS->data['signed_data']) {
-                    IConfig::Set($arr, 'activitypub', 'signed_data', $AS->data['signed_data'], false);
-                    $j = json_decode($AS->data['signed_data'], true);
+                if ($AS->meta['signed_data']) {
+                    IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
+                    $j = json_decode($AS->meta['signed_data'], true);
                     if ($j) {
                         IConfig::Set($arr, 'activitypub', 'rawmsg', json_encode(JSalmon::unpack($j['data'])), true);
                     }
@@ -1611,7 +1612,7 @@ class Libzot
         }
 
         if ($include_sys) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys) {
                 $r[] = $sys['channel_hash'];
             }
@@ -1755,7 +1756,7 @@ class Libzot
 
             $DR = new DReport(z_root(), $sender, $d, $arr['mid']);
 
-            $channel = channelx_by_hash($d);
+            $channel = Channel::from_hash($d);
 
             if (!$channel) {
                 $DR->update('recipient not found');
@@ -1763,7 +1764,7 @@ class Libzot
                 continue;
             }
 
-            $DR->set_name($channel['channel_name'] . ' <' . channel_reddress($channel) . '>');
+            $DR->set_name($channel['channel_name'] . ' <' . Channel::get_webfinger($channel) . '>');
 
 //          if ($act->type === 'Tombstone') {
 //              $r = q("select * from item where mid in ( '%s', '%s' ) and uid = %d",
@@ -2390,12 +2391,12 @@ class Libzot
                 $arr['owner_xchan'] = $a['signature']['signer'];
             }
 
-            if ($AS->data['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
+            if ($AS->meta['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
                 $arr['item_verified'] = true;
             }
 
-            if ($AS->data['signed_data']) {
-                IConfig::Set($arr, 'activitystreams', 'signed_data', $AS->data['signed_data'], false);
+            if ($AS->meta['signed_data']) {
+                IConfig::Set($arr, 'activitystreams', 'signed_data', $AS->meta['signed_data'], false);
             }
 
             logger('FOF Activity received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
@@ -3270,7 +3271,7 @@ class Libzot
             $profile['region'] = $p[0]['region'];
             $profile['postcode'] = $p[0]['postal_code'];
             $profile['country'] = $p[0]['country_name'];
-            $profile['about'] = ((is_sys_channel($e['channel_id'])) ? get_config('system', 'siteinfo') : $p[0]['about']);
+            $profile['about'] = ((Channel::is_system($e['channel_id'])) ? get_config('system', 'siteinfo') : $p[0]['about']);
             $profile['homepage'] = $p[0]['homepage'];
             $profile['hometown'] = $p[0]['hometown'];
 
@@ -3290,7 +3291,7 @@ class Libzot
             }
         }
 
-        $cover_photo = get_cover_photo($e['channel_id'], 'array');
+        $cover_photo = Channel::get_cover_photo($e['channel_id'], 'array');
 
         // Communication details
 
@@ -3489,7 +3490,7 @@ class Libzot
             $ret['site']['realm'] = get_directory_realm();
             $ret['site']['sitename'] = System::get_site_name();
             $ret['site']['logo'] = System::get_site_icon();
-            $ret['site']['project'] = System::get_platform_name();
+            $ret['site']['project'] = System::get_project_name();
             $ret['site']['version'] = System::get_project_version();
         }
 

@@ -9,6 +9,7 @@ use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\Channel;
 
 class ActivityPub
 {
@@ -51,11 +52,12 @@ class ActivityPub
 
         if ($purge_all) {
             $ti = [
-                'id' => channel_url($arr['channel']) . '?operation=delete',
-                'actor' => channel_url($arr['channel']),
+                'id' => Channel::url($arr['channel']) . '?operation=delete',
+                'actor' => Channel::url($arr['channel']),
                 'type' => 'Delete',
-                'object' => channel_url($arr['channel']),
-                'to' => ['https://www.w3.org/ns/activitystreams#Public']
+                'object' => Channel::url($arr['channel']),
+                'to' => ['https://www.w3.org/ns/activitystreams#Public'],
+                'cc' => []
             ];
 
             $msg = array_merge(['@context' => [
@@ -281,7 +283,8 @@ class ActivityPub
                 'type' => (($orig_follow_type) ? $orig_follow_type : 'Follow'),
                 'actor' => $p,
                 'object' => $x['recipient']['xchan_hash'],
-                'to' => [$x['recipient']['xchan_hash']]
+                'to' => [$x['recipient']['xchan_hash']],
+                'cc' => []
             ]
         );
 
@@ -360,7 +363,8 @@ class ActivityPub
                     'actor' => $x['recipient']['xchan_hash'],
                     'object' => z_root() . '/channel/' . $x['sender']['channel_address']
                 ],
-                'to' => [$x['recipient']['xchan_hash']]
+                'to' => [$x['recipient']['xchan_hash']],
+                'cc' => []
             ]
         );
 
@@ -395,7 +399,7 @@ class ActivityPub
             return;
         }
 
-        $channel = channelx_by_n($recip[0]['abook_channel']);
+        $channel = Channel::from_id($recip[0]['abook_channel']);
         if (!$channel) {
             return;
         }
@@ -428,7 +432,8 @@ class ActivityPub
                         'actor' => $recip[0]['xchan_hash'],
                         'object' => $p
                     ],
-                    'to' => [$recip[0]['xchan_hash']]
+                    'to' => [$recip[0]['xchan_hash']],
+                    'cc' => []
                 ]
             );
             del_abconfig($recip[0]['abook_channel'], $recip[0]['xchan_hash'], 'activitypub', 'follow_id');
@@ -451,7 +456,8 @@ class ActivityPub
                         'actor' => $p,
                         'object' => $recip[0]['xchan_hash']
                     ],
-                    'to' => [$recip[0]['xchan_hash']]
+                    'to' => [$recip[0]['xchan_hash']],
+                    'cc' => []
                 ]
             );
         }

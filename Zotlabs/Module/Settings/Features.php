@@ -3,6 +3,7 @@
 namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib as Zlib;
 
 class Features
 {
@@ -11,7 +12,7 @@ class Features
     {
         check_form_security_token_redirectOnErr('/settings/features', 'settings_features');
 
-        $features = get_features(false);
+        $features = Zlib\Features::get(false);
 
         foreach ($features as $fname => $fdata) {
             foreach (array_slice($fdata, 1) as $f) {
@@ -34,21 +35,21 @@ class Features
         $harr = [];
 
 
-        $all_features_raw = get_features(false);
+        $all_features_raw = Zlib\Features::get(false);
 
         foreach ($all_features_raw as $fname => $fdata) {
             foreach (array_slice($fdata, 1) as $f) {
-                $harr[$f[0]] = ((intval(feature_enabled(local_channel(), $f[0]))) ? "1" : '');
+                $harr[$f[0]] = ((intval(Zlib\Features::enabled(local_channel(), $f[0]))) ? "1" : '');
             }
         }
 
-        $features = get_features(true);
+        $features = Zlib\Features::get(true);
 
         foreach ($features as $fname => $fdata) {
             $arr[$fname] = [];
             $arr[$fname][0] = $fdata[0];
             foreach (array_slice($fdata, 1) as $f) {
-                $arr[$fname][1][] = array('feature_' . $f[0], $f[1], ((intval(feature_enabled(local_channel(), $f[0]))) ? "1" : ''), $f[2], array(t('Off'), t('On')));
+                $arr[$fname][1][] = array('feature_' . $f[0], $f[1], ((intval(Zlib\Features::enabled(local_channel(), $f[0]))) ? "1" : ''), $f[2], array(t('Off'), t('On')));
                 unset($harr[$f[0]]);
             }
         }

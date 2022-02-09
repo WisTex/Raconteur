@@ -123,6 +123,10 @@ Available if the 'qrator' addon has been installed. This provides a page to gene
 
 Available if the 'rainbowtag' addon has been installed on the site. Also requires the Tagadelic app. This converts the tag clouds provided by Tagadelic from monochrome into color.
 
+### Roles
+
+This app lets you create named permission settings for different classes/types of connections. This could be something like friends or followers or moderators, and you can choose precisely which permissions to associate with these names.
+     
 ### Search
 
 One click interface to the search page.

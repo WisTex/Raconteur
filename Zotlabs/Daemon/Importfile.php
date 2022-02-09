@@ -5,6 +5,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 class Importfile
 {
@@ -18,7 +19,7 @@ class Importfile
             return;
         }
 
-        $channel = channelx_by_n($argv[1]);
+        $channel = Channel::from_id($argv[1]);
         if (! $channel) {
             return;
         }

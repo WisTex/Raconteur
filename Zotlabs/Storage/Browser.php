@@ -8,12 +8,11 @@ use Sabre\DAV\INode;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Render\Theme;
+use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 use function Sabre\HTTP\encodePath;
-
-//require_once('include/conversation.php');
-//require_once('include/text.php');
-
-require_once('include/acl_selectors.php');
 
 
 /**
@@ -324,7 +323,7 @@ class Browser extends DAV\Browser\Plugin {
 
 		$a = false;
 
-		nav_set_selected('Files');
+		Navbar::set_selected('Files');
 
 		App::$page['content'] = $html;
 		load_pdl();
@@ -367,17 +366,17 @@ class Browser extends DAV\Browser\Plugin {
 		$limit = 0;
 
 		if ($this->auth->owner_id) {
-			$channel = channelx_by_n($this->auth->owner_id);
+			$channel = Channel::from_id($this->auth->owner_id);
 			if ($channel) {
 				$acl = new AccessControl($channel);
 				$channel_acl = $acl->get();
 				$lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
 
-				$aclselect = ((local_channel() == $this->auth->owner_id) ? populate_acl($channel_acl,false,PermissionDescription::fromGlobalPermission('view_storage')) : '');
+				$aclselect = ((local_channel() == $this->auth->owner_id) ? Libacl::populate($channel_acl,false,PermissionDescription::fromGlobalPermission('view_storage')) : '');
 			}
 
 			// Storage and quota for the account (all channels of the owner of this directory)!
-			$limit = engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
+			$limit = engr_units_to_bytes(ServiceClass::fetch($this->auth->owner_id, 'attach_upload_limit'));
 		}
 
 		if ((! $limit) && get_config('system','cloud_report_disksize')) {

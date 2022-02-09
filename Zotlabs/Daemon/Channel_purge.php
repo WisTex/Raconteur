@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\Channel;
+
 class Channel_purge
 {
 

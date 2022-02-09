@@ -3,6 +3,7 @@
 /** @file */
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Channel;
 
 // post categories and "save to file" use the same item.file table for storage.
 // We will differentiate the different uses by wrapping categories in angle brackets
@@ -381,7 +382,7 @@ function pub_tagadelic($mode, $limit, $recent, $safemode, $type)
     if (intval($mode) === PUBLIC_STREAM_SITE) {
         $uids = " and item_private = 0  and item_wall = 1 ";
     } else {
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
         $uids = " and item.uid  = " . intval($sys['channel_id']) . " ";
         $sql_extra = " and item_private = 0 ";
     }

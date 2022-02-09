@@ -11,6 +11,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 
 class Follow extends Controller
@@ -34,7 +35,7 @@ class Follow extends Controller
                 return;
             }
 
-            $chan = channelx_by_n($r[0]['abook_channel']);
+            $chan = Channel::from_id($r[0]['abook_channel']);
 
             if (!$chan) {
                 http_status_exit(404, 'Not found');

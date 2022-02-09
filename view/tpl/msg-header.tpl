@@ -4,7 +4,7 @@
 <script>
 	$(document).ready(function() {
 
-		$("#prvmail-text").editor_autocomplete(baseurl+"/acl");
+		$("#prvmail-text").editor_autocomplete(baseurl+"/acloader");
 
 		$('#invisible-wall-file-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',

@@ -8,13 +8,13 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Navbar;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
-
 
 class Profile extends Controller
 {
@@ -30,7 +30,7 @@ class Profile extends Controller
             return;
         }
 
-        nav_set_selected('Profile');
+        Navbar::set_selected('Profile');
 
         $profile = '';
         $channel = App::get_channel();
@@ -76,7 +76,7 @@ class Profile extends Controller
 
 
         if (ActivityStreams::is_as_request()) {
-            $chan = channelx_by_nick(argv(1));
+            $chan = Channel::from_username(argv(1));
             if (!$chan) {
                 http_status_exit(404, 'Not found');
             }

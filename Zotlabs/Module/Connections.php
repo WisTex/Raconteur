@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/socgraph.php');
 
@@ -37,7 +38,7 @@ class Connections extends Controller
             return login();
         }
 
-        nav_set_selected('Connections');
+        Navbar::set_selected('Connections');
 
         $active = false;
         $blocked = false;

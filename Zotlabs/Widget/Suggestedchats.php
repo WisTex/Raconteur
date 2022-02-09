@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Features;
 
 class Suggestedchats
 {
@@ -10,7 +11,7 @@ class Suggestedchats
     public function widget($arr)
     {
 
-        if (!feature_enabled(App::$profile['profile_uid'], 'ajaxchat')) {
+        if (!Features::enabled(App::$profile['profile_uid'], 'ajaxchat')) {
             return '';
         }
 

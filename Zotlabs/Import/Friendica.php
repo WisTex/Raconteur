@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Connect;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;     
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
@@ -53,7 +55,7 @@ class Friendica
 
         $account_id = $this->settings['account_id'];
 
-        $max_identities = account_service_class_fetch($account_id, 'total_identities');
+        $max_identities = ServiceClass::account_fetch($account_id, 'total_identities');
 
         if ($max_identities !== false) {
             $r = q(
@@ -125,9 +127,9 @@ class Friendica
             [
                 'hubloc_guid' => $channel['channel_guid'],
                 'hubloc_guid_sig' => $channel['channel_guid_sig'],
-                'hubloc_id_url' => channel_url($channel),
+                'hubloc_id_url' => Channel::url($channel),
                 'hubloc_hash' => $channel['channel_hash'],
-                'hubloc_addr' => channel_reddress($channel),
+                'hubloc_addr' => Channel::get_webfinger($channel),
                 'hubloc_primary' => 1,
                 'hubloc_url' => z_root(),
                 'hubloc_url_sig' => Libzot::sign(z_root(), $channel['channel_prvkey']),
@@ -174,8 +176,8 @@ class Friendica
                 'xchan_photo_l' => z_root() . "/photo/profile/l/{$newuid}",
                 'xchan_photo_m' => z_root() . "/photo/profile/m/{$newuid}",
                 'xchan_photo_s' => z_root() . "/photo/profile/s/{$newuid}",
-                'xchan_addr' => channel_reddress($channel),
-                'xchan_url' => channel_url($channel),
+                'xchan_addr' => Channel::get_webfinger($channel),
+                'xchan_url' => Channel::url($channel),
                 'xchan_follow' => z_root() . '/follow?f=&url=%s',
                 'xchan_connurl' => z_root() . '/poco/' . $channel['channel_address'],
                 'xchan_name' => $channel['channel_name'],
@@ -187,7 +189,7 @@ class Friendica
             ]
         );
 
-        $r = profile_store_lowlevel(
+        $r = Channel::profile_store_lowlevel(
             [
                 'aid' => intval($channel['channel_account_id']),
                 'uid' => intval($newuid),
@@ -279,7 +281,7 @@ class Friendica
 
                 foreach ($accts as $acct) {
                     if (trim($acct)) {
-                        $f = connect_and_sync($channel, trim($acct));
+                        $f = Channel::connect_and_sync($channel, trim($acct));
                         if ($f['success']) {
                             $can_view_stream = their_perms_contains($channel['channel_id'], $f['abook']['abook_xchan'], 'view_stream');
 

@@ -29,7 +29,11 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Storage\BasicAuth;
 use Zotlabs\Lib\System;
-
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
+    
 require_once('include/event.php');
 require_once('include/auth.php');
 require_once('include/security.php');
@@ -74,7 +78,7 @@ class Cdav extends Controller
                                 dbesc($keyId)
                             );
                             if ($r) {
-                                $c = channelx_by_hash($r[0]['hubloc_hash']);
+                                $c = Channel::from_hash($r[0]['hubloc_hash']);
                                 if ($c) {
                                     $a = q(
                                         "select * from account where account_id = %d limit 1",
@@ -480,7 +484,7 @@ class Cdav extends Controller
 
                 $hash = $_REQUEST['sharee'];
 
-                $sharee_arr = channelx_by_hash($hash);
+                $sharee_arr = Channel::from_hash($hash);
 
                 $sharee = new Sharee();
 
@@ -907,7 +911,7 @@ class Cdav extends Controller
         }
 
         if (argv(1) === 'calendar') {
-            nav_set_selected('Calendar');
+            Navbar::set_selected('Calendar');
             $caldavBackend = new \Sabre\CalDAV\Backend\PDO($pdo);
             $calendars = $caldavBackend->getCalendarsForUser($principalUri);
         }
@@ -1008,7 +1012,7 @@ class Cdav extends Controller
 
             $sources = rtrim($sources, ', ');
 
-            $first_day = feature_enabled(local_channel(), 'cal_first_day');
+            $first_day = Features::enabled(local_channel(), 'cal_first_day');
             $first_day = (($first_day) ? $first_day : 0);
 
             $title = ['title', t('Event title')];
@@ -1019,12 +1023,11 @@ class Cdav extends Controller
 
             $catsenabled = Apps::system_app_installed(local_channel(), 'Categories');
 
-            require_once('include/acl_selectors.php');
 
             $accesslist = new AccessControl($channel);
             $perm_defaults = $accesslist->get();
 
-            $acl = populate_acl($perm_defaults, false, PermissionDescription::fromGlobalPermission('view_stream'));
+            $acl = Libacl::populate($perm_defaults, false, PermissionDescription::fromGlobalPermission('view_stream'));
 
             $permissions = $perm_defaults;
 
@@ -1191,7 +1194,7 @@ class Cdav extends Controller
                 killme();
             }
 
-            $sharee_arr = channelx_by_hash($hash);
+            $sharee_arr = Channel::from_hash($hash);
 
             $sharee = new Sharee();
 
@@ -1205,7 +1208,7 @@ class Cdav extends Controller
 
 
         if (argv(1) === 'addressbook') {
-            nav_set_selected('CardDAV');
+            Navbar::set_selected('CardDAV');
             $carddavBackend = new PDO($pdo);
             $addressbooks = $carddavBackend->getAddressBooksForUser($principalUri);
         }

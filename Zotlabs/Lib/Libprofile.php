@@ -3,7 +3,10 @@
 namespace Zotlabs\Lib;
 
 use App;
-
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
+use Zotlabs\Lib\Menu;
+        
 class Libprofile
 {
 
@@ -29,7 +32,7 @@ class Libprofile
 
         //  logger('Libprofile::load: ' . $nickname . (($profile) ? ' profile: ' . $profile : ''));
 
-        $channel = channelx_by_nick($nickname);
+        $channel = Channel::from_username($nickname);
 
         if (!$channel) {
             logger('profile error: ' . App::$query_string, LOGGER_DEBUG);
@@ -106,10 +109,10 @@ class Libprofile
         if ($q) {
             $extra_fields = [];
 
-            $profile_fields_basic = get_profile_fields_basic();
-            $profile_fields_advanced = get_profile_fields_advanced();
+            $profile_fields_basic = Channel::get_profile_fields_basic();
+            $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((feature_enabled(local_channel(), 'advanced_profiles')) ? true : false);
+            $advanced = ((Features::enabled(local_channel(), 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -162,12 +165,12 @@ class Libprofile
 
         App::$profile = $p[0];
         App::$profile_uid = $p[0]['profile_uid'];
-        App::$page['title'] = App::$profile['channel_name'] . " - " . unpunify(channel_reddress(App::$profile));
+        App::$page['title'] = App::$profile['channel_name'] . " - " . unpunify(Channel::get_webfinger(App::$profile));
 
         App::$profile['permission_to_view'] = $can_view_profile;
 
         if ($can_view_profile) {
-            $online = get_online_status($nickname);
+            $online = Channel::get_online_status($nickname);
             App::$profile['online_status'] = $online['result'];
         }
 
@@ -197,7 +200,7 @@ class Libprofile
                 'entries' => [],
             );
 
-            $multi_profiles = feature_enabled(local_channel(), 'multi_profiles');
+            $multi_profiles = Features::enabled(local_channel(), 'multi_profiles');
             if ($multi_profiles) {
                 $ret['multi'] = 1;
                 $ret['edit'] = [z_root() . '/profiles', t('Edit Profiles'), '', t('Edit')];
@@ -268,7 +271,7 @@ class Libprofile
 
         head_set_icon($profile['thumb']);
 
-        if (is_sys_channel($profile['uid'])) {
+        if (Channel::is_system($profile['uid'])) {
             $show_connect = false;
         }
 
@@ -307,7 +310,7 @@ class Libprofile
             $connect_url = rconnect_url($profile['uid'], get_observer_hash());
             $connect = (($connect_url) ? t('Connect') : '');
             if ($connect_url) {
-                $connect_url = sprintf($connect_url, urlencode(channel_reddress($profile)));
+                $connect_url = sprintf($connect_url, urlencode(Channel::get_webfinger($profile)));
             }
 
             // premium channel - over-ride
@@ -362,10 +365,9 @@ class Libprofile
         $channel_menu = false;
         $menu = get_pconfig($profile['uid'], 'system', 'channel_menu');
         if ($menu && !$block) {
-            require_once('include/menu.php');
-            $m = menu_fetch($menu, $profile['uid'], $observer['xchan_hash']);
+            $m = Menu::fetch($menu, $profile['uid'], $observer['xchan_hash']);
             if ($m) {
-                $channel_menu = menu_render($m);
+                $channel_menu = Menu::render($m);
             }
         }
         $menublock = get_pconfig($profile['uid'], 'system', 'channel_menublock');
@@ -480,10 +482,10 @@ class Libprofile
         }
 
         if (App::$profile['fullname']) {
-            $profile_fields_basic = get_profile_fields_basic();
-            $profile_fields_advanced = get_profile_fields_advanced();
+            $profile_fields_basic = Channel::get_profile_fields_basic();
+            $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((feature_enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
+            $advanced = ((Features::enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {

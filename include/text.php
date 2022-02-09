@@ -14,6 +14,9 @@ use Zotlabs\Lib\Img_cache;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
+    
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
 /**
@@ -1045,7 +1048,7 @@ function search($s, $id = 'search-box', $url = '/search', $save = false)
         '$action_url' => z_root() . $url,
         '$search_label' => t('Search'),
         '$save_label' => t('Save'),
-        '$savedsearch' => feature_enabled(local_channel(), 'savedsearch')
+        '$savedsearch' => Features::enabled(local_channel(), 'savedsearch')
     ));
 }
 
@@ -1058,7 +1061,7 @@ function searchbox($s, $id = 'search-box', $url = '/search', $save = false)
         '$action_url' => z_root() . '/' . $url,
         '$search_label' => t('Search'),
         '$save_label' => t('Save'),
-        '$savedsearch' => ($save && feature_enabled(local_channel(), 'savedsearch'))
+        '$savedsearch' => ($save && Features::enabled(local_channel(), 'savedsearch'))
     ));
 }
 
@@ -1545,7 +1548,7 @@ function theme_attachments(&$item)
                 continue;
             }
 
-            if (is_foreigner($item['author_xchan'])) {
+            if (Channel::is_foreigner($item['author_xchan'])) {
                 $url = $r['href'];
             } else {
                 $url = z_root() . '/magic?f=&owa=1&hash=' . $item['author_xchan'] . '&bdest=' . bin2hex($r['href'] . ((isset($r['revision']) ? '/' . $r['revision'] : '')));
@@ -2215,7 +2218,7 @@ function mimetype_select($channel_id, $current = 'text/x-multicode', $choices = 
         'application/x-pdl' => t('Comanche Layout')
     ]);
 
-    if ((App::$is_sys) || (channel_codeallowed($channel_id) && $channel_id == local_channel())) {
+    if ((App::$is_sys) || (Channel::codeallowed($channel_id) && $channel_id == local_channel())) {
         $x['application/x-php'] = t('PHP');
     }
 
@@ -2837,12 +2840,12 @@ function jindent($json)
 function design_tools()
 {
 
-    $channel  = channelx_by_n(App::$profile['profile_uid']);
+    $channel  = Channel::from_id(App::$profile['profile_uid']);
     $sys = false;
 
     if (App::$is_sys && is_site_admin()) {
         require_once('include/channel.php');
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         $sys = true;
     }
 
@@ -2872,7 +2875,7 @@ function website_portation_tools()
 
     if (App::$is_sys && is_site_admin()) {
         require_once('include/channel.php');
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         $sys = true;
     }
 
@@ -3743,6 +3746,44 @@ function create_table_from_array($table, $arr, $binary_fields = [])
     return $r;
 }
 
+
+
+function update_table_from_array($table, $arr, $where, $binary_fields = [])
+{
+
+    if (! ($arr && $table)) {
+        return false;
+    }
+
+    $columns = db_columns($table);
+
+    $clean = [];
+    foreach ($arr as $k => $v) {
+        if (! in_array($k, $columns)) {
+            continue;
+        }
+
+        $matches = false;
+        if (preg_match('/([^a-zA-Z0-9\-\_\.])/', $k, $matches)) {
+            return false;
+        }
+        if (in_array($k, $binary_fields)) {
+            $clean[$k] = dbescbin($v);
+        } else {
+            $clean[$k] = dbesc($v);
+        }
+    }
+    $sql = "UPDATE " . TQUOT . $table . TQUOT . " SET ";
+    foreach ($clean as $k => $v) {
+        $sql .= TQUOT . $k . TQUOT . ' = "' . $v . '",';
+    }
+    $sql = rtrim($sql,',');
+    $r = dbq($sql . " WHERE " . $where);
+        
+    return $r;
+}
+
+    
 function share_shield($m)
 {
     return str_replace($m[1], '!=+=+=!' . base64url_encode($m[1]) . '=+!=+!=', $m[0]);
@@ -3757,6 +3798,18 @@ function share_unshield($m)
 
 function cleanup_bbcode($body)
 {
+
+    /**
+     * fix image alt tags containing braces and angle chars from confusing the parser. 
+     */ 
+
+    $matches = null;
+    $c = preg_match('/alt\=\"(.*?)\"/ism',$body,$matches);
+    if ($c) {
+        $alt_tag = str_replace([ '[', ']', '<', '>' ], ['%5B', '%5D', '&lt;', '&gt;'], $matches[1]);
+        $body = str_replace($matches[1],$alt_tag,$body);
+    }
+
 
     /**
      * fix naked links by passing through a callback to see if this is a zot site of some kind

@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\Channel;
+
 class Cron_weekly
 {
 
@@ -38,7 +40,7 @@ class Cron_weekly
         );
         if ($r) {
             foreach ($r as $rv) {
-                channel_remove_final($rv['channel_id']);
+                Channel::channel_remove_final($rv['channel_id']);
             }
         }
 

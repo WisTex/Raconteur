@@ -3,6 +3,7 @@
 
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 // file import to DAV utility
 
@@ -35,7 +36,7 @@ if($argc != 2) {
 
 	$dstfile = substr($dstfile,strlen($nick)+1);
 
-	$channel = channelx_by_nick($nick);
+	$channel = Channel::from_username($nick);
 	if(! $channel)
 		return;
 

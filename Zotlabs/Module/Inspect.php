@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Lib\Channel;
 
 class Inspect extends Controller
 {
@@ -19,7 +20,7 @@ class Inspect extends Controller
             return $output;
         }
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         if (argc() > 2) {
             $item_type = argv(1);

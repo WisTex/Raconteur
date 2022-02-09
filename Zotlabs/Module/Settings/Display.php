@@ -4,6 +4,7 @@ namespace Zotlabs\Module\Settings;
 
 use App;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Features;
 
 class Display
 {
@@ -216,7 +217,7 @@ class Display
             '$channel_menu' => ['channel_menu', t('Provide channel menu in navigation bar'), get_pconfig(local_channel(), 'system', 'channel_menu', get_config('system', 'channel_menu', 0)), t('Default: channel menu located in app menu'), $yes_no],
             '$layout_editor' => t('System Page Layout Editor - (advanced)'),
             '$theme_config' => $theme_config,
-            '$expert' => feature_enabled(local_channel(), 'advanced_theming'),
+            '$expert' => Features::enabled(local_channel(), 'advanced_theming'),
             '$channel_divmore_height' => array('channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(), 'system', 'channel_divmore_height')) ? get_pconfig(local_channel(), 'system', 'channel_divmore_height') : 400), t('click to expand content exceeding this height')),
             '$stream_divmore_height' => array('stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(), 'system', 'stream_divmore_height')) ? get_pconfig(local_channel(), 'system', 'stream_divmore_height') : 400), t('click to expand content exceeding this height')),
             '$indentpx' => ['indentpx', t('Indent threaded comments this many pixels from the parent'), intval(get_pconfig(local_channel(), 'system', 'thread_indent_px', get_config('system', 'thread_indent_px', 0))), t('0-20')],

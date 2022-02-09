@@ -6,6 +6,8 @@ use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;
 
 require_once('include/photos.php');
 
@@ -112,7 +114,7 @@ class File extends DAV\Node implements DAV\IFile {
 			);
 		}
 
-		$ch = channelx_by_n($this->auth->owner_id);
+		$ch = Channel::from_id($this->auth->owner_id);
 		if ($ch) {
 			$sync = attach_export_data($ch,$this->data['hash']);
 			if ($sync) {
@@ -138,7 +140,7 @@ class File extends DAV\Node implements DAV\IFile {
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 
-		$channel = channelx_by_n($this->auth->owner_id);
+		$channel = Channel::from_id($this->auth->owner_id);
 
 		if (! $channel) {
 			throw new DAV\Exception\Forbidden('Permission denied.');
@@ -292,7 +294,7 @@ class File extends DAV\Node implements DAV\IFile {
 			return;
 		}
 
-		$limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
+		$limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
 		if ($limit !== false) {
 			$x = q("select sum(filesize) as total from attach where aid = %d ",
 				intval($channel['channel_account_id'])
@@ -331,7 +333,7 @@ class File extends DAV\Node implements DAV\IFile {
 			// @todo this should be a global definition
 			$unsafe_types = array('text/html', 'text/css', 'application/javascript', 'image/svg+xml');
 
-			if (in_array($r[0]['filetype'], $unsafe_types) && (! channel_codeallowed($this->data['uid']))) {
+			if (in_array($r[0]['filetype'], $unsafe_types) && (!Channel::codeallowed($this->data['uid']))) {
 				header('Content-Disposition: attachment; filename="' . $r[0]['filename'] . '"');
 				header('Content-type: ' . $r[0]['filetype']);
 			}
@@ -433,7 +435,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 		attach_delete($this->auth->owner_id, $this->data['hash']);
 
-		$channel = channelx_by_n($this->auth->owner_id);
+		$channel = Channel::from_id($this->auth->owner_id);
 		if ($channel) {
 			$sync = attach_export_data($channel, $this->data['hash'], true);
 			if ($sync) {

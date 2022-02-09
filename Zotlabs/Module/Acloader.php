@@ -6,7 +6,6 @@ use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Web\Controller;
 
-require_once('include/acl_selectors.php');
 
 /**
  * @brief ACL selector json backend.
@@ -23,7 +22,7 @@ require_once('include/acl_selectors.php');
  * keys however this functionality has grown in an ad-hoc manner and has gotten
  * quite messy over time.
  */
-class Acl extends Controller
+class Acloader extends Controller
 {
 
     public function init()

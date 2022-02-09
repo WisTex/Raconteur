@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Viewsrc extends Controller
 {
@@ -13,7 +14,7 @@ class Viewsrc extends Controller
 
         $o = '';
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         $item_id = ((argc() > 1) ? intval(argv(1)) : 0);
         $json = ((argc() > 2 && argv(2) === 'json') ? true : false);

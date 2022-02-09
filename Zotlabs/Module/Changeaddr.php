@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 /*
  * Change channel nickname
@@ -75,7 +76,7 @@ class Changeaddr extends Controller
             return $ret;
         }
 
-        channel_change_address($channel, $new_address);
+        Channel::change_address($channel, $new_address);
 
         goaway(z_root() . '/changeaddr');
     }

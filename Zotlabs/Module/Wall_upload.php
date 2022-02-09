@@ -4,9 +4,9 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 require_once('include/photo_factory.php');
-require_once('include/channel.php');
 require_once('include/photos.php');
 
 
@@ -22,11 +22,11 @@ class Wall_upload extends Controller
         if ($using_api) {
             require_once('include/api.php');
             if (api_user()) {
-                $channel = channelx_by_n(api_user());
+                $channel = Channel::from_id(api_user());
             }
         } else {
             if (argc() > 1) {
-                $channel = channelx_by_nick(argv(1));
+                $channel = Channel::from_username(argv(1));
             }
         }
 

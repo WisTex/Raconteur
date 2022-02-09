@@ -2,6 +2,7 @@
 namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Online extends Controller
 {
@@ -12,6 +13,6 @@ class Online extends Controller
         if (argc() != 2) {
             json_return_and_die($ret);
         }
-        json_return_and_die(get_online_status(argv(1)));
+        json_return_and_die(Channel::get_online_status(argv(1)));
     }
 }

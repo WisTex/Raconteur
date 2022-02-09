@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 class Apps extends Controller
 {
@@ -12,7 +14,7 @@ class Apps extends Controller
     public function get()
     {
 
-        nav_set_selected('Apps');
+        Navbar::set_selected('Apps');
 
         if (argc() == 2 && argv(1) == 'edit') {
             $mode = 'edit';
@@ -30,7 +32,7 @@ class Apps extends Controller
             Zlib\Apps::import_system_apps();
             $syslist = [];
             $cat = ((array_key_exists('cat', $_GET) && $_GET['cat']) ? [escape_tags($_GET['cat'])] : '');
-            $list = Zlib\Apps::app_list(($available || is_sys_channel(local_channel()) ? 0 : local_channel()), (($mode == 'edit') ? true : false), $cat);
+            $list = Zlib\Apps::app_list(($available || Channel::is_system(local_channel()) ? 0 : local_channel()), (($mode == 'edit') ? true : false), $cat);
             if ($list) {
                 foreach ($list as $x) {
                     $syslist[] = Zlib\Apps::app_encode($x);

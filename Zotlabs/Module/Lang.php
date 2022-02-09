@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Navbar;
 
 class Lang extends Controller
 {
@@ -23,7 +24,7 @@ class Lang extends Controller
             }
         }
 
-        nav_set_selected('Language');
+        Navbar::set_selected('Language');
         return lang_selector();
     }
 }

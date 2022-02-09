@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Module\Settings;
 
+use Zotlabs\Lib\Features;
+
 class Network
 {
 
@@ -9,7 +11,7 @@ class Network
     {
         check_form_security_token_redirectOnErr('/settings/network', 'settings_network');
 
-        $features = self::get_features();
+        $features = self::Features::get();
 
         foreach ($features as $f) {
             $k = $f[0];
@@ -27,10 +29,10 @@ class Network
     public function get()
     {
 
-        $features = self::get_features();
+        $features = self::Features::get();
 
         foreach ($features as $f) {
-            $arr[] = array('feature_' . $f[0], $f[1], ((intval(feature_enabled(local_channel(), $f[0]))) ? "1" : ''), $f[2], array(t('Off'), t('On')));
+            $arr[] = array('feature_' . $f[0], $f[1], ((intval(Features::enabled(local_channel(), $f[0]))) ? "1" : ''), $f[2], array(t('Off'), t('On')));
         }
 
         $tpl = get_markup_template("settings_module.tpl");

@@ -8,7 +8,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Yaml;
-
+use Zotlabs\Lib\Channel;
 
 class Ap_probe extends Controller
 {
@@ -30,7 +30,7 @@ class Ap_probe extends Controller
             if ($_REQUEST['authf']) {
                 $channel = App::get_channel();
                 if (!$channel) {
-                    $channel = get_sys_channel();
+                    $channel = Channel::get_system();
                 }
             }
 

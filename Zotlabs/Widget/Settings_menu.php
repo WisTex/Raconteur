@@ -4,6 +4,7 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Features;
 
 class Settings_menu
 {
@@ -81,7 +82,7 @@ class Settings_menu
             'selected' => ''
         );
 
-//      if(feature_enabled(local_channel(),'oauth_clients')) {
+//      if(Features::enabled(local_channel(),'oauth_clients')) {
 //          $tabs[] =   array(
 //              'label' => t('OAuth1 apps'),
 //              'url' => z_root() . '/settings/oauth',
@@ -97,7 +98,7 @@ class Settings_menu
             );
         }
 
-//      if(feature_enabled(local_channel(),'access_tokens')) {
+//      if(Features::enabled(local_channel(),'access_tokens')) {
 //          $tabs[] =   array(
 //              'label' => t('Guest Access Tokens'),
 //              'url' => z_root() . '/settings/tokens',
@@ -105,13 +106,13 @@ class Settings_menu
 //          );
 //      }
 
-//      if(feature_enabled(local_channel(),'permcats')) {
-//          $tabs[] = array(
-//              'label' => t('Permission Categories'),
-//              'url' => z_root() . '/settings/permcats',
-//              'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
-//          );
-//      }
+      if(Apps::system_app_installed(local_channel(),'Roles')) {
+          $tabs[] = array(
+              'label' => t('Permission Roles'),
+              'url' => z_root() . '/settings/permcats',
+              'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
+          );
+      }
 
 
 //      if($role === false || $role === 'custom') {
@@ -122,7 +123,7 @@ class Settings_menu
 //          );
 //      }
 
-//      if(feature_enabled(local_channel(),'channel_sources')) {
+//      if(Features::enabled(local_channel(),'channel_sources')) {
 //          $tabs[] = array(
 //              'label' => t('Channel Sources'),
 //              'url' => z_root() . '/sources',

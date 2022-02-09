@@ -3,7 +3,7 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Web\HTTPSig;
-
+    
 /**
  * @brief ActivityStreams class.
  *
@@ -14,6 +14,7 @@ class ActivityStreams
 
     public $raw = null;
     public $data = null;
+    public $meta = null;
     public $hub = null;
     public $valid = false;
     public $deleted = false;
@@ -67,10 +68,10 @@ class ActivityStreams
                         logger('Unpacked: ' . json_encode($tmp, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), LOGGER_DATA, LOG_DEBUG);
                         $saved = json_encode($this->data, JSON_UNESCAPED_SLASHES);
                         $this->data = $tmp;
-                        $this->data['signer'] = $ret['signer'];
-                        $this->data['signed_data'] = $saved;
+                        $this->meta['signer'] = $ret['signer'];
+                        $this->meta['signed_data'] = $saved;
                         if ($ret['hubloc']) {
-                            $this->data['hubloc'] = $ret['hubloc'];
+                            $this->meta['hubloc'] = $ret['hubloc'];
                         }
                     }
                 }
@@ -314,7 +315,16 @@ class ActivityStreams
 
     public function fetch_property($url, $channel = null, $hub = null)
     {
-        return Activity::fetch($url, $channel, $hub);
+        $x = Activity::fetch($url, $channel, $hub);
+        if ($x === null && strpos($url, '/channel/')) {
+            // look for other nomadic channels which might be alive
+            $zf = Zotfinger::exec($url, $channel);
+
+            $url = $zf['signature']['signer'];
+            $x = Activity::fetch($url, $channel);
+        }
+
+        return $x;
     }
 
     /**
@@ -413,10 +423,10 @@ class ActivityStreams
                     logger('Unpacked: ' . json_encode($tmp, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), LOGGER_DATA, LOG_DEBUG);
                     $saved = json_encode($x, JSON_UNESCAPED_SLASHES);
                     $x = $tmp;
-                    $x['signer'] = $ret['signer'];
-                    $x['signed_data'] = $saved;
+                    $x['meta']['signer'] = $ret['signer'];
+                    $x['meta']['signed_data'] = $saved;
                     if ($ret['hubloc']) {
-                        $x['hubloc'] = $ret['hubloc'];
+                        $x['meta']['hubloc'] = $ret['hubloc'];
                     }
                 }
             }

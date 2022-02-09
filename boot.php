@@ -11,13 +11,15 @@ use Zotlabs\Lib\System;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
-
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Stringsjs;
+    
 /**
  * @file boot.php
  *
  * @brief This file defines some global constants and includes the central App class.
  */
-
 
 require_once('version.php');
 
@@ -52,13 +54,9 @@ require_once('include/addon.php');
 require_once('include/text.php');
 require_once('include/datetime.php');
 require_once('include/language.php');
-require_once('include/nav.php');
 require_once('include/permissions.php');
-require_once('include/features.php');
 require_once('include/taxonomy.php');
-require_once('include/channel.php');
 require_once('include/connections.php');
-require_once('include/account.php');
 require_once('include/zid.php');
 require_once('include/xchan.php');
 require_once('include/hubloc.php');
@@ -1231,8 +1229,8 @@ class App {
 				'$head_css'        => head_get_css(),
 				'$head_js'         => head_get_js(),
 				'$linkrel'         => head_get_links(),
-				'$js_strings'      => js_strings(),
-				'$zid'             => get_my_address(),
+				'$js_strings'      => Stringsjs::strings(),
+				'$zid'             => Channel::get_my_address(),
 				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
 			]
 		) . self::$page['htmlhead'];
@@ -1510,7 +1508,7 @@ function check_config() {
 	// Ensure the site has a system channel and that it has been upgraded.
 	// This function will only do work if work is required.
 	
-	create_sys_channel();
+	Channel::create_system();
 	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
@@ -2284,7 +2282,7 @@ function construct_page() {
 		$installing = true;
 	}
 	else {
-		nav($navbar);
+		Navbar::render($navbar);
 	}
 
 
@@ -2298,8 +2296,6 @@ function construct_page() {
 
 	if (($p = theme_include('mod_' . App::$module . '.php')) != '')
 		require_once($p);
-
-	require_once('include/js_strings.php');
 
 	if (isset(App::$page['template_style']))
 		head_add_css(App::$page['template_style'] . '.css');

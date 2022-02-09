@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
 
 require_once('include/attach.php');
 require_once('include/photos.php');
@@ -62,14 +64,14 @@ class Embedphotos extends Controller
     protected static function photolink($resource, $channel_id = 0)
     {
         if (intval($channel_id)) {
-            $channel = channelx_by_n($channel_id);
+            $channel = Channel::from_id($channel_id);
         } else {
             $channel = App::get_channel();
         }
 
         $output = EMPTY_STR;
         if ($channel) {
-            $resolution = ((feature_enabled($channel['channel_id'], 'large_photos')) ? 1 : 2);
+            $resolution = ((Features::enabled($channel['channel_id'], 'large_photos')) ? 1 : 2);
             $r = q(
                 "select mimetype, height, width, title from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
                 dbesc($resource),
@@ -128,7 +130,7 @@ class Embedphotos extends Controller
         $channel_id = 0;
         if (array_key_exists('channel_id', $args)) {
             $channel_id = $args['channel_id'];
-            $channel = channelx_by_n($channel_id);
+            $channel = Channel::from_id($channel_id);
         }
 
         if (!$channel_id) {
@@ -233,7 +235,7 @@ class Embedphotos extends Controller
 
     public function embedphotos_album_list($channel_id)
     {
-        $channel = channelx_by_n($channel_id);
+        $channel = Channel::from_id($channel_id);
         $p = photos_albums_list($channel, App::get_observer());
         if ($p['success']) {
             return $p['albums'];

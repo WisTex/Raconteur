@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 function xchan_store_lowlevel($arr)
 {
@@ -79,7 +80,7 @@ function xchan_store($arr)
             $arr['url'] = z_root();
         }
         if (! $arr['photo']) {
-            $arr['photo'] = z_root() . '/' . get_default_profile_photo();
+            $arr['photo'] = z_root() . '/' . Channel::get_default_profile_photo();
         }
 
 		if (in_array($arr['network'], [ 'nomad','zot6' ])) {
@@ -317,56 +318,6 @@ function xchan_change_key($oldx, $newx, $data)
 
     foreach ($acls as $k => $v) {
         xchan_keychange_acl($k, $v, $oldx, $newx);
-    }
-}
-
-
-function migrate_xchan_photos($limit = 100)
-{
-
-    $r = q(
-        "select xchan_photo_l, xchan_hash, photo.xchan, photo.resource_id from photo left join xchan on photo.xchan = xchan_hash where photo.xchan != '' and uid = 0 and imgscale = 4 and photo_usage = 2 and xchan_photo_l like ('%s') limit %d",
-        dbesc(z_root() . '/photo/%'),
-        intval($limit)
-    );
-    if ($r) {
-        foreach ($r as $rv) {
-            logger('migrating xchan_photo for ' . $rv['xchan_hash']);
-            $photos = import_remote_xchan_photo($rv['xchan_photo_l'], $rv['xchan_hash']);
-            if ($photos) {
-                $r = q(
-                    "update xchan set xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
-					where xchan_hash = '%s'",
-                    dbesc($photos[0]),
-                    dbesc($photos[1]),
-                    dbesc($photos[2]),
-                    dbesc($photos[3]),
-                    dbesc($rv['xchan_hash'])
-                );
-            }
-        }
-    }
-}
-
-
-
-
-function cleanup_xchan_photos($limit = 500)
-{
-
-    $r = q(
-        "select photo.xchan, photo.resource_id from photo left join xchan on photo.xchan = xchan_hash where photo.xchan != '' and uid = 0 and imgscale = 4 and photo_usage = 2 and xchan_photo_l like ('%s') limit %d",
-        dbesc(z_root() . '/xp/%'),
-        intval($limit)
-    );
-    if ($r) {
-        foreach ($r as $rv) {
-            q(
-                "delete from photo where xchan = '%s' and resource_id = '%s' and photo_usage = 2 and uid = 0",
-                dbesc($rv['xchan']),
-                dbesc($rv['resource_id'])
-            );
-        }
     }
 }
 

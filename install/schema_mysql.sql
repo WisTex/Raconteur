@@ -161,7 +161,6 @@ CREATE TABLE IF NOT EXISTS `atoken` (
   KEY `atoken_guid` (`atoken_guid`),
   KEY `atoken_aid` (`atoken_aid`),
   KEY `atoken_uid` (`atoken_uid`),
-  KEY `atoken_uid_2` (`atoken_uid`),
   KEY `atoken_name` (`atoken_name`),
   KEY `atoken_token` (`atoken_token`),
   KEY `atoken_expires` (`atoken_expires`)

@@ -2,6 +2,7 @@
 
 use Michelf\MarkdownExtra;
 use Zotlabs\Lib\IConfig;
+use Zotlabs\Lib\Channel;
 
 /**
  * @brief
@@ -250,7 +251,7 @@ function store_doc_file($s)
     }
 
     $item = [];
-    $sys = get_sys_channel();
+    $sys = Channel::get_system();
 
     $item['aid'] = 0;
     $item['uid'] = $sys['channel_id'];

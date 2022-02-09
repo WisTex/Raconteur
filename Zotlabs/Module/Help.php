@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/help.php');
 
@@ -16,7 +17,7 @@ class Help extends Controller
 
     public function get()
     {
-        nav_set_selected('Help');
+        Navbar::set_selected('Help');
 
         if ($_REQUEST['search']) {
             $o .= '<div id="help-content" class="generic-content-wrapper">';

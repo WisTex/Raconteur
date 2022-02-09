@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Features;
 
 class Savedsearch
 {
@@ -10,7 +11,7 @@ class Savedsearch
     public function widget($arr)
     {
 
-        if ((!local_channel()) || (!feature_enabled(local_channel(), 'savedsearch'))) {
+        if ((!local_channel()) || (!Features::enabled(local_channel(), 'savedsearch'))) {
             return '';
         }
 

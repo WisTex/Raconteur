@@ -6,12 +6,13 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Connect;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
-
-require_once('include/menu.php');
-
+use Zotlabs\Lib\Menu;
+use Zotlabs\Lib\MenuItem;
 
 /**
  * @brief Import a channel.
@@ -127,7 +128,7 @@ function import_channel($channel, $account_id, $seize, $newname = '')
     }
 
     if ($clean) {
-        channel_store_lowlevel($clean);
+        Channel::channel_store_lowlevel($clean);
     }
 
     $r = q(
@@ -150,7 +151,7 @@ function import_channel($channel, $account_id, $seize, $newname = '')
     // reset
     $channel = $r[0];
 
-    set_default_login_identity($account_id, $channel['channel_id'], false);
+    Channel::set_default($account_id, $channel['channel_id'], false);
     logger('import step 1');
     $_SESSION['import_step'] = 1;
 
@@ -370,7 +371,7 @@ function import_profiles($channel, $profiles)
                 $profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
             }
 
-            profile_store_lowlevel($profile);
+            Channel::profile_store_lowlevel($profile);
         }
     }
 }
@@ -968,7 +969,7 @@ function import_items($channel, $items, $sync = false, $relocate = null)
 {
 
     if ($channel && $items) {
-        $allow_code = channel_codeallowed($channel['channel_id']);
+        $allow_code = Channel::codeallowed($channel['channel_id']);
 
         $deliver = false; // Don't deliver any messages or notifications when importing
 
@@ -1174,7 +1175,7 @@ function import_menus($channel, $menus)
                 }
             }
 
-            $menu_id = menu_create($m);
+            $menu_id = Menu::create($m);
 
             if ($menu_id) {
                 if (is_array($menu['items'])) {
@@ -1200,7 +1201,7 @@ function import_menus($channel, $menus)
                                 $mitem['mitem_flags'] |= MENU_ITEM_CHATROOM;
                             }
                         }
-                        menu_add_item($menu_id, $channel['channel_id'], $mitem);
+                        MenuItem::add($menu_id, $channel['channel_id'], $mitem);
                     }
                 }
             }
@@ -1251,19 +1252,19 @@ function sync_menus($channel, $menus)
                     continue;
                 }
                 if ($menu['menu_deleted']) {
-                    menu_delete_id($r[0]['menu_id'], $channel['channel_id']);
+                    Menu::delete_id($r[0]['menu_id'], $channel['channel_id']);
                     continue;
                 }
                 $menu_id = $r[0]['menu_id'];
                 $m['menu_id'] = $r[0]['menu_id'];
-                $x = menu_edit($m);
+                $x = Menu::edit($m);
                 if (! $x) {
                     continue;
                 }
                 $editing = true;
             }
             if (! $editing) {
-                $menu_id = menu_create($m);
+                $menu_id = Menu::create($m);
             }
             if ($menu_id) {
                 if ($editing) {
@@ -1297,7 +1298,7 @@ function sync_menus($channel, $menus)
                                 $mitem['mitem_flags'] |= MENU_ITEM_CHATROOM;
                             }
                         }
-                        menu_add_item($menu_id, $channel['channel_id'], $mitem);
+                        MenuItem::add($menu_id, $channel['channel_id'], $mitem);
                     }
                 }
             }
@@ -1445,7 +1446,7 @@ function sync_files($channel, $files)
     require_once('include/attach.php');
 
     if ($channel && $files) {
-        $limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
+        $limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
 
         foreach ($files as $f) {
             if (! $f) {
@@ -1637,7 +1638,7 @@ function sync_files($channel, $files)
                             '(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
                         ];
 
-                        $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), true, 'sha512');
+                        $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
                         $x = z_post_url($fetch_url . '/' . $att['hash'], $parr, $redirects, [ 'filep' => $fp, 'headers' => $headers]);
 
@@ -1731,7 +1732,7 @@ function sync_files($channel, $files)
                             '(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
                         ];
 
-                        $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), true, 'sha512');
+                        $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
                         $x = z_post_url($fetch_url . '/' . $att['hash'], $parr, $redirects, [ 'filep' => $fp, 'headers' => $headers]);
 
@@ -1982,7 +1983,7 @@ function import_webpage_element($element, $channel, $type)
 
     // Verify ability to use html or php!!!
 
-    $execflag = channel_codeallowed(local_channel());
+    $execflag = Channel::codeallowed(local_channel());
 
     $i = q(
         "select id, edited, item_deleted from item where mid = '%s' and uid = %d limit 1",

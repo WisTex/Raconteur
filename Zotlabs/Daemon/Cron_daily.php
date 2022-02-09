@@ -2,9 +2,11 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\ServiceClass;    
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libzot;
-
+use Zotlabs\Lib\Statistics;
+    
 class Cron_daily
 {
 
@@ -54,14 +56,13 @@ class Cron_daily
         );
 
 
-        //update statistics in config
-        require_once('include/statistics_fns.php');
-        update_channels_total_stat();
-        update_channels_active_halfyear_stat();
-        update_channels_active_monthly_stat();
-        update_local_posts_stat();
-        update_local_comments_stat();
+        // update statistics counters (ignore values, they will be stored in config)
 
+        Statistics::get_channels_all();
+        Statistics::get_channels_6mo();
+        Statistics::get_channels_1mo();
+        Statistics::get_posts();
+        Statistics::get_comments();
 
         // expire old delivery reports
 
@@ -98,16 +99,9 @@ class Cron_daily
         }
 
         // expire any expired accounts
-        downgrade_accounts();
+        ServiceClass::downgrade_accounts();
 
         Run::Summon([ 'Expire' ]);
-
-
-        // remove xchan photos that were stored in the DB ine earlier versions
-        // and were migrated to filesystem storage.
-        // eventually this will do nothing but waste cpu cycles checking to see if anything remains.
-
-        cleanup_xchan_photos();
 
         remove_obsolete_hublocs();
 

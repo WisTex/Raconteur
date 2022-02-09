@@ -9,6 +9,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Lib\Channel;
 
 require_once('include/security.php');
 require_once('include/attach.php');
@@ -49,7 +50,7 @@ class Album extends Controller
             $channel = null;
 
             if (argc() > 1) {
-                $channel = channelx_by_nick(argv(1));
+                $channel = Channel::from_username(argv(1));
             }
             if (!$channel) {
                 http_status_exit(404, 'Not found.');

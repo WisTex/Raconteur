@@ -6,6 +6,8 @@ use App;
 use Sabre\DAV;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;
 
 
 require_once('include/photos.php');
@@ -186,7 +188,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
             intval($this->auth->owner_id)
         );
 
-        $ch = channelx_by_n($this->auth->owner_id);
+        $ch = Channel::from_id($this->auth->owner_id);
         if ($ch) {
             $sync = attach_export_data($ch, $this->folder_hash);
             if ($sync) {
@@ -227,7 +229,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
         $mimetype = z_mime_content_type($name);
 
-        $channel = channelx_by_n($this->auth->owner_id);
+        $channel = Channel::from_id($this->auth->owner_id);
 
         if (!$channel) {
             logger('no channel');
@@ -353,7 +355,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         }
 
         // check against service class quota
-        $limit = engr_units_to_bytes(service_class_fetch($channel['channel_id'], 'attach_upload_limit'));
+        $limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
         if ($limit !== false) {
             $z = q("SELECT SUM(filesize) AS total FROM attach WHERE aid = %d ",
                 intval($channel['channel_account_id'])
@@ -414,7 +416,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
             throw new DAV\Exception\Forbidden('Permission denied.');
         }
 
-        $channel = channelx_by_n($this->auth->owner_id);
+        $channel = Channel::from_id($this->auth->owner_id);
 
         if ($channel) {
 
@@ -456,7 +458,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
         attach_delete($this->auth->owner_id, $this->folder_hash);
 
-        $channel = channelx_by_n($this->auth->owner_id);
+        $channel = Channel::from_id($this->auth->owner_id);
         if ($channel) {
             $sync = attach_export_data($channel, $this->folder_hash, true);
             if ($sync) {
@@ -541,7 +543,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
         $channel_name = $path_arr[0];
 
-        $channel = channelx_by_nick($channel_name);
+        $channel = Channel::from_username($channel_name);
 
         if (!$channel) {
             throw new DAV\Exception\NotFound('The file with name: ' . $channel_name . ' could not be found.');
@@ -634,7 +636,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
         $channel_name = $path_arr[0];
 
-        $channel = channelx_by_nick($channel_name);
+        $channel = Channel::from_username($channel_name);
 
         if (!$channel) {
             return null;
@@ -917,13 +919,13 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         $free = 0;
 
         if ($this->auth->owner_id) {
-            $channel = channelx_by_n($this->auth->owner_id);
+            $channel = Channel::from_id($this->auth->owner_id);
             if ($channel) {
                 $r = q("SELECT SUM(filesize) AS total FROM attach WHERE aid = %d",
                     intval($channel['channel_account_id'])
                 );
                 $used = (($r) ? (float)$r[0]['total'] : 0);
-                $limit = (float)engr_units_to_bytes(service_class_fetch($this->auth->owner_id, 'attach_upload_limit'));
+                $limit = (float)engr_units_to_bytes(ServiceClass::fetch($this->auth->owner_id, 'attach_upload_limit'));
                 if ($limit) {
                     // Don't let the result go negative
                     $free = (($limit > $used) ? $limit - $used : 0);

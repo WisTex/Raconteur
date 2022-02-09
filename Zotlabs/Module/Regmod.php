@@ -4,7 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Account;
+    
 class Regmod extends Controller
 {
 
@@ -33,13 +34,13 @@ class Regmod extends Controller
         $hash = argv(2);
 
         if ($cmd === 'deny') {
-            if (!account_deny($hash)) {
+            if (!Account::deny($hash)) {
                 killme();
             }
         }
 
         if ($cmd === 'allow') {
-            if (!account_allow($hash)) {
+            if (!Account::allow($hash)) {
                 killme();
             }
         }

@@ -11,6 +11,8 @@ use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 
 class Chat extends Controller
 {
@@ -102,7 +104,7 @@ class Chat extends Controller
 
         if (local_channel()) {
             $channel = App::get_channel();
-            nav_set_selected('Chatrooms');
+            Navbar::set_selected('Chatrooms');
         }
 
         $ob = App::get_observer();
@@ -229,7 +231,6 @@ class Chat extends Controller
         $channel_acl = $acl->get();
 
         $lockstate = (($channel_acl['allow_cid'] || $channel_acl['allow_gid'] || $channel_acl['deny_cid'] || $channel_acl['deny_gid']) ? 'lock' : 'unlock');
-        require_once('include/acl_selectors.php');
 
         $chatroom_new = '';
         if (local_channel()) {
@@ -238,7 +239,7 @@ class Chat extends Controller
                 '$name' => array('room_name', t('Chatroom name'), '', ''),
                 '$chat_expire' => array('chat_expire', t('Expiration of chats (minutes)'), 120, ''),
                 '$permissions' => t('Permissions'),
-                '$acl' => populate_acl($channel_acl, false),
+                '$acl' => Libacl::populate($channel_acl, false),
                 '$allow_cid' => acl2json($channel_acl['allow_cid']),
                 '$allow_gid' => acl2json($channel_acl['allow_gid']),
                 '$deny_cid' => acl2json($channel_acl['deny_cid']),

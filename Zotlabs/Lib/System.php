@@ -3,6 +3,8 @@
 namespace Zotlabs\Lib;
 
 use App;
+use Zotlabs\Lib\Channel;
+use URLify;
 
 class System
 {
@@ -23,6 +25,21 @@ class System
         return '';
     }
 
+    public static function get_project_name()
+    {
+        $project = EMPTY_STR;
+        $name = self::get_site_name();
+        if ($name) {
+            $words = explode(' ', $name);
+            $project = strtolower(URLify::transliterate($words[0]));
+        }
+        if (!$project) {
+            $project = self::get_platform_name();
+        }
+        return $project;
+    }
+
+    
     public static function get_banner()
     {
 
@@ -34,6 +51,10 @@ class System
 
     public static function get_project_icon()
     {
+        $sys = Channel::get_system();
+        if ($sys) {
+            return z_root() . '/photo/profile/l/' . $sys['channel_id'];
+        }
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon', App::$config['system'])) {
             return App::$config['system']['icon'];
         }

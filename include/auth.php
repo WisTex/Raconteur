@@ -11,6 +11,7 @@
  */
 
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Channel;
 
 require_once('include/api_auth.php');
 require_once('include/security.php');
@@ -76,7 +77,7 @@ function account_verify_password($login, $pass)
         return $ret;
     } else {
         if (! strpos($login, '@')) {
-            $channel = channelx_by_nick($login);
+            $channel = Channel::from_username($login);
             if (! $channel) {
                 $x = q(
                     "select * from atoken where atoken_name = '%s' and atoken_token = '%s' limit 1",
@@ -276,7 +277,7 @@ if (
                 App::$session->extend_cookie();
                 $login_refresh = true;
             }
-            $ch = (($_SESSION['uid']) ? channelx_by_n($_SESSION['uid']) : null);
+            $ch = (($_SESSION['uid']) ? Channel::from_id($_SESSION['uid']) : null);
             authenticate_success($r[0], null, $ch, false, false, $login_refresh);
         } else {
             $_SESSION['account_id'] = 0;

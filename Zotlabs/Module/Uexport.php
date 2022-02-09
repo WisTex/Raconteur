@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Channel;
 
 class Uexport extends Controller
 {
@@ -14,7 +15,7 @@ class Uexport extends Controller
             return;
         }
 
-        $sections = (($_REQUEST['sections']) ? explode(',', $_REQUEST['sections']) : get_default_export_sections());
+        $sections = (($_REQUEST['sections']) ? explode(',', $_REQUEST['sections']) : Channel::get_default_export_sections());
 
         if (argc() > 1) {
             $channel = App::get_channel();
@@ -33,12 +34,12 @@ class Uexport extends Controller
             $flags = ((version_compare(PHP_VERSION, '7.2.0') >= 0) ? JSON_INVALID_UTF8_SUBSTITUTE : 0);
 
             if ($year) {
-                echo json_encode(identity_export_year(local_channel(), $year, $month), $flags);
+                echo json_encode(Channel::export_year(local_channel(), $year, $month), $flags);
                 killme();
             }
 
             if (argc() > 1 && argv(1) === 'basic') {
-                echo json_encode(identity_basic_export(local_channel(), $sections), $flags);
+                echo json_encode(Channel::basic_export(local_channel(), $sections), $flags);
                 killme();
             }
 
@@ -46,7 +47,7 @@ class Uexport extends Controller
 
             if (argc() > 1 && argv(1) === 'complete') {
                 $sections[] = 'items';
-                echo json_encode(identity_basic_export(local_channel(), $sections));
+                echo json_encode(Channel::basic_export(local_channel(), $sections));
                 killme();
             }
         }

@@ -13,6 +13,7 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\Permcat;
+use Zotlabs\Lib\Features;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Web\HTTPHeaders;
 use Sabre\VObject\Reader;
@@ -353,7 +354,7 @@ class Connedit extends Controller
 		});\n\n";
         foreach ($connect_perms['perms'] as $p => $v) {
             if ($v) {
-                $o .= "\$('#me_id_perms_" . $p . "').prop('checked', true); \n";
+                $o .= "\$('#id_perms_" . $p . "').prop('checked', true); \n";
             }
         }
         $o .= " }\n</script>\n";
@@ -731,7 +732,7 @@ class Connedit extends Controller
 
             $unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'), t('Yes')));
 
-            $multiprofs = ((feature_enabled(local_channel(), 'multi_profiles')) ? true : false);
+            $multiprofs = ((Features::enabled(local_channel(), 'multi_profiles')) ? true : false);
 
             if ($slide && !$multiprofs) {
                 $affinity = t('Set Friend Zoom');
@@ -768,16 +769,22 @@ class Connedit extends Controller
                     $thisperm = "1";
                 }
 
-                $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, 1, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
+                $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, $yes_no, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
             }
 
-            $pcat = new Permcat(local_channel());
-            $pcatlist = $pcat->listing();
-            $permcats = [];
-            if ($pcatlist) {
-                foreach ($pcatlist as $pc) {
-                    $permcats[$pc['name']] = $pc['localname'];
+            $current_permcat = EMPTY_STR;
+
+            if (Apps::System_app_installed(local_channel(),'Roles')) {
+                $pcat = new Permcat(local_channel(), $contact['abook_id']);
+                $pcatlist = $pcat->listing();
+                $permcats = [];
+                if ($pcatlist) {
+                    foreach ($pcatlist as $pc) {
+                        $permcats[$pc['name']] = $pc['localname'];
+                    }
                 }
+
+                $current_permcat = $pcat->match($my_perms);
             }
 
             $locstr = locations_by_netid($contact['xchan_hash']);
@@ -804,9 +811,9 @@ class Connedit extends Controller
             $o .= replace_macros($tpl, [
                 '$header' => (($self) ? t('Connection Default Permissions') : sprintf(t('Connection: %s'), $contact['xchan_name']) . (($contact['abook_alias']) ? ' &lt;' . $contact['abook_alias'] . '&gt;' : '')),
                 '$autoperms' => array('autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no),
-                '$permcat' => ['permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
+                '$permcat' => ['permcat', t('Permission role'), $current_permcat, '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
                 '$permcat_new' => t('Add permission role'),
-                '$permcat_enable' => feature_enabled(local_channel(), 'permcats'),
+                '$permcat_enable' => Apps::system_app_installed(local_channel(),'Roles'),
                 '$addr' => unpunify($contact['xchan_addr']),
                 '$primeurl' => unpunify($contact['xchan_url']),
                 '$block_announce' => ['block_announce', t('Ignore shares and repeats this connection posts'), get_abconfig(local_channel(), $contact['xchan_hash'], 'system', 'block_announce', false), t('Note: This is not recommended for Groups.'), [t('No'), t('Yes')]],
@@ -840,7 +847,7 @@ class Connedit extends Controller
                 '$pending_label' => t('Connection Pending Approval'),
                 '$is_pending' => (intval($contact['abook_pending']) ? 1 : ''),
                 '$unapproved' => $unapproved,
-                '$inherited' => t('inherited'),
+                '$inherited' => '', // t('inherited'),
                 '$submit' => t('Submit'),
                 '$lbl_vis2' => sprintf(t('Please choose the profile you would like to display to %s when viewing your profile securely.'), $contact['xchan_name']),
                 '$close' => (($contact['abook_closeness']) ? $contact['abook_closeness'] : 80),
@@ -848,8 +855,8 @@ class Connedit extends Controller
                 '$me' => t('My Settings'),
                 '$perms' => $perms,
                 '$permlbl' => t('Individual Permissions'),
-                '$permnote' => t('Some permissions may be inherited from your channel\'s <a href="settings"><strong>privacy settings</strong></a>, which have higher priority than individual settings. You can <strong>not</strong> change those settings here.'),
-                '$permnote_self' => t('Some permissions may be inherited from your channel\'s <a href="settings"><strong>privacy settings</strong></a>, which have higher priority than individual settings. You can change those settings here but they wont have any impact unless the inherited setting changes.'),
+                '$permnote' => t('Some individual permissions may have been preset or locked based on your channel type and privacy settings.'),
+                '$permnote_self' => t('Some individual permissions may have been preset or locked based on your channel type and privacy settings.'),
                 '$lastupdtext' => t('Last update:'),
                 '$last_update' => relative_date($contact['abook_connected']),
                 '$profile_select' => contact_profile_assign($contact['abook_profile']),

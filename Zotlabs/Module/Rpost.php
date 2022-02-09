@@ -7,8 +7,9 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 
-require_once('include/acl_selectors.php');
 require_once('include/items.php');
 require_once('include/taxonomy.php');
 require_once('include/conversation.php');
@@ -64,7 +65,7 @@ class Rpost extends Controller
             return login();
         }
 
-        nav_set_selected('Post');
+        Navbar::set_selected('Post');
 
         if (local_channel() && array_key_exists('userfile', $_FILES)) {
             $channel = App::get_channel();
@@ -224,7 +225,7 @@ class Rpost extends Controller
             'default_location' => $channel['channel_location'],
             'nickname' => $channel['channel_address'],
             'lockstate' => (($acl->is_private()) ? 'lock' : 'unlock'),
-            'acl' => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+            'acl' => Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
             'permissions' => $channel_acl,
             'bang' => '',
             'visitor' => true,

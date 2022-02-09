@@ -7,6 +7,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Navbar;
 
 class Poke extends Controller
 {
@@ -122,7 +123,7 @@ class Poke extends Controller
             return $o;
         }
 
-        nav_set_selected('Poke');
+        Navbar::set_selected('Poke');
 
         $name = '';
         $id = '';

@@ -7,6 +7,9 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\ThreadStream;
 use Zotlabs\Lib\ThreadItem;
 use Zotlabs\Lib\Chatroom;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Features;
+use Zotlabs\Lib\Menu;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 
@@ -495,7 +498,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     $page_dropping = ((local_channel() && local_channel() == $profile_owner) ? true : false);
 
-    if (! feature_enabled($profile_owner, 'multi_delete')) {
+    if (! Features::enabled($profile_owner, 'multi_delete')) {
         $page_dropping = false;
     }
 
@@ -697,7 +700,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'owner_photo' => $owner_photo,
                     'plink' => get_plink($item, false),
                     'edpost' => false,
-                    'star' => ((feature_enabled(local_channel(), 'star_posts')) ? $star : ''),
+                    'star' => ((Features::enabled(local_channel(), 'star_posts')) ? $star : ''),
                     'drop' => $drop,
                     'vote' => $likebuttons,
                     'like' => '',
@@ -1181,7 +1184,7 @@ function z_status_editor($x, $popup = false)
 
     $o = '';
 
-    $c = channelx_by_n($x['profile_uid']);
+    $c = Channel::from_id($x['profile_uid']);
     if ($c && $c['channel_moved']) {
         return $o;
     }
@@ -1256,7 +1259,7 @@ function z_status_editor($x, $popup = false)
 
     if (array_key_exists('channel_select', $x) && $x['channel_select']) {
         require_once('include/channel.php');
-        $id_select = identity_selector();
+        $id_select = Channel::identity_selector();
     } else {
         $id_select = '';
     }
@@ -1265,7 +1268,7 @@ function z_status_editor($x, $popup = false)
 
     $reset = ((x($x, 'reset')) ? $x['reset'] : '');
 
-    $feature_auto_save_draft = ((feature_enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
+    $feature_auto_save_draft = ((Features::enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
 
     $tpl = get_markup_template('jot-header.tpl');
 
@@ -1531,8 +1534,8 @@ function jot_collections($channel, $collections)
     $output .= t('Post to Collections');
     $output .= '<select size="' . $size . '" class="form-control" name="collections[]" multiple>';
     foreach ($r as $rv) {
-        $selected = ((is_array($collections) && in_array(channel_reddress($rv), $collections)) ? " selected " : "");
-        $output .= '<option value="' . channel_reddress($rv) . '"' . $selected . '>' . $rv['channel_name'] . '</option>';
+        $selected = ((is_array($collections) && in_array(Channel::get_webfinger($rv), $collections)) ? " selected " : "");
+        $output .= '<option value="' . Channel::get_webfinger($rv) . '"' . $selected . '>' . $rv['channel_name'] . '</option>';
     }
     $output .= '</select>';
 
@@ -2023,7 +2026,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
     }
 
 
-    if ($p['chat'] && feature_enabled($uid, 'ajaxchat')) {
+    if ($p['chat'] && Features::enabled($uid, 'ajaxchat')) {
         $has_chats = Chatroom::list_count($uid);
         if ($has_chats) {
             $tabs[] = array(
@@ -2037,8 +2040,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         }
     }
 
-    require_once('include/menu.php');
-    $has_bookmarks = menu_list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
+    $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
 
     if ($is_owner && $has_bookmarks) {
         $tabs[] = array(
@@ -2051,7 +2053,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         );
     }
 
-    if (feature_enabled($uid, 'cards')) {
+    if (Features::enabled($uid, 'cards')) {
         $tabs[] = array(
             'label' => t('Cards'),
             'url'   => z_root() . '/cards/' . $nickname,
@@ -2062,7 +2064,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         );
     }
 
-    if (feature_enabled($uid, 'articles')) {
+    if (Features::enabled($uid, 'articles')) {
         $tabs[] = array(
             'label' => t('articles'),
             'url'   => z_root() . '/articles/' . $nickname,
@@ -2073,7 +2075,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
         );
     }
 
-    if ($has_webpages && feature_enabled($uid, 'webpages')) {
+    if ($has_webpages && Features::enabled($uid, 'webpages')) {
         $tabs[] = array(
             'label' => t('Webpages'),
             'url'   => z_root() . '/page/' . $nickname . '/home',
@@ -2086,7 +2088,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
 
 
     if ($p['view_wiki']) {
-        if (feature_enabled($uid, 'wiki')) {
+        if (Features::enabled($uid, 'wiki')) {
             $tabs[] = array(
                 'label' => t('Wikis'),
                 'url'   => z_root() . '/wiki/' . $nickname,

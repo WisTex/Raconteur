@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 class Vote extends Controller
 {
@@ -99,7 +100,7 @@ class Vote extends Controller
             // we encode the item
 
             $item['obj_type'] = 'Note';
-            $item['author'] = channelx_by_n($channel['channel_id']);
+            $item['author'] = Channel::from_id($channel['channel_id']);
 
             $item['obj'] = Activity::encode_item($item, ((get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
 

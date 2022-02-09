@@ -641,10 +641,13 @@ function handleNotifications(data) {
 	if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
+        $('#notifications_wrapper').show();
+        
 	}
 	if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
+        $('#notifications_wrapper').hide();
 	}
 	if(data.all_events_today) {
 		$('.all_events-update').removeClass('badge-secondary');
@@ -890,7 +893,7 @@ function updateConvItems(mode,data) {
 	});
 
 	/* autocomplete @nicknames */
-	$(".comment-edit-form  textarea").editor_autocomplete(baseurl+"/acl?f=&n=1");
+	$(".comment-edit-form  textarea").editor_autocomplete(baseurl+"/acloader?f=&n=1");
 	/* autocomplete bbcode */
 	$(".comment-edit-form  textarea").bbco_autocomplete('bbcode');
 

@@ -7,6 +7,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
@@ -118,7 +120,7 @@ class Directory extends Controller
         $active = Libzotdir::get_directory_setting($observer, 'activedir');
 
         $o = '';
-        nav_set_selected('Directory');
+        Navbar::set_selected('Directory');
 
         if (x($_POST, 'search')) {
             $search = notags(trim($_POST['search']));
@@ -185,7 +187,7 @@ class Directory extends Controller
         $directory_admin = false;
 
         $url = z_root() . '/dirsearch';
-        if (is_sys_channel(local_channel())) {
+        if (Channel::is_system(local_channel())) {
             $directory_admin = true;
         }
 
@@ -286,7 +288,7 @@ class Directory extends Controller
                             $connect_link = ((local_channel()) ? z_root() . '/follow?f=&url=' . urlencode($rr['address']) : '');
 
                             // Checking status is disabled ATM until someone checks the performance impact more carefully
-                            //$online = remote_online_status($rr['address']);
+                            //$online = Channel::remote_online_status($rr['address']);
                             $online = '';
 
                             if (in_array($rr['hash'], $contacts)) {

@@ -3,8 +3,10 @@
 namespace Zotlabs\Module\Settings;
 
 use App;
+use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\AccessList;
+use Zotlabs\Lib as Zlib;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\PermissionLimits;
@@ -12,7 +14,10 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Permcat;
-
+use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
+use Zotlabs\Lib\Menu;
+    
 class Channel
 {
 
@@ -27,7 +32,7 @@ class Channel
         call_hooks('settings_post', $_POST);
 
         $set_perms = '';
-
+    
         $role = ((x($_POST, 'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
         $oldrole = get_pconfig(local_channel(), 'system', 'permissions_role');
 
@@ -184,8 +189,8 @@ class Channel
         } else {
             set_pconfig(local_channel(), 'system', 'close_comments', EMPTY_STR);
         }
+    
         // allow a permission change to over-ride the autoperms setting from the form
-
         if (!isset($autoperms)) {
             $autoperms = ((x($_POST, 'autoperms')) ? intval($_POST['autoperms']) : 0);
         }
@@ -289,7 +294,7 @@ class Channel
         if ($username != $channel['channel_name']) {
             $name_change = true;
             require_once('include/channel.php');
-            $err = validate_channelname($username);
+            $err = Zlib\Channel::validate_channelname($username);
             if ($err) {
                 notice($err);
                 return;
@@ -383,7 +388,7 @@ class Channel
                 dbesc($username),
                 intval($channel['channel_id'])
             );
-            if (is_sys_channel($channel['channel_id'])) {
+            if (Zlib\Channel::is_system($channel['channel_id'])) {
                 set_config('system', 'sitename', $username);
             }
         }
@@ -406,7 +411,6 @@ class Channel
     public function get()
     {
 
-        require_once('include/acl_selectors.php');
         require_once('include/permissions.php');
 
 
@@ -556,8 +560,8 @@ class Channel
 
         $group_select = AccessList::select(local_channel(), $channel['channel_default_group']);
 
-        require_once('include/menu.php');
-        $m1 = menu_list(local_channel());
+
+        $m1 = Menu::list(local_channel());
         $menu = false;
         if ($m1) {
             $menu = [];
@@ -578,12 +582,10 @@ class Channel
             $permissions_role = 'custom';
         }
 
-        if (in_array($permissions_role, ['forum', 'repository'])) {
-            $autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
-                '$field' => ['autoperms', t('Automatic membership approval'), ((get_pconfig(local_channel(), 'system', 'autoperms', 0)) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no]]);
-        } else {
-            $autoperms = '<input type="hidden" name="autoperms"  value="' . intval(get_pconfig(local_channel(), 'system', 'autoperms')) . '" />';
-        }
+        $autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
+                '$field' => ['autoperms', t('Automatic connection approval'), ((get_pconfig(local_channel(), 'system', 'autoperms', 0)) ? 1 : 0),
+                t('If enabled, connection requests will be approved without your interaction'), $yes_no]
+        ]);
 
         $hyperdrive = ['hyperdrive', t('Friend-of-friend conversations'), ((get_pconfig(local_channel(), 'system', 'hyperdrive', true)) ? 1 : 0), t('Import public third-party conversations in which your connections participate.'), $yes_no];
 
@@ -656,9 +658,9 @@ class Channel
             '$maxreq' => array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']), t('May reduce spam activity')),
             '$permissions' => t('Default Access List'),
             '$permdesc' => t("(click to open/close)"),
-            '$aclselect' => populate_acl($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
+            '$aclselect' => Libacl::populate($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
             '$profseltxt' => t('Profile to assign new connections'),
-            '$profselect' => ((feature_enabled(local_channel(), 'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(), 'system', 'profile_assign', '')) : ''),
+            '$profselect' => ((Features::enabled(local_channel(), 'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(), 'system', 'profile_assign', '')) : ''),
 
             '$allow_cid' => acl2json($perm_defaults['allow_cid']),
             '$allow_gid' => acl2json($perm_defaults['allow_gid']),
@@ -669,8 +671,8 @@ class Channel
             '$can_change_role' => ((in_array($permissions_role, ['collection', 'collection_restricted'])) ? false : true),
             '$permissions_role' => $permissions_role,
             '$role' => array('permissions_role', t('Channel type and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'),
-            '$defpermcat' => ['defpermcat', t('Default Permissions Group'), $default_permcat, '', $permcats],
-            '$permcat_enable' => feature_enabled(local_channel(), 'permcats'),
+            '$defpermcat' => ['defpermcat', t('Default Permissions Role'), $default_permcat, '', $permcats],
+            '$permcat_enable' => Apps::system_app_installed(local_channel(), 'Roles'),
             '$profile_in_dir' => $profile_in_dir,
             '$hide_friends' => $hide_friends,
             '$hide_wall' => $hide_wall,

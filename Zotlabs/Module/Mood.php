@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -142,7 +143,7 @@ class Mood extends Controller
             return $o;
         }
 
-        nav_set_selected('Mood');
+        Navbar::set_selected('Mood');
 
         $parent = ((x($_GET, 'parent')) ? intval($_GET['parent']) : '0');
 

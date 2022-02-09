@@ -17,6 +17,7 @@ use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Nodeinfo;
 use Zotlabs\Lib\System;
+use Zotlabs\Lib\Channel;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -81,7 +82,7 @@ class Activity
             return null;
         }
         if (!$channel) {
-            $channel = get_sys_channel();
+            $channel = Channel::get_system();
         }
 
         $parsed = parse_url($url);
@@ -132,7 +133,7 @@ class Activity
             if (isset($token)) {
                 $headers['Authorization'] = 'Bearer ' . $token;
             }
-            $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], channel_url($channel), false);
+            $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
             $x = z_fetch_url($url, true, $redirects, ['headers' => $h]);
         }
 
@@ -911,6 +912,12 @@ class Activity
             $ret['tag'] = $t;
         }
 
+        $a = self::encode_attachment($i);
+        if ($a) {
+            $ret['attachment'] = $a;
+        }
+
+    
         // addressing madness
 
         if ($activitypub) {
@@ -1567,7 +1574,7 @@ class Activity
             return $p['xchan_url'];
         }
 
-        $c = ((array_key_exists('channel_id', $p)) ? $p : channelx_by_hash($p['xchan_hash']));
+        $c = ((array_key_exists('channel_id', $p)) ? $p : Channel::from_hash($p['xchan_hash']));
 
         $ret['type'] = 'Person';
         $auto_follow = false;
@@ -1577,14 +1584,11 @@ class Activity
             if (strpos($role, 'forum') !== false) {
                 $ret['type'] = 'Group';
             }
-            $role_permissions = PermissionRoles::role_perms($role);
-            if (is_array($role_permissions) && isset($role_permissions['perms_auto'])) {
-                $auto_follow = intval($role_permissions['perms_auto']);
-            }
+            $auto_follow = intval(PConfig::Get($c['channel_id'],'system','autoperms'));
         }
 
         if ($c) {
-            $ret['id'] = channel_url($c);
+            $ret['id'] = Channel::url($c);
         } else {
             $ret['id'] = ((strpos($p['xchan_hash'], 'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
         }
@@ -1661,7 +1665,7 @@ class Activity
                     $ret['alsoKnownAs'] = $locations;
                 }
 
-                $cp = get_cover_photo($c['channel_id'], 'array');
+                $cp = Channel::get_cover_photo($c['channel_id'], 'array');
                 if ($cp) {
                     $ret['image'] = [
                         'type' => 'Image',
@@ -1740,13 +1744,13 @@ class Activity
     {
 
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         // encode  the sys channel information and over-ride with site
         // information
         $ret = self::encode_person($sys, true, true);
 
-        $ret['type'] = ((is_group($sys['channel_id'])) ? 'Group' : 'Service');
+        $ret['type'] = ((Channel::is_group($sys['channel_id'])) ? 'Group' : 'Service');
         $ret['id'] = z_root();
         $ret['alsoKnownAs'] = z_root() . '/channel/sys';
         $auto_follow = false;
@@ -1759,13 +1763,13 @@ class Activity
             'url' => System::get_site_icon(),
         ];
 
-        $ret['generator'] = ['type' => 'Application', 'name' => System::get_platform_name()];
+        $ret['generator'] = ['type' => 'Application', 'name' => System::get_project_name()];
 
         $ret['url'] = z_root();
 
         $ret['manuallyApprovesFollowers'] = ((get_config('system', 'allowed_sites')) ? true : false);
 
-        $cp = get_cover_photo($sys['channel_id'], 'array');
+        $cp = Channel::get_cover_photo($sys['channel_id'], 'array');
         if ($cp) {
             $ret['image'] = [
                 'type' => 'Image',
@@ -2224,7 +2228,7 @@ class Activity
             }
         }
         if (!(isset($icon) && $icon)) {
-            $icon = z_root() . '/' . get_default_profile_photo();
+            $icon = z_root() . '/' . Channel::get_default_profile_photo();
         }
 
         $cover_photo = false;
@@ -2367,9 +2371,9 @@ class Activity
                     'xchan_network' => 'activitypub',
                     'xchan_type' => $xchan_type,
                     'xchan_photo_date' => datetime_convert('UTC', 'UTC', '1968-01-01'),
-                    'xchan_photo_l' => z_root() . '/' . get_default_profile_photo(),
-                    'xchan_photo_m' => z_root() . '/' . get_default_profile_photo(80),
-                    'xchan_photo_s' => z_root() . '/' . get_default_profile_photo(48),
+                    'xchan_photo_l' => z_root() . '/' . Channel::get_default_profile_photo(),
+                    'xchan_photo_m' => z_root() . '/' . Channel::get_default_profile_photo(80),
+                    'xchan_photo_s' => z_root() . '/' . Channel::get_default_profile_photo(48),
                     'xchan_photo_mimetype' => 'image/png',
                     'xchan_censored' => $censored
 
@@ -2520,7 +2524,7 @@ class Activity
         }
 
         if (!$icon) {
-            $icon = z_root() . '/' . get_default_profile_photo(300);
+            $icon = z_root() . '/' . Channel::get_default_profile_photo(300);
         }
 
         // We store all ActivityPub actors we can resolve. Some of them may be able to communicate over Zot6. Find them.
@@ -2925,6 +2929,32 @@ class Activity
                 if ($e) {
                     $content['content'] = $t;
                 }
+            }
+
+            $a = self::decode_taxonomy($act->data);
+            if ($a) {
+                $s['term'] = $a;
+                foreach ($a as $b) {
+                    if ($b['ttype'] === TERM_EMOJI) {
+                        $s['summary'] = str_replace($b['term'], '[img=16x16]' . $b['url'] . '[/img]', $s['summary']);
+
+                        // @todo - @bug
+                        // The emoji reference in the body might be inside a code block. In that case we shouldn't replace it.
+                        // Currently we do.
+
+                        $s['body'] = str_replace($b['term'], '[img=16x16]' . $b['url'] . '[/img]', $s['body']);
+                    }
+                }
+            }
+
+            $a = self::decode_attachment($act->data);
+            if ($a) {
+                $s['attach'] = $a;
+            }
+
+            $a = self::decode_iconfig($act->data);
+            if ($a) {
+                $s['iconfig'] = $a;
             }
         }
 
@@ -3487,12 +3517,12 @@ class Activity
             return;
         }
 
-        $is_sys_channel = is_sys_channel($channel['channel_id']);
+        $is_system = Channel::is_system($channel['channel_id']);
         $is_child_node = false;
 
         // Pleroma scrobbles can be really noisy and contain lots of duplicate activities. Disable them by default.
 
-        if (($act->type === 'Listen') && ($is_sys_channel || get_pconfig($channel['channel_id'], 'system', 'allow_scrobbles', false))) {
+        if (($act->type === 'Listen') && ($is_system || get_pconfig($channel['channel_id'], 'system', 'allow_scrobbles', false))) {
             return;
         }
 
@@ -3504,7 +3534,7 @@ class Activity
 
         // very unpleasant and imperfect way of determining a Mastodon DM
 
-        if ($act->raw_recips && array_key_exists('to', $act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to']) === 1 && $act->raw_recips['to'][0] === channel_url($channel) && !$act->raw_recips['cc']) {
+        if ($act->raw_recips && array_key_exists('to', $act->raw_recips) && is_array($act->raw_recips['to']) && count($act->raw_recips['to']) === 1 && $act->raw_recips['to'][0] === Channel::url($channel) && !$act->raw_recips['cc']) {
             $item['item_private'] = 2;
         }
 
@@ -3578,7 +3608,7 @@ class Activity
                 // reject public stream comments that weren't sent by the conversation owner
                 // but only on remote message deliveries to our site ($fetch_parents === true)
 
-                if ($is_sys_channel && $pubstream && $item['owner_xchan'] !== $observer_hash && !$fetch_parents) {
+                if ($is_system && $pubstream && $item['owner_xchan'] !== $observer_hash && !$fetch_parents) {
                     $allowed = false;
                     $reason[] = 'sender ' . $observer_hash . ' not owner ' . $item['owner_xchan'];
                 }
@@ -3590,7 +3620,7 @@ class Activity
                 }
             }
         } else {
-            if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_sys_channel && $pubstream)) {
+            if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_system && $pubstream)) {
                 logger('allowed: permission allowed', LOGGER_DATA);
                 $allowed = true;
             }
@@ -3619,7 +3649,7 @@ class Activity
             }
         }
 
-        if ($is_sys_channel) {
+        if ($is_system) {
             if (!check_pubstream_channelallowed($observer_hash)) {
                 $allowed = false;
                 $reason[] = 'pubstream channel blocked';
@@ -4178,7 +4208,7 @@ class Activity
             'id' => z_root() . '/bounces/' . new_uuid(),
             'to' => [$observer_hash],
             'type' => 'Reject',
-            'actor' => channel_url($channel),
+            'actor' => Channel::url($channel),
             'name' => 'Permission denied',
             'object' => $item['message_id']
         ];

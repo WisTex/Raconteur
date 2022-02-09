@@ -14,7 +14,8 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Config;
 use Zotlabs\Daemon\Run;
-
+use Zotlabs\Lib\Channel;
+    
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
 
@@ -36,7 +37,7 @@ class Profile_photo
             return;
         }
 
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         Libprofile::load($channel['channel_address']);
     }
 
@@ -54,7 +55,7 @@ class Profile_photo
             return;
         }
 
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
 
         check_form_security_token_redirectOnErr('/profile_photo', 'profile_photo');
 
@@ -309,7 +310,7 @@ class Profile_photo
             return;
         }
 
-        $channel = get_sys_channel();
+        $channel = Channel::get_system();
         $pf = 0;
         $newuser = false;
 

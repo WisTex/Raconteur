@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -30,7 +32,7 @@ class Cal extends Controller
 
             Libprofile::load($nick);
 
-            $channelx = channelx_by_nick($nick);
+            $channelx = Channel::from_username($nick);
 
             if (!$channelx) {
                 return;
@@ -62,7 +64,7 @@ class Cal extends Controller
         $channel = null;
 
         if (argc() > 1) {
-            $channel = channelx_by_nick(argv(1));
+            $channel = Channel::from_username(argv(1));
         }
 
 
@@ -78,7 +80,7 @@ class Cal extends Controller
             return;
         }
 
-        nav_set_selected('Calendar');
+        Navbar::set_selected('Calendar');
 
         $sql_extra = permissions_sql($channel['channel_id'], get_observer_hash(), 'event');
 

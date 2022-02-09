@@ -13,6 +13,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\SubModule;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
 
 /**
  * @brief Admin area.
@@ -79,7 +81,7 @@ class Admin extends Controller
          * Page content
          */
 
-        nav_set_selected('Admin');
+        Navbar::set_selected('Admin');
 
         $o = '';
 

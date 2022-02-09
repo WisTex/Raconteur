@@ -6,12 +6,10 @@ use App;
 use URLify;
 use Zotlabs\Lib\IConfig;
 use Zotlabs\Web\Controller;
-
-/** @file */
-
+use Zotlabs\Lib\Menu;
+use Zotlabs\Lib\MenuItem;
+        
 // import page design element
-
-require_once('include/menu.php');
 
 
 class Impel extends Controller
@@ -99,7 +97,7 @@ class Impel extends Controller
                 }
             }
 
-            $menu_id = menu_create($m);
+            $menu_id = Menu::create($m);
 
             if ($menu_id) {
                 if (is_array($j['items'])) {
@@ -125,7 +123,7 @@ class Impel extends Controller
                                 $mitem['mitem_flags'] |= MENU_ITEM_CHATROOM;
                             }
                         }
-                        menu_add_item($menu_id, local_channel(), $mitem);
+                        MenuItem::add($menu_id, local_channel(), $mitem);
                     }
                     if ($j['edited']) {
                         $x = q(

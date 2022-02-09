@@ -9,7 +9,9 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\ASCollection;
 use Zotlabs\Lib\Queue;
 use Zotlabs\Daemon\Run;
-
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+    
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
@@ -46,7 +48,7 @@ class Search extends Controller
         if ($this->loading) {
             $_SESSION['loadtime'] = datetime_convert();
         }
-        nav_set_selected('Search');
+        Navbar::set_selected('Search');
 
         $format = (($_REQUEST['format']) ? $_REQUEST['format'] : '');
         if ($format !== '') {
@@ -238,7 +240,7 @@ class Search extends Controller
 
 
         if ((!$this->updating) && (!$this->loading)) {
-            $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 0);
+            $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 0);
 
 
             // This is ugly, but we can't pass the profile_uid through the session to the ajax updater,
@@ -285,7 +287,7 @@ class Search extends Controller
         $item_normal = item_normal_search();
         $pub_sql = item_permissions_sql(0, $observer_hash);
 
-        $sys = get_sys_channel();
+        $sys = Channel::get_system();
 
         if (($this->updating) && ($this->loading)) {
             $itemspage = get_pconfig(local_channel(), 'system', 'itemspage');

@@ -5,6 +5,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Lib\Channel;
 
 class Cron
 {

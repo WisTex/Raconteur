@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Features;
 
 class Newmember
 {
@@ -24,7 +25,7 @@ class Newmember
         }
 
         // @fixme
-        if (!feature_enabled(local_channel(), 'start_menu')) {
+        if (!Features::enabled(local_channel(), 'start_menu')) {
             return EMPTY_STR;
         }
 

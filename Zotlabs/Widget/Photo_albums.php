@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Lib\Channel;
 
 require_once('include/photos.php');
 
@@ -16,7 +17,7 @@ class Photo_albums
             return EMPTY_STR;
         }
 
-        $channel = channelx_by_n(App::$profile['profile_uid']);
+        $channel = Channel::from_id(App::$profile['profile_uid']);
 
         if ((!$channel) || (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_storage'))) {
             return EMPTY_STR;

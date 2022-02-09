@@ -6,9 +6,11 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\PConfig;
-
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+    
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 
 class Pubstream extends Controller
@@ -72,7 +74,7 @@ class Pubstream extends Controller
                 'default_location' => $channel['channel_location'],
                 'nickname' => $channel['channel_address'],
                 'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-                'acl' => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+                'acl' => Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
                 'permissions' => $channel_acl,
                 'bang' => '',
                 'visitor' => true,
@@ -92,7 +94,7 @@ class Pubstream extends Controller
         }
 
         if (!$this->updating && !$this->loading) {
-            nav_set_selected(t('Public Stream'));
+            Navbar::set_selected(t('Public Stream'));
 
             if (!$mid) {
                 $_SESSION['loadtime_pubstream'] = datetime_convert();
@@ -101,7 +103,7 @@ class Pubstream extends Controller
                 }
             }
 
-            $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
+            $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 1);
 
             $maxheight = get_config('system', 'home_divmore_height');
             if (!$maxheight) {
@@ -165,7 +167,7 @@ class Pubstream extends Controller
         if ($public_stream_mode === PUBLIC_STREAM_SITE) {
             $uids = " and item_private = 0  and item_wall = 1 ";
         } else {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $uids = " and item_private = 0 and item_wall = 0 and item.uid  = " . intval($sys['channel_id']) . " ";
             $sql_extra = item_permissions_sql($sys['channel_id']);
             App::$data['firehose'] = intval($sys['channel_id']);

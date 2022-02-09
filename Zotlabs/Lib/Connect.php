@@ -1,10 +1,9 @@
 <?php
 
-/** @file */
-
 namespace Zotlabs\Lib;
 
 use App;
+use Zotlabs\Lib\ServiceClass;    
 use Zotlabs\Access\Permissions;
 use Zotlabs\Daemon\Run;
 
@@ -66,8 +65,8 @@ class Connect
             $total_channels = $r[0]['total'];
         }
 
-        if (!service_class_allows($uid, 'total_channels', $total_channels)) {
-            $result['message'] = upgrade_message();
+        if (!ServiceClass::allows($uid, 'total_channels', $total_channels)) {
+            $result['message'] = ServiceClass::upgrade_message();
             return $result;
         }
 

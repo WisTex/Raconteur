@@ -10,7 +10,9 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Config;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Navbar;
 
 class Lists extends Controller
 {
@@ -52,7 +54,7 @@ class Lists extends Controller
                 http_status_exit(403, 'Permission denied');
             }
 
-            $channel = channelx_by_n($group['uid']);
+            $channel = Channel::from_id($group['uid']);
 
             if (!$channel) {
                 http_status_exit(404, 'Not found');
@@ -86,7 +88,7 @@ class Lists extends Controller
         }
 
         App::$profile_uid = local_channel();
-        nav_set_selected('Access Lists');
+        Navbar::set_selected('Access Lists');
     }
 
     public function post()
@@ -258,7 +260,6 @@ class Lists extends Controller
         }
 
         if (argc() > 1) {
-            require_once('include/acl_selectors.php');
 
             if (strlen(argv(1)) <= 11 && intval(argv(1))) {
                 $r = q(

@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\SubModule;
+use Zotlabs\Lib\Navbar;
 
 require_once('include/security.php');
 
@@ -64,7 +65,7 @@ class Settings extends Controller
     public function get()
     {
 
-        nav_set_selected('Settings');
+        Navbar::set_selected('Settings');
 
         if ((!local_channel()) || ($_SESSION['delegate'])) {
             notice(t('Permission denied.') . EOL);

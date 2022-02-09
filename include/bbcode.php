@@ -2,6 +2,7 @@
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libzot;
+use Zotlabs\Lib\Oembed;
 use Zotlabs\Lib\SvgSanitizer;
 use Michelf\MarkdownExtra;
 
@@ -10,7 +11,6 @@ use Michelf\MarkdownExtra;
  * @brief BBCode related functions for parsing, etc.
  */
 
-require_once('include/oembed.php');
 require_once('include/event.php');
 require_once('include/html2plain.php');
 
@@ -86,13 +86,13 @@ function tryoembed($match)
 {
     $url = ((count($match) == 2) ? $match[1] : $match[2]);
 
-    $o = oembed_fetch_url($url);
+    $o = Oembed::fetch_url($url);
 
     if ($o['type'] == 'error') {
         return $match[0];
     }
 
-    $html = oembed_format_object($o);
+    $html = Oembed::format_object($o);
     return $html;
 }
 
@@ -2110,7 +2110,7 @@ function bbcode($Text, $options = [])
 
     // oembed tag
     if (! $export) {
-        $Text = oembed_bbcode2html($Text);
+        $Text = Oembed::bbcode2html($Text);
     }
 
     // Avoid triple linefeeds through oembed

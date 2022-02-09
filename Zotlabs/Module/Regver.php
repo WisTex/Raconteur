@@ -3,7 +3,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Account;
+    
 class Regver extends Controller
 {
 
@@ -20,13 +21,13 @@ class Regver extends Controller
         $hash = argv(2);
 
         if ($cmd === 'deny') {
-            if (!account_deny($hash)) {
+            if (!Account::deny($hash)) {
                 killme();
             }
         }
 
         if ($cmd === 'allow') {
-            if (!account_approve($hash)) {
+            if (!Account::approve($hash)) {
                 killme();
             }
         }

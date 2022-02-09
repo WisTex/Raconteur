@@ -4,7 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
-
+use Zotlabs\Lib\Account;
+    
 class Removeaccount extends Controller
 {
 
@@ -51,7 +52,7 @@ class Removeaccount extends Controller
             }
         }
 
-        account_remove($account_id);
+        Account::remove($account_id);
     }
 
     public function get()

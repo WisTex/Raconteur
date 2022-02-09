@@ -21,12 +21,12 @@ function initEditor(cb){
 			{{/if}}
 			{{if $editor_autocomplete}}
 			if(typeof channelId === 'undefined') {
-				$("#profile-jot-text").editor_autocomplete(baseurl+"/acl");
-				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acl");
+				$("#profile-jot-text").editor_autocomplete(baseurl+"/acloader");
+				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acloader");
 			}
 			else {
-				$("#profile-jot-text").editor_autocomplete(baseurl+"/acl",[channelId]); // Also gives suggestions from current channel's connections
-				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acl",[channelId]); // Also gives suggestions from current channel's connections
+				$("#profile-jot-text").editor_autocomplete(baseurl+"/acloader",[channelId]); // Also gives suggestions from current channel's connections
+				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acloader",[channelId]); // Also gives suggestions from current channel's connections
 			}
 			{{/if}}
 			editor = true;
@@ -66,7 +66,7 @@ var activeCommentText = '';
 		$('#id_mimetype').on('change', jotSetMime);
 
 		{{if $webpage === 8}}
-		$("#jot-pagetitle").name_autocomplete(baseurl + '/acl', 'm', false, function(data) {
+		$("#jot-pagetitle").name_autocomplete(baseurl + '/acloader', 'm', false, function(data) {
 			$("#recip-complete").val(data.xid);
 		});
 		{{/if}}

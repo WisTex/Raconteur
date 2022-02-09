@@ -6,14 +6,18 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Web\Controller;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Features;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
-require_once('include/acl_selectors.php');
 require_once('include/bbcode.php');
 require_once('include/security.php');
 require_once('include/attach.php');
@@ -36,7 +40,7 @@ class Photos extends Controller
 
             Libprofile::load($nick);
 
-            $channelx = channelx_by_nick($nick);
+            $channelx = Channel::from_username($nick);
 
             $profile_uid = 0;
 
@@ -642,7 +646,7 @@ class Photos extends Controller
         $sql_extra = permissions_sql($owner_uid, get_observer_hash(), 'photo');
         $sql_attach = permissions_sql($owner_uid, get_observer_hash(), 'attach');
 
-        nav_set_selected('Photos');
+        Navbar::set_selected('Photos');
 
         $o = '<script src="vendor/blueimp/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
 			<script src="vendor/blueimp/jquery-file-upload/js/jquery.iframe-transport.js"></script>
@@ -675,7 +679,7 @@ class Photos extends Controller
             );
 
 
-            $limit = engr_units_to_bytes(service_class_fetch(App::$data['channel']['channel_id'], 'photo_upload_limit'));
+            $limit = engr_units_to_bytes(ServiceClass::fetch(App::$data['channel']['channel_id'], 'photo_upload_limit'));
             if ($limit !== false) {
                 $usage_message = sprintf(t("%1$.2f MB of %2$.2f MB photo storage used."), $r[0]['total'] / 1024000, $limit / 1024000);
             } else {
@@ -691,7 +695,7 @@ class Photos extends Controller
                 $lockstate = (($acl->is_private()) ? 'lock' : 'unlock');
             }
 
-            $aclselect = (($_is_owner) ? populate_acl($channel_acl, false, PermissionDescription::fromGlobalPermission('view_storage')) : '');
+            $aclselect = (($_is_owner) ? Libacl::populate($channel_acl, false, PermissionDescription::fromGlobalPermission('view_storage')) : '');
 
             // this is wrong but is to work around an issue with js_upload wherein it chokes if these variables
             // don't exist. They really should be set to a parseable representation of the channel's default permissions
@@ -1094,7 +1098,7 @@ class Photos extends Controller
             if ($can_post) {
                 $album_e = $ph[0]['album'];
                 $caption_e = $ph[0]['description'];
-                $aclselect_e = (($_is_owner) ? populate_acl($ph[0], true, PermissionDescription::fromGlobalPermission('view_storage')) : '');
+                $aclselect_e = (($_is_owner) ? Libacl::populate($ph[0], true, PermissionDescription::fromGlobalPermission('view_storage')) : '');
                 $albums = ((array_key_exists('albums', App::$data)) ? App::$data['albums'] : photos_albums_list(App::$data['channel'], App::$data['observer']));
 
                 $_SESSION['album_return'] = bin2hex($ph[0]['album']);
@@ -1127,7 +1131,7 @@ class Photos extends Controller
                     'lockstate' => $lockstate[0],
                     'help_tags' => t('Example: @bob, @Barbara_Jensen, @jim@example.com'),
                     'item_id' => ((count($linked_items)) ? $link_item['id'] : 0),
-                    'adult_enabled' => feature_enabled($owner_uid, 'adult_photo_flagging'),
+                    'adult_enabled' => Features::enabled($owner_uid, 'adult_photo_flagging'),
                     'adult' => array('adult', t('Flag as adult in album view'), intval($ph[0]['is_nsfw']), ''),
                     'submit' => t('Submit'),
                     'delete' => t('Delete Photo'),

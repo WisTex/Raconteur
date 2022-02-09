@@ -5,11 +5,13 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 
 class Hq extends Controller
@@ -117,7 +119,7 @@ class Hq extends Controller
                 $simple_update .= " and item_thread_top = 0 and author_xchan = '" . protect_sprintf(get_observer_hash()) . "' ";
             }
 
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             $sql_extra = item_permissions_sql($sys['channel_id']);
 
             $sys_item = false;
@@ -139,7 +141,7 @@ class Hq extends Controller
                 'default_location' => $channel['channel_location'],
                 'nickname' => $channel['channel_address'],
                 'lockstate' => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-                'acl' => populate_acl($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), get_post_aclDialogDescription(), 'acl_dialog_post'),
+                'acl' => Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
                 'permissions' => $channel_acl,
                 'bang' => '',
                 'visitor' => true,
@@ -164,9 +166,9 @@ class Hq extends Controller
         }
 
         if (!$this->updating && !$this->loading) {
-            nav_set_selected('HQ');
+            Navbar::set_selected('HQ');
 
-            $static = ((local_channel()) ? channel_manual_conv_update(local_channel()) : 1);
+            $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 1);
 
             if ($target_item) {
                 // if the target item is not a post (eg a like) we want to address its thread parent

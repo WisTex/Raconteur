@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Lib\Channel;
+            
 class Expire
 {
 
@@ -50,7 +53,7 @@ class Expire
 
                 // service class default (if non-zero) over-rides the site default
 
-                $service_class_expire = service_class_fetch($rr['channel_id'], 'expire_days');
+                $service_class_expire = ServiceClass::fetch($rr['channel_id'], 'expire_days');
                 if (intval($service_class_expire)) {
                     $channel_expire = $service_class_expire;
                 } else {
@@ -72,7 +75,7 @@ class Expire
             }
         }
 
-        $x = get_sys_channel();
+        $x = Channel::get_system();
         if ($x) {
             // this should probably just fetch the channel_expire_days from the sys channel,
             // but there's no convenient way to set it.

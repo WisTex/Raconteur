@@ -5,14 +5,16 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\ExtendedZip;
+use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Libacl;
+    
 use ZipArchive;
 
-require_once('include/channel.php');
 require_once('include/conversation.php');
-require_once('include/acl_selectors.php');
 
 class Webpages extends Controller
 {
@@ -21,7 +23,7 @@ class Webpages extends Controller
     {
 
         if (argc() > 1 && argv(1) === 'sys' && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 App::$is_sys = true;
             }
@@ -55,7 +57,7 @@ class Webpages extends Controller
             return $o;
         }
 
-        nav_set_selected('Webpages');
+        Navbar::set_selected('Webpages');
 
         $which = argv(1);
 
@@ -112,7 +114,7 @@ class Webpages extends Controller
 
 
         if (App::$is_sys && is_site_admin()) {
-            $sys = get_sys_channel();
+            $sys = Channel::get_system();
             if ($sys && intval($sys['channel_id'])) {
                 $uid = $owner = intval($sys['channel_id']);
                 $channel = $sys;
@@ -172,7 +174,7 @@ class Webpages extends Controller
             'is_owner' => true,
             'nickname' => App::$profile['channel_address'],
             'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
-            'acl' => (($is_owner) ? populate_acl($channel_acl, false, PermissionDescription::fromGlobalPermission('view_pages')) : ''),
+            'acl' => (($is_owner) ? Libacl::populate($channel_acl, false, PermissionDescription::fromGlobalPermission('view_pages')) : ''),
             'permissions' => $channel_acl,
             'showacl' => (($is_owner) ? true : false),
             'visitor' => true,
