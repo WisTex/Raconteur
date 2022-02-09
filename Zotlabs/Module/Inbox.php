@@ -195,12 +195,38 @@ class Inbox extends Controller
                     dbesc(basename($AS->obj['id']))
                 );
             } else {
-                // deliver to anybody following $AS->actor
+                $collections = Activity::get_actor_collections($observer_hash);
 
-                $channels = q(
-                    "SELECT * from channel where channel_id in ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash WHERE xchan_network = 'activitypub' and xchan_hash = '%s' ) and channel_removed = 0 ",
-                    dbesc($observer_hash)
-                );
+                if (in_array($collection['followers'], $AS->recips)
+                    || in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips)
+                    || in_array('Public', $AS->recips)
+                    || in_array('as:Public', $AS->recips)) {
+
+                    // deliver to anybody following $AS->actor
+
+                    $channels = q(
+                        "SELECT * from channel where channel_id in
+                        ( SELECT abook_channel from abook left join xchan on abook_xchan = xchan_hash
+                        WHERE xchan_network = 'activitypub' and xchan_hash = '%s'
+                        ) and channel_removed = 0 ",
+                        dbesc($observer_hash)
+                    );
+                }
+                else {
+                    // deliver to anybody at this site directly addressed
+                    $channel_addr = '';
+                    foreach($AS->recips as $recip) {
+                        if (strpos($recip, z_root()) === 0) {
+                            $channel_addr .= '\'' . dbesc(basename($recip)) . '\',';
+                        }
+                    }
+                    if ($channel_addr) {
+                        $channel_addr = rtrim($channel_addr, ',');
+                        $channels = dbq("SELECT * FROM channel
+                            WHERE channel_address IN ($channel_addr) AND channel_removed = 0");
+                    }
+                }
+
                 if (!$channels) {
                     $channels = [];
                 }
