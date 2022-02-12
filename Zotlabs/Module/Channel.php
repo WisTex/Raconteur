@@ -17,6 +17,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Widget\Pinned;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Head;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Render\Theme;
 
@@ -84,7 +85,7 @@ class Channel extends Controller
             App::$meta->set('robots', 'noindex, noarchive');
         }
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/atom+xml',
             'title' => t('Only posts'),
@@ -339,7 +340,7 @@ class Channel extends Controller
         }
 
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/json+oembed',
             'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),

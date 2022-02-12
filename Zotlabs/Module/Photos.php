@@ -15,6 +15,7 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
+use Zotlabs\Lib\Head;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Render\Theme;
 
@@ -764,7 +765,7 @@ class Photos extends Controller
          */
 
         if ($datatype === 'album') {
-            head_add_link([
+            Head::add_link([
                 'rel' => 'alternate',
                 'type' => 'application/json+oembed',
                 'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
@@ -901,7 +902,7 @@ class Photos extends Controller
          */
 
         if ($datatype === 'image') {
-            head_add_link([
+            Head::add_link([
                 'rel' => 'alternate',
                 'type' => 'application/json+oembed',
                 'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
@@ -1365,7 +1366,7 @@ class Photos extends Controller
 
         // Default - show recent photos
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/json+oembed',
             'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),

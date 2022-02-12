@@ -11,6 +11,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Head;
 use Zotlabs\Extend\Hook;
 
 require_once("include/bbcode.php");
@@ -50,14 +51,14 @@ class Profile extends Controller
             $profile = $r[0]['profile_guid'];
         }
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/atom+xml',
             'title' => t('Posts and comments'),
             'href' => z_root() . '/feed/' . $which
         ]);
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/atom+xml',
             'title' => t('Only posts'),
@@ -125,7 +126,7 @@ class Profile extends Controller
             return;
         }
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/json+oembed',
             'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),

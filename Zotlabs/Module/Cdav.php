@@ -32,6 +32,7 @@ use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Head;
 use Zotlabs\Lib\Features;
 use Zotlabs\Render\Theme;
 
@@ -903,7 +904,7 @@ class Cdav extends Controller
 
         require_once 'vendor/autoload.php';
 
-        head_add_css('cdav.css');
+        Head::add_css('cdav.css');
 
         if (!cdav_principal($principalUri)) {
             $this->activate($pdo, $channel);
@@ -920,17 +921,17 @@ class Cdav extends Controller
 
         // Display calendar(s) here
         if (argc() <= 3 && argv(1) === 'calendar') {
-            head_add_css('/library/fullcalendar/packages/core/main.min.css');
-            head_add_css('/library/fullcalendar/packages/daygrid/main.min.css');
-            head_add_css('/library/fullcalendar/packages/timegrid/main.min.css');
-            head_add_css('/library/fullcalendar/packages/list/main.min.css');
-            head_add_css('cdav_calendar.css');
+            Head::add_css('/library/fullcalendar/packages/core/main.min.css');
+            Head::add_css('/library/fullcalendar/packages/daygrid/main.min.css');
+            Head::add_css('/library/fullcalendar/packages/timegrid/main.min.css');
+            Head::add_css('/library/fullcalendar/packages/list/main.min.css');
+            Head::add_css('cdav_calendar.css');
 
-            head_add_js('/library/fullcalendar/packages/core/main.min.js');
-            head_add_js('/library/fullcalendar/packages/interaction/main.min.js');
-            head_add_js('/library/fullcalendar/packages/daygrid/main.min.js');
-            head_add_js('/library/fullcalendar/packages/timegrid/main.min.js');
-            head_add_js('/library/fullcalendar/packages/list/main.min.js');
+            Head::add_js('/library/fullcalendar/packages/core/main.min.js');
+            Head::add_js('/library/fullcalendar/packages/interaction/main.min.js');
+            Head::add_js('/library/fullcalendar/packages/daygrid/main.min.js');
+            Head::add_js('/library/fullcalendar/packages/timegrid/main.min.js');
+            Head::add_js('/library/fullcalendar/packages/list/main.min.js');
 
             $sources = '';
             $resource_id = '';
@@ -1225,7 +1226,7 @@ class Cdav extends Controller
                 return;
             }
 
-            head_add_css('cdav_addressbook.css');
+            Head::add_css('cdav_addressbook.css');
 
             $o = '';
 

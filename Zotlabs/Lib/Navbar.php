@@ -9,6 +9,7 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
+use Zotlabs\Lib\Head;
 use Zotlabs\Render\Theme;
 use Zotlabs\Extend\Hook;
     
@@ -291,7 +292,7 @@ class Navbar {
         $tpl = Theme::get_template('navbar_' . purify_filename($template) . '.tpl');
 
         if ($c && $tpl) {
-            head_add_css('navbar_' . $template . '.css');
+            Head::add_css('navbar_' . $template . '.css');
         }
 
         if (! $tpl) {
