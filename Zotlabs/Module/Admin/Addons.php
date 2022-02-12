@@ -7,7 +7,7 @@ use PHPGit\Exception\GitException;
 use Zotlabs\Storage\GitRepo;
 use Michelf\MarkdownExtra;
 use Zotlabs\Lib\Addon;
-
+    
 class Addons
 {
 
@@ -262,7 +262,7 @@ class Addons
             }
 
             $enabled = in_array($plugin, Addon::list_installed());
-            $info = get_plugin_info($plugin);
+            $info = Addon::get_info($plugin);
             $x = check_plugin_versions($info);
 
             // disable plugins which are installed but incompatible versions
@@ -374,7 +374,7 @@ class Addons
                 }
                 if (is_dir($file)) {
                     list($tmp, $id) = array_map('trim', explode('/', $file));
-                    $info = get_plugin_info($id);
+                    $info = Addon::get_info($id);
                     $enabled = in_array($id, App::$plugins);
                     $x = check_plugin_versions($info);
 

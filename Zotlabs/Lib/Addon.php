@@ -3,7 +3,8 @@
 namespace Zotlabs\Lib;
 
 use App;
-
+use Zotlabs\Lib\Infocon;
+    
 class Addon {
 
     /**    
@@ -134,7 +135,7 @@ class Addon {
      * @param string $addon name of the addon
      * @return bool
      */
-    public static  function load($addon)
+    public static function load($addon)
     {
         // silently fail if plugin was removed
         if (! file_exists('addon/' . $addon . '/' . $addon . '.php')) {
@@ -281,5 +282,32 @@ class Addon {
         return $y;
     }
 
+    /**
+     * @brief Parse plugin comment in search of plugin infos.
+     *
+     * like
+     * \code
+     *   * Name: Plugin
+     *   * Description: A plugin which plugs in
+     *   * Version: 1.2.3
+     *   * Author: John <profile url>
+     *   * Author: Jane <email>
+     *   *
+     *\endcode
+     * @param string $plugin the name of the plugin
+     * @return array with the plugin information
+     */
+    function get_info($plugin)
+    {
+
+        $info =  null;
+        if (is_file("addon/$plugin/$plugin.yml")) {
+            $info = Infocon::from_file("addon/$plugin/$plugin.yml");
+        }
+        elseif (is_file("addon/$plugin/$plugin.php")) {
+            $info = Infocon::from_c_comment("addon/$plugin/$plugin.php");
+        }
+        return $info ? $info : [ 'name' => $plugin ] ;
+    }
 
 }

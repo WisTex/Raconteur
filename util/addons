@@ -29,7 +29,7 @@ cli_startup();
 		foreach($files as $file) {
 			if(is_dir($file)){
 				list($tmp, $id) = array_map('trim', explode('/', $file));
-				$info = get_plugin_info($id);
+				$info = Addon::get_info($id);
 				$enabled = in_array($id,$installed);
 				$x = check_plugin_versions($info);
 				if($enabled && ! $x) {
