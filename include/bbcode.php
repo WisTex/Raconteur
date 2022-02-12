@@ -4,6 +4,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Oembed;
 use Zotlabs\Lib\SvgSanitizer;
+use Zotlabs\Extend\Hook;
 use Michelf\MarkdownExtra;
 
 /**
@@ -1483,7 +1484,7 @@ function bbcode($Text, $options = [])
 
     $target = (($newwin) ? ' target="_blank" ' : '');
 
-    call_hooks('bbcode_filter', $Text);
+    Hook::call('bbcode_filter', $Text);
 
 
     // Hide all [noparse] contained bbtags by spacefying them
@@ -2180,7 +2181,7 @@ function bbcode($Text, $options = [])
     $Text = bb_replace_images($Text, $saved_images);
 
     $args = [ 'text' => $Text, 'options' => $options ];
-    call_hooks('bbcode', $args);
+    Hook::call('bbcode', $args);
 
     return $args['text'];
 }

@@ -13,6 +13,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 class Friendica
 {
@@ -295,7 +296,7 @@ class Friendica
                 }
             }
 
-            call_hooks('create_identity', $newuid);
+            Hook::call('create_identity', $newuid);
         }
 
         $this->groups = ((isset($this->data['group'])) ? $this->data['group'] : null);

@@ -4,6 +4,7 @@ namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
 
 class Featured
 {
@@ -12,7 +13,7 @@ class Featured
     {
         check_form_security_token_redirectOnErr('/settings/featured', 'settings_featured');
 
-        call_hooks('feature_settings_post', $_POST);
+        Hook::call('feature_settings_post', $_POST);
 
         if ($_POST['affinity_slider-submit']) {
             $cmax = intval($_POST['affinity_cmax']);
@@ -62,7 +63,7 @@ class Featured
             ));
         }
 
-        call_hooks('feature_settings', $settings_addons);
+        Hook::call('feature_settings', $settings_addons);
 
         $this->sortpanels($settings_addons);
 

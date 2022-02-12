@@ -12,6 +12,7 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Import\Friendica;
 use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Extend\Hook;
 require_once('include/import.php');
 require_once('include/photo_factory.php');
 
@@ -128,7 +129,7 @@ class Import extends Controller
         }
 
         if (!array_key_exists('compatibility', $data)) {
-            call_hooks('import_foreign_channel_data', $data);
+            Hook::call('import_foreign_channel_data', $data);
             if ($data['handled']) {
                 return;
             }
@@ -539,7 +540,7 @@ class Import extends Controller
 //          import_items($channel,$data['webpages'],false,$relocate);
 //      }
         $addon = array('channel' => $channel, 'data' => $data);
-        call_hooks('import_channel', $addon);
+        Hook::call('import_channel', $addon);
 
         $saved_notification_flags = Channel::notifications_off($channel['channel_id']);
         if ($import_posts && array_key_exists('item', $data) && $data['item']) {

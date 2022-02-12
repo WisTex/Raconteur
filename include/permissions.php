@@ -2,6 +2,7 @@
 
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 
@@ -241,7 +242,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
         'observer_hash' => $observer_xchan,
         'permissions'   => $ret);
 
-    call_hooks('get_all_perms', $arr);
+    Hook::call('get_all_perms', $arr);
 
     return $arr['permissions'];
 }
@@ -274,7 +275,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
         'result'        => 'unset'
     ];
 
-    call_hooks('perm_is_allowed', $arr);
+    Hook::call('perm_is_allowed', $arr);
     if ($arr['result'] !== 'unset') {
         return $arr['result'];
     }
@@ -460,7 +461,7 @@ function get_all_api_perms($uid, $api)
         'observer_hash' => $observer_xchan,
         'permissions'   => $ret);
 
-    call_hooks('get_all_api_perms', $arr);
+    Hook::call('get_all_api_perms', $arr);
 
     return $arr['permissions'];
 }
@@ -476,7 +477,7 @@ function api_perm_is_allowed($uid, $api, $permission)
         'result'        => false
     );
 
-    call_hooks('api_perm_is_allowed', $arr);
+    Hook::call('api_perm_is_allowed', $arr);
     if ($arr['result']) {
         return true;
     }

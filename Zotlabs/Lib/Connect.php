@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\ServiceClass;    
 use Zotlabs\Access\Permissions;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 class Connect
 {
@@ -293,7 +294,7 @@ class Connect
 
         $arr = ['channel_id' => $uid, 'channel' => $channel, 'abook' => $result['abook']];
 
-        call_hooks('follow', $arr);
+        Hook::call('follow', $arr);
 
         /** If there is a default group for this channel, add this connection to it */
 

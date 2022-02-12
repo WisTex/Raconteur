@@ -17,6 +17,7 @@ use Zotlabs\Lib\Permcat;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
+use Zotlabs\Extend\Hook;
     
 class Channel
 {
@@ -29,7 +30,7 @@ class Channel
 
         check_form_security_token_redirectOnErr('/settings', 'settings');
 
-        call_hooks('settings_post', $_POST);
+        Hook::call('settings_post', $_POST);
 
         $set_perms = '';
     
@@ -611,7 +612,7 @@ class Channel
         }
 
         $plugin = ['basic' => '', 'security' => '', 'notify' => '', 'misc' => ''];
-        call_hooks('channel_settings', $plugin);
+        Hook::call('channel_settings', $plugin);
 
         $public_stream_mode = intval(get_config('system', 'public_stream_mode', PUBLIC_STREAM_NONE));
 
@@ -764,7 +765,7 @@ class Channel
                 ]),
         ]);
 
-        call_hooks('settings_form', $o);
+        Hook::call('settings_form', $o);
         return $o;
     }
 }

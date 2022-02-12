@@ -10,6 +10,7 @@ use Zotlabs\Lib\Connect;
 use Zotlabs\Lib\ServiceClass;    
 use Zotlabs\Lib\DReport;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 class Libsync
 {
@@ -887,7 +888,7 @@ class Libsync
              *   * \e array \b channel
              *   * \e array \b data
              */
-            call_hooks('process_channel_sync_delivery', $addon);
+            Hook::call('process_channel_sync_delivery', $addon);
 
             $DR = new DReport(z_root(), $d, $d, 'sync', 'channel sync delivered');
 

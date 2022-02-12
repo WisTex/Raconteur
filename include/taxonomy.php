@@ -4,6 +4,7 @@
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 // post categories and "save to file" use the same item.file table for storage.
 // We will differentiate the different uses by wrapping categories in angle brackets
@@ -653,7 +654,7 @@ function obj_verbs()
     );
 
     $arr = array('verbs' => $verbs);
-    call_hooks('obj_verbs', $arr);
+    Hook::call('obj_verbs', $arr);
 
     return  $arr['verbs'];
 }

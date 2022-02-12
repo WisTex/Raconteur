@@ -3,6 +3,7 @@
 /** @file */
 
 namespace Zotlabs\Daemon;
+use Zotlabs\Extend\Hook;
 
 class Cronhooks
 {
@@ -14,7 +15,7 @@ class Cronhooks
 
         $d = datetime_convert();
 
-        call_hooks('cron', $d);
+        Hook::call('cron', $d);
 
         return;
     }

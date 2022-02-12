@@ -7,6 +7,7 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
     
 class Connect extends Controller
 {
@@ -119,7 +120,7 @@ class Connect extends Controller
             ));
 
             $arr = array('channel' => App::$data['channel'], 'observer' => App::get_observer(), 'sellpage' => $o, 'submit' => $submit);
-            call_hooks('connect_premium', $arr);
+            Hook::call('connect_premium', $arr);
             $o = $arr['sellpage'];
         }
 

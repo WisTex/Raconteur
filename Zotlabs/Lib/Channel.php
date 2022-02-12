@@ -20,6 +20,7 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\System;
 use Zotlabs\Render\Comanche;
 use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Extend\Hook;
   
 require_once('include/photo_factory.php');
 
@@ -60,7 +61,7 @@ class Channel
          *   * \e string \b name
          *   * \e string \b message - return error message
          */
-        call_hooks('validate_channelname', $arr);
+        Hook::call('validate_channelname', $arr);
 
         if (x($arr, 'message')) {
             return $arr['message'];
@@ -360,7 +361,7 @@ class Channel
          *   * \e array \b channel
          *   * \e string \b photo_url - Return value
          */
-        call_hooks('create_channel_photo', $z);
+        Hook::call('create_channel_photo', $z);
     
         // The site channel gets the project logo as a profile photo.
         if ($arr['account_id'] === 'xxx') {
@@ -558,7 +559,7 @@ class Channel
              *   * \e int - The UID of the created identity
              */
 
-            call_hooks('create_identity', $newuid);
+            Hook::call('create_identity', $newuid);
 
             Run::Summon([ 'Directory', $ret['channel']['channel_id'] ]);
         }
@@ -851,7 +852,7 @@ class Channel
          *   Called to get the default list of functional data groups to export in Channel::basic_export().
          *   * \e array \b sections - return value
          */
-        call_hooks('get_default_export_sections', $cb);
+        Hook::call('get_default_export_sections', $cb);
 
         return $cb['sections'];
     }
@@ -1152,7 +1153,7 @@ class Channel
          *   * \e array \b sections
          *   * \e array \b data - The data will get returned
          */
-        call_hooks('identity_basic_export', $addon);
+        Hook::call('identity_basic_export', $addon);
         $ret = $addon['data'];
 
         return $ret;
@@ -1364,7 +1365,7 @@ class Channel
             *   * \e string \b zid - their zid
             *   * \e string \b url - the destination url
             */
-            call_hooks('zid_init', $arr);
+            Hook::call('zid_init', $arr);
 
             if (! local_channel()) {
                 $r = q(
@@ -1472,7 +1473,7 @@ class Channel
 
         if (! is_dir('images/default_profile_photos/' . $scheme)) {
             $x = [ 'scheme' => $scheme, 'size' => $size, 'url' => '' ];
-            call_hooks('default_profile_photo', $x);
+            Hook::call('default_profile_photo', $x);
             if ($x['url']) {
                 return $x['url'];
             } else {
@@ -2252,7 +2253,7 @@ class Channel
          *   * \e array with entry from channel tabel for $channel_id
          */
 
-        call_hooks('channel_remove', $channel);
+        Hook::call('channel_remove', $channel);
 
         $r = q(
             "select iid from iconfig left join item on item.id = iconfig.iid
@@ -2428,7 +2429,7 @@ class Channel
          *   * \e string \b xchan - return value
          *   * \e string|int \b success - Must be a number, so xchan return value gets used
          */
-        call_hooks('anon_identity_init', $x);
+        Hook::call('anon_identity_init', $x);
 
         if ($x['success'] !== 'unset' && intval($x['success']) && $x['xchan']) {
             return $x['xchan'];

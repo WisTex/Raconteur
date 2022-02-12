@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\LibBlock;
+use Zotlabs\Extend\Hook;
 
 class Activity
 {
@@ -50,7 +51,7 @@ class Activity
         }
 
         $x = ['entries' => $arr];
-        call_hooks('activity_widget', $x);
+        Hook::call('activity_widget', $x);
         $arr = $x['entries'];
 
         if ($arr) {

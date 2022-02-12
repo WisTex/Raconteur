@@ -2,8 +2,9 @@
 
 namespace Zotlabs\Web;
 
-use Zotlabs\Web\SessionHandler
-;
+use Zotlabs\Web\SessionHandler;
+use Zotlabs\Extend\Hook;
+
 
 /**
  *
@@ -152,7 +153,7 @@ class Session
 		);
 
         $arr = array('expire' => $xtime);
-        call_hooks('new_cookie', $arr);
+        Hook::call('new_cookie', $arr);
     }
 
     public function extend_cookie()
@@ -180,7 +181,7 @@ class Session
 		}
 
         $arr = array('expire' => $xtime);
-        call_hooks('extend_cookie', $arr);
+        Hook::call('extend_cookie', $arr);
     }
 
 

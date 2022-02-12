@@ -7,6 +7,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -116,7 +117,7 @@ class Mood extends Controller
             Run::Summon(['Notifier', 'activity', $item_id]);
         }
 
-        call_hooks('post_local_end', $arr);
+        Hook::call('post_local_end', $arr);
 
         if ($_SESSION['return_url']) {
             goaway(z_root() . '/' . $_SESSION['return_url']);

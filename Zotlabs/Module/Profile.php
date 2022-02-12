@@ -11,6 +11,7 @@ use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Extend\Hook;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -132,7 +133,7 @@ class Profile extends Controller
         ]);
 
         $o .= Libprofile::advanced();
-        call_hooks('profile_advanced', $o);
+        Hook::call('profile_advanced', $o);
         return $o;
     }
 }

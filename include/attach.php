@@ -17,6 +17,7 @@ use Zotlabs\Lib\AccessList;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Extend\Hook;
 require_once('include/permissions.php');
 require_once('include/security.php');
 
@@ -489,7 +490,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
      * @hooks photo_upload_begin
      *   Called when attempting to upload a photo.
      */
-    call_hooks('photo_upload_begin', $arr);
+    Hook::call('photo_upload_begin', $arr);
 
     $ret = array('success' => false);
     $channel_id = $channel['channel_id'];
@@ -583,7 +584,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
          *   * \e number \b filesize - return value, default 0
          *   * \e string \b type - return value, default empty
          */
-        call_hooks('photo_upload_file', $f);
+        Hook::call('photo_upload_file', $f);
         /**
          * @hooks attach_upload_file
          *   Called when uploading a file.
@@ -592,7 +593,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
          *   * \e number \b filesize - return value, default 0
          *   * \e string \b type - return value, default empty
          */
-        call_hooks('attach_upload_file', $f);
+        Hook::call('attach_upload_file', $f);
 
         if (x($f, 'src') && x($f, 'filesize')) {
             $src      = $f['src'];
@@ -815,7 +816,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
              * @hooks photo_upload_end
              *   Called when a photo upload has been processed.
              */
-            call_hooks('photo_upload_end', $ret);
+            Hook::call('photo_upload_end', $ret);
 
             return $ret;
         }
@@ -838,7 +839,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
                  * @hooks photo_upload_end
                  *   Called when a photo upload has been processed.
                  */
-                call_hooks('photo_upload_end', $ret);
+                Hook::call('photo_upload_end', $ret);
 
                 return $ret;
             }
@@ -1042,7 +1043,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
          * @hooks photo_upload_end
          *   Called when a photo upload has been processed.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
 
         return $ret;
     }
@@ -1073,7 +1074,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
          * @hooks photo_upload_end
          *   Called when a photo upload has been processed.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
 
         return $ret;
     }
@@ -1086,7 +1087,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
          *   Called when a photo upload has been processed.
          *   This would've been called already with a success result in photos_upload() if it was a photo.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
     }
 
     Run::Summon([ 'Thumbnail' , $hash ]);
@@ -1571,7 +1572,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0)
     if (! $r) {
         attach_drop_photo($channel_id, $resource);
         $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo' => $is_photo];
-        call_hooks("attach_delete", $arr);
+        Hook::call("attach_delete", $arr);
         return;
     }
 
@@ -1637,7 +1638,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0)
     );
 
     $arr = ['channel_id' => $channel_id, 'resource' => $resource, 'is_photo' => $is_photo];
-    call_hooks("attach_delete", $arr);
+    Hook::call("attach_delete", $arr);
 
     file_activity($channel_id, $object, $object['allow_cid'], $object['allow_gid'], $object['deny_cid'], $object['deny_gid'], 'update', true);
 

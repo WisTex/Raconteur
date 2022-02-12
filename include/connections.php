@@ -7,6 +7,7 @@ use Sabre\VObject\Reader;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 function abook_store_lowlevel($arr)
 {
@@ -426,7 +427,7 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false)
         'abook_id'   => $abook_id
     ];
 
-    call_hooks('connection_remove', $x);
+    Hook::call('connection_remove', $x);
 
     $archive = get_pconfig($channel_id, 'system', 'archive_removed_contacts');
     if ($archive) {
@@ -987,7 +988,7 @@ function contact_block()
 
     $arr = array('contacts' => $r, 'output' => $o);
 
-    call_hooks('contact_block_end', $arr);
+    Hook::call('contact_block_end', $arr);
     return $o;
 }
 

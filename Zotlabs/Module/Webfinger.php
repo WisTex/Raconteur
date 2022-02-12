@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 use App;
 
 class Webfinger extends Controller
@@ -185,7 +186,7 @@ class Webfinger extends Controller
         }
 
         $arr = ['channel' => $channel_target, 'request' => $_REQUEST, 'result' => $result];
-        call_hooks('webfinger', $arr);
+        Hook::call('webfinger', $arr);
 
 
         json_return_and_die($arr['result'], 'application/jrd+json', true);

@@ -9,6 +9,7 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Extend\Hook;
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -197,7 +198,7 @@ class Display extends Controller
             }
         }
         if ($target_item['item_type'] == ITEM_TYPE_CUSTOM) {
-            call_hooks('item_custom_display', $target_item);
+            Hook::call('item_custom_display', $target_item);
             notice(t('Page not found.') . EOL);
             return '';
         }
@@ -460,12 +461,12 @@ class Display extends Controller
                 ));
 
                 $x = ['xml' => $atom, 'channel' => $channel, 'observer_hash' => $observer_hash, 'params' => $params];
-                call_hooks('atom_feed_top', $x);
+                Hook::call('atom_feed_top', $x);
 
                 $atom = $x['xml'];
 
                 // a much simpler interface
-                call_hooks('atom_feed', $atom);
+                Hook::call('atom_feed', $atom);
 
 
                 if ($items) {
@@ -478,7 +479,7 @@ class Display extends Controller
                     }
                 }
 
-                call_hooks('atom_feed_end', $atom);
+                Hook::call('atom_feed_end', $atom);
 
                 $atom .= '</feed>' . "\r\n";
 

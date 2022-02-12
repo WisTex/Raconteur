@@ -18,6 +18,7 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\ASCollection;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 require_once('include/html2bbcode.php');
 
@@ -186,7 +187,7 @@ class Libzot
          *   * \e string \b result - the algorithm to return
          */
 
-        call_hooks('zot_best_algorithm', $x);
+        Hook::call('zot_best_algorithm', $x);
 
         if ($x['result']) {
             return $x['result'];
@@ -749,7 +750,7 @@ class Libzot
          *   Called when processing the result of zot_finger() to store the result
          *   * \e array
          */
-        call_hooks('import_xchan', $arr);
+        Hook::call('import_xchan', $arr);
 
         $ret = array('success' => false);
         $dirmode = intval(get_config('system', 'directory_mode'));
@@ -1194,7 +1195,7 @@ class Libzot
 
             if (is_array($x) && array_key_exists('delivery_report', $x) && is_array($x['delivery_report'])) {
                 foreach ($x['delivery_report'] as $xx) {
-                    call_hooks('dreport_process', $xx);
+                    Hook::call('dreport_process', $xx);
                     if (is_array($xx) && array_key_exists('message_id', $xx) && DReport::is_storable($xx)) {
                         q(
                             "insert into dreport ( dreport_mid, dreport_site, dreport_recip, dreport_name, dreport_result, dreport_time, dreport_xchan, dreport_log ) values ( '%s', '%s', '%s','%s','%s','%s','%s','%s' ) ",
@@ -2203,7 +2204,7 @@ class Libzot
                      *   Called when an item has been posted on this machine via mod/item.php (also via API).
                      *   * \e array with an item
                      */
-                    call_hooks('post_local', $arr);
+                    Hook::call('post_local', $arr);
                 }
 
                 $item_id = 0;
@@ -2246,7 +2247,7 @@ class Libzot
                          *   * \e array \b sender
                          *   * \e array \b channel
                          */
-                        call_hooks('activity_received', $parr);
+                        Hook::call('activity_received', $parr);
                         // don't add a source route if it's a relay or later recipients will get a route mismatch
                         if (!$relay) {
                             add_source_route($item_id, $sender);
@@ -2785,7 +2786,7 @@ class Libzot
              *   * \e array \b channel
              *   * \e array \b locations
              */
-            call_hooks('location_move', $arr);
+            Hook::call('location_move', $arr);
         }
     }
 
@@ -3399,7 +3400,7 @@ class Libzot
         }
         $ret['site'] = self::site_info();
 
-        call_hooks('zotinfo', $ret);
+        Hook::call('zotinfo', $ret);
 
         return ($ret);
     }
@@ -3473,14 +3474,14 @@ class Libzot
             $ret['site']['admin'] = get_config('system', 'admin_email');
 
             $visible_plugins = [];
-            if (is_array(App::$plugins) && count(App::$plugins)) {
-                $r = q("select * from addon where hidden = 0");
-                if ($r) {
-                    foreach ($r as $rr) {
-                        $visible_plugins[] = $rr['aname'];
-                    }
+
+            $r = q("select * from addon where hidden = 0");
+            if ($r) {
+                foreach ($r as $rr) {
+                    $visible_plugins[] = $rr['aname'];
                 }
             }
+
 
             $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
             $ret['site']['plugins'] = $visible_plugins;

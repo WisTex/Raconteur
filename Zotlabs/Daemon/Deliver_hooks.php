@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Extend\Hook;
+
 class Deliver_hooks
 {
 
@@ -18,7 +20,7 @@ class Deliver_hooks
             intval($argv[1])
         );
         if ($r) {
-            call_hooks('notifier_normal', $r[0]);
+            Hook::call('notifier_normal', $r[0]);
         }
     }
 }

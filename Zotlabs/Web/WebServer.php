@@ -4,6 +4,7 @@ namespace Zotlabs\Web;
 
 use App;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class WebServer
 {
@@ -173,7 +174,7 @@ class WebServer
             App::$page['content'] = EMPTY_STR;
         }
 
-        call_hooks('page_content_top', App::$page['content']);
+        Hook::call('page_content_top', App::$page['content']);
     }
 
     private function create_channel_links()
@@ -219,7 +220,7 @@ class WebServer
             ];
 
             $x = [ 'channel_address' => argv(1), 'channel_links' => App::$channel_links ];
-            call_hooks('channel_links', $x);
+            Hook::call('channel_links', $x);
             App::$channel_links = $x['channel_links'];
             header('Link: ' . App::get_channel_links());
         }

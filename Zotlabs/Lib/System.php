@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 use URLify;
 
 class System
@@ -146,7 +147,7 @@ class System
     public static function get_zot_revision()
     {
         $x = [ 'revision' => ZOT_REVISION ];
-        call_hooks('zot_revision', $x);
+        Hook::call('zot_revision', $x);
         return $x['revision'];
     }
 

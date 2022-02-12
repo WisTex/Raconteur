@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
 
 class Pdledit extends Controller
 {
@@ -66,7 +67,7 @@ class Pdledit extends Controller
             if ($files) {
                 foreach ($files as $f) {
                     $name = lcfirst(basename($f, '.php'));
-                    $x = theme_include('mod_' . $name . '.pdl');
+                    $x = Theme::include('mod_' . $name . '.pdl');
                     if ($x) {
                         $o .= '<a href="pdledit/' . $name . '" >' . $name . '</a>' . ((in_array($name, $edited)) ? ' ' . t('(modified)') . ' <a href="pdledit/' . $name . '/reset" >' . t('Reset') . '</a>' : '') . '<br>';
                     }
@@ -87,7 +88,7 @@ class Pdledit extends Controller
         }
 
         $t = get_pconfig(local_channel(), 'system', $module);
-        $s = @file_get_contents(theme_include($module));
+        $s = @file_get_contents(Theme::include($module));
         if (!$s) {
             $a = glob('addon/*/' . $module);
             if ($a) {

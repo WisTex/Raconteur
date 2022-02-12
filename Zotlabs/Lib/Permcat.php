@@ -5,6 +5,7 @@ namespace Zotlabs\Lib;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Permission Categories. Permission rules for various classes of connections.
@@ -195,7 +196,7 @@ class Permcat
          * @hooks permcats
          *   * \e array
          */
-        call_hooks('permcats', $permcats);
+        Hook::call('permcats', $permcats);
 
         return $permcats;
     }

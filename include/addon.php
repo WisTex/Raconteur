@@ -1,4 +1,8 @@
 <?php
+
+use Zotlabs\Extend\Hook;
+
+
 /**
  * @file include/addon.php
  *
@@ -200,7 +204,7 @@ function plugin_is_installed($name)
  * @return bool
  */
 
-function addon_is_installed($name)
+function Addon::is_installed($name)
 {
     $r = q(
         "select aname from addon where aname = '%s' and installed = 1 limit 1",
@@ -500,7 +504,7 @@ function insert_hook($hook, $fn, $version = 0, $priority = 0)
  * @param string $name of the hook to call
  * @param[in,out] string|array &$data to transmit to the callback handler
  */
-function call_hooks($name, &$data = null)
+function Hook::call($name, &$data = null)
 {
     $a = 0;
 

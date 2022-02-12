@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Extend\Hook;
 
 class Notify extends Controller
 {
@@ -27,7 +28,7 @@ class Notify extends Controller
             );
             if ($r) {
                 $x = ['channel_id' => local_channel(), 'update' => 'unset'];
-                call_hooks('update_unseen', $x);
+                Hook::call('update_unseen', $x);
                 if ((!$_SESSION['sudo']) && ($x['update'] === 'unset' || intval($x['update']))) {
                     q(
                         "update notify set seen = 1 where (( parent != '' and parent = '%s' and otype = '%s' ) or link = '%s' ) and uid = %d",

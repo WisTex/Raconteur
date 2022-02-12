@@ -8,6 +8,7 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -284,7 +285,7 @@ class Like extends Controller
         $arr['deny_gid']      = $deny_gid;
         $arr['item_private']  = $private;
 
-        call_hooks('post_local', $arr);
+        Hook::call('post_local', $arr);
 
         $post = item_store($arr);
         $post_id = $post['item_id'];
@@ -297,7 +298,7 @@ class Like extends Controller
 
         $arr['id'] = $post_id;
 
-        call_hooks('post_local_end', $arr);
+        Hook::call('post_local_end', $arr);
 
         $r = q(
             "select * from item where id = %d",

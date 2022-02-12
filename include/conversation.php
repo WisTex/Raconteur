@@ -10,6 +10,7 @@ use Zotlabs\Lib\Chatroom;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
+use Zotlabs\Extend\Hook;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 
@@ -516,7 +517,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
     load_contact_links(local_channel());
 
     $cb = array('items' => $items, 'mode' => $mode, 'update' => $update, 'preview' => $preview);
-    call_hooks('conversation_start', $cb);
+    Hook::call('conversation_start', $cb);
 
     $items = $cb['items'];
 
@@ -547,7 +548,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'mode' => $mode,
                     'item' => $item
                 ];
-                call_hooks('stream_item', $x);
+                Hook::call('stream_item', $x);
 
                 $item = $x['item'];
 
@@ -718,7 +719,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 );
 
                 $arr = array('item' => $item, 'output' => $tmp_item);
-                call_hooks('display_item', $arr);
+                Hook::call('display_item', $arr);
 
 //              $threads[$threadsid]['id'] = $item['item_id'];
                 $threads[] = $arr['output'];
@@ -742,7 +743,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
             $threads = [];
             foreach ($items as $item) {
                 $x = [ 'mode' => $mode, 'item' => $item ];
-                call_hooks('stream_item', $x);
+                Hook::call('stream_item', $x);
 
                 $item = $x['item'];
 
@@ -878,7 +879,7 @@ function thread_action_menu($item, $mode = '')
     }
 
     $args = [ 'item' => $item, 'mode' => $mode, 'menu' => $menu ];
-    call_hooks('thread_action_menu', $args);
+    Hook::call('thread_action_menu', $args);
 
     return $args['menu'];
 }
@@ -887,7 +888,7 @@ function author_is_pmable($xchan, $abook)
 {
 
     $x = [ 'xchan' => $xchan, 'abook' => $abook, 'result' => 'unset' ];
-    call_hooks('author_is_pmable', $x);
+    Hook::call('author_is_pmable', $x);
     if ($x['result'] !== 'unset') {
         return $x['result'];
     }
@@ -1027,7 +1028,7 @@ function thread_author_menu($item, $mode = '')
     }
 
     $args = [ 'item' => $item, 'mode' => $mode, 'menu' => $menu ];
-    call_hooks('thread_author_menu', $args);
+    Hook::call('thread_author_menu', $args);
 
     return $args['menu'];
 }
@@ -1165,7 +1166,7 @@ function format_like($cnt, $arr, $type, $id)
 function status_editor($x, $popup = false, $module = '')
 {
     $hook_info = ['editor_html' => '', 'x' => $x, 'popup' => $popup, 'module' => $module];
-    call_hooks('status_editor', $hook_info);
+    Hook::call('status_editor', $hook_info);
     if ($hook_info['editor_html'] == '') {
         return z_status_editor($x, $popup);
     } else {
@@ -1383,7 +1384,7 @@ function z_status_editor($x, $popup = false)
     }
 
     $jotplugins = '';
-    call_hooks('jot_tool', $jotplugins);
+    Hook::call('jot_tool', $jotplugins);
 
     $jotcoll = jot_collections($c, ((array_key_exists('collections', $x)) ? $x['collections'] : []));
     if (! $jotcoll) {
@@ -1392,7 +1393,7 @@ function z_status_editor($x, $popup = false)
 
     $jotnets = EMPTY_STR;
     if (x($x, 'jotnets')) {
-        call_hooks('jot_networks', $jotnets);
+        Hook::call('jot_networks', $jotnets);
     }
 
     $permanent_draft = ((intval($x['profile_uid']) && intval($x['profile_uid']) === local_channel() && Apps::system_app_installed($x['profile_uid'], 'Drafts')) ? ('Save draft') : EMPTY_STR);
@@ -1720,7 +1721,7 @@ function conv_sort($arr, $order)
 
     $data = [ 'items' => $narr, 'order' => $order ];
 
-    call_hooks('conv_sort', $data);
+    Hook::call('conv_sort', $data);
 
     $arr = $data['items'];
 
@@ -1839,7 +1840,7 @@ function format_location($item)
         $location = ((strpos($location, '[') !== false) ? zidify_links(bbcode($location)) : $location);
     } else {
         $locate = array('location' => $item['location'], 'coord' => $item['coord'], 'html' => '');
-        call_hooks('render_location', $locate);
+        Hook::call('render_location', $locate);
         $location = ((strlen($locate['html'])) ? $locate['html'] : render_location_default($locate));
     }
     return $location;
@@ -2101,7 +2102,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
     }
 
     $arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
-    call_hooks('profile_tabs', $arr);
+    Hook::call('profile_tabs', $arr);
 
     $tpl = get_markup_template('profile_tabs.tpl');
 

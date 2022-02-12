@@ -15,6 +15,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\Permcat;
 use Zotlabs\Lib\Features;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 use Zotlabs\Web\HTTPHeaders;
 use Sabre\VObject\Reader;
 
@@ -92,7 +93,7 @@ class Connedit extends Controller
 
         $orig_record = array_shift($orig_record);
 
-        call_hooks('contact_edit_post', $_POST);
+        Hook::call('contact_edit_post', $_POST);
 
         $vc = get_abconfig(local_channel(), $orig_record['abook_xchan'], 'system', 'vcard');
         $vcard = (($vc) ? Reader::read($vc) : null);
@@ -274,7 +275,7 @@ class Connedit extends Controller
 
         if ($new_friend) {
             $arr = ['channel_id' => local_channel(), 'abook' => App::$poi];
-            call_hooks('accept_follow', $arr);
+            Hook::call('accept_follow', $arr);
         }
 
         $this->connedit_clone($a);
@@ -675,7 +676,7 @@ class Connedit extends Controller
                     80 => t('Connections'),
                     99 => t('All')
                 ];
-                call_hooks('affinity_labels', $labels);
+                Hook::call('affinity_labels', $labels);
 
                 $slider_tpl = get_markup_template('contact_slider.tpl');
 
@@ -897,7 +898,7 @@ class Connedit extends Controller
 
             $arr = array('contact' => $contact, 'output' => $o);
 
-            call_hooks('contact_edit', $arr);
+            Hook::call('contact_edit', $arr);
 
             return $arr['output'];
         }

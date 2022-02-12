@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Config;
 use Zotlabs\Web\Controller;
+use Zotlabs\Extend\Hook;
 
 class Siteinfo extends Controller
 {
@@ -26,7 +27,7 @@ class Siteinfo extends Controller
         }
 
 
-        call_hooks('federated_transports', $federated);
+        Hook::call('federated_transports', $federated);
 
         $siteinfo = replace_macros(
             get_markup_template('siteinfo.tpl'),
@@ -57,7 +58,7 @@ class Siteinfo extends Controller
             ]
         );
 
-        call_hooks('about_hook', $siteinfo);
+        Hook::call('about_hook', $siteinfo);
 
         return $siteinfo;
     }

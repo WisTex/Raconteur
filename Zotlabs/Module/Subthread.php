@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -183,7 +184,7 @@ class Subthread extends Controller
 
         $arr['id'] = $post_id;
 
-        call_hooks('post_local_end', $arr);
+        Hook::call('post_local_end', $arr);
 
         killme();
     }

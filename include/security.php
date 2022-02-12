@@ -1,6 +1,7 @@
 <?php
 
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
         
 /**
  * @file include/security.php
@@ -51,12 +52,12 @@ function authenticate_success($user_record, $channel = null, $login_initial = fa
             );
             App::$account['account_lastlog'] = datetime_convert();
             $lastlog_updated = true;
-            call_hooks('logged_in', App::$account);
+            Hook::call('logged_in', App::$account);
         }
     }
 
     if (($login_initial) && (! $lastlog_updated)) {
-        call_hooks('logged_in', $user_record);
+        Hook::call('logged_in', $user_record);
 
         // might want to log success here
     }
@@ -335,7 +336,7 @@ function change_channel($change_channel)
         }
 
         $arr = [ 'channel_id' => $change_channel, 'chanx' => $ret ];
-        call_hooks('change_channel', $arr);
+        Hook::call('change_channel', $arr);
     }
 
     return $ret;

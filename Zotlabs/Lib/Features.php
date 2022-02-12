@@ -3,6 +3,7 @@
 namespace Zotlabs\Lib;
 
 use App;
+use Zotlabs\Extend\Hook;
     
 
 class Features {
@@ -21,7 +22,7 @@ class Features {
             }
         }
         $arr = array('uid' => $uid, 'feature' => $feature, 'enabled' => $x);
-        call_hooks('feature_enabled', $arr);
+        Hook::call('feature_enabled', $arr);
         return($arr['enabled']);
     }
 
@@ -531,7 +532,7 @@ class Features {
         ];
 
         $x = [ 'features' => $arr, ];
-        call_hooks('get_features', $x);
+        Hook::call('get_features', $x);
 
         $arr = $x['features'];
 

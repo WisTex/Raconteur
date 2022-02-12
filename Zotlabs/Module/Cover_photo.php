@@ -8,6 +8,7 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 /*
    @file cover_photo.php
@@ -435,7 +436,7 @@ class Cover_photo extends Controller
 
             ]);
 
-            call_hooks('cover_photo_content_end', $o);
+            Hook::call('cover_photo_content_end', $o);
 
             return $o;
         } else {

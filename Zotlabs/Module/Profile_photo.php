@@ -14,6 +14,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
@@ -523,7 +524,7 @@ class Profile_photo extends Controller
                 '$select' => t('Select previously uploaded photo'),
             ]);
 
-            call_hooks('profile_photo_content_end', $o);
+            Hook::call('profile_photo_content_end', $o);
             return $o;
         } else {
             // present a cropping form

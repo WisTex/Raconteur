@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Extend\Hook;
+
 class DReport
 {
 
@@ -84,7 +86,7 @@ class DReport
          *   * \e array
          */
 
-        call_hooks('dreport_is_storable', $dr);
+        Hook::call('dreport_is_storable', $dr);
 
         // let plugins accept or reject - if neither, continue on
         if (array_key_exists('accept', $dr) && intval($dr['accept'])) {

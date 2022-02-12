@@ -27,6 +27,7 @@ namespace Zotlabs\Tests\Unit\Access;
 use phpmock\phpunit\PHPMock;
 use Zotlabs\Tests\Unit\UnitTestCase;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Unit Test case for PermissionLimits class.
@@ -43,7 +44,7 @@ class PermissionLimitsTest extends UnitTestCase
      * result of Permissions::Perms() mostly.
      *
      * @uses Zotlabs\Access\Permissions::Perms
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testStd_Limits()
     {

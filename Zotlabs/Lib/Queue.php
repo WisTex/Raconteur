@@ -11,6 +11,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Zot6\Receiver;
 use Zotlabs\Zot6\Zot6Handler;
+use Zotlabs\Extend\Hook;
 
 class Queue
 {
@@ -226,7 +227,7 @@ class Queue
         }
 
         $arr = array('outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate);
-        call_hooks('queue_deliver', $arr);
+        Hook::call('queue_deliver', $arr);
         if ($arr['handled']) {
             return;
         }

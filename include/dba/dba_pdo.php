@@ -22,21 +22,31 @@ class dba_pdo extends dba_driver
 
         if (strpbrk($server, ':;')) {
             $dsn = $server;
-        } else {
+            $this->driver_dbtype = substr($dsn,0,strpos($dsn,':'));
+        }
+        else {
             $dsn = $this->driver_dbtype . ':host=' . $server . (intval($port) ? ';port=' . $port : '');
         }
 
         $dsn .= ';dbname=' . $db;
-        if ($this->driver_dbtype === 'mysql') {
+
+        // allow folks to over-ride the client encoding by setting it explicitly
+        // in the dsn. By default everything we do is in utf8 and for mysql this
+        // requires specifying utf8mb4.
+         
+        if ($this->driver_dbtype === 'mysql' && !strpos($dsn,'charset=')) {
             $dsn .= ';charset=utf8mb4';
         }
-        else {
+
+        if ($this->driver_type === 'pgsql' && !strpos($dsn,'client_encoding')) {
             $dsn .= ";options='--client_encoding=UTF8'";
         }
+    
         try {
             $this->db = new PDO($dsn, $user, $pass);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             if (file_exists('dbfail.out')) {
                 file_put_contents('dbfail.out', datetime_convert() . "\nConnect: " . $e->getMessage() . "\n", FILE_APPEND);
             }

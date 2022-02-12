@@ -18,6 +18,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Nodeinfo;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 use Emoji;
 
 require_once('include/html2bbcode.php');
@@ -68,7 +69,7 @@ class Activity
             return self::fetch_thing($x);
         }
 
-        call_hooks('encode_object', $x);
+        Hook::call('encode_object', $x);
 
         return $x;
     }
@@ -1732,7 +1733,7 @@ class Activity
         }
 
         $arr = ['xchan' => $p, 'encoded' => $ret, 'activitypub' => $activitypub];
-        call_hooks('encode_person', $arr);
+        Hook::call('encode_person', $arr);
         $ret = $arr['encoded'];
 
 
@@ -1813,7 +1814,7 @@ class Activity
             'http://activitystrea.ms/schema/1.0/unfollow' => 'Ignore',
         ];
 
-        call_hooks('activity_mapper', $acts);
+        Hook::call('activity_mapper', $acts);
 
         if (array_key_exists($verb, $acts) && $acts[$verb]) {
             return $acts[$verb];
@@ -1863,7 +1864,7 @@ class Activity
 
         ];
 
-        call_hooks('activity_obj_mapper', $objs);
+        Hook::call('activity_obj_mapper', $objs);
 
         if ($obj === 'Answer') {
             return 'Note';
@@ -3358,7 +3359,7 @@ class Activity
             's' => $s
         ];
 
-        call_hooks('decode_note', $hookinfo);
+        Hook::call('decode_note', $hookinfo);
 
         $s = $hookinfo['s'];
 
@@ -3956,7 +3957,7 @@ class Activity
                 'item' => $item
             ];
 
-            call_hooks('fetch_and_store', $hookinfo);
+            Hook::call('fetch_and_store', $hookinfo);
 
             $item = $hookinfo['item'];
 

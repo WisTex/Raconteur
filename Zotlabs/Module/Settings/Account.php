@@ -3,6 +3,7 @@
 namespace Zotlabs\Module\Settings;
 
 use App;
+use Zotlabs\Extend\Hook;
 
 class Account
 {
@@ -11,7 +12,7 @@ class Account
     {
         check_form_security_token_redirectOnErr('/settings/account', 'settings_account');
 
-        call_hooks('account_settings_post', $_POST);
+        Hook::call('account_settings_post', $_POST);
 
         $errs = [];
 
@@ -99,7 +100,7 @@ class Account
     {
         $account_settings = "";
 
-        call_hooks('account_settings', $account_settings);
+        Hook::call('account_settings', $account_settings);
 
         $email = App::$account['account_email'];
 

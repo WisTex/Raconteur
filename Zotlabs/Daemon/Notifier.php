@@ -9,6 +9,7 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\ActivityPub;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
     
 require_once('include/html2plain.php');
 require_once('include/conversation.php');
@@ -178,7 +179,7 @@ class Notifier
                             break;
                     }
                     if (! $perm_update['success']) {
-                        call_hooks($cmd, $perm_update);
+                        Hook::call($cmd, $perm_update);
                     }
 
                     if ($perm_update['success']) {
@@ -278,7 +279,7 @@ class Notifier
                         'deliver'    => false
                     ];
 
-                    call_hooks('customitem_deliver', $hookinfo);
+                    Hook::call('customitem_deliver', $hookinfo);
                 }
 
                 if (! $hookinfo['deliver']) {
@@ -552,7 +553,7 @@ class Notifier
             'queued'         => []
         ];
 
-        call_hooks('notifier_process', $narr);
+        Hook::call('notifier_process', $narr);
         if ($narr['queued']) {
             foreach ($narr['queued'] as $pq) {
                 self::$deliveries[] = $pq;
@@ -690,7 +691,7 @@ class Notifier
 
                 ActivityPub::notifier_process($narr);
 
-                call_hooks('notifier_hub', $narr);
+                Hook::call('notifier_hub', $narr);
                 if ($narr['queued']) {
                     foreach ($narr['queued'] as $pq) {
                         self::$deliveries[] = $pq;
@@ -807,7 +808,7 @@ class Notifier
             }
         }
 
-        call_hooks('notifier_end', $target_item);
+        Hook::call('notifier_end', $target_item);
 
         logger('notifer: complete.');
         return;

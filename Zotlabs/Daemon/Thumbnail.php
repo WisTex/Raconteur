@@ -4,6 +4,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Extend\Hook;
+    
 class Thumbnail
 {
 
@@ -46,7 +48,7 @@ class Thumbnail
          *  * \e string \b thumbnail
          */
 
-        call_hooks('thumbnail', $p);
+        Hook::call('thumbnail', $p);
         if ($p['thumbnail']) {
             return;
         }

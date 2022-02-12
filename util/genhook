@@ -1,5 +1,5 @@
 /bin/rm hook1
-grep -r call_hooks --exclude-dir=.git --exclude-dir=cache --exclude-dir=logs --exclude-dir=store * > hook1
+grep -r Hook::call --exclude-dir=.git --exclude-dir=cache --exclude-dir=logs --exclude-dir=store * > hook1
 awk -F\' '{ print $2};' < hook1 > hook2
 sed -i '/^\s*$/d' hook2
 sort < hook2 | uniq > hooklist.mc

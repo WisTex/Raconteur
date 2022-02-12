@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class Share
 {
@@ -146,7 +147,7 @@ class Share
 
             $arr['id'] = $post_id;
 
-            call_hooks('post_local_end', $arr);
+            Hook::call('post_local_end', $arr);
 
             $r = q(
                 "select * from item where id = %d",

@@ -6,6 +6,7 @@ use App;
 use PHPGit\Exception\GitException;
 use Zotlabs\Storage\GitRepo;
 use Michelf\MarkdownExtra;
+use Zotlabs\Lib\Addon;
 
 class Addons
 {
@@ -260,7 +261,7 @@ class Addons
                 return '';
             }
 
-            $enabled = in_array($plugin, App::$plugins);
+            $enabled = in_array($plugin, Addon::list_installed());
             $info = get_plugin_info($plugin);
             $x = check_plugin_versions($info);
 
@@ -268,12 +269,7 @@ class Addons
 
             if ($enabled && !$x) {
                 $enabled = false;
-                $idz = array_search($plugin, App::$plugins);
-                if ($idz !== false) {
-                    unset(App::$plugins[$idz]);
-                    uninstall_plugin($plugin);
-                    set_config("system", "addon", implode(", ", App::$plugins));
-                }
+                uninstall_plugin($plugin);
             }
             $info['disabled'] = 1 - intval($x);
 
@@ -281,19 +277,16 @@ class Addons
                 check_form_security_token_redirectOnErr('/admin/addons', 'admin_addons', 't');
                 $pinstalled = false;
                 // Toggle plugin status
-                $idx = array_search($plugin, App::$plugins);
+                $idx = array_search($plugin, Addon::list_installed());
                 if ($idx !== false) {
-                    unset(App::$plugins[$idx]);
-                    uninstall_plugin($plugin);
+                    Addon::uninstall($plugin);
                     $pinstalled = false;
                     info(sprintf(t("Plugin %s disabled."), $plugin));
                 } else {
-                    App::$plugins[] = $plugin;
-                    install_plugin($plugin);
+                    Addon::install($plugin);
                     $pinstalled = true;
                     info(sprintf(t("Plugin %s enabled."), $plugin));
                 }
-                set_config("system", "addon", implode(", ", App::$plugins));
 
                 if ($pinstalled) {
                     @require_once("addon/$plugin/$plugin.php");
@@ -306,7 +299,7 @@ class Addons
 
             // display plugin details
 
-            if (in_array($plugin, App::$plugins)) {
+            if (in_array($plugin, Addon::list_installed())) {
                 $status = 'on';
                 $action = t('Disable');
             } else {
@@ -389,11 +382,9 @@ class Addons
 
                     if ($enabled && !$x) {
                         $enabled = false;
-                        $idz = array_search($id, App::$plugins);
+                        $idz = array_search($id, Addon::list_installed());
                         if ($idz !== false) {
-                            unset(App::$plugins[$idz]);
                             uninstall_plugin($id);
-                            set_config("system", "addon", implode(", ", App::$plugins));
                         }
                     }
                     $info['disabled'] = 1 - intval($x);

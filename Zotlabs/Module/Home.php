@@ -11,6 +11,7 @@ use Zotlabs\Lib\Crypto;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 require_once('include/conversation.php');
 
@@ -23,7 +24,7 @@ class Home extends Controller
 
         $ret = [];
 
-        call_hooks('home_init', $ret);
+        Hook::call('home_init', $ret);
 
         if (ActivityStreams::is_as_request()) {
             $x = array_merge(['@context' => [
@@ -129,7 +130,7 @@ class Home extends Controller
 
         $splash = ((argc() > 1 && argv(1) === 'splash') ? true : false);
 
-        call_hooks('home_content', $o);
+        Hook::call('home_content', $o);
         if ($o) {
             return $o;
         }
