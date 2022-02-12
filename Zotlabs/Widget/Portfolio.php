@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/attach.php');
 
@@ -110,7 +112,7 @@ class Portfolio
         }
 
 
-        $tpl = get_markup_template('photo_album_portfolio.tpl');
+        $tpl = Theme::get_template('photo_album_portfolio.tpl');
         $o .= replace_macros($tpl, array(
             '$photos' => $photos,
             '$mode' => $mode,

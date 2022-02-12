@@ -6,6 +6,8 @@ use Zotlabs\Lib\System;
 use Zotlabs\Lib\Config;
 use Zotlabs\Web\Controller;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Siteinfo extends Controller
 {
@@ -30,7 +32,7 @@ class Siteinfo extends Controller
         Hook::call('federated_transports', $federated);
 
         $siteinfo = replace_macros(
-            get_markup_template('siteinfo.tpl'),
+            Theme::get_template('siteinfo.tpl'),
             [
                 '$title' => t('About this site'),
                 '$url' => z_root(),

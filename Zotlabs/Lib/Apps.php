@@ -8,6 +8,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Lib\Addon;
+use Zotlabs\Render\Theme;
+
     
 /**
  * Apps
@@ -596,7 +598,7 @@ class Apps
         $icon = ((strpos($papp['photo'], 'icon:') === 0) ? substr($papp['photo'], 5) : '');
 
         if ($mode === 'navbar') {
-            return replace_macros(get_markup_template('app_nav.tpl'), [
+            return replace_macros(Theme::get_template('app_nav.tpl'), [
                 '$app' => $papp,
                 '$icon' => $icon,
             ]);
@@ -612,7 +614,7 @@ class Apps
             $pinned = ((strpos($papp['categories'], 'nav_pinned_app') !== false) ? true : false);
         }
 
-        return replace_macros(get_markup_template('app.tpl'), [
+        return replace_macros(Theme::get_template('app.tpl'), [
             '$app' => $papp,
             '$icon' => $icon,
             '$hosturl' => $hosturl,

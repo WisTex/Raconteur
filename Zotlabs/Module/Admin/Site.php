@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\System;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Site
 {
@@ -307,7 +309,7 @@ class Site
         $homelogin = get_config('system', 'login_on_homepage');
         $enable_context_help = get_config('system', 'enable_context_help');
 
-        return replace_macros(get_markup_template('admin_site.tpl'), [
+        return replace_macros(Theme::get_template('admin_site.tpl'), [
             '$title' => t('Administration'),
             '$page' => t('Site'),
             '$submit' => t('Submit'),

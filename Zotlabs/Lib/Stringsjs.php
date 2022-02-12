@@ -2,12 +2,14 @@
 
 namespace Zotlabs\Lib;
 
+use Zotlabs\Render\Theme;
+
 
 class Stringsjs {
 
     public static function strings()
     {
-        return replace_macros(get_markup_template('js_strings.tpl'), array(
+        return replace_macros(Theme::get_template('js_strings.tpl'), array(
             '$icon'        => '/images/' . PLATFORM_NAME . '-64.png',
             '$delitem'     => t('Delete this item?'),
             '$comment'     => t('Comment'),

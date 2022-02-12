@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Render\Theme;
+
 
 class Dreport extends Controller
 {
@@ -171,7 +173,7 @@ class Dreport extends Controller
             ];
         }
 
-        $output = replace_macros(get_markup_template('dreport.tpl'), array(
+        $output = replace_macros(Theme::get_template('dreport.tpl'), array(
             '$title' => sprintf(t('Delivery report for %1$s'), basename($message_id)) . '...',
             '$table' => $table,
             '$mid' => urlencode($mid),

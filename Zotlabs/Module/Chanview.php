@@ -7,6 +7,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Activity;
+use Zotlabs\Render\Theme;
+
 
 class Chanview extends Controller
 {
@@ -163,7 +165,7 @@ class Chanview extends Controller
                 }
             }
 
-            $o = replace_macros(get_markup_template('chanview.tpl'), [
+            $o = replace_macros(Theme::get_template('chanview.tpl'), [
                 '$url' => $url,
                 '$photo' => get_xconfig(App::$poi['xchan_hash'], 'system', 'cover_photo'),
                 '$alt' => t('Cover photo for this channel'),

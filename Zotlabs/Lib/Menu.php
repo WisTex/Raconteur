@@ -4,6 +4,8 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -134,7 +136,7 @@ class Menu
 
         $wrap = (($var['wrap'] === 'none') ? false : true);
 
-        $ret = replace_macros(get_markup_template('usermenu.tpl'), array(
+        $ret = replace_macros(Theme::get_template('usermenu.tpl'), array(
             '$menu' => $menu['menu'],
             '$class' => $class,
             '$nick' => $chan['channel_address'],

@@ -297,7 +297,7 @@ class Addon {
      * @param string $plugin the name of the plugin
      * @return array with the plugin information
      */
-    function get_info($plugin)
+    public static function get_info($plugin)
     {
 
         $info =  null;
@@ -308,6 +308,63 @@ class Addon {
             $info = Infocon::from_c_comment("addon/$plugin/$plugin.php");
         }
         return $info ? $info : [ 'name' => $plugin ] ;
+    }
+
+        
+    public static function check_versions($info)
+    {
+
+        if (! is_array($info)) {
+            return true;
+        }
+
+        if (array_key_exists('minversion', $info) && $info['minversion']) {
+            if (! version_compare(STD_VERSION, trim($info['minversion']), '>=')) {
+                logger('minversion limit: ' . $info['name'], LOGGER_NORMAL, LOG_WARNING);
+                return false;
+            }
+        }
+        if (array_key_exists('maxversion', $info) && $info['maxversion']) {
+            if (! version_compare(STD_VERSION, trim($info['maxversion']), '<')) {
+                logger('maxversion limit: ' . $info['name'], LOGGER_NORMAL, LOG_WARNING);
+                return false;
+            }
+        }
+        if (array_key_exists('minphpversion', $info) && $info['minphpversion']) {
+            if (! version_compare(PHP_VERSION, trim($info['minphpversion']), '>=')) {
+                logger('minphpversion limit: ' . $info['name'], LOGGER_NORMAL, LOG_WARNING);
+                return false;
+            }
+        }
+
+        if (array_key_exists('requires', $info)) {
+            $arr = explode(',', $info['requires']);
+            $found = true;
+            if ($arr) {
+                foreach ($arr as $test) {
+                    $test = trim($test);
+                    if (! $test) {
+                        continue;
+                    }
+                    if (strpos($test, '.')) {
+                        $conf = explode('.', $test);
+                        if (get_config(trim($conf[0]), trim($conf[1]))) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    if (! in_array($test, Addon::list_installed())) {
+                        $found = false;
+                    }
+                }
+            }
+            if (! $found) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

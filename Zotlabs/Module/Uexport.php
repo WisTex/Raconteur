@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Uexport extends Controller
 {
@@ -61,7 +63,7 @@ class Uexport extends Controller
         $yearurl = z_root() . '/uexport/' . $y;
         $janurl = z_root() . '/uexport/' . $y . '/1';
         $impurl = '/import_items';
-        $o = replace_macros(get_markup_template('uexport.tpl'), array(
+        $o = replace_macros(Theme::get_template('uexport.tpl'), array(
             '$title' => t('Export Channel'),
             '$basictitle' => t('Export Channel'),
             '$basic' => t('Export your basic channel information to a file.  This acts as a backup of your connections, permissions, profile and basic data, which can be used to import your data to a new server hub, but does not contain your content.'),

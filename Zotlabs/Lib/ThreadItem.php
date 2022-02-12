@@ -7,6 +7,8 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/text.php');
 
@@ -923,7 +925,7 @@ class ThreadItem
             return;
         }
 
-        $template = get_markup_template($this->get_comment_box_template());
+        $template = Theme::get_template($this->get_comment_box_template());
 
         $observer = $conv->get_observer();
 

@@ -17,6 +17,8 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
     
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
@@ -589,7 +591,7 @@ function alt_pager($i, $more = '', $less = '')
        $url = $url . '?f=';
     }
 
-    return replace_macros(get_markup_template('alt_pager.tpl'), array(
+    return replace_macros(Theme::get_template('alt_pager.tpl'), array(
         '$has_less' => ((App::$pager['page'] > 1) ? true : false),
         '$has_more' => (($i > 0 && $i >= App::$pager['itemspage']) ? true : false),
         '$less' => $less,
@@ -1043,7 +1045,7 @@ function magiclink_url($observer, $myaddr, $url)
 function search($s, $id = 'search-box', $url = '/search', $save = false)
 {
 
-    return replace_macros(get_markup_template('searchbox.tpl'), array(
+    return replace_macros(Theme::get_template('searchbox.tpl'), array(
         '$s' => $s,
         '$id' => $id,
         '$action_url' => z_root() . $url,
@@ -1056,7 +1058,7 @@ function search($s, $id = 'search-box', $url = '/search', $save = false)
 
 function searchbox($s, $id = 'search-box', $url = '/search', $save = false)
 {
-    return replace_macros(get_markup_template('searchbox.tpl'), array(
+    return replace_macros(Theme::get_template('searchbox.tpl'), array(
         '$s' => $s,
         '$id' => $id,
         '$action_url' => z_root() . '/' . $url,
@@ -1562,7 +1564,7 @@ function theme_attachments(&$item)
             ];
         }
 
-        $s = replace_macros(get_markup_template('item_attach.tpl'), [
+        $s = replace_macros(Theme::get_template('item_attach.tpl'), [
             '$attaches' => $attaches
         ]);
     }
@@ -1592,7 +1594,7 @@ function format_categories(&$item, $writeable)
             $categories[] = array('term' => $term, 'writeable' => $writeable, 'removelink' => $removelink, 'url' => zid($t['url']));
         }
 
-        $s = replace_macros(get_markup_template('item_categories.tpl'), array(
+        $s = replace_macros(Theme::get_template('item_categories.tpl'), array(
             '$remove' => t('remove category'),
             '$categories' => $categories
         ));
@@ -1731,7 +1733,7 @@ function format_filer(&$item)
             $categories[] = array('term' => $term, 'removelink' => $removelink);
         }
 
-        $s = replace_macros(get_markup_template('item_filer.tpl'), array(
+        $s = replace_macros(Theme::get_template('item_filer.tpl'), array(
             '$remove' => t('remove from file'),
             '$categories' => $categories
         ));
@@ -2066,7 +2068,7 @@ function format_poll($item, $s, $opts)
 
 function prepare_binary($item)
 {
-    return replace_macros(get_markup_template('item_binary.tpl'), [
+    return replace_macros(Theme::get_template('item_binary.tpl'), [
         '$download'  => t('Download binary/encrypted content'),
         '$url'       => z_root() . '/viewsrc/' . $item['id'] . '/download'
     ]);
@@ -2199,7 +2201,7 @@ function layout_select($channel_id, $current = '')
         }
     }
 
-    $o = replace_macros(get_markup_template('field_select_raw.tpl'), array(
+    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), array(
         '$field'    => array('layout_mid', t('Page layout'), $selected, t('You can create your own with the layouts tool'), $options)
     ));
 
@@ -2228,7 +2230,7 @@ function mimetype_select($channel_id, $current = 'text/x-multicode', $choices = 
         $options .= '<option value="' . $y . '"' . $selected . '>' . $z . '</option>';
     }
 
-    $o = replace_macros(get_markup_template('field_select_raw.tpl'), array(
+    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), array(
         '$field'    => array( $element, t('Page content type'), $selected, '', $options)
     ));
 
@@ -2852,7 +2854,7 @@ function design_tools()
 
     $who = $channel['channel_address'];
 
-    return replace_macros(get_markup_template('design_tools.tpl'), array(
+    return replace_macros(Theme::get_template('design_tools.tpl'), array(
         '$title'  => t('Design Tools'),
         '$who'    => $who,
         '$sys'    => $sys,
@@ -2880,7 +2882,7 @@ function website_portation_tools()
         $sys = true;
     }
 
-    return replace_macros(get_markup_template('website_portation_tools.tpl'), array(
+    return replace_macros(Theme::get_template('website_portation_tools.tpl'), array(
         '$title'               => t('Import'),
         '$import_label'        => t('Import website...'),
         '$import_placeholder'  => t('Select folder to import'),

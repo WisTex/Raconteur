@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 /**
  * module: invite.php
@@ -112,7 +114,7 @@ class Invite extends Controller
 
         Navbar::set_selected('Invite');
 
-        $tpl = get_markup_template('invite.tpl');
+        $tpl = Theme::get_template('invite.tpl');
         $invonly = false;
 
         if (get_config('system', 'invitation_only')) {

@@ -11,6 +11,8 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\ExtendedZip;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Render\Theme;
+
     
 use ZipArchive;
 
@@ -72,7 +74,7 @@ class Webpages extends Controller
         switch ($_SESSION['action']) {
             case 'import':
                 $_SESSION['action'] = null;
-                $o .= replace_macros(get_markup_template('webpage_import.tpl'), array(
+                $o .= replace_macros(Theme::get_template('webpage_import.tpl'), array(
                     '$title' => t('Import Webpage Elements'),
                     '$importbtn' => t('Import selected'),
                     '$action' => 'import',
@@ -96,7 +98,7 @@ class Webpages extends Controller
                 $pages = get_webpage_elements($channel, 'pages');
                 $layouts = get_webpage_elements($channel, 'layouts');
                 $blocks = get_webpage_elements($channel, 'blocks');
-                $o .= replace_macros(get_markup_template('webpage_export_list.tpl'), array(
+                $o .= replace_macros(Theme::get_template('webpage_export_list.tpl'), array(
                     '$title' => t('Export Webpage Elements'),
                     '$exportbtn' => t('Export selected'),
                     '$action' => $_SESSION['export'],    // value should be 'zipfile' or 'cloud'
@@ -260,7 +262,7 @@ class Webpages extends Controller
         //Build the base URL for edit links
         $url = z_root() . '/editwebpage/' . $which;
 
-        $o .= replace_macros(get_markup_template('webpagelist.tpl'), array(
+        $o .= replace_macros(Theme::get_template('webpagelist.tpl'), array(
             '$listtitle' => t('Webpages'),
             '$baseurl' => $url,
             '$create' => t('Create'),

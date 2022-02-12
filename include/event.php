@@ -12,6 +12,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Extend\Hook;
 use Symfony\Component\Uid\Uuid;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/bbcode.php');
 
@@ -122,7 +124,7 @@ function format_event_obj($jobject)
         $dtend = ((array_key_exists('endTime', $object)) ? $object['endTime'] : NULL_DATE);
         $title = ((isset($object['summary']) && $object['summary']) ? zidify_links(smilies(bbcode($object['summary']))) : $object['name']);
 
-        $event['header'] = replace_macros(get_markup_template('event_item_header.tpl'), array(
+        $event['header'] = replace_macros(Theme::get_template('event_item_header.tpl'), array(
             '$title'     => $title,
             '$dtstart_label' => t('Starts:'),
             '$dtstart_title' => datetime_convert('UTC', 'UTC', $object['startTime'], ((strpos($object['startTime'], 'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
@@ -134,7 +136,7 @@ function format_event_obj($jobject)
 
         ));
 
-        $event['content'] = replace_macros(get_markup_template('event_item_content.tpl'), array(
+        $event['content'] = replace_macros(Theme::get_template('event_item_content.tpl'), array(
             '$description'    => $object['content'],
             '$location_label' => t('Location:'),
             '$location'   => ((array_path_exists('location/content', $object)) ? zidify_links(smilies(bbcode($object['location']['content']))) : EMPTY_STR)

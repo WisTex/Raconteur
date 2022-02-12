@@ -4,6 +4,8 @@ namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib as Zlib;
+use Zotlabs\Render\Theme;
+
 
 class Features
 {
@@ -54,7 +56,7 @@ class Features
             }
         }
 
-        $tpl = get_markup_template("settings_features.tpl");
+        $tpl = Theme::get_template("settings_features.tpl");
         $o .= replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_features"),
             '$title' => t('Additional Features'),

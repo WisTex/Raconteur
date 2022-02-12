@@ -13,6 +13,9 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Import\Friendica;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
+
 require_once('include/import.php');
 require_once('include/photo_factory.php');
 
@@ -683,7 +686,7 @@ class Import extends Controller
             return EMPTY_STR;
         }
 
-        return replace_macros(get_markup_template('channel_import.tpl'), [
+        return replace_macros(Theme::get_template('channel_import.tpl'), [
             '$title' => t('Import Channel'),
             '$desc' => t('Use this form to import an existing channel from a different server. You may retrieve the channel identity from the old server via the network or provide an export file.'),
             '$label_filename' => t('File to Upload'),

@@ -8,6 +8,8 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Render\Theme;
+
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -156,7 +158,7 @@ class Hq extends Controller
             ];
 
             $o = replace_macros(
-                get_markup_template("hq.tpl"),
+                Theme::get_template("hq.tpl"),
                 [
                     '$no_messages' => (($target_item) ? false : true),
                     '$no_messages_label' => [t('Welcome to $Projectname!'), t('You have got no unseen posts...')],
@@ -184,7 +186,7 @@ class Hq extends Controller
             $o .= "<script> var profile_uid = " . local_channel()
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . ";</script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), [
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'hq',
                 '$uid' => local_channel(),

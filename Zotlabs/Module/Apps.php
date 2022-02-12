@@ -7,6 +7,8 @@ use Zotlabs\Lib as Zlib;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 class Apps extends Controller
 {
@@ -51,7 +53,7 @@ class Apps extends Controller
             $apps[] = Zlib\Apps::app_render($app, (($available) ? 'install' : $mode));
         }
 		
-        return replace_macros(get_markup_template('myapps.tpl'), array(
+        return replace_macros(Theme::get_template('myapps.tpl'), array(
             '$sitename' => get_config('system', 'sitename'),
             '$cat' => $cat,
             '$title' => (($available) ? t('Available Apps') : t('Installed Apps')),

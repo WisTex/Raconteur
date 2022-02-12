@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 class Content_filter extends Controller
 {
@@ -45,7 +47,7 @@ class Content_filter extends Controller
 
         $setting_fields = $text;
 
-        $setting_fields .= replace_macros(get_markup_template('field_textarea.tpl'), array(
+        $setting_fields .= replace_macros(Theme::get_template('field_textarea.tpl'), array(
             '$field' => [
                 'message_filter_incl',
                 t('Only import posts with this text'),
@@ -53,7 +55,7 @@ class Content_filter extends Controller
                 t('words one per line or #tags, $categories, /patterns/, lang=xx, lang!=xx - leave blank to import all posts')
             ]
         ));
-        $setting_fields .= replace_macros(get_markup_template('field_textarea.tpl'), array(
+        $setting_fields .= replace_macros(Theme::get_template('field_textarea.tpl'), array(
             '$field' => [
                 'message_filter_excl',
                 t('Do not import posts with this text'),
@@ -62,7 +64,7 @@ class Content_filter extends Controller
             ]
         ));
 
-        $s .= replace_macros(get_markup_template('generic_app_settings.tpl'), array(
+        $s .= replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
             '$addon' => array('content_filter', '' . t('Content Filter Settings'), '', t('Submit')),
             '$content' => $setting_fields
         ));

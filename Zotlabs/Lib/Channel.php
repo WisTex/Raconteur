@@ -21,6 +21,8 @@ use Zotlabs\Lib\System;
 use Zotlabs\Render\Comanche;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
   
 require_once('include/photo_factory.php');
 
@@ -1590,7 +1592,7 @@ class Channel
                 intval(get_account_id())
             );
             if ($r && count($r) > 1) {
-                $o = replace_macros(get_markup_template('channel_id_select.tpl'), array(
+                $o = replace_macros(Theme::get_template('channel_id_select.tpl'), array(
                     '$channels' => $r,
                     '$selected' => local_channel()
                 ));
@@ -1888,7 +1890,7 @@ class Channel
             $cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.jpg' ];
         }
 
-        $o .= replace_macros(get_markup_template('zcard.tpl'), array(
+        $o .= replace_macros(Theme::get_template('zcard.tpl'), array(
             '$maxwidth' => $maxwidth,
             '$scale' => $scale,
             '$translate' => $translate,
@@ -1961,7 +1963,7 @@ class Channel
             $cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.jpg' ];
         }
 
-        $o .= replace_macros(get_markup_template('zcard_embed.tpl'), array(
+        $o .= replace_macros(Theme::get_template('zcard_embed.tpl'), array(
             '$maxwidth' => $maxwidth,
             '$scale' => $scale,
             '$translate' => $translate,
@@ -2108,7 +2110,7 @@ class Channel
      */
     public static function remote_login()
     {
-        $o = replace_macros(get_markup_template('remote_login.tpl'), array(
+        $o = replace_macros(Theme::get_template('remote_login.tpl'), array(
             '$title' => t('Remote Authentication'),
             '$desc' => t('Enter your channel address (e.g. channel@example.com)'),
             '$submit' => t('Authenticate')

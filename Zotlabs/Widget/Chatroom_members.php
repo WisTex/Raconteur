@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Render\Theme;
+
+
 class Chatroom_members
 {
 
@@ -9,7 +12,7 @@ class Chatroom_members
 
     public function widget()
     {
-        return replace_macros(get_markup_template('chatroom_members.tpl'), array(
+        return replace_macros(Theme::get_template('chatroom_members.tpl'), array(
             '$header' => t('Chat Members')
         ));
     }

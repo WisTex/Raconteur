@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Render\Theme;
+
+
 class Security
 {
 
@@ -130,7 +133,7 @@ class Security
         $embedhelp3 = t("https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/<br>https://vimeo.com/<br>https://soundcloud.com/<br>");
         $embedhelp4 = t("All other embedded content will be filtered, <strong>unless</strong> embedded content from that site is explicitly blocked.");
 
-        $t = get_markup_template('admin_security.tpl');
+        $t = Theme::get_template('admin_security.tpl');
         return replace_macros($t, array(
             '$title' => t('Administration'),
             '$page' => t('Security'),

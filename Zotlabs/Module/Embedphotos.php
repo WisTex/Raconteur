@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/attach.php');
 require_once('include/photos.php');
@@ -218,7 +220,7 @@ class Embedphotos extends Controller
             }
         }
 
-        $o .= replace_macros(get_markup_template('photo_album.tpl'), [
+        $o .= replace_macros(Theme::get_template('photo_album.tpl'), [
             '$photos' => $photos,
             '$album' => (($title) ? $title : $album),
             '$album_id' => rand(),

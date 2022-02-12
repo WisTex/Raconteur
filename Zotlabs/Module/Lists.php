@@ -13,6 +13,8 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 class Lists extends Controller
 {
@@ -187,7 +189,7 @@ class Lists extends Controller
                 $i++;
             }
 
-            $tpl = get_markup_template('privacy_groups.tpl');
+            $tpl = Theme::get_template('privacy_groups.tpl');
             $o = replace_macros($tpl, [
                 '$title' => t('Access Lists'),
                 '$add_new_label' => t('Create access list'),
@@ -210,7 +212,7 @@ class Lists extends Controller
         }
 
         $context = array('$submit' => t('Submit'));
-        $tpl = get_markup_template('group_edit.tpl');
+        $tpl = Theme::get_template('group_edit.tpl');
 
         if ((argc() == 3) && (argv(1) === 'drop')) {
 	        if (!local_channel()) {
@@ -296,7 +298,7 @@ class Lists extends Controller
                         $members[] = micropro($member, true, 'mpgroup', 'card');
                     }
                 }
-                $o = replace_macros(get_markup_template('listmembers.tpl'), [
+                $o = replace_macros(Theme::get_template('listmembers.tpl'), [
                     '$title' => t('List members'),
                     '$members' => $members
                 ]);
@@ -387,7 +389,7 @@ class Lists extends Controller
         $context['$desc'] = t('Select a channel to toggle membership');
 
         if ($change) {
-            $tpl = get_markup_template('groupeditor.tpl');
+            $tpl = Theme::get_template('groupeditor.tpl');
             echo replace_macros($tpl, $context);
             killme();
         }

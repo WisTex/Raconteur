@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -54,7 +56,7 @@ class Filer extends Controller
                     $filetags[] = $rr['term'];
                 }
             }
-            $tpl = get_markup_template("filer_dialog.tpl");
+            $tpl = Theme::get_template("filer_dialog.tpl");
             $o = replace_macros($tpl, array(
                 '$field' => array('term', t('Enter a folder name'), '', '', $filetags, 'placeholder="' . t('or select an existing folder (doubleclick)') . '"'),
                 '$submit' => t('Save'),

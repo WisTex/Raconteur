@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Render\Theme;
+
     
 class Follow
 {
@@ -32,7 +34,7 @@ class Follow
             $abook_usage_message = EMPTY_STR;
         }
 
-        return replace_macros(get_markup_template('follow.tpl'), [
+        return replace_macros(Theme::get_template('follow.tpl'), [
             '$connect' => t('Add New Connection'),
             '$desc' => t('Enter channel address'),
             '$hint' => t('Examples: bob@example.com, https://example.com/barbara'),

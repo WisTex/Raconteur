@@ -3,6 +3,10 @@
 namespace Zotlabs\Render;
 
 use App;
+use Zotlabs\Lib\Infocon;
+use Zotlabs\Lib\Addon;
+use Zotlabs\Render\Theme;
+
 
 class Theme
 {
@@ -66,8 +70,8 @@ class Theme
         $themepair = explode(':', $chosen_theme);
 
         // Check if $chosen_theme is compatible with core. If not fall back to default
-        $info = get_theme_info($themepair[0]);
-        $compatible = check_plugin_versions($info);
+        $info = self::get_info($themepair[0]);
+        $compatible = Addon::check_versions($info);
         if (!$compatible) {
             $chosen_theme = '';
         }
@@ -175,10 +179,72 @@ class Theme
         return '';
     }
 
+    static public function get_info($theme) {
+
+        $info =  null;
+        if (is_file("view/theme/$theme/$theme.yml")) {
+            $info = Infocon::from_file("view/theme/$theme.yml");
+        }
+        elseif (is_file("view/theme/$theme/php/theme.php")) {
+            $info = Infocon::from_c_comment("view/theme/$theme/php/theme.php");
+        }
+        return $info ? $info : [ 'name' => $theme ] ;
+    
+    }
+
+    static public function get_email_template($s, $root = '')
+    {
+            $testroot = ($root=='') ? $testroot = "ROOT" : $root;
+            $t = App::template_engine();
+
+        if (isset(App::$override_intltext_templates[$testroot][$s]["content"])) {
+                return App::$override_intltext_templates[$testroot][$s]["content"];
+        } else {
+            if (isset(App::$override_intltext_templates[$testroot][$s]["root"]) &&
+                   isset(App::$override_intltext_templates[$testroot][$s]["file"])) {
+                    $s = App::$override_intltext_templates[$testroot][$s]["file"];
+                    $root = App::$override_intltext_templates[$testroot][$s]["root"];
+            } elseif (App::$override_templateroot) {
+                $newroot = App::$override_templateroot.$root;
+                if ($newroot != '' && substr($newroot, -1) != '/') {
+                               $newroot .= '/';
+                }
+                    $template = $t->Theme::get_email_template($s, $newroot);
+            }
+                $template = $t->Theme::get_email_template($s, $root);
+                return $template;
+        }
+    }
+
+    static public function get_template($s, $root = '')
+    {
+            $testroot = ($root=='') ? $testroot = "ROOT" : $root;
+
+            $t = App::template_engine();
+
+        if (isset(App::$override_markup_templates[$testroot][$s]["content"])) {
+                return App::$override_markup_templates[$testroot][$s]["content"];
+        } else {
+            if (isset(App::$override_markup_templates[$testroot][$s]["root"]) &&
+                   isset(App::$override_markup_templates[$testroot][$s]["file"])) {
+                    $s = App::$override_markup_templates[$testroot][$s]["file"];
+                    $root = App::$override_markup_templates[$testroot][$s]["root"];
+            } elseif (App::$override_templateroot) {
+                $newroot = App::$override_templateroot.$root;
+                if ($newroot != '' && substr($newroot, -1) != '/') {
+                               $newroot .= '/';
+                }
+                    $template = $t->get_template($s, $newroot);
+            }
+                $template = $t->get_template($s, $root);
+                return $template;
+        }
+    }
 
 
 
     
+
     public function debug()
     {
         logger('system_theme: ' . self::$system_theme);

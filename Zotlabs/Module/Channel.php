@@ -18,6 +18,8 @@ use Zotlabs\Widget\Pinned;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/items.php');
 require_once('include/security.php');
@@ -248,7 +250,7 @@ class Channel extends Controller
 
             // search terms header
             if ($search) {
-                $o .= replace_macros(get_markup_template("section_title.tpl"), array(
+                $o .= replace_macros(Theme::get_template("section_title.tpl"), array(
                     '$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT, 'UTF-8')
                 ));
             }
@@ -472,7 +474,7 @@ class Channel extends Controller
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page']
                 . "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), array(
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), array(
                 '$baseurl' => z_root(),
                 '$pgtype' => 'channel',
                 '$uid' => ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),

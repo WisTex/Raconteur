@@ -181,7 +181,7 @@ class Head {
 
     public static function get_main_js()
     {
-        return self::self::format_js_if_exists('main.js', true);
+        return self::format_js_if_exists('main.js', true);
     }
 
     public static function format_js_if_exists($source)

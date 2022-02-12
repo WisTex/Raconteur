@@ -7,6 +7,8 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Permcat;
+use Zotlabs\Render\Theme;
+
 
 class Permcats
 {
@@ -121,7 +123,7 @@ class Permcats
         }
 
     
-        $tpl = get_markup_template("settings_permcats.tpl");
+        $tpl = Theme::get_template("settings_permcats.tpl");
         $o .= replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_permcats"),
             '$title' => t('Permission Roles'),

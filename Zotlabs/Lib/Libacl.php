@@ -5,6 +5,8 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\PermissionDescription;
+use Zotlabs\Render\Theme;
+
 
 class Libacl
 {
@@ -129,7 +131,7 @@ class Libacl
             }
         }
 
-        $tpl = get_markup_template("acl_selector.tpl");
+        $tpl = Theme::get_template("acl_selector.tpl");
         $o = replace_macros($tpl, array(
             '$showall'         => $showall_caption,
             '$onlyme'          => t('Only me'),

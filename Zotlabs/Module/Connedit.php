@@ -18,6 +18,8 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Web\HTTPHeaders;
 use Sabre\VObject\Reader;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @file connedit.php
@@ -658,7 +660,7 @@ class Connedit extends Controller
             }
 
 
-            $tpl = get_markup_template("abook_edit.tpl");
+            $tpl = Theme::get_template("abook_edit.tpl");
 
             if (Apps::system_app_installed(local_channel(), 'Friend Zoom')) {
                 $sections['affinity'] = [
@@ -678,7 +680,7 @@ class Connedit extends Controller
                 ];
                 Hook::call('affinity_labels', $labels);
 
-                $slider_tpl = get_markup_template('contact_slider.tpl');
+                $slider_tpl = Theme::get_template('contact_slider.tpl');
 
                 $slideval = intval($contact['abook_closeness']);
 
@@ -715,7 +717,7 @@ class Connedit extends Controller
             $rating_enabled = get_config('system', 'rating_enabled');
 
             if ($rating_enabled) {
-                $rating = replace_macros(get_markup_template('rating_slider.tpl'), array(
+                $rating = replace_macros(Theme::get_template('rating_slider.tpl'), array(
                     '$min' => -10,
                     '$val' => $rating_val
                 ));

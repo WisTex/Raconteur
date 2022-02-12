@@ -3,6 +3,8 @@
 namespace Zotlabs\Module\Admin;
 
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
     
 class Profs
 {
@@ -92,7 +94,7 @@ class Profs
         }
 
         if ((argc() > 2) && argv(2) === 'new') {
-            return replace_macros(get_markup_template('profdef_edit.tpl'), array(
+            return replace_macros(Theme::get_template('profdef_edit.tpl'), array(
                 '$header' => t('New Profile Field'),
                 '$field_name' => array('field_name', t('Field nickname'), $_REQUEST['field_name'], t('System name of field')),
                 '$field_type' => array('field_type', t('Input type'), (($_REQUEST['field_type']) ? $_REQUEST['field_type'] : 'text'), ''),
@@ -112,7 +114,7 @@ class Profs
                 goaway(z_root() . '/admin/profs');
             }
 
-            return replace_macros(get_markup_template('profdef_edit.tpl'), array(
+            return replace_macros(Theme::get_template('profdef_edit.tpl'), array(
                 '$id' => intval($r[0]['id']),
                 '$header' => t('Edit Profile Field'),
                 '$field_name' => array('field_name', t('Field nickname'), $r[0]['field_name'], t('System name of field')),
@@ -179,7 +181,7 @@ class Profs
         }
 
 
-        $o = replace_macros(get_markup_template('admin_profiles.tpl'), array(
+        $o = replace_macros(Theme::get_template('admin_profiles.tpl'), array(
             '$title' => t('Profile Fields'),
             '$basic' => array('basic', t('Basic Profile Fields'), $basic, ''),
             '$advanced' => array('advanced', t('Advanced Profile Fields'), $advanced, t('(In addition to basic fields)')),

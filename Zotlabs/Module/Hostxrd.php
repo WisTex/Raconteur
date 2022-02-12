@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Hostxrd extends Controller
 {
@@ -16,8 +18,8 @@ class Hostxrd extends Controller
         header("Content-type: application/xrd+xml");
         logger('hostxrd', LOGGER_DEBUG);
 
-        $tpl = get_markup_template('xrd_host.tpl');
-        $x = replace_macros(get_markup_template('xrd_host.tpl'), array(
+        $tpl = Theme::get_template('xrd_host.tpl');
+        $x = replace_macros(Theme::get_template('xrd_host.tpl'), array(
             '$zhost' => App::get_hostname(),
             '$zroot' => z_root()
         ));

@@ -8,6 +8,8 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Lib\MenuItem;
+use Zotlabs\Render\Theme;
+
     
 
 class Menu extends Controller
@@ -163,7 +165,7 @@ class Menu extends Controller
                 }
             }
 
-            $create = replace_macros(get_markup_template('menuedit.tpl'), array(
+            $create = replace_macros(Theme::get_template('menuedit.tpl'), array(
                 '$menu_name' => array('menu_name', t('Menu Name'), '', t('Unique name (not visible on webpage) - required'), '*'),
                 '$menu_desc' => array('menu_desc', t('Menu Title'), '', t('Visible on webpage - leave empty for no title'), ''),
                 '$menu_bookmark' => array('menu_bookmark', t('Allow Bookmarks'), 0, t('Menu may be used to store saved bookmarks'), array(t('No'), t('Yes'))),
@@ -173,7 +175,7 @@ class Menu extends Controller
                 '$display' => 'none'
             ));
 
-            $o = replace_macros(get_markup_template('menulist.tpl'), array(
+            $o = replace_macros(Theme::get_template('menulist.tpl'), array(
                 '$title' => t('Menus'),
                 '$create' => $create,
                 '$menus' => $x,
@@ -215,7 +217,7 @@ class Menu extends Controller
                     return '';
                 }
 
-                $o = replace_macros(get_markup_template('menuedit.tpl'), array(
+                $o = replace_macros(Theme::get_template('menuedit.tpl'), array(
                     '$header' => t('Edit Menu'),
                     '$sys' => App::$is_sys,
                     '$menu_id' => intval(argv(2)),

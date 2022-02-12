@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Newmember
 {
@@ -63,7 +65,7 @@ class Newmember
             $options[5]['pubstream'] = t('View public stream');
         }
 
-        $o = replace_macros(get_markup_template('new_member.tpl'), [
+        $o = replace_macros(Theme::get_template('new_member.tpl'), [
             '$title' => t('New Member Links'),
             '$options' => $options
         ]);

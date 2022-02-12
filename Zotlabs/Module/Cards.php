@@ -10,6 +10,8 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/conversation.php');
 
@@ -209,7 +211,7 @@ class Cards extends Controller
 
         $content = conversation($items_result, $mode, false, $page_mode);
 
-        $o = replace_macros(get_markup_template('cards.tpl'), [
+        $o = replace_macros(Theme::get_template('cards.tpl'), [
             '$title' => t('Cards'),
             '$editor' => $editor,
             '$content' => $content,

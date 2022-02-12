@@ -3,6 +3,8 @@
 namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Network
 {
@@ -35,7 +37,7 @@ class Network
             $arr[] = array('feature_' . $f[0], $f[1], ((intval(Features::enabled(local_channel(), $f[0]))) ? "1" : ''), $f[2], array(t('Off'), t('On')));
         }
 
-        $tpl = get_markup_template("settings_module.tpl");
+        $tpl = Theme::get_template("settings_module.tpl");
 
         $o .= replace_macros($tpl, array(
             '$action_url' => 'settings/network',

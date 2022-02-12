@@ -10,6 +10,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Menu;
 use Zotlabs\Lib\MenuList;    
+use Zotlabs\Render\Theme;
+
 
 
 class Mitem extends Controller
@@ -175,7 +177,7 @@ class Mitem extends Controller
                 $display = (($r) ? 'none' : 'block');
             }
 
-            $create = replace_macros(get_markup_template('mitemedit.tpl'), array(
+            $create = replace_macros(Theme::get_template('mitemedit.tpl'), array(
                 '$menu_id' => App::$data['menu']['menu_id'],
                 '$permissions' => t('Menu Item Permissions'),
                 '$permdesc' => t("\x28click to open/close\x29"),
@@ -198,7 +200,7 @@ class Mitem extends Controller
                 '$sys' => App::$is_sys
             ));
 
-            $o .= replace_macros(get_markup_template('mitemlist.tpl'), array(
+            $o .= replace_macros(Theme::get_template('mitemlist.tpl'), array(
                 '$title' => t('Menu:'),
                 '$create' => $create,
                 '$nametitle' => t('Link Name'),
@@ -253,7 +255,7 @@ class Mitem extends Controller
                 }
 
                 // edit menu item
-                $o = replace_macros(get_markup_template('mitemedit.tpl'), array(
+                $o = replace_macros(Theme::get_template('mitemedit.tpl'), array(
                     '$header' => t('Edit Menu Element'),
                     '$menu_id' => App::$data['menu']['menu_id'],
                     '$permissions' => t('Menu Item Permissions'),

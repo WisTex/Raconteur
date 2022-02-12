@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Archive
 {
@@ -46,7 +48,7 @@ class Archive
         $cutoff_year = intval(datetime_convert('', date_default_timezone_get(), 'now', 'Y')) - $visible_years;
         $cutoff = ((array_key_exists($cutoff_year, $ret)) ? true : false);
 
-        $o = replace_macros(get_markup_template('posted_date_widget.tpl'), array(
+        $o = replace_macros(Theme::get_template('posted_date_widget.tpl'), array(
             '$title' => t('Archives'),
             '$size' => $visible_years,
             '$cutoff_year' => $cutoff_year,

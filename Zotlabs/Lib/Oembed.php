@@ -5,6 +5,8 @@ namespace Zotlabs\Lib;
 use App;
 use Zotlabs\Lib\Cache;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Oembed
 {
@@ -324,7 +326,7 @@ class Oembed
 
                     $th = 120;
                     $tw = $th * $tr;
-                    $tpl = get_markup_template('oembed_video.tpl');
+                    $tpl = Theme::get_template('oembed_video.tpl');
 
                     $ret .= replace_macros($tpl, array(
                         '$baseurl' => z_root(),

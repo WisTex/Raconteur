@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/socgraph.php');
 
@@ -53,7 +55,7 @@ class Suggestions
             ];
         }
 
-        $o = replace_macros(get_markup_template('suggest_widget.tpl'), [
+        $o = replace_macros(Theme::get_template('suggest_widget.tpl'), [
             '$title' => t('Suggestions'),
             '$more' => t('See more...'),
             '$entries' => $arr

@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
     
 class Fedi_id extends Controller
 {
@@ -44,7 +46,7 @@ class Fedi_id extends Controller
     {
 
         return replace_macros(
-            get_markup_template('fedi_id.tpl'),
+            Theme::get_template('fedi_id.tpl'),
             [
                 '$title' => t('Home instance'),
                 '$address' => ['address', t('Enter your channel address or fediverse ID (e.g. channel@example.com)'), '', t('If you do not have a fediverse ID, please use your browser \'back\' button to return to the previous page')],

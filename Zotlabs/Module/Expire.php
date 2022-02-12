@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 class Expire extends Controller
 {
@@ -40,11 +42,11 @@ class Expire extends Controller
             return $text;
         }
 
-        $setting_fields .= replace_macros(get_markup_template('field_input.tpl'), [
+        $setting_fields .= replace_macros(Theme::get_template('field_input.tpl'), [
             '$field' => array('selfexpiredays', t('Expire and delete all my posts after this many days'), intval(get_pconfig(local_channel(), 'system', 'selfexpiredays', 0)), t('Leave at 0 if you wish to manually control expiration of specific posts.'))
         ]);
 
-        return replace_macros(get_markup_template('generic_app_settings.tpl'), [
+        return replace_macros(Theme::get_template('generic_app_settings.tpl'), [
             '$addon' => array('expire', t('Automatic Expiration Settings'), '', t('Submit')),
             '$content' => $setting_fields
         ]);

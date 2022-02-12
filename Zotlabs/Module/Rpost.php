@@ -10,6 +10,8 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Addon;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/items.php');
 require_once('include/taxonomy.php');
@@ -245,7 +247,7 @@ class Rpost extends Controller
 
         $editor = status_editor($x);
 
-        $o .= replace_macros(get_markup_template('edpost_head.tpl'), [
+        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), [
             '$title' => t('Edit post'),
             '$cancel' => '',
             '$editor' => $editor

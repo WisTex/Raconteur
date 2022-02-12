@@ -7,6 +7,8 @@
 
 use Zotlabs\Lib\Img_filesize;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @brief Return an Atom feed for channel.
@@ -90,7 +92,7 @@ function get_feed_for($channel, $observer_hash, $params)
     }
 
 
-    $feed_template = get_markup_template('atom_feed.tpl');
+    $feed_template = Theme::get_template('atom_feed.tpl');
 
     $atom = '';
 

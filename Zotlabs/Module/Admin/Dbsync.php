@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Render\Theme;
+
+
 class Dbsync
 {
 
@@ -90,7 +93,7 @@ class Dbsync
             }
         }
         if (count($failed)) {
-            $o = replace_macros(get_markup_template('failed_updates.tpl'), array(
+            $o = replace_macros(Theme::get_template('failed_updates.tpl'), array(
                 '$base' => z_root(),
                 '$banner' => t('Failed Updates'),
                 '$desc' => '',

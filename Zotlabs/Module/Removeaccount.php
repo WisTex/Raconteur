@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Account;
+use Zotlabs\Render\Theme;
+
     
 class Removeaccount extends Controller
 {
@@ -66,7 +68,7 @@ class Removeaccount extends Controller
 
         $_SESSION['remove_account_verify'] = $hash;
 
-        $o .= replace_macros(get_markup_template('removeaccount.tpl'), [
+        $o .= replace_macros(Theme::get_template('removeaccount.tpl'), [
             '$basedir' => z_root(),
             '$hash' => $hash,
             '$title' => t('Remove This Account'),

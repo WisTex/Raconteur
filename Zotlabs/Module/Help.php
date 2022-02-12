@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/help.php');
 
@@ -111,7 +113,7 @@ class Help extends Controller
         }
 
 
-        return replace_macros(get_markup_template('help.tpl'), array(
+        return replace_macros(Theme::get_template('help.tpl'), array(
             '$title' => t('$Projectname Documentation'),
             '$tocHeading' => t('Contents'),
             '$content' => $content,

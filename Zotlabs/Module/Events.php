@@ -13,6 +13,8 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -331,7 +333,7 @@ class Events extends Controller
 
         $first_day = intval(get_pconfig(local_channel(), 'system', 'cal_first_day', 0));
 
-        $htpl = get_markup_template('event_head.tpl');
+        $htpl = Theme::get_template('event_head.tpl');
         App::$page['htmlhead'] .= replace_macros($htpl, array(
             '$baseurl' => z_root(),
             '$module_url' => '/events',
@@ -497,7 +499,7 @@ class Events extends Controller
             ];
 
 
-            $tpl = get_markup_template('event_form.tpl');
+            $tpl = Theme::get_template('event_form.tpl');
 
             $form = replace_macros($tpl, array(
                 '$post' => z_root() . '/events',
@@ -744,9 +746,9 @@ class Events extends Controller
 
             // links: array('href', 'text', 'extra css classes', 'title')
             if (x($_GET, 'id')) {
-                $tpl = get_markup_template("event.tpl");
+                $tpl = Theme::get_template("event.tpl");
             } else {
-                $tpl = get_markup_template("events-js.tpl");
+                $tpl = Theme::get_template("events-js.tpl");
             }
 
             $o = replace_macros($tpl, array(

@@ -5,6 +5,8 @@
 namespace Zotlabs\Render;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class SmartyTemplate implements TemplateEngine
 {
@@ -59,7 +61,7 @@ class SmartyTemplate implements TemplateEngine
         return $s->parsed($template);
     }
 
-    public function get_markup_template($file, $root = '')
+    public function get_template($file, $root = '')
     {
         $template_file = Theme::include($file, $root);
         if ($template_file) {
@@ -71,7 +73,7 @@ class SmartyTemplate implements TemplateEngine
         return EMPTY_STR;
     }
 
-    public function get_intltext_template($file, $root = '')
+    public function get_email_template($file, $root = '')
     {
 
         $lang = App::$language;

@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Activity_filter
 {
@@ -318,11 +320,11 @@ class Activity_filter
         $o = '';
 
         if ($arr['tabs']) {
-            $content = replace_macros(get_markup_template('common_pills.tpl'), [
+            $content = replace_macros(Theme::get_template('common_pills.tpl'), [
                 '$pills' => $arr['tabs']
             ]);
 
-            $o .= replace_macros(get_markup_template('activity_filter_widget.tpl'), [
+            $o .= replace_macros(Theme::get_template('activity_filter_widget.tpl'), [
                 '$title' => t('Stream Filters'),
     			'$content_id' => 'activity-filter-widget',
                 '$reset' => $reset,

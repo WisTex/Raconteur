@@ -1162,8 +1162,8 @@ img.mail-conv-sender-photo {
 	border-top-left-radius: 0px;
 }
 
-.thread-wrapper {
-	box-shadow: 3px 3px 3px 0 #aaaaaa;
+.thread-wrapper .top-level {
+	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
 }
 
 /*

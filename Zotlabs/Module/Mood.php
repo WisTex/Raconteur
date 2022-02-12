@@ -8,6 +8,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -158,7 +160,7 @@ class Mood extends Controller
         }
 
 
-        $tpl = get_markup_template('mood_content.tpl');
+        $tpl = Theme::get_template('mood_content.tpl');
 
         $o = replace_macros($tpl, array(
             '$title' => t('Mood'),

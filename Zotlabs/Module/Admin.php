@@ -16,6 +16,8 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Addon;
+use Zotlabs\Render\Theme;
+
     
 /**
  * @brief Admin area.
@@ -166,7 +168,7 @@ class Admin extends Controller
             $upgrade = ((version_compare(STD_VERSION, $vrelease) < 0) ? t('Your software should be updated') : '');
         }
 
-        $t = get_markup_template('admin_summary.tpl');
+        $t = Theme::get_template('admin_summary.tpl');
         return replace_macros($t, [
             '$title' => t('Administration'),
             '$page' => t('Summary'),

@@ -11,6 +11,8 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Webfinger;
+use Zotlabs\Render\Theme;
+
 
 class Finger extends Controller
 {
@@ -18,7 +20,7 @@ class Finger extends Controller
     public function get()
     {
 
-        $o = replace_macros(get_markup_template('finger.tpl'), [
+        $o = replace_macros(Theme::get_template('finger.tpl'), [
             '$page_title' => t('Webfinger Diagnostic'),
             '$resource' => ['resource', t('Lookup address or URL'), $_GET['resource'], EMPTY_STR],
             '$submit' => t('Submit')

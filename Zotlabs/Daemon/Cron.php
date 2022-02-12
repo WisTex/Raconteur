@@ -6,6 +6,7 @@ namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Addon;
 
 class Cron
 {
@@ -202,7 +203,7 @@ class Cron
             }
         }
 
-        reload_plugins();
+        Addon::reload_all();
 
         $d = datetime_convert();
 

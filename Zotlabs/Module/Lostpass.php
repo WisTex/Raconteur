@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 class Lostpass extends Controller
 {
@@ -40,7 +42,7 @@ class Lostpass extends Controller
             info(t('Password reset request issued. Check your email.') . EOL);
         }
 
-        $email_tpl = get_intltext_template("lostpass_eml.tpl");
+        $email_tpl = Theme::get_email_template("lostpass_eml.tpl");
         $message = replace_macros($email_tpl, array(
             '$sitename' => get_config('system', 'sitename'),
             '$siteurl' => z_root(),
@@ -97,7 +99,7 @@ class Lostpass extends Controller
             );
 
             if ($r) {
-                $tpl = get_markup_template('pwdreset.tpl');
+                $tpl = Theme::get_template('pwdreset.tpl');
                 $o .= replace_macros($tpl, array(
                     '$lbl1' => t('Password Reset'),
                     '$lbl2' => t('Your password has been reset as requested.'),
@@ -112,7 +114,7 @@ class Lostpass extends Controller
 
                 info("Your password has been reset." . EOL);
 
-                $email_tpl = get_intltext_template("passchanged_eml.tpl");
+                $email_tpl = Theme::get_email_template("passchanged_eml.tpl");
                 $message = replace_macros($email_tpl, array(
                         '$sitename' => App::$config['sitename'],
                         '$siteurl' => z_root(),
@@ -132,7 +134,7 @@ class Lostpass extends Controller
                 return $o;
             }
         } else {
-            $tpl = get_markup_template('lostpass.tpl');
+            $tpl = Theme::get_template('lostpass.tpl');
 
             $o .= replace_macros($tpl, array(
                 '$title' => t('Forgot your Password?'),

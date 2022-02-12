@@ -11,6 +11,8 @@ use Zotlabs\Lib\Queue;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
     
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -250,7 +252,7 @@ class Search extends Controller
             $o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), [
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'search',
                 '$uid' => ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),

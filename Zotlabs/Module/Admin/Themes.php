@@ -4,6 +4,8 @@ namespace Zotlabs\Module\Admin;
 
 use App;
 use Michelf\MarkdownExtra;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @brief Admin area theme settings.
@@ -129,7 +131,7 @@ class Themes
                 $screenshot = null;
             }
 
-            $t = get_markup_template('admin_plugins_details.tpl');
+            $t = Theme::get_template('admin_plugins_details.tpl');
             return replace_macros($t, array(
                 '$title' => t('Administration'),
                 '$page' => t('Themes'),
@@ -163,7 +165,7 @@ class Themes
             }
         }
 
-        $t = get_markup_template('admin_plugins.tpl');
+        $t = Theme::get_template('admin_plugins.tpl');
         return replace_macros($t, array(
             '$title' => t('Administration'),
             '$page' => t('Themes'),

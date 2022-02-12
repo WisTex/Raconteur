@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class Notifications
 {
@@ -144,7 +146,7 @@ class Notifications
             ];
         }
 
-        $o = replace_macros(get_markup_template('notifications_widget.tpl'), array(
+        $o = replace_macros(Theme::get_template('notifications_widget.tpl'), array(
             '$module' => App::$module,
             '$notifications' => $notifications,
 			'$notifications_label' => t('Notifications'),

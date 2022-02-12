@@ -16,6 +16,8 @@ use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
@@ -724,7 +726,7 @@ class Photos extends Controller
                 }
             }
 
-            $tpl = get_markup_template('photos_upload.tpl');
+            $tpl = Theme::get_template('photos_upload.tpl');
             $upload_form = replace_macros($tpl, array(
                 '$pagename' => t('Upload Photos'),
                 '$sessid' => session_id(),
@@ -808,7 +810,7 @@ class Photos extends Controller
 
                 // @fixme - syncronise actions with DAV
 
-                //              $edit_tpl = get_markup_template('album_edit.tpl');
+                //              $edit_tpl = Theme::get_template('album_edit.tpl');
                 //              $album_edit = replace_macros($edit_tpl,array(
                 //                  '$nametext' => t('Enter a new album name'),
                 //                  '$name_placeholder' => t('or select an existing one (doubleclick)'),
@@ -863,7 +865,7 @@ class Photos extends Controller
 
             if ($_REQUEST['aj']) {
                 if ($photos) {
-                    $o = replace_macros(get_markup_template('photosajax.tpl'), array(
+                    $o = replace_macros(Theme::get_template('photosajax.tpl'), array(
                         '$photos' => $photos,
                         '$album_id' => $datum
                     ));
@@ -874,7 +876,7 @@ class Photos extends Controller
                 killme();
             } else {
                 $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
-                $tpl = get_markup_template('photo_album.tpl');
+                $tpl = Theme::get_template('photo_album.tpl');
                 $o .= replace_macros($tpl, array(
                     '$photos' => $photos,
                     '$album' => $album,
@@ -1141,11 +1143,11 @@ class Photos extends Controller
             }
 
             if (count($linked_items)) {
-                $cmnt_tpl = get_markup_template('comment_item.tpl');
-                $tpl = get_markup_template('photo_item.tpl');
+                $cmnt_tpl = Theme::get_template('comment_item.tpl');
+                $tpl = Theme::get_template('photo_item.tpl');
                 $return_url = App::$cmd;
 
-                $like_tpl = get_markup_template('like_noshare.tpl');
+                $like_tpl = Theme::get_template('like_noshare.tpl');
 
                 $likebuttons = '';
                 $ilike = false;
@@ -1265,7 +1267,7 @@ class Photos extends Controller
                         $drop = '';
 
                         if ($observer['xchan_hash'] === $item['author_xchan'] || $observer['xchan_hash'] === $item['owner_xchan']) {
-                            $drop = replace_macros(get_markup_template('photo_drop.tpl'), array('$id' => $item['id'], '$delete' => t('Delete')));
+                            $drop = replace_macros(Theme::get_template('photo_drop.tpl'), array('$id' => $item['id'], '$delete' => t('Delete')));
                         }
 
 
@@ -1319,7 +1321,7 @@ class Photos extends Controller
 
             $responses = get_responses($conv_responses, $response_verbs, '', $link_item);
 
-            $o .= replace_macros(get_markup_template('photo_view.tpl'), [
+            $o .= replace_macros(Theme::get_template('photo_view.tpl'), [
                 '$id' => $ph[0]['id'],
                 '$album' => $album_e,
                 '$tools_label' => t('Photo Tools'),
@@ -1417,7 +1419,7 @@ class Photos extends Controller
 
         if ($_REQUEST['aj']) {
             if ($photos) {
-                $o = replace_macros(get_markup_template('photosajax.tpl'), [
+                $o = replace_macros(Theme::get_template('photosajax.tpl'), [
                     '$photos' => $photos,
                     '$album_id' => bin2hex(t('Recent Photos'))
                 ]);
@@ -1429,7 +1431,7 @@ class Photos extends Controller
         } else {
             $o .= "<script>var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 
-            $o .= replace_macros(get_markup_template('photos_recent.tpl'), [
+            $o .= replace_macros(Theme::get_template('photos_recent.tpl'), [
                 '$title' => t('Recent Photos'),
                 '$album_id' => bin2hex(t('Recent Photos')),
                 '$file_view' => t('View files'),

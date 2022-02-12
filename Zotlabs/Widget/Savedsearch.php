@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Savedsearch
 {
@@ -90,7 +92,7 @@ class Savedsearch
             }
         }
 
-        $tpl = get_markup_template("saved_searches.tpl");
+        $tpl = Theme::get_template("saved_searches.tpl");
         $o = replace_macros($tpl, array(
             '$title' => t('Saved Searches'),
             '$add' => t('add'),

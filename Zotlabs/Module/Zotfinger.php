@@ -15,6 +15,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Zotfinger as Zfinger;
+use Zotlabs\Render\Theme;
+
 
 class Zotfinger extends Controller
 {
@@ -22,7 +24,7 @@ class Zotfinger extends Controller
     public function get()
     {
 
-        $o = replace_macros(get_markup_template('zotfinger.tpl'), [
+        $o = replace_macros(Theme::get_template('zotfinger.tpl'), [
             '$page_title' => t('Zotfinger Diagnostic'),
             '$resource' => ['resource', t('Lookup URL'), $_GET['resource'], EMPTY_STR],
             '$submit' => t('Submit')

@@ -103,7 +103,7 @@ class Pdledit extends Controller
             return '';
         }
 
-        $o = replace_macros(get_markup_template('pdledit.tpl'), array(
+        $o = replace_macros(Theme::get_template('pdledit.tpl'), array(
             '$header' => t('Edit System Page Description'),
             '$mname' => t('Module Name:'),
             '$help' => t('Layout Help'),

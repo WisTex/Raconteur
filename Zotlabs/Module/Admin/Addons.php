@@ -7,6 +7,8 @@ use PHPGit\Exception\GitException;
 use Zotlabs\Storage\GitRepo;
 use Michelf\MarkdownExtra;
 use Zotlabs\Lib\Addon;
+use Zotlabs\Render\Theme;
+
     
 class Addons
 {
@@ -331,7 +333,7 @@ class Addons
             }
 
 
-            $t = get_markup_template('admin_plugins_details.tpl');
+            $t = Theme::get_template('admin_plugins_details.tpl');
             return replace_macros($t, array(
                 '$title' => t('Administration'),
                 '$page' => t('Addons'),
@@ -402,7 +404,7 @@ class Addons
         }
 
         $admin_plugins_add_repo_form = replace_macros(
-            get_markup_template('admin_plugins_addrepo.tpl'),
+            Theme::get_template('admin_plugins_addrepo.tpl'),
             array(
                 '$post' => 'admin/addons/addrepo',
                 '$desc' => t('Enter the public git repository URL of the addon repo.'),
@@ -413,7 +415,7 @@ class Addons
         );
         $newRepoModalID = random_string(3);
         $newRepoModal = replace_macros(
-            get_markup_template('generic_modal.tpl'),
+            Theme::get_template('generic_modal.tpl'),
             array(
                 '$id' => $newRepoModalID,
                 '$title' => t('Install new repo'),
@@ -429,7 +431,7 @@ class Addons
             /// @TODO Parse repo info to provide more information about repos
         }
 
-        $t = get_markup_template('admin_plugins.tpl');
+        $t = Theme::get_template('admin_plugins.tpl');
         return replace_macros($t, array(
             '$title' => t('Administration'),
             '$page' => t('Addons'),

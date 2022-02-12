@@ -4,6 +4,9 @@ namespace Zotlabs\Module\Admin;
 
 use Zotlabs\Lib\Queue as ZQueue;
 
+use Zotlabs\Render\Theme;
+
+
 class Queue
 {
 
@@ -31,7 +34,7 @@ class Queue
             $r[$x]['connected'] = datetime_convert('UTC', date_default_timezone_get(), $r[$x]['connected'], 'Y-m-d');
         }
 
-        $o = replace_macros(get_markup_template('admin_queue.tpl'), array(
+        $o = replace_macros(Theme::get_template('admin_queue.tpl'), array(
             '$banner' => t('Queue Statistics'),
             '$numentries' => t('Total Entries'),
             '$priority' => t('Priority'),

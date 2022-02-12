@@ -5,7 +5,8 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\ServiceClass;
-    
+use Zotlabs\Lib\Addon;
+        
 class Poller
 {
 
@@ -70,7 +71,7 @@ class Poller
 
         $sql_extra = (($manual_id) ? " AND abook_id = " . intval($manual_id) . " " : "");
 
-        reload_plugins();
+        Addon::reload_all();
 
         $d = datetime_convert();
 

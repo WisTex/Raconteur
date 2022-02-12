@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class Filer
 {
@@ -30,7 +32,7 @@ class Filer
             $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
         }
 
-        return replace_macros(get_markup_template('fileas_widget.tpl'), array(
+        return replace_macros(Theme::get_template('fileas_widget.tpl'), array(
             '$title' => t('Saved Folders'),
             '$desc' => '',
             '$sel_all' => (($selected == '') ? 'selected' : ''),

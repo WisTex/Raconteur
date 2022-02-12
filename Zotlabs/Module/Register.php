@@ -6,6 +6,8 @@ use Zotlabs\Lib\Account;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Access\PermissionRoles;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/security.php');
 
@@ -284,7 +286,7 @@ class Register extends Controller
         $email_verify = get_config('system', 'verify_email');
 
 
-        $o = replace_macros(get_markup_template('register.tpl'), [
+        $o = replace_macros(Theme::get_template('register.tpl'), [
             '$form_security_token' => get_form_security_token("register"),
             '$title' => t('Registration'),
             '$reg_is' => $registration_is,

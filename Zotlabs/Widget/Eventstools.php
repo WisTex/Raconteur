@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Render\Theme;
+
+
 class Eventstools
 {
 
@@ -12,7 +15,7 @@ class Eventstools
             return;
         }
 
-        return replace_macros(get_markup_template('events_tools_side.tpl'), array(
+        return replace_macros(Theme::get_template('events_tools_side.tpl'), array(
             '$title' => t('Events Tools'),
             '$export' => t('Export Calendar'),
             '$import' => t('Import Calendar'),

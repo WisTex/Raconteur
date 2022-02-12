@@ -10,6 +10,8 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
@@ -181,7 +183,7 @@ class Directory extends Controller
             $advanced = rtrim($advanced);
         }
 
-        $tpl = get_markup_template('directory_header.tpl');
+        $tpl = Theme::get_template('directory_header.tpl');
 
         $dirmode = intval(get_config('system', 'directory_mode'));
 
@@ -463,7 +465,7 @@ class Directory extends Controller
 
                         if ($_REQUEST['aj']) {
                             if ($entries) {
-                                $o = replace_macros(get_markup_template('directajax.tpl'), ['$entries' => $entries]);
+                                $o = replace_macros(Theme::get_template('directajax.tpl'), ['$entries' => $entries]);
                             } else {
                                 $o = '<div id="content-complete"></div>';
                             }

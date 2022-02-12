@@ -6,6 +6,8 @@ use App;
 use DBA;
 use Sabre\CardDAV\Backend\PDO;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Cdav
 {
@@ -132,7 +134,7 @@ class Cdav
                 'switch' => get_pconfig(local_channel(), 'cdav_calendar', 'calendar')
             ];
 
-            $o .= replace_macros(get_markup_template('cdav_widget_calendar.tpl'), [
+            $o .= replace_macros(Theme::get_template('cdav_widget_calendar.tpl'), [
                 '$calendars_label' => t('Channel Calendar'),
                 '$calendars' => $calendars,
                 '$my_calendars_label' => t('CalDAV Calendars'),
@@ -175,7 +177,7 @@ class Cdav
                 ];
             }
 
-            $o .= replace_macros(get_markup_template('cdav_widget_addressbook.tpl'), [
+            $o .= replace_macros(Theme::get_template('cdav_widget_addressbook.tpl'), [
                 '$addressbooks_label' => t('Addressbooks'),
                 '$addressbooks' => $addressbooks,
                 '$edit_label' => t('Addressbook name'),

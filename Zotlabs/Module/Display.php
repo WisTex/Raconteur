@@ -10,6 +10,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once("include/bbcode.php");
 require_once('include/security.php');
@@ -235,7 +237,7 @@ class Display extends Controller
             $o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), array(
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), array(
                 '$baseurl' => z_root(),
                 '$pgtype' => 'display',
                 '$uid' => '0',
@@ -448,7 +450,7 @@ class Display extends Controller
                 break;
 
             case 'atom':
-                $atom = replace_macros(get_markup_template('atom_feed.tpl'), array(
+                $atom = replace_macros(Theme::get_template('atom_feed.tpl'), array(
                     '$version' => xmlify(System::get_project_version()),
                     '$generator' => xmlify(System::get_platform_name()),
                     '$generator_uri' => 'https://hubzilla.org',

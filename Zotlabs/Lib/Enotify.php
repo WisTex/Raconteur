@@ -7,6 +7,8 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
     
 /**
  * @brief File with functions and a class for generating system and email notifications.
@@ -756,7 +758,7 @@ class Enotify
             }
 
             // load the template for private message notifications
-            $tpl = get_markup_template('email_notify_html.tpl');
+            $tpl = Theme::get_template('email_notify_html.tpl');
             $email_html_body = replace_macros($tpl, array(
             '$banner'       => $datarray['banner'],
             '$notify_icon'  => System::get_site_icon(),
@@ -779,7 +781,7 @@ class Enotify
             ));
 
             // load the template for private message notifications
-            $tpl = get_markup_template('email_notify_text.tpl');
+            $tpl = Theme::get_template('email_notify_text.tpl');
             $email_text_body = replace_macros($tpl, array(
                 '$banner'       => $datarray['banner'],
                 '$product'      => $datarray['product'],

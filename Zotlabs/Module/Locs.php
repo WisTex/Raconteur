@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Render\Theme;
+
 
 class Locs extends Controller
 {
@@ -127,7 +129,7 @@ class Locs extends Controller
             return;
         }
 
-        $o = replace_macros(get_markup_template('locmanage.tpl'), [
+        $o = replace_macros(Theme::get_template('locmanage.tpl'), [
             '$header' => t('Manage Channel Locations'),
             '$loc' => t('Location'),
             '$addr' => t('Address'),

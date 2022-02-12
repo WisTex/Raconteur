@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Notify extends Controller
 {
@@ -52,9 +54,9 @@ class Notify extends Controller
             return login();
         }
 
-        $notif_tpl = get_markup_template('notifications.tpl');
+        $notif_tpl = Theme::get_template('notifications.tpl');
 
-        $not_tpl = get_markup_template('notify.tpl');
+        $not_tpl = Theme::get_template('notify.tpl');
 
         $r = q(
             "SELECT * from notify where uid = %d and seen = 0 order by created desc",

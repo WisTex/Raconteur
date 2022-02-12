@@ -13,6 +13,8 @@ use Zotlabs\Web\HTTPHeaders;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
@@ -752,7 +754,7 @@ function photos_album_widget($channelx, $observer, $sortkey = 'display_path', $d
     }
 
     if ($albums['success']) {
-        $o = replace_macros(get_markup_template('photo_albums.tpl'), [
+        $o = replace_macros(Theme::get_template('photo_albums.tpl'), [
             '$nick'    => $channelx['channel_address'],
             '$title'   => t('Photo Albums'),
             '$recent'  => t('Recent Photos'),

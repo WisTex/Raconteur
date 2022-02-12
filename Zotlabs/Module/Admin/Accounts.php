@@ -5,6 +5,8 @@ namespace Zotlabs\Module\Admin;
 use App;
 use Zotlabs\Lib\Account;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
     
 class Accounts
 {
@@ -173,7 +175,7 @@ class Accounts
         }
 
         $t =
-        $o = replace_macros(get_markup_template('admin_accounts.tpl'), [
+        $o = replace_macros(Theme::get_template('admin_accounts.tpl'), [
             '$title' => t('Administration'),
             '$page' => t('Accounts'),
             '$submit' => t('Submit'),

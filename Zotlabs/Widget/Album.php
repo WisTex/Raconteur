@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/attach.php');
 
@@ -97,7 +99,7 @@ class Album
         }
 
 
-        $tpl = get_markup_template('photo_album.tpl');
+        $tpl = Theme::get_template('photo_album.tpl');
         $o .= replace_macros($tpl, array(
             '$photos' => $photos,
             '$album' => (($title) ? $title : $album),

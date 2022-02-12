@@ -8,6 +8,8 @@ use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 class Poke extends Controller
 {
@@ -140,7 +142,7 @@ class Poke extends Controller
         $title = t('Poke');
         $desc = t('Poke, prod or do other things to somebody');
 
-        $o = replace_macros(get_markup_template('poke_content.tpl'), array(
+        $o = replace_macros(Theme::get_template('poke_content.tpl'), array(
             '$title' => $title,
             '$desc' => $desc,
             '$clabel' => t('Recipient'),

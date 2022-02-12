@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Appman extends Controller
 {
@@ -140,7 +142,7 @@ class Appman extends Controller
             $embed = ['embed', t('Embed code'), Apps::app_encode($app, true), EMPTY_STR, 'onclick="this.select();"'];
         }
 
-        return replace_macros(get_markup_template('app_create.tpl'), [
+        return replace_macros(Theme::get_template('app_create.tpl'), [
             '$banner' => (($app) ? t('Edit App') : t('Create App')),
             '$app' => $app,
             '$guid' => (($app) ? $app['app_id'] : EMPTY_STR),

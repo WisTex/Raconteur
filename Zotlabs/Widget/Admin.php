@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Admin
 {
@@ -57,7 +59,7 @@ class Admin
         $arr = array('links' => $aside, 'plugins' => $plugins, 'logs' => $logs);
         Hook::call('admin_aside', $arr);
 
-        $o .= replace_macros(get_markup_template('admin_aside.tpl'), array(
+        $o .= replace_macros(Theme::get_template('admin_aside.tpl'), array(
             '$admin' => $aside,
             '$admtxt' => t('Admin'),
             '$plugadmtxt' => t('Addon Features'),

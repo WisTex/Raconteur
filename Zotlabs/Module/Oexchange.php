@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 class Oexchange extends Controller
 {
@@ -12,7 +14,7 @@ class Oexchange extends Controller
     {
 
         if ((argc() > 1) && (argv(1) === 'xrd')) {
-            echo replace_macros(get_markup_template('oexchange_xrd.tpl'), ['$base' => z_root()]);
+            echo replace_macros(Theme::get_template('oexchange_xrd.tpl'), ['$base' => z_root()]);
             killme();
         }
     }

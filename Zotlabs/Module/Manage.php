@@ -8,6 +8,8 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/security.php');
 
@@ -181,7 +183,7 @@ class Manage extends Controller
             $delegates = null;
         }
 
-        return replace_macros(get_markup_template('channels.tpl'), [
+        return replace_macros(Theme::get_template('channels.tpl'), [
             '$header' => t('Channels'),
             '$msg_selected' => t('Current Channel'),
             '$selected' => local_channel(),

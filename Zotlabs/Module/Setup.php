@@ -16,6 +16,8 @@ use PDO;
 use Zotlabs\Lib\System;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 /**
  * @brief Initialisation for the setup module.
  *
@@ -138,7 +140,7 @@ class Setup extends Controller
                     killme();
                 }
 
-                $txt = replace_macros(get_intltext_template('htconfig.tpl'), [
+                $txt = replace_macros(Theme::get_email_template('htconfig.tpl'), [
                     '$dbhost' => $dbhost,
                     '$dbport' => $dbport,
                     '$dbuser' => $dbuser,
@@ -224,7 +226,7 @@ class Setup extends Controller
         if (DBA::$dba && DBA::$dba->connected) {
             $r = q("SELECT COUNT(*) as total FROM account");
             if ($r && count($r) && $r[0]['total']) {
-                return replace_macros(get_markup_template('install.tpl'), [
+                return replace_macros(Theme::get_template('install.tpl'), [
                     '$title' => $install_title,
                     '$pass' => '',
                     '$status' => t('Permission denied.'),
@@ -238,8 +240,8 @@ class Setup extends Controller
         }
 
         if ($db_return_text !== EMPTY_STR) {
-            $tpl = get_markup_template('install.tpl');
-            return replace_macros(get_markup_template('install.tpl'), [
+            $tpl = Theme::get_template('install.tpl');
+            return replace_macros(Theme::get_template('install.tpl'), [
                 '$title' => $install_title,
                 '$icon' => $icon,
                 '$pass' => $pass,
@@ -277,7 +279,7 @@ class Setup extends Controller
 
                 $checkspassed = array_reduce($checks, "self::check_passed", true);
 
-                $o .= replace_macros(get_markup_template('install_checks.tpl'), [
+                $o .= replace_macros(Theme::get_template('install_checks.tpl'), [
                     '$title' => $install_title,
                     '$pass' => t('System check'),
                     '$checks' => $checks,
@@ -308,7 +310,7 @@ class Setup extends Controller
 
                 $servertype = EMPTY_STR;
 
-                $o .= replace_macros(get_markup_template('install_db.tpl'), [
+                $o .= replace_macros(Theme::get_template('install_db.tpl'), [
                     '$title' => $install_title,
                     '$pass' => t('Database connection'),
                     '$info_01' => t('In order to install this software we need to know how to connect to your database.'),
@@ -352,7 +354,7 @@ class Setup extends Controller
                 $siteurl = ((x($_POST, 'siteurl')) ? trim($_POST['siteurl']) : EMPTY_STR);
                 $timezone = ((x($_POST, 'timezone')) ? ($_POST['timezone']) : 'America/Los_Angeles');
 
-                $o .= replace_macros(get_markup_template('install_settings.tpl'), [
+                $o .= replace_macros(Theme::get_template('install_settings.tpl'), [
                     '$title' => $install_title,
                     '$pass' => t('Site settings'),
                     '$status' => $wizard_status,
@@ -432,7 +434,7 @@ class Setup extends Controller
             $help .= t('If you do not have a command line version of PHP installed on server, you will not be able to run background tasks - including message delivery.') . EOL;
             $help .= EOL;
 
-            $help .= replace_macros(get_markup_template('field_input.tpl'), [
+            $help .= replace_macros(Theme::get_template('field_input.tpl'), [
                 '$field' => ['phpath', t('PHP executable path'), $phpath, t('Enter full path to php executable. You can leave this blank to continue the installation.')],
             ]);
             $phpath = '';

@@ -5,6 +5,8 @@ namespace Zotlabs\Widget;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Settings_menu
 {
@@ -131,7 +133,7 @@ class Settings_menu
 //          );
 //      }
 
-        $tabtpl = get_markup_template("generic_links_widget.tpl");
+        $tabtpl = Theme::get_template("generic_links_widget.tpl");
         return replace_macros($tabtpl, array(
             '$title' => t('Settings'),
             '$class' => 'settings-widget',

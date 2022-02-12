@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Render\Theme;
+
+
 class Logs
 {
 
@@ -46,7 +49,7 @@ class Logs
             LOGGER_ALL => 'All'
         );
 
-        $t = get_markup_template('admin_logs.tpl');
+        $t = Theme::get_template('admin_logs.tpl');
 
         $f = get_config('system', 'logfile');
 

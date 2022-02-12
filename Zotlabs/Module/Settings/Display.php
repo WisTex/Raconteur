@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Display
 {
@@ -196,7 +198,7 @@ class Display
 
         // logger('schemas: ' . print_r($schemas,true));
 
-        $tpl = get_markup_template("settings_display.tpl");
+        $tpl = Theme::get_template("settings_display.tpl");
         $o = replace_macros($tpl, array(
             '$ptitle' => t('Display Settings'),
             '$d_tset' => t('Theme Settings'),

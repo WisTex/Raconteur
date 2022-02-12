@@ -12,6 +12,8 @@
 use CommerceGuys\Intl\Language\LanguageRepository;
 use Zotlabs\Lib\System;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @brief Get the browser's submitted preferred languages.
@@ -437,7 +439,7 @@ function lang_selector()
         }
     }
 
-    $tpl = get_markup_template('lang_selector.tpl');
+    $tpl = Theme::get_template('lang_selector.tpl');
 
     $o = replace_macros($tpl, array(
         '$title' => t('Select an alternate language'),

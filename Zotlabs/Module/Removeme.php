@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Removeme extends Controller
 {
@@ -66,7 +68,7 @@ class Removeme extends Controller
 
         $_SESSION['remove_channel_verify'] = $hash;
 
-        $o .= replace_macros(get_markup_template('removeme.tpl'), [
+        $o .= replace_macros(Theme::get_template('removeme.tpl'), [
             '$basedir' => z_root(),
             '$hash' => $hash,
             '$title' => t('Remove This Channel'),

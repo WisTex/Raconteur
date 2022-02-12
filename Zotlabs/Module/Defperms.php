@@ -10,6 +10,8 @@ use Zotlabs\Web\Controller;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/socgraph.php');
 
@@ -212,7 +214,7 @@ class Defperms extends Controller
 
             $self = false;
 
-            $tpl = get_markup_template('defperms.tpl');
+            $tpl = Theme::get_template('defperms.tpl');
 
             $perms = [];
             $channel = App::get_channel();

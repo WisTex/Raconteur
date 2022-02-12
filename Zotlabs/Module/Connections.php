@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/socgraph.php');
 
@@ -354,7 +356,7 @@ class Connections extends Controller
 
         if ($_REQUEST['aj']) {
             if ($contacts) {
-                $o = replace_macros(get_markup_template('contactsajax.tpl'), array(
+                $o = replace_macros(Theme::get_template('contactsajax.tpl'), array(
                     '$contacts' => $contacts,
                     '$edit' => t('Edit'),
                 ));
@@ -365,7 +367,7 @@ class Connections extends Controller
             killme();
         } else {
             $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
-            $o .= replace_macros(get_markup_template('connections.tpl'), array(
+            $o .= replace_macros(Theme::get_template('connections.tpl'), array(
                 '$header' => t('Connections') . (($head) ? ': ' . $head : ''),
                 '$tabs' => $tabs,
                 '$order' => $order,

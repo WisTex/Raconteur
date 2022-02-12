@@ -13,6 +13,8 @@ use Zotlabs\Lib\Menu;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Render\Theme;
+
 
 function item_extract_images($body)
 {
@@ -534,7 +536,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
     $threads = [];
     $threadsid = -1;
 
-    $page_template = get_markup_template("conversation.tpl");
+    $page_template = Theme::get_template("conversation.tpl");
 
     if ($items) {
         if (in_array($mode, [ 'stream-new', 'search', 'community', 'moderate' ])) {
@@ -779,11 +781,11 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
     }
 
     if (in_array($page_mode, [ 'traditional', 'preview', 'pager_list'])) {
-        $page_template = get_markup_template("threaded_conversation.tpl");
+        $page_template = Theme::get_template("threaded_conversation.tpl");
     } elseif ($update) {
-        $page_template = get_markup_template("convobj.tpl");
+        $page_template = Theme::get_template("convobj.tpl");
     } else {
-        $page_template = get_markup_template("conv_frame.tpl");
+        $page_template = Theme::get_template("conv_frame.tpl");
         $threads = null;
     }
 
@@ -1216,7 +1218,7 @@ function z_status_editor($x, $popup = false)
     }
 
 
-    $geotag = (($x['allow_location']) ? replace_macros(get_markup_template('jot_geotag.tpl'), []) : '');
+    $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
     $setloc = t('Set your location');
     $clearloc = ((get_pconfig($x['profile_uid'], 'system', 'use_browser_location')) ? t('Clear browser location') : '');
     if (x($x, 'hide_location')) {
@@ -1271,7 +1273,7 @@ function z_status_editor($x, $popup = false)
 
     $feature_auto_save_draft = ((Features::enabled($x['profile_uid'], 'auto_save_draft')) ? "true" : "false");
 
-    $tpl = get_markup_template('jot-header.tpl');
+    $tpl = Theme::get_template('jot-header.tpl');
 
     if (! isset(App::$page['htmlhead'])) {
         App::$page['htmlhead'] = EMPTY_STR;
@@ -1300,7 +1302,7 @@ function z_status_editor($x, $popup = false)
         '$reset' => $reset
     ));
 
-    $tpl = get_markup_template('jot.tpl');
+    $tpl = Theme::get_template('jot.tpl');
 
     $preview = t('Preview');
     if (x($x, 'hide_preview')) {
@@ -1887,7 +1889,7 @@ function prepare_page($item)
     if (App::$page['template'] == 'none') {
         $tpl = 'page_display_empty.tpl';
 
-        return replace_macros(get_markup_template($tpl), array(
+        return replace_macros(Theme::get_template($tpl), array(
             '$body' => $body['html']
         ));
     }
@@ -1897,7 +1899,7 @@ function prepare_page($item)
         $tpl = 'page_display.tpl';
     }
 
-    return replace_macros(get_markup_template($tpl), array(
+    return replace_macros(Theme::get_template($tpl), array(
         '$author' => (($naked) ? '' : $item['author']['xchan_name']),
         '$auth_url' => (($naked) ? '' : zid($item['author']['xchan_url'])),
         '$date' => (($naked) ? '' : datetime_convert('UTC', date_default_timezone_get(), $item['created'], 'Y-m-d H:i')),
@@ -2104,7 +2106,7 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
     $arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
     Hook::call('profile_tabs', $arr);
 
-    $tpl = get_markup_template('profile_tabs.tpl');
+    $tpl = Theme::get_template('profile_tabs.tpl');
 
     return replace_macros($tpl, array(
         '$tabs' => $arr['tabs'],

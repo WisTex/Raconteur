@@ -1,6 +1,8 @@
 <?php
 
 namespace Zotlabs\Render;
+use Zotlabs\Render\Theme;
+
 
 define("KEY_NOT_EXISTS", '^R_key_not_Exists^');
 
@@ -169,7 +171,7 @@ class SimpleTemplate implements TemplateEngine
             $r[$a] = $this->_get_var($b);
         }
         $this->nodes = array();
-        $tpl = get_markup_template($tplfile);
+        $tpl = Theme::get_template($tplfile);
         $ret = $this->replace($tpl, $r);
         $this->_pop_stack();
 
@@ -329,7 +331,7 @@ class SimpleTemplate implements TemplateEngine
         return $s;
     }
 
-    public function get_markup_template($file, $root = '')
+    public function get_template($file, $root = '')
     {
         $template_file = Theme::include($file, $root);
         if ($template_file) {

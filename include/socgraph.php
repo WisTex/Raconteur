@@ -6,6 +6,8 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\ASCollection;
+use Zotlabs\Render\Theme;
+
 
 /**
  * poco_load
@@ -678,7 +680,7 @@ function poco()
 
     if ($format === 'xml') {
         header('Content-type: text/xml');
-        echo replace_macros(get_markup_template('poco_xml.tpl'), array_xmlify(array('$response' => $ret)));
+        echo replace_macros(Theme::get_template('poco_xml.tpl'), array_xmlify(array('$response' => $ret)));
         http_status_exit(500);
     }
     if ($format === 'json') {

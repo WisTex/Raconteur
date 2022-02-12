@@ -12,6 +12,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/conversation.php');
 
@@ -213,7 +215,7 @@ class Stream extends Controller
             // the activity_filter widget because it doesn't look very good
             if ($search && $search !== 'video]') {
                 $o .= replace_macros(
-                    get_markup_template("section_title.tpl"),
+                    Theme::get_template("section_title.tpl"),
                     ['$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT, 'UTF-8')]
                 );
             }
@@ -300,7 +302,7 @@ class Stream extends Controller
             }
 
             if ($x || $vg) {
-                $title = replace_macros(get_markup_template("section_title.tpl"), array(
+                $title = replace_macros(Theme::get_template("section_title.tpl"), array(
                     '$title' => sprintf(t('Access list: %s'), (($vg) ? $vg : $x['gname']))
                 ));
             }
@@ -323,7 +325,7 @@ class Stream extends Controller
                 }
             }
 
-            $title = replace_macros(get_markup_template('section_title.tpl'), [
+            $title = replace_macros(Theme::get_template('section_title.tpl'), [
                 '$title' => '<a href="' . zid($cid_r[0]['xchan_url']) . '" ><img src="' . zid($cid_r[0]['xchan_photo_s']) . '" alt="' . urlencode($cid_r[0]['xchan_name']) . '" /></a> <a href="' . zid($cid_r[0]['xchan_url']) . '" >' . $cid_r[0]['xchan_name'] . '</a>'
             ]);
 
@@ -337,7 +339,7 @@ class Stream extends Controller
             if ($r) {
                 $item_thread_top = '';
                 $sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE true $sql_options AND uid = " . intval(local_channel()) . " AND ( author_xchan = '" . dbesc($xchan) . "' or owner_xchan = '" . dbesc($xchan) . "' ) $item_normal ) ";
-                $title = replace_macros(get_markup_template('section_title.tpl'), [
+                $title = replace_macros(Theme::get_template('section_title.tpl'), [
                     '$title' => '<a href="' . zid($r[0]['xchan_url']) . '" ><img src="' . zid($r[0]['xchan_photo_s']) . '" alt="' . urlencode($r[0]['xchan_name']) . '" /></a> <a href="' . zid($r[0]['xchan_url']) . '" >' . $r[0]['xchan_name'] . '</a>'
                 ]);
 
@@ -372,7 +374,7 @@ class Stream extends Controller
                 . "; var profile_page = " . App::$pager['page']
                 . "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template('build_query.tpl'), [
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template('build_query.tpl'), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'stream',
                 '$uid' => ((local_channel()) ? local_channel() : '0'),

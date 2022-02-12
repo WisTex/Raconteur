@@ -9,6 +9,8 @@ use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Yaml;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Ap_probe extends Controller
 {
@@ -18,7 +20,7 @@ class Ap_probe extends Controller
 
         $channel = null;
 
-        $o = replace_macros(get_markup_template('ap_probe.tpl'), [
+        $o = replace_macros(Theme::get_template('ap_probe.tpl'), [
             '$page_title' => t('ActivityPub Probe Diagnostic'),
             '$resource' => ['resource', t('Object URL'), $_REQUEST['resource'], EMPTY_STR],
             '$authf' => ['authf', t('Authenticated fetch'), $_REQUEST['authf'], EMPTY_STR, [t('No'), t('Yes')]],

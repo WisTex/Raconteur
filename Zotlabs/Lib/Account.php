@@ -12,6 +12,8 @@ use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Account {
     
@@ -302,7 +304,7 @@ class Account {
         push_lang(($account['account_language']) ? $account['account_language'] : 'en');
 
         $email_msg = replace_macros(
-            get_intltext_template('register_verify_member.tpl'),
+            Theme::get_email_template('register_verify_member.tpl'),
             [
                 '$sitename' => System::get_site_name(),
                 '$siteurl'  => z_root(),
@@ -381,7 +383,7 @@ class Account {
                 push_lang('en');
             }
 
-            $email_msg = replace_macros(get_intltext_template('register_verify_eml.tpl'), [
+            $email_msg = replace_macros(Theme::get_email_template('register_verify_eml.tpl'), [
                 '$sitename' => get_config('system', 'sitename'),
                 '$siteurl'  =>  z_root(),
                 '$email'    => $arr['email'],
@@ -413,7 +415,7 @@ class Account {
     public static function send_register_success_email($email, $password)
     {
 
-        $email_msg = replace_macros(get_intltext_template('register_open_eml.tpl'), [
+        $email_msg = replace_macros(Theme::get_email_template('register_open_eml.tpl'), [
             '$sitename' => System::get_site_name(),
             '$siteurl' =>  z_root(),
             '$email'    => $email,
@@ -480,7 +482,7 @@ class Account {
 
         push_lang($register[0]['lang']);
 
-        $email_tpl = get_intltext_template("register_open_eml.tpl");
+        $email_tpl = Theme::get_email_template("register_open_eml.tpl");
         $email_msg = replace_macros($email_tpl, [
             '$sitename' => System::get_site_name(),
             '$siteurl'  =>  z_root(),

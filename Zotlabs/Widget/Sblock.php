@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class Sblock
 {
@@ -14,7 +16,7 @@ class Sblock
             return EMPTY_STR;
         }
 
-        return replace_macros(get_markup_template('superblock_widget.tpl'), [
+        return replace_macros(Theme::get_template('superblock_widget.tpl'), [
             '$connect' => t('Block channel or site'),
             '$desc' => t('Enter channel address or URL'),
             '$hint' => t('Examples: bob@example.com, https://example.com/barbara'),

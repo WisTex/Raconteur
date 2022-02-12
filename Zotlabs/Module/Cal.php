@@ -8,6 +8,8 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -86,7 +88,7 @@ class Cal extends Controller
 
         $first_day = intval(get_pconfig($channel['channel_id'], 'system', 'cal_first_day', 0));
 
-        $htpl = get_markup_template('event_head.tpl');
+        $htpl = Theme::get_template('event_head.tpl');
         App::$page['htmlhead'] .= replace_macros($htpl, array(
             '$baseurl' => z_root(),
             '$module_url' => '/cal/' . $channel['channel_address'],
@@ -342,9 +344,9 @@ class Cal extends Controller
 
             // links: array('href', 'text', 'extra css classes', 'title')
             if (x($_GET, 'id')) {
-                $tpl = get_markup_template("event_cal.tpl");
+                $tpl = Theme::get_template("event_cal.tpl");
             } else {
-                $tpl = get_markup_template("events_cal-js.tpl");
+                $tpl = Theme::get_template("events_cal-js.tpl");
             }
 
             $nick = $channel['channel_address'];

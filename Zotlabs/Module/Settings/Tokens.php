@@ -8,6 +8,8 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/security.php');
 
@@ -290,7 +292,7 @@ class Tokens
         }
 
 
-        $tpl = get_markup_template("settings_tokens.tpl");
+        $tpl = Theme::get_template("settings_tokens.tpl");
         $o .= replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_tokens"),
             '$title' => t('Guest Access Tokens'),

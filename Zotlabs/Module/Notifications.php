@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/bbcode.php');
 
@@ -55,7 +57,7 @@ class Notifications extends Controller
             $notifications_available = true;
             foreach ($r as $rr) {
                 $x = strip_tags(bbcode($rr['msg']));
-                $notif_content .= replace_macros(get_markup_template('notify.tpl'), array(
+                $notif_content .= replace_macros(Theme::get_template('notify.tpl'), array(
                     '$item_link' => z_root() . '/notify/view/' . $rr['id'],
                     '$item_image' => $rr['photo'],
                     '$item_text' => $x,
@@ -68,7 +70,7 @@ class Notifications extends Controller
             $notif_content = t('No more system notifications.');
         }
 
-        $o .= replace_macros(get_markup_template('notifications.tpl'), array(
+        $o .= replace_macros(Theme::get_template('notifications.tpl'), array(
             '$notif_header' => t('System Notifications'),
             '$notif_link_mark_seen' => t('Mark all seen'),
             '$notif_content' => $notif_content,

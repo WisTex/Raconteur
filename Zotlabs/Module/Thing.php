@@ -9,6 +9,8 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
     
 /**
  * @file Zotlabs/Module/Thing.php
@@ -297,7 +299,7 @@ class Thing extends Controller
             );
 
             if ($r) {
-                return replace_macros(get_markup_template('show_thing.tpl'), array(
+                return replace_macros(Theme::get_template('show_thing.tpl'), array(
                     '$header' => t('Show Thing'),
                     '$edit' => t('Edit'),
                     '$delete' => t('Delete'),
@@ -337,7 +339,7 @@ class Thing extends Controller
                 return '';
             }
 
-            $o .= replace_macros(get_markup_template('thing_edit.tpl'), array(
+            $o .= replace_macros(Theme::get_template('thing_edit.tpl'), array(
                 '$thing_hdr' => t('Edit Thing'),
                 '$multiprof' => Features::enabled(local_channel(), 'multi_profiles'),
                 '$profile_lbl' => t('Select a profile'),
@@ -396,7 +398,7 @@ class Thing extends Controller
             return $o;
         }
 
-        $o .= replace_macros(get_markup_template('thing_input.tpl'), array(
+        $o .= replace_macros(Theme::get_template('thing_input.tpl'), array(
             '$thing_hdr' => t('Add Thing to your Profile'),
             '$multiprof' => Features::enabled(local_channel(), 'multi_profiles'),
             '$profile_lbl' => t('Select a profile'),

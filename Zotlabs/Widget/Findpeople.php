@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Findpeople
 {
@@ -26,7 +28,7 @@ class Findpeople
 
         $advanced_search = ((local_channel() && Features::enabled(local_channel(), 'advanced_dirsearch')) ? t('Advanced') : false);
 
-        return replace_macros(get_markup_template('peoplefind.tpl'), array(
+        return replace_macros(Theme::get_template('peoplefind.tpl'), array(
             '$findpeople' => t('Find Channels'),
             '$desc' => t('Enter name or interest'),
             '$label' => t('Connect/Follow'),

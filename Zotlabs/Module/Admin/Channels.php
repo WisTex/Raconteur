@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @brief Admin Module for Channels.
@@ -166,7 +168,7 @@ class Channels
 
         Hook::call('admin_channels', $channels);
 
-        $o = replace_macros(get_markup_template('admin_channels.tpl'), [
+        $o = replace_macros(Theme::get_template('admin_channels.tpl'), [
             // strings //
             '$title' => t('Administration'),
             '$page' => t('Channels'),

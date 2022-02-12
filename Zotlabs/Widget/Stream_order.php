@@ -4,6 +4,7 @@ namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
 use App;
 
 class Stream_order
@@ -130,11 +131,11 @@ class Stream_order
         $o = '';
 
         if ($arr['tabs']) {
-            $content = replace_macros(get_markup_template('common_pills.tpl'), [
+            $content = replace_macros(Theme::get_template('common_pills.tpl'), [
                 '$pills' => $arr['tabs'],
             ]);
 
-            $o = replace_macros(get_markup_template('common_widget.tpl'), [
+            $o = replace_macros(Theme::get_template('common_widget.tpl'), [
                 '$title' => t('Stream Order'),
     			'$content_id' => 'widget-stream-order',
                 '$content' => $content,

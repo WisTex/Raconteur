@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Render\Theme;
+
 
 class Notes
 {
@@ -18,7 +20,7 @@ class Notes
 
         $text = get_pconfig(local_channel(), 'notes', 'text');
 
-        $o = replace_macros(get_markup_template('notes.tpl'), [
+        $o = replace_macros(Theme::get_template('notes.tpl'), [
             '$banner' => t('Notes'),
             '$text' => $text,
             '$save' => t('Save'),

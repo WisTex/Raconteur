@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Rmagic extends Controller
 {
@@ -81,7 +83,7 @@ class Rmagic extends Controller
     public function get()
     {
         return replace_macros(
-            get_markup_template('rmagic.tpl'),
+            Theme::get_template('rmagic.tpl'),
             [
                 '$title' => t('Remote Authentication'),
                 '$address' => ['address', t('Enter your channel address (e.g. channel@example.com)'), '', ''],

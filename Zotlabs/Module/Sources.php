@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Sources extends Controller
 {
@@ -109,7 +111,7 @@ class Sources extends Controller
                     $r[$x]['src_patt'] = htmlspecialchars($r[$x]['src_patt'], ENT_COMPAT, 'UTF-8');
                 }
             }
-            $o = replace_macros(get_markup_template('sources_list.tpl'), [
+            $o = replace_macros(Theme::get_template('sources_list.tpl'), [
                 '$title' => t('Channel Sources'),
                 '$desc' => t('Manage remote sources of content for your channel.'),
                 '$new' => t('New Source'),
@@ -121,7 +123,7 @@ class Sources extends Controller
         if (argc() == 2 && argv(1) === 'new') {
             // TODO add the words 'or RSS feed' and corresponding code to manage feeds and frequency
 
-            $o = replace_macros(get_markup_template('sources_new.tpl'), [
+            $o = replace_macros(Theme::get_template('sources_new.tpl'), [
                 '$title' => t('New Source'),
                 '$desc' => t('Import all or selected content from the following channel into this channel and distribute it according to your channel settings.'),
                 '$words' => ['words', t('Only import content with these words (one per line)'), '', t('Leave blank to import all public content')],
@@ -154,7 +156,7 @@ class Sources extends Controller
 
             $r[0]['src_patt'] = htmlspecialchars($r[0]['src_patt'], ENT_QUOTES, 'UTF-8');
 
-            $o = replace_macros(get_markup_template('sources_edit.tpl'), array(
+            $o = replace_macros(Theme::get_template('sources_edit.tpl'), array(
                 '$title' => t('Edit Source'),
                 '$drop' => t('Delete Source'),
                 '$id' => $r[0]['src_id'],

@@ -294,7 +294,7 @@ class Browser extends DAV\Browser\Plugin {
 		$tiles = ((array_key_exists('cloud_tiles',$_SESSION)) ? intval($_SESSION['cloud_tiles']) : $deftiles);
 		$_SESSION['cloud_tiles'] = $tiles;
 	
-		$html .= replace_macros(get_markup_template('cloud.tpl'), [
+		$html .= replace_macros(Theme::get_template('cloud.tpl'), [
 				'$header' => t('Files') . ": " . $this->escapeHTML($path) . "/",
 				'$total' => t('Total'),
 				'$actionspanel' => $output,
@@ -415,7 +415,7 @@ class Browser extends DAV\Browser\Plugin {
 			$path = trim(substr($path,$count),'/');
 		}
 
-		$output .= replace_macros(get_markup_template('cloud_actionspanel.tpl'), array(
+		$output .= replace_macros(Theme::get_template('cloud_actionspanel.tpl'), array(
 				'$folder_header' => t('Create new folder'),
 				'$folder_submit' => t('Create'),
 				'$upload_header' => t('Upload file'),

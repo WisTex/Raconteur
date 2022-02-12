@@ -18,6 +18,8 @@ use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
     
 class Channel
 {
@@ -510,7 +512,7 @@ class Channel
 
         $timezone = date_default_timezone_get();
 
-        $opt_tpl = get_markup_template("field_checkbox.tpl");
+        $opt_tpl = Theme::get_template("field_checkbox.tpl");
         if (get_config('system', 'publish_all')) {
             $profile_in_dir = '<input type="hidden" name="profile_in_directory" value="1" />';
         } else {
@@ -529,7 +531,7 @@ class Channel
         $webbie = $nickname . '@' . App::get_hostname();
         $intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());
 
-        $prof_addr = replace_macros(get_markup_template('channel_settings_header.tpl'), array(
+        $prof_addr = replace_macros(Theme::get_template('channel_settings_header.tpl'), array(
             '$desc' => t('Your channel address is'),
             '$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
             '$compat' => t('Friends using compatible applications can use this address to connect with you.'),
@@ -583,7 +585,7 @@ class Channel
             $permissions_role = 'custom';
         }
 
-        $autoperms = replace_macros(get_markup_template('field_checkbox.tpl'), [
+        $autoperms = replace_macros(Theme::get_template('field_checkbox.tpl'), [
                 '$field' => ['autoperms', t('Automatic connection approval'), ((get_pconfig(local_channel(), 'system', 'autoperms', 0)) ? 1 : 0),
                 t('If enabled, connection requests will be approved without your interaction'), $yes_no]
         ]);
@@ -592,7 +594,7 @@ class Channel
 
         if (get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) {
             $apconfig = true;
-            $activitypub = replace_macros(get_markup_template('field_checkbox.tpl'), ['$field' => ['activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(), 'system', 'activitypub', ACTIVITYPUB_ENABLED)) ? 1 : 0), t('ActivityPub is an emerging internet standard for social communications'), $yes_no]]);
+            $activitypub = replace_macros(Theme::get_template('field_checkbox.tpl'), ['$field' => ['activitypub', t('Enable ActivityPub protocol'), ((get_pconfig(local_channel(), 'system', 'activitypub', ACTIVITYPUB_ENABLED)) ? 1 : 0), t('ActivityPub is an emerging internet standard for social communications'), $yes_no]]);
         } else {
             $apconfig = false;
             $activitypub = '<input type="hidden" name="activitypub" value="' . intval(ACTIVITYPUB_ENABLED) . '" >' . EOL;
@@ -624,7 +626,7 @@ class Channel
         }
 
 
-        $o .= replace_macros(get_markup_template('settings.tpl'), [
+        $o .= replace_macros(Theme::get_template('settings.tpl'), [
             '$ptitle' => t('Channel Settings'),
             '$submit' => t('Submit'),
             '$baseurl' => z_root(),
@@ -689,7 +691,7 @@ class Channel
             '$h_not' => t('Notifications'),
             '$activity_options' => t('By default post a status message when:'),
             '$post_newfriend' => array('post_newfriend', t('accepting a friend request'), $post_newfriend, '', $yes_no),
-            '$post_joingroup' => array('post_joingroup', t('joining a forum/community'), $post_joingroup, '', $yes_no),
+            '$post_joingroup' => array('post_joingroup', t('joining a group/community'), $post_joingroup, '', $yes_no),
             '$post_profilechange' => array('post_profilechange', t('making an <em>interesting</em> profile change'), $post_profilechange, '', $yes_no),
             '$lbl_not' => t('Send a notification email when:'),
             '$notify1' => array('notify1', t('You receive a connection request'), ($notify & NOTIFY_INTRO), NOTIFY_INTRO, '', $yes_no),
@@ -721,7 +723,7 @@ class Channel
 //          '$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
             '$vnotify13' => (($public_stream_mode) ? ['vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no] : []),
             '$vnotify14' => array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
-            '$vnotify15' => array('vnotify15', t('Unseen forum posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
+            '$vnotify15' => array('vnotify15', t('Unseen group posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
             '$vnotify16' => ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : []),
             '$desktop_notifications_info' => t('Desktop notifications are unavailable because the required browser permission has not been granted'),
             '$desktop_notifications_request' => t('Grant permission'),

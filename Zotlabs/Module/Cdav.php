@@ -33,6 +33,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/event.php');
 require_once('include/auth.php');
@@ -1031,7 +1033,7 @@ class Cdav extends Controller
 
             $permissions = $perm_defaults;
 
-            $o .= replace_macros(get_markup_template('cdav_calendar.tpl'), [
+            $o .= replace_macros(Theme::get_template('cdav_calendar.tpl'), [
                 '$sources' => $sources,
                 '$color' => $color,
                 '$lang' => App::$language,
@@ -1346,7 +1348,7 @@ class Cdav extends Controller
                 });
             }
 
-            $o .= replace_macros(get_markup_template('cdav_addressbook.tpl'), [
+            $o .= replace_macros(Theme::get_template('cdav_addressbook.tpl'), [
                 '$id' => $id,
                 '$cards' => $cards,
                 '$displayname' => $displayname,

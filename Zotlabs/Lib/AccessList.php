@@ -3,6 +3,8 @@
 namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libsync;
+use Zotlabs\Render\Theme;
+
 
 class AccessList
 {
@@ -341,7 +343,7 @@ class AccessList
             }
         }
 
-        return replace_macros(get_markup_template('group_selection.tpl'), [
+        return replace_macros(Theme::get_template('group_selection.tpl'), [
             '$label' => t('Add new connections to this access list'),
             '$groups' => $grps
         ]);
@@ -387,7 +389,7 @@ class AccessList
             }
         }
 
-        return replace_macros(get_markup_template('group_side.tpl'), [
+        return replace_macros(Theme::get_template('group_side.tpl'), [
             '$title' => t('Lists'),
             '$edittext' => t('Edit list'),
             '$createtext' => t('Create new list'),

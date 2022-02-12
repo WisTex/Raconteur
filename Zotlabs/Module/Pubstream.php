@@ -9,6 +9,8 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/conversation.php');
 
@@ -118,7 +120,7 @@ class Pubstream extends Controller
             // if we got a decoded hash we must encode it again before handing to javascript
             $mid = gen_link_id($mid);
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template("build_query.tpl"), array(
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), array(
                 '$baseurl' => z_root(),
                 '$pgtype' => 'pubstream',
                 '$uid' => ((local_channel()) ? local_channel() : '0'),

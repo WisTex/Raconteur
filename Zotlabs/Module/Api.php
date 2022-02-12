@@ -9,6 +9,8 @@ use OAuth1Consumer;
 use OAuth1Util;
 use Zotlabs\Web\Controller;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/api.php');
 
@@ -80,7 +82,7 @@ class Api extends Controller
                     killme();
                 }
 
-                $tpl = get_markup_template("oauth_authorize_done.tpl");
+                $tpl = Theme::get_template("oauth_authorize_done.tpl");
                 $o = replace_macros($tpl, array(
                     '$title' => t('Authorize application connection'),
                     '$info' => t('Return to your app and insert this Security Code:'),
@@ -102,7 +104,7 @@ class Api extends Controller
                 return "Invalid request. Unknown token.";
             }
 
-            $tpl = get_markup_template('oauth_authorize.tpl');
+            $tpl = Theme::get_template('oauth_authorize.tpl');
             $o = replace_macros($tpl, array(
                 '$title' => t('Authorize application connection'),
                 '$app' => $app,

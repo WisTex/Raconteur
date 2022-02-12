@@ -5,6 +5,8 @@ namespace Zotlabs\Widget;
 use App;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Cover_photo
 {
@@ -87,7 +89,7 @@ class Cover_photo
             $c = str_replace('src=', 'data-src=', $c);
             $photo_html = (($style) ? str_replace('alt=', ' style="' . $style . '" alt=', $c) : $c);
 
-            $o = replace_macros(get_markup_template('cover_photo_widget.tpl'), array(
+            $o = replace_macros(Theme::get_template('cover_photo_widget.tpl'), array(
                 '$photo_html' => $photo_html,
                 '$title' => $title,
                 '$subtitle' => $subtitle,

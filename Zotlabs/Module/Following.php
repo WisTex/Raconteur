@@ -10,6 +10,8 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 class Following extends Controller
 {
@@ -85,7 +87,7 @@ class Following extends Controller
                 $members[] = micropro($member, true, 'mpgroup', 'card');
             }
         }
-        $o = replace_macros(get_markup_template('listmembers.tpl'), [
+        $o = replace_macros(Theme::get_template('listmembers.tpl'), [
             '$title' => t('List members'),
             '$members' => $members
         ]);

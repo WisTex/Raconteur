@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
   
 require_once('include/conversation.php');
 
@@ -160,7 +162,7 @@ class Blocks extends Controller
         //Build the base URL for edit links
         $url = z_root() . '/editblock/' . $which;
 
-        $o .= replace_macros(get_markup_template('blocklist.tpl'), array(
+        $o .= replace_macros(Theme::get_template('blocklist.tpl'), array(
             '$baseurl' => $url,
             '$title' => t('Blocks'),
             '$name' => t('Block Name'),

@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Render\Theme;
+
 
 class Apporder extends Controller
 {
@@ -43,7 +45,7 @@ class Apporder extends Controller
             }
         }
 
-        return replace_macros(get_markup_template('apporder.tpl'), [
+        return replace_macros(Theme::get_template('apporder.tpl'), [
             '$arrange'     => t('Arrange Apps'),
             '$header' => [t('Change order of pinned navbar apps'), t('Change order of app tray apps')],
             '$desc' => [t('Use arrows to move the corresponding app left (top) or right (bottom) in the navbar'),

@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Module\Admin;
 
+use Zotlabs\Render\Theme;
+
+
 class Account_edit
 {
 
@@ -68,7 +71,7 @@ class Account_edit
         }
 
 
-        $a = replace_macros(get_markup_template('admin_account_edit.tpl'), [
+        $a = replace_macros(Theme::get_template('admin_account_edit.tpl'), [
                 '$account' => $x[0],
                 '$title' => t('Account Edit'),
                 '$pass1' => ['pass1', t('New Password'), ' ', ''],

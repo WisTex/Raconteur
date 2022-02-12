@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Render\Theme;
+
+
 class Mailmenu
 {
 
@@ -12,7 +15,7 @@ class Mailmenu
             return;
         }
 
-        return replace_macros(get_markup_template('message_side.tpl'), array(
+        return replace_macros(Theme::get_template('message_side.tpl'), array(
             '$title' => t('Private Mail Menu'),
             '$combined' => array(
                 'label' => t('Combined View'),

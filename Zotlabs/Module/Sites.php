@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 class Sites extends Controller
 {
@@ -111,7 +113,7 @@ class Sites extends Controller
             }
         }
 
-        $o = replace_macros(get_markup_template('sitentry_header.tpl'), [
+        $o = replace_macros(Theme::get_template('sitentry_header.tpl'), [
             '$dirlbl' => t('Affiliated Sites'),
             '$desc' => $desc,
             '$entries' => $j,

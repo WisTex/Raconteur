@@ -9,5 +9,5 @@ namespace Zotlabs\Render;
 interface TemplateEngine
 {
     public function replace_macros($s, $v);
-    public function get_markup_template($file, $root = '');
+    public function get_template($file, $root = '');
 }

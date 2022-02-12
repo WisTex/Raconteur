@@ -6,6 +6,8 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Affinity extends Controller
 {
@@ -53,7 +55,7 @@ class Affinity extends Controller
 
         $cmax = intval(get_pconfig(local_channel(), 'affinity', 'cmax'));
         $cmax = (($cmax) ? $cmax : 99);
-//      $setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
+//      $setting_fields .= replace_macros(Theme::get_template('field_input.tpl'), array(
 //          '$field'    => array('affinity_cmax', t('Default maximum affinity level'), $cmax, t('0-99 default 99'))
 //      ));
 
@@ -68,7 +70,7 @@ class Affinity extends Controller
             );
             Hook::call('affinity_labels', $labels);
 
-            $tpl = get_markup_template('affinity.tpl');
+            $tpl = Theme::get_template('affinity.tpl');
             $x = replace_macros($tpl, [
                 '$cmin' => 0,
                 '$cmax' => $cmax,
@@ -83,7 +85,7 @@ class Affinity extends Controller
             $setting_fields .= $arr['html'];
         }
 
-        $s .= replace_macros(get_markup_template('generic_app_settings.tpl'), array(
+        $s .= replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
             '$addon' => array('affinity', '' . t('Friend Zoom Settings'), '', t('Submit')),
             '$content' => $setting_fields
         ));

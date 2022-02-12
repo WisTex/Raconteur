@@ -7,6 +7,8 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\MarkdownSoap;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 
 require_once('include/conversation.php');
@@ -147,7 +149,7 @@ class Editblock extends Controller
 
         $editor = status_editor($x);
 
-        $o .= replace_macros(get_markup_template('edpost_head.tpl'), array(
+        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), array(
             '$title' => t('Edit Block'),
             '$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
             '$id' => $itm[0]['id'],

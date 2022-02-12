@@ -14,6 +14,8 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Render\Theme;
+
     
 class Filestorage extends Controller
 {
@@ -222,7 +224,7 @@ class Filestorage extends Controller
             $encoded_path = str_replace('%2F', '/', rawurlencode($cloudpath));
             $folder_list = attach_folder_select_list($channel['channel_id']);
 
-            $o = replace_macros(get_markup_template('attach_edit.tpl'), [
+            $o = replace_macros(Theme::get_template('attach_edit.tpl'), [
                 '$header' => t('Edit file permissions'),
                 '$file' => $f,
                 '$cloudpath' => z_root() . '/' . $encoded_path,

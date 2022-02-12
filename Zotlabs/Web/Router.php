@@ -164,8 +164,8 @@ class Router
                 }
 
                 header($_SERVER['SERVER_PROTOCOL'] . ' 404 Not Found');
-                $tpl = get_markup_template('404.tpl');
-                App::$page['content'] = replace_macros(get_markup_template('404.tpl'), ['$message' => t('Page not found.')]);
+                $tpl = Theme::get_template('404.tpl');
+                App::$page['content'] = replace_macros(Theme::get_template('404.tpl'), ['$message' => t('Page not found.')]);
 
                 // pretend this is a module so it will initialise the theme
                 App::$module = '404';

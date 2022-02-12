@@ -7,6 +7,7 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
         
 class Libprofile
 {
@@ -378,9 +379,9 @@ class Libprofile
         }
 
         if ($zcard) {
-            $tpl = get_markup_template('profile_vcard_short.tpl');
+            $tpl = Theme::get_template('profile_vcard_short.tpl');
         } else {
-            $tpl = get_markup_template('profile_vcard.tpl');
+            $tpl = Theme::get_template('profile_vcard.tpl');
         }
 
         $o .= replace_macros($tpl, array(
@@ -501,7 +502,7 @@ class Libprofile
             }
 
 
-            $tpl = get_markup_template('profile_advanced.tpl');
+            $tpl = Theme::get_template('profile_advanced.tpl');
 
             $profile = [];
 

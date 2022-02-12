@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/import.php');
 
@@ -134,7 +136,7 @@ class Import_items extends Controller
             return login();
         }
 
-        $o = replace_macros(get_markup_template('item_import.tpl'), array(
+        $o = replace_macros(Theme::get_template('item_import.tpl'), array(
             '$title' => t('Import Items'),
             '$desc' => t('Use this form to import existing posts and content from an export file.'),
             '$label_filename' => t('File to Upload'),

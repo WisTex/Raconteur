@@ -7,6 +7,8 @@ use Zotlabs\Lib\ZotURL;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Web\Controller;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Render\Theme;
+
 
 class Zot_probe extends Controller
 {
@@ -14,7 +16,7 @@ class Zot_probe extends Controller
     public function get()
     {
 
-        $o = replace_macros(get_markup_template('zot_probe.tpl'), [
+        $o = replace_macros(Theme::get_template('zot_probe.tpl'), [
             '$page_title' => t('Zot6 Probe Diagnostic'),
             '$resource' => ['resource', t('Object URL'), $_REQUEST['resource'], EMPTY_STR],
             '$authf' => ['authf', t('Authenticated fetch'), $_REQUEST['authf'], EMPTY_STR, [t('No'), t('Yes')]],

@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/conversation.php');
 require_once('include/text.php');
@@ -102,7 +104,7 @@ class Sharedwithme extends Controller
 
         $o = '';
 
-        $o .= replace_macros(get_markup_template('sharedwithme.tpl'), array(
+        $o .= replace_macros(Theme::get_template('sharedwithme.tpl'), array(
             '$header' => t('Files: shared with me'),
             '$name' => t('Name'),
             '$label_new' => t('NEW'),

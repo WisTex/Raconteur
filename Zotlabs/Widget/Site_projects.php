@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Render\Theme;
+
+
 class Site_projects
 {
 
@@ -28,7 +31,7 @@ class Site_projects
                 $results[] = $result;
             }
 
-            $o = replace_macros(get_markup_template('site_projects.tpl'), [
+            $o = replace_macros(Theme::get_template('site_projects.tpl'), [
                 '$title' => t('Projects'),
                 '$desc' => '',
                 '$all' => t('All projects'),

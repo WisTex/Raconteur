@@ -5,6 +5,8 @@ namespace Zotlabs\Module\Settings;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Features;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Featured
 {
@@ -48,16 +50,16 @@ class Featured
         if (Features::enabled(local_channel(), 'affinity')) {
             $cmax = intval(get_pconfig(local_channel(), 'affinity', 'cmax'));
             $cmax = (($cmax) ? $cmax : 99);
-            $setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
+            $setting_fields .= replace_macros(Theme::get_template('field_input.tpl'), array(
                 '$field' => array('affinity_cmax', t('Default maximum affinity level'), $cmax, t('0-99 default 99'))
             ));
             $cmin = intval(get_pconfig(local_channel(), 'affinity', 'cmin'));
             $cmin = (($cmin) ? $cmin : 0);
-            $setting_fields .= replace_macros(get_markup_template('field_input.tpl'), array(
+            $setting_fields .= replace_macros(Theme::get_template('field_input.tpl'), array(
                 '$field' => array('affinity_cmin', t('Default minimum affinity level'), $cmin, t('0-99 - default 0'))
             ));
 
-            $settings_addons .= replace_macros(get_markup_template('generic_addon_settings.tpl'), array(
+            $settings_addons .= replace_macros(Theme::get_template('generic_addon_settings.tpl'), array(
                 '$addon' => array('affinity_slider', '' . t('Affinity Slider Settings'), '', t('Submit')),
                 '$content' => $setting_fields
             ));
@@ -68,7 +70,7 @@ class Featured
         $this->sortpanels($settings_addons);
 
 
-        $tpl = get_markup_template("settings_addons.tpl");
+        $tpl = Theme::get_template("settings_addons.tpl");
         $o .= replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_featured"),
             '$title' => t('Addon Settings'),

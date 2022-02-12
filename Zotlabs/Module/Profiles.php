@@ -13,6 +13,8 @@ use Zotlabs\Lib\Features;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Extend\Hook;
 use Sabre\VObject\Reader;
+use Zotlabs\Render\Theme;
+
 
 class Profiles extends Controller
 {
@@ -706,7 +708,7 @@ class Profiles extends Controller
 
             $editselect = 'none';
 
-            App::$page['htmlhead'] .= replace_macros(get_markup_template('profed_head.tpl'), array(
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template('profed_head.tpl'), array(
                 '$baseurl' => z_root(),
                 '$editselect' => $editselect,
             ));
@@ -757,7 +759,7 @@ class Profiles extends Controller
 
             $is_default = (($r[0]['is_default']) ? 1 : 0);
 
-            $tpl = get_markup_template("profile_edit.tpl");
+            $tpl = Theme::get_template("profile_edit.tpl");
             $o .= replace_macros($tpl, array(
                 '$multi_profiles' => ((Features::enabled(local_channel(), 'multi_profiles')) ? true : false),
                 '$form_security_token' => get_form_security_token("profile_edit"),
@@ -862,7 +864,7 @@ class Profiles extends Controller
                 local_channel()
             );
             if ($r) {
-                $tpl = get_markup_template('profile_entry.tpl');
+                $tpl = Theme::get_template('profile_entry.tpl');
                 foreach ($r as $rr) {
                     $profiles .= replace_macros($tpl, array(
                         '$photo' => $rr['thumb'],
@@ -875,7 +877,7 @@ class Profiles extends Controller
                     ));
                 }
 
-                $tpl_header = get_markup_template('profile_listing_header.tpl');
+                $tpl_header = Theme::get_template('profile_listing_header.tpl');
                 $o .= replace_macros($tpl_header, array(
                     '$header' => t('Edit Profiles'),
                     '$cr_new' => t('Create New'),

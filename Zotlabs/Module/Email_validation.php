@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Account;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
     
 class Email_validation extends Controller
 {
@@ -38,7 +40,7 @@ class Email_validation extends Controller
             $email = hex2bin(argv(1));
         }
 
-        $o = replace_macros(get_markup_template('email_validation.tpl'), [
+        $o = replace_macros(Theme::get_template('email_validation.tpl'), [
             '$title' => t('Email Verification Required'),
             '$desc' => sprintf(t('A verification token was sent to your email address [%s]. Enter that token here to complete the account verification step. Please allow a few minutes for delivery, and check your spam folder if you do not see the message.'), $email),
             '$resend' => t('Resend Email'),

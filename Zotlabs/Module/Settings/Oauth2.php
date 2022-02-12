@@ -3,6 +3,8 @@
 namespace Zotlabs\Module\Settings;
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Render\Theme;
+
 
 class Oauth2
 {
@@ -106,7 +108,7 @@ class Oauth2
         }
 
         if ((argc() > 2) && (argv(2) === 'add')) {
-            $tpl = get_markup_template("settings_oauth2_edit.tpl");
+            $tpl = Theme::get_template("settings_oauth2_edit.tpl");
             $o .= replace_macros($tpl, array(
                 '$form_security_token' => get_form_security_token("settings_oauth2"),
                 '$title' => t('Add OAuth2 application'),
@@ -136,7 +138,7 @@ class Oauth2
 
             $app = $r[0];
 
-            $tpl = get_markup_template("settings_oauth2_edit.tpl");
+            $tpl = Theme::get_template("settings_oauth2_edit.tpl");
             $o .= replace_macros($tpl, array(
                 '$form_security_token' => get_form_security_token("settings_oauth2"),
                 '$title' => t('Add application'),
@@ -202,7 +204,7 @@ class Oauth2
             }
         }
 
-        $tpl = get_markup_template("settings_oauth2.tpl");
+        $tpl = Theme::get_template("settings_oauth2.tpl");
         $o .= replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_oauth2"),
             '$baseurl' => z_root(),

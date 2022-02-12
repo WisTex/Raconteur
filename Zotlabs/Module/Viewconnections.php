@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
+use Zotlabs\Render\Theme;
+
 
 class Viewconnections extends Controller
 {
@@ -96,7 +98,7 @@ class Viewconnections extends Controller
 
         if ($_REQUEST['aj']) {
             if ($contacts) {
-                $o = replace_macros(get_markup_template('viewcontactsajax.tpl'), [
+                $o = replace_macros(Theme::get_template('viewcontactsajax.tpl'), [
                     '$contacts' => $contacts
                 ]);
             } else {
@@ -106,7 +108,7 @@ class Viewconnections extends Controller
             killme();
         } else {
             $o .= "<script> var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
-            $o .= replace_macros(get_markup_template('viewcontact_template.tpl'), [
+            $o .= replace_macros(Theme::get_template('viewcontact_template.tpl'), [
                 '$title' => t('View Connections'),
                 '$contacts' => $contacts,
             ]);

@@ -15,7 +15,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Stringsjs;
 use Zotlabs\Extend\Hook;
-    
+use Zotlabs\Lib\Head;
+        
 /**
  * @file boot.php
  *
@@ -703,7 +704,7 @@ function sys_boot() {
 
 		App::$session = new Session();
 		App::$session->init();
-		load_hooks();
+		Hook::load();
 		/**
 		 * @hooks 'startup'
 		 */
@@ -1183,7 +1184,7 @@ class App {
 
 		// webmanifest
 		
-		head_add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
+		Head::add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
 		self::$meta->set('application-name', System::get_platform_name() );
 
 		self::$meta->set('generator', System::get_platform_name());
@@ -1193,9 +1194,9 @@ class App {
 			$i = System::get_site_icon();
 		}
 		if ($i) {
-			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
-			head_add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
-			head_add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
+			Head::add_link(['rel' => 'shortcut icon', 'href' => $i ]);
+			Head::add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
+			Head::add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
 		}
 
 		$x = [ 'header' => '' ];
@@ -1215,7 +1216,7 @@ class App {
 			self::$page['htmlhead'] = EMPTY_STR; // needed to silence warning
 		}
 		
-		self::$page['htmlhead'] = replace_macros(get_markup_template('head.tpl'),
+		self::$page['htmlhead'] = replace_macros(Theme::get_template('head.tpl'),
 			[
 				'$preload_images'  => $preload_images,
 				'$user_scalable'   => $user_scalable,
@@ -1226,9 +1227,9 @@ class App {
 				'$plugins'         => $x['header'],
 				'$update_interval' => $interval,
 				'$alerts_interval' => $alerts_interval,
-				'$head_css'        => head_get_css(),
-				'$head_js'         => head_get_js(),
-				'$linkrel'         => head_get_links(),
+				'$head_css'        => Head::get_css(),
+				'$head_js'         => Head::get_js(),
+				'$linkrel'         => Head::get_links(),
 				'$js_strings'      => Stringsjs::strings(),
 				'$zid'             => Channel::get_my_address(),
 				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
@@ -1236,7 +1237,7 @@ class App {
 		) . self::$page['htmlhead'];
 
 		// always put main.js at the end
-		self::$page['htmlhead'] .= head_get_main_js();
+		self::$page['htmlhead'] .= Head::get_main_js();
 	}
 
 	/**
@@ -1512,7 +1513,7 @@ function check_config() {
 	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
-	load_hooks();
+	Hook::load();
 
 	check_cron_broken();
 
@@ -1709,10 +1710,10 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	$dest_url = z_root() . '/' . App::$query_string;
 
 	if(local_channel()) {
-		$tpl = get_markup_template('logout.tpl');
+		$tpl = Theme::get_template('logout.tpl');
 	}
 	else {
-		$tpl = get_markup_template('login.tpl');
+		$tpl = Theme::get_template('login.tpl');
 		if(strlen(App::$query_string))
 			$_SESSION['login_return_url'] = App::$query_string;
 	}
@@ -2290,23 +2291,23 @@ function construct_page() {
 	// Theme::debug();
 
 	if (($p = Theme::include($current_theme[0] . '.js')) != '')
-		head_add_js('/' . $p);
+		Head::add_js('/' . $p);
 
 	if (($p = Theme::include('mod_' . App::$module . '.php')) != '')
 		require_once($p);
 
 	if (isset(App::$page['template_style']))
-		head_add_css(App::$page['template_style'] . '.css');
+		Head::add_css(App::$page['template_style'] . '.css');
 	else
-		head_add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
+		Head::add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
 
 	if (($p = Theme::include('mod_' . App::$module . '.css')) != '')
-		head_add_css('mod_' . App::$module . '.css');
+		Head::add_css('mod_' . App::$module . '.css');
 
-	head_add_css(Theme::url($installing));
+	Head::add_css(Theme::url($installing));
 
 	if (($p = Theme::include('mod_' . App::$module . '.js')) != '')
-		head_add_js('mod_' . App::$module . '.js');
+		Head::add_js('mod_' . App::$module . '.js');
 
 	App::build_pagehead();
 
@@ -2535,7 +2536,7 @@ function cert_bad_email() {
 		[
 			'toEmail'        => App::$config['system']['admin_email'],
 			'messageSubject' => sprintf(t('[$Projectname] Website SSL error for %s'), App::get_hostname()),
-			'textVersion'    => replace_macros(get_intltext_template('cert_bad_eml.tpl'),
+			'textVersion'    => replace_macros(Theme::get_email_template('cert_bad_eml.tpl'),
 				[
 					'$sitename' => App::$config['system']['sitename'],
 					'$siteurl'  => z_root(),
@@ -2584,7 +2585,7 @@ function check_cron_broken() {
 		[
 			'toEmail'        => App::$config['system']['admin_email'],
 			'messageSubject' => sprintf(t('[$Projectname] Cron tasks not running on %s'), App::get_hostname()),
-			'textVersion'    => replace_macros(get_intltext_template('cron_bad_eml.tpl'),
+			'textVersion'    => replace_macros(Theme::get_email_template('cron_bad_eml.tpl'),
 				[
 					'$sitename' => App::$config['system']['sitename'],
 					'$siteurl'  =>  z_root(),

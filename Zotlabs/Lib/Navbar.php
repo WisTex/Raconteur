@@ -73,7 +73,7 @@ class Navbar {
         if (! isset(App::$page['header'])) {
             App::$page['header'] = EMPTY_STR;
         }
-        App::$page['header'] .= replace_macros(get_markup_template('hdr.tpl'), array(
+        App::$page['header'] .= replace_macros(Theme::get_template('hdr.tpl'), array(
             //we could additionally use this to display important system notifications e.g. for updates
         ));
 
@@ -138,7 +138,7 @@ class Navbar {
                     $nav['login'] = login(true, 'navbar-login', false, false);
                     $nav['loginmenu'][] = ['login',t('Login'),'',t('Sign in'),'login_nav_btn'];
                     App::$page['content'] .= replace_macros(
-                        get_markup_template('nav_login.tpl'),
+                        Theme::get_template('nav_login.tpl'),
                         [
                             '$nav' => $nav,
                             'userinfo' => $userinfo
@@ -288,14 +288,14 @@ class Navbar {
         }
 
         $c = Theme::include('navbar_' . purify_filename($template) . '.css');
-        $tpl = get_markup_template('navbar_' . purify_filename($template) . '.tpl');
+        $tpl = Theme::get_template('navbar_' . purify_filename($template) . '.tpl');
 
         if ($c && $tpl) {
             head_add_css('navbar_' . $template . '.css');
         }
 
         if (! $tpl) {
-            $tpl = get_markup_template('navbar_default.tpl');
+            $tpl = Theme::get_template('navbar_default.tpl');
         }
 
         App::$page['nav'] .= replace_macros($tpl, array(
@@ -332,7 +332,7 @@ class Navbar {
         if (x($_SESSION, 'reload_avatar') && $observer) {
             // The avatar has been changed on the server but the browser doesn't know that,
             // force the browser to reload the image from the server instead of its cache.
-            $tpl = get_markup_template('force_image_reload.tpl');
+            $tpl = Theme::get_template('force_image_reload.tpl');
 
             App::$page['nav'] .= replace_macros($tpl, array(
                 '$imgUrl' => $observer['xchan_photo_m']
@@ -537,7 +537,7 @@ class Navbar {
         Hook::call('channel_apps', $arr);
 
         return replace_macros(
-            get_markup_template('profile_tabs.tpl'),
+            Theme::get_template('profile_tabs.tpl'),
             [
                 '$tabs'  => $arr['tabs'],
                 '$name'  => App::$profile['channel_name'],

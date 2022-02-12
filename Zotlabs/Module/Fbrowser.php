@@ -4,6 +4,8 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @package     Friendica\modules
@@ -63,7 +65,7 @@ class Fbrowser extends Controller
 
                 $files = array_map("self::files1", $r);
 
-                $tpl = get_markup_template("filebrowser.tpl");
+                $tpl = Theme::get_template("filebrowser.tpl");
                 echo replace_macros($tpl, array(
                     '$type' => 'image',
                     '$baseurl' => z_root(),
@@ -86,7 +88,7 @@ class Fbrowser extends Controller
                     //echo "<pre>"; var_dump($files); killme();
 
 
-                    $tpl = get_markup_template("filebrowser.tpl");
+                    $tpl = Theme::get_template("filebrowser.tpl");
                     echo replace_macros($tpl, array(
                         '$type' => 'file',
                         '$baseurl' => z_root(),

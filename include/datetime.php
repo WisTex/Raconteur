@@ -2,6 +2,8 @@
 
 
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 /**
  * @file include/datetime.php
@@ -164,7 +166,7 @@ function dob($dob)
 
     $age = age($value, App::$user['timezone'], App::$user['timezone']);
 
-    $o = replace_macros(get_markup_template("field_input.tpl"), [
+    $o = replace_macros(Theme::get_template("field_input.tpl"), [
         '$field' => [ 'dob', t('Birthday'), $value, ((intval($age)) ? t('Age: ') . $age : ''), '', 'placeholder="' . t('YYYY-MM-DD or MM-DD') . '"' ]
     ]);
 
@@ -247,7 +249,7 @@ function datetimesel($format, $min, $max, $default, $label, $id = 'datetimepicke
     $readable_format = str_replace('H', 'HH', $readable_format);
     $readable_format = str_replace('i', 'MM', $readable_format);
 
-    $tpl = get_markup_template('field_input.tpl');
+    $tpl = Theme::get_template('field_input.tpl');
     $o .= replace_macros($tpl, array(
             '$field' => array($id, $label, $input_text, (($required) ? t('Required') : ''), (($required) ? '*' : ''), 'placeholder="' . $readable_format . '"'),
         ));

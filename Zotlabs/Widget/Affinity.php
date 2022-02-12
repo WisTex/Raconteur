@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\Apps;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 class Affinity
 {
@@ -33,7 +35,7 @@ class Affinity
             );
             Hook::call('affinity_labels', $labels);
 
-            $tpl = get_markup_template('main_slider.tpl');
+            $tpl = Theme::get_template('main_slider.tpl');
             $x = replace_macros($tpl, [
                 '$cmin' => $cmin,
                 '$cmax' => $cmax,

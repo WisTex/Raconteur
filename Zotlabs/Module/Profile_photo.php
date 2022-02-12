@@ -15,6 +15,8 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
@@ -497,7 +499,7 @@ class Profile_photo extends Controller
         $importing = ((array_key_exists('importfile', App::$data)) ? true : false);
 
         if (!array_key_exists('imagecrop', App::$data)) {
-            $tpl = get_markup_template('profile_photo.tpl');
+            $tpl = Theme::get_template('profile_photo.tpl');
 
             $o .= replace_macros($tpl, [
                 '$user' => App::$channel['channel_address'],
@@ -531,7 +533,7 @@ class Profile_photo extends Controller
 
             $filename = App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'];
             $resolution = App::$data['imagecrop_resolution'];
-            $o .= replace_macros(get_markup_template('cropbody.tpl'), [
+            $o .= replace_macros(Theme::get_template('cropbody.tpl'), [
                 '$filename' => $filename,
                 '$profile' => intval($_REQUEST['profile']),
                 '$resource' => App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'],
@@ -570,7 +572,7 @@ class Profile_photo extends Controller
 
         App::$data['imagecrop'] = $hash;
         App::$data['imagecrop_resolution'] = $smallest;
-        App::$page['htmlhead'] .= replace_macros(get_markup_template('crophead.tpl'), []);
+        App::$page['htmlhead'] .= replace_macros(Theme::get_template('crophead.tpl'), []);
         return;
     }
 }

@@ -8,6 +8,8 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
     
 class Connect extends Controller
 {
@@ -85,7 +87,7 @@ class Connect extends Controller
         $text = get_pconfig(App::$data['channel']['channel_id'], 'system', 'selltext');
 
         if ($edit) {
-            $o = replace_macros(get_markup_template('sellpage_edit.tpl'), array(
+            $o = replace_macros(Theme::get_template('sellpage_edit.tpl'), array(
                 '$header' => t('Premium Channel Setup'),
                 '$address' => App::$data['channel']['channel_address'],
                 '$premium' => array('premium', t('Enable premium channel connection restrictions'), ((App::$data['channel']['channel_pageflags'] & PAGE_PREMIUM) ? '1' : ''), ''),
@@ -104,12 +106,12 @@ class Connect extends Controller
                 $text = t('(No specific instructions have been provided by the channel owner.)');
             }
 
-            $submit = replace_macros(get_markup_template('sellpage_submit.tpl'), array(
+            $submit = replace_macros(Theme::get_template('sellpage_submit.tpl'), array(
                 '$continue' => t('Continue'),
                 '$address' => App::$data['channel']['channel_address']
             ));
 
-            $o = replace_macros(get_markup_template('sellpage_view.tpl'), array(
+            $o = replace_macros(Theme::get_template('sellpage_view.tpl'), array(
                 '$header' => t('Restricted or Premium Channel'),
                 '$desc' => t('This channel may require additional steps or acknowledgement of the following conditions prior to connecting:'),
                 '$text' => prepare_text($text),

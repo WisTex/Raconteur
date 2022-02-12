@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Render\Theme;
+
 
 /*
  * Change channel nickname
@@ -101,7 +103,7 @@ class Changeaddr extends Controller
 
         $_SESSION['remove_account_verify'] = $hash;
 
-        $tpl = get_markup_template('channel_rename.tpl');
+        $tpl = Theme::get_template('channel_rename.tpl');
         $o .= replace_macros($tpl, [
             '$basedir' => z_root(),
             '$hash' => $hash,

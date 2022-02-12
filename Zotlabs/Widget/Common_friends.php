@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class Common_friends
 {
@@ -43,7 +45,7 @@ class Common_friends
 
         $r = common_friends($profile_uid, $observer_hash, 0, $cnt, true);
 
-        return replace_macros(get_markup_template('remote_friends_common.tpl'), array(
+        return replace_macros(Theme::get_template('remote_friends_common.tpl'), array(
             '$desc' => t('Common Connections'),
             '$base' => z_root(),
             '$uid' => $profile_uid,

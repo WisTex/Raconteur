@@ -5,6 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
+use Zotlabs\Render\Theme;
+
 
 require_once('include/socgraph.php');
 
@@ -69,7 +71,7 @@ class Common extends Controller
             }
         }
 
-        $tpl = get_markup_template('common_friends.tpl');
+        $tpl = Theme::get_template('common_friends.tpl');
 
         $o = replace_macros($tpl, [
             '$title' => t('View Common Connections'),

@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Render\Theme;
+
 
 class Categories
 {
@@ -81,7 +83,7 @@ class Categories
                 $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
             }
 
-            return replace_macros(get_markup_template('categories_widget.tpl'), array(
+            return replace_macros(Theme::get_template('categories_widget.tpl'), array(
                 '$title' => t('Categories'),
                 '$desc' => '',
                 '$sel_all' => (($selected == '') ? 'selected' : ''),
@@ -129,7 +131,7 @@ class Categories
                 $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
             }
 
-            return replace_macros(get_markup_template('categories_widget.tpl'), array(
+            return replace_macros(Theme::get_template('categories_widget.tpl'), array(
                 '$title' => t('Categories'),
                 '$desc' => '',
                 '$sel_all' => (($selected == '') ? 'selected' : ''),
@@ -180,7 +182,7 @@ class Categories
                 $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
             }
 
-            return replace_macros(get_markup_template('categories_widget.tpl'), array(
+            return replace_macros(Theme::get_template('categories_widget.tpl'), array(
                 '$title' => t('Categories'),
                 '$desc' => '',
                 '$sel_all' => (($selected == '') ? 'selected' : ''),

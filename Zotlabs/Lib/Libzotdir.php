@@ -8,6 +8,8 @@ use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Extend\Hook;
+use Zotlabs\Render\Theme;
+
     
 require_once('include/permissions.php');
 
@@ -116,7 +118,7 @@ class Libzotdir
         $q = http_build_query($tmp);
         $forumsurl = $url . (($q) ? '&' . $q : '') . $suggest;
 
-        $o = replace_macros(get_markup_template('dir_sort_links.tpl'), [
+        $o = replace_macros(Theme::get_template('dir_sort_links.tpl'), [
             '$header' => t('Directory Options'),
             '$forumsurl' => $forumsurl,
             '$safemode' => array('safemode', t('Safe Mode'), $safe_mode, '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),

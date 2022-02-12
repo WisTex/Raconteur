@@ -3,6 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class Sitesearch
 {
@@ -30,7 +32,7 @@ class Sitesearch
 
         $saved = [];
 
-        $tpl = get_markup_template("sitesearch.tpl");
+        $tpl = Theme::get_template("sitesearch.tpl");
         $o = replace_macros($tpl, array(
             '$title' => t('Search'),
             '$searchbox' => searchbox($search, 'netsearch-box', $srchurl . (($hasq) ? '' : '?f='), false),

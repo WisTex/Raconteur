@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Widget;
 
+use Zotlabs\Render\Theme;
+
+
 class Hq_controls
 {
 
@@ -13,7 +16,7 @@ class Hq_controls
         }
 
         return replace_macros(
-            get_markup_template('hq_controls.tpl'),
+            Theme::get_template('hq_controls.tpl'),
             [
                 '$title' => t('HQ Control Panel'),
                 '$menu' => [

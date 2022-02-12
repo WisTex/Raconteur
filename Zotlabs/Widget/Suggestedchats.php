@@ -4,6 +4,8 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Lib\Features;
+use Zotlabs\Render\Theme;
+
 
 class Suggestedchats
 {
@@ -35,7 +37,7 @@ class Suggestedchats
                 $r[$x]['xchat_url'] = zid($r[$x]['xchat_url']);
             }
         }
-        return replace_macros(get_markup_template('bookmarkedchats.tpl'), array(
+        return replace_macros(Theme::get_template('bookmarkedchats.tpl'), array(
             '$header' => t('Suggested Chatrooms'),
             '$rooms' => $r
         ));

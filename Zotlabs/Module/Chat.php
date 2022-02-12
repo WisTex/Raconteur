@@ -13,6 +13,8 @@ use Zotlabs\Lib\Libprofile;
 use Zotlabs\Access\AccessControl;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Render\Theme;
+
 
 class Chat extends Controller
 {
@@ -203,7 +205,7 @@ class Chat extends Controller
             }
 
 
-            $o = replace_macros(get_markup_template('chat.tpl'), [
+            $o = replace_macros(Theme::get_template('chat.tpl'), [
                 '$is_owner' => ((local_channel() && local_channel() == $x[0]['cr_uid']) ? true : false),
                 '$room_name' => $room_name,
                 '$room_id' => $room_id,
@@ -234,7 +236,7 @@ class Chat extends Controller
 
         $chatroom_new = '';
         if (local_channel()) {
-            $chatroom_new = replace_macros(get_markup_template('chatroom_new.tpl'), array(
+            $chatroom_new = replace_macros(Theme::get_template('chatroom_new.tpl'), array(
                 '$header' => t('New Chatroom'),
                 '$name' => array('room_name', t('Chatroom name'), '', ''),
                 '$chat_expire' => array('chat_expire', t('Expiration of chats (minutes)'), 120, ''),
@@ -252,7 +254,7 @@ class Chat extends Controller
 
         $rooms = Chatroom::roomlist(App::$profile['profile_uid']);
 
-        $o .= replace_macros(get_markup_template('chatrooms.tpl'), [
+        $o .= replace_macros(Theme::get_template('chatrooms.tpl'), [
             '$header' => sprintf(t('%1$s\'s Chatrooms'), App::$profile['fullname']),
             '$name' => t('Name'),
             '$baseurl' => z_root(),

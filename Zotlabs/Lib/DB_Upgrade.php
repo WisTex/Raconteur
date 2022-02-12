@@ -3,6 +3,8 @@
 namespace Zotlabs\Lib;
 
 use App;
+use Zotlabs\Render\Theme;
+
 
 class DB_Upgrade
 {
@@ -90,7 +92,7 @@ class DB_Upgrade
                                 'toEmail' => App::$config['system']['admin_email'],
                                 'messageSubject' => sprintf(t('Update Error at %s'), z_root()),
                                 'textVersion' => replace_macros(
-                                    get_intltext_template('update_fail_eml.tpl'),
+                                    Theme::get_email_template('update_fail_eml.tpl'),
                                     [
                                         '$sitename' => App::$config['system']['sitename'],
                                         '$siteurl' => z_root(),
