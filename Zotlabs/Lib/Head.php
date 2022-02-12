@@ -85,7 +85,6 @@ class Head {
             }
         } else {
             // It's a file from the theme
-    FIXME
             $path = '/' . Theme::include($script);
         }
 

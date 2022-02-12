@@ -1,4 +1,4 @@
-65;6402;1c<?php
+<?php
 
 namespace Zotlabs\Web;
 
