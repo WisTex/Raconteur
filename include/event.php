@@ -10,6 +10,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Extend\Hook;
 use Symfony\Component\Uid\Uuid;
 
 require_once('include/bbcode.php');
@@ -511,7 +512,7 @@ function event_store_event($arr)
      *   * \e array \b existing_event
      *   * \e boolean \b cancel - default false
      */
-    call_hooks('event_store_event', $hook_info);
+    Hook::call('event_store_event', $hook_info);
     if ($hook_info['cancel']) {
         return false;
     }
@@ -1282,7 +1283,7 @@ function event_store_item($arr, $event)
          * @hooks event_updated
          *   Called when an event record is modified.
          */
-        call_hooks('event_updated', $event['id']);
+        Hook::call('event_updated', $event['id']);
 
         return $item_id;
     } else {
@@ -1406,7 +1407,7 @@ function event_store_item($arr, $event)
          * @hooks event_created
          *   Called when an event record is created.
          */
-        call_hooks('event_created', $event['id']);
+        Hook::call('event_created', $event['id']);
 
         return $item_id;
     }

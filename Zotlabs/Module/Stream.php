@@ -11,6 +11,7 @@ use Zotlabs\Lib\PermissionDescription;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Extend\Hook;
 
 require_once('include/conversation.php');
 
@@ -58,7 +59,7 @@ class Stream extends Controller
         }
 
         $arr = ['query' => App::$query_string];
-        call_hooks('stream_content_init', $arr);
+        Hook::call('stream_content_init', $arr);
 
         $channel = ((isset(App::$data['channel'])) ? App::$data['channel'] : null);
 
@@ -641,7 +642,7 @@ class Stream extends Controller
 
         if ($update_unseen && (!(isset($_SESSION['sudo']) && $_SESSION['sudo']))) {
             $x = ['channel_id' => local_channel(), 'update' => 'unset'];
-            call_hooks('update_unseen', $x);
+            Hook::call('update_unseen', $x);
             if ($x['update'] === 'unset' || intval($x['update'])) {
                 $r = q(
                     "UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d $update_unseen ",

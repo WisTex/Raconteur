@@ -11,6 +11,7 @@ use Zotlabs\Lib\AccessList;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Apps;
+use Zotlabs\Extend\Hook;
 
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Lib\Enotify;
@@ -212,7 +213,7 @@ function comments_are_now_closed($item) {
 	 *   * \e boolean \b closed - return value
 	 */
 
-	call_hooks('comments_are_now_closed', $x);
+	Hook::call('comments_are_now_closed', $x);
 
 	if ($x['closed'] !== 'unset') {
 		return $x['closed'];
@@ -308,7 +309,7 @@ function can_comment_on_post($observer_xchan, $item)
      *   * \e boolean \b allowed - return value
      */
 
-    call_hooks('can_comment_on_post', $x);
+    Hook::call('can_comment_on_post', $x);
 
     if ($x['allowed'] !== 'unset') {
         return $x['allowed'];
@@ -515,7 +516,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	 * @hooks post_local
 	 *   Called when an item has been posted on this machine via mod/item.php (also via API).
 	 */
-	call_hooks('post_local', $arr);
+	Hook::call('post_local', $arr);
 
 	if(x($arr, 'cancel')) {
 		logger('Post cancelled by plugin.');
@@ -535,7 +536,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 		 *   Called after a local post operation has completed.
 		 *   * \e array - the item returned from item_store()
 		 */
-		call_hooks('post_local_end', $ret['activity']);
+		Hook::call('post_local_end', $ret['activity']);
 	}
 
 	if($post_id && $deliver) {
@@ -906,7 +907,7 @@ function import_author_xchan($x) {
 	 *   * \e array \b xchan
 	 *   * \e string \b xchan_hash - The returned value
 	 */
-	call_hooks('import_author_xchan', $arr);
+	Hook::call('import_author_xchan', $arr);
 	if($arr['xchan_hash'])
 		return $arr['xchan_hash'];
 
@@ -999,7 +1000,7 @@ function import_author_unknown($x) {
 	 *   * \e array \b author
 	 *   * \e boolean|string \b result - Return value, default false
 	 */
-	call_hooks('import_author', $arr);
+	Hook::call('import_author', $arr);
 	if($arr['result'])
 		return $arr['result'];
 
@@ -1580,7 +1581,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	 *   * \e array \b item
 	 *   * \e boolean \b allow_exec
 	 */
-	call_hooks('item_store_before', $d);
+	Hook::call('item_store_before', $d);
 	$arr = $d['item'];
 	$allow_exec = $d['allow_exec'];
 
@@ -1674,7 +1675,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		 *   * \e string \b to
 		 *   * \e boolean \b translated
 		 */
-		call_hooks('item_translate', $translate);
+		Hook::call('item_translate', $translate);
 		if((! $translate['translated']) && (intval(get_pconfig($arr['uid'],'system','reject_disallowed_languages')))) {
 			logger('language ' . $arr['lang'] . ' not accepted for uid ' . $arr['uid']);
 			$ret['message'] = 'language not accepted';
@@ -1920,14 +1921,14 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	 *   Called when item_store() stores a record of type item.
 	 */
 
-	call_hooks('item_store', $arr);
+	Hook::call('item_store', $arr);
 
 	/**
 	 * @hooks post_remote
 	 *   Called when an activity arrives from another site.
 	 *   This hook remains for backward compatibility.
 	 */
-	call_hooks('post_remote', $arr);
+	Hook::call('post_remote', $arr);
 
 	if(x($arr, 'cancel')) {
 		logger('Post cancelled by plugin.');
@@ -2043,7 +2044,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	 * @hooks post_remote_end
 	 *   Called after processing a remote post.
 	 */
-	call_hooks('post_remote_end', $arr);
+	Hook::call('post_remote_end', $arr);
 
 	item_update_parent_commented($arr);
 
@@ -2096,7 +2097,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	 *   * \e array \b item
 	 *   * \e boolean \b allow_exec
 	 */
-	call_hooks('item_store_update_before', $d);
+	Hook::call('item_store_update_before', $d);
 	$arr = $d['item'];
 	$allow_exec = $d['allow_exec'];
 
@@ -2177,7 +2178,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		 *   * \e string \b to
 		 *   * \e boolean \b translated - default false, set true if hook translated it and provide it in item
 		 */
-		call_hooks('item_translate', $translate);
+		Hook::call('item_translate', $translate);
 		if((! $translate['translated']) && (intval(get_pconfig($arr['uid'],'system','reject_disallowed_languages')))) {
 			logger('item_store: language ' . $arr['lang'] . ' not accepted for uid ' . $arr['uid']);
 			$ret['message'] = 'language not accepted';
@@ -2304,7 +2305,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	 * @hooks post_remote_update
 	 *   Called when processing a remote post that involved an edit or update.
 	 */
-	call_hooks('post_remote_update', $arr);
+	Hook::call('post_remote_update', $arr);
 
 	if(x($arr, 'cancel')) {
 		logger('Post cancelled by plugin.');
@@ -2391,7 +2392,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 	 * @hooks post_remote_update_end
 	 *   Called after processing a remote post that involved an edit or update.
 	 */
-	call_hooks('post_remote_update_end', $arr);
+	Hook::call('post_remote_update_end', $arr);
 
 
 	if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false)) {
@@ -2810,7 +2811,7 @@ function tag_deliver($uid, $item_id) {
 			 *   * \e string \b body
 			 */
 
-			call_hooks('tagged', $arr);
+			Hook::call('tagged', $arr);
 
 			/**
 			 * post to a group (aka forum) via normal @-mentions *only if* the group is public
@@ -3806,7 +3807,7 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 		 * @hooks drop_item
 		 *   Called when an 'item' is removed.
 		 */
-		call_hooks('drop_item', $arr);
+		Hook::call('drop_item', $arr);
 
 		$notify_id = intval($item['id']);
 

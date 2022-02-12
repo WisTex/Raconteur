@@ -38,6 +38,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Access\AccessControl;
+use Zotlabs\Extend\Hook;
 use Zotlabs\Daemon\Run;
 use App;
 use URLify;
@@ -416,7 +417,7 @@ class Item extends Controller
             $observer = $sys;
         }
 
-        call_hooks('post_local_start', $_REQUEST);
+        Hook::call('post_local_start', $_REQUEST);
 
         // logger('postvars ' . print_r($_REQUEST,true), LOGGER_DATA);
 
@@ -940,7 +941,7 @@ class Item extends Controller
 
 
         $arr = ['profile_uid' => $profile_uid, 'summary' => $summary, 'content' => $body, 'mimetype' => $mimetype];
-        call_hooks('post_content', $arr);
+        Hook::call('post_content', $arr);
         $summary = $arr['summary'];
         $body = $arr['content'];
         $mimetype = $arr['mimetype'];
@@ -1517,7 +1518,7 @@ class Item extends Controller
             }
         }
 
-        call_hooks('post_local', $datarray);
+        Hook::call('post_local', $datarray);
 
         // This is no longer needed
         unset($datarray['edit']);
@@ -1702,7 +1703,7 @@ class Item extends Controller
         $datarray['id'] = $post_id;
         $datarray['llink'] = z_root() . '/display/' . gen_link_id($datarray['mid']);
 
-        call_hooks('post_local_end', $datarray);
+        Hook::call('post_local_end', $datarray);
 
         if ($groupww) {
             $nopush = false;

@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Extend\Hook;
     
 /**
  * @brief A class with chatroom related static methods.
@@ -297,7 +298,7 @@ class Chatroom
          *   * \e string \b chat_xchan
          *   * \e string \b chat_text
          */
-        call_hooks('chat_message', $arr);
+        Hook::call('chat_message', $arr);
 
         $x = q(
             "insert into chat ( chat_room, chat_xchan, created, chat_text )

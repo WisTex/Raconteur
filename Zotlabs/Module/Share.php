@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 require_once('include/bbcode.php');
@@ -129,7 +130,7 @@ class Share extends Controller
 
         $arr['id'] = $post_id;
 
-        call_hooks('post_local_end', $arr);
+        Hook::call('post_local_end', $arr);
 
         info(t('Post repeated') . EOL);
 

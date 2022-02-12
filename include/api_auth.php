@@ -7,6 +7,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\System;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 require_once('include/oauth.php');
 require_once('include/auth.php');
@@ -61,7 +62,7 @@ function api_login()
                 require_once('include/security.php');
                 authenticate_success($x[0], null, true, false, true, true);
                 $_SESSION['allow_api'] = true;
-                call_hooks('logged_in', App::$user);
+                Hook::call('logged_in', App::$user);
                 return;
             }
         } else {
@@ -76,7 +77,7 @@ function api_login()
 
                 App::set_oauth_key($consumer->key);
 
-                call_hooks('logged_in', App::$user);
+                Hook::call('logged_in', App::$user);
                 return;
             }
             

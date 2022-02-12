@@ -15,6 +15,7 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
@@ -669,7 +670,7 @@ class Photos extends Controller
                 'addon_text' => $uploader,
                 'default_upload' => true);
 
-            call_hooks('photo_upload_form', $ret);
+            Hook::call('photo_upload_form', $ret);
 
             /* Show space usage */
 

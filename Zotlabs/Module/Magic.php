@@ -8,6 +8,7 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\SConfig;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class Magic extends Controller
 {
@@ -56,7 +57,7 @@ class Magic extends Controller
             'proceed' => true
         ];
 
-        call_hooks('magic_auth', $arr);
+        Hook::call('magic_auth', $arr);
         $dest = $arr['destination'];
         if (!$arr['proceed']) {
             goaway($dest);

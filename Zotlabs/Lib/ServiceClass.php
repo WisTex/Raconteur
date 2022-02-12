@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class ServiceClass {        
 
@@ -89,7 +90,7 @@ class ServiceClass {
                     intval($rr['account_id'])
                 );
                 $ret = [ 'account' => $rr ];
-                call_hooks('account_downgrade', $ret);
+                Hook::call('account_downgrade', $ret);
                 logger('downgrade_accounts: Account id ' . $rr['account_id'] . ' downgraded.');
             } else {
                 $x = q(
@@ -98,7 +99,7 @@ class ServiceClass {
                     intval($rr['account_id'])
                 );
                 $ret = [ 'account' => $rr ];
-                call_hooks('account_downgrade', $ret);
+                Hook::call('account_downgrade', $ret);
                 logger('downgrade_accounts: Account id ' . $rr['account_id'] . ' expired.');
             }
         }

@@ -3,6 +3,7 @@
 namespace Zotlabs\Lib;
 
 use Exception;
+use Zotlabs\Extend\Hook;
 
 class Crypto
 {
@@ -26,7 +27,7 @@ class Crypto
             $ret[] = $ossl[0] . '.oaep';
         }
 
-        call_hooks('crypto_methods', $ret);
+        Hook::call('crypto_methods', $ret);
         return $ret;
     }
 
@@ -35,7 +36,7 @@ class Crypto
     {
 
         $ret = [ 'sha256' ];
-        call_hooks('signing_methods', $ret);
+        Hook::call('signing_methods', $ret);
         return $ret;
     }
 
@@ -162,7 +163,7 @@ class Crypto
                 return $result;
         } else {
             $x = [ 'data' => $data, 'pubkey' => $pubkey, 'alg' => $alg, 'result' => $data ];
-            call_hooks('crypto_encapsulate', $x);
+            Hook::call('crypto_encapsulate', $x);
             return $x['result'];
         }
     }
@@ -206,7 +207,7 @@ class Crypto
             return openssl_decrypt(base64url_decode($data['data']), $method[1], substr($k, 0, $method[2]), OPENSSL_RAW_DATA, substr($i, 0, $method[3]));
         } else {
             $x = [ 'data' => $data, 'prvkey' => $prvkey, 'alg' => $data['alg'], 'result' => $data ];
-            call_hooks('crypto_unencapsulate', $x);
+            Hook::call('crypto_unencapsulate', $x);
             return $x['result'];
         }
     }

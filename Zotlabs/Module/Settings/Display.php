@@ -5,6 +5,7 @@ namespace Zotlabs\Module\Settings;
 use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
 
 class Display
 {
@@ -101,7 +102,7 @@ class Display
             intval(local_channel())
         );
 
-        call_hooks('display_settings_post', $_POST);
+        Hook::call('display_settings_post', $_POST);
         Libsync::build_sync_packet();
         goaway(z_root() . '/settings/display');
         return; // NOTREACHED
@@ -224,7 +225,7 @@ class Display
 
         ));
 
-        call_hooks('display_settings', $o);
+        Hook::call('display_settings', $o);
         return $o;
     }
 

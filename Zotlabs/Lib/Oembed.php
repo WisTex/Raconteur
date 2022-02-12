@@ -4,6 +4,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Cache;
+use Zotlabs\Extend\Hook;
 
 class Oembed
 {
@@ -105,7 +106,7 @@ class Oembed
         }
 
         $arr = array('url' => $embedurl, 'action' => $action);
-        call_hooks('oembed_action', $arr);
+        Hook::call('oembed_action', $arr);
 
         //logger('action: ' . $arr['action'] . ' url: ' . $arr['url'], LOGGER_DEBUG,LOG_DEBUG);
 
@@ -231,7 +232,7 @@ class Oembed
 
             if ($txt == false || $txt == "") {
                 $x = array('url' => $embedurl,'videowidth' => App::$videowidth);
-                call_hooks('oembed_probe', $x);
+                Hook::call('oembed_probe', $x);
                 if (array_key_exists('embed', $x)) {
                     $txt = $x['embed'];
                 }

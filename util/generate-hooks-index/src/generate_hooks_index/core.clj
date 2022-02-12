@@ -24,7 +24,7 @@
 (defn get-fn-arg
   [s]
   (->> s
-       (re-matches #".*call_hooks\((.+)\,(.*)\).*")
+       (re-matches #".*Hook::call\((.+)\,(.*)\).*")
        rest
        check-fn-args))
 
@@ -37,7 +37,7 @@
 
 (defn show-hooks
   [path]
-  (for [s (-> (sh/sh "rgrep" "call_hooks" path)
+  (for [s (-> (sh/sh "rgrep" "Hook::call" path)
               :out
               str/split-lines)
         :let [[file hook]   (str/split s #"\t*:")]]

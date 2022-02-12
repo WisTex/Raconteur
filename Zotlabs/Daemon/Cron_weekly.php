@@ -3,6 +3,7 @@
 namespace Zotlabs\Daemon;
 
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class Cron_weekly
 {
@@ -17,7 +18,7 @@ class Cron_weekly
          *
          */
 
-        call_hooks('cron_weekly', datetime_convert());
+        Hook::call('cron_weekly', datetime_convert());
 
         z_check_cert();
 

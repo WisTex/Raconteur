@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class Rmagic extends Controller
 {
@@ -39,7 +40,7 @@ class Rmagic extends Controller
 
         if (strpos($address, '@') === false) {
             $arr = ['address' => $address];
-            call_hooks('reverse_magic_auth', $arr);
+            Hook::call('reverse_magic_auth', $arr);
 
             // if they're still here...
             notice(t('Authentication failed.') . EOL);

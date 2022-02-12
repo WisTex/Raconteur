@@ -5,6 +5,8 @@ namespace Zotlabs\Web;
 use App;
 use Zotlabs\Extend\Route;
 use Zotlabs\Render\Theme;
+use Zotlabs\Extend\Hook;
+
 use Exception;
 
 /**
@@ -117,7 +119,7 @@ class Router
              *   * \e boolean \b installed
              *   * \e mixed \b controller - The initialized module object
              */
-            call_hooks('module_loaded', $x);
+            Hook::call('module_loaded', $x);
             if ($x['installed']) {
                 App::$module_loaded = true;
                 $this->controller = $x['controller'];
@@ -145,7 +147,7 @@ class Router
                     'installed' => App::$module_loaded,
                     'controller' => $this->controller
                 ];
-                call_hooks('page_not_found', $x);
+                Hook::call('page_not_found', $x);
 
                 // Stupid browser tried to pre-fetch our Javascript img template.
                 // Don't log the event or return anything - just quietly exit.
@@ -196,7 +198,7 @@ class Router
              */
 
             $arr = ['init' => true, 'replace' => false];
-            call_hooks(App::$module . '_mod_init', $arr);
+            Hook::call(App::$module . '_mod_init', $arr);
             if (!$arr['replace']) {
                 if ($this->controller && method_exists($this->controller, 'init')) {
                     $this->controller->init();
@@ -242,7 +244,7 @@ class Router
             }
 
             if (($_SERVER['REQUEST_METHOD'] === 'POST') && (!App::$error) && (!x($_POST, 'auth-params'))) {
-                call_hooks(App::$module . '_mod_post', $_POST);
+                Hook::call(App::$module . '_mod_post', $_POST);
                 if ($this->controller && method_exists($this->controller, 'post')) {
                     $this->controller->post();
                 }
@@ -250,14 +252,14 @@ class Router
 
             if (!App::$error) {
                 $arr = ['content' => App::$page['content'], 'replace' => false];
-                call_hooks(App::$module . '_mod_content', $arr);
+                Hook::call(App::$module . '_mod_content', $arr);
 
                 if (!$arr['replace']) {
                     if ($this->controller && method_exists($this->controller, 'get')) {
                         $arr = ['content' => $this->controller->get(), 'replace' => false];
                     }
                 }
-                call_hooks(App::$module . '_mod_aftercontent', $arr);
+                Hook::call(App::$module . '_mod_aftercontent', $arr);
                 App::$page['content'] = (($arr['replace']) ? $arr['content'] : App::$page['content'] . $arr['content']);
             }
         }

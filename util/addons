@@ -1,8 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-// Hubzilla plugin management utility
+// plugin management utility
+use Zotlabs\Lib\Addon;
 
+    
 function usage() {
 echo <<< EOT
  Usage:
@@ -18,32 +20,24 @@ require_once('include/cli_startup.php');
 
 cli_startup();
 
-	$plugs = get_config('system', 'addon');
-	$plugins_arr = [];
-
-	if($plugs)
-		$plugins_arr = explode(',', str_replace(' ', '', $plugs));
-
-	App::$plugins = $plugins_arr;
-
+    $installed = Addon::list_installed();
+    
+    
 	$plugins = [];
 	$files = glob('addon/*/');
 	if($files) {
 		foreach($files as $file) {
 			if(is_dir($file)){
 				list($tmp, $id) = array_map('trim', explode('/', $file));
-				$info = get_plugin_info($id);
-				$enabled = in_array($id,App::$plugins);
+				$info = Addon::get_info($id);
+				$enabled = in_array($id,$installed);
 				$x = check_plugin_versions($info);
 				if($enabled && ! $x) {
 					$enabled = false;
-					$idz = array_search($id, App::$plugins);
-					if ($idz !== false) {
-						unset(App::$plugins[$idz]);
-						uninstall_plugin($id);
-						set_config('system', 'addon', implode(', ',App::$plugins));
-					}
-				}
+                    Addon::uninstall($id);
+                    $installed = Addon::list_installed();
+                }
+
 				$info['disabled'] = 1-intval($x);
 
 				$plugins[] = array( $id, (($enabled)? '*' : '') , $info);
@@ -90,9 +84,7 @@ if($argc == 3 && $argv[1] === 'install') {
 				elseif($p[2]['disabled'])
 					echo $p[0] . ' disabled (version compatibility).' . "\n";
 				else {
-					App::$plugins[] = $p[0];
-					install_plugin($p[0]);
-					set_config('system', 'addon', implode(', ',App::$plugins));
+					Addon::install($p[0]);
 					echo $p[0] . ' installed.' . "\n";
 				}
 			}
@@ -117,11 +109,7 @@ if($argc == 3 && $argv[1] === 'uninstall') {
 				elseif($p[2]['disabled'])
 					echo $p[0] . ' disabled (version compatibility).' . "\n";
 				else {
-					$idx = array_search($p[0], App::$plugins);
-					if ($idx !== false)
-						unset(App::$plugins[$idx]);
-					uninstall_plugin($p[0]);
-					set_config('system', 'addon', implode(', ',App::$plugins));
+					Addon::uninstall($p[0]);
 					echo $p[0] . ' uninstalled.' . "\n";
 				}
 			}
@@ -131,11 +119,7 @@ if($argc == 3 && $argv[1] === 'uninstall') {
 	// force uninstall of addon which no longer exists
 
 	if(! $found) {
-		$idx = array_search($argv[2], App::$plugins);
-		if ($idx !== false)
-			unset(App::$plugins[$idx]);
-		uninstall_plugin($argv[2]);
-		set_config('system', 'addon', implode(', ',App::$plugins));
+		Addon::uninstall($argv[2]);
 		echo $argv[2] . ' uninstalled.' . "\n";
 	}
 

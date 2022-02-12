@@ -4,6 +4,7 @@ namespace Zotlabs\Access;
 
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Extensible permissions.
@@ -80,7 +81,7 @@ class Permissions
          *   * \e array \b permissions
          *   * \e string \b filter
          */
-        call_hooks('permissions_list', $x);
+        Hook::call('permissions_list', $x);
 
         return($x['permissions']);
     }
@@ -108,7 +109,7 @@ class Permissions
          * @hooks write_perms
          *   * \e array \b permissions
          */
-        call_hooks('write_perms', $x);
+        Hook::call('write_perms', $x);
 
         return($x['permissions']);
     }

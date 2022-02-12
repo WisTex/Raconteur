@@ -9,6 +9,7 @@ use Zotlabs\Lib\Apps;
 use Zotlabs\Web\Controller;
 use Zotlabs\Access\Permissions;
 use Zotlabs\Access\PermissionLimits;
+use Zotlabs\Extend\Hook;
 
 require_once('include/socgraph.php');
 
@@ -268,7 +269,7 @@ class Defperms extends Controller
 
             $arr = array('contact' => $contact, 'output' => $o);
 
-            call_hooks('contact_edit', $arr);
+            Hook::call('contact_edit', $arr);
 
             return $arr['output'];
         }

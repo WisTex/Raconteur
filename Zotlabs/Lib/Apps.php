@@ -6,6 +6,8 @@ use App;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
+use Zotlabs\Lib\Addon;
     
 /**
  * Apps
@@ -42,7 +44,7 @@ class Apps
             foreach ($files as $f) {
                 $path = explode('/', $f);
                 $plugin = trim($path[1]);
-                if (addon_is_installed($plugin)) {
+                if (Addon::is_installed($plugin)) {
                     $x = self::parse_app_description($f, $translate);
                     if ($x) {
                         $x['plugin'] = $plugin;
@@ -52,7 +54,7 @@ class Apps
             }
         }
 
-        call_hooks('get_system_apps', $ret);
+        Hook::call('get_system_apps', $ret);
 
         return $ret;
     }
@@ -92,7 +94,7 @@ class Apps
         }
 
         $x = get_config('system', 'base_apps', $default_apps);
-        call_hooks('get_base_apps', $x);
+        Hook::call('get_base_apps', $x);
         return $x;
     }
 
@@ -464,7 +466,7 @@ class Apps
 
         self::translate_system_apps($papp);
 
-        if (isset($papp['plugin']) && trim($papp['plugin']) && (!addon_is_installed(trim($papp['plugin'])))) {
+        if (isset($papp['plugin']) && trim($papp['plugin']) && (!Addon::is_installed(trim($papp['plugin'])))) {
             return '';
         }
 
@@ -740,7 +742,7 @@ class Apps
                             intval(TERM_OBJ_APP),
                             intval($x[0]['id'])
                         );
-                        call_hooks('app_destroy', $x[0]);
+                        Hook::call('app_destroy', $x[0]);
                     } else {
                         $r = q(
                             "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
@@ -825,7 +827,7 @@ class Apps
                 'app' => $app,
                 'installed' => $r
             ];
-            call_hooks('app_installed_filter', $filter_arr);
+            Hook::call('app_installed_filter', $filter_arr);
             $r = $filter_arr['installed'];
         }
 
@@ -846,7 +848,7 @@ class Apps
                 'app' => $app,
                 'installed' => $r
             ];
-            call_hooks('addon_app_installed_filter', $filter_arr);
+            Hook::call('addon_app_installed_filter', $filter_arr);
             $r = $filter_arr['installed'];
         }
 
@@ -867,7 +869,7 @@ class Apps
                 'app' => $app,
                 'installed' => $r
             ];
-            call_hooks('system_app_installed_filter', $filter_arr);
+            Hook::call('system_app_installed_filter', $filter_arr);
             $r = $filter_arr['installed'];
         }
 
@@ -911,7 +913,7 @@ class Apps
 
         if ($r) {
             $hookinfo = ['uid' => $uid, 'deleted' => $deleted, 'cats' => $cats, 'apps' => $r];
-            call_hooks('app_list', $hookinfo);
+            Hook::call('app_list', $hookinfo);
             $r = $hookinfo['apps'];
             for ($x = 0; $x < count($r); $x++) {
                 if (!$r[$x]['app_system']) {

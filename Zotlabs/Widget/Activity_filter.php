@@ -5,6 +5,7 @@ namespace Zotlabs\Widget;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
 
 class Activity_filter
 {
@@ -312,7 +313,7 @@ class Activity_filter
 
         $arr = ['tabs' => $tabs];
 
-        call_hooks('activity_filter', $arr);
+        Hook::call('activity_filter', $arr);
 
         $o = '';
 

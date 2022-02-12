@@ -28,6 +28,7 @@ use phpmock\phpunit\PHPMock;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Tests\Unit\UnitTestCase;
 use Zotlabs\Access\Permissions;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Unit Test case for Permissions class.
@@ -61,7 +62,7 @@ class PermissionsTest extends UnitTestCase
     }
 
     /**
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testPerms()
     {
@@ -94,9 +95,9 @@ class PermissionsTest extends UnitTestCase
      * filter parmeter is only used in hook \b permissions_list. So the result
      * in this test should be the same as if there was no filter parameter.
      *
-     * @todo Stub call_hooks() function and also test filter
+     * @todo Stub Hook::call() function and also test filter
      *
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testPermsFilter()
     {
@@ -123,7 +124,7 @@ class PermissionsTest extends UnitTestCase
     /**
      * Better should mock Permissions::Perms, but not possible with static methods.
      *
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      *
      * @dataProvider FilledPermsProvider
      *
@@ -217,7 +218,7 @@ class PermissionsTest extends UnitTestCase
         ];
     }
     /**
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testFilledPermsNull()
     {

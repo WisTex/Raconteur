@@ -6,6 +6,7 @@ use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Libzotdir;
 use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Statistics;
+use Zotlabs\Extend\Hook;
     
 class Cron_daily
 {
@@ -105,7 +106,7 @@ class Cron_daily
 
         remove_obsolete_hublocs();
 
-        call_hooks('cron_daily', datetime_convert());
+        Hook::call('cron_daily', datetime_convert());
 
         set_config('system', 'last_expire_day', intval(datetime_convert('UTC', 'UTC', 'now', 'd')));
 

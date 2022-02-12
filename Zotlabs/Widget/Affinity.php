@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Extend\Hook;
 
 class Affinity
 {
@@ -30,7 +31,7 @@ class Affinity
                 80 => t('Connections'),
                 99 => t('All')
             );
-            call_hooks('affinity_labels', $labels);
+            Hook::call('affinity_labels', $labels);
 
             $tpl = get_markup_template('main_slider.tpl');
             $x = replace_macros($tpl, [
@@ -42,7 +43,7 @@ class Affinity
             ]);
 
             $arr = array('html' => $x);
-            call_hooks('main_slider', $arr);
+            Hook::call('main_slider', $arr);
             return $arr['html'];
         }
         return '';

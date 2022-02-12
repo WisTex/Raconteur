@@ -8,6 +8,7 @@ use Zotlabs\Lib\Enotify;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\PConfig;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 require_once('include/bbcode.php');
 
@@ -611,7 +612,7 @@ class Ping extends Controller
 
             if ($r) {
                 $arr = array('items' => $r);
-                call_hooks('network_ping', $arr);
+                Hook::call('network_ping', $arr);
 
                 foreach ($r as $it) {
                     if ($it['author_xchan'] === $ob_hash) {

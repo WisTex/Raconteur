@@ -9,6 +9,7 @@ use App;
 use Zotlabs\Lib as Zlib;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 
@@ -66,7 +67,7 @@ class Chatsvc extends Controller
             'chat_text' => $text
         );
 
-        call_hooks('chat_post', $arr);
+        Hook::call('chat_post', $arr);
 
         $x = q(
             "insert into chat ( chat_room, chat_xchan, created, chat_text )

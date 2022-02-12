@@ -1,5 +1,8 @@
 <?php
 
+
+use Zotlabs\Extend\Hook;
+
 /** @file */
 /*
 html2bbcode.php
@@ -267,7 +270,7 @@ function html2bbcode($message)
     $message = preg_replace('=\r *\r=i', "\n", $message);
     $message = str_replace("\r", "\n", $message);
 
-    call_hooks('html2bbcode', $message);
+    Hook::call('html2bbcode', $message);
 
     $message = strip_tags($message);
 

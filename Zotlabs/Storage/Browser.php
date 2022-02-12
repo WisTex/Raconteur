@@ -12,6 +12,7 @@ use Zotlabs\Lib\ServiceClass;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Extend\Hook;
 use function Sabre\HTTP\encodePath;
 
 
@@ -253,7 +254,7 @@ class Browser extends DAV\Browser\Plugin {
 			}
 
 			$g = [ 'resource_id' => $attachHash, 'thumbnail' => $photo_icon, 'security' => $preview_style ];
-			call_hooks('file_thumbnail', $g);
+			Hook::call('file_thumbnail', $g);
 			$photo_icon = $g['thumbnail'];
 
 

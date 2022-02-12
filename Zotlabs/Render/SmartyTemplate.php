@@ -61,7 +61,7 @@ class SmartyTemplate implements TemplateEngine
 
     public function get_markup_template($file, $root = '')
     {
-        $template_file = theme_include($file, $root);
+        $template_file = Theme::include($file, $root);
         if ($template_file) {
             $template = new SmartyInterface();
             $template->filename = $template_file;
@@ -84,7 +84,7 @@ class SmartyTemplate implements TemplateEngine
             }
         }
         if ($template_file == '') {
-            $template_file = theme_include($file, $root);
+            $template_file = Theme::include($file, $root);
         }
         if ($template_file) {
             $template = new SmartyInterface();

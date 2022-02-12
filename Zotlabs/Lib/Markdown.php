@@ -11,6 +11,7 @@ use League\HTMLToMarkdown\HtmlConverter;
 use League\HTMLToMarkdown\Environment;
 use League\HTMLToMarkdown\Converter\ConverterInterface;
 use League\HTMLToMarkdown\ElementInterface;
+use Zotlabs\Extend\Hook;
 
 require_once("include/event.php");
 require_once("include/html2bbcode.php");
@@ -62,7 +63,7 @@ class Markdown
          *   * \e boolean \b zrl
          *   * \e array \b options
          */
-        call_hooks('markdown_to_bb_init', $x);
+        Hook::call('markdown_to_bb_init', $x);
 
         $s = $x['text'];
 
@@ -99,7 +100,7 @@ class Markdown
          * @hooks markdown_to_bb
          *   * \e string - The already converted message as bbcode
          */
-        call_hooks('markdown_to_bb', $s);
+        Hook::call('markdown_to_bb', $s);
 
         return $s;
     }
@@ -264,7 +265,7 @@ class Markdown
          *   * \e string \b bbcode - The message as bbcode and what will get returned
          *   * \e array \b options
          */
-        call_hooks('bb_to_markdown_bb', $x);
+        Hook::call('bb_to_markdown_bb', $x);
 
         $Text = $x['bbcode'];
 
@@ -294,7 +295,7 @@ class Markdown
          * @hooks bb_to_markdown
          *   * \e string - The already converted message as bbcode and what will get returned
          */
-        call_hooks('bb_to_markdown', $Text);
+        Hook::call('bb_to_markdown', $Text);
 
         return $Text;
     }

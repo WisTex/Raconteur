@@ -9,6 +9,7 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 require_once('include/attach.php');
@@ -114,7 +115,7 @@ class Photo extends Controller
             $uid = $person;
 
             $d = ['imgscale' => $resolution, 'channel_id' => $uid, 'default' => $default, 'data' => '', 'mimetype' => ''];
-            call_hooks('get_profile_photo', $d);
+            Hook::call('get_profile_photo', $d);
 
             $resolution = $d['imgscale'];
             $uid = $d['channel_id'];

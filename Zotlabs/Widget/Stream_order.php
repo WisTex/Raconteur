@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use Zotlabs\Lib\Apps;
+use Zotlabs\Extend\Hook;
 use App;
 
 class Stream_order
@@ -124,7 +125,7 @@ class Stream_order
 
         $arr = ['tabs' => $tabs];
 
-        call_hooks('activity_order', $arr);
+        Hook::call('activity_order', $arr);
 
         $o = '';
 

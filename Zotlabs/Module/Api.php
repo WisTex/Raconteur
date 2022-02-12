@@ -8,6 +8,7 @@ use OAuth1Request;
 use OAuth1Consumer;
 use OAuth1Util;
 use Zotlabs\Web\Controller;
+use Zotlabs\Extend\Hook;
 
 require_once('include/api.php');
 
@@ -24,7 +25,7 @@ class Api extends Controller
         api_register_func('api/oauth/access_token', 'api_oauth_access_token', false);
 
         $args = [];
-        call_hooks('api_register', $args);
+        Hook::call('api_register', $args);
 
         return;
     }

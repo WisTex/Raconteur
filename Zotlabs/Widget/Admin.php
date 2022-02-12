@@ -3,6 +3,7 @@
 namespace Zotlabs\Widget;
 
 use App;
+use Zotlabs\Extend\Hook;
 
 class Admin
 {
@@ -47,14 +48,14 @@ class Admin
                 $plugin = $h['aname'];
                 $plugins[] = array(z_root() . '/admin/addons/' . $plugin, $plugin, 'plugin');
                 // temp plugins with admin
-                App::$plugins_admin[] = $plugin;
+                App::$addons_admin[] = $plugin;
             }
         }
 
         $logs = array(z_root() . '/admin/logs/', t('Logs'), 'logs');
 
         $arr = array('links' => $aside, 'plugins' => $plugins, 'logs' => $logs);
-        call_hooks('admin_aside', $arr);
+        Hook::call('admin_aside', $arr);
 
         $o .= replace_macros(get_markup_template('admin_aside.tpl'), array(
             '$admin' => $aside,

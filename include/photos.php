@@ -12,6 +12,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Web\HTTPHeaders;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\ServiceClass;
+use Zotlabs\Extend\Hook;
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
@@ -158,7 +159,7 @@ function photo_upload($channel, $observer, $args)
              * @hooks photo_upload_end
              *   Called when a photo upload has been processed.
              */
-            call_hooks('photo_upload_end', $ret);
+            Hook::call('photo_upload_end', $ret);
             return $ret;
         }
 
@@ -169,7 +170,7 @@ function photo_upload($channel, $observer, $args)
              * @hooks photo_post_end
              *   Called after uploading a photo.
              */
-            call_hooks('photo_post_end', $ret);
+            Hook::call('photo_post_end', $ret);
             return $ret;
         }
 
@@ -191,7 +192,7 @@ function photo_upload($channel, $observer, $args)
          * @hooks photo_post_end
          *   Called after uploading a photo.
          */
-        call_hooks('photo_post_end', $ret);
+        Hook::call('photo_post_end', $ret);
         return $ret;
     }
 
@@ -205,7 +206,7 @@ function photo_upload($channel, $observer, $args)
          * @hooks photo_upload_end
          *   Called when a photo upload has been processed.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
         return $ret;
     }
 
@@ -363,7 +364,7 @@ function photo_upload($channel, $observer, $args)
          * @hooks photo_upload_end
          *   Called when a photo upload has been processed.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
         return $ret;
     }
 
@@ -590,7 +591,7 @@ function photo_upload($channel, $observer, $args)
      * @hooks photo_upload_end
      *   Called when a photo upload has been processed.
      */
-    call_hooks('photo_upload_end', $ret);
+    Hook::call('photo_upload_end', $ret);
 
     return $ret;
 }

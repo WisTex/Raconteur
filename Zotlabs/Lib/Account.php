@@ -11,6 +11,7 @@ use App;
 use Zotlabs\Lib\Crypto;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
 
 class Account {
     
@@ -45,7 +46,7 @@ class Account {
         }
 
         $arr = array('email' => $email, 'result' => $result);
-        call_hooks('check_account_email', $arr);
+        Hook::call('check_account_email', $arr);
 
         return $arr['result'];
     }
@@ -59,7 +60,7 @@ class Account {
         // Use hooked functions to perform complexity requirement checks.
 
         $arr = [ 'password' => $password, 'result' => $result ];
-        call_hooks('check_account_password', $arr);
+        Hook::call('check_account_password', $arr);
 
         return $arr['result'];
     }
@@ -84,7 +85,7 @@ class Account {
         }
 
         $arr = [ 'invite_code' => $invite_code, 'result' => $result ];
-        call_hooks('check_account_invite', $arr);
+        Hook::call('check_account_invite', $arr);
 
         return $arr['result'];
     }
@@ -255,7 +256,7 @@ class Account {
         $result['email']    = $email;
         $result['password'] = $password;
 
-        call_hooks('register_account', $result);
+        Hook::call('register_account', $result);
 
         return $result;
     }

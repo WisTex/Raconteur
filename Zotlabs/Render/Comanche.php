@@ -567,7 +567,7 @@ class Comanche
             } elseif (file_exists('Zotlabs/Widget/' . $clsname . '.php')) {
                 require_once('Zotlabs/Widget/' . $clsname . '.php');
             } else {
-                $pth = theme_include($clsname . '.php');
+                $pth = Theme::include($clsname . '.php');
                 if ($pth) {
                     require_once($pth);
                 }
@@ -592,8 +592,8 @@ class Comanche
             }
             if (!function_exists($func)) {
                 $theme_widget = $func . '.php';
-                if (theme_include($theme_widget)) {
-                    require_once(theme_include($theme_widget));
+                if (Theme::include($theme_widget)) {
+                    require_once(Theme::include($theme_widget));
                 }
             }
         }

@@ -11,6 +11,7 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Features;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 use Sabre\VObject\Reader;
 
 class Profiles extends Controller
@@ -244,7 +245,7 @@ class Profiles extends Controller
             }
         }
 
-        call_hooks('profile_post', $_POST);
+        Hook::call('profile_post', $_POST);
 
 
         if ((argc() > 1) && (argv(1) !== "new") && intval(argv(1))) {
@@ -852,7 +853,7 @@ class Profiles extends Controller
             ));
 
             $arr = array('profile' => $r[0], 'entry' => $o);
-            call_hooks('profile_edit', $arr);
+            Hook::call('profile_edit', $arr);
 
             return $o;
         } else {
@@ -985,7 +986,7 @@ class Profiles extends Controller
         $o = '';
         $select = array('', t('Male'), t('Female'), t('Currently Male'), t('Currently Female'), t('Mostly Male'), t('Mostly Female'), t('Transgender'), t('Intersex'), t('Transsexual'), t('Hermaphrodite'), t('Neuter'), t('Non-specific'), t('Other'), t('Undecided'));
 
-        call_hooks('gender_selector', $select);
+        Hook::call('gender_selector', $select);
 
         $o .= "<select class=\"form-control\" name=\"gender$suffix\" id=\"gender-select$suffix\" size=\"1\" >";
         foreach ($select as $selection) {
@@ -1003,7 +1004,7 @@ class Profiles extends Controller
         $o = '';
         $select = array('', t('Male'), t('Female'), t('Other'));
 
-        call_hooks('gender_selector_min', $select);
+        Hook::call('gender_selector_min', $select);
 
         $o .= "<select class=\"form-control\" name=\"gender$suffix\" id=\"gender-select$suffix\" size=\"1\" >";
         foreach ($select as $selection) {
@@ -1021,7 +1022,7 @@ class Profiles extends Controller
         $o = '';
         $select = array('', t('He/Him'), t('She/Her'), t('They/Them'));
 
-        call_hooks('pronouns_selector', $select);
+        Hook::call('pronouns_selector', $select);
 
         $o .= "<select class=\"form-control\" name=\"pronouns$suffix\" id=\"pronouns-select$suffix\" size=\"1\" >";
         foreach ($select as $selection) {
@@ -1054,7 +1055,7 @@ class Profiles extends Controller
         $select = array('', t('Males'), t('Females'), t('Gay'), t('Lesbian'), t('No Preference'), t('Bisexual'), t('Autosexual'), t('Abstinent'), t('Virgin'), t('Deviant'), t('Fetish'), t('Oodles'), t('Nonsexual'));
 
 
-        call_hooks('sexpref_selector', $select);
+        Hook::call('sexpref_selector', $select);
 
         $o .= "<select class=\"form-control\" name=\"sexual$suffix\" id=\"sexual-select$suffix\" size=\"1\" >";
         foreach ($select as $selection) {
@@ -1073,7 +1074,7 @@ class Profiles extends Controller
         $o = '';
         $select = array('', t('Males'), t('Females'), t('Other'));
 
-        call_hooks('sexpref_selector_min', $select);
+        Hook::call('sexpref_selector_min', $select);
 
         $o .= "<select class=\"form-control\" name=\"sexual$suffix\" id=\"sexual-select$suffix\" size=\"1\" >";
         foreach ($select as $selection) {
@@ -1092,7 +1093,7 @@ class Profiles extends Controller
         $o = '';
         $select = array('', t('Single'), t('Lonely'), t('Available'), t('Unavailable'), t('Has crush'), t('Infatuated'), t('Dating'), t('Unfaithful'), t('Sex Addict'), t('Friends'), t('Friends/Benefits'), t('Casual'), t('Engaged'), t('Married'), t('Imaginarily married'), t('Partners'), t('Cohabiting'), t('Common law'), t('Happy'), t('Not looking'), t('Swinger'), t('Betrayed'), t('Separated'), t('Unstable'), t('Divorced'), t('Imaginarily divorced'), t('Widowed'), t('Uncertain'), t('It\'s complicated'), t('Don\'t care'), t('Ask me'));
 
-        call_hooks('marital_selector', $select);
+        Hook::call('marital_selector', $select);
 
         $o .= "<select class=\"form-control\" name=\"marital\" id=\"marital-select\" size=\"1\" >";
         foreach ($select as $selection) {
@@ -1110,7 +1111,7 @@ class Profiles extends Controller
         $o = '';
         $select = array('', t('Single'), t('Dating'), t('Cohabiting'), t('Married'), t('Separated'), t('Divorced'), t('Widowed'), t('It\'s complicated'), t('Other'));
 
-        call_hooks('marital_selector_min', $select);
+        Hook::call('marital_selector_min', $select);
 
         $o .= "<select class=\"form-control\" name=\"marital\" id=\"marital-select\" size=\"1\" >";
         foreach ($select as $selection) {

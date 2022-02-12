@@ -27,6 +27,7 @@ namespace Zotlabs\Tests\Unit\Access;
 use Zotlabs\Tests\Unit\UnitTestCase;
 use Zotlabs\Access\PermissionRoles;
 use phpmock\phpunit\PHPMock;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Unit Test case for PermissionRoles class.
@@ -81,7 +82,7 @@ class PermissionRolesTest extends UnitTestCase
 
 
     /**
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      * @uses Zotlabs\Access\PermissionLimits::Std_Limits
      * @uses Zotlabs\Access\Permissions::Perms
      */

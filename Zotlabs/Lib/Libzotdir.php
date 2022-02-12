@@ -7,6 +7,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Webfinger;
 use Zotlabs\Lib\Zotfinger;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
     
 require_once('include/permissions.php');
 
@@ -245,7 +246,7 @@ class Libzotdir
             }
 
             $arr = ['channel_id' => $uid, 'hash' => $hash, 'profile' => $profile];
-            call_hooks('local_dir_update', $arr);
+            Hook::call('local_dir_update', $arr);
 
             $address = Channel::get_webfinger($p[0]);
 
@@ -436,7 +437,7 @@ class Libzotdir
          *   * \e boolean \b update
          */
 
-        call_hooks('import_directory_profile', $d);
+        Hook::call('import_directory_profile', $d);
 
         if (($d['update']) && (!$suppress_update)) {
             self::update_modtime($arr['xprof_hash'], new_uuid(), $addr, $ud_flags);

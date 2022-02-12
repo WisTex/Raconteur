@@ -14,6 +14,7 @@ use Zotlabs\Daemon\Run;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Lib\Stringsjs;
+use Zotlabs\Extend\Hook;
     
 /**
  * @file boot.php
@@ -50,7 +51,6 @@ if (file_exists('addon/version.php')) {
 
 require_once('include/config.php');
 require_once('include/network.php');
-require_once('include/addon.php');
 require_once('include/text.php');
 require_once('include/datetime.php');
 require_once('include/language.php');
@@ -708,7 +708,7 @@ function sys_boot() {
 		 * @hooks 'startup'
 		 */
 		$arr = [];
-		call_hooks('startup',$arr);
+		Hook::call('startup',$arr);
 	}
 }
 
@@ -771,7 +771,7 @@ class App {
 	public static  $language;
 	public static  $langsave;
 	public static  $rtl = false;
-	public static  $plugins_admin;
+	public static  $addons_admin;
 	public static  $module_loaded = false;
 	public static  $query_string;
 	public static  $page;
@@ -794,7 +794,7 @@ class App {
 	public static  $hooks;
 	public static  $timezone;
 	public static  $interactive = true;
-	public static  $plugins;
+	public static  $addons;
 	private static $apps = [];
 	public static  $identities;
 	public static  $css_sources = [];
@@ -1204,7 +1204,7 @@ class App {
 		 *   Called when creating the HTML page header.
 		 *   * \e string \b header - Return the HTML header which should be added
 		 */
-		call_hooks('build_pagehead', $x);
+		Hook::call('build_pagehead', $x);
 
 		/* put the head template at the beginning of page['htmlhead']
 		 * since the code added by the modules frequently depends on it
@@ -1512,8 +1512,6 @@ function check_config() {
 	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
-	plugins_sync();
-
 	load_hooks();
 
 	check_cron_broken();
@@ -1740,7 +1738,7 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	 *   Called when generating the login form.
 	 *   * \e string with parsed HTML
 	 */
-	call_hooks('login_hook', $o);
+	Hook::call('login_hook', $o);
 
 	return $o;
 }
@@ -1953,7 +1951,7 @@ function proc_run() {
 	 *   * \e boolean \b run_cmd
 	 */
 
-	call_hooks('proc_run', $arr);
+	Hook::call('proc_run', $arr);
 
 	if (! $arr['run_cmd']) {
 		return;
@@ -2212,7 +2210,7 @@ function load_pdl() {
 		 *   * \e string \b module
 		 *   * \e string \b layout
 		 */
-		call_hooks('load_pdl', $arr);
+		Hook::call('load_pdl', $arr);
 		$layout = $arr['layout'];
 
 		$n = 'mod_' . App::$module . '.pdl' ;
@@ -2222,7 +2220,7 @@ function load_pdl() {
 		if(! (isset($s) && $s))
 			$s = $layout;
 
-		if((! $s) && (($p = theme_include($n)) != ''))
+		if((! $s) && (($p = Theme::include($n)) != ''))
 			$s = @file_get_contents($p);
 		elseif(file_exists('addon/'. App::$module . '/' . $n))
 			$s = @file_get_contents('addon/'. App::$module . '/' . $n);
@@ -2231,7 +2229,7 @@ function load_pdl() {
 			'module' => App::$module,
 			'layout' => $s
 		];
-		call_hooks('alter_pdl',$arr);
+		Hook::call('alter_pdl',$arr);
 		$s = $arr['layout'];
 
 		if($s) {
@@ -2257,13 +2255,13 @@ function exec_pdl() {
  */
 function construct_page() {
 
-	call_hooks('page_end', App::$page['content']);
+	Hook::call('page_end', App::$page['content']);
 
 	exec_pdl();
 
 	$comanche = ((isset(App::$layout) && is_array(App::$layout) && count(App::$layout)) ? true : false);
 
-	require_once(theme_include('theme_init.php'));
+	require_once(Theme::include('theme_init.php'));
 
 	$installing = false;
 
@@ -2291,10 +2289,10 @@ function construct_page() {
 	// logger('current_theme: ' . print_r($current_theme,true));
 	// Theme::debug();
 
-	if (($p = theme_include($current_theme[0] . '.js')) != '')
+	if (($p = Theme::include($current_theme[0] . '.js')) != '')
 		head_add_js('/' . $p);
 
-	if (($p = theme_include('mod_' . App::$module . '.php')) != '')
+	if (($p = Theme::include('mod_' . App::$module . '.php')) != '')
 		require_once($p);
 
 	if (isset(App::$page['template_style']))
@@ -2302,12 +2300,12 @@ function construct_page() {
 	else
 		head_add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
 
-	if (($p = theme_include('mod_' . App::$module . '.css')) != '')
+	if (($p = Theme::include('mod_' . App::$module . '.css')) != '')
 		head_add_css('mod_' . App::$module . '.css');
 
 	head_add_css(Theme::url($installing));
 
-	if (($p = theme_include('mod_' . App::$module . '.js')) != '')
+	if (($p = Theme::include('mod_' . App::$module . '.js')) != '')
 		head_add_js('mod_' . App::$module . '.js');
 
 	App::build_pagehead();
@@ -2337,7 +2335,7 @@ function construct_page() {
 		 *   * \e string \b module
 		 *   * \e string \b layout
 		 */
-		call_hooks('construct_page', $arr);
+		Hook::call('construct_page', $arr);
 		App::$layout = ((isset($arr['layout']) && is_array($arr['layout'])) ? $arr['layout'] : []);
 
 		foreach(App::$layout as $k => $v) {
@@ -2384,7 +2382,7 @@ function construct_page() {
 			'script-src' => Array ("'self'","'unsafe-inline'","'unsafe-eval'"),
 			'style-src' => Array ("'self'","'unsafe-inline'")
 		);
-		call_hooks('content_security_policy',$cspsettings);
+		Hook::call('content_security_policy',$cspsettings);
 
 		// Legitimate CSP directives (cxref: https://content-security-policy.com/)
 		$validcspdirectives=Array(
@@ -2428,7 +2426,7 @@ function construct_page() {
 		header("Public-Key-Pins: " . App::$config['system']['public_key_pins']);
 	}
 
-	require_once(theme_include(
+	require_once(Theme::include(
 		((isset(App::$page['template']) && App::$page['template']) ? App::$page['template'] : 'default' ) . '.php' )
 	);
 }

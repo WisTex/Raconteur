@@ -16,6 +16,7 @@ use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
     
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
@@ -41,7 +42,7 @@ function replace_macros($s, $r)
      *   * \e array \b params
      */
 
-    call_hooks('replace_macros', $arr);
+    Hook::call('replace_macros', $arr);
 
     $t = App::template_engine();
 
@@ -747,7 +748,7 @@ function logger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
     $pluginfo = array('filename' => $logfile, 'loglevel' => $level, 'message' => $s,'priority' => $priority, 'logged' => false);
 
     if (! (App::$module == 'setup')) {
-        call_hooks('logger', $pluginfo);
+        Hook::call('logger', $pluginfo);
     }
 
     if (! $pluginfo['logged']) {
@@ -1202,7 +1203,7 @@ function get_poke_verbs()
          * @hooks poke_verbs
          *   * \e array associative array with another array as value
          */
-        call_hooks('poke_verbs', $arr);
+        Hook::call('poke_verbs', $arr);
     }
 
     return $arr;
@@ -1246,7 +1247,7 @@ function get_mood_verbs()
      * @hooks mood_verbs
      *   * \e array associative array with mood verbs
      */
-    call_hooks('mood_verbs', $arr);
+    Hook::call('mood_verbs', $arr);
 
     return $arr;
 }
@@ -1334,7 +1335,7 @@ function list_smilies($default_only = false)
         return $params;
     }
 
-    call_hooks('smilie', $params);
+    Hook::call('smilie', $params);
 
     return $params;
 }
@@ -1767,7 +1768,7 @@ function generate_map($coord)
      *   * \e string \b lon
      *   * \e string \b html the parsed HTML to return
      */
-    call_hooks('generate_map', $arr);
+    Hook::call('generate_map', $arr);
 
     return (($arr['html']) ? $arr['html'] : $coord);
 }
@@ -1784,7 +1785,7 @@ function generate_named_map($location)
      *   * \e string \b location
      *   * \e string \b html the parsed HTML to return
      */
-    call_hooks('generate_named_map', $arr);
+    Hook::call('generate_named_map', $arr);
 
     return (($arr['html']) ? $arr['html'] : $location);
 }
@@ -1793,7 +1794,7 @@ function generate_named_map($location)
 function prepare_body(&$item, $attach = false, $opts = false)
 {
 
-    call_hooks('prepare_body_init', $item);
+    Hook::call('prepare_body_init', $item);
 
     $censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored'] || intval($item['item_nsfw'])) && (get_safemode()))
         ? true
@@ -1887,7 +1888,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         'photo' => $photo
     );
 
-    call_hooks('prepare_body', $prep_arr);
+    Hook::call('prepare_body', $prep_arr);
 
     $s = $prep_arr['html'];
     $photo = $prep_arr['photo'];
@@ -1954,7 +1955,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         'attachments' => $attachments
     );
 
-    call_hooks('prepare_body_final', $prep_arr);
+    Hook::call('prepare_body_final', $prep_arr);
 
     unset($prep_arr['item']);
 
@@ -2312,14 +2313,14 @@ function cleardiv()
 function bb_translate_video($s)
 {
     $arr = array('string' => $s);
-    call_hooks('bb_translate_video', $arr);
+    Hook::call('bb_translate_video', $arr);
     return $arr['string'];
 }
 
 function html2bb_video($s)
 {
     $arr = array('string' => $s);
-    call_hooks('html2bb_video', $arr);
+    Hook::call('html2bb_video', $arr);
     return $arr['string'];
 }
 
@@ -2493,7 +2494,7 @@ function legal_webbie($s)
     $r = preg_replace('/([^a-z0-9\-\_])/', '', strtolower($s));
 
     $x = [ 'input' => $s, 'output' => $r ];
-    call_hooks('legal_webbie', $x);
+    Hook::call('legal_webbie', $x);
     return $x['output'];
 }
 
@@ -2505,7 +2506,7 @@ function legal_webbie_text()
     $s = t('a-z, 0-9, -, and _ only');
 
     $x = [ 'text' => $s ];
-    call_hooks('legal_webbie_text', $x);
+    Hook::call('legal_webbie_text', $x);
     return $x['text'];
 }
 
@@ -3567,7 +3568,7 @@ function pdl_selector($uid, $current = '')
     );
 
     $arr = array('channel_id' => $uid, 'current' => $current, 'entries' => $r);
-    call_hooks('pdl_selector', $arr);
+    Hook::call('pdl_selector', $arr);
 
     $entries = $arr['entries'];
     $current = $arr['current'];
@@ -3654,7 +3655,7 @@ function text_highlight($s, $lang, $options)
      *   * \e string \b language
      *   * \e boolean \b success default false
      */
-    call_hooks('text_highlight', $arr);
+    Hook::call('text_highlight', $arr);
 
     if ($arr['success']) {
         $o = $arr['text'];

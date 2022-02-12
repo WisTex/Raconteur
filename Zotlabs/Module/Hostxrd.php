@@ -4,6 +4,7 @@ namespace Zotlabs\Module;
 
 use App;
 use Zotlabs\Web\Controller;
+use Zotlabs\Extend\Hook;
 
 class Hostxrd extends Controller
 {
@@ -21,7 +22,7 @@ class Hostxrd extends Controller
             '$zroot' => z_root()
         ));
         $arr = array('xrd' => $x);
-        call_hooks('hostxrd', $arr);
+        Hook::call('hostxrd', $arr);
 
         echo $arr['xrd'];
         killme();

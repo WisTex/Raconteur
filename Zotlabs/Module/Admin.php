@@ -15,7 +15,8 @@ use Zotlabs\Web\SubModule;
 use Zotlabs\Lib\Config;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
-
+use Zotlabs\Lib\Addon;
+    
 /**
  * @brief Admin area.
  *
@@ -151,18 +152,7 @@ class Admin extends Controller
         $queue = (($r) ? $r[0]['total'] : 0);
         $queues = ['label' => t('Message queues'), 'queue' => $queue];
 
-        $plugins = [];
-
-        if (is_array(App::$plugins) && App::$plugins) {
-            foreach (App::$plugins as $p) {
-                if ($p) {
-                    $plugins[] = $p;
-                }
-            }
-            sort($plugins);
-        } else {
-            $plugins = 0;
-        }
+        $plugins = Addon::list_installed();
 
         // Could be extended to provide also other alerts to the admin
 

@@ -6,6 +6,7 @@ namespace Zotlabs\Lib;
 
 use App;
 use Zotlabs\Lib\Features;
+use Zotlabs\Extend\Hook;
 
 require_once('include/text.php');
 
@@ -373,7 +374,7 @@ class ThreadItem
         $has_tags = (($body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders']) ? true : false);
 
         $dropdown_extras_arr = [ 'item' => $item , 'dropdown_extras' => '' ];
-        call_hooks('dropdown_extras', $dropdown_extras_arr);
+        Hook::call('dropdown_extras', $dropdown_extras_arr);
         $dropdown_extras = $dropdown_extras_arr['dropdown_extras'];
 
         // Pinned item processing
@@ -513,7 +514,7 @@ class ThreadItem
         );
 
         $arr = array('item' => $item, 'output' => $tmp_item);
-        call_hooks('display_item', $arr);
+        Hook::call('display_item', $arr);
 
         $result = $arr['output'];
 
@@ -927,7 +928,7 @@ class ThreadItem
         $observer = $conv->get_observer();
 
         $arr = array('comment_buttons' => '','id' => $this->get_id());
-        call_hooks('comment_buttons', $arr);
+        Hook::call('comment_buttons', $arr);
         $comment_buttons = $arr['comment_buttons'];
 
         $feature_auto_save_draft = ((Features::enabled($conv->get_profile_owner(), 'auto_save_draft')) ? "true" : "false");

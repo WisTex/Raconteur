@@ -9,6 +9,8 @@ use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
+use Zotlabs\Render\Theme;
+use Zotlabs\Extend\Hook;
     
 require_once('include/security.php');
 
@@ -198,7 +200,7 @@ class Navbar {
 
         $x = array('nav' => $nav, 'usermenu' => $userinfo );
 
-        call_hooks('nav', $x);
+        Hook::call('nav', $x);
 
         // Not sure the best place to put this on the page. So I'm implementing it but leaving it
         // turned off until somebody discovers this and figures out a good location for it.
@@ -285,7 +287,7 @@ class Navbar {
             }
         }
 
-        $c = theme_include('navbar_' . purify_filename($template) . '.css');
+        $c = Theme::include('navbar_' . purify_filename($template) . '.css');
         $tpl = get_markup_template('navbar_' . purify_filename($template) . '.tpl');
 
         if ($c && $tpl) {
@@ -338,7 +340,7 @@ class Navbar {
             unset($_SESSION['reload_avatar']);
         }
 
-        call_hooks('page_header', App::$page['nav']);
+        Hook::call('page_header', App::$page['nav']);
     }
 
     /*
@@ -532,7 +534,7 @@ class Navbar {
 
         $arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
 
-        call_hooks('channel_apps', $arr);
+        Hook::call('channel_apps', $arr);
 
         return replace_macros(
             get_markup_template('profile_tabs.tpl'),

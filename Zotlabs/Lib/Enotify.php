@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Extend\Hook;
     
 /**
  * @brief File with functions and a class for generating system and email notifications.
@@ -510,7 +511,7 @@ class Enotify
         'recipient' => $recip
         );
 
-        call_hooks('enotify', $h);
+        Hook::call('enotify', $h);
 
         $subject   = $h['subject'];
         $preamble  = $h['preamble'];
@@ -568,7 +569,7 @@ class Enotify
             }
         }
 
-        call_hooks('enotify_store', $datarray);
+        Hook::call('enotify_store', $datarray);
 
         if ($datarray['abort']) {
             pop_lang();
@@ -718,7 +719,7 @@ class Enotify
             $datarray['headers']      = $additional_mail_header;
             $datarray['email_secure'] = false;
 
-            call_hooks('enotify_mail', $datarray);
+            Hook::call('enotify_mail', $datarray);
 
             // Default to private - don't disclose message contents over insecure channels (such as email)
             // Might be interesting to use GPG,PGP,S/MIME encryption instead
@@ -849,7 +850,7 @@ class Enotify
         $params['sent']   = false;
         $params['result'] = false;
 
-        call_hooks('email_send', $params);
+        Hook::call('email_send', $params);
 
         if ($params['sent']) {
             logger("notification: enotify::send (addon) returns " . (($params['result']) ? 'success' : 'failure'), LOGGER_DEBUG);
@@ -972,7 +973,7 @@ class Enotify
             return [];
         }
 
-        call_hooks('enotify_format', $x);
+        Hook::call('enotify_format', $x);
         if (! $x['display']) {
             return [];
         }

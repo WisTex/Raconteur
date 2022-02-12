@@ -331,7 +331,7 @@ class SimpleTemplate implements TemplateEngine
 
     public function get_markup_template($file, $root = '')
     {
-        $template_file = theme_include($file, $root);
+        $template_file = Theme::include($file, $root);
         if ($template_file) {
             $content = file_get_contents($template_file);
         }

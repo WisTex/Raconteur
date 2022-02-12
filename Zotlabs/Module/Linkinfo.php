@@ -12,6 +12,7 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Oembed;
 use Zotlabs\Lib as Zlib;
+use Zotlabs\Extend\Hook;
 
 require_once('include/security.php');
 
@@ -188,7 +189,7 @@ class Linkinfo extends Controller
 
         $arr = array('url' => $url, 'text' => '');
 
-        call_hooks('parse_link', $arr);
+        Hook::call('parse_link', $arr);
 
         if (strlen($arr['text'])) {
             echo $arr['text'];

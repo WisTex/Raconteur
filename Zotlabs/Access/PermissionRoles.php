@@ -2,6 +2,9 @@
 
 namespace Zotlabs\Access;
 
+use Zotlabs\Extend\Hook;
+
+
 /**
  * @brief PermissionRoles class.
  *
@@ -115,7 +118,7 @@ class PermissionRoles
          */
         $x = ['role' => $role, 'result' => $ret];
 
-        call_hooks('get_role_perms', $x);
+        Hook::call('get_role_perms', $x);
 
         return $x['result'];
     }
@@ -144,7 +147,7 @@ class PermissionRoles
             ],
         ];
 
-        call_hooks('list_permission_roles', $roles);
+        Hook::call('list_permission_roles', $roles);
 
         return $roles;
     }

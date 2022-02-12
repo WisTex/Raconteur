@@ -5,6 +5,7 @@ namespace Zotlabs\Module\Admin;
 use App;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Admin Module for Channels.
@@ -163,7 +164,7 @@ class Channels
             }
         }
 
-        call_hooks('admin_channels', $channels);
+        Hook::call('admin_channels', $channels);
 
         $o = replace_macros(get_markup_template('admin_channels.tpl'), [
             // strings //

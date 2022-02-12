@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Web\Controller;
+use Zotlabs\Extend\Hook;
 
 class Affinity extends Controller
 {
@@ -65,7 +66,7 @@ class Affinity extends Controller
                 80 => t('Connections'),
                 99 => t('All')
             );
-            call_hooks('affinity_labels', $labels);
+            Hook::call('affinity_labels', $labels);
 
             $tpl = get_markup_template('affinity.tpl');
             $x = replace_macros($tpl, [
@@ -78,7 +79,7 @@ class Affinity extends Controller
 
 
             $arr = array('html' => $x);
-            call_hooks('affinity_slider', $arr);
+            Hook::call('affinity_slider', $arr);
             $setting_fields .= $arr['html'];
         }
 

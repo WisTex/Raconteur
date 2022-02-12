@@ -6,7 +6,8 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\Channel;
-
+use Zotlabs\Lib\Addon;
+    
 require_once('include/attach.php');
 require_once('include/photos.php');
 
@@ -148,7 +149,7 @@ class Wall_attach extends Controller
                 logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
             }
         }
-        if ($r['data']['filetype'] === 'text/vnd.abc' && addon_is_installed('abc')) {
+        if ($r['data']['filetype'] === 'text/vnd.abc' && Addon::is_installed('abc')) {
             $x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
             if ($x) {
                 $s .= "\n\n" . '[abc]' . $x . '[/abc]';

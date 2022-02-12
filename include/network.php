@@ -13,6 +13,7 @@ use Zotlabs\Lib\Keyutils;
 use Zotlabs\Lib\LDSignatures;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Daemon\Run;
+use Zotlabs\Extend\Hook;
 
 /**
  * @file include/network.php
@@ -1236,7 +1237,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
      *   * \e array \b webfinger - The result from webfinger_rfc7033()
      *   * \e boolean \b success - The return value, default false
      */
-    call_hooks('discover_channel_webfinger', $arr);
+    Hook::call('discover_channel_webfinger', $arr);
     if ($arr['success']) {
         return $arr['xchan'];
     }
@@ -1480,7 +1481,7 @@ function check_siteallowed($url)
      *   * \e string \b url
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('check_siteallowed', $arr);
+    Hook::call('check_siteallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1539,7 +1540,7 @@ function check_pubstream_siteallowed($url)
      *   * \e string \b url
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('pubstream_check_siteallowed', $arr);
+    Hook::call('pubstream_check_siteallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1600,7 +1601,7 @@ function check_channelallowed($hash)
      *   * \e string \b hash
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('check_channelallowed', $arr);
+    Hook::call('check_channelallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1655,7 +1656,7 @@ function check_pubstream_channelallowed($hash)
      *   * \e string \b hash
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('check_pubstream_channelallowed', $arr);
+    Hook::call('check_pubstream_channelallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1772,7 +1773,7 @@ function network_to_name($s)
      * @hooks network_to_name
      * @deprecated
      */
-    call_hooks('network_to_name', $nets);
+    Hook::call('network_to_name', $nets);
 
     $search  = array_keys($nets);
     $replace = array_values($nets);
@@ -1822,7 +1823,7 @@ function z_mail($params)
      * @hooks email_send
      *   * \e params @see z_mail()
      */
-    call_hooks('email_send', $params);
+    Hook::call('email_send', $params);
 
     if ($params['sent']) {
         logger('notification: z_mail returns ' . (($params['result']) ? 'success' : 'failure'), LOGGER_DEBUG);
@@ -1900,7 +1901,7 @@ function service_plink($contact, $guid)
      *   * \e string \b url
      *   * \e string \b plink will get returned
      */
-    call_hooks('service_plink', $x);
+    Hook::call('service_plink', $x);
 
     return $x['plink'];
 }

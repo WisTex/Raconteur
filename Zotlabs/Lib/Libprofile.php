@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Features;
 use Zotlabs\Lib\Menu;
+use Zotlabs\Extend\Hook;
         
 class Libprofile
 {
@@ -281,7 +282,7 @@ class Libprofile
          * @hooks profile_sidebar_enter
          *   Called before generating the 'channel sidebar' or mini-profile.
          */
-        call_hooks('profile_sidebar_enter', $profile);
+        Hook::call('profile_sidebar_enter', $profile);
 
 		$profdm = EMPTY_STR;
 		$profdm_url = EMPTY_STR;
@@ -418,7 +419,7 @@ class Libprofile
          *   * \e array \b profile
          *   * \e string \b entry - The parsed HTML template
          */
-        call_hooks('profile_sidebar', $arr);
+        Hook::call('profile_sidebar', $arr);
 
         return $arr['entry'];
     }

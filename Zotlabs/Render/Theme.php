@@ -134,6 +134,51 @@ class Theme
         return ('/view/theme/' . $t . '/css/style.css');
     }
 
+    public static function include($file, $root = '')
+    {
+
+        // Make sure $root ends with a slash / if it's not blank
+        if ($root) {
+            $root = rtrim($root,'/') . '/';
+        }
+    
+        $theme_info = App::$theme_info;
+
+        if (array_key_exists('extends', $theme_info)) {
+            $parent = $theme_info['extends'];
+        } else {
+            $parent = 'NOPATH';
+        }
+
+        $theme = self::current();
+        $thname = $theme[0];
+
+        $ext = substr($file, strrpos($file, '.') + 1);
+
+        $paths = array(
+            "{$root}view/theme/$thname/$ext/$file",
+            "{$root}view/theme/$parent/$ext/$file",
+            "{$root}view/site/$ext/$file",
+            "{$root}view/$ext/$file",
+        );
+
+        foreach ($paths as $p) {
+
+            if (strpos($p, 'NOPATH') !== false) {
+                continue;
+            }
+            if (file_exists($p)) {
+                return $p;
+            }
+        }
+
+        return '';
+    }
+
+
+
+
+    
     public function debug()
     {
         logger('system_theme: ' . self::$system_theme);

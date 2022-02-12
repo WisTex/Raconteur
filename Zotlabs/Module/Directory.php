@@ -9,6 +9,7 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Extend\Hook;
 
 require_once('include/socgraph.php');
 require_once('include/bbcode.php');
@@ -435,7 +436,7 @@ class Directory extends Controller
 
                             $arr = array('contact' => $rr, 'entry' => $entry);
 
-                            call_hooks('directory_item', $arr);
+                            Hook::call('directory_item', $arr);
 
                             unset($profile);
                             unset($location);

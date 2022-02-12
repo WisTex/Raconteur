@@ -6,6 +6,7 @@ use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Module\Webfinger;
 use Zotlabs\Module\Oauthinfo;
+use Zotlabs\Extend\Hook;
 
 class Well_known extends Controller
 {
@@ -15,7 +16,7 @@ class Well_known extends Controller
 
         if (argc() > 1) {
             $arr = ['server' => $_SERVER, 'request' => $_REQUEST];
-            call_hooks('well_known', $arr);
+            Hook::call('well_known', $arr);
 
             if (!check_siteallowed($_SERVER['REMOTE_ADDR'])) {
                 logger('well_known: site not allowed. ' . $_SERVER['REMOTE_ADDR']);

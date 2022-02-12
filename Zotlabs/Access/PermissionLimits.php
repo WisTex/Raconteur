@@ -4,6 +4,7 @@ namespace Zotlabs\Access;
 
 use App;
 use Zotlabs\Lib\PConfig;
+use Zotlabs\Extend\Hook;
 
 /**
  * @brief Permission limits.
@@ -92,7 +93,7 @@ class PermissionLimits
             $x = PConfig::Get($channel_id, 'perm_limits', $perm);
             if ($x === false) {
                 $a = [ 'channel_id' => $channel_id, 'permission' => $perm, 'value' => $x ];
-                call_hooks('permission_limits_get', $a);
+                Hook::call('permission_limits_get', $a);
                 return intval($a['value']);
             }
             return intval($x);

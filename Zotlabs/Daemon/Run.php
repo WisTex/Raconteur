@@ -2,6 +2,8 @@
 
 namespace Zotlabs\Daemon;
 
+use Zotlabs\Extend\Hook;
+
 if (array_search(__file__, get_included_files()) === 0) {
     require_once('include/cli_startup.php');
     array_shift($argv);
@@ -38,7 +40,7 @@ class Run
             'long_running' => self::$long_running
         ];
 
-        call_hooks('daemon_summon', $hookinfo);
+        Hook::call('daemon_summon', $hookinfo);
 
         $arr  = $hookinfo['argv'];
         $argc = count($arr);
@@ -60,7 +62,7 @@ class Run
             'long_running' => self::$long_running
         ];
 
-        call_hooks('daemon_release', $hookinfo);
+        Hook::call('daemon_release', $hookinfo);
 
         $argv = $hookinfo['argv'];
         $argc = count($argv);
