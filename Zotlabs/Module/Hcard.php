@@ -5,7 +5,8 @@ namespace Zotlabs\Module;
 use App;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Libprofile;
-
+use Zotlabs\Lib\Head;
+    
 class Hcard extends Controller
 {
 
@@ -39,14 +40,14 @@ class Hcard extends Controller
             $profile = $r[0]['profile_guid'];
         }
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/atom+xml',
             'title' => t('Posts and comments'),
             'href' => z_root() . '/feed/' . $which
         ]);
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/atom+xml',
             'title' => t('Only posts'),

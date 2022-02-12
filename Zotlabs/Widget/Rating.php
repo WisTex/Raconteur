@@ -3,7 +3,8 @@
 namespace Zotlabs\Widget;
 
 use App;
-
+use Zotlabs\Lib\Head;
+    
 class Rating
 {
 
@@ -50,7 +51,7 @@ class Rating
                 $self = true;
             }
 
-            head_add_js('ratings.js');
+            Head::add_js('ratings.js');
         }
 
 

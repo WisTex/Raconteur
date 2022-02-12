@@ -9,6 +9,7 @@ use Zotlabs\Lib\PConfig;
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Libacl;
+use Zotlabs\Lib\Head;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Render\Theme;
 
@@ -270,7 +271,7 @@ class Display extends Controller
                 '$mid' => (($mid) ? urlencode($mid) : '')
             ));
 
-            head_add_link([
+            Head::add_link([
                 'rel' => 'alternate',
                 'type' => 'application/json+oembed',
                 'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
