@@ -8,10 +8,6 @@ use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Navbar;
 use Zotlabs\Render\Theme;
 
-
-require_once('include/socgraph.php');
-
-
 class Connections extends Controller
 {
 

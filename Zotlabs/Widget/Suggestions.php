@@ -5,10 +5,7 @@ namespace Zotlabs\Widget;
 use App;
 use Zotlabs\Lib\Apps;
 use Zotlabs\Render\Theme;
-
-
-require_once('include/socgraph.php');
-
+use Zotlabs\Lib\Socgraph;
 
 class Suggestions
 {
@@ -20,7 +17,7 @@ class Suggestions
             return EMPTY_STR;
         }
 
-        $r = suggestion_query(local_channel(), get_observer_hash(), 0, 20);
+        $r = Socgraph::suggestion_query(local_channel(), get_observer_hash(), 0, 20);
 
         if (!$r) {
             return EMPTY_STR;

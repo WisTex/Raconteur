@@ -4,7 +4,7 @@ namespace Zotlabs\Widget;
 
 use App;
 use Zotlabs\Render\Theme;
-
+use Zotlabs\Lib\Socgraph;
 
 class Common_friends
 {
@@ -35,15 +35,13 @@ class Common_friends
             return;
         }
 
-        require_once('include/socgraph.php');
-
-        $t = count_common_friends($profile_uid, $observer_hash);
+        $t = Socgraph::count_common_friends($profile_uid, $observer_hash);
 
         if (!$t) {
             return;
         }
 
-        $r = common_friends($profile_uid, $observer_hash, 0, $cnt, true);
+        $r = Socgraph::common_friends($profile_uid, $observer_hash, 0, $cnt, true);
 
         return replace_macros(Theme::get_template('remote_friends_common.tpl'), array(
             '$desc' => t('Common Connections'),

@@ -8,9 +8,8 @@ use Zotlabs\Lib\Libzot;
 use Zotlabs\Lib\ActivityStreams;
 use Zotlabs\Lib\Activity;
 use Zotlabs\Lib\ASCollection;
-
-require_once('include/socgraph.php');
-
+use Zotlabs\Lib\Socgraph;
+    
 
 class Onepoll
 {
@@ -172,7 +171,7 @@ class Onepoll
             db_quoteinterval('7 DAY')
         );
         if (! $r) {
-            poco_load($contact['xchan_hash'], $contact['xchan_connurl']);
+            Socgraph::poco_load($contact['xchan_hash'], $contact['xchan_connurl']);
         }
         return;
     }

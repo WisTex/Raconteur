@@ -26,7 +26,6 @@ use Zotlabs\Render\Theme;
  * @brief In this file the connection-editor form is generated and evaluated.
  */
 
-require_once('include/socgraph.php');
 require_once('include/photos.php');
 
 

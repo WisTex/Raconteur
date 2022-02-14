@@ -9,11 +9,11 @@ use Zotlabs\Lib\Libsync;
 use Zotlabs\Lib\LibBlock;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Lib\Navbar;
+use Zotlabs\Lib\Socgraph;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Render\Theme;
 
 
-require_once('include/socgraph.php');
 require_once('include/bbcode.php');
 require_once('include/html2plain.php');
 
@@ -153,7 +153,7 @@ class Directory extends Controller
             // same number of results
 
             App::set_pager_itemspage(60);
-            $r = suggestion_query(local_channel(), get_observer_hash(), App::$pager['start'], DIRECTORY_PAGESIZE);
+            $r = Socgraph::suggestion_query(local_channel(), get_observer_hash(), App::$pager['start'], DIRECTORY_PAGESIZE);
 
             if (!$r) {
                 if ($_REQUEST['aj']) {

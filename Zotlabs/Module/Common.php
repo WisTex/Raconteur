@@ -6,9 +6,7 @@ use App;
 use Zotlabs\Lib\Libprofile;
 use Zotlabs\Web\Controller;
 use Zotlabs\Render\Theme;
-
-
-require_once('include/socgraph.php');
+use Zotlabs\Lib\Socgraph.php
 
 
 class Common extends Controller
@@ -51,14 +49,14 @@ class Common extends Controller
             return;
         }
 
-        $t = count_common_friends(App::$profile['profile_uid'], $observer_hash);
+        $t = Socgraph::count_common_friends(App::$profile['profile_uid'], $observer_hash);
 
         if (!$t) {
             notice(t('No connections in common.') . EOL);
             return;
         }
 
-        $r = common_friends(App::$profile['profile_uid'], $observer_hash);
+        $r = Socgraph::common_friends(App::$profile['profile_uid'], $observer_hash);
 
         if ($r) {
             foreach ($r as $rr) {

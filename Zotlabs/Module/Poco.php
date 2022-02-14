@@ -1,5 +1,4 @@
 <?php
-
 namespace Zotlabs\Module;
 
 /*
@@ -8,14 +7,13 @@ namespace Zotlabs\Module;
 
 
 use Zotlabs\Web\Controller;
+use Zotlabs\Lib\Socgraph;
 
-require_once('include/socgraph.php');
 
 class Poco extends Controller
 {
-
     public function init()
     {
-        poco();
+        Socgraph::poco();
     }
 }

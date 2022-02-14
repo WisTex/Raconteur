@@ -9,7 +9,6 @@ use Zotlabs\Web\HTTPSig;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Extend\Hook;
 
-require_once('include/oauth.php');
 require_once('include/auth.php');
 require_once('include/security.php');
 
@@ -65,24 +64,8 @@ function api_login()
                 Hook::call('logged_in', App::$user);
                 return;
             }
-        } else {
-            // OAuth 1.0
-            $oauth = new ZotOAuth1();
-            $req = OAuth1Request::from_request();
-
-            list($consumer, $token) = $oauth->verify_request($req);
-
-            if (! is_null($token)) {
-                $oauth->loginUser($token->uid);
-
-                App::set_oauth_key($consumer->key);
-
-                Hook::call('logged_in', App::$user);
-                return;
-            }
-            
-            killme();
         }
+
     } catch (Exception $e) {
         logger($e->getMessage());
     }

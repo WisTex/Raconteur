@@ -12,11 +12,7 @@ use Zotlabs\Access\PermissionLimits;
 use Zotlabs\Extend\Hook;
 use Zotlabs\Render\Theme;
 
-
-require_once('include/socgraph.php');
-
 require_once('include/photos.php');
-
 
 class Defperms extends Controller
 {
