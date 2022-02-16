@@ -1,6 +1,7 @@
 <?php
 namespace Code\Lib;
 
+use App;
 use Code\Lib\Libzot;
 use Code\Lib\Libzotdir;
 use Code\Lib\Zotfinger;
