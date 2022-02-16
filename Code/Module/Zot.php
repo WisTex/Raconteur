@@ -10,8 +10,8 @@
 namespace Code\Module;
 
 use Code\Web\Controller;
-use Code\Zot6\Receiver;
-use Code\Zot6\Zot6Handler;
+use Code\Nomad\Receiver;
+use Code\Nomad\NomadHandler;
 
 /**
  * @brief Zot module.
@@ -21,7 +21,7 @@ class Zot extends Controller
 {
 	public function init()
 	{
-		$zot = new Receiver(new Zot6Handler());
+		$zot = new Receiver(new NomadHandler());
 		json_return_and_die($zot->run(),'application/x-nomad+json');
 	}
 

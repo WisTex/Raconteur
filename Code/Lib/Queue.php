@@ -9,8 +9,8 @@ use Code\Web\HTTPSig;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Channel;
-use Code\Zot6\Receiver;
-use Code\Zot6\Zot6Handler;
+use Code\Nomad\Receiver;
+use Code\Nomad\NomadHandler;
 use Code\Extend\Hook;
 
 class Queue
@@ -445,7 +445,7 @@ class Queue
 
         if ($outq['outq_posturl'] === z_root() . '/zot') {
             // local delivery
-            $zot = new Receiver(new Zot6Handler(), $outq['outq_notify']);
+            $zot = new Receiver(new NomadHandler(), $outq['outq_notify']);
             $result = $zot->run();
             logger('returned_json: ' . json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOGGER_DATA);
             logger('deliver: local zot delivery succeeded to ' . $outq['outq_posturl']);

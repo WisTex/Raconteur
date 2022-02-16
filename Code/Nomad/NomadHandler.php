@@ -1,11 +1,11 @@
 <?php
 
-namespace Code\Zot6;
+namespace Code\Nomad;
 
 use Code\Lib\Libzot;
 use Code\Lib\Queue;
 
-class Zot6Handler implements IHandler
+class NomadHandler implements IHandler
 {
 
     public function Notify($data, $hub)

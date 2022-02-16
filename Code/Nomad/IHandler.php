@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\Zot6;
+namespace Code\Nomad;
 
 interface IHandler
 {

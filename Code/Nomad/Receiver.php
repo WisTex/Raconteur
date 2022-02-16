@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\Zot6;
+namespace Code\Nomad;
 
 use Code\Lib\Config;
 use Code\Lib\Libzot;
