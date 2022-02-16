@@ -34,10 +34,10 @@ Then we're going to create a comment block to describe the addon. There's a spec
 [/code]
 These tags will be seen by the site administrator when he/she installs or manages plugins from the admin panel. There can be more than one author. Just add another line starting with 'Author:'.
 
-Next we will create a 'use' statement to include the code in Zotlabs/Lib/Apps.php
+Next we will create a 'use' statement to include the code in Code/Lib/Apps.php
 
 [code]
-use Zotlabs\Lib\Apps;
+use Code\Lib\Apps;
 [/code]
 The typical addon will have at least the following functions:
 [code]
@@ -52,22 +52,22 @@ In our case, we'll call them randplace_load() and randplace_unload(), as that is
 
 Next we'll talk about [b]hooks[/b], which are essentially event handlers. There are a lot of these, and they each have a name. What we normally do is use the addonname_load() function to register a &quot;handler function&quot; for any hooks you are interested in. Then when any of the corresponding events occur, your code will be called. These are all called with one argument, which is often an array of data or information that is specific to that hook or event. In order to change any information in that array, you must indicate in your handler function that the argument variable is to be passed "by reference". You can do this with '&$variable_name'.
 
-We register hook handlers with the 'Zotlabs\Extend\Hook::register()' function. It typically takes 3 arguments. The first is the name of the hook we wish to catch, the second is the filename of the file to find our handler function (relative to the base of your $Projectname installation), and the third is the function name of your handler function. Then we'll use 'Zotlabs\Extend\Route::register()' to define a "controller" or web page. This requires two arguments. The first is the name of the file we wish to provide the controller logic and the second is the name of the webpage path where we want our controller to answer web requests. By convention we use addon/addonname/Mod_something.php as the filename and in this case the page will be found at https://{yoursite}/something.  So let's create our randplace_load() function right now. 
+We register hook handlers with the 'Code\Extend\Hook::register()' function. It typically takes 3 arguments. The first is the name of the hook we wish to catch, the second is the filename of the file to find our handler function (relative to the base of your $Projectname installation), and the third is the function name of your handler function. Then we'll use 'Code\Extend\Route::register()' to define a "controller" or web page. This requires two arguments. The first is the name of the file we wish to provide the controller logic and the second is the name of the webpage path where we want our controller to answer web requests. By convention we use addon/addonname/Mod_something.php as the filename and in this case the page will be found at https://{yoursite}/something.  So let's create our randplace_load() function right now. 
 
 [code]
 	function randplace_load() {
-	    Zotlabs\Extend\Hook::register('post_local', 'addon/randplace/randplace.php', 'randplace_post_hook');
+	    Code\Extend\Hook::register('post_local', 'addon/randplace/randplace.php', 'randplace_post_hook');
 		
-        Zotlabs\Extend\Route::register('addon/randplace/Mod_randplace.php', 'randplace');
+        Code\Extend\Route::register('addon/randplace/Mod_randplace.php', 'randplace');
 	}
 [/code]
 
 Next we'll create an unload function. This is easy, as it just unregisters the things we registered. It takes exactly the same arguments. 
 [code]
 	function randplace_unload() {
-	    Zotlabs\Extend\Hook::unregister('post_local', 'addon/randplace/randplace.php', 'randplace_post_hook');
+	    Code\Extend\Hook::unregister('post_local', 'addon/randplace/randplace.php', 'randplace_post_hook');
 
-		Zotlabs\Extend\Route::unregister('addon/randplace/Mod_randplace.php, 'randplace');
+		Code\Extend\Route::unregister('addon/randplace/Mod_randplace.php, 'randplace');
 	}
 [/code]
 
@@ -143,13 +143,13 @@ Now let's create our webpage. This simply describes our app and indicates whethe
 If it is installed, the addon will do its prescribed work. 
 [code]
 <?php
-/* With rare exception, controllers use the 'Zotlabs\Module' namespace and extend the Zotlabs\Web\Controller class */
-namespace Zotlabs\Module;
+/* With rare exception, controllers use the 'Code\Module' namespace and extend the Code\Web\Controller class */
+namespace Code\Module;
 
-use Zotlabs\Web\Controller;
+use Code\Web\Controller;
 
 /* Autoload the Apps code */
-use Zotlabs\Lib\Apps;
+use Code\Lib\Apps;
 
 class Randplace extends Controller {
 
@@ -213,9 +213,9 @@ To register a hook using a class method as a callback, a couple of things need t
  */
 
 function myplugin_load() {
-	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php','\\Myplugin::foo');
+	Code\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php','\\Myplugin::foo');
 	/* The next line is identical in how it behaves, but uses a slightly different method */
-	Zotlabs\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php', [ '\\Myplugin', 'foo' ]);
+	Code\Extend\Hook::register('hook_name','addon/myplugin/myplugin.php', [ '\\Myplugin', 'foo' ]);
 }
  
 class Myplugin {

@@ -3,10 +3,10 @@
 
 // connect utility
 
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Connect;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Daemon\Run;
+use Code\Lib\Libsync;
+use Code\Lib\Connect;
+use Code\Lib\Channel;
+use Code\Daemon\Run;
 
 if (! file_exists('include/cli_startup.php')) {
     echo t('Run from the top level $Projectname web directory, as util/connect <args>') . PHP_EOL;

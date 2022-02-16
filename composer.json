@@ -64,12 +64,12 @@
 	"autoload" : {
 		"psr-4" : {
 			"Hubzilla\\" : "include/",
-			"Zotlabs\\" : "Zotlabs/"
+			"Code\\" : "Code/"
 		}
 	},
 	"autoload-dev" : {
 		"psr-4" : {
-			"Zotlabs\\Tests\\Unit\\" : "tests/unit"
+			"Code\\Tests\\Unit\\" : "tests/unit"
 		}
 	},
 	"minimum-stability" : "stable",

@@ -1,21 +1,21 @@
 <?php
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Web\Session;
-use Zotlabs\Web\HttpMeta;
-use Zotlabs\Render\SmartyTemplate;
-use Zotlabs\Render\Comanche;
-use Zotlabs\Render\Theme;
-use Zotlabs\Lib\DB_Upgrade;
-use Zotlabs\Lib\System;
-use Zotlabs\Lib\PConfig;
-use Zotlabs\Lib\Config;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\Navbar;
-use Zotlabs\Lib\Stringsjs;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Lib\Head;
+use Code\Lib\Libzot;
+use Code\Web\Session;
+use Code\Web\HttpMeta;
+use Code\Render\SmartyTemplate;
+use Code\Render\Comanche;
+use Code\Render\Theme;
+use Code\Lib\DB_Upgrade;
+use Code\Lib\System;
+use Code\Lib\PConfig;
+use Code\Lib\Config;
+use Code\Daemon\Run;
+use Code\Lib\Channel;
+use Code\Lib\Navbar;
+use Code\Lib\Stringsjs;
+use Code\Extend\Hook;
+use Code\Lib\Head;
         
 /**
  * @file boot.php

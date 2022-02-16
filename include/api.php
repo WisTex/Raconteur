@@ -1,7 +1,7 @@
 <?php
 
-use Zotlabs\Lib\Api_router;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Api_router;
+use Code\Extend\Hook;
 
 require_once("include/conversation.php");
 require_once("include/html2plain.php");

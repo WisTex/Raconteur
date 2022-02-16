@@ -5,9 +5,9 @@
  * @brief Some functions to work with XML feeds.
  */
 
-use Zotlabs\Lib\Img_filesize;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Render\Theme;
+use Code\Lib\Img_filesize;
+use Code\Extend\Hook;
+use Code\Render\Theme;
 
 
 /**
@@ -99,8 +99,8 @@ function get_feed_for($channel, $observer_hash, $params)
     $feed_author = '';
 
     $atom .= replace_macros($feed_template, array(
-        '$version'       => xmlify(Zotlabs\Lib\System::get_project_version()),
-        '$generator'     => xmlify(Zotlabs\Lib\System::get_platform_name()),
+        '$version'       => xmlify(Code\Lib\System::get_project_version()),
+        '$generator'     => xmlify(Code\Lib\System::get_platform_name()),
 		'$generator_uri' => 'https://codeberg.org/' . ((PLATFORM_NAME === 'streams') ? 'streams' : 'zot') . '/' . PLATFORM_NAME,
         '$feed_id'       => xmlify($channel['xchan_url']),
         '$feed_title'    => xmlify($channel['channel_name']),

@@ -6,18 +6,18 @@
  * a number of miscellaneous functions that didn't really fit anywhere else.  Perhaps it should be named "misc.php" instead.
  */
 
-use Zotlabs\Lib\MarkdownSoap;
-use Zotlabs\Lib\AccessList;
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\SvgSanitizer;
-use Zotlabs\Lib\Img_cache;
-use Zotlabs\Lib\PConfig;
-use Zotlabs\Lib\Config;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\Features;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Render\Theme;
+use Code\Lib\MarkdownSoap;
+use Code\Lib\AccessList;
+use Code\Lib\Libzot;
+use Code\Lib\SvgSanitizer;
+use Code\Lib\Img_cache;
+use Code\Lib\PConfig;
+use Code\Lib\Config;
+use Code\Lib\Activity;
+use Code\Lib\Channel;
+use Code\Lib\Features;
+use Code\Extend\Hook;
+use Code\Render\Theme;
 
     
 use Michelf\MarkdownExtra;

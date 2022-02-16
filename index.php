@@ -1,6 +1,6 @@
 <?php
 
-namespace Zotlabs\Web;
+namespace Code\Web;
 
 /**
  * @file index.php
@@ -8,7 +8,7 @@ namespace Zotlabs\Web;
  * @brief The main entry point to the application.
  */
 
-require_once 'Zotlabs/Web/WebServer.php';
+require_once 'Code/Web/WebServer.php';
 
 $server = new WebServer();
 $server->run();

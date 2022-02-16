@@ -1,4 +1,4 @@
-INPUT = README.md index.php boot.php include/ install/ util/ view/ Zotlabs/
+INPUT = README.md index.php boot.php include/ install/ util/ view/ Code/
 RECURSIVE = YES
 PROJECT_NAME = "Hubzilla"
 PROJECT_LOGO = images/rm-64.png

@@ -22,16 +22,16 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\Lib;
+namespace Code\Tests\Unit\Lib;
 
 use phpmock\phpunit\PHPMock;
-use Zotlabs\Tests\Unit\UnitTestCase;
-use Zotlabs\Lib\PermissionDescription;
+use Code\Tests\Unit\UnitTestCase;
+use Code\Lib\PermissionDescription;
 
 /**
  * @brief Unit Test case for PermissionDescription class.
  *
- * @covers Zotlabs\Lib\PermissionDescription
+ * @covers Code\Lib\PermissionDescription
  */
 class PermissionDescriptionTest extends UnitTestCase
 {
@@ -50,14 +50,14 @@ class PermissionDescriptionTest extends UnitTestCase
     public function testFromStandalonePermission()
     {
         // Create a stub for global function t()
-        $t = $this->getFunctionMock('Zotlabs\Lib', 't');
+        $t = $this->getFunctionMock('Code\Lib', 't');
         $t->expects($this->atLeastOnce())->willReturnCallback(
             function ($string) {
                 return $string;
             }
         );
         // Create a mock for global function logger()
-        $this->getFunctionMock('Zotlabs\Lib', 'logger');
+        $this->getFunctionMock('Code\Lib', 'logger');
 
         $permDescUnknown = PermissionDescription::fromStandalonePermission(-1);
         $permDescSelf = PermissionDescription::fromStandalonePermission(0);
@@ -78,14 +78,14 @@ class PermissionDescriptionTest extends UnitTestCase
     public function testGetPermissionDescription()
     {
         // Create a stub for global function t()
-        $t = $this->getFunctionMock('Zotlabs\Lib', 't');
+        $t = $this->getFunctionMock('Code\Lib', 't');
         $t->expects($this->atLeastOnce())->willReturnCallback(
             function ($string) {
                 return $string;
             }
         );
         // Create a mock for global function logger()
-        $this->getFunctionMock('Zotlabs\Lib', 'logger');
+        $this->getFunctionMock('Code\Lib', 'logger');
 
         // Create a stub for the PermissionDescription class
         $stub = $this->createMock(PermissionDescription::class);

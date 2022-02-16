@@ -1,13 +1,13 @@
 <?php
 
 use OAuth2\Request;
-use Zotlabs\Identity\OAuth2Storage;
-use Zotlabs\Identity\OAuth2Server;
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\System;
-use Zotlabs\Web\HTTPSig;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Extend\Hook;
+use Code\Identity\OAuth2Storage;
+use Code\Identity\OAuth2Server;
+use Code\Lib\Libzot;
+use Code\Lib\System;
+use Code\Web\HTTPSig;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
 
 require_once('include/auth.php');
 require_once('include/security.php');

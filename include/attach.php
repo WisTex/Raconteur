@@ -12,12 +12,12 @@
  * @todo Also an 'append' option to the storage function might be a useful addition.
  */
 
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\AccessList;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\ServiceClass;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Libsync;
+use Code\Lib\AccessList;
+use Code\Daemon\Run;
+use Code\Lib\Channel;
+use Code\Lib\ServiceClass;
+use Code\Extend\Hook;
 require_once('include/permissions.php');
 require_once('include/security.php');
 

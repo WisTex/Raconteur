@@ -10,9 +10,9 @@
  */
 
 use CommerceGuys\Intl\Language\LanguageRepository;
-use Zotlabs\Lib\System;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Render\Theme;
+use Code\Lib\System;
+use Code\Extend\Hook;
+use Code\Render\Theme;
 
 
 /**

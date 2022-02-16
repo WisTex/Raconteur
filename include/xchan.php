@@ -1,8 +1,8 @@
 <?php
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Web\HTTPSig;
-use Zotlabs\Lib\Channel;
+use Code\Lib\Libzot;
+use Code\Web\HTTPSig;
+use Code\Lib\Channel;
 
 function xchan_store_lowlevel($arr)
 {

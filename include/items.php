@@ -5,27 +5,27 @@
  */
 
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\AccessList;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\ActivityStreams;
-use Zotlabs\Lib\Apps;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Libzot;
+use Code\Lib\Libsync;
+use Code\Lib\AccessList;
+use Code\Lib\Activity;
+use Code\Lib\ActivityStreams;
+use Code\Lib\Apps;
+use Code\Extend\Hook;
 
-use Zotlabs\Lib as Zlib;
-use Zotlabs\Lib\Enotify;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\MarkdownSoap;
-use Zotlabs\Lib\MessageFilter;
-use Zotlabs\Lib\IConfig;
-use Zotlabs\Lib\PConfig;
-use Zotlabs\Lib\LibBlock;
-use Zotlabs\Lib\ThreadListener;
-use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Access\PermissionRoles;
-use Zotlabs\Access\AccessControl;
-use Zotlabs\Daemon\Run;
+use Code\Lib as Zlib;
+use Code\Lib\Enotify;
+use Code\Lib\Channel;
+use Code\Lib\MarkdownSoap;
+use Code\Lib\MessageFilter;
+use Code\Lib\IConfig;
+use Code\Lib\PConfig;
+use Code\Lib\LibBlock;
+use Code\Lib\ThreadListener;
+use Code\Access\PermissionLimits;
+use Code\Access\PermissionRoles;
+use Code\Access\AccessControl;
+use Code\Daemon\Run;
 
 require_once('include/feedutils.php');
 require_once('include/photo_factory.php');

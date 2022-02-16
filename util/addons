@@ -2,7 +2,7 @@
 <?php
 
 // plugin management utility
-use Zotlabs\Lib\Addon;
+use Code\Lib\Addon;
 
     
 function usage() {

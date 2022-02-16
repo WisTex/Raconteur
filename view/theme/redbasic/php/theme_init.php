@@ -1,5 +1,5 @@
 <?php
-use Zotlabs\Lib\Head;
+use Code\Lib\Head;
     
 Head::add_css('/vendor/forkawesome/fork-awesome/css/fork-awesome.min.css');
 Head::add_css('/vendor/twbs/bootstrap/dist/css/bootstrap.min.css');

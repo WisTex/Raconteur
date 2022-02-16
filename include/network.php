@@ -1,20 +1,20 @@
 <?php
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Zotfinger;
-use Zotlabs\Lib\Webfinger;
-use Zotlabs\Lib\Channel;    
-use Zotlabs\Lib\ActivityStreams;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\ActivityPub;
-use Zotlabs\Lib\Queue;
-use Zotlabs\Lib\System;
-use Zotlabs\Lib\Keyutils;
-use Zotlabs\Lib\LDSignatures;
-use Zotlabs\Lib\Addon;
-use Zotlabs\Web\HTTPSig;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Libzot;
+use Code\Lib\Zotfinger;
+use Code\Lib\Webfinger;
+use Code\Lib\Channel;    
+use Code\Lib\ActivityStreams;
+use Code\Lib\Activity;
+use Code\Lib\ActivityPub;
+use Code\Lib\Queue;
+use Code\Lib\System;
+use Code\Lib\Keyutils;
+use Code\Lib\LDSignatures;
+use Code\Lib\Addon;
+use Code\Web\HTTPSig;
+use Code\Daemon\Run;
+use Code\Extend\Hook;
 
 /**
  * @file include/network.php
@@ -1248,7 +1248,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 
 /**
  * @brief Fetch and return a webfinger for a webbie.
- * No longer used - see Zotlabs/Lib/Webfinger.php
+ * No longer used - see Code/Lib/Webfinger.php
  *
  * @param string $webbie - The resource
  * @return bool|string false or associative array from result JSON

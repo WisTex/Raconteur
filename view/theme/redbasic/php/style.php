@@ -1,5 +1,5 @@
 <?php
-use Zotlabs\Lib\Channel;
+use Code\Lib\Channel;
 
 if(! App::$install) {
 

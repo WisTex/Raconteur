@@ -1,8 +1,8 @@
 <?php
 
 use Michelf\MarkdownExtra;
-use Zotlabs\Lib\IConfig;
-use Zotlabs\Lib\Channel;
+use Code\Lib\IConfig;
+use Code\Lib\Channel;
 
 /**
  * @brief

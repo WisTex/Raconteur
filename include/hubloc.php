@@ -5,7 +5,7 @@
  * @brief Hubloc related functions.
  */
 
-use Zotlabs\Daemon\Run;
+use Code\Daemon\Run;
 
 /**
  * @brief Create an array for hubloc table and insert record.
@@ -326,7 +326,7 @@ function ping_site($url)
 {
     $ret = [ 'success' => false ];
 
-    $r = Zotlabs\Lib\Zotfinger::exec($url);
+    $r = Code\Lib\Zotfinger::exec($url);
 
     if (! $r['data']) {
         $ret['message'] = 'no answer from ' . $url;

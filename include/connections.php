@@ -4,11 +4,11 @@
 
 use Sabre\VObject\Component\VCard;
 use Sabre\VObject\Reader;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Render\Theme;
+use Code\Daemon\Run;
+use Code\Lib\Libsync;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
+use Code\Render\Theme;
 
 
 function abook_store_lowlevel($arr)
