@@ -6,7 +6,7 @@ use App;
 use Code\Lib\Libprofile;
 use Code\Web\Controller;
 use Code\Render\Theme;
-use Code\Lib\Socgraph.php
+use Code\Lib\Socgraph;
 
 
 class Common extends Controller
