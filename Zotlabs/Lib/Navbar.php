@@ -34,6 +34,9 @@ class Navbar {
             App::$page['htmlhead'] = EMPTY_STR;
         }
 
+        $site_channel = Channel::get_system();
+
+    
         App::$page['htmlhead'] .= '<script>$(document).ready(function() { $("#nav-search-text").search_autocomplete(\'' . z_root() . '/acloader' . '\');});</script>';
 
         $is_owner = (((local_channel()) && ((App::$profile_uid == local_channel()) || (App::$profile_uid == 0))) ? true : false);
@@ -51,9 +54,8 @@ class Navbar {
                     "select channel_name, channel_id from channel left join pconfig on channel_id = pconfig.uid where channel_account_id = %d and channel_removed = 0 and pconfig.cat = 'system' and pconfig.k = 'include_in_menu' and pconfig.v = '1' order by channel_name ",
                     intval(get_account_id())
                 );
-                $q = Channel::get_system();
-                if (is_site_admin() && intval(get_pconfig($q['channel_id'], 'system', 'include_in_menu'))) {
-                    $chans = array_merge([$q], $chans);
+                if (is_site_admin() && intval(get_pconfig($site_channel['channel_id'], 'system', 'include_in_menu'))) {
+                    $chans = array_merge([$site_channel], $chans);
                 }
             }
 
@@ -301,6 +303,7 @@ class Navbar {
 
         App::$page['nav'] .= replace_macros($tpl, array(
             '$baseurl' => z_root(),
+            '$site_home' => Channel::url($site_channel).
             '$project_icon' => $site_icon,
             '$project_title' => t('Powered by $Projectname'),
             '$fulldocs' => t('Help'),

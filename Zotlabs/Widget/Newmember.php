@@ -65,11 +65,16 @@ class Newmember
             $options[5]['pubstream'] = t('View public stream');
         }
 
-        $o = replace_macros(Theme::get_template('new_member.tpl'), [
+
+        $content = replace_macros(Theme::get_template('new_member.tpl'), [ '$options' => $options ]);
+    
+        $o = replace_macros(Theme::get_template('common_widget.tpl'), [
             '$title' => t('New Member Links'),
-            '$options' => $options
+            '$content_id' => 'widget-new-member',
+            '$content' => $content,
         ]);
 
+ 
         return $o;
     }
 }

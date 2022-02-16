@@ -3188,7 +3188,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		}
 
 		$arr['tgt_type'] = $item['tgt_type'];
-		$arr['target'] = $item['target'];
+
+        if (is_array($item['target'])) {
+            $arr['target'] = $item['target']['id'];
+        }
+        else {
+            $arr['target'] = $item['target'];
+        }
 		
 		$arr['term'] = $item['term'];
 
@@ -3197,7 +3203,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		$arr['obj_type'] = $item['obj_type'];
 
-		$arr['verb'] = 'Create';
+		$arr['verb'] = 'Add';
 	
 		$arr['item_restrict'] = 1;
 
