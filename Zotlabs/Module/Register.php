@@ -5,6 +5,7 @@ namespace Zotlabs\Module;
 use Zotlabs\Lib\Account;    
 use Zotlabs\Web\Controller;
 use Zotlabs\Lib\Channel;
+use Zotlabs\Lib\Config;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Render\Theme;
 
@@ -66,7 +67,7 @@ class Register extends Controller
             }
         }
 
-        if (!(isset($_POST['tos']) && intval($_POST['tos']))) {
+        if (Config::Get('system','tos_required') && !(isset($_POST['tos']) && intval($_POST['tos']))) {
             notice(t('Please indicate acceptance of the Terms of Service. Registration failed.') . EOL);
             return;
         }
@@ -268,7 +269,7 @@ class Register extends Controller
             $label_tos = sprintf(t('I am over %s years of age and accept the %s for this website'), $age, $toslink);
         }
 
-        $enable_tos = 1 - intval(get_config('system', 'no_termsofservice'));
+        $enable_tos = Config::Get('system','tos_required');
 
         $email = ['email', t('Your email address'), ((x($_REQUEST, 'email')) ? strip_tags(trim($_REQUEST['email'])) : ""), '', '', ' required '];
         $password = ['password', t('Choose a password'), '', '', '', ' required '];

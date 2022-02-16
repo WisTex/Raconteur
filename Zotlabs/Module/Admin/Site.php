@@ -7,7 +7,7 @@ use Zotlabs\Lib\System;
 use Zotlabs\Access\PermissionRoles;
 use Zotlabs\Lib\Channel;
 use Zotlabs\Render\Theme;
-
+use Zotlabs\Lib\Addon;
 
 class Site
 {
@@ -57,6 +57,7 @@ class Site
         if (!$first_page) {
             $first_page = 'profiles';
         }
+        $tos_required = ((x($_POST, 'tos_required')) ? intval(trim($_POST['tos_required'])) : 0);
         $mirror_frontpage = ((x($_POST, 'mirror_frontpage')) ? intval(trim($_POST['mirror_frontpage'])) : 0);
         $directory_server = ((x($_POST, 'directory_server')) ? trim($_POST['directory_server']) : '');
         $force_publish = ((x($_POST, 'publish_all')) ? true : false);
@@ -124,7 +125,7 @@ class Site
         set_config('system', 'pubstream_excl', $pub_excl);
         set_config('system', 'max_imported_follow', $max_imported_follow);
         set_config('system', 'animated_avatars', $animations);
-
+        set_config('system', 'tos_required', $tos_required);
 
         if ($directory_server) {
             set_config('system', 'directory_server', $directory_server);
@@ -229,8 +230,8 @@ class Site
                 $vars = '';
                 $f = basename($file);
 
-                $info = get_theme_info($f);
-                $compatible = check_plugin_versions($info);
+                $info = Theme::get_info($f);
+                $compatible = Addon::check_versions($info);
                 if (!$compatible) {
                     $theme_choices[$f] = $theme_choices_mobile[$f] = sprintf(t('%s - (Incompatible)'), $f);
                     continue;
@@ -335,6 +336,7 @@ class Site
             '$minimum_age' => ['minimum_age', t("Minimum age"), (x(get_config('system', 'minimum_age')) ? get_config('system', 'minimum_age') : 13), t("Minimum age (in years) for who may register on this site.")],
             '$access_policy' => ['access_policy', t("Which best describes the types of account offered by this hub?"), get_config('system', 'access_policy'), t("If a public server policy is selected, this information may be displayed on the public server site list."), $access_choices],
             '$register_text' => ['register_text', t("Register text"), htmlspecialchars(get_config('system', 'register_text'), ENT_QUOTES, 'UTF-8'), t("Will be displayed prominently on the registration page.")],
+            '$tos_required' => [ 'tos_required', t('Require acceptance of Terms of Service'),get_config('system','tos_required'),'', [ t('No'), t('Yes') ] ],
             '$role' => $role,
             '$frontpage' => ['frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system', 'frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.")],
             '$mirror_frontpage' => ['mirror_frontpage', t("Preserve site homepage URL"), get_config('system', 'mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting')],
