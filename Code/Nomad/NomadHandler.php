@@ -97,7 +97,7 @@ class NomadHandler implements IHandler
 
         //  newsig is newkey signed with oldkey
 
-        // The original xchan will remain. In Zot/Receiver we will have imported the new xchan and hubloc to verify
+        // The original xchan will remain. In Nomad/Receiver we will have imported the new xchan and hubloc to verify
         // the packet authenticity. What we will do now is verify that the keychange operation was signed by the
         // oldkey, and if so change all the abook, abconfig, group, and permission elements which reference the
         // old xchan_hash.
