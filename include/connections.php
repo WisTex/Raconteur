@@ -4,9 +4,12 @@
 
 use Sabre\VObject\Component\VCard;
 use Sabre\VObject\Reader;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Channel;
+use Code\Daemon\Run;
+use Code\Lib\Libsync;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
+use Code\Render\Theme;
+
 
 function abook_store_lowlevel($arr)
 {
@@ -170,7 +173,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 
 	if (local_channel()) {
 	
-		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && $xchan['xchan_type'] !== XCHAN_TYPE_GROUP;
+		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && intval($xchan['xchan_type']) !== XCHAN_TYPE_GROUP;
 
 	    if ($can_dm) {
 			$profdm = t('Direct Message');
@@ -186,7 +189,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 
 
 
-    return replace_macros(get_markup_template('xchan_vcard.tpl'), [
+    return replace_macros(Theme::get_template('xchan_vcard.tpl'), [
         '$name'    => $xchan['xchan_name'],
         '$photo'   => ((is_array(App::$profile) && array_key_exists('photo', App::$profile)) ? App::$profile['photo'] : $xchan['xchan_photo_l']),
         '$follow'  => urlencode(($xchan['xchan_addr']) ? $xchan['xchan_addr'] : $xchan['xchan_url']),
@@ -426,7 +429,7 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false)
         'abook_id'   => $abook_id
     ];
 
-    call_hooks('connection_remove', $x);
+    Hook::call('connection_remove', $x);
 
     $archive = get_pconfig($channel_id, 'system', 'archive_removed_contacts');
     if ($archive) {
@@ -977,7 +980,7 @@ function contact_block()
         }
     }
 
-    $tpl = get_markup_template('contact_block.tpl');
+    $tpl = Theme::get_template('contact_block.tpl');
     $o = replace_macros($tpl, array(
         '$contacts' => $contacts,
         '$nickname' => App::$profile['channel_address'],
@@ -987,7 +990,7 @@ function contact_block()
 
     $arr = array('contacts' => $r, 'output' => $o);
 
-    call_hooks('contact_block_end', $arr);
+    Hook::call('contact_block_end', $arr);
     return $o;
 }
 
@@ -1009,7 +1012,7 @@ function micropro($contact, $redirect = false, $class = '', $mode = false)
         $tpl = 'micropro_card.tpl';
     }
 
-    return replace_macros(get_markup_template($tpl), array(
+    return replace_macros(Theme::get_template($tpl), array(
         '$click' => (($contact['click']) ? $contact['click'] : ''),
         '$class' => $class . (($contact['archived']) ? ' archived' : ''),
         '$oneway' => (($contact['oneway']) ? true : false),

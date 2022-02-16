@@ -1,4 +1,3 @@
-<div class="project-banner" title="{{$project_title}}"><a href="{{$baseurl}}/siteinfo"><img src="{{$project_icon}}" alt="{{$project_title}}" class="nav-avatar"></a></div>
 {{if $nav.login && !$userinfo}}
 <div class="d-lg-none pt-1 pb-1">
 	{{if $nav.loginmenu.1.4}}
@@ -62,8 +61,8 @@
 	{{/if}}
 	{{if ! $is_owner}}
 	<div class="dropdown-menu" role="menu" aria-labelledby="avatar">
-		<a class="dropdown-item" href="{{$nav.rusermenu.0}}" role="menuitem">{{$nav.rusermenu.1}}</a>
-		<a class="dropdown-item" href="{{$nav.rusermenu.2}}" role="menuitem">{{$nav.rusermenu.3}}</a>
+		<a class="dropdown-item" href="{{$nav.rusermenu.0}}" role="menuitem"><i class="fa fa-fw fa-home"></i> {{$nav.rusermenu.1}}</a>
+		<a class="dropdown-item" href="{{$nav.rusermenu.2}}" role="menuitem"><i class="fa fa-fw fa-window-close-o"></i> {{$nav.rusermenu.3}}</a>
 	</div>
 	{{/if}}
 </div>

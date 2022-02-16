@@ -6,16 +6,19 @@
  * a number of miscellaneous functions that didn't really fit anywhere else.  Perhaps it should be named "misc.php" instead.
  */
 
-use Zotlabs\Lib\MarkdownSoap;
-use Zotlabs\Lib\AccessList;
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\SvgSanitizer;
-use Zotlabs\Lib\Img_cache;
-use Zotlabs\Lib\PConfig;
-use Zotlabs\Lib\Config;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\Features;
+use Code\Lib\MarkdownSoap;
+use Code\Lib\AccessList;
+use Code\Lib\Libzot;
+use Code\Lib\SvgSanitizer;
+use Code\Lib\Img_cache;
+use Code\Lib\PConfig;
+use Code\Lib\Config;
+use Code\Lib\Activity;
+use Code\Lib\Channel;
+use Code\Lib\Features;
+use Code\Extend\Hook;
+use Code\Render\Theme;
+
     
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
@@ -41,7 +44,7 @@ function replace_macros($s, $r)
      *   * \e array \b params
      */
 
-    call_hooks('replace_macros', $arr);
+    Hook::call('replace_macros', $arr);
 
     $t = App::template_engine();
 
@@ -588,7 +591,7 @@ function alt_pager($i, $more = '', $less = '')
        $url = $url . '?f=';
     }
 
-    return replace_macros(get_markup_template('alt_pager.tpl'), array(
+    return replace_macros(Theme::get_template('alt_pager.tpl'), array(
         '$has_less' => ((App::$pager['page'] > 1) ? true : false),
         '$has_more' => (($i > 0 && $i >= App::$pager['itemspage']) ? true : false),
         '$less' => $less,
@@ -747,7 +750,7 @@ function logger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
     $pluginfo = array('filename' => $logfile, 'loglevel' => $level, 'message' => $s,'priority' => $priority, 'logged' => false);
 
     if (! (App::$module == 'setup')) {
-        call_hooks('logger', $pluginfo);
+        Hook::call('logger', $pluginfo);
     }
 
     if (! $pluginfo['logged']) {
@@ -1042,7 +1045,7 @@ function magiclink_url($observer, $myaddr, $url)
 function search($s, $id = 'search-box', $url = '/search', $save = false)
 {
 
-    return replace_macros(get_markup_template('searchbox.tpl'), array(
+    return replace_macros(Theme::get_template('searchbox.tpl'), array(
         '$s' => $s,
         '$id' => $id,
         '$action_url' => z_root() . $url,
@@ -1055,7 +1058,7 @@ function search($s, $id = 'search-box', $url = '/search', $save = false)
 
 function searchbox($s, $id = 'search-box', $url = '/search', $save = false)
 {
-    return replace_macros(get_markup_template('searchbox.tpl'), array(
+    return replace_macros(Theme::get_template('searchbox.tpl'), array(
         '$s' => $s,
         '$id' => $id,
         '$action_url' => z_root() . '/' . $url,
@@ -1202,7 +1205,7 @@ function get_poke_verbs()
          * @hooks poke_verbs
          *   * \e array associative array with another array as value
          */
-        call_hooks('poke_verbs', $arr);
+        Hook::call('poke_verbs', $arr);
     }
 
     return $arr;
@@ -1246,7 +1249,7 @@ function get_mood_verbs()
      * @hooks mood_verbs
      *   * \e array associative array with mood verbs
      */
-    call_hooks('mood_verbs', $arr);
+    Hook::call('mood_verbs', $arr);
 
     return $arr;
 }
@@ -1334,7 +1337,7 @@ function list_smilies($default_only = false)
         return $params;
     }
 
-    call_hooks('smilie', $params);
+    Hook::call('smilie', $params);
 
     return $params;
 }
@@ -1561,7 +1564,7 @@ function theme_attachments(&$item)
             ];
         }
 
-        $s = replace_macros(get_markup_template('item_attach.tpl'), [
+        $s = replace_macros(Theme::get_template('item_attach.tpl'), [
             '$attaches' => $attaches
         ]);
     }
@@ -1591,7 +1594,7 @@ function format_categories(&$item, $writeable)
             $categories[] = array('term' => $term, 'writeable' => $writeable, 'removelink' => $removelink, 'url' => zid($t['url']));
         }
 
-        $s = replace_macros(get_markup_template('item_categories.tpl'), array(
+        $s = replace_macros(Theme::get_template('item_categories.tpl'), array(
             '$remove' => t('remove category'),
             '$categories' => $categories
         ));
@@ -1730,7 +1733,7 @@ function format_filer(&$item)
             $categories[] = array('term' => $term, 'removelink' => $removelink);
         }
 
-        $s = replace_macros(get_markup_template('item_filer.tpl'), array(
+        $s = replace_macros(Theme::get_template('item_filer.tpl'), array(
             '$remove' => t('remove from file'),
             '$categories' => $categories
         ));
@@ -1767,7 +1770,7 @@ function generate_map($coord)
      *   * \e string \b lon
      *   * \e string \b html the parsed HTML to return
      */
-    call_hooks('generate_map', $arr);
+    Hook::call('generate_map', $arr);
 
     return (($arr['html']) ? $arr['html'] : $coord);
 }
@@ -1784,7 +1787,7 @@ function generate_named_map($location)
      *   * \e string \b location
      *   * \e string \b html the parsed HTML to return
      */
-    call_hooks('generate_named_map', $arr);
+    Hook::call('generate_named_map', $arr);
 
     return (($arr['html']) ? $arr['html'] : $location);
 }
@@ -1793,7 +1796,7 @@ function generate_named_map($location)
 function prepare_body(&$item, $attach = false, $opts = false)
 {
 
-    call_hooks('prepare_body_init', $item);
+    Hook::call('prepare_body_init', $item);
 
     $censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored'] || intval($item['item_nsfw'])) && (get_safemode()))
         ? true
@@ -1887,7 +1890,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         'photo' => $photo
     );
 
-    call_hooks('prepare_body', $prep_arr);
+    Hook::call('prepare_body', $prep_arr);
 
     $s = $prep_arr['html'];
     $photo = $prep_arr['photo'];
@@ -1954,7 +1957,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         'attachments' => $attachments
     );
 
-    call_hooks('prepare_body_final', $prep_arr);
+    Hook::call('prepare_body_final', $prep_arr);
 
     unset($prep_arr['item']);
 
@@ -2065,7 +2068,7 @@ function format_poll($item, $s, $opts)
 
 function prepare_binary($item)
 {
-    return replace_macros(get_markup_template('item_binary.tpl'), [
+    return replace_macros(Theme::get_template('item_binary.tpl'), [
         '$download'  => t('Download binary/encrypted content'),
         '$url'       => z_root() . '/viewsrc/' . $item['id'] . '/download'
     ]);
@@ -2198,7 +2201,7 @@ function layout_select($channel_id, $current = '')
         }
     }
 
-    $o = replace_macros(get_markup_template('field_select_raw.tpl'), array(
+    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), array(
         '$field'    => array('layout_mid', t('Page layout'), $selected, t('You can create your own with the layouts tool'), $options)
     ));
 
@@ -2227,7 +2230,7 @@ function mimetype_select($channel_id, $current = 'text/x-multicode', $choices = 
         $options .= '<option value="' . $y . '"' . $selected . '>' . $z . '</option>';
     }
 
-    $o = replace_macros(get_markup_template('field_select_raw.tpl'), array(
+    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), array(
         '$field'    => array( $element, t('Page content type'), $selected, '', $options)
     ));
 
@@ -2312,14 +2315,14 @@ function cleardiv()
 function bb_translate_video($s)
 {
     $arr = array('string' => $s);
-    call_hooks('bb_translate_video', $arr);
+    Hook::call('bb_translate_video', $arr);
     return $arr['string'];
 }
 
 function html2bb_video($s)
 {
     $arr = array('string' => $s);
-    call_hooks('html2bb_video', $arr);
+    Hook::call('html2bb_video', $arr);
     return $arr['string'];
 }
 
@@ -2493,7 +2496,7 @@ function legal_webbie($s)
     $r = preg_replace('/([^a-z0-9\-\_])/', '', strtolower($s));
 
     $x = [ 'input' => $s, 'output' => $r ];
-    call_hooks('legal_webbie', $x);
+    Hook::call('legal_webbie', $x);
     return $x['output'];
 }
 
@@ -2505,7 +2508,7 @@ function legal_webbie_text()
     $s = t('a-z, 0-9, -, and _ only');
 
     $x = [ 'text' => $s ];
-    call_hooks('legal_webbie_text', $x);
+    Hook::call('legal_webbie_text', $x);
     return $x['text'];
 }
 
@@ -2851,7 +2854,7 @@ function design_tools()
 
     $who = $channel['channel_address'];
 
-    return replace_macros(get_markup_template('design_tools.tpl'), array(
+    return replace_macros(Theme::get_template('design_tools.tpl'), array(
         '$title'  => t('Design Tools'),
         '$who'    => $who,
         '$sys'    => $sys,
@@ -2879,7 +2882,7 @@ function website_portation_tools()
         $sys = true;
     }
 
-    return replace_macros(get_markup_template('website_portation_tools.tpl'), array(
+    return replace_macros(Theme::get_template('website_portation_tools.tpl'), array(
         '$title'               => t('Import'),
         '$import_label'        => t('Import website...'),
         '$import_placeholder'  => t('Select folder to import'),
@@ -3567,7 +3570,7 @@ function pdl_selector($uid, $current = '')
     );
 
     $arr = array('channel_id' => $uid, 'current' => $current, 'entries' => $r);
-    call_hooks('pdl_selector', $arr);
+    Hook::call('pdl_selector', $arr);
 
     $entries = $arr['entries'];
     $current = $arr['current'];
@@ -3654,7 +3657,7 @@ function text_highlight($s, $lang, $options)
      *   * \e string \b language
      *   * \e boolean \b success default false
      */
-    call_hooks('text_highlight', $arr);
+    Hook::call('text_highlight', $arr);
 
     if ($arr['success']) {
         $o = $arr['text'];

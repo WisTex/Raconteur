@@ -10,7 +10,10 @@
  */
 
 use CommerceGuys\Intl\Language\LanguageRepository;
-use Zotlabs\Lib\System;
+use Code\Lib\System;
+use Code\Extend\Hook;
+use Code\Render\Theme;
+
 
 /**
  * @brief Get the browser's submitted preferred languages.
@@ -113,7 +116,7 @@ function get_best_language()
 
     $arr = array('langs' => $langs, 'preferred' => $preferred);
 
-    call_hooks('get_best_language', $arr);
+    Hook::call('get_best_language', $arr);
 
     if ($arr['preferred'] !== 'unset') {
         return $arr['preferred'];
@@ -436,7 +439,7 @@ function lang_selector()
         }
     }
 
-    $tpl = get_markup_template('lang_selector.tpl');
+    $tpl = Theme::get_template('lang_selector.tpl');
 
     $o = replace_macros($tpl, array(
         '$title' => t('Select an alternate language'),

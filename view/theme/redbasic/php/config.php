@@ -1,8 +1,10 @@
 <?php
 
-namespace Zotlabs\Theme;
+namespace Code\Theme;
 
-use Zotlabs\Lib\Features;
+use Code\Lib\Features;
+use Code\Render\Theme;
+
 
 class RedbasicConfig {
 
@@ -91,7 +93,7 @@ class RedbasicConfig {
 			$expert = 1;
 					
 
-	  	$o .= replace_macros(get_markup_template('theme_settings.tpl'), array(
+	  	$o .= replace_macros(Theme::get_template('theme_settings.tpl'), array(
 			'$submit' => t('Submit'),
 			'$baseurl' => z_root(),
 			'$theme' => \App::$channel['channel_theme'],

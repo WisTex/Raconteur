@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit;
+namespace Code\Tests\Unit;
 
 use PDO;
 use PHPUnit\DbUnit\Database\Connection;

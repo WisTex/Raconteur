@@ -22,11 +22,11 @@
 * SOFTWARE.
 */
 
-namespace Zotlabs\Tests\Unit\includes;
+namespace Code\Tests\Unit\includes;
 
-use Zotlabs\Tests\Unit\UnitTestCase;
+use Code\Tests\Unit\UnitTestCase;
 use phpmock\phpunit\PHPMock;
-use Zotlabs\Lib\Markdown;
+use Code\Lib\Markdown;
 
 /**
  * @brief Unit Test case for markdown functions.

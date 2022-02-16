@@ -22,16 +22,17 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\Access;
+namespace Code\Tests\Unit\Access;
 
 use phpmock\phpunit\PHPMock;
-use Zotlabs\Tests\Unit\UnitTestCase;
-use Zotlabs\Access\PermissionLimits;
+use Code\Tests\Unit\UnitTestCase;
+use Code\Access\PermissionLimits;
+use Code\Extend\Hook;
 
 /**
  * @brief Unit Test case for PermissionLimits class.
  *
- * @covers Zotlabs\Access\PermissionLimits
+ * @covers Code\Access\PermissionLimits
  */
 class PermissionLimitsTest extends UnitTestCase
 {
@@ -42,8 +43,8 @@ class PermissionLimitsTest extends UnitTestCase
      * Std_Limits() we could better unit test this method, now we test the
      * result of Permissions::Perms() mostly.
      *
-     * @uses Zotlabs\Access\Permissions::Perms
-     * @uses ::call_hooks
+     * @uses Code\Access\Permissions::Perms
+     * @uses ::Hook::call
      */
     public function testStd_Limits()
     {
@@ -51,7 +52,7 @@ class PermissionLimitsTest extends UnitTestCase
         $permsCount = 18;
 
         // Create a stub for global function t() with expectation
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 't');
         $t->expects($this->exactly($permsCount));
 
         $stdlimits = PermissionLimits::Std_Limits();

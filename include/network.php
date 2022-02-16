@@ -1,18 +1,20 @@
 <?php
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Zotfinger;
-use Zotlabs\Lib\Webfinger;
-use Zotlabs\Lib\Channel;    
-use Zotlabs\Lib\ActivityStreams;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\ActivityPub;
-use Zotlabs\Lib\Queue;
-use Zotlabs\Lib\System;
-use Zotlabs\Lib\Keyutils;
-use Zotlabs\Lib\LDSignatures;
-use Zotlabs\Web\HTTPSig;
-use Zotlabs\Daemon\Run;
+use Code\Lib\Libzot;
+use Code\Lib\Zotfinger;
+use Code\Lib\Webfinger;
+use Code\Lib\Channel;    
+use Code\Lib\ActivityStreams;
+use Code\Lib\Activity;
+use Code\Lib\ActivityPub;
+use Code\Lib\Queue;
+use Code\Lib\System;
+use Code\Lib\Keyutils;
+use Code\Lib\LDSignatures;
+use Code\Lib\Addon;
+use Code\Web\HTTPSig;
+use Code\Daemon\Run;
+use Code\Extend\Hook;
 
 /**
  * @file include/network.php
@@ -1236,7 +1238,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
      *   * \e array \b webfinger - The result from webfinger_rfc7033()
      *   * \e boolean \b success - The return value, default false
      */
-    call_hooks('discover_channel_webfinger', $arr);
+    Hook::call('discover_channel_webfinger', $arr);
     if ($arr['success']) {
         return $arr['xchan'];
     }
@@ -1246,7 +1248,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 
 /**
  * @brief Fetch and return a webfinger for a webbie.
- * No longer used - see Zotlabs/Lib/Webfinger.php
+ * No longer used - see Code/Lib/Webfinger.php
  *
  * @param string $webbie - The resource
  * @return bool|string false or associative array from result JSON
@@ -1379,7 +1381,7 @@ function get_site_info()
         $service_class = false;
     }
 
-    $visible_plugins = visible_plugin_list();
+    $visible_plugins = Addon::list_visible();
 
     if (@is_dir('.git') && function_exists('shell_exec')) {
         $commit = trim(@shell_exec('git log -1 --format="%h"'));
@@ -1433,7 +1435,7 @@ function get_site_info()
 
     $data = [
         'url'                          => z_root(),
-        'platform'                     => System::get_platform_name(),
+        'platform'                     => System::get_project_name(),
         'site_name'                    => (($site_name) ? $site_name : ''),
         'version'                      => $version,
 //      'version_tag'                  => $tag,
@@ -1441,9 +1443,9 @@ function get_site_info()
         'commit'                       => $commit,
         'protocols'                    => $protocols,
         'plugins'                      => $visible_plugins,
-        'register_policy'              =>  $register_policy[get_config('system', 'register_policy')],
+        'register_policy'              => $register_policy[get_config('system', 'register_policy')],
         'invitation_only'              => (bool) (defined('INVITE_WORKING') && intval(get_config('system', 'invitation_only'))),
-        'directory_mode'               =>  $directory_mode[get_config('system', 'directory_mode')],
+        'directory_mode'               => $directory_mode[get_config('system', 'directory_mode')],
 //      'directory_server'             => get_config('system','directory_server'),
         'language'                     => get_config('system', 'language'),
 //      'rss_connections'              => (bool) intval(get_config('system','feed_contacts')),
@@ -1480,7 +1482,7 @@ function check_siteallowed($url)
      *   * \e string \b url
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('check_siteallowed', $arr);
+    Hook::call('check_siteallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1539,7 +1541,7 @@ function check_pubstream_siteallowed($url)
      *   * \e string \b url
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('pubstream_check_siteallowed', $arr);
+    Hook::call('pubstream_check_siteallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1600,7 +1602,7 @@ function check_channelallowed($hash)
      *   * \e string \b hash
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('check_channelallowed', $arr);
+    Hook::call('check_channelallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1655,7 +1657,7 @@ function check_pubstream_channelallowed($hash)
      *   * \e string \b hash
      *   * \e boolean \b allowed - optional return value set in hook
      */
-    call_hooks('check_pubstream_channelallowed', $arr);
+    Hook::call('check_pubstream_channelallowed', $arr);
 
     if (array_key_exists('allowed', $arr)) {
         return $arr['allowed'];
@@ -1772,7 +1774,7 @@ function network_to_name($s)
      * @hooks network_to_name
      * @deprecated
      */
-    call_hooks('network_to_name', $nets);
+    Hook::call('network_to_name', $nets);
 
     $search  = array_keys($nets);
     $replace = array_values($nets);
@@ -1822,7 +1824,7 @@ function z_mail($params)
      * @hooks email_send
      *   * \e params @see z_mail()
      */
-    call_hooks('email_send', $params);
+    Hook::call('email_send', $params);
 
     if ($params['sent']) {
         logger('notification: z_mail returns ' . (($params['result']) ? 'success' : 'failure'), LOGGER_DEBUG);
@@ -1900,7 +1902,7 @@ function service_plink($contact, $guid)
      *   * \e string \b url
      *   * \e string \b plink will get returned
      */
-    call_hooks('service_plink', $x);
+    Hook::call('service_plink', $x);
 
     return $x['plink'];
 }

@@ -22,17 +22,18 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\Access;
+namespace Code\Tests\Unit\Access;
 
 use phpmock\phpunit\PHPMock;
-use Zotlabs\Access\PermissionRoles;
-use Zotlabs\Tests\Unit\UnitTestCase;
-use Zotlabs\Access\Permissions;
+use Code\Access\PermissionRoles;
+use Code\Tests\Unit\UnitTestCase;
+use Code\Access\Permissions;
+use Code\Extend\Hook;
 
 /**
  * @brief Unit Test case for Permissions class.
  *
- * @covers Zotlabs\Access\Permissions
+ * @covers Code\Access\Permissions
  */
 class PermissionsTest extends UnitTestCase
 {
@@ -61,7 +62,7 @@ class PermissionsTest extends UnitTestCase
     }
 
     /**
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testPerms()
     {
@@ -69,7 +70,7 @@ class PermissionsTest extends UnitTestCase
         $permsCount = 18;
 
         // Create a stub for global function t() with expectation
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 't');
         $t->expects($this->exactly(2 * $permsCount))->willReturnCallback(
             function ($string) {
                 return $string;
@@ -94,9 +95,9 @@ class PermissionsTest extends UnitTestCase
      * filter parmeter is only used in hook \b permissions_list. So the result
      * in this test should be the same as if there was no filter parameter.
      *
-     * @todo Stub call_hooks() function and also test filter
+     * @todo Stub Hook::call() function and also test filter
      *
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testPermsFilter()
     {
@@ -104,7 +105,7 @@ class PermissionsTest extends UnitTestCase
         $permsCount = 18;
 
         // Create a stub for global function t() with expectation
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 't');
         $t->expects($this->exactly(2 * $permsCount))->willReturnCallback(
             function ($string) {
                 return $string;
@@ -123,7 +124,7 @@ class PermissionsTest extends UnitTestCase
     /**
      * Better should mock Permissions::Perms, but not possible with static methods.
      *
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      *
      * @dataProvider FilledPermsProvider
      *
@@ -133,7 +134,7 @@ class PermissionsTest extends UnitTestCase
     public function testFilledPerms($permarr, $expected)
     {
         // Create a stub for global function t()
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 't');
 
         $this->assertEquals($expected, Permissions::FilledPerms($permarr));
     }
@@ -217,15 +218,15 @@ class PermissionsTest extends UnitTestCase
         ];
     }
     /**
-     * @uses ::call_hooks
+     * @uses ::Hook::call
      */
     public function testFilledPermsNull()
     {
         // Create a stub for global function t() with expectation
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 't');
         $t->expects($this->atLeastOnce());
         // Create a stub for global function bt() with expectations
-        $bt = $this->getFunctionMock('Zotlabs\Access', 'btlogger');
+        $bt = $this->getFunctionMock('Code\Access', 'btlogger');
         $bt->expects($this->once())->with($this->equalTo('FilledPerms: null'));
 
         $result = [

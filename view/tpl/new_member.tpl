@@ -1,5 +1,3 @@
-<div class="widget">
-<h3>{{$title}}</h3>
 {{if $options}}
 <ul class="nav nav-pills flex-column">
 {{foreach $options as $x}}
@@ -13,5 +11,5 @@
 {{/foreach}}
 </ul>
 {{/if}}
-</div>
+
 

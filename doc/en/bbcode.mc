@@ -182,8 +182,8 @@ The list type options are 1, i, I, a, A.[/td]
 [video poster="image.jpg"]video URL[/video]<br>
 [audio]audio URL[/audio]<br>[/nobb][/td]
 [td][/td][/tr]
-[tr][td][nobb][url=https://zotlabs.com]Zotlabs[/url][/nobb][/td]
-[td]<a href="https://zotlabs.com" target="_blank">Zotlabs</a>[/td]
+[tr][td][nobb][url=https://zotlabs.com]Code[/url][/nobb][/td]
+[td]<a href="https://zotlabs.com" target="_blank">Code</a>[/td]
 [/tr]
 [tr]
 [td][nobb]An image

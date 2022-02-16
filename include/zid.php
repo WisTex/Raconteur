@@ -1,8 +1,9 @@
 <?php
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Verify;
-use Zotlabs\Lib\Channel;
+use Code\Lib\Libzot;
+use Code\Lib\Verify;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
 
 function is_matrix_url($url)
 {
@@ -96,7 +97,7 @@ function zid($s, $address = '')
      *   * \e string \b zid - urlencoded zid
      *   * \e string \b result - the return string we calculated, change it if you want to return something else
      */
-    call_hooks('zid', $arr);
+    Hook::call('zid', $arr);
 
     return $arr['result'];
 }
@@ -155,7 +156,7 @@ function zidify_callback($match)
 {
 
     $arr = [ 'zid' => ((strpos($match[1], 'zrl') || strpos($match[3], 'zrl')) ? true : false), 'url' => $match[2] ];
-    call_hooks('zidify', $arr);
+    Hook::call('zidify', $arr);
 
     $replace = '<a' . $match[1] . ' href="' . (intval($arr['zid']) ? zid($arr['url']) : $arr['url']) . '"' . $match[3] . '>';
 
@@ -168,7 +169,7 @@ function zidify_img_callback($match)
 {
 
     $arr = [ 'zid' => ((strpos($match[1], 'zrl') || strpos($match[3], 'zrl')) ? true : false), 'url' => $match[2] ];
-    call_hooks('zidify', $arr);
+    Hook::call('zidify', $arr);
 
     $replace = '<img' . $match[1] . ' src="' . (intval($arr['zid']) ? zid($arr['url']) : $arr['url']) . '"' . $match[3] . '>';
 
@@ -390,7 +391,7 @@ function owt_init($token)
      *   * \e string \b url
      *   * \e array \b session
      */
-    call_hooks('magic_auth_success', $arr);
+    Hook::call('magic_auth_success', $arr);
 
     App::set_observer($hubloc);
     App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
@@ -449,7 +450,7 @@ function observer_auth($ob_hash)
     // those that arrive with a zid.
     // This is to prevent signed ActivityPub fetches from getting zid-enabled links.
     // If a pre-set zid applies, $_SESSION['my_address'] will have been set already
-    // in Zotlabs\Web\WebServer.php
+    // in Code\Web\WebServer.php
     // @FIXME: to work seamlessly with Friendica and other platforms that choose to
     // provide OWA we will need to store the OWA endpoints for each site in SConfig
     // and refer to this to determine whether or not to provide "zidified" links.

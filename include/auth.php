@@ -10,8 +10,9 @@
  * Also provides a function for OpenID identiy matching.
  */
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Channel;
+use Code\Lib\Libzot;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
 
 require_once('include/api_auth.php');
 require_once('include/security.php');
@@ -70,7 +71,7 @@ function account_verify_password($login, $pass)
      *
      */
 
-    call_hooks('authenticate', $addon_auth);
+    Hook::call('authenticate', $addon_auth);
 
     if (($addon_auth['authenticated']) && is_array($addon_auth['user_record']) && (! empty($addon_auth['user_record']))) {
         $ret['account'] = $addon_auth['user_record'];
@@ -123,7 +124,7 @@ function account_verify_password($login, $pass)
                 'user_record'   => null
             ];
 
-            call_hooks('authenticate', $addon_auth);
+            Hook::call('authenticate', $addon_auth);
 
             if (($addon_auth['authenticated']) && is_array($addon_auth['user_record']) && (! empty($addon_auth['user_record']))) {
                 $ret['account'] = $addon_auth['user_record'];
@@ -200,7 +201,7 @@ if (
     if (((x($_POST, 'auth-params')) && ($_POST['auth-params'] === 'logout')) || (App::$module === 'logout')) {
         // process logout request
         $args = array('channel_id' => local_channel());
-        call_hooks('logging_out', $args);
+        Hook::call('logging_out', $args);
 
 
         if ($_SESSION['delegate'] && $_SESSION['delegate_push']) {

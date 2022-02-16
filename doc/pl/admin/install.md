@@ -115,13 +115,13 @@ Ze względu na bezpieczeństwo witryny nie ma możliwości zapewnienia dostępu 
 
 Skonfiguruj zadanie crona lub zaplanowane zadanie, aby uruchamiać menedżera crona co 10-15 minut do wykonywania w tle zadań przetwarzania i konserwacji. Przykład:
 
-	cd /base/directory; /path/to/php Zotlabs/Daemon/Run.php Cron
+	cd /base/directory; /path/to/php Code/Daemon/Run.php Cron
 
 Zmień "/base/directory" i "/path/to/php" na swoje rzeczywiste ścieżki.
 
 Jeśli używasz serwera Linux, uruchom "crontab -e" i dodaj linię podobną do pokazanej niżej, zastępując ścieżki i ustawienia swoimi danymi:
 
-	*/10 * * * *	cd /home/myname/mywebsite; /usr/bin/php Zotlabs/Daemon/Run.php Cron > /dev/null 2>&1
+	*/10 * * * *	cd /home/myname/mywebsite; /usr/bin/php Code/Daemon/Run.php Cron > /dev/null 2>&1
 
 Na ogół możesz znaleźć lokalizację PHP, wykonując "which php". Jeśli masz problemy z tą sekcją, skontaktuj się z dostawcą usług hostingowych w celu uzyskania pomocy. Oprogramowanie nie będzie działać poprawnie, jeśli nie możesz wykonać tego kroku.
 

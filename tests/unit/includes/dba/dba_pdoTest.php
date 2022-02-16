@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\includes;
+namespace Code\Tests\Unit\includes;
 
 use dba_driver;
 use dba_pdo;
 use PHPUnit\DbUnit\DataSet\IDataSet;
-use Zotlabs\Tests\Unit\DatabaseTestCase;
+use Code\Tests\Unit\DatabaseTestCase;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PHPUnit\DbUnit\DataSet\YamlDataSet;
 

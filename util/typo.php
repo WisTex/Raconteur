@@ -38,8 +38,8 @@ foreach ($files as $file) {
 //  }
 
 
-    echo "Directory: Zotlabs\n";
-    $files = glob('Zotlabs/*/*.php');
+    echo "Directory: Code\n";
+    $files = glob('Code/*/*.php');
 foreach ($files as $file) {
     if ((strpos($file, 'SiteModule') === false) || (strpos($file, 'SiteWidget') === false)) {
         echo exec($cmd . $file) . "\n";
@@ -47,8 +47,8 @@ foreach ($files as $file) {
     }
 }
 
-    echo "Directory: Zotlabs/Module (sub-modules)\n";
-    $files = glob('Zotlabs/Module/*/*.php');
+    echo "Directory: Code/Module (sub-modules)\n";
+    $files = glob('Code/Module/*/*.php');
 foreach ($files as $file) {
     echo exec($cmd . $file) . "\n";
     include_once($file);

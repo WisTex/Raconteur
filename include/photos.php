@@ -5,13 +5,16 @@
  * @brief Functions related to photo handling.
  */
 
-use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Access\AccessControl;
-use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Web\HTTPHeaders;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\ServiceClass;
+use Code\Lib\Apps;
+use Code\Lib\Activity;
+use Code\Access\AccessControl;
+use Code\Access\PermissionLimits;
+use Code\Web\HTTPHeaders;
+use Code\Daemon\Run;
+use Code\Lib\ServiceClass;
+use Code\Extend\Hook;
+use Code\Render\Theme;
+
 
 require_once('include/permissions.php');
 require_once('include/photo_factory.php');
@@ -158,7 +161,7 @@ function photo_upload($channel, $observer, $args)
              * @hooks photo_upload_end
              *   Called when a photo upload has been processed.
              */
-            call_hooks('photo_upload_end', $ret);
+            Hook::call('photo_upload_end', $ret);
             return $ret;
         }
 
@@ -169,7 +172,7 @@ function photo_upload($channel, $observer, $args)
              * @hooks photo_post_end
              *   Called after uploading a photo.
              */
-            call_hooks('photo_post_end', $ret);
+            Hook::call('photo_post_end', $ret);
             return $ret;
         }
 
@@ -191,7 +194,7 @@ function photo_upload($channel, $observer, $args)
          * @hooks photo_post_end
          *   Called after uploading a photo.
          */
-        call_hooks('photo_post_end', $ret);
+        Hook::call('photo_post_end', $ret);
         return $ret;
     }
 
@@ -205,7 +208,7 @@ function photo_upload($channel, $observer, $args)
          * @hooks photo_upload_end
          *   Called when a photo upload has been processed.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
         return $ret;
     }
 
@@ -363,7 +366,7 @@ function photo_upload($channel, $observer, $args)
          * @hooks photo_upload_end
          *   Called when a photo upload has been processed.
          */
-        call_hooks('photo_upload_end', $ret);
+        Hook::call('photo_upload_end', $ret);
         return $ret;
     }
 
@@ -590,7 +593,7 @@ function photo_upload($channel, $observer, $args)
      * @hooks photo_upload_end
      *   Called when a photo upload has been processed.
      */
-    call_hooks('photo_upload_end', $ret);
+    Hook::call('photo_upload_end', $ret);
 
     return $ret;
 }
@@ -751,7 +754,7 @@ function photos_album_widget($channelx, $observer, $sortkey = 'display_path', $d
     }
 
     if ($albums['success']) {
-        $o = replace_macros(get_markup_template('photo_albums.tpl'), [
+        $o = replace_macros(Theme::get_template('photo_albums.tpl'), [
             '$nick'    => $channelx['channel_address'],
             '$title'   => t('Photo Albums'),
             '$recent'  => t('Recent Photos'),

@@ -1,9 +1,9 @@
 <?php
 
-use Zotlabs\Lib\Api_router;
+use Code\Lib\Api_router;
+use Code\Extend\Hook;
 
 require_once("include/conversation.php");
-require_once("include/oauth.php");
 require_once("include/html2plain.php");
 require_once('include/security.php');
 require_once('include/photos.php');
@@ -136,7 +136,7 @@ function api_call()
 
 
     $x = [ 'path' => App::$query_string ];
-    call_hooks('api_not_found', $x);
+    Hook::call('api_not_found', $x);
 
     header('HTTP/1.1 404 Not Found');
     logger('API call not implemented: ' . App::$query_string . ' - ' . print_r($_REQUEST, true));
@@ -229,32 +229,3 @@ function api_client_register($type)
     json_return_and_die($ret);
 }
 
-function api_oauth_request_token($type)
-{
-    try {
-        $oauth = new ZotOAuth1();
-        $req = OAuth1Request::from_request();
-        logger('Req: ' . var_export($req, true), LOGGER_DATA);
-        $r = $oauth->fetch_request_token($req);
-    } catch (Exception $e) {
-        logger('oauth_exception: ' . print_r($e->getMessage(), true));
-        echo 'error=' . OAuth1Util::urlencode_rfc3986($e->getMessage());
-        killme();
-    }
-    echo $r;
-    killme();
-}
-
-function api_oauth_access_token($type)
-{
-    try {
-        $oauth = new ZotOAuth1();
-        $req   = OAuth1Request::from_request();
-        $r     = $oauth->fetch_access_token($req);
-    } catch (Exception $e) {
-        echo 'error=' . OAuth1Util::urlencode_rfc3986($e->getMessage());
-        killme();
-    }
-    echo $r;
-    killme();
-}

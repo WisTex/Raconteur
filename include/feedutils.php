@@ -5,7 +5,10 @@
  * @brief Some functions to work with XML feeds.
  */
 
-use Zotlabs\Lib\Img_filesize;
+use Code\Lib\Img_filesize;
+use Code\Extend\Hook;
+use Code\Render\Theme;
+
 
 /**
  * @brief Return an Atom feed for channel.
@@ -89,15 +92,15 @@ function get_feed_for($channel, $observer_hash, $params)
     }
 
 
-    $feed_template = get_markup_template('atom_feed.tpl');
+    $feed_template = Theme::get_template('atom_feed.tpl');
 
     $atom = '';
 
     $feed_author = '';
 
     $atom .= replace_macros($feed_template, array(
-        '$version'       => xmlify(Zotlabs\Lib\System::get_project_version()),
-        '$generator'     => xmlify(Zotlabs\Lib\System::get_platform_name()),
+        '$version'       => xmlify(Code\Lib\System::get_project_version()),
+        '$generator'     => xmlify(Code\Lib\System::get_platform_name()),
 		'$generator_uri' => 'https://codeberg.org/' . ((PLATFORM_NAME === 'streams') ? 'streams' : 'zot') . '/' . PLATFORM_NAME,
         '$feed_id'       => xmlify($channel['xchan_url']),
         '$feed_title'    => xmlify($channel['channel_name']),
@@ -121,7 +124,7 @@ function get_feed_for($channel, $observer_hash, $params)
      *   * \e string \b observer_hash
      *   * \e array \b params
      */
-    call_hooks('atom_feed_top', $x);
+    Hook::call('atom_feed_top', $x);
 
     $atom = $x['xml'];
 
@@ -130,7 +133,7 @@ function get_feed_for($channel, $observer_hash, $params)
      *   A much simpler interface than atom_feed_top.
      *   * \e string - the feed after atom_feed_top hook
      */
-    call_hooks('atom_feed', $atom);
+    Hook::call('atom_feed', $atom);
 
     $items = items_fetch(
         [
@@ -167,7 +170,7 @@ function get_feed_for($channel, $observer_hash, $params)
      * @hooks atom_feed_end
      *   \e string - The created XML feed as a string without closing tag
      */
-    call_hooks('atom_feed_end', $atom);
+    Hook::call('atom_feed_end', $atom);
 
     $atom .= '</feed>' . "\r\n";
 
@@ -212,7 +215,7 @@ function atom_author($tag, $nick, $name, $uri, $h, $w, $type, $photo)
      *  Possibility to add further tags to returned XML string
      *   * \e string - The created XML tag as a string without closing tag
      */
-    call_hooks('atom_author', $o);
+    Hook::call('atom_author', $o);
 
     $o .= "</$tag>\r\n";
 
@@ -248,7 +251,7 @@ function atom_render_author($tag, $xchan)
      *   Possibility to add further tags to returned XML string.
      *   * \e string The created XML tag as a string without closing tag
      */
-    call_hooks('atom_render_author', $o);
+    Hook::call('atom_render_author', $o);
 
     $o .= "</$tag>\r\n";
 
@@ -404,7 +407,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
      *   * \e number \b abook_id
      *   * \e string \b entry - The generated entry and what will get returned
      */
-    call_hooks('atom_entry', $x);
+    Hook::call('atom_entry', $x);
 
     return $x['entry'];
 }

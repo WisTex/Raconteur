@@ -7,7 +7,7 @@
  * database class DBA and some functions for working with databases.
  */
 
-use Zotlabs\Lib\System;
+use Code\Lib\System;
 
 /**
  * @brief Database classs with database factory method.

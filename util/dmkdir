@@ -2,8 +2,8 @@
 <?php
 
 
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Channel;
+use Code\Lib\Libsync;
+use Code\Lib\Channel;
 
 // file import to DAV utility
 

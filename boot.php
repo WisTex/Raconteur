@@ -1,20 +1,22 @@
 <?php
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Web\Session;
-use Zotlabs\Web\HttpMeta;
-use Zotlabs\Render\SmartyTemplate;
-use Zotlabs\Render\Comanche;
-use Zotlabs\Render\Theme;
-use Zotlabs\Lib\DB_Upgrade;
-use Zotlabs\Lib\System;
-use Zotlabs\Lib\PConfig;
-use Zotlabs\Lib\Config;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\Navbar;
-use Zotlabs\Lib\Stringsjs;
-    
+use Code\Lib\Libzot;
+use Code\Web\Session;
+use Code\Web\HttpMeta;
+use Code\Render\SmartyTemplate;
+use Code\Render\Comanche;
+use Code\Render\Theme;
+use Code\Lib\DB_Upgrade;
+use Code\Lib\System;
+use Code\Lib\PConfig;
+use Code\Lib\Config;
+use Code\Daemon\Run;
+use Code\Lib\Channel;
+use Code\Lib\Navbar;
+use Code\Lib\Stringsjs;
+use Code\Extend\Hook;
+use Code\Lib\Head;
+        
 /**
  * @file boot.php
  *
@@ -50,7 +52,6 @@ if (file_exists('addon/version.php')) {
 
 require_once('include/config.php');
 require_once('include/network.php');
-require_once('include/addon.php');
 require_once('include/text.php');
 require_once('include/datetime.php');
 require_once('include/language.php');
@@ -703,12 +704,12 @@ function sys_boot() {
 
 		App::$session = new Session();
 		App::$session->init();
-		load_hooks();
+		Hook::load();
 		/**
 		 * @hooks 'startup'
 		 */
 		$arr = [];
-		call_hooks('startup',$arr);
+		Hook::call('startup',$arr);
 	}
 }
 
@@ -771,7 +772,7 @@ class App {
 	public static  $language;
 	public static  $langsave;
 	public static  $rtl = false;
-	public static  $plugins_admin;
+	public static  $addons_admin;
 	public static  $module_loaded = false;
 	public static  $query_string;
 	public static  $page;
@@ -794,7 +795,7 @@ class App {
 	public static  $hooks;
 	public static  $timezone;
 	public static  $interactive = true;
-	public static  $plugins;
+	public static  $addons;
 	private static $apps = [];
 	public static  $identities;
 	public static  $css_sources = [];
@@ -1183,7 +1184,7 @@ class App {
 
 		// webmanifest
 		
-		head_add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
+		Head::add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
 		self::$meta->set('application-name', System::get_platform_name() );
 
 		self::$meta->set('generator', System::get_platform_name());
@@ -1193,9 +1194,9 @@ class App {
 			$i = System::get_site_icon();
 		}
 		if ($i) {
-			head_add_link(['rel' => 'shortcut icon', 'href' => $i ]);
-			head_add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
-			head_add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
+			Head::add_link(['rel' => 'shortcut icon', 'href' => $i ]);
+			Head::add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
+			Head::add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
 		}
 
 		$x = [ 'header' => '' ];
@@ -1204,7 +1205,7 @@ class App {
 		 *   Called when creating the HTML page header.
 		 *   * \e string \b header - Return the HTML header which should be added
 		 */
-		call_hooks('build_pagehead', $x);
+		Hook::call('build_pagehead', $x);
 
 		/* put the head template at the beginning of page['htmlhead']
 		 * since the code added by the modules frequently depends on it
@@ -1215,7 +1216,7 @@ class App {
 			self::$page['htmlhead'] = EMPTY_STR; // needed to silence warning
 		}
 		
-		self::$page['htmlhead'] = replace_macros(get_markup_template('head.tpl'),
+		self::$page['htmlhead'] = replace_macros(Theme::get_template('head.tpl'),
 			[
 				'$preload_images'  => $preload_images,
 				'$user_scalable'   => $user_scalable,
@@ -1226,9 +1227,9 @@ class App {
 				'$plugins'         => $x['header'],
 				'$update_interval' => $interval,
 				'$alerts_interval' => $alerts_interval,
-				'$head_css'        => head_get_css(),
-				'$head_js'         => head_get_js(),
-				'$linkrel'         => head_get_links(),
+				'$head_css'        => Head::get_css(),
+				'$head_js'         => Head::get_js(),
+				'$linkrel'         => Head::get_links(),
 				'$js_strings'      => Stringsjs::strings(),
 				'$zid'             => Channel::get_my_address(),
 				'$channel_id'      => ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '')
@@ -1236,7 +1237,7 @@ class App {
 		) . self::$page['htmlhead'];
 
 		// always put main.js at the end
-		self::$page['htmlhead'] .= head_get_main_js();
+		self::$page['htmlhead'] .= Head::get_main_js();
 	}
 
 	/**
@@ -1512,9 +1513,7 @@ function check_config() {
 	
 	$x = new DB_Upgrade(DB_UPDATE_VERSION);
 
-	plugins_sync();
-
-	load_hooks();
+	Hook::load();
 
 	check_cron_broken();
 
@@ -1711,10 +1710,10 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	$dest_url = z_root() . '/' . App::$query_string;
 
 	if(local_channel()) {
-		$tpl = get_markup_template('logout.tpl');
+		$tpl = Theme::get_template('logout.tpl');
 	}
 	else {
-		$tpl = get_markup_template('login.tpl');
+		$tpl = Theme::get_template('login.tpl');
 		if(strlen(App::$query_string))
 			$_SESSION['login_return_url'] = App::$query_string;
 	}
@@ -1740,7 +1739,7 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 	 *   Called when generating the login form.
 	 *   * \e string with parsed HTML
 	 */
-	call_hooks('login_hook', $o);
+	Hook::call('login_hook', $o);
 
 	return $o;
 }
@@ -1953,7 +1952,7 @@ function proc_run() {
 	 *   * \e boolean \b run_cmd
 	 */
 
-	call_hooks('proc_run', $arr);
+	Hook::call('proc_run', $arr);
 
 	if (! $arr['run_cmd']) {
 		return;
@@ -2070,7 +2069,7 @@ function load_contact_links($uid) {
 
 //	logger('load_contact_links');
 
-	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_addr, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
+	$r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, abook_my_perms, abook_their_perms, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_addr, xchan_network, xchan_type from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
 		intval($uid)
 	);
 	if($r) {
@@ -2212,7 +2211,7 @@ function load_pdl() {
 		 *   * \e string \b module
 		 *   * \e string \b layout
 		 */
-		call_hooks('load_pdl', $arr);
+		Hook::call('load_pdl', $arr);
 		$layout = $arr['layout'];
 
 		$n = 'mod_' . App::$module . '.pdl' ;
@@ -2222,7 +2221,7 @@ function load_pdl() {
 		if(! (isset($s) && $s))
 			$s = $layout;
 
-		if((! $s) && (($p = theme_include($n)) != ''))
+		if((! $s) && (($p = Theme::include($n)) != ''))
 			$s = @file_get_contents($p);
 		elseif(file_exists('addon/'. App::$module . '/' . $n))
 			$s = @file_get_contents('addon/'. App::$module . '/' . $n);
@@ -2231,7 +2230,7 @@ function load_pdl() {
 			'module' => App::$module,
 			'layout' => $s
 		];
-		call_hooks('alter_pdl',$arr);
+		Hook::call('alter_pdl',$arr);
 		$s = $arr['layout'];
 
 		if($s) {
@@ -2257,13 +2256,13 @@ function exec_pdl() {
  */
 function construct_page() {
 
-	call_hooks('page_end', App::$page['content']);
+	Hook::call('page_end', App::$page['content']);
 
 	exec_pdl();
 
 	$comanche = ((isset(App::$layout) && is_array(App::$layout) && count(App::$layout)) ? true : false);
 
-	require_once(theme_include('theme_init.php'));
+	require_once(Theme::include('theme_init.php'));
 
 	$installing = false;
 
@@ -2291,24 +2290,24 @@ function construct_page() {
 	// logger('current_theme: ' . print_r($current_theme,true));
 	// Theme::debug();
 
-	if (($p = theme_include($current_theme[0] . '.js')) != '')
-		head_add_js('/' . $p);
+	if (($p = Theme::include($current_theme[0] . '.js')) != '')
+		Head::add_js('/' . $p);
 
-	if (($p = theme_include('mod_' . App::$module . '.php')) != '')
+	if (($p = Theme::include('mod_' . App::$module . '.php')) != '')
 		require_once($p);
 
 	if (isset(App::$page['template_style']))
-		head_add_css(App::$page['template_style'] . '.css');
+		Head::add_css(App::$page['template_style'] . '.css');
 	else
-		head_add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
+		Head::add_css(((isset(App::$page['template'])) ? App::$page['template'] : 'default' ) . '.css');
 
-	if (($p = theme_include('mod_' . App::$module . '.css')) != '')
-		head_add_css('mod_' . App::$module . '.css');
+	if (($p = Theme::include('mod_' . App::$module . '.css')) != '')
+		Head::add_css('mod_' . App::$module . '.css');
 
-	head_add_css(Theme::url($installing));
+	Head::add_css(Theme::url($installing));
 
-	if (($p = theme_include('mod_' . App::$module . '.js')) != '')
-		head_add_js('mod_' . App::$module . '.js');
+	if (($p = Theme::include('mod_' . App::$module . '.js')) != '')
+		Head::add_js('mod_' . App::$module . '.js');
 
 	App::build_pagehead();
 
@@ -2337,7 +2336,7 @@ function construct_page() {
 		 *   * \e string \b module
 		 *   * \e string \b layout
 		 */
-		call_hooks('construct_page', $arr);
+		Hook::call('construct_page', $arr);
 		App::$layout = ((isset($arr['layout']) && is_array($arr['layout'])) ? $arr['layout'] : []);
 
 		foreach(App::$layout as $k => $v) {
@@ -2384,7 +2383,7 @@ function construct_page() {
 			'script-src' => Array ("'self'","'unsafe-inline'","'unsafe-eval'"),
 			'style-src' => Array ("'self'","'unsafe-inline'")
 		);
-		call_hooks('content_security_policy',$cspsettings);
+		Hook::call('content_security_policy',$cspsettings);
 
 		// Legitimate CSP directives (cxref: https://content-security-policy.com/)
 		$validcspdirectives=Array(
@@ -2428,7 +2427,7 @@ function construct_page() {
 		header("Public-Key-Pins: " . App::$config['system']['public_key_pins']);
 	}
 
-	require_once(theme_include(
+	require_once(Theme::include(
 		((isset(App::$page['template']) && App::$page['template']) ? App::$page['template'] : 'default' ) . '.php' )
 	);
 }
@@ -2537,7 +2536,7 @@ function cert_bad_email() {
 		[
 			'toEmail'        => App::$config['system']['admin_email'],
 			'messageSubject' => sprintf(t('[$Projectname] Website SSL error for %s'), App::get_hostname()),
-			'textVersion'    => replace_macros(get_intltext_template('cert_bad_eml.tpl'),
+			'textVersion'    => replace_macros(Theme::get_email_template('cert_bad_eml.tpl'),
 				[
 					'$sitename' => App::$config['system']['sitename'],
 					'$siteurl'  => z_root(),
@@ -2586,7 +2585,7 @@ function check_cron_broken() {
 		[
 			'toEmail'        => App::$config['system']['admin_email'],
 			'messageSubject' => sprintf(t('[$Projectname] Cron tasks not running on %s'), App::get_hostname()),
-			'textVersion'    => replace_macros(get_intltext_template('cron_bad_eml.tpl'),
+			'textVersion'    => replace_macros(Theme::get_email_template('cron_bad_eml.tpl'),
 				[
 					'$sitename' => App::$config['system']['sitename'],
 					'$siteurl'  =>  z_root(),

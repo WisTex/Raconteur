@@ -86,6 +86,7 @@
 					{{include file="field_select.tpl" field=$access_policy}}
 					{{include file="field_input.tpl" field=$register_text}}
 					{{include file="field_select_grouped.tpl" field=$role}}
+					{{include file="field_checkbox.tpl" field=$tos_required}}
 					{{include file="field_input.tpl" field=$minimum_age}}
 					{{include file="field_input.tpl" field=$location}}
 					{{include file="field_input.tpl" field=$sellpage}}

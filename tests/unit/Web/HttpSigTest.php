@@ -21,17 +21,17 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\Web;
+namespace Code\Tests\Unit\Web;
 
 use phpmock\phpunit\PHPMock;
-use Zotlabs\Tests\Unit\UnitTestCase;
+use Code\Tests\Unit\UnitTestCase;
 
-use Zotlabs\Web\HTTPSig;
+use Code\Web\HTTPSig;
 
 /**
  * @brief Unit Test case for HTTPSig class.
  *
- * @covers Zotlabs\Web\HTTPSig
+ * @covers Code\Web\HTTPSig
  */
 class PermissionDescriptionTest extends UnitTestCase
 {
@@ -113,7 +113,7 @@ class PermissionDescriptionTest extends UnitTestCase
     public function testDecrypt_sigheaderUseSitePrivateKey()
     {
         // Create a stub for global function get_config() with expectation
-        $t = $this->getFunctionMock('Zotlabs\Web', 'get_config');
+        $t = $this->getFunctionMock('Code\Web', 'get_config');
         $t->expects($this->once())->willReturn('system.prvkey');
 
         $header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';

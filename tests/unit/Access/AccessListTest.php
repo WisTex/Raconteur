@@ -22,15 +22,15 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\Access;
+namespace Code\Tests\Unit\Access;
 
-use Zotlabs\Tests\Unit\UnitTestCase;
-use Zotlabs\Access\AccessControl;
+use Code\Tests\Unit\UnitTestCase;
+use Code\Access\AccessControl;
 
 /**
  * @brief Unit Test case for AccessList class.
  *
- * @covers Zotlabs\Access\AccessControl
+ * @covers Code\Access\AccessControl
  */
 class AccessListTest extends UnitTestCase
 {

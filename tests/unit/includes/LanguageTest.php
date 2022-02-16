@@ -22,9 +22,9 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\includes;
+namespace Code\Tests\Unit\includes;
 
-use Zotlabs\Tests\Unit\UnitTestCase;
+use Code\Tests\Unit\UnitTestCase;
 use Text_LanguageDetect;
 
 //use phpmock\phpunit\PHPMock;
@@ -52,7 +52,7 @@ class LanguageTest extends UnitTestCase
         // If the calling function is in a namespace it would work.
         //$gc = $this->getFunctionMock(__NAMESPACE__, 'get_config');
         //$gc->expects($this->once())->willReturn(10)
-        //$cg = $this->getFunctionMock('Zotlabs\Lib\Config', 'Get');
+        //$cg = $this->getFunctionMock('Code\Lib\Config', 'Get');
         //$cg->expects($this->once())->willReturn(10);
         //$this->assertEquals($langCode, detect_language($text));
 

@@ -1,7 +1,7 @@
 <?php
 
-use Zotlabs\Lib\MastAPI;
-use Zotlabs\Lib\Channel;
+use Code\Lib\MastAPI;
+use Code\Lib\Channel;
 
 function zot_api_init()
 {
@@ -75,11 +75,11 @@ function api_zot_version($type)
 
     if ($type === 'xml') {
         header('Content-type: application/xml');
-        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\r\n" . '<version>' . Zotlabs\Lib\System::get_project_version() . '</version>' . "\r\n";
+        echo '<?xml version="1.0" encoding="UTF-8"?>' . "\r\n" . '<version>' . Code\Lib\System::get_project_version() . '</version>' . "\r\n";
         killme();
     } elseif ($type === 'json') {
         header('Content-type: application/json');
-        echo '"' . Zotlabs\Lib\System::get_project_version() . '"';
+        echo '"' . Code\Lib\System::get_project_version() . '"';
         killme();
     }
 }
@@ -592,14 +592,14 @@ function zot_item_update($type)
     if (x($_FILES, 'media')) {
         $_FILES['userfile'] = $_FILES['media'];
         // upload the image if we have one
-        $mod = new Zotlabs\Module\Wall_attach();
+        $mod = new Code\Module\Wall_attach();
         $media = $mod->post();
         if ($media) {
             $_REQUEST['body'] .= "\n\n" . $media;
         }
     }
 
-    $mod = new Zotlabs\Module\Item();
+    $mod = new Code\Module\Item();
     $x = $mod->post();
     json_return_and_die($x);
 }

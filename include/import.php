@@ -1,18 +1,18 @@
 <?php
 
-use Zotlabs\Lib\IConfig;
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Web\HTTPSig;
-use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\Connect;
-use Zotlabs\Lib\LibBlock;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\ServiceClass;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Access\PermissionRoles;
-use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Lib\Menu;
-use Zotlabs\Lib\MenuItem;
+use Code\Lib\IConfig;
+use Code\Lib\Libzot;
+use Code\Web\HTTPSig;
+use Code\Lib\Apps;
+use Code\Lib\Connect;
+use Code\Lib\LibBlock;
+use Code\Lib\Channel;
+use Code\Lib\ServiceClass;
+use Code\Daemon\Run;
+use Code\Access\PermissionRoles;
+use Code\Access\PermissionLimits;
+use Code\Lib\Menu;
+use Code\Lib\MenuItem;
 
 /**
  * @brief Import a channel.

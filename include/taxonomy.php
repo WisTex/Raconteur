@@ -2,8 +2,9 @@
 
 /** @file */
 
-use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\Channel;
+use Code\Lib\Apps;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
 
 // post categories and "save to file" use the same item.file table for storage.
 // We will differentiate the different uses by wrapping categories in angle brackets
@@ -233,7 +234,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
         return [];
     }
 
-    return Zotlabs\Text\Tagadelic::calc($r);
+    return Code\Text\Tagadelic::calc($r);
 }
 
 
@@ -291,7 +292,7 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
         return [];
     }
 
-    return Zotlabs\Text\Tagadelic::calc($r);
+    return Code\Text\Tagadelic::calc($r);
 }
 
 function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $restrict = 0, $type = TERM_CATEGORY)
@@ -347,7 +348,7 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
         return [];
     }
 
-    return Zotlabs\Text\Tagadelic::calc($r);
+    return Code\Text\Tagadelic::calc($r);
 }
 
 
@@ -415,7 +416,7 @@ function pub_tagadelic($mode, $limit, $recent, $safemode, $type)
     if (! $r) {
         return [];
     }
-    return Zotlabs\Text\Tagadelic::calc($r);
+    return Code\Text\Tagadelic::calc($r);
 }
 
 
@@ -452,7 +453,7 @@ function dir_tagadelic($count = 0, $hub = '', $type = 0, $safe = '')
         return [];
     }
 
-    return Zotlabs\Text\Tagadelic::calc($r);
+    return Code\Text\Tagadelic::calc($r);
 }
 
 
@@ -496,7 +497,7 @@ function app_tagadelic($count = 0)
         return [];
     }
 
-    return Zotlabs\Text\Tagadelic::calc($r);
+    return Code\Text\Tagadelic::calc($r);
 }
 
 
@@ -653,7 +654,7 @@ function obj_verbs()
     );
 
     $arr = array('verbs' => $verbs);
-    call_hooks('obj_verbs', $arr);
+    Hook::call('obj_verbs', $arr);
 
     return  $arr['verbs'];
 }

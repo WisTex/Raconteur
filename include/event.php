@@ -6,11 +6,14 @@
  */
 
 use Sabre\VObject;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Access\AccessControl;
+use Code\Lib\Libsync;
+use Code\Lib\Activity;
+use Code\Lib\Channel;
+use Code\Access\AccessControl;
+use Code\Extend\Hook;
 use Symfony\Component\Uid\Uuid;
+use Code\Render\Theme;
+
 
 require_once('include/bbcode.php');
 
@@ -121,7 +124,7 @@ function format_event_obj($jobject)
         $dtend = ((array_key_exists('endTime', $object)) ? $object['endTime'] : NULL_DATE);
         $title = ((isset($object['summary']) && $object['summary']) ? zidify_links(smilies(bbcode($object['summary']))) : $object['name']);
 
-        $event['header'] = replace_macros(get_markup_template('event_item_header.tpl'), array(
+        $event['header'] = replace_macros(Theme::get_template('event_item_header.tpl'), array(
             '$title'     => $title,
             '$dtstart_label' => t('Starts:'),
             '$dtstart_title' => datetime_convert('UTC', 'UTC', $object['startTime'], ((strpos($object['startTime'], 'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
@@ -133,7 +136,7 @@ function format_event_obj($jobject)
 
         ));
 
-        $event['content'] = replace_macros(get_markup_template('event_item_content.tpl'), array(
+        $event['content'] = replace_macros(Theme::get_template('event_item_content.tpl'), array(
             '$description'    => $object['content'],
             '$location_label' => t('Location:'),
             '$location'   => ((array_path_exists('location/content', $object)) ? zidify_links(smilies(bbcode($object['location']['content']))) : EMPTY_STR)
@@ -153,7 +156,7 @@ function ical_wrapper($ev)
     $o .= "BEGIN:VCALENDAR";
     $o .= "\r\nVERSION:2.0";
     $o .= "\r\nMETHOD:PUBLISH";
-    $o .= "\r\nPRODID:-//" . get_config('system', 'sitename') . "//" . Zotlabs\Lib\System::get_platform_name() . "//" . strtoupper(App::$language) . "\r\n";
+    $o .= "\r\nPRODID:-//" . get_config('system', 'sitename') . "//" . Code\Lib\System::get_platform_name() . "//" . strtoupper(App::$language) . "\r\n";
     if (array_key_exists('dtstart', $ev)) {
         $o .= format_event_ical($ev);
     } else {
@@ -511,7 +514,7 @@ function event_store_event($arr)
      *   * \e array \b existing_event
      *   * \e boolean \b cancel - default false
      */
-    call_hooks('event_store_event', $hook_info);
+    Hook::call('event_store_event', $hook_info);
     if ($hook_info['cancel']) {
         return false;
     }
@@ -1282,7 +1285,7 @@ function event_store_item($arr, $event)
          * @hooks event_updated
          *   Called when an event record is modified.
          */
-        call_hooks('event_updated', $event['id']);
+        Hook::call('event_updated', $event['id']);
 
         return $item_id;
     } else {
@@ -1406,7 +1409,7 @@ function event_store_item($arr, $event)
          * @hooks event_created
          *   Called when an event record is created.
          */
-        call_hooks('event_created', $event['id']);
+        Hook::call('event_created', $event['id']);
 
         return $item_id;
     }
