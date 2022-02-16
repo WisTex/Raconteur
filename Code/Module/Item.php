@@ -1168,7 +1168,23 @@ class Item extends Controller
 
         // BBCODE end alert
 
-
+        $netgroup = false;
+        $found_group_mention = false;
+        $netgroups = get_forum_channels($profile_uid, 1);
+        if ($post_tags) {
+            foreach ($post_tags as $tag) {
+                foreach ($netgroups as $netgroup) {
+                    if (isset($tag['url']) && $tag['url'] === $netgroup['xchan_url']) {
+                        $found_group_mention = true;
+                        break;
+                    }
+                }
+                if ($found_group_mention) {
+                    break;
+                }
+            }
+        }
+    
         // if the acl contains a single contact and it's a group, add a mention. This is for compatibility
         // with other groups implementations which require a mention to trigger group delivery.
 
