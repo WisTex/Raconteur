@@ -3213,6 +3213,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['deny_gid']  = $channel['channel_deny_gid'];
 		$arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
+        $merge = (($item['attach']) ? $item['attach'] : []);
+        $arr['attach'] = array_merge($merge, [[ 'type' => 'application/json+ld', 'href' => $item['mid'] ]] );
+    
 		$arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
 
 		if ($arr['id']) {

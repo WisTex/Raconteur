@@ -72,10 +72,12 @@ class Navbar {
 
         $site_icon = System::get_site_icon();
 
-        $banner = System::get_site_name();
-        if (! isset(App::$page['header'])) {
-            App::$page['header'] = EMPTY_STR;
-        }
+        $banner = EMPTY_STR;
+    
+//        $banner = System::get_site_name();
+//        if (! isset(App::$page['header'])) {
+//            App::$page['header'] = EMPTY_STR;
+//        }
         App::$page['header'] .= replace_macros(Theme::get_template('hdr.tpl'), array(
             //we could additionally use this to display important system notifications e.g. for updates
         ));
@@ -303,7 +305,7 @@ class Navbar {
 
         App::$page['nav'] .= replace_macros($tpl, array(
             '$baseurl' => z_root(),
-            '$site_home' => Channel::url($site_channel).
+            '$site_home' => Channel::url($site_channel),
             '$project_icon' => $site_icon,
             '$project_title' => t('Powered by $Projectname'),
             '$fulldocs' => t('Help'),

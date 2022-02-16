@@ -11,6 +11,7 @@ use Zotlabs\Lib\Queue;
 use Zotlabs\Lib\System;
 use Zotlabs\Lib\Keyutils;
 use Zotlabs\Lib\LDSignatures;
+use Zotlabs\Lib\Addon;
 use Zotlabs\Web\HTTPSig;
 use Zotlabs\Daemon\Run;
 use Zotlabs\Extend\Hook;
@@ -1380,7 +1381,7 @@ function get_site_info()
         $service_class = false;
     }
 
-    $visible_plugins = visible_plugin_list();
+    $visible_plugins = Addon::list_visible();
 
     if (@is_dir('.git') && function_exists('shell_exec')) {
         $commit = trim(@shell_exec('git log -1 --format="%h"'));

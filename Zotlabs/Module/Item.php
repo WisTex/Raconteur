@@ -954,42 +954,6 @@ class Item extends Controller
         $str_group_deny = $gacl['deny_gid'];
 
 
-        // if the acl contains a single contact and it's a group, add a mention. This is for compatibility
-        // with other groups implementations which require a mention to trigger group delivery.
-
-        if (($str_contact_allow) && (!$str_group_allow) && (!$str_contact_deny) && (!$str_group_deny)) {
-            $cida = expand_acl($str_contact_allow);
-            if (count($cida) === 1) {
-                $netgroups = get_forum_channels($profile_uid, 1);
-                if ($netgroups) {
-                    foreach ($netgroups as $ng) {
-                        if ($ng['xchan_hash'] == $cida[0]) {
-                            if (!is_array($post_tags)) {
-                                $post_tags = [];
-                            }
-                            $post_tags[] = array(
-                                'uid' => $profile_uid,
-                                'ttype' => TERM_MENTION,
-                                'otype' => TERM_OBJ_POST,
-                                'term' => $ng['xchan_name'],
-                                'url' => $ng['xchan_url']
-                            );
-
-                            $colls = get_xconfig($ng['xchan_hash'], 'activitypub', 'collections');
-                            if ($colls && is_array($colls) && isset($colls['wall'])) {
-                                $datarray['target'] = [
-                                    'id' => $colls['wall'],
-                                    'type' => 'Collection',
-                                    'attributedTo' => ((in_array($ng['xchan_network'], ['zot6', 'nomad'])) ? $ng['xchan_url'] : $ng['xchan_hash'])
-                                ];
-                                $datarray['tgt_type'] = 'Collection';
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         $groupww = false;
 
         // if this is a wall-to-wall post to a group, turn it into a direct message
@@ -1204,6 +1168,44 @@ class Item extends Controller
 
         // BBCODE end alert
 
+
+        // if the acl contains a single contact and it's a group, add a mention. This is for compatibility
+        // with other groups implementations which require a mention to trigger group delivery.
+
+        if (($str_contact_allow) && (!$str_group_allow) && (!$str_contact_deny) && (!$str_group_deny)) {
+            $cida = expand_acl($str_contact_allow);
+            if (count($cida) === 1) {
+                $netgroups = get_forum_channels($profile_uid, 1);
+                if ($netgroups) {
+                    foreach ($netgroups as $ng) {
+                        if ($ng['xchan_hash'] == $cida[0]) {
+                            if (!is_array($post_tags)) {
+                                $post_tags = [];
+                            }
+                            $post_tags[] = array(
+                                'uid' => $profile_uid,
+                                'ttype' => TERM_MENTION,
+                                'otype' => TERM_OBJ_POST,
+                                'term' => $ng['xchan_name'],
+                                'url' => $ng['xchan_url']
+                            );
+
+                            $colls = get_xconfig($ng['xchan_hash'], 'activitypub', 'collections');
+                            if ($colls && is_array($colls) && isset($colls['wall'])) {
+                                $datarray['target'] = [
+                                    'id' => $colls['wall'],
+                                    'type' => 'Collection',
+                                    'attributedTo' => ((in_array($ng['xchan_network'], ['zot6', 'nomad'])) ? $ng['xchan_url'] : $ng['xchan_hash'])
+                                ];
+                                $datarray['tgt_type'] = 'Collection';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    
         if (strlen($categories)) {
             if (!isset($post_tags)) {
                 $post_tags = [];
