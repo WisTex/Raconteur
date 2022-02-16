@@ -173,7 +173,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 
 	if (local_channel()) {
 	
-		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && $xchan['xchan_type'] !== XCHAN_TYPE_GROUP;
+		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && intval($xchan['xchan_type']) !== XCHAN_TYPE_GROUP;
 
 	    if ($can_dm) {
 			$profdm = t('Direct Message');
