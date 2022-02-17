@@ -76,6 +76,7 @@ class Apps
         }
 
         $default_apps = [
+            'Admin',
             'Channel Home',
             'Connections',
             'Directory',

@@ -34,11 +34,8 @@ define ( 'PLATFORM_ARCHITECTURE',   'zap' );
 
 define ( 'PROJECT_BASE',   __DIR__ );
 
-// This configures the default state of activitypub at the project level.
+define ( 'ACTIVITYPUB_ENABLED', true );
 
-if (! defined('ACTIVITYPUB_ENABLED')) {
-	define ( 'ACTIVITYPUB_ENABLED', true );
-}
 
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
@@ -2030,11 +2027,16 @@ function is_site_admin() {
 	if(isset($_SESSION['delegate']))
 		return false;
 
-	if(isset($_SESSION['authenticated']) && intval($_SESSION['authenticated'])
-		&& is_array(App::$account)
-		&& (App::$account['account_roles'] & ACCOUNT_ROLE_ADMIN))
-		return true;
-
+	if(isset($_SESSION['authenticated']) && intval($_SESSION['authenticated'])) {
+        if (is_array(App::$account) && (App::$account['account_roles'] & ACCOUNT_ROLE_ADMIN)) {
+    		return true;
+        }
+        // the system channel is by definition an administrator
+        if (isset(App::$sys_channel) && array_key_exists('channel_id', App::$sys_channel) && intval(App::$sys_channel['channel_id']) === local_channel()) {
+            return true;
+        }
+    }
+    
 	return false;
 }
 

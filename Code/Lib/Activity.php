@@ -1751,7 +1751,7 @@ class Activity
         // information
         $ret = self::encode_person($sys, true, true);
 
-        $ret['type'] = ((Channel::is_group($sys['channel_id'])) ? 'Group' : 'Service');
+        $ret['type'] = self::xchan_type_to_type(intval($sys['xchan_type']));
         $ret['id'] = z_root();
         $ret['alsoKnownAs'] = z_root() . '/channel/sys';
         $auto_follow = false;
@@ -3044,7 +3044,7 @@ class Activity
 
         if (
             $generator && array_key_exists('type', $generator)
-            && in_array($generator['type'], ['Application', 'Service']) && array_key_exists('name', $generator)
+            && in_array($generator['type'], ['Application', 'Service', 'Organization']) && array_key_exists('name', $generator)
         ) {
             $s['app'] = escape_tags($generator['name']);
         }
@@ -4264,6 +4264,22 @@ class Activity
                 return XCHAN_TYPE_APPLICATION;
             default:
                 return XCHAN_TYPE_UNKNOWN;
+        }
+    }
+
+    public static function xchan_type_to_type($type)
+    {
+        switch ($type) {
+            case XCHAN_TYPE_GROUP;
+                return 'Group';
+            case XCHAN_TYPE_SERVICE;
+                return 'Service';
+            case XCHAN_TYPE_ORGANIZATION;
+                return 'Organization';
+            case XCHAN_TYPE_APPLICATION;
+                return 'Application';
+            default:
+                return 'Person';
         }
     }
 
