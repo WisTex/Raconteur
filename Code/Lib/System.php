@@ -53,7 +53,7 @@ class System
     public static function get_project_icon()
     {
         if (isset(App::$sys_channel['xchan_photo_l'])) {
-            return App::$sys_channel['xchan_photo_l']);
+            return App::$sys_channel['xchan_photo_l'];
         }
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon', App::$config['system'])) {
             return App::$config['system']['icon'];
@@ -101,9 +101,6 @@ class System
 
     public static function get_site_icon()
     {
-        if (is_array(App::$config) && is_array(App::$config['system']) && isset(App::$config['system']['site_icon_url']) && App::$config['system']['site_icon_url']) {
-            return App::$config['system']['site_icon_url'];
-        }
         return self::get_project_icon();
     }
 

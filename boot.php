@@ -1182,9 +1182,8 @@ class App {
         // webmanifest
 
         Head::add_link( [ 'rel' => 'manifest', 'href' => z_root() . '/manifest.webmanifest' ] );
-        self::$meta->set('application-name', System::get_platform_name() );
-
-        self::$meta->set('generator', System::get_platform_name());
+        self::$meta->set('application-name', System::get_project_name() );
+        self::$meta->set('generator', System::get_project_name());
 
         $i = head_get_icon();
         if (! $i) {
@@ -1192,8 +1191,8 @@ class App {
         }
         if ($i) {
             Head::add_link(['rel' => 'shortcut icon', 'href' => $i ]);
-            Head::add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => System::get_site_icon() ]);
-            Head::add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => 'images/' . System::get_platform_name() . '.svg' ]);
+            Head::add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => str_replace('/l/','/64/', System::get_site_icon()) ]);
+            Head::add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => str_replace('/l/','/192/', System::get_site_icon()) ]);
         }
 
         $x = [ 'header' => '' ];
