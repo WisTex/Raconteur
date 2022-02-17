@@ -89,9 +89,25 @@ class Channel
         $sys = self::get_system();
 
         if ($sys) {
-            if (isset($sys['channel_pubkey']) && $sys['channel_pubkey'] === get_config('system', 'pubkey')) {
-                return;
-            } else {
+            // upgrade the default network drivers if this looks like an upgraded zot6-based platform. 
+
+            if ($sys['xchan_network'] !== 'nomad') {
+                $chans = q("select * from channel where true");
+                if ($chans) {
+                    foreach ($chans as $chan) {
+                        q("update hubloc set hubloc_network = 'nomad' where xchan_hash = '%s'",
+                            dbesc($chan['channel_hash'])
+                        );
+                        q("update hubloc set xchan_network = 'nomad' where xchan_hash = '%s'",
+                            dbesc($chan['channel_hash'])
+                        );
+                    }
+                }
+            }
+    
+            // fix lost system keys, since we cannot communicate without them
+    
+            if (!(isset($sys['channel_pubkey']) && $sys['channel_pubkey'] === get_config('system', 'pubkey'))) {
                 // upgrade the sys channel and return
                 $pubkey = get_config('system', 'pubkey');
                 $prvkey = get_config('system', 'prvkey');
@@ -139,8 +155,9 @@ class Channel
                     dbesc($sys['channel_hash'])
                 );
 
-                return;
             }
+            App::$sys_channel = $sys;
+            return;
         }
 
         self::create([
