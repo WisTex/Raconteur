@@ -170,10 +170,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	}
 
 	// This is a somewhat expensive operation but important.
-	// Don't send this item to anybody who isn't allowed to see it
+	// Don't send this item to anybody who doesn't have the deliver_stream permission
 
-	// Note: commented out - no longer needed in zap and later projects because we do not allow this permission to be changed.
-	// $recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+    $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
 
 	// remove any upstream recipients from our list.
 	// If it is ourself we'll add it back in a second.

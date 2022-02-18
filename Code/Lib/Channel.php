@@ -13,6 +13,7 @@ use Code\Lib\Libsync;
 use Code\Lib\AccessList;
 use Code\Lib\Crypto;
 use Code\Lib\Connect;
+use Code\Lib\ABConfig;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Access\Permissions;
@@ -89,7 +90,7 @@ class Channel
         $sys = self::get_system();
 
         if ($sys) {
-            // upgrade the default network drivers if this looks like an upgraded zot6-based platform. 
+            // upgrade the default network drivers and permissions if this looks like an upgraded zot6-based platform. 
 
             if ($sys['xchan_network'] !== 'nomad') {
                 $chans = q("select * from channel where true");
@@ -107,6 +108,25 @@ class Channel
                     intval(XCHAN_TYPE_ORGANIZATION),
                     dbesc($sys['xchan_hash'])
                 );
+    
+                // Add the new "deliver_stream" permission
+    
+                $c = q("select * from channel where true");
+                if ($c) {
+                    foreach ($c as $cv) {
+                        PConfig::Set($cv['channel_id'],'perm_limits','deliver_stream', PERMS_SPECIFIC);
+                    }
+                }
+                $ab = q("SELECT * from abook where abook_self = 0");
+                if ($ab) {
+                    foreach ($ab as $abv) {
+                        $p = explode(',', ABConfig::Get($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', EMPTY_STR));
+                        if (! in_array('deliver_stream', $p)) {
+                            $p[] = 'deliver_stream';
+                        }
+                        ABConfig::Set($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', implode(',', $p));
+                    }
+                }
             }
     
             // fix lost system keys, since we cannot communicate without them

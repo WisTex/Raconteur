@@ -27,7 +27,7 @@ require_once('version.php');
 
 define ( 'PLATFORM_NAME',           'streams' );
 
-define ( 'DB_UPDATE_VERSION',       1254 );
+define ( 'DB_UPDATE_VERSION',       1255 );
 define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );

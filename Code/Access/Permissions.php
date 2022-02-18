@@ -58,18 +58,19 @@ class Permissions
     {
 
         $perms = [
-            'view_stream'   => t('Grant viewing access to and delivery of your channel stream and posts'),
-            'view_profile'  => t('Grant viewing access to your default channel profile'),
-            'view_contacts' => t('Grant viewing access to your address book (connections)'),
-            'view_storage'  => t('Grant viewing access to your file storage and photos'),
-            'post_wall'     => t('Grant permission to post on your channel (wall) page'),
-            'post_mail'     => t('Accept delivery of direct messages and personal mail'),
-            'send_stream'   => t('Accept delivery of their posts and all comments to their posts'),
-            'post_comments' => t('Accept delivery of their comments and likes on your posts'),
-            'write_storage' => t('Grant upload permissions to your file storage and photos'),
-            'republish'     => t('Grant permission to republish/mirror your posts'),
-            'moderated'     => t('Accept comments and wall posts only after approval (moderation)'),
-            'delegate'      => t('Grant channel administration (delegation) permission')
+            'view_stream'    => t('Grant viewing access to your channel stream and posts'),
+            'deliver_stream' => t('Provide delivery of your channel stream and posts'),
+            'view_profile'   => t('Grant viewing access to your default channel profile'),
+            'view_contacts'  => t('Grant viewing access to your address book (connections)'),
+            'view_storage'   => t('Grant viewing access to your file storage and photos'),
+            'post_wall'      => t('Grant permission to post on your channel (wall) page'),
+            'post_mail'      => t('Accept delivery of direct messages and personal mail'),
+            'send_stream'    => t('Accept delivery of their posts and all comments to their posts'),
+            'post_comments'  => t('Accept delivery of their comments and likes on your posts'),
+            'write_storage'  => t('Grant upload permissions to your file storage and photos'),
+            'republish'      => t('Grant permission to republish/mirror your posts'),
+            'moderated'      => t('Accept comments and wall posts only after approval (moderation)'),
+            'delegate'       => t('Grant channel administration (delegation) permission')
         ];
 
         $x = [
