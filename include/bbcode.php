@@ -1,10 +1,10 @@
 <?php
 
-use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Oembed;
-use Zotlabs\Lib\SvgSanitizer;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Apps;
+use Code\Lib\Libzot;
+use Code\Lib\Oembed;
+use Code\Lib\SvgSanitizer;
+use Code\Extend\Hook;
 use Michelf\MarkdownExtra;
 
 /**

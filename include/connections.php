@@ -4,11 +4,11 @@
 
 use Sabre\VObject\Component\VCard;
 use Sabre\VObject\Reader;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Render\Theme;
+use Code\Daemon\Run;
+use Code\Lib\Libsync;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
+use Code\Render\Theme;
 
 
 function abook_store_lowlevel($arr)
@@ -173,7 +173,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 
 	if (local_channel()) {
 	
-		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && $xchan['xchan_type'] !== XCHAN_TYPE_GROUP;
+		$can_dm = their_perms_contains(local_channel(),$xchan['xchan_hash'],'post_mail') && intval($xchan['xchan_type']) !== XCHAN_TYPE_GROUP;
 
 	    if ($can_dm) {
 			$profdm = t('Direct Message');

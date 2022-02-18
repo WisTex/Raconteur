@@ -1,8 +1,8 @@
 <?php
 
-use Zotlabs\Access\Permissions;
-use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Extend\Hook;
+use Code\Access\Permissions;
+use Code\Access\PermissionLimits;
+use Code\Extend\Hook;
 
 require_once('include/security.php');
 

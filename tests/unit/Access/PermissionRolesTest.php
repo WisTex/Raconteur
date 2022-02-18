@@ -22,19 +22,19 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\Access;
+namespace Code\Tests\Unit\Access;
 
-use Zotlabs\Tests\Unit\UnitTestCase;
-use Zotlabs\Access\PermissionRoles;
+use Code\Tests\Unit\UnitTestCase;
+use Code\Access\PermissionRoles;
 use phpmock\phpunit\PHPMock;
-use Zotlabs\Extend\Hook;
+use Code\Extend\Hook;
 
 /**
  * @brief Unit Test case for PermissionRoles class.
  *
  * @TODO Work around dependencies to static PermissionLimits methods.
  *
- * @covers Zotlabs\Access\PermissionRoles
+ * @covers Code\Access\PermissionRoles
  */
 class PermissionRolesTest extends UnitTestCase
 {
@@ -54,7 +54,7 @@ class PermissionRolesTest extends UnitTestCase
     public function testRoles()
     {
         // Create a stub for global function t() with expectation
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 't');
         $t->expects($this->atLeastOnce())->willReturnCallback(
             function ($string) {
                 return $string;
@@ -83,14 +83,14 @@ class PermissionRolesTest extends UnitTestCase
 
     /**
      * @uses ::Hook::call
-     * @uses Zotlabs\Access\PermissionLimits::Std_Limits
-     * @uses Zotlabs\Access\Permissions::Perms
+     * @uses Code\Access\PermissionLimits::Std_Limits
+     * @uses Code\Access\Permissions::Perms
      */
     public function testRole_perms()
     {
         // Create a stub for global function t()
-        $t = $this->getFunctionMock('Zotlabs\Access', 't');
-        $t = $this->getFunctionMock('Zotlabs\Access', 'get_config');
+        $t = $this->getFunctionMock('Code\Access', 't');
+        $t = $this->getFunctionMock('Code\Access', 'get_config');
 
         $rp_social = PermissionRoles::role_perms('social');
         $this->assertEquals('social', $rp_social['role']);

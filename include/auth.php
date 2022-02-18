@@ -10,9 +10,9 @@
  * Also provides a function for OpenID identiy matching.
  */
 
-use Zotlabs\Lib\Libzot;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Libzot;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
 
 require_once('include/api_auth.php');
 require_once('include/security.php');

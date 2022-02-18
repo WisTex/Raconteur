@@ -1,7 +1,7 @@
 <?php
 
-use Zotlabs\Lib\Channel;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Channel;
+use Code\Extend\Hook;
         
 /**
  * @file include/security.php

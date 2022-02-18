@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-namespace Zotlabs\Tests\Unit\includes;
+namespace Code\Tests\Unit\includes;
 
 use DBA;
-use Zotlabs\Tests\Unit\UnitTestCase;
+use Code\Tests\Unit\UnitTestCase;
 
 // required because of process isolation and no autoloading
 require_once 'include/dba/dba_driver.php';

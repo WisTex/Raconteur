@@ -5,15 +5,15 @@
  * @brief Functions related to photo handling.
  */
 
-use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Access\AccessControl;
-use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Web\HTTPHeaders;
-use Zotlabs\Daemon\Run;
-use Zotlabs\Lib\ServiceClass;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Render\Theme;
+use Code\Lib\Apps;
+use Code\Lib\Activity;
+use Code\Access\AccessControl;
+use Code\Access\PermissionLimits;
+use Code\Web\HTTPHeaders;
+use Code\Daemon\Run;
+use Code\Lib\ServiceClass;
+use Code\Extend\Hook;
+use Code\Render\Theme;
 
 
 require_once('include/permissions.php');

@@ -6,13 +6,13 @@
  */
 
 use Sabre\VObject;
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Activity;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Access\AccessControl;
-use Zotlabs\Extend\Hook;
+use Code\Lib\Libsync;
+use Code\Lib\Activity;
+use Code\Lib\Channel;
+use Code\Access\AccessControl;
+use Code\Extend\Hook;
 use Symfony\Component\Uid\Uuid;
-use Zotlabs\Render\Theme;
+use Code\Render\Theme;
 
 
 require_once('include/bbcode.php');
@@ -156,7 +156,7 @@ function ical_wrapper($ev)
     $o .= "BEGIN:VCALENDAR";
     $o .= "\r\nVERSION:2.0";
     $o .= "\r\nMETHOD:PUBLISH";
-    $o .= "\r\nPRODID:-//" . get_config('system', 'sitename') . "//" . Zotlabs\Lib\System::get_platform_name() . "//" . strtoupper(App::$language) . "\r\n";
+    $o .= "\r\nPRODID:-//" . get_config('system', 'sitename') . "//" . Code\Lib\System::get_platform_name() . "//" . strtoupper(App::$language) . "\r\n";
     if (array_key_exists('dtstart', $ev)) {
         $o .= format_event_ical($ev);
     } else {

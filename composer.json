@@ -1,31 +1,19 @@
 {
-	"name" : "zot/zap",
+	"name" : "streams/streams",
 	"type" : "application",
-	"description" : "Zot social server",
+	"description" : "social server",
 	"keywords" : [
 	        "identity",
 	        "decentralisation",
 	        "permission",
 	        "SSO",
-	        "ZOT",
-	        "ZOT6",
 	        "Nomad",
 	        "Fediverse",
 	        "activitypub"
 	],
-	"homepage" : "http://codeberg.org/zot/zap/",
-	"license" : "Unlicense",
-	"authors" : [{
-			"name" : "Mike Macgirvin",
-			"role" : "founder"
-		}
-	],
-	"support" : {
-	        "issues" : "https://z.macgirvin.com/channel/zap",
-		"source" : "https://codeberg.org/zot/zap/"
-	},
+	"homepage" : "http://codeberg.org/streams/streams/",
 	"require" : {
-		"php" : ">=7.4",
+		"php" : ">=8.0",
 		"ext-curl" : "*",
 		"ext-gd" : "*",
 		"ext-mbstring" : "*",
@@ -64,17 +52,17 @@
 	"autoload" : {
 		"psr-4" : {
 			"Hubzilla\\" : "include/",
-			"Zotlabs\\" : "Zotlabs/"
+			"Code\\" : "Code/"
 		}
 	},
 	"autoload-dev" : {
 		"psr-4" : {
-			"Zotlabs\\Tests\\Unit\\" : "tests/unit"
+			"Code\\Tests\\Unit\\" : "tests/unit"
 		}
 	},
 	"minimum-stability" : "stable",
         "config" : {
-	        "platform": { "php": "7.4" },
+	        "platform": { "php": "8.0" },
 		"notify-on-install" : false,
 		"optimize-autoloader" : true
 	}

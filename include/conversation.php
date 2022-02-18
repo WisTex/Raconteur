@@ -2,18 +2,18 @@
 
 /** @file */
 
-use Zotlabs\Lib\Apps;
-use Zotlabs\Lib\LibBlock;
-use Zotlabs\Lib\ThreadStream;
-use Zotlabs\Lib\ThreadItem;
-use Zotlabs\Lib\Chatroom;
-use Zotlabs\Lib\Channel;
-use Zotlabs\Lib\Features;
-use Zotlabs\Lib\Menu;
-use Zotlabs\Extend\Hook;
-use Zotlabs\Access\Permissions;
-use Zotlabs\Access\PermissionLimits;
-use Zotlabs\Render\Theme;
+use Code\Lib\Apps;
+use Code\Lib\LibBlock;
+use Code\Lib\ThreadStream;
+use Code\Lib\ThreadItem;
+use Code\Lib\Chatroom;
+use Code\Lib\Channel;
+use Code\Lib\Features;
+use Code\Lib\Menu;
+use Code\Extend\Hook;
+use Code\Access\Permissions;
+use Code\Access\PermissionLimits;
+use Code\Render\Theme;
 
 
 function item_extract_images($body)

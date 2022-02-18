@@ -1,7 +1,7 @@
 <?php
 
 
-use Zotlabs\Extend\Hook;
+use Code\Extend\Hook;
 
 /** @file */
 /*

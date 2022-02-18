@@ -1,11 +1,11 @@
 <?php
 
-use Zotlabs\Photo\PhotoDriver;
-use Zotlabs\Photo\PhotoGd;
-use Zotlabs\Photo\PhotoImagick;
-use Zotlabs\Lib\Img_cache;
-use Zotlabs\Lib\Hashpath;
-use Zotlabs\Lib\Channel;
+use Code\Photo\PhotoDriver;
+use Code\Photo\PhotoGd;
+use Code\Photo\PhotoImagick;
+use Code\Lib\Img_cache;
+use Code\Lib\Hashpath;
+use Code\Lib\Channel;
 
 /**
  * @brief Return a PhotoDriver object.

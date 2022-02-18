@@ -1,5 +1,5 @@
 <?php
-use Zotlabs\Lib\Head;
+use Code\Lib\Head;
     
 Head::add_css('/library/tiptip/tipTip.css');
 Head::add_css('/library/jgrowl/jquery.jgrowl.css');

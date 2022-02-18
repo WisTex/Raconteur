@@ -198,14 +198,14 @@ using web forms.
 8. Set up a cron job or scheduled task to run the Cron manager once every 10-15
 minutes to perform background processing and maintenance. Example:
 
-    cd /base/directory; /path/to/php Zotlabs/Daemon/Run.php Cron
+    cd /base/directory; /path/to/php Code/Daemon/Run.php Cron
 
 Change "/base/directory", and "/path/to/php" as appropriate for your situation.
 
 If you are using a Linux server, run "crontab -e" and add a line like the
 one shown, substituting for your unique paths and settings:
 
-*/10 * * * *    cd /home/myname/mywebsite; /usr/bin/php Zotlabs/Daemon/Run.php Cron > /dev/null 2>&1
+*/10 * * * *    cd /home/myname/mywebsite; /usr/bin/php Code/Daemon/Run.php Cron > /dev/null 2>&1
 
 You can generally find the location of PHP by executing "which php". If you
 have troubles with this section please contact your hosting provider for

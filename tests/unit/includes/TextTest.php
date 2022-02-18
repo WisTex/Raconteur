@@ -1,8 +1,8 @@
 <?php
 
-namespace Zotlabs\Tests\Unit\includes;
+namespace Code\Tests\Unit\includes;
 
-use Zotlabs\Tests\Unit\UnitTestCase;
+use Code\Tests\Unit\UnitTestCase;
 
 /**
  * @brief Unit Test case for include/text.php file.

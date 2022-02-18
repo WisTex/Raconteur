@@ -1,9 +1,9 @@
 <?php
 
-namespace Zotlabs\Theme;
+namespace Code\Theme;
 
-use Zotlabs\Lib\Features;
-use Zotlabs\Render\Theme;
+use Code\Lib\Features;
+use Code\Render\Theme;
 
 
 class RedbasicConfig {

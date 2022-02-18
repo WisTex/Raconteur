@@ -3,8 +3,8 @@
 
 // personal config utility
 
-use Zotlabs\Lib\Libsync;
-use Zotlabs\Lib\Channel;
+use Code\Lib\Libsync;
+use Code\Lib\Channel;
 
 
 if(!file_exists('include/cli_startup.php')) {
