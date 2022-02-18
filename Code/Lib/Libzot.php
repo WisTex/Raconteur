@@ -1075,25 +1075,8 @@ class Libzot
             $address = $ud_arr['ud_addr'];
         }
 
-        // Are we a directory server of some kind?
 
-        $other_realm = false;
-
-//      $realm = get_directory_realm();
-//      if (array_key_exists('site',$arr)
-//          && array_key_exists('realm',$arr['site'])
-//          && (strpos($arr['site']['realm'],$realm) === false))
-//          $other_realm = true;
-
-
-//      if ($dirmode != DIRECTORY_MODE_NORMAL) {
-
-        // We're some kind of directory server. However we can only add directory information
-        // if the entry is in the same realm (or is a sub-realm). Sub-realms are denoted by
-        // including the parent realm in the name. e.g. 'RED_GLOBAL:foo' would allow an entry to
-        // be in directories for the local realm (foo) and also the RED_GLOBAL realm.
-
-        if (array_key_exists('profile', $arr) && is_array($arr['profile']) && (!$other_realm)) {
+        if (array_key_exists('profile', $arr) && is_array($arr['profile'])) {
             $profile_changed = Libzotdir::import_directory_profile($xchan_hash, $arr['profile'], $address, $ud_flags, 1);
             if ($profile_changed) {
                 $what .= 'profile ';
@@ -1111,7 +1094,7 @@ class Libzot
                 dbesc($xchan_hash)
             );
         }
-//      }
+
 
         if (array_key_exists('site', $arr) && is_array($arr['site'])) {
             $profile_changed = self::import_site($arr['site']);
@@ -2870,12 +2853,6 @@ class Libzot
         if ($arr['directory_mode'] == 'normal') {
             $site_directory = DIRECTORY_MODE_NORMAL;
         }
-        if ($arr['directory_mode'] == 'primary') {
-            $site_directory = DIRECTORY_MODE_PRIMARY;
-        }
-        if ($arr['directory_mode'] == 'secondary') {
-            $site_directory = DIRECTORY_MODE_SECONDARY;
-        }
         if ($arr['directory_mode'] == 'standalone') {
             $site_directory = DIRECTORY_MODE_STANDALONE;
         }
@@ -2924,11 +2901,9 @@ class Libzot
         $site_logo = EMPTY_STR;
         $sitename = EMPTY_STR;
 
-        $directory_url = htmlspecialchars(isset($arr['directory_url']) ? $arr['directory_url'] : EMPTY_STR, ENT_COMPAT, 'UTF-8', false);
         $url = htmlspecialchars(strtolower($arr['url']), ENT_COMPAT, 'UTF-8', false);
         $sellpage = htmlspecialchars($arr['sellpage'], ENT_COMPAT, 'UTF-8', false);
         $site_location = htmlspecialchars($arr['location'], ENT_COMPAT, 'UTF-8', false);
-        $site_realm = htmlspecialchars($arr['realm'], ENT_COMPAT, 'UTF-8', false);
         $sitename = htmlspecialchars($arr['sitename'], ENT_COMPAT, 'UTF-8', false);
         $site_project = htmlspecialchars($arr['project'], ENT_COMPAT, 'UTF-8', false);
         $site_crypto = ((array_key_exists('encryption', $arr) && is_array($arr['encryption'])) ? htmlspecialchars(implode(',', $arr['encryption']), ENT_COMPAT, 'UTF-8', false) : '');
@@ -2958,12 +2933,10 @@ class Libzot
             if (
                 ($siterecord['site_flags'] != $site_flags)
                 || ($siterecord['site_access'] != $access_policy)
-                || ($siterecord['site_directory'] != $directory_url)
                 || ($siterecord['site_sellpage'] != $sellpage)
                 || ($siterecord['site_location'] != $site_location)
                 || ($siterecord['site_register'] != $register_policy)
                 || ($siterecord['site_project'] != $site_project)
-                || ($siterecord['site_realm'] != $site_realm)
                 || ($siterecord['site_crypto'] != $site_crypto)
                 || ($siterecord['site_version'] != $site_version)
             ) {
@@ -2973,16 +2946,14 @@ class Libzot
                 //          logger('import_site: stored: ' . print_r($siterecord,true));
 
                 $r = q(
-                    "update site set site_dead = 0, site_location = '%s', site_flags = %d, site_access = %d, site_directory = '%s', site_register = %d, site_update = '%s', site_sellpage = '%s', site_realm = '%s', site_type = %d, site_project = '%s', site_version = '%s', site_crypto = '%s'
+                    "update site set site_dead = 0, site_location = '%s', site_flags = %d, site_access = %d, site_register = %d, site_update = '%s', site_sellpage = '%s', site_type = %d, site_project = '%s', site_version = '%s', site_crypto = '%s'
 					where site_url = '%s'",
                     dbesc($site_location),
                     intval($site_flags),
                     intval($access_policy),
-                    dbesc($directory_url),
                     intval($register_policy),
                     dbesc(datetime_convert()),
                     dbesc($sellpage),
-                    dbesc($site_realm),
                     intval(SITE_TYPE_ZOT),
                     dbesc($site_project),
                     dbesc($site_version),
@@ -3010,10 +2981,8 @@ class Libzot
                     'site_access' => intval($access_policy),
                     'site_flags' => intval($site_flags),
                     'site_update' => datetime_convert(),
-                    'site_directory' => $directory_url,
                     'site_register' => intval($register_policy),
                     'site_sellpage' => $sellpage,
-                    'site_realm' => $site_realm,
                     'site_type' => intval(SITE_TYPE_ZOT),
                     'site_project' => $site_project,
                     'site_version' => $site_version,
@@ -3488,7 +3457,6 @@ class Libzot
             $ret['site']['sitehash'] = get_config('system', 'location_hash');
             $ret['site']['sellpage'] = get_config('system', 'sellpage');
             $ret['site']['location'] = get_config('system', 'site_location');
-            $ret['site']['realm'] = get_directory_realm();
             $ret['site']['sitename'] = System::get_site_name();
             $ret['site']['logo'] = System::get_site_icon();
             $ret['site']['project'] = System::get_project_name();

@@ -95,14 +95,18 @@ class Channel
                 $chans = q("select * from channel where true");
                 if ($chans) {
                     foreach ($chans as $chan) {
-                        q("update hubloc set hubloc_network = 'nomad' where xchan_hash = '%s'",
+                        q("update hubloc set hubloc_network = 'nomad' where hubloc_hash = '%s'",
                             dbesc($chan['channel_hash'])
                         );
-                        q("update hubloc set xchan_network = 'nomad' where xchan_hash = '%s'",
+                        q("update xchan set xchan_network = 'nomad' where xchan_hash = '%s'",
                             dbesc($chan['channel_hash'])
                         );
                     }
                 }
+                q("update xchan set xchan_type = %d where xchan_hash = '%s'",
+                    intval(XCHAN_TYPE_ORGANIZATION),
+                    dbesc($sys['xchan_hash'])
+                );
             }
     
             // fix lost system keys, since we cannot communicate without them
@@ -323,6 +327,14 @@ class Channel
             $publish = intval($role_permissions['directory_publish']);
         }
 
+        $xchannel_type = XCHAN_TYPE_PERSON ;
+        if (strpos($arr['permissions_role'], 'forum') !== false || strpos($arr['permissions_role'], 'group') !== false) {
+            $xchannel_type = XCHAN_TYPE_GROUP ;
+        }
+        if ($system) {
+            $xchannel_type = XCHAN_TYPE_ORGANIZATION ;
+        }
+    
         $primary = true;
 
         if (array_key_exists('primary', $arr)) {
@@ -452,6 +464,7 @@ class Channel
                 'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
                 'xchan_name'       => $ret['channel']['channel_name'],
                 'xchan_network'    => 'nomad',
+                'xchan_type'       => $xchannel_type,
                 'xchan_updated'    => datetime_convert(),
                 'xchan_photo_date' => datetime_convert(),
                 'xchan_name_date'  => datetime_convert(),
