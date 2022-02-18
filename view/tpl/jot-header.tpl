@@ -1,9 +1,9 @@
 
 <script language="javascript" type="text/javascript">
 
-var editor = false;
-var plaintext = '{{$editselect}}';
-var pretext = '{{$pretext}}';
+let editor = false;
+let plaintext = '{{$editselect}}';
+let pretext = '{{$pretext}}';
 
 function initEditor(cb){
 	if(editor == false){
@@ -54,8 +54,8 @@ function enableOnUser(){
 <script src="vendor/blueimp/jquery-file-upload/js/jquery.fileupload.js"></script>
 
 <script>
-var activeCommentID = 0;
-var activeCommentText = '';
+let activeCommentID = 0;
+let activeCommentText = '';
 
 	$(document).ready(function() {
 	
@@ -72,7 +72,7 @@ var activeCommentText = '';
 		{{/if}}
 
 		$("input[name='link_style']").change(function() {
-			var radioValue = $("input[name='link_style']:checked"). val();
+			let radioValue = $("input[name='link_style']:checked"). val();
 			if(radioValue == '0') {
 				$("#linkmodaldiscover").hide();
 			}
@@ -85,7 +85,7 @@ var activeCommentText = '';
 		$(document).on('click', '.poll-option-close', jotRemoveOption);
 
 		function jotSetMime() { 
-			var mtype = $('#id_mimetype').val(); 
+			let mtype = $('#id_mimetype').val(); 
 			if(mtype == 'text/bbcode' || mtype == 'text/x-multicode')
 				$('#profile-jot-submit-left').show();
 			else
@@ -129,7 +129,7 @@ var activeCommentText = '';
 			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
 
-				var tmpStr = $("#comment-edit-text-" + activeCommentID).val();
+				let tmpStr = $("#comment-edit-text-" + activeCommentID).val();
 				if(tmpStr == activeCommentText) {
 					tmpStr = "";
 					$("#comment-edit-text-" + activeCommentID).addClass("comment-edit-text-full");
@@ -156,7 +156,7 @@ var activeCommentText = '';
 	});
 
 	function deleteCheckedItems() {
-		var checkedstr = '';
+		let checkedstr = '';
 
 		$('.item-select').each( function() {
 			if($(this).is(':checked')) {
@@ -176,10 +176,10 @@ var activeCommentText = '';
 	function jotGetLink() {
 		textarea = document.getElementById('profile-jot-text');
 		if (textarea.selectionStart || textarea.selectionStart == "0") {
-			var start = textarea.selectionStart;
-			var end = textarea.selectionEnd;	
+			let start = textarea.selectionStart;
+			let end = textarea.selectionEnd;	
 			if (end > start) {
-				var reply = prompt("{{$linkurl}}");
+				let reply = prompt("{{$linkurl}}");
 				if(reply && reply.length) {
 					textarea.value = textarea.value.substring(0, start) + "[url=" + reply + "]" + textarea.value.substring(start, end) + "[/url]" + textarea.value.substring(end, textarea.value.length);
 				}
@@ -199,19 +199,19 @@ var activeCommentText = '';
 	}
 
 	function jotgetlinkmodal() {
-		var reply = $('#id_link_url').val();
+		let reply = $('#id_link_url').val();
 
 		if(reply && reply.length) {
-			var radioValue = $("input[name='link_style']:checked"). val();
+			let radioValue = $("input[name='link_style']:checked"). val();
 			if(radioValue == '0') {
 				reply = '!' + reply;
 			}
-			var optstr = '';
-			var opts =  $("input[name='oembed']:checked"). val();
+			let optstr = '';
+			let opts =  $("input[name='oembed']:checked"). val();
 			if(opts) {
 				optstr = optstr + '&oembed=1';
 			}
-			var opts =  $("input[name='zotobj']:checked"). val();
+			let opts =  $("input[name='zotobj']:checked"). val();
 			if(opts) {
 				optstr = optstr + '&zotobj=1';
 			}								
@@ -276,7 +276,7 @@ var activeCommentText = '';
 		$('#commModal').modal('show');
 		$('#comm-modal-OKButton').on('click', function() {
 
-			var comment_state = $("input[name='comments_allowed']:checked").val();
+			let comment_state = $("input[name='comments_allowed']:checked").val();
 			if (comment_state && comment_state.length) {
 				$('#jot-commentstate').val(comment_state);
 			}
@@ -284,11 +284,11 @@ var activeCommentText = '';
 				$('#jot-commentstate').val(0);
 			}				
 			
-			var post_comments = $('#id_post_comments').val();
+			let post_comments = $('#id_post_comments').val();
 			if (post_comments && post_comments.length) {
 				$('#jot-commfrom').val(post_comments);
 			}
-			var reply=$('#commclose-date').val();
+			let reply=$('#commclose-date').val();
 			if(reply && reply.length) {
 				$('#jot-commclosed').val(reply);
 			}
@@ -334,15 +334,15 @@ var activeCommentText = '';
 	}
 
 	function linkdropper(event) {
-		var linkFound = ((event.dataTransfer.types.indexOf("text/uri-list") > -1) ? true : false);
+		let linkFound = ((event.dataTransfer.types.indexOf("text/uri-list") > -1) ? true : false);
 		if(linkFound) {
 			event.preventDefault();
-			var editwin = '#' + event.target.id;
-			var commentwin = false;
+			let editwin = '#' + event.target.id;
+			let commentwin = false;
 			if(editwin) {
 				commentwin = ((editwin.indexOf('comment') >= 0) ? true : false);
 				if(commentwin) {
-					var commentid = editwin.substring(editwin.lastIndexOf('-') + 1);
+					let commentid = editwin.substring(editwin.lastIndexOf('-') + 1);
 					$('#comment-edit-text-' + commentid).addClass('hover');
 				}
 			}
@@ -350,27 +350,27 @@ var activeCommentText = '';
 	}
 
 	function linkdropexit(event) {
-		var editwin = '#' + event.target.id;
-		var commentwin = false;
+		let editwin = '#' + event.target.id;
+		let commentwin = false;
 		if(editwin) {
 			commentwin = ((editwin.indexOf('comment') >= 0) ? true : false);
 			if(commentwin) {
-				var commentid = editwin.substring(editwin.lastIndexOf('-') + 1);
+				let commentid = editwin.substring(editwin.lastIndexOf('-') + 1);
 				$('#comment-edit-text-' + commentid).removeClass('hover');
 			}
 		}
 	}
 
 	function linkdrop(event) {
-		var reply = event.dataTransfer.getData("text/uri-list");
+		let reply = event.dataTransfer.getData("text/uri-list");
 		if(reply) {
 			event.preventDefault();
-			var editwin = '#' + event.target.id;
-			var commentwin = false;
+			let editwin = '#' + event.target.id;
+			let commentwin = false;
 			if(editwin) {
 				commentwin = ((editwin.indexOf('comment') >= 0) ? true : false);
 				if(commentwin) {
-					var commentid = editwin.substring(editwin.lastIndexOf('-') + 1);
+					let commentid = editwin.substring(editwin.lastIndexOf('-') + 1);
 					$("#comment-edit-text-" + commentid).addClass("expanded");
 				}
 			}
@@ -493,7 +493,7 @@ var activeCommentText = '';
 	}
 
 
-	var initializeEmbedPhotoDialog = function () {
+	let initializeEmbedPhotoDialog = function () {
         $('.embed-photo-selected-photo').each(function (index) {
             $(this).removeClass('embed-photo-selected-photo');
         });
@@ -502,7 +502,7 @@ var activeCommentText = '';
         $('#embedPhotoModal').modal('show');
     };
 
-    var choosePhotoFromAlbum = function (album) {
+    let choosePhotoFromAlbum = function (album) {
         $.post("embedphotos/album", {name: album},
             function(data) {
                 if (data['status']) {
@@ -518,11 +518,11 @@ var activeCommentText = '';
                     $('#embedPhotoModalBodyAlbumDialog').append(data['content']);
                     $('#embedPhotoModalBodyAlbumDialog').click(function (evt) {
                         evt.preventDefault();
-                        var image = document.getElementById(evt.target.id);
+                        let image = document.getElementById(evt.target.id);
                         if (typeof($(image).parent()[0]) !== 'undefined') {
-                            var imageparent = document.getElementById($(image).parent()[0].id);
+                            let imageparent = document.getElementById($(image).parent()[0].id);
                             $(imageparent).toggleClass('embed-photo-selected-photo');
-                            var href = $(imageparent).attr('href');
+                            let href = $(imageparent).attr('href');
                             $.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
                                     if (ddata['status']) {
@@ -549,17 +549,17 @@ var activeCommentText = '';
         'json');
     };
 
-    var getPhotoAlbumList = function () {
+    let getPhotoAlbumList = function () {
         $.post("embedphotos/albumlist", {},
             function(data) {
                 if (data['status']) {
-                    var albums = data['albumlist']; //JSON.parse(data['albumlist']);
+                    let albums = data['albumlist']; //JSON.parse(data['albumlist']);
                     $('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
-                    for(var i=0; i<albums.length; i++) {
-                        var albumName = albums[i].text;
-			var jsAlbumName = albums[i].jstext;
-			var albumLink = '<li class="nav-item">';
+                    for(let i=0; i<albums.length; i++) {
+                        let albumName = albums[i].text;
+			let jsAlbumName = albums[i].jstext;
+			let albumLink = '<li class="nav-item">';
 			albumLink += '<a class="nav-link" href="#" onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">' + albumName + '</a>';
                         albumLink += '</li>';
                         $('#embedPhotoModalBodyAlbumList').find('ul').append(albumLink);
@@ -578,7 +578,7 @@ var activeCommentText = '';
     // initialize drag-drop
     function DragDropUploadInit() {
 
-      var filedrag = $("#profile-jot-text");
+      let filedrag = $("#profile-jot-text");
 
 	  // file drop
         filedrag.on("dragover", DragDropUploadFileHover);
@@ -613,7 +613,7 @@ var activeCommentText = '';
 	}
 
 	function jotAddOption() {
-		var option = '<div class="jot-poll-option form-group"><input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="Option"><div class="poll-option-close"><i class="fa fa-close"></i></div></div>';
+		let option = '<div class="jot-poll-option form-group"><input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="Option"><div class="poll-option-close"><i class="fa fa-close"></i></div></div>';
 		$('#jot-poll-options').append(option);
 	}
 
@@ -625,7 +625,7 @@ var activeCommentText = '';
 
 <script>
 $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-delete-link,.block-delete-link", function(e) {
-	var link = $(this).attr("href"); // "get" the intended link in a var
+	let link = $(this).attr("href"); // "get" the intended link in a let
 
 	if (typeof(eval($.fn.modal)) === 'function'){
 		e.preventDefault();
@@ -642,13 +642,13 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 
 
 <script>
-	var postSaveTimer = null;
+	let postSaveTimer = null;
 
 	function postSaveChanges(action) {
 		if({{$auto_save_draft}}) {
 
-			var doctype = $('#jot-webpage').val();
-			var postid = '-' + doctype + '-' + $('#jot-postid').val();
+			let doctype = $('#jot-webpage').val();
+			let postid = '-' + doctype + '-' + $('#jot-postid').val();
 
 			if(action != 'clean') {
 				localStorage.setItem("post_title" + postid, $("#jot-title").val());
@@ -681,15 +681,15 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 
 	$(document).ready(function() {
 
-		var cleaned = false;
+		let cleaned = false;
 
 		if({{$auto_save_draft}}) {
-			var doctype = $('#jot-webpage').val();
-			var postid = '-' + doctype + '-' + $('#jot-postid').val();
-			var postTitle = localStorage.getItem("post_title" + postid);
-			var postBody = localStorage.getItem("post_body" + postid);
-			var postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category" + postid) : '');
-			var openEditor = false;
+			let doctype = $('#jot-webpage').val();
+			let postid = '-' + doctype + '-' + $('#jot-postid').val();
+			let postTitle = localStorage.getItem("post_title" + postid);
+			let postBody = localStorage.getItem("post_body" + postid);
+			let postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category" + postid) : '');
+			let openEditor = false;
 
 			if(postTitle) {
 				$('#jot-title').val(postTitle);
@@ -700,7 +700,7 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 				openEditor = true;
 			}
 			if(postCategory) {
-				var categories = postCategory.split(',');
+				let categories = postCategory.split(',');
 				categories.forEach(function(cat) {
 					$('#jot-category').tagsinput('add', cat);
 				});
