@@ -81,6 +81,8 @@ define ( 'TEMPLATE_BUILD_PATH',    'cache/smarty3' );
 // The only ones of consequence in 2021 are DIRECTORY_MODE_NORMAL and DIRECTORY_MODE_STANDALONE.
 
 define ( 'DIRECTORY_MODE_NORMAL',      0x0000); // A directory client
+define ( 'DIRECTORY_MODE_PRIMARY',     0x0001); // There can only be *one* primary directory server in a directory_realm.
+define ( 'DIRECTORY_MODE_SECONDARY',   0x0002); // All other mirror directory servers
 define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub with itself as directory server.
 
 // Types of xchan records. These are a superset of ActivityStreams Actor types
