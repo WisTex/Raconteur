@@ -211,7 +211,7 @@ let activeCommentText = '';
 			if(opts) {
 				optstr = optstr + '&oembed=1';
 			}
-			let opts =  $("input[name='zotobj']:checked"). val();
+			opts =  $("input[name='zotobj']:checked"). val();
 			if(opts) {
 				optstr = optstr + '&zotobj=1';
 			}								
