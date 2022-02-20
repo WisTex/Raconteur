@@ -28,12 +28,14 @@ class Addons
             }
 
             goaway(z_root() . '/admin/addons/' . argv(2));
-        } elseif (argc() > 2) {
+        }
+        elseif (argc() > 2) {
             switch (argv(2)) {
                 case 'updaterepo':
                     if (array_key_exists('repoName', $_REQUEST)) {
                         $repoName = $_REQUEST['repoName'];
-                    } else {
+                    }
+                    else {
                         json_return_and_die(array('message' => 'No repo name provided.', 'success' => false));
                     }
                     $extendDir = 'cache/git/sys/extend';
@@ -265,13 +267,13 @@ class Addons
 
             $enabled = in_array($plugin, Addon::list_installed());
             $info = Addon::get_info($plugin);
-            $x = check_plugin_versions($info);
+            $x = Addon::check_versions($info);
 
             // disable plugins which are installed but incompatible versions
 
             if ($enabled && !$x) {
                 $enabled = false;
-                uninstall_plugin($plugin);
+                Addon::uninstall($plugin);
             }
             $info['disabled'] = 1 - intval($x);
 
@@ -328,7 +330,7 @@ class Addons
                 @require_once("addon/$plugin/$plugin.php");
                 if (function_exists($plugin . '_plugin_admin')) {
                     $func = $plugin . '_plugin_admin';
-                    $func($a, $admin_form);
+                    $func($admin_form);
                 }
             }
 
