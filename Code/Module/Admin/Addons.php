@@ -377,8 +377,8 @@ class Addons
                 if (is_dir($file)) {
                     list($tmp, $id) = array_map('trim', explode('/', $file));
                     $info = Addon::get_info($id);
-                    $enabled = in_array($id, App::$plugins);
-                    $x = check_plugin_versions($info);
+                    $enabled = in_array($id, Addon::list_installed());
+                    $x = Addon::check_versions($info);
 
                     // disable plugins which are installed but incompatible versions
 
@@ -386,7 +386,7 @@ class Addons
                         $enabled = false;
                         $idz = array_search($id, Addon::list_installed());
                         if ($idz !== false) {
-                            uninstall_plugin($id);
+                            Addon::uninstall($id);
                         }
                     }
                     $info['disabled'] = 1 - intval($x);

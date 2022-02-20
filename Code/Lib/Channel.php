@@ -104,7 +104,7 @@ class Channel
                         );
                     }
                 }
-                q("update xchan set xchan_type = %d where xchan_hash = '%s'",
+                q("update xchan set xchan_hidden = 0, xchan_type = %d where xchan_hash = '%s'",
                     intval(XCHAN_TYPE_ORGANIZATION),
                     dbesc($sys['xchan_hash'])
                 );
