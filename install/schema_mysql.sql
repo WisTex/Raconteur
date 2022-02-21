@@ -1258,7 +1258,7 @@ CREATE TABLE IF NOT EXISTS `xchan` (
   KEY `xchan_network` (`xchan_network`(191)),
   KEY `xchan_url` (`xchan_url`(191)),
   KEY `xchan_connurl` (`xchan_connurl`(191)),
-  KEY `xchan_follow` (`xchan_follow`(191(),
+  KEY `xchan_follow` (`xchan_follow`(191)),
   KEY `xchan_hidden` (`xchan_hidden`),
   KEY `xchan_orphan` (`xchan_orphan`),
   KEY `xchan_censored` (`xchan_censored`),
