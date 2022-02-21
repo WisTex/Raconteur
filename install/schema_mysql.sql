@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS `attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `auth_codes` (
-  `id` varchar(16383) NOT NULL DEFAULT '',
+  `id` varchar(4095) NOT NULL DEFAULT '',
   `client_id` varchar(255) NOT NULL DEFAULT '',
   `redirect_uri` varchar(512) NOT NULL DEFAULT '',
   `expires` int(11) NOT NULL DEFAULT 0 ,
