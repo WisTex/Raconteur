@@ -435,7 +435,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and and hubloc_network in ('nomad','zot6') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network in ('nomad','zot6') order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id)
             );

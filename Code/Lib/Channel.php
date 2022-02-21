@@ -13,6 +13,7 @@ use Code\Lib\Libsync;
 use Code\Lib\AccessList;
 use Code\Lib\Crypto;
 use Code\Lib\Connect;
+use Code\Lib\ABConfig;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Access\Permissions;
@@ -89,18 +90,41 @@ class Channel
         $sys = self::get_system();
 
         if ($sys) {
-            // upgrade the default network drivers if this looks like an upgraded zot6-based platform. 
+            // upgrade the default network drivers and permissions if this looks like an upgraded zot6-based platform. 
 
             if ($sys['xchan_network'] !== 'nomad') {
                 $chans = q("select * from channel where true");
                 if ($chans) {
                     foreach ($chans as $chan) {
-                        q("update hubloc set hubloc_network = 'nomad' where xchan_hash = '%s'",
+                        q("update hubloc set hubloc_network = 'nomad' where hubloc_hash = '%s'",
                             dbesc($chan['channel_hash'])
                         );
-                        q("update hubloc set xchan_network = 'nomad' where xchan_hash = '%s'",
+                        q("update xchan set xchan_network = 'nomad' where xchan_hash = '%s'",
                             dbesc($chan['channel_hash'])
                         );
+                    }
+                }
+                q("update xchan set xchan_type = %d where xchan_hash = '%s'",
+                    intval(XCHAN_TYPE_ORGANIZATION),
+                    dbesc($sys['xchan_hash'])
+                );
+    
+                // Add the new "deliver_stream" permission
+    
+                $c = q("select * from channel where true");
+                if ($c) {
+                    foreach ($c as $cv) {
+                        PConfig::Set($cv['channel_id'],'perm_limits','deliver_stream', PERMS_SPECIFIC);
+                    }
+                }
+                $ab = q("SELECT * from abook where abook_self = 0");
+                if ($ab) {
+                    foreach ($ab as $abv) {
+                        $p = explode(',', ABConfig::Get($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', EMPTY_STR));
+                        if (! in_array('deliver_stream', $p)) {
+                            $p[] = 'deliver_stream';
+                        }
+                        ABConfig::Set($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', implode(',', $p));
                     }
                 }
             }
@@ -323,6 +347,14 @@ class Channel
             $publish = intval($role_permissions['directory_publish']);
         }
 
+        $xchannel_type = XCHAN_TYPE_PERSON ;
+        if (strpos($arr['permissions_role'], 'forum') !== false || strpos($arr['permissions_role'], 'group') !== false) {
+            $xchannel_type = XCHAN_TYPE_GROUP ;
+        }
+        if ($system) {
+            $xchannel_type = XCHAN_TYPE_ORGANIZATION ;
+        }
+    
         $primary = true;
 
         if (array_key_exists('primary', $arr)) {
@@ -452,6 +484,7 @@ class Channel
                 'xchan_connurl'    => z_root() . '/poco/' . $ret['channel']['channel_address'],
                 'xchan_name'       => $ret['channel']['channel_name'],
                 'xchan_network'    => 'nomad',
+                'xchan_type'       => $xchannel_type,
                 'xchan_updated'    => datetime_convert(),
                 'xchan_photo_date' => datetime_convert(),
                 'xchan_name_date'  => datetime_convert(),

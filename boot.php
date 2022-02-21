@@ -27,7 +27,7 @@ require_once('version.php');
 
 define ( 'PLATFORM_NAME',           'streams' );
 
-define ( 'DB_UPDATE_VERSION',       1254 );
+define ( 'DB_UPDATE_VERSION',       1255 );
 define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -84,14 +84,6 @@ define ( 'DIRECTORY_MODE_NORMAL',      0x0000); // A directory client
 define ( 'DIRECTORY_MODE_PRIMARY',     0x0001); // There can only be *one* primary directory server in a directory_realm.
 define ( 'DIRECTORY_MODE_SECONDARY',   0x0002); // All other mirror directory servers
 define ( 'DIRECTORY_MODE_STANDALONE',  0x0100); // A detached (off the grid) hub with itself as directory server.
-
-// We will look for upstream directories whenever we make contact
-// with other sites, but if this is a new installation and isn't
-// a standalone hub, we need to seed the service with a starting
-// point to go out and find the rest of the world.
-
-define ( 'DIRECTORY_REALM',            'ZAP');
-
 
 // Types of xchan records. These are a superset of ActivityStreams Actor types
 
@@ -2465,18 +2457,6 @@ function head_get_icon() {
         $icon = z_root() . $icon;
 
     return $icon;
-}
-
-/**
- * @brief Return the Realm of the directory.
- *
- * @return string
- */
-function get_directory_realm() {
-    if($x = get_config('system', 'directory_realm'))
-        return $x;
-
-    return DIRECTORY_REALM;
 }
 
 /**

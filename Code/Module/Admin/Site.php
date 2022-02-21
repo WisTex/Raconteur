@@ -59,14 +59,12 @@ class Site
         }
         $tos_required = ((x($_POST, 'tos_required')) ? intval(trim($_POST['tos_required'])) : 0);
         $mirror_frontpage = ((x($_POST, 'mirror_frontpage')) ? intval(trim($_POST['mirror_frontpage'])) : 0);
-        $directory_server = ((x($_POST, 'directory_server')) ? trim($_POST['directory_server']) : '');
         $force_publish = ((x($_POST, 'publish_all')) ? true : false);
         $open_pubstream = ((x($_POST, 'open_pubstream')) ? true : false);
         $public_stream_mode = ((x($_POST, 'public_stream_mode')) ? intval($_POST['public_stream_mode']) : PUBLIC_STREAM_NONE);
         $animations = ((x($_POST, 'animations')) ? true : false);
         $login_on_homepage = ((x($_POST, 'login_on_homepage')) ? true : false);
         $enable_context_help = ((x($_POST, 'enable_context_help')) ? true : false);
-        $global_directory = ((x($_POST, 'directory_submit_url')) ? notags(trim($_POST['directory_submit_url'])) : '');
         $no_community_page = !((x($_POST, 'no_community_page')) ? true : false);
         $default_expire_days = ((array_key_exists('default_expire_days', $_POST)) ? intval($_POST['default_expire_days']) : 0);
         $active_expire_days = ((array_key_exists('active_expire_days', $_POST)) ? intval($_POST['active_expire_days']) : 7);
@@ -127,10 +125,6 @@ class Site
         set_config('system', 'animated_avatars', $animations);
         set_config('system', 'tos_required', $tos_required);
 
-        if ($directory_server) {
-            set_config('system', 'directory_server', $directory_server);
-        }
-
         if ($admininfo == '') {
             del_config('system', 'admininfo');
         } else {
@@ -179,12 +173,6 @@ class Site
         set_config('system', 'public_stream_mode', $public_stream_mode);
         set_config('system', 'open_pubstream', $open_pubstream);
         set_config('system', 'force_queue_threshold', $force_queue);
-        if ($global_directory == '') {
-            del_config('system', 'directory_submit_url');
-        } else {
-            set_config('system', 'directory_submit_url', $global_directory);
-        }
-
         set_config('system', 'no_community_page', $no_community_page);
         set_config('system', 'no_utf', $no_utf);
         set_config('system', 'verifyssl', $verifyssl);
@@ -258,29 +246,6 @@ class Site
                 }
             }
         }
-
-        $dir_choices = null;
-        $dirmode = get_config('system', 'directory_mode');
-        $realm = get_directory_realm();
-
-        // directory server should not be set or settable unless we are a directory client
-        // avoid older redmatrix servers which don't have modern encryption
-
-        if ($dirmode == DIRECTORY_MODE_NORMAL) {
-            $x = q(
-                "select site_url from site where site_flags in (%d,%d) and site_realm = '%s' and site_dead = 0",
-                intval(DIRECTORY_MODE_SECONDARY),
-                intval(DIRECTORY_MODE_PRIMARY),
-                dbesc($realm)
-            );
-            if ($x) {
-                $dir_choices = [];
-                foreach ($x as $xx) {
-                    $dir_choices[$xx['site_url']] = $xx['site_url'];
-                }
-            }
-        }
-
 
         /* Admin Info */
 
@@ -362,7 +327,6 @@ class Site
             '$reply_address' => ['reply_address', t('Reply-to email address for system generated email.'), get_config('system', 'reply_address', 'noreply@' . App::get_hostname()), ''],
             '$from_email' => ['from_email', t('Sender (From) email address for system generated email.'), get_config('system', 'from_email', 'Administrator@' . App::get_hostname()), ''],
             '$from_email_name' => ['from_email_name', t('Display name of email sender for system generated email.'), get_config('system', 'from_email_name', System::get_site_name()), ''],
-            '$directory_server' => (($dir_choices) ? ['directory_server', t("Directory Server URL"), get_config('system', 'directory_server'), t("Default directory server"), $dir_choices] : null),
             '$proxyuser' => ['proxyuser', t("Proxy user"), get_config('system', 'proxyuser'), ""],
             '$proxy' => ['proxy', t("Proxy URL"), get_config('system', 'proxy'), ""],
             '$timeout' => ['timeout', t("Network fetch timeout"), (x(get_config('system', 'curl_timeout')) ? get_config('system', 'curl_timeout') : 60), t("Value is in seconds. Set to 0 for unlimited (not recommended).")],

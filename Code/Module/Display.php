@@ -288,7 +288,6 @@ class Display extends Controller
         if ($noscript_content || $this->loading) {
             $r = null;
 
-            require_once('include/channel.php');
             $sys = Channel::get_system();
             $sysid = $sys['channel_id'];
 
@@ -312,7 +311,6 @@ class Display extends Controller
         } elseif ($this->updating && !$this->loading) {
             $r = null;
 
-            require_once('include/channel.php');
             $sys = Channel::get_system();
             $sysid = $sys['channel_id'];
 

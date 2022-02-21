@@ -426,7 +426,6 @@ class Dirsearch extends Controller
     {
 
         $rand = db_getfunc('rand');
-        $realm = get_directory_realm();
 
         $r = q(
             "select * from site where site_type = %d and site_dead = 0",
