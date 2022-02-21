@@ -296,7 +296,7 @@ CREATE TABLE IF NOT EXISTS `channel` (
   KEY `channel_parent` (`channel_parent`(191)),
   KEY `channel_timezone` (`channel_timezone`(191)),
   KEY `channel_location` (`channel_location`(191)),
-  KEY `channel_theme` (`channel_theme`(191),
+  KEY `channel_theme` (`channel_theme`(191)),
   KEY `channel_notifyflags` (`channel_notifyflags`),
   KEY `channel_pageflags` (`channel_pageflags`),
   KEY `channel_max_anon_mail` (`channel_max_anon_mail`),
