@@ -18,9 +18,12 @@ class Apporder extends Controller
         if (!local_channel()) {
             return;
         }
-
+    
         Navbar::set_selected('Order Apps');
 
+        $nav_apps = [];
+        $navbar_apps = [];
+    
         foreach (['nav_featured_app', 'nav_pinned_app'] as $l) {
             $syslist = [];
             $list = Apps::app_list(local_channel(), false, [$l]);
@@ -39,7 +42,8 @@ class Apporder extends Controller
             foreach ($syslist as $app) {
                 if ($l === 'nav_pinned_app') {
                     $navbar_apps[] = Apps::app_render($app, 'nav-order-pinned');
-                } else {
+                }
+                else {
                     $nav_apps[] = Apps::app_render($app, 'nav-order');
                 }
             }

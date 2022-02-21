@@ -299,7 +299,7 @@ class Site
             '$invite_only' => ['invite_only', t("Invitation only"), get_config('system', 'invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.")],
             '$invite_working' => defined('INVITE_WORKING'),
             '$minimum_age' => ['minimum_age', t("Minimum age"), (x(get_config('system', 'minimum_age')) ? get_config('system', 'minimum_age') : 13), t("Minimum age (in years) for who may register on this site.")],
-            '$access_policy' => ['access_policy', t("Which best describes the types of account offered by this hub?"), get_config('system', 'access_policy'), t("If a public server policy is selected, this information may be displayed on the public server site list."), $access_choices],
+            '$access_policy' => ['access_policy', t("Which best describes the types of account offered by this site?"), get_config('system', 'access_policy'), t("If a public server policy is selected, this information may be displayed on the public server site list."), $access_choices],
             '$register_text' => ['register_text', t("Register text"), htmlspecialchars(get_config('system', 'register_text'), ENT_QUOTES, 'UTF-8'), t("Will be displayed prominently on the registration page.")],
             '$tos_required' => [ 'tos_required', t('Require acceptance of Terms of Service'),get_config('system','tos_required'),'', [ t('No'), t('Yes') ] ],
             '$role' => $role,

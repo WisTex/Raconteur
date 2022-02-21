@@ -161,7 +161,7 @@ class Themes
         $xthemes = [];
         if ($themes) {
             foreach ($themes as $th) {
-                $xthemes[] = array($th['name'], (($th['allowed']) ? "on" : "off"), get_theme_info($th['name']));
+                $xthemes[] = array($th['name'], (($th['allowed']) ? "on" : "off"), Theme::get_info($th['name']));
             }
         }
 

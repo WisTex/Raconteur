@@ -9,12 +9,17 @@
 	{{/if}}
 
 	<p>{{$info.description}}</p>
-	
+    {{if is_array($info.author) }}	
 	{{foreach $info.author as $a}}
 	<p class="author">{{$str_author}}
-		{{$a.name}}{{if $a.link}} {{$a.link}}{{/if}}
+		{{$a}}
 	</p>
 	{{/foreach}}
+    {{else}}
+    <p class="author">{{$str_author}}
+		{{$info.author}}
+	</p>
+    {{/if}}
 
 	{{if $info.minversion}}
 	<p class="versionlimit">{{$str_minversion}}{{$info.minversion}}</p>
@@ -32,12 +37,17 @@
 	<p class="versionlimit">{{$str_requires}}{{$info.requires}}</p>
 	{{/if}}
 
-
+    {{if is_array($info.maintainer) }}
 	{{foreach $info.maintainer as $a}}
 	<p class="maintainer">{{$str_maintainer}}
-		{{$a.name}}{{if $a.link}} {{$a.link}}{{/if}}
+		{{$a}}
 	</p>
 	{{/foreach}}
+    {{else}}
+	<p class="maintainer">{{$str_maintainer}}
+		{{$info.maintainer}}
+	</p>
+    {{/if}}    
 	
 	{{if $screenshot}}
 	<a href="{{$screenshot.0}}" class='screenshot'><img src="{{$screenshot.0}}" alt="{{$screenshot.1}}" /></a>
