@@ -204,15 +204,6 @@ CREATE TABLE IF NOT EXISTS `attach` (
   KEY `os_storage` (`os_storage`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `auth_codes` (
-  `id` varchar(4095) NOT NULL DEFAULT '',
-  `client_id` varchar(255) NOT NULL DEFAULT '',
-  `redirect_uri` varchar(512) NOT NULL DEFAULT '',
-  `expires` int(11) NOT NULL DEFAULT 0 ,
-  `auth_scope` varchar(512) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `block` (
   `block_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `block_channel_id` int(10) UNSIGNED NOT NULL,
@@ -545,23 +536,6 @@ CREATE TABLE IF NOT EXISTS `iconfig` (
   KEY `k` (`k`(191)),
   KEY `sharing` (`sharing`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `issue` (
-  `issue_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `issue_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `issue_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `issue_assigned` varchar(255) NOT NULL DEFAULT '',
-  `issue_priority` int(11) NOT NULL DEFAULT 0 ,
-  `issue_status` int(11) NOT NULL DEFAULT 0 ,
-  `issue_component` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`issue_id`),
-  KEY `issue_created` (`issue_created`),
-  KEY `issue_updated` (`issue_updated`),
-  KEY `issue_assigned` (`issue_assigned`(191)),
-  KEY `issue_priority` (`issue_priority`),
-  KEY `issue_status` (`issue_status`),
-  KEY `issue_component` (`issue_component`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1062,29 +1036,6 @@ CREATE TABLE IF NOT EXISTS `session` (
   KEY `expire` (`expire`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `shares` (
-  `share_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `share_type` int(11) NOT NULL DEFAULT 0 ,
-  `share_target` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `share_xchan` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`share_id`),
-  KEY `share_type` (`share_type`),
-  KEY `share_target` (`share_target`),
-  KEY `share_xchan` (`share_xchan`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `sign` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `iid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `retract_iid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `signed_text` mediumtext NOT NULL,
-  `signature` text NOT NULL,
-  `signer` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `iid` (`iid`),
-  KEY `retract_iid` (`retract_iid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `site` (
   `site_url` varchar(255) NOT NULL,
   `site_access` int(11) NOT NULL DEFAULT 0 ,
@@ -1131,15 +1082,6 @@ CREATE TABLE IF NOT EXISTS `source` (
   KEY `src_xchan` (`src_xchan`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS `sys_perms` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `cat` varchar(255) NOT NULL DEFAULT '',
-  `k` varchar(255) NOT NULL DEFAULT '',
-  `v` mediumtext NOT NULL,
-  `public_perm` tinyint(1) unsigned NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS `term` (
   `tid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
@@ -1164,19 +1106,6 @@ CREATE TABLE IF NOT EXISTS `term` (
   KEY `parent_hash` (`parent_hash`(191)),
   KEY `term_ttype` (`term`,`ttype`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `tokens` (
-  `id` varchar(4096) NOT NULL DEFAULT '',
-  `secret` text NOT NULL,
-  `client_id` varchar(255) NOT NULL DEFAULT '',
-  `expires` bigint(20) unsigned NOT NULL DEFAULT 0 ,
-  `auth_scope` varchar(1024) NOT NULL DEFAULT '',
-  `uid` int(11) NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`id`(191)),
-  KEY `client_id` (`client_id`(191)),
-  KEY `expires` (`expires`),
-  KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `updates` (
   `ud_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -1209,20 +1138,6 @@ CREATE TABLE IF NOT EXISTS `verify` (
   KEY `meta` (`meta`(191)),
   KEY `created` (`created`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `vote` (
-  `vote_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `vote_guid` varchar(255) NOT NULL, 
-  `vote_poll` int(11) NOT NULL DEFAULT 0 ,
-  `vote_element` int(11) NOT NULL DEFAULT 0 ,
-  `vote_result` text NOT NULL,
-  `vote_xchan` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`vote_id`),
-  UNIQUE KEY `vote_vote` (`vote_poll`,`vote_element`,`vote_xchan`(191)),
-  KEY `vote_guid` (`vote_guid`(191)),
-  KEY `vote_poll` (`vote_poll`),
-  KEY `vote_element` (`vote_element`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xchan` (
   `xchan_hash` varchar(255) NOT NULL,
