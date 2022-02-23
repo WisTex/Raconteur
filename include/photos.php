@@ -413,11 +413,11 @@ function photo_upload($channel, $observer, $args)
 
 	if (array_path_exists('/directory/hash',$args)) {
     	$album_link = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/album/' . $args['directory']['hash'] . ']' . ((strlen($album)) ? $album : '/') . '[/zrl]';
-	}
+        $activity_format = sprintf(t('%1$s posted %2$s to %3$s', 'photo_upload'), $author_link, $photo_link, $album_link);
+  	}
 	else {
-		$album_link = EMPTY_STR;
+        $activity_format = sprintf(t('%1$s posted %2$s', 'photo_upload'), $author_link, $photo_link);
 	}
-    $activity_format = sprintf(t('%1$s posted %2$s to %3$s', 'photo_upload'), $author_link, $photo_link, $album_link);
 
     $body = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 

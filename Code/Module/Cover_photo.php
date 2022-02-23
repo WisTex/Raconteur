@@ -167,7 +167,7 @@ class Cover_photo extends Controller
                     $orig_srcw = ($srcW / $scaled_width) * $base_image['width'];
                     $orig_srch = ($srcH / $scaled_height) * $base_image['height'];
 
-                    $im->cropImageRect(1200, 435, $orig_srcx, $orig_srcy, $orig_srcw, $orig_srch);
+                    $im->cropImageRect(1200, 675, $orig_srcx, $orig_srcy, $orig_srcw, $orig_srch);
 
                     $aid = get_account_id();
 
@@ -188,12 +188,12 @@ class Cover_photo extends Controller
 
                     $r1 = $im->storeThumbnail($p, PHOTO_RES_COVER_1200);
 
-                    $im->doScaleImage(850, 310);
+                    $im->doScaleImage(850, 478);
                     $p['imgscale'] = 8;
 
                     $r2 = $im->storeThumbnail($p, PHOTO_RES_COVER_850);
 
-                    $im->doScaleImage(425, 160);
+                    $im->doScaleImage(425, 239);
                     $p['imgscale'] = 9;
 
                     $r3 = $im->storeThumbnail($p, PHOTO_RES_COVER_425);

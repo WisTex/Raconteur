@@ -251,9 +251,9 @@ define ( 'PHOTO_RES_PROFILE_300',       4 );  // square 300 px
 define ( 'PHOTO_RES_PROFILE_80',        5 );  // square 80 px
 define ( 'PHOTO_RES_PROFILE_48',        6 );  // square 48 px
 
-define ( 'PHOTO_RES_COVER_1200',        7 );  // 1200w x 435h (2.75:1)
-define ( 'PHOTO_RES_COVER_850',         8 );  // 850w x 310h
-define ( 'PHOTO_RES_COVER_425',             9 );  // 425w x 160h
+define ( 'PHOTO_RES_COVER_1200',        7 );  // 1200w x 675h (16:9)
+define ( 'PHOTO_RES_COVER_850',         8 );  // 850w x 478h
+define ( 'PHOTO_RES_COVER_425',         9 );  // 425w x 239h
 
 
 /**
