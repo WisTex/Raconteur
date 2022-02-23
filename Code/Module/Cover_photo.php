@@ -417,7 +417,7 @@ class Cover_photo extends Controller
             $o .= replace_macros(Theme::get_template('cover_photo.tpl'), [
                 '$user' => App::$channel['channel_address'],
                 '$info' => t('Your cover photo may be visible to anybody on the internet'),
-                '$existing' => get_cover_photo(local_channel(), 'array', PHOTO_RES_COVER_850),
+                '$existing' => Channel::get_cover_photo(local_channel(), 'array', PHOTO_RES_COVER_850),
                 '$lbl_upfile' => t('Upload File:'),
                 '$lbl_profiles' => t('Select a profile:'),
                 '$title' => t('Change Cover Photo'),
