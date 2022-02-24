@@ -6,21 +6,21 @@
     <Property 
         type="http://www.oexchange.org/spec/0.8/prop/vendor">Code</Property>
     <Property 
-        type="http://www.oexchange.org/spec/0.8/prop/title">Hubzilla</Property>
+        type="http://www.oexchange.org/spec/0.8/prop/title">Streams</Property>
     <Property 
-        type="http://www.oexchange.org/spec/0.8/prop/name">Hubzilla</Property>
+        type="http://www.oexchange.org/spec/0.8/prop/name">Streams</Property>
     <Property 
-        type="http://www.oexchange.org/spec/0.8/prop/prompt">Send to Hubzilla</Property>
+        type="http://www.oexchange.org/spec/0.8/prop/prompt">Send to Streams</Property>
 
     <Link 
         rel="icon" 
-        href="{{$base}}/images/hz-16.png"
+        href="{{$base}}/images/streams-16.png"
         type="image/png" 
         />
 
     <Link 
         rel="icon32" 
-        href="{{$base}}/images/hz-32.png"
+        href="{{$base}}/images/streams-32.png"
         type="image/png" 
         />
 

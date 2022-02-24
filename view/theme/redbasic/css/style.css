@@ -1901,3 +1901,7 @@ dl.bb-dl > dd > li {
     margin: 0 10px;
     padding: 10px 0;
 }
+
+.screenshot img {
+    max-width: 100%;
+}
