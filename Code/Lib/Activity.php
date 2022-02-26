@@ -2811,17 +2811,17 @@ class Activity
 
         if (array_key_exists('published', $act->data) && $act->data['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->data['published']);
-        } elseif (array_key_exists('published', $act->obj) && $act->obj['published']) {
+        } elseif (is_array($acct->obj) && array_key_exists('published', $act->obj) && $act->obj['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->obj['published']);
         }
         if (array_key_exists('updated', $act->data) && $act->data['updated']) {
             $s['edited'] = datetime_convert('UTC', 'UTC', $act->data['updated']);
-        } elseif (array_key_exists('updated', $act->obj) && $act->obj['updated']) {
+        } elseif (is_array($act->obj) && array_key_exists('updated', $act->obj) && $act->obj['updated']) {
             $s['edited'] = datetime_convert('UTC', 'UTC', $act->obj['updated']);
         }
         if (array_key_exists('expires', $act->data) && $act->data['expires']) {
             $s['expires'] = datetime_convert('UTC', 'UTC', $act->data['expires']);
-        } elseif (array_key_exists('expires', $act->obj) && $act->obj['expires']) {
+        } elseif (is_array($act->obj) && array_key_exists('expires', $act->obj) && $act->obj['expires']) {
             $s['expires'] = datetime_convert('UTC', 'UTC', $act->obj['expires']);
         }
 

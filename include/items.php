@@ -4133,7 +4133,7 @@ function fetch_post_tags($items, $link = false) {
 				}
 				else {
 					if ($t['oid'] == $items[$x]['id']) {
-						if (! is_array($items[$x]['term'])) {
+						if (! (isset($items[$x]['term']) && is_array($items[$x]['term']))) {
 							$items[$x]['term'] = [];
 						}
 						$items[$x]['term'][] = $t;
