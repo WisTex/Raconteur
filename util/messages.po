@@ -1,14 +1,14 @@
-# zap
-# Copyright (C) 2010-2020 zap
-# This file is distributed under the same license as the zap package.
+# streams
+# Copyright (C) 2010-2022 streams
+# This file is distributed under the same license as the streams package.
 # Nobody, 2010
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 22.02.19\n"
+"Project-Id-Version: 22.02.25\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-18 15:07-0800\n"
+"POT-Creation-Date: 2022-02-24 16:01-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 #: Code/Module/Editwebpage.php:45 Code/Module/Hcard.php:19
 #: Code/Module/Layouts.php:41 Code/Module/Menu.php:100
 #: Code/Module/Profile.php:30 Code/Module/Webpages.php:48
-#: extend/addon/a/gallery/Mod_Gallery.php:52
+#: extend/addon/a/gallery/Mod_Gallery.php:54
 msgid "Requested profile is not available."
 msgstr ""
 
@@ -76,14 +76,14 @@ msgstr ""
 msgid "Edit visibility"
 msgstr ""
 
-#: Code/Lib/Libprofile.php:305 include/connections.php:179
+#: Code/Lib/Libprofile.php:305 include/connections.php:183
 #: include/conversation.php:998
 msgid "Direct Message"
 msgstr ""
 
 #: Code/Lib/Libprofile.php:318 Code/Module/Directory.php:404
 #: Code/Module/Fedi_id.php:55 Code/Widget/Follow.php:41
-#: Code/Widget/Suggestions.php:49 include/connections.php:151
+#: Code/Widget/Suggestions.php:49 include/connections.php:155
 #: include/conversation.php:978
 msgid "Connect"
 msgstr ""
@@ -313,12 +313,12 @@ msgstr ""
 #: Code/Module/Mitem.php:192 Code/Module/Mitem.php:271
 #: Code/Module/Mitem.php:272 Code/Module/Photos.php:738
 #: Code/Module/Profiles.php:728 Code/Module/Settings/Permcats.php:117
-#: Code/Module/Settings/Display.php:117 Code/Module/Settings/Channel.php:420
+#: Code/Module/Settings/Channel.php:420 Code/Module/Settings/Display.php:118
 #: Code/Module/Zot_probe.php:22 Code/Module/Sources.php:132
 #: Code/Module/Sources.php:168 Code/Storage/Browser.php:435 boot.php:1718
-#: extend/addon/a/content_import/Mod_content_import.php:138
 #: extend/addon/a/content_import/Mod_content_import.php:139
-#: extend/addon/a/zotpost/Mod_zotpost.php:78 include/conversation.php:1436
+#: extend/addon/a/content_import/Mod_content_import.php:140
+#: extend/addon/a/zotpost/Mod_zotpost.php:79 include/conversation.php:1436
 #: include/conversation.php:1441 view/theme/redbasic/php/config.php:102
 msgid "No"
 msgstr ""
@@ -337,12 +337,12 @@ msgstr ""
 #: Code/Module/Mitem.php:192 Code/Module/Mitem.php:271
 #: Code/Module/Mitem.php:272 Code/Module/Photos.php:738
 #: Code/Module/Profiles.php:728 Code/Module/Settings/Permcats.php:117
-#: Code/Module/Settings/Display.php:117 Code/Module/Settings/Channel.php:420
+#: Code/Module/Settings/Channel.php:420 Code/Module/Settings/Display.php:118
 #: Code/Module/Zot_probe.php:22 Code/Module/Sources.php:132
 #: Code/Module/Sources.php:168 Code/Storage/Browser.php:435 boot.php:1718
-#: extend/addon/a/content_import/Mod_content_import.php:138
 #: extend/addon/a/content_import/Mod_content_import.php:139
-#: extend/addon/a/zotpost/Mod_zotpost.php:78 include/conversation.php:1436
+#: extend/addon/a/content_import/Mod_content_import.php:140
+#: extend/addon/a/zotpost/Mod_zotpost.php:79 include/conversation.php:1436
 #: include/conversation.php:1441 view/theme/redbasic/php/config.php:102
 msgid "Yes"
 msgstr ""
@@ -504,7 +504,7 @@ msgstr ""
 
 #: Code/Lib/ThreadItem.php:286 Code/Module/Admin/Profs.php:103
 #: Code/Module/Admin/Profs.php:124 Code/Module/Filer.php:62
-#: Code/Widget/Notes.php:26 extend/addon/a/queueworker/Mod_Queueworker.php:116
+#: Code/Widget/Notes.php:26 extend/addon/a/queueworker/Mod_Queueworker.php:118
 #: include/text.php:1053 include/text.php:1066
 msgid "Save"
 msgstr ""
@@ -678,11 +678,11 @@ msgid "Comment"
 msgstr ""
 
 #: Code/Lib/ThreadItem.php:954 Code/Lib/Stringsjs.php:31
-#: Code/Module/Admin/Themes.php:172 Code/Module/Admin/Security.php:172
-#: Code/Module/Admin/Profs.php:195 Code/Module/Admin/Logs.php:87
-#: Code/Module/Admin/Channels.php:175 Code/Module/Admin/Addons.php:438
+#: Code/Module/Admin/Security.php:172 Code/Module/Admin/Profs.php:195
+#: Code/Module/Admin/Logs.php:87 Code/Module/Admin/Channels.php:175
 #: Code/Module/Admin/Accounts.php:181 Code/Module/Admin/Account_edit.php:81
-#: Code/Module/Admin/Site.php:281 Code/Module/Affinity.php:89
+#: Code/Module/Admin/Site.php:281 Code/Module/Admin/Addons.php:440
+#: Code/Module/Admin/Themes.php:172 Code/Module/Affinity.php:89
 #: Code/Module/Ap_probe.php:27 Code/Module/Appman.php:163
 #: Code/Module/Cal.php:363 Code/Module/Chat.php:214 Code/Module/Chat.php:250
 #: Code/Module/Connect.php:99 Code/Module/Connedit.php:853
@@ -700,22 +700,22 @@ msgstr ""
 #: Code/Module/Settings/Tokens.php:317 Code/Module/Settings/Permcats.php:146
 #: Code/Module/Settings/Oauth2.php:115 Code/Module/Settings/Oauth.php:98
 #: Code/Module/Settings/Network.php:48 Code/Module/Settings/Features.php:66
-#: Code/Module/Settings/Featured.php:63 Code/Module/Settings/Display.php:208
-#: Code/Module/Settings/Account.php:117 Code/Module/Settings/Channel.php:631
+#: Code/Module/Settings/Featured.php:63 Code/Module/Settings/Account.php:117
+#: Code/Module/Settings/Channel.php:631 Code/Module/Settings/Display.php:209
 #: Code/Module/Setup.php:334 Code/Module/Setup.php:379
 #: Code/Module/Zot_probe.php:23 Code/Module/Xchan.php:18
 #: Code/Module/Thing.php:364 Code/Module/Thing.php:419
 #: Code/Module/Zotfinger.php:30 Code/Module/Superblock.php:257
 #: Code/Module/Sources.php:133 Code/Module/Sources.php:171
 #: Code/Widget/Eventstools.php:22
-#: extend/addon/a/content_import/Mod_content_import.php:143
-#: extend/addon/a/faces/faces.php:126 extend/addon/a/faces/Mod_Faces.php:181
+#: extend/addon/a/content_import/Mod_content_import.php:144
+#: extend/addon/a/faces/Mod_Faces.php:183 extend/addon/a/faces/faces.php:126
 #: extend/addon/a/flashcards/Mod_Flashcards.php:265
-#: extend/addon/a/followlist/Mod_followlist.php:137
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:56
-#: extend/addon/a/logrot/logrot.php:36 extend/addon/a/nsfw/Mod_Nsfw.php:50
-#: extend/addon/a/openstreetmap/openstreetmap.php:206
-#: extend/addon/a/zotpost/Mod_zotpost.php:82
+#: extend/addon/a/followlist/Mod_followlist.php:139
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:58
+#: extend/addon/a/logrot/logrot.php:37 extend/addon/a/nsfw/Mod_Nsfw.php:52
+#: extend/addon/a/openstreetmap/openstreetmap.php:207
+#: extend/addon/a/zotpost/Mod_zotpost.php:83
 #: view/theme/redbasic/php/config.php:97
 msgid "Submit"
 msgstr ""
@@ -1541,7 +1541,7 @@ msgstr ""
 #: Code/Module/Connections.php:35 Code/Module/Connedit.php:341
 #: Code/Module/Cover_photo.php:340 Code/Module/Cover_photo.php:354
 #: Code/Module/Defperms.php:179 Code/Module/Defperms.php:185
-#: Code/Module/Display.php:514 Code/Module/Editblock.php:79
+#: Code/Module/Display.php:512 Code/Module/Editblock.php:79
 #: Code/Module/Editlayout.php:77 Code/Module/Editlayout.php:100
 #: Code/Module/Editpost.php:26 Code/Module/Editwebpage.php:82
 #: Code/Module/Editwebpage.php:103 Code/Module/Editwebpage.php:122
@@ -1572,10 +1572,10 @@ msgstr ""
 #: Code/Module/Suggestions.php:35 Code/Module/Webpages.php:143
 #: Code/Module/Viewconnections.php:37 Code/Module/Viewconnections.php:42
 #: Code/Module/Sources.php:92 Code/Web/WebServer.php:72 include/items.php:3857
-#: include/photos.php:40 include/attach.php:163 include/attach.php:212
-#: include/attach.php:290 include/attach.php:416 include/attach.php:431
-#: include/attach.php:438 include/attach.php:517 include/attach.php:1134
-#: include/attach.php:1211 include/attach.php:1382
+#: include/attach.php:163 include/attach.php:212 include/attach.php:290
+#: include/attach.php:416 include/attach.php:431 include/attach.php:438
+#: include/attach.php:517 include/attach.php:1139 include/attach.php:1216
+#: include/attach.php:1387 include/photos.php:40
 msgid "Permission denied."
 msgstr ""
 
@@ -1654,7 +1654,7 @@ msgid "This email was sent by %1$s at %2$s."
 msgstr ""
 
 #: Code/Lib/Enotify.php:80 Code/Module/Home.php:144 Code/Module/Home.php:153
-#: extend/addon/a/opensearch/Mod_opensearch.php:28
+#: extend/addon/a/opensearch/Mod_opensearch.php:30
 msgid "$Projectname"
 msgstr ""
 
@@ -2008,7 +2008,7 @@ msgstr ""
 #: Code/Lib/Apps.php:361 Code/Module/Affinity.php:68
 #: Code/Module/Connections.php:367 Code/Module/Connedit.php:677
 #: Code/Module/Stream.php:139 Code/Widget/Affinity.php:33
-#: Code/Widget/Activity_filter.php:150 include/connections.php:968
+#: Code/Widget/Activity_filter.php:150 include/connections.php:972
 msgid "Connections"
 msgstr ""
 
@@ -2017,7 +2017,7 @@ msgid "Content Filter"
 msgstr ""
 
 #: Code/Lib/Apps.php:363
-#: extend/addon/a/content_import/Mod_content_import.php:136
+#: extend/addon/a/content_import/Mod_content_import.php:137
 msgid "Content Import"
 msgstr ""
 
@@ -2047,7 +2047,7 @@ msgstr ""
 msgid "Files"
 msgstr ""
 
-#: Code/Lib/Apps.php:370 extend/addon/a/followlist/Mod_followlist.php:130
+#: Code/Lib/Apps.php:370 extend/addon/a/followlist/Mod_followlist.php:132
 msgid "Followlist"
 msgstr ""
 
@@ -2059,8 +2059,8 @@ msgstr ""
 msgid "Future Posting"
 msgstr ""
 
-#: Code/Lib/Apps.php:373 extend/addon/a/gallery/Mod_Gallery.php:139
-#: extend/addon/a/gallery/gallery.php:47
+#: Code/Lib/Apps.php:373 extend/addon/a/gallery/Mod_Gallery.php:141
+#: extend/addon/a/gallery/gallery.php:49
 msgid "Gallery"
 msgstr ""
 
@@ -2196,7 +2196,7 @@ msgid "Secrets"
 msgstr ""
 
 #: Code/Lib/Apps.php:408 Code/Lib/Navbar.php:118
-#: Code/Module/Admin/Themes.php:139 Code/Module/Admin/Addons.php:341
+#: Code/Module/Admin/Addons.php:343 Code/Module/Admin/Themes.php:139
 #: Code/Widget/Newmember.php:57 Code/Widget/Settings_menu.php:138
 msgid "Settings"
 msgstr ""
@@ -2246,7 +2246,7 @@ msgstr ""
 msgid "Wiki"
 msgstr ""
 
-#: Code/Lib/Apps.php:421 extend/addon/a/zotpost/Mod_zotpost.php:55
+#: Code/Lib/Apps.php:421 extend/addon/a/zotpost/Mod_zotpost.php:56
 msgid "ZotPost"
 msgstr ""
 
@@ -2254,7 +2254,7 @@ msgstr ""
 msgid "Installed"
 msgstr ""
 
-#: Code/Lib/Apps.php:598 Code/Module/Admin/Addons.php:422
+#: Code/Lib/Apps.php:598 Code/Module/Admin/Addons.php:424
 msgid "Install"
 msgstr ""
 
@@ -2485,7 +2485,7 @@ msgstr ""
 msgid "Available Apps"
 msgstr ""
 
-#: Code/Lib/Navbar.php:332 Code/Module/Apporder.php:49
+#: Code/Lib/Navbar.php:332 Code/Module/Apporder.php:53
 msgid "Arrange Apps"
 msgstr ""
 
@@ -2606,7 +2606,7 @@ msgstr ""
 #: Code/Module/Connedit.php:640 Code/Module/Filestorage.php:233
 #: Code/Module/Photos.php:744 Code/Module/Photos.php:1129
 #: Code/Module/Thing.php:357 Code/Module/Thing.php:412
-#: extend/addon/a/faces/Mod_Faces.php:173
+#: extend/addon/a/faces/Mod_Faces.php:175
 #: extend/addon/a/flashcards/Mod_Flashcards.php:257
 msgid "Permissions"
 msgstr ""
@@ -2775,9 +2775,9 @@ msgstr ""
 msgid "network"
 msgstr ""
 
-#: Code/Module/Admin.php:94 Code/Module/Admin/Themes.php:82
-#: Code/Module/Admin/Addons.php:262 Code/Module/Display.php:69
-#: Code/Module/Display.php:517 Code/Module/Filestorage.php:41
+#: Code/Module/Admin.php:94 Code/Module/Admin/Addons.php:264
+#: Code/Module/Admin/Themes.php:82 Code/Module/Display.php:69
+#: Code/Module/Display.php:515 Code/Module/Filestorage.php:41
 #: Code/Module/Inspect.php:35 Code/Module/Search.php:189
 #: Code/Module/Viewsrc.php:29 Code/Module/Thing.php:110
 #: extend/addon/a/flashcards/Mod_Flashcards.php:287
@@ -2818,11 +2818,11 @@ msgstr ""
 msgid "Your software should be updated"
 msgstr ""
 
-#: Code/Module/Admin.php:173 Code/Module/Admin/Themes.php:136
-#: Code/Module/Admin/Themes.php:170 Code/Module/Admin/Security.php:138
+#: Code/Module/Admin.php:173 Code/Module/Admin/Security.php:138
 #: Code/Module/Admin/Logs.php:85 Code/Module/Admin/Channels.php:173
-#: Code/Module/Admin/Addons.php:338 Code/Module/Admin/Addons.php:436
 #: Code/Module/Admin/Accounts.php:179 Code/Module/Admin/Site.php:279
+#: Code/Module/Admin/Addons.php:340 Code/Module/Admin/Addons.php:438
+#: Code/Module/Admin/Themes.php:136 Code/Module/Admin/Themes.php:170
 msgid "Administration"
 msgstr ""
 
@@ -2856,51 +2856,6 @@ msgstr ""
 
 #: Code/Module/Admin.php:183
 msgid "Repository version (dev)"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:31
-msgid "Theme settings updated."
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:71
-msgid "No themes found."
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:107 Code/Module/Admin/Addons.php:306
-msgid "Disable"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:110 Code/Module/Admin/Addons.php:309
-msgid "Enable"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:129
-msgid "Screenshot"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:137 Code/Module/Admin/Themes.php:171
-#: Code/Widget/Admin.php:37
-msgid "Themes"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:138 Code/Module/Admin/Addons.php:340
-msgid "Toggle"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:148 Code/Module/Admin/Addons.php:348
-msgid "Author: "
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:149 Code/Module/Admin/Addons.php:349
-msgid "Maintainer: "
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:176
-msgid "[Experimental]"
-msgstr ""
-
-#: Code/Module/Admin/Themes.php:177
-msgid "[Unsupported]"
 msgstr ""
 
 #: Code/Module/Admin/Security.php:129
@@ -3286,7 +3241,7 @@ msgid "Use a photo from your albums"
 msgstr ""
 
 #: Code/Module/Admin/Profile_photo.php:478
-#: Code/Module/Admin/Cover_photo.php:382 Code/Module/Admin/Addons.php:423
+#: Code/Module/Admin/Cover_photo.php:382 Code/Module/Admin/Addons.php:425
 #: Code/Module/Card_edit.php:142 Code/Module/Cdav.php:1066
 #: Code/Module/Cdav.php:1374 Code/Module/Connedit.php:890
 #: Code/Module/Cover_photo.php:428 Code/Module/Editblock.php:156
@@ -3579,99 +3534,6 @@ msgid ""
 "channel on this site will be permanently deleted!\\n\\nAre you sure?"
 msgstr ""
 
-#: Code/Module/Admin/Addons.php:286
-#, php-format
-msgid "Plugin %s disabled."
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:290
-#, php-format
-msgid "Plugin %s enabled."
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:339 Code/Module/Admin/Addons.php:437
-#: Code/Widget/Admin.php:36
-msgid "Addons"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:350
-msgid "Minimum project version: "
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:351
-msgid "Maximum project version: "
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:352
-msgid "Minimum PHP version: "
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:353
-msgid "Compatible Server Roles: "
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:354
-msgid "Requires: "
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:355 Code/Module/Admin/Addons.php:442
-msgid "Disabled - version incompatibility"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:410
-msgid "Enter the public git repository URL of the addon repo."
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:411
-msgid "Addon repo git URL"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:412
-msgid "Custom repo name"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:412
-msgid "(optional)"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:413
-msgid "Download Addon Repo"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:421
-msgid "Install new repo"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:445
-msgid "Manage Repos"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:446
-msgid "Installed Addon Repositories"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:447
-msgid "Install a New Addon Repository"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:453 Code/Module/Cdav.php:1061
-#: Code/Module/Cdav.php:1372 Code/Module/Connedit.php:888
-#: Code/Module/Profiles.php:852 Code/Module/Settings/Oauth2.php:57
-#: Code/Module/Settings/Oauth2.php:145 Code/Module/Settings/Oauth.php:48
-#: Code/Module/Settings/Oauth.php:126
-msgid "Update"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:454
-msgid "Switch branch"
-msgstr ""
-
-#: Code/Module/Admin/Addons.php:455 Code/Module/Photos.php:1076
-#: Code/Module/Tagrm.php:151 Code/Module/Superblock.php:236
-#: Code/Module/Superblock.php:253
-msgid "Remove"
-msgstr ""
-
 #: Code/Module/Admin/Accounts.php:44
 #, php-format
 msgid "%s account blocked/unblocked"
@@ -3814,7 +3676,7 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: Code/Module/Admin/Site.php:224 Code/Module/Settings/Display.php:151
+#: Code/Module/Admin/Site.php:224 Code/Module/Settings/Display.php:152
 #, php-format
 msgid "%s - (Incompatible)"
 msgstr ""
@@ -3971,7 +3833,7 @@ msgid "Minimum age (in years) for who may register on this site."
 msgstr ""
 
 #: Code/Module/Admin/Site.php:302
-msgid "Which best describes the types of account offered by this hub?"
+msgid "Which best describes the types of account offered by this site?"
 msgstr ""
 
 #: Code/Module/Admin/Site.php:302
@@ -4265,6 +4127,144 @@ msgstr ""
 msgid "Region or country - shared with other sites"
 msgstr ""
 
+#: Code/Module/Admin/Addons.php:288
+#, php-format
+msgid "Plugin %s disabled."
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:292
+#, php-format
+msgid "Plugin %s enabled."
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:308 Code/Module/Admin/Themes.php:107
+msgid "Disable"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:311 Code/Module/Admin/Themes.php:110
+msgid "Enable"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:341 Code/Module/Admin/Addons.php:439
+#: Code/Widget/Admin.php:36
+msgid "Addons"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:342 Code/Module/Admin/Themes.php:138
+msgid "Toggle"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:350 Code/Module/Admin/Themes.php:148
+msgid "Author: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:351 Code/Module/Admin/Themes.php:149
+msgid "Maintainer: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:352
+msgid "Minimum project version: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:353
+msgid "Maximum project version: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:354
+msgid "Minimum PHP version: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:355
+msgid "Compatible Server Roles: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:356
+msgid "Requires: "
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:357 Code/Module/Admin/Addons.php:444
+msgid "Disabled - version incompatibility"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:412
+msgid "Enter the public git repository URL of the addon repo."
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:413
+msgid "Addon repo git URL"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:414
+msgid "Custom repo name"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:414
+msgid "(optional)"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:415
+msgid "Download Addon Repo"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:423
+msgid "Install new repo"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:447
+msgid "Manage Repos"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:448
+msgid "Installed Addon Repositories"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:449
+msgid "Install a New Addon Repository"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:455 Code/Module/Cdav.php:1061
+#: Code/Module/Cdav.php:1372 Code/Module/Connedit.php:888
+#: Code/Module/Profiles.php:852 Code/Module/Settings/Oauth2.php:57
+#: Code/Module/Settings/Oauth2.php:145 Code/Module/Settings/Oauth.php:48
+#: Code/Module/Settings/Oauth.php:126
+msgid "Update"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:456
+msgid "Switch branch"
+msgstr ""
+
+#: Code/Module/Admin/Addons.php:457 Code/Module/Photos.php:1076
+#: Code/Module/Tagrm.php:151 Code/Module/Superblock.php:236
+#: Code/Module/Superblock.php:253
+msgid "Remove"
+msgstr ""
+
+#: Code/Module/Admin/Themes.php:31
+msgid "Theme settings updated."
+msgstr ""
+
+#: Code/Module/Admin/Themes.php:71
+msgid "No themes found."
+msgstr ""
+
+#: Code/Module/Admin/Themes.php:129
+msgid "Screenshot"
+msgstr ""
+
+#: Code/Module/Admin/Themes.php:137 Code/Module/Admin/Themes.php:171
+#: Code/Widget/Admin.php:37
+msgid "Themes"
+msgstr ""
+
+#: Code/Module/Admin/Themes.php:176
+msgid "[Experimental]"
+msgstr ""
+
+#: Code/Module/Admin/Themes.php:177
+msgid "[Unsupported]"
+msgstr ""
+
 #: Code/Module/Affinity.php:34
 msgid "Friend Zoom settings updated."
 msgstr ""
@@ -4410,21 +4410,21 @@ msgstr ""
 msgid "Location (URL) to purchase app"
 msgstr ""
 
-#: Code/Module/Apporder.php:50
+#: Code/Module/Apporder.php:54
 msgid "Change order of pinned navbar apps"
 msgstr ""
 
-#: Code/Module/Apporder.php:50
+#: Code/Module/Apporder.php:54
 msgid "Change order of app tray apps"
 msgstr ""
 
-#: Code/Module/Apporder.php:51
+#: Code/Module/Apporder.php:55
 msgid ""
 "Use arrows to move the corresponding app left (top) or right (bottom) in the "
 "navbar"
 msgstr ""
 
-#: Code/Module/Apporder.php:52
+#: Code/Module/Apporder.php:56
 msgid "Use arrows to move the corresponding app up or down in the app tray"
 msgstr ""
 
@@ -4675,8 +4675,8 @@ msgstr ""
 msgid "CardDAV App"
 msgstr ""
 
-#: Code/Module/Cdav.php:893 extend/addon/a/fuzzloc/Mod_Fuzzloc.php:37
-#: extend/addon/a/gallery/Mod_Gallery.php:61
+#: Code/Module/Cdav.php:893 extend/addon/a/fuzzloc/Mod_Fuzzloc.php:39
+#: extend/addon/a/gallery/Mod_Gallery.php:63
 msgid "Not Installed"
 msgstr ""
 
@@ -4777,19 +4777,19 @@ msgid "Note"
 msgstr ""
 
 #: Code/Module/Cdav.php:1365 Code/Module/Connedit.php:881
-#: Code/Module/Profiles.php:845 include/connections.php:839
+#: Code/Module/Profiles.php:845 include/connections.php:843
 #: include/event.php:1515
 msgid "Mobile"
 msgstr ""
 
 #: Code/Module/Cdav.php:1366 Code/Module/Connedit.php:882
-#: Code/Module/Profiles.php:846 include/connections.php:840
+#: Code/Module/Profiles.php:846 include/connections.php:844
 #: include/event.php:1516
 msgid "Home"
 msgstr ""
 
 #: Code/Module/Cdav.php:1367 Code/Module/Connedit.php:883
-#: Code/Module/Profiles.php:847 include/connections.php:843
+#: Code/Module/Profiles.php:847 include/connections.php:847
 #: include/event.php:1519
 msgid "Work"
 msgstr ""
@@ -4797,8 +4797,8 @@ msgstr ""
 #: Code/Module/Cdav.php:1368 Code/Module/Connedit.php:884
 #: Code/Module/Profiles.php:848 Code/Module/Profiles.php:989
 #: Code/Module/Profiles.php:1007 Code/Module/Profiles.php:1077
-#: Code/Module/Profiles.php:1114 include/connections.php:846
-#: include/connections.php:852 include/event.php:1522 include/event.php:1528
+#: Code/Module/Profiles.php:1114 include/connections.php:850
+#: include/connections.php:856 include/event.php:1522 include/event.php:1528
 msgid "Other"
 msgstr ""
 
@@ -4913,7 +4913,7 @@ msgstr ""
 msgid "Reset form"
 msgstr ""
 
-#: Code/Module/Channel.php:562 Code/Module/Display.php:442
+#: Code/Module/Channel.php:562 Code/Module/Display.php:440
 msgid ""
 "You must enable javascript for your browser to be able to view this content."
 msgstr ""
@@ -5546,7 +5546,7 @@ msgstr ""
 msgid "Do not import posts with this text"
 msgstr ""
 
-#: Code/Module/Connedit.php:842 extend/addon/a/zotpost/Mod_zotpost.php:70
+#: Code/Module/Connedit.php:842 extend/addon/a/zotpost/Mod_zotpost.php:71
 msgid "Nickname"
 msgstr ""
 
@@ -5650,8 +5650,8 @@ msgid "%1$s updated their %2$s"
 msgstr ""
 
 #: Code/Module/Defperms.php:106 Code/Module/Settings/Channel.php:365
-#: extend/addon/a/faces/faces.php:209 extend/addon/a/logrot/logrot.php:55
-#: extend/addon/a/openstreetmap/openstreetmap.php:223
+#: extend/addon/a/faces/faces.php:209 extend/addon/a/logrot/logrot.php:56
+#: extend/addon/a/openstreetmap/openstreetmap.php:224
 msgid "Settings updated."
 msgstr ""
 
@@ -5770,50 +5770,50 @@ msgstr ""
 msgid "No entries (some entries may be hidden)."
 msgstr ""
 
-#: Code/Module/Display.php:395
+#: Code/Module/Display.php:393
 #, php-format
 msgid "\"%1$s\", shared by %2$s with %3$s"
 msgstr ""
 
-#: Code/Module/Display.php:396
+#: Code/Module/Display.php:394
 #, php-format
 msgid "%1$s shared this post with %2$s"
 msgstr ""
 
-#: Code/Module/Display.php:400
+#: Code/Module/Display.php:398
 msgid "Not much to read, click to see the post."
 msgstr ""
 
-#: Code/Module/Display.php:404
+#: Code/Module/Display.php:402
 #, php-format
 msgid "%1$s shared a reaction to \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:405
+#: Code/Module/Display.php:403
 #, php-format
 msgid "%s shared a reaction to this post/conversation"
 msgstr ""
 
-#: Code/Module/Display.php:412
+#: Code/Module/Display.php:410
 #, php-format
 msgid "%1$s commented \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:413
+#: Code/Module/Display.php:411
 #, php-format
 msgid "%s shared a comment of this post/conversation"
 msgstr ""
 
-#: Code/Module/Display.php:417
+#: Code/Module/Display.php:415
 #, php-format
 msgid "%1$s wrote this: \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:459
+#: Code/Module/Display.php:457
 msgid "Article"
 msgstr ""
 
-#: Code/Module/Display.php:512
+#: Code/Module/Display.php:510
 msgid "Item has been removed."
 msgstr ""
 
@@ -6163,7 +6163,7 @@ msgstr ""
 msgid "Move to directory"
 msgstr ""
 
-#: Code/Module/Filestorage.php:242 extend/addon/a/faces/Mod_Faces.php:180
+#: Code/Module/Filestorage.php:242 extend/addon/a/faces/Mod_Faces.php:182
 #: extend/addon/a/flashcards/Mod_Flashcards.php:264
 msgid "Set/edit permissions"
 msgstr ""
@@ -7127,14 +7127,6 @@ msgstr ""
 #: Code/Module/Notify.php:45
 #, php-format
 msgid "A notification with that id was not found for channel '%s'"
-msgstr ""
-
-#: Code/Module/Oexchange.php:30
-msgid "Unable to find your site."
-msgstr ""
-
-#: Code/Module/Oexchange.php:44
-msgid "Post successful."
 msgstr ""
 
 #: Code/Module/Page.php:188
@@ -8425,101 +8417,6 @@ msgstr ""
 msgid "Please save/submit changes to any panel before opening another."
 msgstr ""
 
-#: Code/Module/Settings/Display.php:160
-#, php-format
-msgid "%s - (Experimental)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:203
-msgid "Display Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:204
-msgid "Theme Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:205
-msgid "Custom Theme Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:206
-msgid "Content Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:212
-msgid "Display Theme:"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:213
-msgid "Select scheme"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:215
-msgid "Preload images before rendering the page"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:215
-msgid ""
-"The subjective page load time will be longer but the page will be ready when "
-"displayed"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:216
-msgid "Enable user zoom on mobile devices"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:217
-msgid "Update notifications every xx seconds"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:217
-msgid "Minimum of 15 seconds, no maximum"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:218
-msgid "Maximum number of conversations to load at any time:"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:218
-msgid "Maximum of 100 items"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:219
-msgid "Show emoticons (smilies) as images"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:220
-msgid "Provide channel menu in navigation bar"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:220
-msgid "Default: channel menu located in app menu"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:221
-msgid "System Page Layout Editor - (advanced)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:224
-msgid "Channel page max height of content (in pixels)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:224 Code/Module/Settings/Display.php:225
-msgid "click to expand content exceeding this height"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:225
-msgid "Stream page max height of content (in pixels)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:226
-msgid "Indent threaded comments this many pixels from the parent"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:226
-msgid "0-20"
-msgstr ""
-
 #: Code/Module/Settings/Account.php:26
 msgid "Not valid email."
 msgstr ""
@@ -9035,6 +8932,101 @@ msgstr ""
 
 #: Code/Module/Settings/Channel.php:759
 msgid "This varies by country/culture"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:161
+#, php-format
+msgid "%s - (Experimental)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:204
+msgid "Display Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:205
+msgid "Theme Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:206
+msgid "Custom Theme Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:207
+msgid "Content Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:213
+msgid "Display Theme:"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:214
+msgid "Select scheme"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:216
+msgid "Preload images before rendering the page"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:216
+msgid ""
+"The subjective page load time will be longer but the page will be ready when "
+"displayed"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:217
+msgid "Enable user zoom on mobile devices"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:218
+msgid "Update notifications every xx seconds"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:218
+msgid "Minimum of 15 seconds, no maximum"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:219
+msgid "Maximum number of conversations to load at any time:"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:219
+msgid "Maximum of 100 items"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:220
+msgid "Show emoticons (smilies) as images"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:221
+msgid "Provide channel menu in navigation bar"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:221
+msgid "Default: channel menu located in app menu"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:222
+msgid "System Page Layout Editor - (advanced)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:225
+msgid "Channel page max height of content (in pixels)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:225 Code/Module/Settings/Display.php:226
+msgid "click to expand content exceeding this height"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:226
+msgid "Stream page max height of content (in pixels)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:227
+msgid "Indent threaded comments this many pixels from the parent"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:227
+msgid "0-20"
 msgstr ""
 
 #: Code/Module/Setup.php:194
@@ -9761,7 +9753,7 @@ msgstr ""
 msgid "Access list: %s"
 msgstr ""
 
-#: Code/Module/Stream.php:349 extend/addon/a/zotpost/Mod_zotpost.php:30
+#: Code/Module/Stream.php:349 extend/addon/a/zotpost/Mod_zotpost.php:31
 msgid "Invalid channel."
 msgstr ""
 
@@ -10822,19 +10814,19 @@ msgstr ""
 msgid "never"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:28
+#: extend/addon/a/content_import/Mod_content_import.php:29
 msgid "No server specified"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:74
+#: extend/addon/a/content_import/Mod_content_import.php:75
 msgid "Posts imported"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:114
+#: extend/addon/a/content_import/Mod_content_import.php:115
 msgid "Files imported"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:123
+#: extend/addon/a/content_import/Mod_content_import.php:124
 msgid ""
 "This addon app copies existing content and file storage to a cloned/copied "
 "channel. Once the app is installed, visit the newly installed app. This will "
@@ -10842,137 +10834,137 @@ msgid ""
 "range of files/conversations to copy."
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:137
+#: extend/addon/a/content_import/Mod_content_import.php:138
 msgid ""
 "This will import all your conversations and cloud files from a cloned "
 "channel on another server. This may take a while if you have lots of posts "
 "and or files."
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:138
+#: extend/addon/a/content_import/Mod_content_import.php:139
 msgid "Include posts"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:138
+#: extend/addon/a/content_import/Mod_content_import.php:139
 msgid "Conversations, Articles, Cards, and other posted content"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:139
+#: extend/addon/a/content_import/Mod_content_import.php:140
 msgid "Include files"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:139
+#: extend/addon/a/content_import/Mod_content_import.php:140
 msgid "Files, Photos and other cloud storage"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:140
+#: extend/addon/a/content_import/Mod_content_import.php:141
 msgid "Original Server base URL"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:141
+#: extend/addon/a/content_import/Mod_content_import.php:142
 msgid "Since modified date yyyy-mm-dd"
 msgstr ""
 
-#: extend/addon/a/content_import/Mod_content_import.php:142
+#: extend/addon/a/content_import/Mod_content_import.php:143
 msgid "Until modified date yyyy-mm-dd"
+msgstr ""
+
+#: extend/addon/a/faces/Mod_Faces.php:63
+#: extend/addon/a/flashcards/Mod_Flashcards.php:55
+msgid "Profile Unavailable."
+msgstr ""
+
+#: extend/addon/a/faces/Mod_Faces.php:1697
+msgid "Face detection is not activated"
+msgstr ""
+
+#: extend/addon/a/faces/Mod_Faces.php:1707
+msgid "Face detection is still busy"
 msgstr ""
 
 #: extend/addon/a/faces/faces.php:238
 msgid "Errors encountered deleting all rows of database table "
 msgstr ""
 
-#: extend/addon/a/faces/Mod_Faces.php:61
-#: extend/addon/a/flashcards/Mod_Flashcards.php:55
-msgid "Profile Unavailable."
-msgstr ""
-
-#: extend/addon/a/faces/Mod_Faces.php:1695
-msgid "Face detection is not activated"
-msgstr ""
-
-#: extend/addon/a/faces/Mod_Faces.php:1705
-msgid "Face detection is still busy"
-msgstr ""
-
 #: extend/addon/a/flashcards/Mod_Flashcards.php:222
 msgid "Not allowed."
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:73
+#: extend/addon/a/followlist/Mod_followlist.php:75
 msgid "Adding connections"
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:87
+#: extend/addon/a/followlist/Mod_followlist.php:89
 msgid "Connect failed: "
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:87
+#: extend/addon/a/followlist/Mod_followlist.php:89
 msgid " Reason: "
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:90
+#: extend/addon/a/followlist/Mod_followlist.php:92
 msgid "Finished adding connections"
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:97
+#: extend/addon/a/followlist/Mod_followlist.php:99
 msgid ""
 "This app allows you to connect to everybody in a pre-defined ActivityPub "
 "collection or CSV file, such as follower/following lists. Install the app "
 "and revisit this page to input the source URL."
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:131
+#: extend/addon/a/followlist/Mod_followlist.php:133
 #, php-format
 msgid "You may import up to %d records"
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:134
+#: extend/addon/a/followlist/Mod_followlist.php:136
 msgid ""
 "Enter the URL of an ActivityPub followers/following collection to import"
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:135
+#: extend/addon/a/followlist/Mod_followlist.php:137
 msgid "Or upload an ActivityPub or CSV followers file from your device"
 msgstr ""
 
-#: extend/addon/a/followlist/Mod_followlist.php:136
+#: extend/addon/a/followlist/Mod_followlist.php:138
 msgid "URL of followers/following list"
 msgstr ""
 
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:24
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:26
 msgid "Fuzzloc Settings updated."
 msgstr ""
 
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:37
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:39
 msgid "Fuzzy Location App"
 msgstr ""
 
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:38
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:40
 msgid ""
 "Blur your precise location if your channel uses browser location mapping"
 msgstr ""
 
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:43
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:45
 msgid "Minimum offset in meters"
 msgstr ""
 
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:47
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:49
 msgid "Maximum offset in meters"
 msgstr ""
 
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:53
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:55
 msgid "Fuzzy Location"
 msgstr ""
 
-#: extend/addon/a/gallery/Mod_Gallery.php:61
+#: extend/addon/a/gallery/Mod_Gallery.php:63
 msgid "Gallery App"
 msgstr ""
 
-#: extend/addon/a/gallery/Mod_Gallery.php:62
+#: extend/addon/a/gallery/Mod_Gallery.php:64
 msgid "A simple gallery for your photo albums"
 msgstr ""
 
-#: extend/addon/a/gallery/gallery.php:50
+#: extend/addon/a/gallery/gallery.php:52
 msgid "Photo Gallery"
 msgstr ""
 
@@ -10984,50 +10976,20 @@ msgstr ""
 msgid "Authentication successful but rejected: account creation is disabled."
 msgstr ""
 
-#: extend/addon/a/logrot/logrot.php:37
+#: extend/addon/a/logrot/logrot.php:38
 msgid "Logfile archive directory"
 msgstr ""
 
-#: extend/addon/a/logrot/logrot.php:37
+#: extend/addon/a/logrot/logrot.php:38
 msgid "Directory to store rotated logs"
 msgstr ""
 
-#: extend/addon/a/logrot/logrot.php:38
+#: extend/addon/a/logrot/logrot.php:39
 msgid "Logfile size in bytes before rotating, example 10M"
 msgstr ""
 
-#: extend/addon/a/logrot/logrot.php:39
+#: extend/addon/a/logrot/logrot.php:40
 msgid "Number of logfiles to retain"
-msgstr ""
-
-#: extend/addon/a/nsfw/Mod_Nsfw.php:20
-msgid "NSFW Settings saved."
-msgstr ""
-
-#: extend/addon/a/nsfw/Mod_Nsfw.php:30
-msgid ""
-"This addon app looks in posts for the words/text you specify below, and "
-"collapses any content containing those keywords so it is not displayed at "
-"inappropriate times, such as sexual innuendo that may be improper in a work "
-"setting. It is polite and recommended to tag any content containing nudity "
-"with #NSFW.  This filter can also match any other word/text you specify, and "
-"can thereby be used as a general purpose content filter."
-msgstr ""
-
-#: extend/addon/a/nsfw/Mod_Nsfw.php:42
-msgid "Comma separated list of keywords to hide"
-msgstr ""
-
-#: extend/addon/a/nsfw/Mod_Nsfw.php:42
-msgid "Word, /regular-expression/, lang=xx, lang!=xx"
-msgstr ""
-
-#: extend/addon/a/nsfw/Mod_Nsfw.php:50
-msgid "Not Safe For Work Settings"
-msgstr ""
-
-#: extend/addon/a/nsfw/Mod_Nsfw.php:50
-msgid "General Purpose Content Filter"
 msgstr ""
 
 #: extend/addon/a/nsfw/nsfw.php:162
@@ -11043,8 +11005,34 @@ msgstr ""
 msgid "%s - view"
 msgstr ""
 
-#: extend/addon/a/opensearch/Mod_opensearch.php:29
-msgid "Search $Projectname"
+#: extend/addon/a/nsfw/Mod_Nsfw.php:22
+msgid "NSFW Settings saved."
+msgstr ""
+
+#: extend/addon/a/nsfw/Mod_Nsfw.php:32
+msgid ""
+"This addon app looks in posts for the words/text you specify below, and "
+"collapses any content containing those keywords so it is not displayed at "
+"inappropriate times, such as sexual innuendo that may be improper in a work "
+"setting. It is polite and recommended to tag any content containing nudity "
+"with #NSFW.  This filter can also match any other word/text you specify, and "
+"can thereby be used as a general purpose content filter."
+msgstr ""
+
+#: extend/addon/a/nsfw/Mod_Nsfw.php:44
+msgid "Comma separated list of keywords to hide"
+msgstr ""
+
+#: extend/addon/a/nsfw/Mod_Nsfw.php:44
+msgid "Word, /regular-expression/, lang=xx, lang!=xx"
+msgstr ""
+
+#: extend/addon/a/nsfw/Mod_Nsfw.php:52
+msgid "Not Safe For Work Settings"
+msgstr ""
+
+#: extend/addon/a/nsfw/Mod_Nsfw.php:52
+msgid "General Purpose Content Filter"
 msgstr ""
 
 #: extend/addon/a/opensearch/opensearch.php:34
@@ -11058,92 +11046,96 @@ msgctxt "opensearch"
 msgid "$Projectname"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:145
+#: extend/addon/a/opensearch/Mod_opensearch.php:31
+msgid "Search $Projectname"
+msgstr ""
+
+#: extend/addon/a/openstreetmap/openstreetmap.php:146
 msgid "View Larger"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:207
+#: extend/addon/a/openstreetmap/openstreetmap.php:208
 msgid "Tile Server URL"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:207
+#: extend/addon/a/openstreetmap/openstreetmap.php:208
 msgid ""
 "A list of <a href=\"http://wiki.openstreetmap.org/wiki/TMS\" target=\"_blank"
 "\">public tile servers</a>"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:208
+#: extend/addon/a/openstreetmap/openstreetmap.php:209
 msgid "Nominatim (reverse geocoding) Server URL"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:208
+#: extend/addon/a/openstreetmap/openstreetmap.php:209
 msgid ""
 "A list of <a href=\"http://wiki.openstreetmap.org/wiki/Nominatim\" target="
 "\"_blank\">Nominatim servers</a>"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:209
+#: extend/addon/a/openstreetmap/openstreetmap.php:210
 msgid "Default zoom"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:209
+#: extend/addon/a/openstreetmap/openstreetmap.php:210
 msgid ""
 "The default zoom level. (1:world, 18:highest, also depends on tile server)"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:210
+#: extend/addon/a/openstreetmap/openstreetmap.php:211
 msgid "Include marker on map"
 msgstr ""
 
-#: extend/addon/a/openstreetmap/openstreetmap.php:210
+#: extend/addon/a/openstreetmap/openstreetmap.php:211
 msgid "Include a marker on the map."
-msgstr ""
-
-#: extend/addon/a/qrator/Mod_qrator.php:10
-msgid "QR Generator (Qrator)"
-msgstr ""
-
-#: extend/addon/a/qrator/Mod_qrator.php:11
-msgid "Enter some text"
 msgstr ""
 
 #: extend/addon/a/qrator/qrator.php:44
 msgid "QR code"
 msgstr ""
 
-#: extend/addon/a/queueworker/Mod_Queueworker.php:77
-msgid "Max queueworker threads"
+#: extend/addon/a/qrator/Mod_qrator.php:12
+msgid "QR Generator (Qrator)"
+msgstr ""
+
+#: extend/addon/a/qrator/Mod_qrator.php:13
+msgid "Enter some text"
 msgstr ""
 
 #: extend/addon/a/queueworker/Mod_Queueworker.php:79
+msgid "Max queueworker threads"
+msgstr ""
+
+#: extend/addon/a/queueworker/Mod_Queueworker.php:81
 msgid "Minimum 4, default 4"
 msgstr ""
 
-#: extend/addon/a/queueworker/Mod_Queueworker.php:90
+#: extend/addon/a/queueworker/Mod_Queueworker.php:92
 msgid "Assume workers dead after"
 msgstr ""
 
-#: extend/addon/a/queueworker/Mod_Queueworker.php:92
+#: extend/addon/a/queueworker/Mod_Queueworker.php:94
 msgid "Minimum 120, default 300 seconds"
 msgstr ""
 
-#: extend/addon/a/queueworker/Mod_Queueworker.php:103
+#: extend/addon/a/queueworker/Mod_Queueworker.php:105
 msgid "Pause before starting next task"
 msgstr ""
 
-#: extend/addon/a/queueworker/Mod_Queueworker.php:105
+#: extend/addon/a/queueworker/Mod_Queueworker.php:107
 msgid "Minimum 100, default 100 microseconds"
 msgstr ""
 
-#: extend/addon/a/queueworker/Mod_Queueworker.php:113
+#: extend/addon/a/queueworker/Mod_Queueworker.php:115
 msgid "Queueworker Settings"
 msgstr ""
 
-#: extend/addon/a/rainbowtag/Mod_Rainbowtag.php:15
+#: extend/addon/a/rainbowtag/Mod_Rainbowtag.php:17
 msgid "Add some colour to tag clouds"
 msgstr ""
 
-#: extend/addon/a/rainbowtag/Mod_Rainbowtag.php:34
+#: extend/addon/a/rainbowtag/Mod_Rainbowtag.php:36
 msgid "Rainbow Tag"
 msgstr ""
 
@@ -11172,79 +11164,79 @@ msgstr ""
 msgid "Post to Zot"
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:25
+#: extend/addon/a/zotpost/Mod_zotpost.php:26
 msgid "Channel is required."
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:38
+#: extend/addon/a/zotpost/Mod_zotpost.php:39
 msgid "Zotpost Settings saved."
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:46
+#: extend/addon/a/zotpost/Mod_zotpost.php:47
 msgid ""
 "This addon app allows you to cross-post to other Zot services and channels. "
 "After installing the app, select it to configure the destination settings "
 "and preferences."
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:66
+#: extend/addon/a/zotpost/Mod_zotpost.php:67
 msgid "Zot server URL"
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:66
+#: extend/addon/a/zotpost/Mod_zotpost.php:67
 msgid "https://example.com"
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:70
+#: extend/addon/a/zotpost/Mod_zotpost.php:71
 msgid "Zot channel name"
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:74
+#: extend/addon/a/zotpost/Mod_zotpost.php:75
 msgid "Zot password"
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:78
+#: extend/addon/a/zotpost/Mod_zotpost.php:79
 msgid "Send public postings to Zot channel by default"
 msgstr ""
 
-#: extend/addon/a/zotpost/Mod_zotpost.php:82
+#: extend/addon/a/zotpost/Mod_zotpost.php:83
 msgid "Zotpost Settings"
 msgstr ""
 
-#: include/connections.php:200
+#: include/connections.php:204
 msgid "New window"
 msgstr ""
 
-#: include/connections.php:201
+#: include/connections.php:205
 msgid "Open the selected location in a different window or browser tab"
 msgstr ""
 
-#: include/connections.php:841 include/event.php:1517
+#: include/connections.php:845 include/event.php:1517
 msgid "Home, Voice"
 msgstr ""
 
-#: include/connections.php:842 include/event.php:1518
+#: include/connections.php:846 include/event.php:1518
 msgid "Home, Fax"
 msgstr ""
 
-#: include/connections.php:844 include/event.php:1520
+#: include/connections.php:848 include/event.php:1520
 msgid "Work, Voice"
 msgstr ""
 
-#: include/connections.php:845 include/event.php:1521
+#: include/connections.php:849 include/event.php:1521
 msgid "Work, Fax"
 msgstr ""
 
-#: include/connections.php:956
+#: include/connections.php:960
 msgid "No connections"
 msgstr ""
 
-#: include/connections.php:987
+#: include/connections.php:991
 #, php-format
 msgid "View all %s connections"
 msgstr ""
 
-#: include/connections.php:1024
+#: include/connections.php:1028
 #, php-format
 msgid "Network: %s"
 msgstr ""
@@ -11853,6 +11845,72 @@ msgctxt "edit_activity"
 msgid "Comment"
 msgstr ""
 
+#: include/attach.php:285 include/attach.php:411
+msgid "Item was not found."
+msgstr ""
+
+#: include/attach.php:303
+msgid "Unknown error."
+msgstr ""
+
+#: include/attach.php:606
+msgid "No source file."
+msgstr ""
+
+#: include/attach.php:630
+msgid "Cannot locate file to replace"
+msgstr ""
+
+#: include/attach.php:651
+msgid "Cannot locate file to revise/update"
+msgstr ""
+
+#: include/attach.php:815
+#, php-format
+msgid "File exceeds size limit of %d"
+msgstr ""
+
+#: include/attach.php:838
+#, php-format
+msgid "You have reached your limit of %1$.0f Mbytes attachment storage."
+msgstr ""
+
+#: include/attach.php:1045
+msgid "File upload failed. Possible system limit or action terminated."
+msgstr ""
+
+#: include/attach.php:1076
+msgid "Stored file could not be verified. Upload failed."
+msgstr ""
+
+#: include/attach.php:1154 include/attach.php:1171
+msgid "Path not available."
+msgstr ""
+
+#: include/attach.php:1221 include/attach.php:1392
+msgid "Empty pathname"
+msgstr ""
+
+#: include/attach.php:1249
+msgid "duplicate filename or path"
+msgstr ""
+
+#: include/attach.php:1274
+msgid "Path not found."
+msgstr ""
+
+#: include/attach.php:1345
+msgid "mkdir failed."
+msgstr ""
+
+#: include/attach.php:1348
+msgid "database storage failed."
+msgstr ""
+
+#: include/attach.php:1398
+msgid "Empty path"
+msgstr ""
+
 #: include/photos.php:158
 #, php-format
 msgid "Image exceeds website size limit of %lu bytes"
@@ -11870,10 +11928,16 @@ msgstr ""
 msgid "a new photo"
 msgstr ""
 
-#: include/photos.php:420
+#: include/photos.php:416
 #, php-format
 msgctxt "photo_upload"
 msgid "%1$s posted %2$s to %3$s"
+msgstr ""
+
+#: include/photos.php:419
+#, php-format
+msgctxt "photo_upload"
+msgid "%1$s posted %2$s"
 msgstr ""
 
 #: include/photos.php:764
@@ -11924,72 +11988,6 @@ msgstr ""
 
 #: include/api_auth.php:169
 msgid "This api method requires authentication"
-msgstr ""
-
-#: include/attach.php:285 include/attach.php:411
-msgid "Item was not found."
-msgstr ""
-
-#: include/attach.php:303
-msgid "Unknown error."
-msgstr ""
-
-#: include/attach.php:606
-msgid "No source file."
-msgstr ""
-
-#: include/attach.php:630
-msgid "Cannot locate file to replace"
-msgstr ""
-
-#: include/attach.php:651
-msgid "Cannot locate file to revise/update"
-msgstr ""
-
-#: include/attach.php:810
-#, php-format
-msgid "File exceeds size limit of %d"
-msgstr ""
-
-#: include/attach.php:833
-#, php-format
-msgid "You have reached your limit of %1$.0f Mbytes attachment storage."
-msgstr ""
-
-#: include/attach.php:1040
-msgid "File upload failed. Possible system limit or action terminated."
-msgstr ""
-
-#: include/attach.php:1071
-msgid "Stored file could not be verified. Upload failed."
-msgstr ""
-
-#: include/attach.php:1149 include/attach.php:1166
-msgid "Path not available."
-msgstr ""
-
-#: include/attach.php:1216 include/attach.php:1387
-msgid "Empty pathname"
-msgstr ""
-
-#: include/attach.php:1244
-msgid "duplicate filename or path"
-msgstr ""
-
-#: include/attach.php:1269
-msgid "Path not found."
-msgstr ""
-
-#: include/attach.php:1340
-msgid "mkdir failed."
-msgstr ""
-
-#: include/attach.php:1343
-msgid "database storage failed."
-msgstr ""
-
-#: include/attach.php:1393
-msgid "Empty path"
 msgstr ""
 
 #: include/auth.php:209
@@ -12372,7 +12370,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: view/theme/redbasic/php/config.php:20 view/theme/redbasic/php/config.php:23
-msgid "Focus (Hubzilla default)"
+msgid "Focus (default)"
 msgstr ""
 
 #: view/theme/redbasic/php/config.php:101

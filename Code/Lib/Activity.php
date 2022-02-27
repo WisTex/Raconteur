@@ -3619,7 +3619,8 @@ class Activity
                     $item['obj_type'] = 'Answer';
                 }
             }
-        } else {
+        }
+        else {
             if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_system && $pubstream)) {
                 logger('allowed: permission allowed', LOGGER_DATA);
                 $allowed = true;
