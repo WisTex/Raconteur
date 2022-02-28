@@ -3500,11 +3500,10 @@ function post_is_importable($channel_id,$item,$abook) {
 		if (! ($ab['abook_incl'] || $ab['abook_excl']) ) {
 			continue;
 		}
-
 		$evaluator = MessageFilter::evaluate($item,$ab['abook_incl'],$ab['abook_excl']);
 		// A negative assessment for any individual connections
 		// is an instant fail
-		if (! $evaluater) {
+		if (! $evaluator) {
 			return false;
 		}
 	}
