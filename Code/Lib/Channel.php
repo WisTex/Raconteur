@@ -187,7 +187,7 @@ class Channel
         self::create([
                 'account_id'       => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
                 'nickname'         => 'sys',
-                'name'             => 'System',
+                'name'             => ucfirst(basename(z_root())),
                 'permissions_role' => 'social',
                 'pageflags'        => 0,
                 'publish'          => 0,

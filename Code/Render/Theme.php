@@ -209,10 +209,10 @@ class Theme
                 if ($newroot != '' && substr($newroot, -1) != '/') {
                                $newroot .= '/';
                 }
-                    $template = $t->Theme::get_email_template($s, $newroot);
+                $template = $t->get_email_template($s, $newroot);
             }
-                $template = $t->Theme::get_email_template($s, $root);
-                return $template;
+            $template = $t->get_email_template($s, $root);
+            return $template;
         }
     }
 
