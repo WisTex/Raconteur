@@ -35,7 +35,10 @@ a.zrl:hover {
 .thread-separator {
 	margin-top: 0px;
 	margin-bottom: 2px;
-	border-top: 1px dotted #EEE;
+    margin-left: auto;
+    margin-right: auto;
+    width: 98%;
+	border-top: 3px solid #EEE;
 }
 
 body {
@@ -1897,4 +1900,8 @@ dl.bb-dl > dd > li {
 .justified-gallery {
     margin: 0 10px;
     padding: 10px 0;
+}
+
+.screenshot img {
+    max-width: 100%;
 }

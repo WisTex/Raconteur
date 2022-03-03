@@ -2,6 +2,7 @@
 
 namespace Code\Module;
 
+use App;
 use Code\Lib\Libzotdir;
 use Code\Lib\LibBlock;
 use Code\Web\Controller;
@@ -14,17 +15,39 @@ class Sites extends Controller
     public function get()
     {
 
+        if (!(isset($_REQUEST['aj']) && $_REQUEST['aj'])) {
+            $_SESSION['return_url'] = App::$query_string;
+        }
+
         $sql_extra = (($_REQUEST['project']) ? " and site_project = '" . escape_tags(protect_sprintf(dbesc($_REQUEST['project']))) . "' " : "");
 
         $desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of websites and dozens of projects and providers which make up the fediverse.');
 
-        $j = [];
+        $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
 
-        $r = q("select * from site where site_flags != 256 and site_dead = 0 $sql_extra order by site_update desc");
+        $j = [];
+        $total = 0;
+
+        $r = q(
+            "select count(site_url) as total from site 
+            where site_flags != 256 and site_dead = 0 $sql_extra 
+            order by site_update desc"
+        );
+        if ($r) {
+            App::set_pager_total($r[0]['total']);
+            $total = $r[0]['total'];
+        }
+
+        $r = q(
+            "select * from site 
+            where site_flags != 256 and site_dead = 0 $sql_extra 
+            order by site_update desc LIMIT %d OFFSET %d",
+            intval(App::$pager['itemspage']),
+            intval(App::$pager['start'])
+        );
 
 
         if ($r) {
-            $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
             foreach ($r as $rr) {
                 $found_block = false;
                 if ($blocked) {
@@ -113,12 +136,29 @@ class Sites extends Controller
             }
         }
 
-        $o = replace_macros(Theme::get_template('sitentry_header.tpl'), [
-            '$dirlbl' => t('Affiliated Sites'),
-            '$desc' => $desc,
-            '$entries' => $j,
-        ]);
+        if ($_REQUEST['aj']) {
+            if ($j) {
+                $o = replace_macros(Theme::get_template('sitesajax.tpl'), [ '$entries' => $j ]);
+            }
+            else {
+                $o = '<div id="content-complete"></div>';
+            }
+            echo $o;
+            killme();
+        }
+        else {
+            $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 
+            $o .= replace_macros(Theme::get_template('sitentry_header.tpl'), [
+                '$dirlbl' => t('Affiliated Sites'),
+                '$desc' => $desc,
+                '$entries' => $j,
+            ]);
+
+            if (!$j) {
+                $o .= '<div id="content-complete"></div>';
+            }
+        }
 
         return $o;
     }

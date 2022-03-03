@@ -4,7 +4,7 @@
 
 VINFO=`echo "<?php include 'boot.php'; echo PLATFORM_NAME . \" \" . STD_VERSION . \"\\n\";" | php`
 
-PROJECTNAME=zap
+PROJECTNAME=streams
 F9KVERSION=`echo $VINFO | awk '{print $2;}'`
 
 
@@ -72,7 +72,7 @@ then
 	sed -i '/^\"Plural-Forms/d' "$OUTFILE"
 else
     sed -i "s/SOME DESCRIPTIVE TITLE./$PROJECTNAME/g" "$OUTFILE"
-    sed -i "s/YEAR THE PACKAGE'S COPYRIGHT HOLDER/2010-2020 $PROJECTNAME/g" "$OUTFILE"
+    sed -i "s/YEAR THE PACKAGE'S COPYRIGHT HOLDER/2010-2022 $PROJECTNAME/g" "$OUTFILE"
     sed -i "s/FIRST AUTHOR <EMAIL@ADDRESS>, YEAR./Nobody, 2010/g" "$OUTFILE"
     sed -i "s/PACKAGE VERSION/$F9KVERSION/g" "$OUTFILE"
     sed -i "s/PACKAGE/$PROJECTNAME/g" "$OUTFILE"

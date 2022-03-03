@@ -687,7 +687,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
 
     $pathname = '';
 
-
+    
     // If we were called from the Photos module there is a slightly different mechanism
     // for setting the parent path than if we were called from the Files (cloud) module.
 
@@ -706,6 +706,11 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
         } else {
             $pathname = filepath_macro($album);
         }
+    }
+    elseif ($album && !$newalbum) {
+        // We can land here from the profile_photo and cover_photo modules.
+        // Just use the album provided.
+        $pathname = filepath_macro($album);
     }
 
     if (! $pathname) {

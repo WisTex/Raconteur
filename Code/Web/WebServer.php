@@ -124,7 +124,10 @@ class WebServer
 
     private function set_identities()
     {
-
+        if (! App::$install) {
+            App::$sys_channel = Channel::get_system();
+        }
+    
         if ((x($_GET, 'zid')) && (! App::$install)) {
             App::$query_string = strip_zids(App::$query_string);
             if (! local_channel()) {

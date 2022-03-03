@@ -38,6 +38,7 @@ class Infocon {
     }
 
     public static function from_c_comment($file) {
+
         $info = NULL;
         try {
             $code = file_get_contents($file);
@@ -45,11 +46,13 @@ class Infocon {
         catch (Exception $e) {
             ;
         }
+
         // Match and fetch the first C-style comment
         $result = preg_match("|/\*.*\*/|msU", $code, $matches);
 
         if ($result) {
-            $lines = explode("\n", $m[0]);
+
+            $lines = explode("\n", $matches[0]);
             foreach ($lines as $line) {
                 $line = trim($line, "\t\n\r */");
                 if ($line != "") {

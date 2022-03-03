@@ -290,7 +290,7 @@ class Libprofile
 
         $xchan = q("SELECT * from xchan where xchan_hash = '%s'",
             dbesc($profile['channel_hash'])
-        }
+        );
         $is_group = ($xchan && intval($xchan[0]['xchan_type']) === XCHAN_TYPE_GROUP);
 		
         $can_dm = perm_is_allowed($profile['uid'], (is_array($observer)) ? $observer['xchan_hash'] : EMPTY_STR, 'post_mail') && $is_group ;

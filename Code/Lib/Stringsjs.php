@@ -3,14 +3,14 @@
 namespace Code\Lib;
 
 use Code\Render\Theme;
-
+use Code\Lib\System;
 
 class Stringsjs {
 
     public static function strings()
     {
         return replace_macros(Theme::get_template('js_strings.tpl'), array(
-            '$icon'        => '/images/' . PLATFORM_NAME . '-64.png',
+            '$icon'        => System::get_project_icon(),
             '$delitem'     => t('Delete this item?'),
             '$comment'     => t('Comment'),
             '$showmore'    => sprintf(t('%s show all'), '<i class=\'fa fa-chevron-down\'></i>'),

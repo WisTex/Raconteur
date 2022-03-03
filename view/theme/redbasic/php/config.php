@@ -17,10 +17,10 @@ class RedbasicConfig {
 
 			if(in_array('view/theme/redbasic/schema/default.php', $files)) {
 				$scheme_choices['---'] = t('Default');
-				$scheme_choices['focus'] = t('Focus (Hubzilla default)');
+				$scheme_choices['focus'] = t('Focus (default)');
 			}
 			else {
-				$scheme_choices['---'] = t('Focus (Hubzilla default)');
+				$scheme_choices['---'] = t('Focus (default)');
 			}
 
 			foreach($files as $file) {

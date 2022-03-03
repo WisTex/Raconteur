@@ -167,32 +167,14 @@ class dba_pdo extends dba_driver
         }
     }
 
-    // These two functions assume that postgres standard_conforming_strings is set to off;
-    // which we perform during DB open.
-
     public function escapebin($str)
     {
-        if ($this->driver_dbtype === 'pgsql') {
-            return "\\\\x" . bin2hex($str);
-        } else {
-            return $this->escape($str);
-        }
+        return $this->escape($str);
     }
 
     public function unescapebin($str)
     {
-        if (gettype($str) === 'resource') {
-            $x = '';
-            while (!feof($str)) {
-                $x .= fread($str, 8192);
-            }
-            if (substr($x, 0, 2) === '\\x') {
-                $x = hex2bin(substr($x, 2));
-            }
-            return $x;
-        } else {
-            return $str;
-        }
+        return $str;
     }
 
 

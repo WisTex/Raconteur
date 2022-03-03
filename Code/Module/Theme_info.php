@@ -4,6 +4,7 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
+use Code\Render\Theme;
 
 class Theme_info extends Controller
 {
@@ -32,7 +33,7 @@ class Theme_info extends Controller
                 $theme_config = $th_config->get();
             }
         }
-        $info = get_theme_info($theme);
+        $info = Theme::get_info($theme);
         if ($info) {
             // unfortunately there will be no translation for this string
             $desc = $info['description'];
@@ -46,7 +47,7 @@ class Theme_info extends Controller
 
         $ret = [
             'theme' => $theme,
-            'img' => get_theme_screenshot($theme),
+            'img' => Theme::get_screenshot($theme),
             'desc' => $desc,
             'version' => $version,
             'credits' => $credits,

@@ -5,6 +5,7 @@ namespace Code\Module\Settings;
 use App;
 use Code\Lib\Libsync;
 use Code\Lib\Features;
+use Code\Lib\Addon;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -145,8 +146,8 @@ class Display
             foreach ($allowed_themes as $th) {
                 $f = $th;
 
-                $info = get_theme_info($th);
-                $compatible = check_plugin_versions($info);
+                $info = Theme::get_info($th);
+                $compatible = Addon::check_versions($info);
                 if (!$compatible) {
                     $themes[$f] = sprintf(t('%s - (Incompatible)'), $f);
                     continue;

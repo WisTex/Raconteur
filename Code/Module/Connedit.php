@@ -414,7 +414,7 @@ class Connedit extends Controller
 
             if ($cmd === 'resetphoto') {
                 q(
-                    "update xchan set xchan_photo_date = '2001-01-01 00:00:00' where xchan_hash = '%s'",
+                    "update xchan set xchan_photo_date = '2001-01-01 00:00:00', xchan_name_date = '2001-01-01 00:00:00' where xchan_hash = '%s'",
                     dbesc($orig_record['xchan_hash'])
                 );
                 $cmd = 'refresh';
