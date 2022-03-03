@@ -614,7 +614,7 @@ function item_message_id()
 {
 
     try {
-        $hash = Uuid::v4();
+        $hash = (string) Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -635,7 +635,7 @@ function photo_new_resource()
 {
 
     try {
-        $hash = Uuid::v4();
+        $hash = (string) Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -670,7 +670,7 @@ function new_uuid()
 {
 
     try {
-        $hash = Uuid::v4();
+        $hash = (string) Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
