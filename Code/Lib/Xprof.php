@@ -1,5 +1,5 @@
 <?php
-namespace Code\Lib\Xprof;
+namespace Code\Lib;
 
 class Xprof {
 

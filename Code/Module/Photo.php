@@ -22,8 +22,6 @@ class Photo extends Controller
 
     public function init()
     {
-
-
         if (ActivityStreams::is_as_request()) {
             $sigdata = HTTPSig::verify(EMPTY_STR);
             if ($sigdata['portable_id'] && $sigdata['header_valid']) {

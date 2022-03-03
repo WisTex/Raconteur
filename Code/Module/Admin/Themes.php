@@ -126,7 +126,7 @@ class Themes
                 }
             }
 
-            $screenshot = array(get_theme_screenshot($theme), t('Screenshot'));
+            $screenshot = array(Theme::get_screenshot($theme), t('Screenshot'));
             if (!stristr($screenshot[0], $theme)) {
                 $screenshot = null;
             }
@@ -142,7 +142,7 @@ class Themes
                 '$plugin' => $theme,
                 '$status' => $status,
                 '$action' => $action,
-                '$info' => get_theme_info($theme),
+                '$info' => Theme::get_info($theme),
                 '$function' => 'themes',
                 '$admin_form' => $admin_form,
                 '$str_author' => t('Author: '),
@@ -161,7 +161,7 @@ class Themes
         $xthemes = [];
         if ($themes) {
             foreach ($themes as $th) {
-                $xthemes[] = array($th['name'], (($th['allowed']) ? "on" : "off"), get_theme_info($th['name']));
+                $xthemes[] = array($th['name'], (($th['allowed']) ? "on" : "off"), Theme::get_info($th['name']));
             }
         }
 

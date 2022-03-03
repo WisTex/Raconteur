@@ -9,7 +9,7 @@ require_once('include/security.php');
 /**
  * @file include/permissions.php
  *
- * This file conntains functions to check and work with permissions.
+ * This file contains functions to check and work with permissions.
  *
  */
 

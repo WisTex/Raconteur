@@ -20,8 +20,8 @@ class System
 
     public static function get_site_name()
     {
-        if (is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['sitename']) {
-            return App::$config['system']['sitename'];
+        if (is_array(App::$sys_channel) && isset(App::$sys_channel['channel_name'])) {
+            return App::$sys_channel['channel_name'];
         }
         return '';
     }
@@ -32,7 +32,8 @@ class System
         $name = self::get_site_name();
         if ($name) {
             $words = explode(' ', $name);
-            $project = strtolower(URLify::transliterate($words[0]));
+            // restrict result to characters allowed by the nodeinfo specification
+            $project = preg_replace('/[^a-z0-9-]/', '-', strtolower(URLify::transliterate($words[0])));
         }
         if (!$project) {
             $project = self::get_platform_name();
@@ -52,9 +53,8 @@ class System
 
     public static function get_project_icon()
     {
-        $sys = Channel::get_system();
-        if ($sys) {
-            return z_root() . '/photo/profile/l/' . $sys['channel_id'];
+        if (isset(App::$sys_channel['xchan_photo_l'])) {
+            return App::$sys_channel['xchan_photo_l'];
         }
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon', App::$config['system'])) {
             return App::$config['system']['icon'];
@@ -102,9 +102,6 @@ class System
 
     public static function get_site_icon()
     {
-        if (is_array(App::$config) && is_array(App::$config['system']) && isset(App::$config['system']['site_icon_url']) && App::$config['system']['site_icon_url']) {
-            return App::$config['system']['site_icon_url'];
-        }
         return self::get_project_icon();
     }
 

@@ -35,6 +35,7 @@ use Code\Lib\Libacl;
 use Code\Lib\Head;
 use Code\Lib\Features;
 use Code\Render\Theme;
+use Code\Lib\Config;
 
     
 require_once('include/event.php');
@@ -50,6 +51,10 @@ class Cdav extends Controller
         $record = null;
         $channel_login = false;
 
+        if (! Config::Get('system','cdav')) {
+            http_status_exit(404, 'Not found');
+        }
+    
         if ((argv(1) !== 'calendar') && (argv(1) !== 'addressbook')) {
             foreach (['REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION'] as $head) {
                 /* Basic authentication */
@@ -251,6 +256,11 @@ class Cdav extends Controller
         if (!local_channel()) {
             return;
         }
+
+        if (! Config::Get('system','cdav')) {
+            http_status_exit(404, 'Not found');
+        }
+
 
         if ((argv(1) === 'addressbook') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {
             return;
@@ -884,6 +894,10 @@ class Cdav extends Controller
 
         if (!local_channel()) {
             return;
+        }
+
+        if (! Config::Get('system','cdav')) {
+            http_status_exit(404, 'Not found');
         }
 
         if ((argv(1) === 'addressbook') && (!Apps::system_app_installed(local_channel(), 'CardDAV'))) {

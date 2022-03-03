@@ -1751,7 +1751,7 @@ class Activity
         // information
         $ret = self::encode_person($sys, true, true);
 
-        $ret['type'] = ((Channel::is_group($sys['channel_id'])) ? 'Group' : 'Service');
+        $ret['type'] = self::xchan_type_to_type(intval($sys['xchan_type']));
         $ret['id'] = z_root();
         $ret['alsoKnownAs'] = z_root() . '/channel/sys';
         $auto_follow = false;
@@ -1779,7 +1779,6 @@ class Activity
             ];
         }
 
-        $ret['summary'] = bbcode(get_config('system', 'siteinfo', ''), ['export' => true]);
         $ret['source'] = [
             'mediaType' => 'text/x-multicode',
             'summary' => get_config('system', 'siteinfo', '')
@@ -2812,17 +2811,17 @@ class Activity
 
         if (array_key_exists('published', $act->data) && $act->data['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->data['published']);
-        } elseif (array_key_exists('published', $act->obj) && $act->obj['published']) {
+        } elseif (is_array($acct->obj) && array_key_exists('published', $act->obj) && $act->obj['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->obj['published']);
         }
         if (array_key_exists('updated', $act->data) && $act->data['updated']) {
             $s['edited'] = datetime_convert('UTC', 'UTC', $act->data['updated']);
-        } elseif (array_key_exists('updated', $act->obj) && $act->obj['updated']) {
+        } elseif (is_array($act->obj) && array_key_exists('updated', $act->obj) && $act->obj['updated']) {
             $s['edited'] = datetime_convert('UTC', 'UTC', $act->obj['updated']);
         }
         if (array_key_exists('expires', $act->data) && $act->data['expires']) {
             $s['expires'] = datetime_convert('UTC', 'UTC', $act->data['expires']);
-        } elseif (array_key_exists('expires', $act->obj) && $act->obj['expires']) {
+        } elseif (is_array($act->obj) && array_key_exists('expires', $act->obj) && $act->obj['expires']) {
             $s['expires'] = datetime_convert('UTC', 'UTC', $act->obj['expires']);
         }
 
@@ -3044,7 +3043,7 @@ class Activity
 
         if (
             $generator && array_key_exists('type', $generator)
-            && in_array($generator['type'], ['Application', 'Service']) && array_key_exists('name', $generator)
+            && in_array($generator['type'], ['Application', 'Service', 'Organization']) && array_key_exists('name', $generator)
         ) {
             $s['app'] = escape_tags($generator['name']);
         }
@@ -3620,7 +3619,8 @@ class Activity
                     $item['obj_type'] = 'Answer';
                 }
             }
-        } else {
+        }
+        else {
             if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_system && $pubstream)) {
                 logger('allowed: permission allowed', LOGGER_DATA);
                 $allowed = true;
@@ -4264,6 +4264,22 @@ class Activity
                 return XCHAN_TYPE_APPLICATION;
             default:
                 return XCHAN_TYPE_UNKNOWN;
+        }
+    }
+
+    public static function xchan_type_to_type($type)
+    {
+        switch ($type) {
+            case XCHAN_TYPE_GROUP;
+                return 'Group';
+            case XCHAN_TYPE_SERVICE;
+                return 'Service';
+            case XCHAN_TYPE_ORGANIZATION;
+                return 'Organization';
+            case XCHAN_TYPE_APPLICATION;
+                return 'Application';
+            default:
+                return 'Person';
         }
     }
 

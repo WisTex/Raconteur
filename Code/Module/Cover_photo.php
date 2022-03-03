@@ -167,7 +167,7 @@ class Cover_photo extends Controller
                     $orig_srcw = ($srcW / $scaled_width) * $base_image['width'];
                     $orig_srch = ($srcH / $scaled_height) * $base_image['height'];
 
-                    $im->cropImageRect(1200, 435, $orig_srcx, $orig_srcy, $orig_srcw, $orig_srch);
+                    $im->cropImageRect(1200, 675, $orig_srcx, $orig_srcy, $orig_srcw, $orig_srch);
 
                     $aid = get_account_id();
 
@@ -188,12 +188,12 @@ class Cover_photo extends Controller
 
                     $r1 = $im->storeThumbnail($p, PHOTO_RES_COVER_1200);
 
-                    $im->doScaleImage(850, 310);
+                    $im->doScaleImage(850, 478);
                     $p['imgscale'] = 8;
 
                     $r2 = $im->storeThumbnail($p, PHOTO_RES_COVER_850);
 
-                    $im->doScaleImage(425, 160);
+                    $im->doScaleImage(425, 239);
                     $p['imgscale'] = 9;
 
                     $r3 = $im->storeThumbnail($p, PHOTO_RES_COVER_425);
@@ -417,7 +417,7 @@ class Cover_photo extends Controller
             $o .= replace_macros(Theme::get_template('cover_photo.tpl'), [
                 '$user' => App::$channel['channel_address'],
                 '$info' => t('Your cover photo may be visible to anybody on the internet'),
-                '$existing' => get_cover_photo(local_channel(), 'array', PHOTO_RES_COVER_850),
+                '$existing' => Channel::get_cover_photo(local_channel(), 'array', PHOTO_RES_COVER_850),
                 '$lbl_upfile' => t('Upload File:'),
                 '$lbl_profiles' => t('Select a profile:'),
                 '$title' => t('Change Cover Photo'),

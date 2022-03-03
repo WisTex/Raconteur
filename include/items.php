@@ -170,10 +170,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	}
 
 	// This is a somewhat expensive operation but important.
-	// Don't send this item to anybody who isn't allowed to see it
+	// Don't send this item to anybody who doesn't have the deliver_stream permission
 
-	// Note: commented out - no longer needed in zap and later projects because we do not allow this permission to be changed.
-	// $recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+    $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
 
 	// remove any upstream recipients from our list.
 	// If it is ourself we'll add it back in a second.
@@ -3501,11 +3500,10 @@ function post_is_importable($channel_id,$item,$abook) {
 		if (! ($ab['abook_incl'] || $ab['abook_excl']) ) {
 			continue;
 		}
-
 		$evaluator = MessageFilter::evaluate($item,$ab['abook_incl'],$ab['abook_excl']);
 		// A negative assessment for any individual connections
 		// is an instant fail
-		if (! $evaluater) {
+		if (! $evaluator) {
 			return false;
 		}
 	}
@@ -4134,7 +4132,7 @@ function fetch_post_tags($items, $link = false) {
 				}
 				else {
 					if ($t['oid'] == $items[$x]['id']) {
-						if (! is_array($items[$x]['term'])) {
+						if (! (isset($items[$x]['term']) && is_array($items[$x]['term']))) {
 							$items[$x]['term'] = [];
 						}
 						$items[$x]['term'][] = $t;

@@ -34,7 +34,8 @@ class Zotfinger
                 '(request-target)' => 'post ' . get_request_string($resource)
             ];
             $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
-        } else {
+        }
+        else {
             $h = ['Accept: application/x-nomad+json, application/x-zot+json'];
         }
 

@@ -286,8 +286,6 @@ function xchan_change_key($oldx, $newx, $data)
         'item'         => 'owner_xchan',
         'item'         => 'author_xchan',
         'item'         => 'source_xchan',
-        'mail'         => 'from_xchan',
-        'mail'         => 'to_xchan',
         'shares'       => 'share_xchan',
         'source'       => 'src_channel_xchan',
         'source'       => 'src_xchan',

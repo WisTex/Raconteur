@@ -17,8 +17,6 @@ CREATE TABLE "abook" (
   "abook_channel" bigint  NOT NULL,
   "abook_xchan" text NOT NULL DEFAULT '',
   "abook_alias" text NOT NULL DEFAULT '',
-  "abook_my_perms" bigint NOT NULL,
-  "abook_their_perms" bigint NOT NULL,
   "abook_closeness" numeric(3)  NOT NULL DEFAULT '99',
   "abook_created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "abook_updated" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -46,8 +44,6 @@ CREATE TABLE "abook" (
   create index  "abook_channel" on abook  ("abook_channel");
   create index  "abook_xchan"  on abook ("abook_xchan");
   create index  "abook_alias"  on abook ("abook_alias");
-  create index  "abook_my_perms"  on abook ("abook_my_perms");
-  create index  "abook_their_perms"  on abook ("abook_their_perms");
   create index  "abook_closeness" on abook  ("abook_closeness");
   create index  "abook_created"  on abook ("abook_created");
   create index  "abook_updated"  on abook ("abook_updated");
@@ -180,7 +176,7 @@ CREATE TABLE "attach" (
   "os_storage" smallint NOT NULL DEFAULT '0',
   "os_path" text NOT NULL,
   "display_path" text NOT NULL,
-  "content" bytea NOT NULL,
+  "content" text NOT NULL,
   "created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "edited" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "allow_cid" text NOT NULL,
@@ -373,20 +369,6 @@ CREATE TABLE "config" (
   PRIMARY KEY ("id"),
   UNIQUE ("cat","k")
 );
-CREATE TABLE "conv" (
-  "id" serial  NOT NULL,
-  "guid" text NOT NULL,
-  "recips" text NOT NULL,
-  "uid" bigint NOT NULL,
-  "creator" text NOT NULL,
-  "created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
-  "updated" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
-  "subject" text NOT NULL,
-  PRIMARY KEY ("id")
-);
-create index "conv_created_idx" on conv ("created");
-create index "conv_updated_idx" on conv ("updated");
-
 CREATE TABLE IF NOT EXISTS "dreport" (
   "dreport_id" serial NOT NULL,
   "dreport_channel" int NOT NULL DEFAULT '0',
@@ -757,51 +739,6 @@ CREATE TABLE listeners (
 create index "target_id_idx" on listeners ("target_id");
 create index "portable_id_idx" on listeners ("portable_id");
 create index "ltype_idx" on listeners ("ltype");
-
-CREATE TABLE "mail" (
-  "id" serial  NOT NULL,
-  "convid" bigint  NOT NULL DEFAULT '0',
-  "conv_guid" text NOT NULL,
-  "mail_flags" bigint  NOT NULL DEFAULT '0',
-  "from_xchan" text NOT NULL DEFAULT '',
-  "to_xchan" text NOT NULL DEFAULT '',
-  "account_id" bigint  NOT NULL DEFAULT '0',
-  "channel_id" bigint  NOT NULL DEFAULT '0',
-  "mail_mimetype" varchar(64) NOT NULL DEFAULT '0',
-  "title" text NOT NULL,
-  "body" text NOT NULL,
-  "sig" text NOT NULL,
-  "attach" text NOT NULL DEFAULT '',
-  "mid" text NOT NULL,
-  "parent_mid" text NOT NULL,
-  "mail_deleted" smallint NOT NULL DEFAULT '0',
-  "mail_replied" smallint NOT NULL DEFAULT '0',
-  "mail_isreply" smallint NOT NULL DEFAULT '0',
-  "mail_seen" smallint NOT NULL DEFAULT '0',
-  "mail_recalled" smallint NOT NULL DEFAULT '0',
-  "mail_obscured" smallint NOT NULL DEFAULT '0',
-  "mail_raw" smallint NOT NULL DEFAULT '0',
-  "created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
-  "expires" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
-  PRIMARY KEY ("id")
-);
-create index "mail_convid" on mail ("convid");
-create index "mail_conv_guid" on mail ("conv_guid");
-create index "mail_created" on mail ("created");
-create index "mail_flags" on mail ("mail_flags");
-create index "mail_account_id" on mail ("account_id");
-create index "mail_channel_id" on mail ("channel_id");
-create index "mail_from_xchan" on mail ("from_xchan");
-create index "mail_to_xchan" on mail ("to_xchan");
-create index "mail_mid" on mail ("mid");
-create index "mail_parent_mid" on mail ("parent_mid");
-create index "mail_expires" on mail ("expires");
-create index "mail_deleted" on mail ("mail_deleted");
-create index "mail_replied" on mail ("mail_replied");
-create index "mail_isreply" on mail ("mail_isreply");
-create index "mail_seen" on mail ("mail_seen");
-create index "mail_recalled" on mail ("mail_recalled");
-create index "mail_obscured" on mail ("mail_obscured");
 CREATE TABLE "menu" (
   "menu_id" serial  NOT NULL,
   "menu_channel_id" bigint  NOT NULL DEFAULT '0',
@@ -948,7 +885,7 @@ CREATE TABLE "photo" (
   "height" numeric(6) NOT NULL,
   "width" numeric(6) NOT NULL,
   "filesize" bigint  NOT NULL DEFAULT '0',
-  "content" bytea NOT NULL,
+  "content" text NOT NULL,
   "imgscale" numeric(3) NOT NULL DEFAULT '0',
   "profile" numeric(1) NOT NULL DEFAULT '0',
   "photo_usage" smallint NOT NULL DEFAULT '0',
@@ -1433,7 +1370,7 @@ CREATE UNIQUE INDEX addressbooks_ukey
 CREATE TABLE cards (
     id SERIAL NOT NULL,
     addressbookid INTEGER NOT NULL,
-    carddata BYTEA,
+    carddata text,
     uri VARCHAR(200),
     lastmodified INTEGER,
     etag VARCHAR(32),
@@ -1462,7 +1399,7 @@ CREATE INDEX addressbookchanges_addressbookid_synctoken_ix
 
 CREATE TABLE calendarobjects (
     id SERIAL NOT NULL,
-    calendardata BYTEA,
+    calendardata text NOT NULL,
     uri VARCHAR(200),
     calendarid INTEGER NOT NULL,
     lastmodified INTEGER,
@@ -1559,7 +1496,7 @@ CREATE INDEX calendarchanges_calendarid_synctoken_ix
 CREATE TABLE schedulingobjects (
     id SERIAL NOT NULL,
     principaluri VARCHAR(255),
-    calendardata BYTEA,
+    calendardata text,
     uri VARCHAR(200),
     lastmodified INTEGER,
     etag VARCHAR(32),
@@ -1616,7 +1553,7 @@ CREATE TABLE propertystorage (
     path VARCHAR(1024) NOT NULL,
     name VARCHAR(100) NOT NULL,
     valuetype INT,
-    value BYTEA
+    value text
 );
 
 ALTER TABLE ONLY propertystorage

@@ -3,6 +3,8 @@
 namespace Code\Lib;
 
 use App;
+use DOMDocument;
+use DOMXPath;
 use Code\Lib\Cache;
 use Code\Extend\Hook;
 use Code\Render\Theme;
