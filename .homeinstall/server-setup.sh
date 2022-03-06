@@ -306,27 +306,28 @@ function install_php {
 }
 
 function install_composer {
-
-    # We need to add something here, to check if composer is already installed
-
-    EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
-
-    if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]
+    print_info "We check if Composer is already installed"
+    if [ ! -f /usr/local/bin/composer ]
     then
-        >&2 echo 'ERROR: Invalid installer checksum'
+        EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
+        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+        ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+        if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]
+        then
+            >&2 echo 'ERROR: Invalid installer checksum'
+            rm composer-setup.php
+            exit 1
+        fi
+        php composer-setup.php --quiet
+        RESULT=$?
         rm composer-setup.php
-        exit 1
+        exit $RESULT
+        # We install Composer globally
+        mv composer.phar /usr/local/bin/composer
+        print_info "Composer was successfully installed."
+    else
+        print_info "Composer is already installed on this system."
     fi
-
-    php composer-setup.php --quiet
-    RESULT=$?
-    rm composer-setup.php
-    exit $RESULT
-
-    # We install Composer globally
-    mv composer.phar /usr/local/bin/composer
 }
 
 function install_mysql {
@@ -570,9 +571,14 @@ function repo_name {
 }
 
 function install_website {
-    # We'll also keep things here for future forks
-    print_info "installing addons..."
     cd $install_path/
+    # Pull in external libraries with composer. Leave off the --no-dev
+    # option if you are a developer and wish to install addditional CI/CD tools.
+    composer install --no-dev
+
+    # We install addons
+    # We'll keep stuff here for possible future forks so that the script can be the same
+    print_info "installing addons..."
     if [ $repository = "streams" ]
     then
         print_info "Streams"
@@ -590,7 +596,7 @@ function install_website {
     fi
     mkdir -p "cache/smarty3"
     mkdir -p "store"
-    chmod -R 777 store
+    chmod -R 700 store cache
     touch .htconfig.php
     chmod ou+w .htconfig.php
     cd /var/www/
