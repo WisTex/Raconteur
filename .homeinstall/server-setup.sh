@@ -240,7 +240,7 @@ function add_vhost {
 
 function add_nginx_conf {
     print_info "adding nginx conf files"
-    sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx-repository.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx-server.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
     ln -s /etc/nginx/sites-available/${le_domain}.conf /etc/nginx/sites-enabled/
     if [ ! -f /etc/nginx/snippets/adminer-nginx.inc ]
     then
@@ -321,7 +321,7 @@ function install_composer {
         php composer-setup.php --quiet
         RESULT=$?
         rm composer-setup.php
-        exit $RESULT
+        # exit $RESULT
         # We install Composer globally
         mv composer.phar /usr/local/bin/composer
         print_info "Composer was successfully installed."
