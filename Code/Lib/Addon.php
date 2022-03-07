@@ -3,7 +3,9 @@
 namespace Code\Lib;
 
 use App;
+use Exception;
 use Code\Lib\Infocon;
+use Code\Lib\Yaml;
     
 class Addon {
 
@@ -301,12 +303,24 @@ class Addon {
     {
 
         $info =  null;
+        $has_yaml = true;
+    
         if (is_file("addon/$plugin/$plugin.yml")) {
             $info = Infocon::from_file("addon/$plugin/$plugin.yml");
         }
         elseif (is_file("addon/$plugin/$plugin.php")) {
+            $has_yaml = false;
             $info = Infocon::from_c_comment("addon/$plugin/$plugin.php");
         }
+        if ($info && ! $has_yaml) {
+            try {
+                file_put_contents("addon/$plugin/$plugin.yml",Yaml::encode($info));
+            }
+            catch (Exception $e) {
+                ;
+            }
+        }
+    
         return $info ? $info : [ 'name' => $plugin ] ;
     }
 

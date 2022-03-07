@@ -15,7 +15,7 @@ class Infocon {
         $info = NULL;
         if (file_exists($name)) {
             try {
-                $info = Yaml::parseFile($name, Yaml::PARSE_DATETIME);
+                $info = Yaml::parseFile($name);
             }
             catch (Exception $e) {
                 ;
@@ -28,7 +28,7 @@ class Infocon {
         $info = NULL;
         if ($str) {
             try {
-                $info = Yaml::parse($str, Yaml::PARSE_DATETIME);
+                $info = Yaml::parse($str);
             }
             catch (Exception $e) {
                 ;

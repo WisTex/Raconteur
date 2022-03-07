@@ -150,7 +150,7 @@ class Sites extends Controller
             $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 
             $o .= replace_macros(Theme::get_template('sitentry_header.tpl'), [
-                '$dirlbl' => t('Affiliated Sites'),
+                '$dirlbl' => t('Communities'),
                 '$desc' => $desc,
                 '$entries' => $j,
             ]);
