@@ -3,7 +3,7 @@
 namespace Code\Module;
 
 use Code\Web\Controller;
-use Zotabs\Lib\Account;
+use Zotlabs\Lib\Account;
     
 class Email_resend extends Controller
 {
