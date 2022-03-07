@@ -6,7 +6,7 @@ use Code\Lib\Config;
 
 class Statistics {
 
-    function get_channels_all()
+    public static function get_channels_all()
     {
         $r = q(
             "select count(channel_id) as channels_total from channel left join account on account_id = channel_account_id
@@ -17,7 +17,7 @@ class Statistics {
         return $total;
     }
 
-    function get_channels_6mo()
+    public static function get_channels_6mo()
     {
         $r = q(
             "select channel_id from channel left join account on account_id = channel_account_id
@@ -30,7 +30,7 @@ class Statistics {
         return $total;
     }
 
-    function get_channels_1mo()
+    public static function get_channels_1mo()
     {
         $r = q(
             "select channel_id from channel left join account on account_id = channel_account_id
@@ -43,7 +43,7 @@ class Statistics {
         return $total;
     }
 
-    function get_posts()
+    public static function get_posts()
     {
         $posts = q("SELECT COUNT(*) AS local_posts FROM item WHERE item_wall = 1 and id = parent");
         $total = ($posts) ? intval($posts[0]['local_posts']) : 0;
@@ -51,7 +51,7 @@ class Statistics {
         return $total;
     }
 
-    function get_comments()
+    public static function get_comments()
     {
         $posts = q("SELECT COUNT(*) AS local_posts FROM item WHERE item_wall = 1 and id != parent");
         $total = ($posts) ? intval($posts[0]['local_posts']) : 0;

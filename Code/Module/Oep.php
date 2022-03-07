@@ -1,4 +1,5 @@
-<?php
+
+    <?php
 
 namespace Code\Module;
 
@@ -427,9 +428,6 @@ class Oep extends Controller
 
     public function oep_profile_reply($args)
     {
-
-
-        require_once('include/channel.php');
 
         $url = $args['url'];
 

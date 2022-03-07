@@ -70,7 +70,7 @@ class Onepoll
             : datetime_convert('UTC', 'UTC', $contact['abook_updated'] . ' - 2 days')
         );
 
-		if (in_array($contact['xchan_network'],['nomad']['zot6'])) {
+		if (in_array($contact['xchan_network'],['nomad','zot6'])) {
             // update permissions
 
             $x = Libzot::refresh($contact, $importer);
