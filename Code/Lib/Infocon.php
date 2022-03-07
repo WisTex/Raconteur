@@ -5,7 +5,7 @@ namespace Code\Lib;
  * Infocon class: extract information and configuration structures from source modules.
  */
 
-use Exception;        
+use Exception;
 use Symfony\Component\Yaml\Yaml;
 
 
