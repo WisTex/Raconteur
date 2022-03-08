@@ -203,17 +203,22 @@ function print_warn {
 }
 
 function stop_server {
-    if [ $webserver = "nginx" ]
+    # If another website was already installed on this computer we stop the webserver
+    if [ $webserver = "nginx" ] && [ -d /etc/nginx ]
     then
         print_info "stopping nginx webserver..."
         systemctl stop nginx
-    elif [ $webserver = "apache" ]
+    elif [ $webserver = "apache" ] && [ -d /etc/apache2 ]
     then
         print_info "stopping apache webserver..."
         systemctl stop apache2
     fi
-    print_info "stopping mysql db..."
-    systemctl stop mariadb
+    # We probably don't need this wether we hav a db server installed or not
+    # if [ -d /etc/mysql ]
+    # then
+    #     print_info "stopping mysql db..."
+    #     systemctl stop mariadb
+    # fi
 }
 
 function install_apache {
@@ -283,7 +288,7 @@ function install_sury_repo {
 
 function php_version {
     # We need to be able to find php version and use  it with install_php
-    $phpversion = $(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
+    phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
 }
 
 function install_php {
@@ -303,6 +308,7 @@ function install_php {
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/apache2/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/apache2/php.ini
     fi
+    print_info "we'll be using PHP ${phpversion}"
 }
 
 function install_composer {
@@ -336,15 +342,16 @@ function install_mysql {
     then
         die "mysqlpass not set in $configfile"
     fi
-	if type mysql ; then
-		echo "Yes, mysql is installed"
-	else
-		echo "mariadb-server"
-		nocheck_install "mariadb-server"
-        systemctl status mariadb
-        systemctl start mariadb
-        mysql --user=root <<_EOF_
-UPDATE mysql.user SET Password=PASSWORD('${mysqlpass}') WHERE User='root';
+        if type mysql
+        then
+            echo "mysql is already installed"
+        else
+            echo "we install mariadb-server"
+            nocheck_install "mariadb-server"
+            systemctl is-active --quiet mariadb && echo "MariaDB is running"
+            mysql -u root <<_EOF_
+ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysqlpass}';
+#UPDATE mysql.user SET Password=PASSWORD('${mysqlpass}') WHERE User='root';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
@@ -800,18 +807,17 @@ install_composer
 install_mysql
 install_adminer
 create_website_db
-run_freedns
-install_run_selfhost
-ping_domain
-configure_cron_freedns
-configure_cron_selfhost
-
 if [ "$le_domain" != "localhost" ]
 then
+    run_freedns
+    install_run_selfhost
+    ping_domain
+    configure_cron_freedns
+    configure_cron_selfhost
     install_letsencrypt
     check_https
 else
-    print_info "is localhost - skipped installation of letsencrypt and configuration of apache for https"
+    print_info "domain is localhost - skipped some stuff (https, DynDNS...)"
 fi
 
 install_website
