@@ -3,8 +3,8 @@
 
 ## Disclaimers
 
-- This script does work with Debian 11 only.
-- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to install several hub/instances on the same server, though.
+- This script does work with Debian 10 or 11 only.
+- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to ins$
 
 ## Preconditions
 
@@ -16,7 +16,7 @@ Hardware
 
 Software
 
-+ Fresh installation of Debian 11 (Bullseye)
++ Fresh installation of Debian 11 (Bullseye) or Debian 10 (Buster)
 + Router with open ports 80 and 443 for your web server
 
 You can of course run the script on a VPS or any distant server as long as the above sotfware requirements are satisfied.
@@ -72,23 +72,21 @@ Switch the verification on/off (1/0)
   - backup to external disk (certificates, database, /var/www/)
   - renew certfificate (letsencrypt)
   - update of your hub/instance (git)
-  - update of Debian
+  - update of Debian (it will also add sury repository for PHP 8.*)
   - restart
 + create cron jobs for
   - DynDNS (selfHOST.de or freedns.afraid.org) every 5 minutes
   - Run.php for your hub/instance every 10 minutes
   - daily maintenance script every day at 05:30
 
-The script is known to work without adjustments with
+The script is known to work without adjustments with a Mini-PC or a VPS with Debian 11 (bullseye) or Debian 10 (buster) installed. It probably works but needs testing with the following:
 
 + Hardware
-  - Mini-PC with Debian 11 (bullseye), or
-  - Rapberry 3 with Raspbian, (previous version of the script, with Debian 10)
-  - Rapberry 4 with Raspbian, (previous version too, with Debian 10)
+  - Rapberry 3 with Raspbian,
+  - Rapberry 4 with Raspbian,
 + DynDNS
   - selfHOST.de
   - freedns.afraid.org
-
 
 # Step-by-Step - some Details
 
@@ -127,8 +125,6 @@ The cost is 1,50 € per month (2019).
 ...for example register at freedns.afraid.org
 
 ## Note on Rasperry 
-
-Previous versions of the script were tested with a Raspberry 3 and a Raspberry 4 both with Raspian, Debian 10.
 
 It is recommended to run the Raspi without graphical frontend (X-Server). Use...
 

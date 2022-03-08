@@ -5,7 +5,7 @@
 #
 # This file automates the installation of your website using the Streams repository
 # (https://codeberg.org/streams/streams)
-# under Debian Linux "Bullseye"
+# under Debian Linux "Bullseye" or "Buster"
 #
 # 1) Copy the file "server-config.txt.template" to "server-config.txt"
 #       Follow the instuctions there
@@ -25,7 +25,7 @@
 # under Debian Linux. It will:
 # - install
 #        * apache or nginx webserver,
-#        * php (adding sury repository to get php 8.* on Debian 11),
+#        * php (adding sury repository to get php 8.* on Debian 11 or 10),
 #        * composer
 #        * mariadb - the database your website,
 #        * adminer,
@@ -54,7 +54,7 @@
 #
 # The script makes a (daily) backup of all relevant files
 # - /var/lib/mysql/ > database
-# - /var/www/ > hubzilla/zap/misty from git repository
+# - /var/www/ > your websites
 # - /etc/letsencrypt/ > certificates
 #
 # The backup will be written on an external disk compatible to LUKS+ext4 (see server-config.txt)
@@ -92,7 +92,10 @@ function check_sanity {
     fi
     if ! grep -q 'Linux 11' /etc/issue
     then
-        die "Linux 11 (bullseye) is supported only"
+        if ! grep -q 'Linux 10' /etc/issue
+        then
+            die "Debian 11 (bullseye) or Debian 10 (buster) are supported only"
+        fi
     fi
 }
 
