@@ -2243,7 +2243,12 @@ class Activity
         }
 
         $hidden = false;
+        // Mastodon style hidden flag
         if (array_key_exists('discoverable', $person_obj) && (!intval($person_obj['discoverable']))) {
+            $hidden = true;
+        }
+        // Pleroma style hidden flag
+        if (array_key_exists('invisible', $person_obj) && (!intval($person_obj['invisible']))) {
             $hidden = true;
         }
 

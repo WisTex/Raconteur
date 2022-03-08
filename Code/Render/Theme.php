@@ -6,6 +6,7 @@ use App;
 use Code\Lib\Infocon;
 use Code\Lib\Addon;
 use Code\Render\Theme;
+use Code\Lib\Yaml;
 
 
 class Theme
@@ -182,12 +183,25 @@ class Theme
     public static function get_info($theme) {
 
         $info =  null;
-        if (is_file("view/theme/$theme/$theme.yml")) {
+        $has_yaml = true;
+    
+        if (is_file("view/theme/$theme.yml")) {
             $info = Infocon::from_file("view/theme/$theme.yml");
         }
         elseif (is_file("view/theme/$theme/php/theme.php")) {
+            $has_yaml = false;
             $info = Infocon::from_c_comment("view/theme/$theme/php/theme.php");
         }
+
+        if ($info && ! $has_yaml) {
+            try {
+                file_put_contents("view/theme/$theme.yml",Yaml::encode($info));
+            }
+            catch (Exception $e) {
+                ;
+            }
+        }
+    
         return $info ? $info : [ 'name' => $theme ] ;
     
     }

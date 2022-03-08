@@ -75,17 +75,6 @@ class Share
         $channel = Channel::from_id($this->item['uid']);
         $observer = App::get_observer();
 
-        $can_comment = false;
-        if ((array_key_exists('owner', $this->item)) && intval($this->item['owner']['abook_self'])) {
-            $can_comment = perm_is_allowed($this->item['uid'], $observer['xchan_hash'], 'post_comments');
-        } else {
-            $can_comment = can_comment_on_post($observer['xchan_hash'], $this->item);
-        }
-
-        if (! $can_comment) {
-            return;
-        }
-
         $r = q(
             "select * from xchan where xchan_hash = '%s' limit 1",
             dbesc($this->item['owner_xchan'])
