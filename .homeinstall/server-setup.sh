@@ -349,9 +349,9 @@ function install_mysql {
             echo "we install mariadb-server"
             nocheck_install "mariadb-server"
             systemctl is-active --quiet mariadb && echo "MariaDB is running"
+            # We can probably find a more elegant solution like in create_website_db function
             mysql -u root <<_EOF_
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysqlpass}';
-#UPDATE mysql.user SET Password=PASSWORD('${mysqlpass}') WHERE User='root';
 DELETE FROM mysql.user WHERE User='';
 DROP DATABASE IF EXISTS test;
 DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';
@@ -581,7 +581,7 @@ function install_website {
     cd $install_path/
     # Pull in external libraries with composer. Leave off the --no-dev
     # option if you are a developer and wish to install addditional CI/CD tools.
-    composer install --no-dev
+    COMPOSER_ALLOW_SUPERUSER=1 /usr/local/bin/composer install --no-dev
 
     # We install addons
     # We'll keep stuff here for possible future forks so that the script can be the same
