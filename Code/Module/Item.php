@@ -219,7 +219,8 @@ class Item extends Controller
                     dbesc($r[0]['parent_mid']),
                     dbesc($portable_id)
                 );
-            } elseif (Config::get('system', 'require_authenticated_fetch', false)) {
+            }
+            elseif (Config::get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
 
