@@ -20,8 +20,10 @@ class Sites extends Controller
         }
 
         $sql_extra = (($_REQUEST['project']) ? " and site_project = '" . escape_tags(protect_sprintf(dbesc($_REQUEST['project']))) . "' " : "");
-
-        $desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of websites and dozens of projects and providers which make up the fediverse.');
+        if (isset($_REQUEST['search'])) {
+            $sql_extra .= ""; //@TODO
+        }
+        $desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of websites and dozens of projects and providers which participate in this communications network.');
 
         $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
 
@@ -150,7 +152,7 @@ class Sites extends Controller
             $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 
             $o .= replace_macros(Theme::get_template('sitentry_header.tpl'), [
-                '$dirlbl' => t('Affiliated Sites'),
+                '$dirlbl' => t('Communities'),
                 '$desc' => $desc,
                 '$entries' => $j,
             ]);

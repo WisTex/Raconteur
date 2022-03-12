@@ -59,6 +59,9 @@ class Themes
         $files = glob('view/theme/*');
         if ($files) {
             foreach ($files as $file) {
+                if (! is_dir($file)) {
+                    continue;
+                }
                 $f = basename($file);
                 $is_experimental = intval(file_exists($file . '/.experimental'));
                 $is_supported = 1 - (intval(file_exists($file . '/.unsupported'))); // Is not used yet

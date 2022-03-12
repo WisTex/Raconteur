@@ -13,7 +13,7 @@
 
 var image = document.getElementById('croppa');
 var cropper = new Cropper(image, {
-	aspectRatio: 2.75 / 1,
+	aspectRatio: 16 / 9,
 	viewMode: 1,
 	preview: '.crop-preview',
 	  crop: function(e) {

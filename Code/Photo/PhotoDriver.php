@@ -463,7 +463,7 @@ abstract class PhotoDriver
         $p['title'] = (($arr['title']) ? $arr['title'] : '');
         $p['description'] = (($arr['description']) ? $arr['description'] : '');
         $p['photo_usage'] = intval($arr['photo_usage']);
-        $p['os_storage'] = intval($arr['os_storage']);
+        $p['os_storage'] = ((isset($arr['os_storage'])) ? intval($arr['os_storage']) : 1);
         $p['os_path'] = $arr['os_path'];
         $p['os_syspath'] = ((array_key_exists('os_syspath', $arr)) ? $arr['os_syspath'] : '');
         $p['display_path'] = (($arr['display_path']) ? $arr['display_path'] : '');
