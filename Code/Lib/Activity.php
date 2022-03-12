@@ -613,7 +613,7 @@ class Activity
 
         $ret = [];
 
-        if (is_array($item['attachment']) && $item['attachment']) {
+        if (isset($item['attachment']) && is_array($item['attachment']) && $item['attachment']) {
             $ptr = $item['attachment'];
             if (!array_key_exists(0, $ptr)) {
                 $ptr = [$ptr];
@@ -667,7 +667,7 @@ class Activity
                     $ret[] = $entry;
                 }
             }
-        } elseif (is_string($item['attachment'])) {
+        } elseif (isset($item['attachment']) && is_string($item['attachment'])) {
             btlogger('not an array: ' . $item['attachment']);
         }
 
