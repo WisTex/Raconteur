@@ -132,21 +132,14 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 					}
 				}
 			}
+
+			// We've determined this is public. Send it also to the system channel.
 			
-			// We've determined it is public. If it is also a wall post and not owned by the sys channel,
-			// send this also to followers of the sys_channel
-			
-			$sys = Channel::get_system();
-			if ($sys && intval($item['uid']) !== intval($sys['channel_id']) && intval($item['item_wall'])) {
-				$r = q("select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-					intval($sys['channel_id'])
-				);
-				if ($r) {
-					foreach ($r as $rv) {
-						$recipients[] = $rv['abook_xchan'];
-					}
-				}
+			$sys = get_sys_channel();
+			if ($sys && intval($item['uid']) !== intval($sys['channel_id'])) {
+				$recipients[] = $sys['channel_hash'];
 			}
+
 		}
 		
 		// Add the authors of any posts in this thread, if they are known to us.
