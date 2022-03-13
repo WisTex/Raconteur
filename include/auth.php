@@ -43,14 +43,9 @@ function account_verify_password($login, $pass)
 {
 
     $ret = [ 'account' => null, 'channel' => null, 'xchan' => null ];
-    $login = punify($login);
 
     $email_verify = get_config('system', 'verify_email');
     $register_policy = get_config('system', 'register_policy');
-
-    if (! $login) {
-        return null;
-    }
 
     $account = null;
     $channel = null;
@@ -76,7 +71,13 @@ function account_verify_password($login, $pass)
     if (($addon_auth['authenticated']) && is_array($addon_auth['user_record']) && (! empty($addon_auth['user_record']))) {
         $ret['account'] = $addon_auth['user_record'];
         return $ret;
-    } else {
+    }
+    else {
+        if (! $login) {
+            logger('No login identity provided or authenticate addon failed.');
+            return false;
+        }
+        $login = punify($login);
         if (! strpos($login, '@')) {
             $channel = Channel::from_username($login);
             if (! $channel) {
