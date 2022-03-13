@@ -31,7 +31,7 @@ cli_startup();
 				list($tmp, $id) = array_map('trim', explode('/', $file));
 				$info = Addon::get_info($id);
 				$enabled = in_array($id,$installed);
-				$x = check_plugin_versions($info);
+				$x = Addon::check_versions($info);
 				if($enabled && ! $x) {
 					$enabled = false;
                     Addon::uninstall($id);
