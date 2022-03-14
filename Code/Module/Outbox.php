@@ -11,7 +11,11 @@ use Code\Web\HTTPSig;
 use Code\Lib\Activity;
 use Code\Lib\ActivityPub;
 use Code\Lib\Config;
+use Code\Lib\PConfig;
 use Code\Lib\Channel;
+
+require_once('include/api_auth.php');
+require_once('include/api.php');
 
 /**
  * Implements an ActivityPub outbox.
@@ -19,12 +23,22 @@ use Code\Lib\Channel;
 class Outbox extends Controller
 {
 
+    public function init() {
+        if (! api_user()) {
+            api_login();
+        }
+    }
+    
     public function post()
     {
         if (argc() < 2) {
             killme();
         }
 
+        if (! api_user()) {
+            killme();
+        }
+    
         $channel = Channel::from_username(argv(1));
         if (!$channel) {
             killme();
@@ -34,25 +48,20 @@ class Outbox extends Controller
             killme();
         }
 
-        // At this point there is unlikely to be an authenticated observer using the C2S ActivityPub API.
-        // Mostly we're protecting the page from malicious mischief until the project's OAuth2 interface
-        // is linked to this page.
-
         $observer = App::get_observer();
         if (!$observer) {
             killme();
         }
-
+        
         if ($observer['xchan_hash'] !== $channel['channel_hash']) {
             if (!perm_is_allowed($channel['channel_id'], $observer['xchan_hash'], 'post_wall')) {
                 logger('outbox post permission denied to ' . $observer['xchan_name']);
                 killme();
             }
         }
-// disable C2S until we've fully tested it.
-        return;
 
-
+        $observer_hash = get_observer_hash();
+    
         $data = file_get_contents('php://input');
         if (!$data) {
             return;
@@ -60,7 +69,8 @@ class Outbox extends Controller
 
         logger('outbox_activity: ' . jindent($data), LOGGER_DATA);
 
-        $AS = new ActivityStreams($data);
+        // the third parameter signals to the parser that we are using C2S and that implied Create activities are supported
+        $AS = new ActivityStreams($data, null, true);
 
         if (!$AS->is_valid()) {
             return;
@@ -70,41 +80,57 @@ class Outbox extends Controller
             return;
         }
 
+        // ensure the posted activity has required attributes
+
+        $uuid = new_uuid();
+        
+        if (! $AS->id) {
+            $AS->id = z_root() . '/activity/' . $uuid;
+        }
+
+        if (isset($AS->obj) && (! isset($AS->obj['id']))) {
+            $AS->obj['id'] = z_root() . '/item/' . $uuid;
+        }
+
+        if (! isset($AS->actor)) {
+            $AS->actor = Channel::url($channel);
+        }
+          
         logger('outbox_channel: ' . $channel['channel_address'], LOGGER_DEBUG);
 
-//      switch ($AS->type) {
-//          case 'Follow':
-//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type']) && isset($AS->obj['id'])) {
-//                  // do follow activity
-//                  Activity::follow($channel,$AS);
-//              }
-//              break;
-//          case 'Invite':
-//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-//                  // do follow activity
-//                  Activity::follow($channel,$AS);
-//              }
-//              break;
-//          case 'Join':
-//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-//                  // do follow activity
-//                  Activity::follow($channel,$AS);
-//              }
-//              break;
-//          case 'Accept':
-//              // Activitypub for wordpress sends lowercase 'follow' on accept.
-//              // https://github.com/pfefferle/wordpress-activitypub/issues/97
-//              // Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
-//              if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
-//                  // do follow activity
-//                  Activity::follow($channel,$AS);
-//              }
-//              break;
-//          case 'Reject':
-//          default:
-//              break;
-//
-//      }
+        switch ($AS->type) {
+            case 'Follow':
+                if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type']) && isset($AS->obj['id'])) {
+                    // do follow activity
+                    Activity::follow($channel,$AS);
+                }
+                break;
+            case 'Invite':
+                if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+                    // do follow activity
+                    Activity::follow($channel,$AS);
+                }
+                break;
+            case 'Join':
+                if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+                    // do follow activity
+                    Activity::follow($channel,$AS);
+                }
+                break;
+            case 'Accept':
+                // Activitypub for wordpress sends lowercase 'follow' on accept.
+                // https://github.com/pfefferle/wordpress-activitypub/issues/97
+                // Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
+                if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow','follow', 'Member'])) {
+                    // do follow activity
+                    Activity::follow($channel,$AS);
+                }
+                break;
+            case 'Reject':
+            default:
+                break;
+
+        }
 
         // These activities require permissions
 
@@ -113,10 +139,7 @@ class Outbox extends Controller
         switch ($AS->type) {
             case 'Update':
                 if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
-                    // pretend this is an old cache entry to force an update of all the actor details
-                    $AS->obj['cached'] = true;
-                    $AS->obj['updated'] = datetime_convert('UTC', 'UTC', '1980-01-01', ATOM_TIME);
-                    Activity::actor_store($AS->obj['id'], $AS->obj);
+                    Activity::actor_store($AS->obj['id'], $AS->obj, true /* force cache refresh */);
                     break;
                 }
             case 'Accept':
@@ -186,8 +209,43 @@ class Outbox extends Controller
         }
 
         if ($item) {
+            // fixup some of the item fields when using C2S
+    
+            if (! (isset($item['parent_mid']) && $item['parent_mid'])) {
+                $item['parent_mid'] = $item['mid'];
+            }
+            $item['item_private'] = ((in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips)
+                || in_array('Public', $AS->recips)
+                || in_array('as:Public', $AS->recips))
+                ? false
+                : true
+            );
+            if ($AS->recips) {
+                foreach ($AS->recips as $recip) {
+                    if (strpos($recip,'/lists/')) {
+                        $r = q("select * from pgrp where hash = '%s' and uid = %d",
+                            dbesc(basename($recip)),
+                            intval($channel['channel_id'])
+                        );
+                        if ($r) {
+                            $item['allow_gid'] .= '<' . $r[0]['hash'] . '>';
+                        }
+                        continue;
+                    }
+                    $r = q("select * from hubloc where hubloc_id_url = '%s'",
+                        dbesc($recip)
+                    );
+                    if ($r) {
+                        $item['allow_cid'] .= '<' . $r[0]['hubloc_hash'] . '>';
+                    }
+                }
+            }    
+            $item['item_wall'] = 1;
+    
             logger('parsed_item: ' . print_r($item, true), LOGGER_DATA);
             Activity::store($channel, $observer_hash, $AS, $item);
+
+    
         }
 
         http_status_exit(200, 'OK');
