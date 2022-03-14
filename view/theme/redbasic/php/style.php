@@ -1,7 +1,7 @@
 <?php
 use Code\Lib\Channel;
 
-if(! App::$install) {
+if (! App::$install) {
 
 	// Get the UID of the channel owner
 	$uid = Channel::get_theme_uid();
@@ -36,9 +36,9 @@ if(! App::$install) {
 // Setting $schema to '' wasn't working for some reason, so we'll check it's
 // not --- like the mobile theme does instead.
 
-// Allow layouts to over-ride the schema
+// Allow layouts to over-ride the schema - used as a filename component so sanitize.
 
-$schema = ((isset($_REQUEST['schema']) && $_REQUEST['schema']) ? $_REQUEST['schema'] : EMPTY_STR);
+$schema = str_replace(['/', '.'], [ '', '' ], ((isset($_REQUEST['schema']) && $_REQUEST['schema']) ? $_REQUEST['schema'] : EMPTY_STR));
 
 
 if (($schema) && ($schema != '---')) {
