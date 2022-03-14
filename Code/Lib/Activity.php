@@ -3882,13 +3882,16 @@ class Activity
                     // We are the owner of this conversation, so send all received comments back downstream
                     Run::Summon(['Notifier', 'comment-import', $x['item_id']]);
                 }
-                $r = q(
-                    "select * from item where id = %d limit 1",
-                    intval($x['item_id'])
-                );
-                if ($r) {
-                    send_status_notifications($x['item_id'], $r[0]);
-                }
+            }
+            elseif ($act->client && $channel['channel_hash'] === $observer_hash) {
+                Run::Summon(['Notifier', 'wall-new', $x['item_id']]);
+            }
+            $r = q(
+                "select * from item where id = %d limit 1",
+                intval($x['item_id'])
+            );
+            if ($r) {
+                send_status_notifications($x['item_id'], $r[0]);
             }
             sync_an_item($channel['channel_id'], $x['item_id']);
         }
