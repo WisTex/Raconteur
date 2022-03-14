@@ -948,7 +948,7 @@ function get_tags($s)
     // Pull out single word tags. These can be @nickname, @first_last
     // and #hash tags.
 
-    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
+    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;\#])([@#]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
         foreach ($match[1] as $mtch) {
             // Cleanup/ignore false positives
 
