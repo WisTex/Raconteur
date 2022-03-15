@@ -778,13 +778,14 @@ class Activity
 
             if (!in_array($ret['type'], ['Create', 'Update', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject'])) {
                 $ret['inReplyTo'] = $i['thr_parent'];
-                $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
-                if (!$cnv) {
-                    $cnv = get_iconfig($i['parent'], 'ostatus', 'conversation');
-                }
-                if (!$cnv) {
-                    $cnv = $ret['parent_mid'];
-                }
+            }
+    
+            $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
+            if (!$cnv) {
+                $cnv = get_iconfig($i['parent'], 'ostatus', 'conversation');
+            }
+            if (!$cnv) {
+                $cnv = $ret['parent_mid'];
             }
         }
 
