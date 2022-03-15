@@ -215,46 +215,62 @@ class Outbox extends Controller
                 $item['parent_mid'] = $item['mid'];
             }
             // map ActivityPub recipients to Nomad ACLs to the extent possible. 
-            $item['item_private'] = ((in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips)
-                || in_array('Public', $AS->recips)
-                || in_array('as:Public', $AS->recips))
-                ? false
-                : true
-            );
-            // The item ACL is only considered public if empty and item_private is 0.
-            if ($AS->recips && ! $item['item_private']) {
-                foreach ($AS->recips as $recip) {
-                    if (strpos($recip,'/lists/')) {
-                        $r = q("select * from pgrp where hash = '%s' and uid = %d",
-                            dbesc(basename($recip)),
-                            intval($channel['channel_id'])
+            if (isset($AS->recips)) {
+                $item['item_private'] = ((in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips)
+                    || in_array('Public', $AS->recips)
+                    || in_array('as:Public', $AS->recips))
+                    ? 0
+                    : 1
+                );
+
+                if ($item['item_private']) {
+                    foreach ($AS->recips as $recip) {
+                        if (strpos($recip,'/lists/')) {
+                            $r = q("select * from pgrp where hash = '%s' and uid = %d",
+                                dbesc(basename($recip)),
+                                intval($channel['channel_id'])
+                            );
+                            if ($r) {
+                                if (! isset($item['allow_gid'])) {
+                                    $item['allow_gid'] = EMPTY_STR;
+                                }
+                                $item['allow_gid'] .= '<' . $r[0]['hash'] . '>';
+                            }
+                            continue;
+                        }
+                        if ($recip === z_root() . '/followers/' . $channel['channel_address']) {
+                            // map to a virtual list/group even if the app isn't installed. This should do the right
+                            // thing and create a followers-only post with the correct ACL as long as the public stream
+                            // isn't addressed. And if it is, the post will still go to all your connections - so the ACL isn't
+                            // necessary. 
+                            if (! isset($item['allow_gid'])) {
+                                $item['allow_gid'] = EMPTY_STR;
+                            }
+                            $item['allow_gid'] .= '<connections:' . $channel['channel_hash'] . '>';
+                            continue;
+                        }
+                        $r = q("select * from hubloc where hubloc_id_url = '%s'",
+                            dbesc($recip)
                         );
                         if ($r) {
-                            $item['allow_gid'] .= '<' . $r[0]['hash'] . '>';
+                            if (! isset($item['allow_cid'])) {
+                                $item['allow_cid'] = EMPTY_STR;
+                            }
+                            $item['allow_cid'] .= '<' . $r[0]['hubloc_hash'] . '>';
                         }
-                        continue;
-                    }
-                    if ($recip === z_root() . '/followers/' . $channel['channel_address']) {
-                        // map to a virtual list/group even if the app isn't installed. This should do the right
-                        // thing and create a followers-only post with the correct ACL as long as the public stream
-                        // isn't addressed. And if it is, the post will still go to all your connections - so the ACL isn't
-                        // necessary. 
-                        $item['allow_gid'] .= '<connections:' . $channel['channel_hash'] . '>';
-                        continue;
-                    }
-                    $r = q("select * from hubloc where hubloc_id_url = '%s'",
-                        dbesc($recip)
-                    );
-                    if ($r) {
-                        $item['allow_cid'] .= '<' . $r[0]['hubloc_hash'] . '>';
                     }
                 }
-            }    
+                // set the DM flag if needed
+                if ($item['item_private'] && isset($item['allow_cid']) && ! isset($item['allow_gid'])
+                    && in_array(substr_count($item['allow_cid'],'<'), [ 1, 2 ])) {
+                    $item['item_private'] = 2;
+                }
+            }
+        
             $item['item_wall'] = 1;
     
             logger('parsed_item: ' . print_r($item, true), LOGGER_DATA);
             Activity::store($channel, $observer_hash, $AS, $item);
-
     
         }
 
