@@ -625,7 +625,7 @@ class Account {
             Channel::auto_create($register[0]['uid']);
         } else {
             $_SESSION['login_return_url'] = 'new_channel';
-            authenticate_success($account[0], null, true, true, false, true);
+            authenticate_success($account[0], false, true, true, false, true);
         }
 
         return true;

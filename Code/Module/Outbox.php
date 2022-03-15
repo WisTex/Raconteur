@@ -214,13 +214,15 @@ class Outbox extends Controller
             if (! (isset($item['parent_mid']) && $item['parent_mid'])) {
                 $item['parent_mid'] = $item['mid'];
             }
+            // map ActivityPub recipients to Nomad ACLs to the extent possible. 
             $item['item_private'] = ((in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips)
                 || in_array('Public', $AS->recips)
                 || in_array('as:Public', $AS->recips))
                 ? false
                 : true
             );
-            if ($AS->recips) {
+            // The item ACL is only considered public if empty and item_private is 0.
+            if ($AS->recips && ! $item['item_private']) {
                 foreach ($AS->recips as $recip) {
                     if (strpos($recip,'/lists/')) {
                         $r = q("select * from pgrp where hash = '%s' and uid = %d",
@@ -230,6 +232,14 @@ class Outbox extends Controller
                         if ($r) {
                             $item['allow_gid'] .= '<' . $r[0]['hash'] . '>';
                         }
+                        continue;
+                    }
+                    if ($recip === z_root() . '/followers/' . $channel['channel_address']) {
+                        // map to a virtual list/group even if the app isn't installed. This should do the right
+                        // thing and create a followers-only post with the correct ACL as long as the public stream
+                        // isn't addressed. And if it is, the post will still go to all your connections - so the ACL isn't
+                        // necessary. 
+                        $item['allow_gid'] .= '<connections:' . $channel['channel_hash'] . '>';
                         continue;
                     }
                     $r = q("select * from hubloc where hubloc_id_url = '%s'",
