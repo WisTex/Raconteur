@@ -174,7 +174,7 @@ class Register extends Controller
 
         // fall through and authenticate if no approvals or verifications were required.
 
-        authenticate_success($result['account'], null, true, false, true);
+        authenticate_success($result['account'], false, true, false, true);
 
         $new_channel = false;
         $next_page = 'new_channel';

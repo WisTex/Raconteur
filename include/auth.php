@@ -230,7 +230,7 @@ if (
                 App::$session->new_cookie(60 * 60 * 24); // one day
                 $_SESSION['last_login_date'] = datetime_convert();
                 unset($_SESSION['visitor_id']); // no longer a visitor
-                authenticate_success($x[0], null, true, true);
+                authenticate_success($x[0], false, true, true);
             }
         }
         if (array_key_exists('atoken', $_SESSION)) {
@@ -279,7 +279,7 @@ if (
                 $login_refresh = true;
             }
             $ch = (($_SESSION['uid']) ? Channel::from_id($_SESSION['uid']) : null);
-            authenticate_success($r[0], null, $ch, false, false, $login_refresh);
+            authenticate_success($r[0], false, $ch, false, false, $login_refresh);
         } else {
             $_SESSION['account_id'] = 0;
             App::$session->nuke();

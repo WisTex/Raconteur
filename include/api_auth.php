@@ -59,7 +59,7 @@ function api_login()
             );
             if ($x) {
                 require_once('include/security.php');
-                authenticate_success($x[0], null, true, false, true, true);
+                authenticate_success($x[0], false, true, false, true, true);
                 $_SESSION['allow_api'] = true;
                 Hook::call('logged_in', App::$user);
                 return;
