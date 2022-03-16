@@ -778,13 +778,14 @@ class Activity
 
             if (!in_array($ret['type'], ['Create', 'Update', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject'])) {
                 $ret['inReplyTo'] = $i['thr_parent'];
-                $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
-                if (!$cnv) {
-                    $cnv = get_iconfig($i['parent'], 'ostatus', 'conversation');
-                }
-                if (!$cnv) {
-                    $cnv = $ret['parent_mid'];
-                }
+            }
+    
+            $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
+            if (!$cnv) {
+                $cnv = get_iconfig($i['parent'], 'ostatus', 'conversation');
+            }
+            if (!$cnv) {
+                $cnv = $ret['parent_mid'];
             }
         }
 
@@ -3822,16 +3823,23 @@ class Activity
                     $item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
                 }
             }
-
-            // Private conversation, but this comment went rogue and was published publicly
-            // Set item_restrict to indicate this condition so we can flag it in the UI
-
-            if (intval($parent[0]['item_private']) !== 0 && $act->recips && (in_array(ACTIVITY_PUBLIC_INBOX, $act->recips) || in_array('Public', $act->recips) || in_array('as:Public', $act->recips))) {
-                $item['item_restrict'] = $item['item_restrict'] | 2;
-            }
         }
 
         self::rewrite_mentions($item);
+
+        if (! isset($item['replyto'])) {
+            if (strpos($item['owner_xchan'],'http') === 0) {
+                $item['replyto'] = $item['owner_xchan'];
+            }
+            else {
+                $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1",
+                    dbesc($item['owner_xchan'])
+                );
+                if ($r) {
+                    $item['replyto'] = $r[0]['hubloc_id_url'];
+                }
+            }
+        }
 
         $r = q(
             "select id, created, edited from item where mid = '%s' and uid = %d limit 1",
