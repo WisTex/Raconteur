@@ -205,21 +205,21 @@ class Search extends Controller
             $tag = true;
             $search = substr($search, 1);
         }
-        if (strpos($search, '@') === 0) {
+        if (strpos($search, '@') === 0 && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
-        if (strpos($search, '!') === 0) {
+        if (strpos($search, '!') === 0 && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
-        if (strpos($search, '?') === 0) {
+        if (strpos($search, '?') === 0 && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/help' . '?f=1&navsearch=1&search=' . $search);
         }
 
         // look for a naked webbie
-        if (strpos($search, '@') !== false && strpos($search, 'http') !== 0) {
+        if (strpos($search, '@') !== false && strpos($search, 'http') !== 0 && $format === '') {
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
 
