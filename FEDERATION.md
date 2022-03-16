@@ -3,6 +3,9 @@ Federation
 
 The ActivityPub implementation in this project strives to be compliant to the core spec where possible, while offering a range of services and features which normally aren't provided by ActivityPub projects.
 
+C2S
+
+This project supports ActivityPub C2S. You may authenticate with HTTP basic-auth, OAuth2, or OpenWebAuth. There is no media upload endpoint since the (deprecated) specification of that service has no workarounds for working in memory-restricted environments and most mobile phone photos exceed PHP's default upload size limits. 
 
 Direct Messages
 
