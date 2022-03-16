@@ -1413,7 +1413,7 @@ function activity_sanitise($arr) {
 				if(is_array($x))
 					$ret[$k] = activity_sanitise($x);
 				else
-					$ret[$k] = htmlspecialchars($x, ENT_COMPAT, 'UTF-8', false);
+					$ret[$k] = htmlspecialchars((isset($x) ? $x : ''), ENT_COMPAT, 'UTF-8', false);
 			}
 			return $ret;
 		}
