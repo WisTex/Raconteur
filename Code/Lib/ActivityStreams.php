@@ -16,6 +16,7 @@ class ActivityStreams
     public $data = null;
     public $meta = null;
     public $hub = null;
+    public $client = false;
     public $valid = false;
     public $deleted = false;
     public $id = '';
@@ -48,7 +49,8 @@ class ActivityStreams
 
         $this->raw = $string;
         $this->hub = $hub;
-
+        $this->client = $client;
+    
         if (is_array($string)) {
             $this->data = $string;
             $this->raw = json_encode($string, JSON_UNESCAPED_SLASHES);

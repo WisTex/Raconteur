@@ -219,7 +219,8 @@ class Item extends Controller
                     dbesc($r[0]['parent_mid']),
                     dbesc($portable_id)
                 );
-            } elseif (Config::get('system', 'require_authenticated_fetch', false)) {
+            }
+            elseif (Config::get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
 
@@ -738,7 +739,7 @@ class Item extends Controller
             dbesc($channel['channel_hash'])
         );
         if ($r && count($r)) {
-            $owner_xchan = $r[0];
+            $owner_xchan = array_shift($r);
         } else {
             logger("mod_item: no owner.");
             if ($api_source) {
@@ -774,15 +775,6 @@ class Item extends Controller
                 }
             }
         }
-
-        if (!isset($replyto)) {
-            if (strpos($owner_xchan['xchan_hash'], 'http') === 0) {
-                $replyto = $owner_xchan['xchan_hash'];
-            } else {
-                $replyto = $owner_xchan['xchan_url'];
-            }
-        }
-
 
         $acl = new AccessControl($channel);
 
@@ -1394,6 +1386,24 @@ class Item extends Controller
 
         if (array_path_exists('obj/id', $datarray)) {
             $datarray['obj']['id'] = $mid;
+        }
+
+
+        if (! (isset($replyto) && $replyto)) {
+            if ($owner_hash && strpos($owner_hash,'http') === 0) {
+                $replyto = $owner_hash;
+            }
+            else {
+                $tmp = $owner_hash ? $owner_hash : $owner_xchan['xchan_hash'];
+                if ($tmp) {
+                    $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1",
+                        dbesc($tmp)
+                    );
+                    if ($r) {
+                        $replyto = $r[0]['hubloc_id_url'];
+                    }
+                }
+            }
         }
 
 		if ($private && !$parent) {

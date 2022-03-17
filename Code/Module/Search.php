@@ -12,6 +12,8 @@ use Code\Daemon\Run;
 use Code\Lib\Channel;
 use Code\Lib\Navbar;
 use Code\Render\Theme;
+use Code\Lib\LDSignatures;
+use Code\Web\HTTPSig;
 
     
 require_once("include/bbcode.php");
@@ -52,7 +54,7 @@ class Search extends Controller
         }
         Navbar::set_selected('Search');
 
-        $format = (($_REQUEST['format']) ? $_REQUEST['format'] : '');
+        $format = (($_REQUEST['module_format']) ? $_REQUEST['module_format'] : '');
         if ($format !== '') {
             $this->updating = $this->loading = 1;
         }
@@ -66,14 +68,18 @@ class Search extends Controller
 
         if (x(App::$data, 'search')) {
             $search = trim(App::$data['search']);
+            $saved_id = 'search=' . urlencode($_GET['search']);
         } else {
             $search = ((x($_GET, 'search')) ? trim(escape_tags(rawurldecode($_GET['search']))) : '');
+            $saved_id = 'search=' . urlencode($_GET['search']);
         }
         $tag = false;
         if (x($_GET, 'tag')) {
             $tag = true;
             $search = ((x($_GET, 'tag')) ? trim(escape_tags(rawurldecode($_GET['tag']))) : '');
+            $saved_id = 'tag=' . urlencode($_GET['tag']);
         }
+
 
         $static = ((array_key_exists('static', $_REQUEST)) ? intval($_REQUEST['static']) : 0);
 
@@ -199,21 +205,21 @@ class Search extends Controller
             $tag = true;
             $search = substr($search, 1);
         }
-        if (strpos($search, '@') === 0) {
+        if (strpos($search, '@') === 0 && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
-        if (strpos($search, '!') === 0) {
+        if (strpos($search, '!') === 0 && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
-        if (strpos($search, '?') === 0) {
+        if (strpos($search, '?') === 0 && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/help' . '?f=1&navsearch=1&search=' . $search);
         }
 
         // look for a naked webbie
-        if (strpos($search, '@') !== false && strpos($search, 'http') !== 0) {
+        if (strpos($search, '@') !== false && strpos($search, 'http') !== 0 && $format === '') {
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
 
@@ -335,16 +341,28 @@ class Search extends Controller
             $items = [];
         }
 
-        if ($format == 'json') {
-            $result = [];
-            require_once('include/conversation.php');
-            foreach ($items as $item) {
-                $item['html'] = zidify_links(bbcode($item['body']));
-                $x = encode_item($item);
-                $x['html'] = prepare_text($item['body'], $item['mimetype']);
-                $result[] = $x;
-            }
-            json_return_and_die(array('success' => true, 'messages' => $result));
+        if ($format === 'json') {
+
+            $chan = Channel::get_system();
+    
+            $i = Activity::encode_item_collection($items, 'search?' . $saved_id , 'OrderedCollection', true, count($items));
+    
+            $x = array_merge(['@context' => [
+                ACTIVITYSTREAMS_JSONLD_REV,
+                'https://w3id.org/security/v1',
+                Activity::ap_schema()
+            ]], $i);
+
+            $headers = [];
+            $headers['Content-Type'] = 'application/x-nomad+json';
+            $x['signature'] = LDSignatures::sign($x, $chan);
+            $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+            $headers['Digest'] = HTTPSig::generate_digest_header($ret);
+            $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+            $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], Channel::url($chan));
+            HTTPSig::set_headers($h);
+            echo $ret;
+            killme();
         }
 
         if ($tag) {
