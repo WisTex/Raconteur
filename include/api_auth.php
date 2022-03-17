@@ -14,7 +14,7 @@ require_once('include/security.php');
 
 
 /**
- * API Login via basic-auth or OAuth
+ * API Login via basic-auth, OpenWebAuth, or OAuth2
  */
 
 function api_login()
@@ -58,8 +58,7 @@ function api_login()
                 intval($record['channel_account_id'])
             );
             if ($x) {
-                require_once('include/security.php');
-                authenticate_success($x[0], null, true, false, true, true);
+                authenticate_success($x[0], false, true, false, true, true);
                 $_SESSION['allow_api'] = true;
                 Hook::call('logged_in', App::$user);
                 return;
@@ -164,8 +163,8 @@ function api_login()
 
 function retry_basic_auth($method = 'Basic')
 {
-    header('WWW-Authenticate: ' . $method . ' realm="' . System::get_platform_name() . '"');
+    header('WWW-Authenticate: ' . $method . ' realm="' . System::get_project_name() . '"');
     header('HTTP/1.0 401 Unauthorized');
-    echo( t('This api method requires authentication'));
+    echo( t('This API method requires authentication.'));
     killme();
 }

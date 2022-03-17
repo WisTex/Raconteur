@@ -3,7 +3,19 @@ Federation
 
 The ActivityPub implementation in this project strives to be compliant to the core spec where possible, while offering a range of services and features which normally aren't provided by ActivityPub projects.
 
+C2S
 
+This project supports ActivityPub C2S. You may authenticate with HTTP basic-auth, OAuth2, or OpenWebAuth. There is no media upload endpoint since the (deprecated) specification of that service has no workarounds for working in memory-restricted environments and most mobile phone photos exceed PHP's default upload size limits. 
+
+Client search interface
+
+If public access is allowed to the content search interface (a site security setting), clients may search the content of public messages or tags and are returned an ActivityStreams Collection of search results. When authenticated via OpenWebAuth, the search results may contain their own content or private content which they are permitted to access.  
+
+The URL endpoints are:
+
+  https://example.com/search?search=banana
+  https://example.com/search?tag=banana
+    
 Direct Messages
 
 Direct Messages (DM) are differentiated from other private messaging using the zot:directMessage flag (boolean). This is compatible with the same facility provided by other projects in other namespaces and is not prefixed within activities so that these may potentially be aggregated.

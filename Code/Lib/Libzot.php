@@ -1466,7 +1466,7 @@ class Libzot
                         }
                     }
                 }
-                if ($AS->data['hubloc']) {
+                if (isset($AS->data['hubloc']) && $AS->data['hubloc']) {
                     $arr['item_verified'] = true;
 
                     if (!array_key_exists('comment_policy', $arr)) {
@@ -2094,7 +2094,7 @@ class Libzot
                         $last_hop = '';
                     }
 
-                    $current_route = (($arr['route']) ? $arr['route'] . ',' : '') . $sender;
+                    $current_route = ((isset($arr['route']) && $arr['route']) ? $arr['route'] . ',' : '') . $sender;
 
                     if ($last_hop && $last_hop != $sender) {
                         logger('comment route mismatch: parent route = ' . $r[0]['route'] . ' expected = ' . $current_route, LOGGER_DEBUG);
