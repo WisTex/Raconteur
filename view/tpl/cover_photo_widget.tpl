@@ -64,8 +64,8 @@
 	});
 
     function calc_height() {
-        if (! {{$photo.height}} ) return Math.ceil($(window).width()/1.77777778);
-        return Math.ceil( ({{$photo.width}} / {{$photo.height}}) * $(window.width()));
+        if (! ({{$photo.height}} && {{$photo.height}} )) return Math.ceil($(window).width()/1.77777778);
+        return Math.ceil( $(window).width() / ( {{$photo.width}} / {{$photo.height}}));
     }
     
 	function slideUpCover() {

@@ -516,7 +516,8 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	}
 
 	$post = item_store($arr,$allow_code,$deliver);
-
+    $post_id = 0;
+    
 	if($post['success']) {
 		$post_id = $post['item_id'];
 		$ret['success'] = true;
@@ -529,13 +530,12 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 		 *   * \e array - the item returned from item_store()
 		 */
 		Hook::call('post_local_end', $ret['activity']);
-	}
-
+        sync_an_item($channel ? $channel['channel_id'] : $arr['uid'], $post_id);
+    }
+    
 	if($post_id && $deliver) {
 		Run::Summon([ 'Notifier','activity',$post_id ]);
 	}
-
-	$ret['success'] = true;
 
 	return $ret;
 }
