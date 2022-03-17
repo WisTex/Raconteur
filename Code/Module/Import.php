@@ -463,11 +463,19 @@ class Import extends Controller
                     $group['gname'] = $group['name'];
                     unset($group['name']);
                 }
+                $r = q("select * from pgrp where gname = '%s' and uid = %d",
+                    dbesc($group['gname']),
+                    intval($channel['channel_id'])
+                );
+                if ($r) {
+                    continue;
+                }
                 unset($group['id']);
                 $group['uid'] = $channel['channel_id'];
 
                 create_table_from_array('pgrp', $group);
             }
+            // create a list of ids that applies to this system so we can map members to them
             $r = q(
                 "select * from pgrp where uid = %d",
                 intval($channel['channel_id'])
@@ -489,6 +497,14 @@ class Import extends Controller
                     if ($x['old'] == $group_member['gid']) {
                         $group_member['gid'] = $x['new'];
                     }
+                }
+                // check if it's a duplicate
+                $r = q("select * from pgrp_member where xchan = '%s' and gid = %d",
+                    dbesc($group_member['xchan']),
+                    intval($group_member['gid'])
+                );
+                if ($r) {
+                    continue;
                 }
                 create_table_from_array('pgrp_member', $group_member);
             }

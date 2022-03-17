@@ -1452,7 +1452,9 @@ function sync_files($channel, $files)
             if (! $f) {
                 continue;
             }
+
             $fetch_url = $f['fetch_url'];
+
             $oldbase = dirname($fetch_url);
             $original_channel = $f['original_channel'];
 
@@ -1462,8 +1464,10 @@ function sync_files($channel, $files)
 
             $has_undeleted_attachments = false;
 
+    
             if ($f['attach']) {
                 foreach ($f['attach'] as $att) {
+    
                     $attachment_stored = false;
                     convert_oldfields($att, 'data', 'content');
 

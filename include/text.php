@@ -1515,8 +1515,9 @@ function theme_attachments(&$item)
         $attaches = [];
         foreach ($arr as $r) {
             $label = EMPTY_STR;
-            $icon = getIconFromType($r['type']);
-
+            if (isset($r['type'])) {
+                $icon = getIconFromType($r['type']);
+            }
             if (isset($r['title']) && $r['title']) {
                 $label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
             }
@@ -3450,9 +3451,11 @@ function item_url_replace($channel, &$item, $old, $new, $oldnick = '')
         $item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
     }
 
-    $item['llink'] = str_replace($old, $new, $item['llink']);
-    if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-        $item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
+    if (isset($item['llink'])) {
+        $item['llink'] = str_replace($old, $new, $item['llink']);
+        if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+            $item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
+        }
     }
 
     if ($item['term']) {
