@@ -29,8 +29,8 @@ You can of course run the script on a VPS or any distant server as long as the a
   - apt-get install git
   - mkdir -p /var/www
   - cd /var/www
-  - git clone https://codeberg.org/streams/streams.git html (you can replace "html" with any name you like, which you'll have to do if you plan to have more than one hub/instance running on your server)
-  - cd html/.homeinstall
+  - git clone https://codeberg.org/streams/streams.git mywebsite (you can replace "mywebsite" with any name you like, which you'll have to do if you plan to have more than one hub/instance running on your server); if you plan to install a test server using "localhost" rather that a domain name, be sure to replace "mywebsite" with "html"
+  - cd website/.homeinstall
   - cp server-config.txt.template server-config.txt
   - nano server-config.txt
     - Read the comments carefully

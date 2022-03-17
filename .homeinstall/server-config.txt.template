@@ -42,53 +42,21 @@ webserver=apache
 
 
 ###############################################
-### OPTIONAL - selfHOST - dynamic IP address ##
+###      OPTIONAL - DDNS CONFIGURATION      ###
 #
-# 1. Register a domain at selfhost.de
-#    - choose offer "DOMAIN dynamisch" 1,50€/mon at 04/2019
-# 2. Get your configuration for dynamic IP update
-#    - Log in at selfhost.de
-#    - go to "DynDNS Accounte"
-#    - klick "Details" of your (freshly) registered domain
-#    - You will find the configuration there
-#      - Benutzername (user name) > use this for "selfhost_user="
-#      - Passwort (pass word) > use this for "selfhost_pass="
+# A set of scripts is available in the "ddns" folder.
+# Each one is intended for a specific provider (FreeDNS, Gandi LiveDNS, selfHOST.de)
+# You can set ddns_provider to match one of them.
 #
+# "freedns" will run freedns.sh if you choose FreeDNS (https://freedns.afraid.org)
+# "gandi" will run gandi.sh if you choose Gandi LiveDNS (https://gandi.net)
+# "selfhost" will run selfhost.sh if you choose selfHOST.de (https://selfost.de)
 #
-selfhost_user=
-selfhost_pass=
-
-###############################################
-### OPTIONAL - FreeDNS - dynamic IP address ###
+#    Example : ddns_provider=gandi
 #
-# Please give the alpha-numeric-key of freedns
+ddns_provider=
 #
-# Get a free subdomain from freedns and use it for your dynamic ip address
-# Documentation under http://www.techjawab.com/2013/06/setup-dynamic-dns-dyndns-for-free-on.html
-#
-# - Register for a Free domain at http://freedns.afraid.org/signup/
-# - WATCH THIS: Make sure you choose a domain with as less subdomains as
-#   possible. Why? Let's encrpyt issues a limited count of certificates each
-#   day. Possible other users of this domain will try to issue a certificate
-#   at the same day.
-# - Logon to FreeDNS (where you just registered)
-# - Goto http://freedns.afraid.org/dynamic/
-# - Right click on "Direct Link" and copy the URL and paste it somewhere.
-# - You should notice a large and unique alpha-numeric key in the URL
-#
-#       http://freedns.afraid.org/dynamic/update.php?alpha-numeric-key
-#
-#   Provided your url from freedns is
-#
-#	http://freedns.afraid.org/dynamic/update.php?U1Z6aGt2R0NzMFNPNWRjbWxxZGpsd093OjE1Mzg5NDE5
-#
-#   Then you have to provide
-#
-#       freedns_key=U1Z6aGt2R0NzMFNPNWRjbWxxZGpsd093OjE1Mzg5NDE5
-#
-#
-freedns_key=
-
+# Feel free to add scripts for other providers if you feel you can do that!
 
 ###############################################
 ### OPTIONAL - Backup to external device ######
@@ -100,7 +68,7 @@ freedns_key=
 # - ext4
 #
 # You should test to mount the device before you run the script
-# (hubzilla-setup.sh).
+# (server-setup.sh).
 # How to find your (pluged-in) devices?
 #
 #     fdisk -l
@@ -170,9 +138,3 @@ website_db_pass=$db_pass
 #   Example: mysqlpass="aber hallo has blanks in it"
 #
 mysqlpass=$db_pass
-
-# Password for package phpmyadmin
-#   Example: phpmyadminpass=aberhallo
-#   Example: phpmyadminpass="aber hallo has blanks in it"
-phpmyadminpass=$db_pass
-
