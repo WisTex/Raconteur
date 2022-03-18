@@ -4,6 +4,7 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
+use Code\Lib\Libsync;
 use Code\Lib\Apps;
 use Code\Widget\Tasklist;
 
@@ -70,6 +71,7 @@ class Tasks extends Controller
                 }
                 $x = event_store_event($event);
                 if ($x) {
+                    Libsync::build_sync_packet($channel['channel_id'], ['event' => [$x]]);
                     $ret['success'] = true;
                 }
             }
@@ -93,10 +95,13 @@ class Tasks extends Controller
             $event['summary'] = escape_tags($_REQUEST['summary']);
             $x = event_store_event($event);
             if ($x) {
+			    Libsync::build_sync_packet($channel['channel_id'], ['event' => [$x]]);
                 $x['success'] = true;
-            } else {
+            }
+            else {
                 $x = ['success' => false];
             }
+    
             json_return_and_die($x);
         }
     }
