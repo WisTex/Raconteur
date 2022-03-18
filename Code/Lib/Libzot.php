@@ -21,6 +21,7 @@ use Code\Daemon\Run;
 use Code\Extend\Hook;
 
 require_once('include/html2bbcode.php');
+require_once('include/photo_factory.php');
 
 class Libzot
 {
@@ -968,56 +969,10 @@ class Libzot
 
             // see if this is a channel clone that's hosted locally - which we treat different from other xchans/connections
 
-            $local = q(
-                "select channel_account_id, channel_id from channel where channel_hash = '%s' limit 1",
+            $local = q("select channel_id from channel where channel_hash = '%s' limit 1",
                 dbesc($xchan_hash)
             );
-            if ($local) {
-                $ph = false;
-                if (strpos($arr['photo']['url'], z_root()) === false) {
-                    $ph = z_fetch_url($arr['photo']['url'], true);
-                }
-                if ($ph && $ph['success']) {
-                    $hash = import_channel_photo($ph['body'], $arr['photo']['type'], $local[0]['channel_account_id'], $local[0]['channel_id']);
-
-                    if ($hash) {
-                        // unless proven otherwise
-                        $is_default_profile = 1;
-
-                        $profile = q(
-                            "select is_default from profile where aid = %d and uid = %d limit 1",
-                            intval($local[0]['channel_account_id']),
-                            intval($local[0]['channel_id'])
-                        );
-                        if ($profile) {
-                            if (!intval($profile[0]['is_default'])) {
-                                $is_default_profile = 0;
-                            }
-                        }
-
-                        // If setting for the default profile, unset the profile photo flag from any other photos I own
-                        if ($is_default_profile) {
-                            q(
-                                "UPDATE photo SET photo_usage = %d WHERE photo_usage = %d AND resource_id != '%s' AND aid = %d AND uid = %d",
-                                intval(PHOTO_NORMAL),
-                                intval(PHOTO_PROFILE),
-                                dbesc($hash),
-                                intval($local[0]['channel_account_id']),
-                                intval($local[0]['channel_id'])
-                            );
-                        }
-                    }
-
-                    // reset the names in case they got messed up when we had a bug in this function
-                    $photos = array(
-                        z_root() . '/photo/profile/l/' . $local[0]['channel_id'],
-                        z_root() . '/photo/profile/m/' . $local[0]['channel_id'],
-                        z_root() . '/photo/profile/s/' . $local[0]['channel_id'],
-                        $arr['photo_mimetype'],
-                        false
-                    );
-                }
-            } else {
+            if (!$local) {
                 $photos = import_remote_xchan_photo($arr['photo']['url'], $xchan_hash);
             }
             if ($photos) {
