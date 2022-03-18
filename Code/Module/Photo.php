@@ -131,7 +131,7 @@ class Photo extends Controller
                 if ($r) {
                     $data = dbunescbin($r[0]['content']);
                     $mimetype = $r[0]['mimetype'];
-                    if (intval($r[0]['os_storage'])) {
+                    if ($data && intval($r[0]['os_storage'])) {
                         $data = file_get_contents($data);
                     }
                 }

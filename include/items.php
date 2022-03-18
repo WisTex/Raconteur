@@ -724,15 +724,15 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['obj'] = $arr['obj']['asld'];
 	}
 
-	$arr['target']       = activity_sanitise($x['target']);
+	$arr['target']       = isset($x['target']) ? activity_sanitise($x['target']) : '';
 
 	if($arr['target'] && is_array($arr['target']) && array_key_exists('asld',$arr['target'])) {
 		$arr['target'] = $arr['target']['asld'];
 	}
 
 	$arr['attach']       = activity_sanitise($x['attach']);
-	$arr['replyto']      = activity_sanitise($c['replyto']);
-	$arr['term']         = decode_tags($x['tags']);
+	$arr['replyto']      = activity_sanitise($x['replyto']);
+	$arr['term']         = isset($x['tags']) ? decode_tags($x['tags']) : [];
 	$arr['iconfig']      = decode_item_meta($x['meta']);
 
 	$arr['item_private'] = 0;
@@ -874,8 +874,8 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['item_delayed'] = intval($x['item_delayed']);
 		$arr['item_pending_remove'] = intval($x['item_pending_remove']);
 		$arr['item_blocked'] = intval($x['item_blocked']);
-		$arr['item_restrict'] = intval($x['item_restrict']);
-		$arr['item_flags'] = intval($x['item_flags']);
+		$arr['item_restrict'] = isset($x['item_restrict']) ? intval($x['item_restrict']) : 0;
+		$arr['item_flags'] = isset($x['item_flags']) ? intval($x['item_flags']) : 0;
 
 	}
 
