@@ -6,15 +6,20 @@
     		$('#{{$content_id}}-chevron').removeClass('fa-chevron-up').addClass('fa-chevron-down');
 		} return false;" >
 		{{$title}}
-		{{if ! $reset}}
-	    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink"></i>
-		{{/if}}
 		</div>
+		{{if ! $reset}}
+	    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink pull-right" onclick="openClose('{{$content_id}}'); if ($('#{{$content_id}}').is(':visible')) {
+	    $('#{{$content_id}}-chevron').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        } else {
+	    $('#{{$content_id}}-chevron').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        } return false;" ></i>
+		{{/if}}
 		{{if $reset}}
 		<a href="{{$reset.url}}" class="text-muted" title="{{$reset.title}}">
 			<i class="fa fa-fw fa-{{$reset.icon}}"></i>
 		</a>
 		{{/if}}
+
 	</h3>
 	<div id="{{$content_id}}" style="display: none;">
 	{{if $name}}
