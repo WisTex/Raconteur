@@ -23,7 +23,7 @@ class Communities extends Controller
         if (isset($_REQUEST['search'])) {
             $sql_extra .= ""; //@TODO
         }
-        $desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of websites and dozens of projects and providers which participate in this communications network.');
+        $desc = t('This page provides information about affiliated website communities which are currently known to this website. These are a small fraction of the thousands of websites and dozens of projects and providers which participate in this communications network.');
 
         $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
 
