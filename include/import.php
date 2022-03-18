@@ -1452,7 +1452,7 @@ function sync_files($channel, $files)
             if (! $f) {
                 continue;
             }
-
+            $is_profile_photo = false;
             $fetch_url = $f['fetch_url'];
 
             $oldbase = dirname($fetch_url);
@@ -1660,6 +1660,7 @@ function sync_files($channel, $files)
                 logger('attachment store failed', LOGGER_NORMAL, LOG_ERR);
             }
             if ($f['photo']) {
+                $is_profile_photo = false;
                 foreach ($f['photo'] as $p) {
                     unset($p['id']);
                     $p['aid'] = $channel['channel_account_id'];
@@ -1674,6 +1675,7 @@ function sync_files($channel, $files)
                     // for any other photo which previously held it.
 
                     if ($p['photo_usage'] == PHOTO_PROFILE) {
+                        $is_profile_photo = true;
                         $e = q(
                             "update photo set photo_usage = %d where photo_usage = %d
 							and resource_id != '%s' and uid = %d ",
@@ -1748,6 +1750,7 @@ function sync_files($channel, $files)
                         }
                     }
 
+                    
                     if (!isset($p['display_path'])) {
                         $p['display_path'] = '';
                     }
@@ -1778,7 +1781,16 @@ function sync_files($channel, $files)
                     }
                 }
             }
-
+            
+            if ($is_profile_photo) {
+                // set this or the next channel refresh will wipe out the profile photo with one that's fetched remotely
+                // and lacks the file context; as we probably didn't receive an xchan record in the sync packet
+                q("update xchan set xchan_photo_date = '%s' where xchan_hash = '%s'",
+                    dbesc(datetime_convert()),
+                    dbesc($channel['channel_hash'])
+                );
+            }
+    
             Run::Summon([ 'Thumbnail' , $att['hash'] ]);
 
             if ($f['item']) {

@@ -201,7 +201,7 @@ class Import extends Controller
         logger('import step 2');
 
         if (array_key_exists('channel', $data)) {
-            if ($data['photo']) {
+            if (isset($data['photo']) && $data['photo']) {
                 import_channel_photo(base64url_decode($data['photo']['data']), $data['photo']['type'], $account_id, $channel['channel_id']);
             }
 
