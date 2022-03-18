@@ -33,7 +33,7 @@ class Libsync
     public static function build_sync_packet($uid = 0, $packet = null, $groups_changed = false)
     {
 
-        //logger('build_sync_packet');
+        // logger('build_sync_packet');
 
         $keychange = (($packet && array_key_exists('keychange', $packet)) ? true : false);
         if ($keychange) {
