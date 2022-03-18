@@ -1013,7 +1013,7 @@ function import_items($channel, $items, $sync = false, $relocate = null)
                 (is_array($stored)) && ($stored['id'] != $stored['parent'])
                 && ($stored['author_xchan'] === $channel['channel_hash'])
             ) {
-                retain_item($stored['item']['parent']);
+                retain_item($stored['parent']);
             }
 
             fix_attached_permissions($channel['channel_id'], $item['body'], $item['allow_cid'], $item['allow_gid'], $item['deny_cid'], $item['deny_gid']);
