@@ -1515,9 +1515,8 @@ function theme_attachments(&$item)
         $attaches = [];
         foreach ($arr as $r) {
             $label = EMPTY_STR;
-            if (isset($r['type']) && $r['type']) {
-                $icon = getIconFromType($r['type']);
-            }
+            $icon = getIconFromType(isset($r['type']) ? $r['type'] : 'application/octet-stream');
+
             if (isset($r['title']) && $r['title']) {
                 $label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
             }

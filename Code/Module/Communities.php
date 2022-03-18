@@ -9,7 +9,7 @@ use Code\Web\Controller;
 use Code\Render\Theme;
 
 
-class Sites extends Controller
+class Communities extends Controller
 {
 
     public function get()
@@ -125,7 +125,7 @@ class Sites extends Controller
                     'photo' => $logo,
                     'about' => bbcode($about),
                     'hash' => substr(hash('sha256', $rr['site_url']), 0, 16),
-                    'network_label' => t('Project'),
+                    'network_label' => t('Type'),
                     'network' => $rr['site_project'],
                     'version_label' => t('Version'),
                     'version' => $rr['site_version'],
@@ -175,7 +175,7 @@ class Sites extends Controller
             }
         }
         $projects = array_keys($ret);
-        rsort($projects);
+        sort($projects);
 
         $newret = [];
         foreach ($projects as $p) {
