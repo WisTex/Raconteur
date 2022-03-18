@@ -764,6 +764,7 @@ function import_sysapps($channel, $apps)
         $sysapps = Apps::get_system_apps(false);
 
         foreach ($apps as $app) {
+    
             if (array_key_exists('app_system', $app) && (! intval($app['app_system']))) {
                 continue;
             }
@@ -775,7 +776,7 @@ function import_sysapps($channel, $apps)
             $term = ((array_key_exists('term', $app) && is_array($app['term'])) ? $app['term'] : null);
 
             foreach ($sysapps as $sysapp) {
-                if ($app['app_id'] === hash('whirlpool', $sysapp['app_name'])) {
+                if ($app['app_id'] === hash('whirlpool', $sysapp['name'])) {
                     // install this app on this server
                     $newapp = $sysapp;
                     $newapp['uid'] = $channel['channel_id'];
@@ -811,7 +812,7 @@ function sync_sysapps($channel, $apps)
 {
 
     $sysapps = Apps::get_system_apps(false);
-
+    
     if ($channel && $apps) {
         $columns = db_columns('app');
 
@@ -824,7 +825,7 @@ function sync_sysapps($channel, $apps)
             }
 
             foreach ($sysapps as $sysapp) {
-                if ($app['app_id'] === hash('whirlpool', $sysapp['app_name'])) {
+                if ($app['app_id'] === hash('whirlpool', $sysapp['name'])) {
                     if (array_key_exists('app_deleted', $app) && $app['app_deleted'] && $app['app_id']) {
                         q(
                             "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
