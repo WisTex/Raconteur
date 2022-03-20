@@ -774,7 +774,6 @@ class Libzot
 
         $import_photos = false;
 
-        $sig_methods = ((array_key_exists('signing', $arr) && is_array($arr['signing'])) ? $arr['signing'] : ['sha256']);
         $verified = false;
 
         if (!self::verify($arr['id'], $arr['id_sig'], $arr['public_key'])) {
@@ -1423,20 +1422,10 @@ class Libzot
                 }
                 if (isset($AS->data['hubloc']) && $AS->data['hubloc']) {
                     $arr['item_verified'] = true;
+                }
 
-                    if (!array_key_exists('comment_policy', $arr)) {
-                        // set comment policy based on type of site.
-                        $s = q(
-                            "select site_type from site where site_url = '%s' limit 1",
-                            dbesc($r[0]['hubloc_url'])
-                        );
-
-                        if ($s && intval($s[0]['site_type']) === SITE_TYPE_ZOT) {
-                            $arr['comment_policy'] = 'contacts';
-                        } else {
-                            $arr['comment_policy'] = 'authenticated';
-                        }
-                    }
+                if (!array_key_exists('comment_policy', $arr)) {
+                    $arr['comment_policy'] = 'authenticated';
                 }
                 if ($AS->meta['signed_data']) {
                     IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
@@ -3374,6 +3363,7 @@ class Libzot
 
 
         $ret['site']['encryption'] = Crypto::methods();
+        $ret['signature_algorithm'] = $sig_method;
         $ret['site']['zot'] = System::get_zot_revision();
 
         // hide detailed site information if you're off the grid

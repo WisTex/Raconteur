@@ -204,6 +204,13 @@ audio, video {
 
 }
 
+.panel {
+    background-color: rgb(255,255,255);
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: $radius;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
+}
+
 .heart {
 	color: #FF0000;
 }
