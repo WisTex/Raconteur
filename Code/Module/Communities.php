@@ -9,7 +9,7 @@ use Code\Web\Controller;
 use Code\Render\Theme;
 
 
-class Sites extends Controller
+class Communities extends Controller
 {
 
     public function get()
@@ -23,7 +23,7 @@ class Sites extends Controller
         if (isset($_REQUEST['search'])) {
             $sql_extra .= ""; //@TODO
         }
-        $desc = t('This page provides information about related projects and websites that are currently known to this system. These are a small fraction of the thousands of websites and dozens of projects and providers which participate in this communications network.');
+        $desc = t('This page provides information about affiliated website communities which are currently known to this website. These are a small fraction of the thousands of websites and dozens of projects and providers which participate in this communications network.');
 
         $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
 
@@ -125,7 +125,7 @@ class Sites extends Controller
                     'photo' => $logo,
                     'about' => bbcode($about),
                     'hash' => substr(hash('sha256', $rr['site_url']), 0, 16),
-                    'network_label' => t('Project'),
+                    'network_label' => t('Type'),
                     'network' => $rr['site_project'],
                     'version_label' => t('Version'),
                     'version' => $rr['site_version'],
@@ -175,7 +175,7 @@ class Sites extends Controller
             }
         }
         $projects = array_keys($ret);
-        rsort($projects);
+        sort($projects);
 
         $newret = [];
         foreach ($projects as $p) {

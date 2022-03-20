@@ -631,7 +631,7 @@ function event_store_event($arr)
         intval($arr['uid'])
     );
     if ($r) {
-        return $r[0];
+        return array_shift($r);
     }
 
     return false;
