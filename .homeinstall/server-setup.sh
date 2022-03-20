@@ -720,6 +720,7 @@ then
         fi
     fi
     ping_domain
+    # add something here to remove dns_cache_fail ?
     if [ ! -z $ddns_provider ]
     then
         configure_cron_$ddns_provider
@@ -757,14 +758,6 @@ install_mysql
 install_adminer
 create_website_db
 
-if [ "$le_domain" != "localhost" ]
-then
-    install_letsencrypt
-    check_https
-else
-    print_info "domain is localhost - skipped https configuration"
-fi
-
 install_website
 
 configure_daily_update
@@ -773,10 +766,13 @@ configure_cron_daily
 
 if [ "$le_domain" != "localhost" ]
 then
+    install_letsencrypt
+    check_https
+
     install_cryptosetup
     install_rsync
 else
-    print_info "is localhost - skipped installation of cryptosetup"
+    print_info "is localhost - skipped https configuration, and installation of cryptosetup"
 fi
 
 
