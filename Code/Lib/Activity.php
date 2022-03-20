@@ -2977,11 +2977,8 @@ class Activity
                     }
                 }
                 $remainder = substr($act->obj['commentPolicy'], 0, (($until) ? $until : strlen($act->obj['commentPolicy'])));
-                if ($remainder) {
+                if (isset($remainder) && $remainder) {
                     $s['comment_policy'] = $remainder;
-                }
-                if (!(isset($item['comment_policy']) && strlen($item['comment_policy']))) {
-                    $s['comment_policy'] = 'contacts';
                 }
             }
         }

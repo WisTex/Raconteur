@@ -332,7 +332,7 @@ function sync_block($channel, $blocks)
                 LibBlock::remove($channel['channel_id'], $block['block_entity']);
                 continue;
             }
-            LibBlock::store($channel['channel_id'], $block);
+            LibBlock::store($block);
         }
     }
 }
@@ -1053,6 +1053,11 @@ function import_events($channel, $events)
 {
 
     if ($channel && $events) {
+
+        if (isset($events['event_hash'])) {
+            $events = [ $events ];
+        }
+
         foreach ($events as $event) {
             unset($event['id']);
             $event['aid'] = $channel['channel_account_id'];
@@ -1079,6 +1084,10 @@ function sync_events($channel, $events)
     if ($channel && $events) {
         $columns = db_columns('event');
 
+        if (isset($events['event_hash'])) {
+            $events = [ $events ];
+        }
+    
         foreach ($events as $event) {
             if ((! $event['event_hash']) || (! $event['dtstart'])) {
                 continue;
