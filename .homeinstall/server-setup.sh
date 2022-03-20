@@ -698,6 +698,34 @@ stop_server
 update_upgrade
 install_curl
 install_wget
+
+if [ "$le_domain" != "localhost" ]
+then
+    if [ "$install_path" == "/var/www/html" ]
+    then
+        die "Please install in /var/www/html only with \$le_domain=localhost in server-config.txt (for testing purposes)"
+    fi
+    if [ ! -z $ddns_provider ]
+    source ddns/$ddns_provider.sh
+    then
+        if [ ! -f dns_cache_fail ]
+        then
+            nocheck_install "dnsutils"
+            install_run_$ddns_provider
+        fi
+        if [ -z $(dig -4 $le_domain +short | grep $(curl ip4.me/ip/)) ]
+        then
+            touch dns_cache_fail
+            die "There seems to be a DNS cache issue here, you need to wait a litlle before running the script again"
+        fi
+    fi
+    ping_domain
+    if [ ! -z $ddns_provider ]
+    then
+        configure_cron_$ddns_provider
+    fi
+fi
+
 install_sendmail
 install_sury_repo
 if [ $webserver = "nginx" ]
@@ -728,22 +756,13 @@ install_composer
 install_mysql
 install_adminer
 create_website_db
+
 if [ "$le_domain" != "localhost" ]
 then
-    if [ ! -z $ddns_provider ]
-    source ddns/$ddns_provider.sh
-    then
-        install_run_$ddns_provider
-    fi
-    ping_domain
-    if [ ! -z $ddns_provider ]
-    then
-        configure_cron_$ddns_provider
-    fi
     install_letsencrypt
     check_https
 else
-    print_info "domain is localhost - skipped some stuff (https, DynDNS...)"
+    print_info "domain is localhost - skipped https configuration"
 fi
 
 install_website

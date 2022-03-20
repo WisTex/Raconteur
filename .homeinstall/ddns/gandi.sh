@@ -99,6 +99,10 @@ function install_run_gandi {
         die "IP address could not be retrieved. Check your internet connection"
     else
         echo $ip4 | /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $domain_name -r "$subdomain"
+        if [ $? != 0 ]
+        then
+            die "Something went wrong, you should check you API key in ddns/gandi.sh"
+        fi
         if [ $ip4 != $ip6 ]
         then
         echo $ip6 | /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $domain_name -r "$subdomain"
