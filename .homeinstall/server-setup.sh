@@ -716,7 +716,7 @@ then
         if [ -z $(dig -4 $le_domain +short | grep $(curl ip4.me/ip/)) ]
         then
             touch dns_cache_fail
-            die "There seems to be a DNS cache issue here, you need to wait a litlle before running the script again"
+            die "There seems to be a DNS cache issue here, you need to wait a few minutes before running the script again"
         fi
     fi
     ping_domain
