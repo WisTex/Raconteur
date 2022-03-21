@@ -38,6 +38,7 @@
 			</div>
 		</form>
 	</div>
+    <hr class="connections-separator">
 	<div class="connections-wrapper clearfix">
 		{{foreach $contacts as $contact}}
 			{{include file="connection_template.tpl"}}
