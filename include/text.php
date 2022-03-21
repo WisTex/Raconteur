@@ -1515,7 +1515,7 @@ function theme_attachments(&$item)
         $attaches = [];
         foreach ($arr as $r) {
             $label = EMPTY_STR;
-            $icon = getIconFromType($r['type']);
+            $icon = getIconFromType(isset($r['type']) ? $r['type'] : 'application/octet-stream');
 
             if (isset($r['title']) && $r['title']) {
                 $label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
@@ -3445,17 +3445,21 @@ function item_url_replace($channel, &$item, $old, $new, $oldnick = '')
     $item['sig'] = Libzot::sign($item['body'], $channel['channel_prvkey']);
     $item['item_verified'] = 1;
 
-    $item['plink'] = str_replace($old, $new, $item['plink']);
-    if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-        $item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
+    if (isset($item['plink'])) {
+        $item['plink'] = str_replace($old, $new, $item['plink']);
+        if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+            $item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
+        }
+    }
+    
+    if (isset($item['llink'])) {
+        $item['llink'] = str_replace($old, $new, $item['llink']);
+        if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+            $item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
+        }
     }
 
-    $item['llink'] = str_replace($old, $new, $item['llink']);
-    if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-        $item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
-    }
-
-    if ($item['term']) {
+    if (isset($item['term']) && is_array($item['term'])) {
         for ($x = 0; $x < count($item['term']); $x++) {
             $item['term'][$x]['url'] =  str_replace($old, $new, $item['term'][$x]['url']);
             if ($oldnick && ($oldnick !== $channel['channel_address'])) {

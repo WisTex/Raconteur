@@ -32,9 +32,9 @@ class Site_projects
             }
 
             $o = replace_macros(Theme::get_template('site_projects.tpl'), [
-                '$title' => t('Projects'),
+                '$title' => t('Community Types'),
                 '$desc' => '',
-                '$all' => t('All projects'),
+                '$all' => t('All community types'),
                 'base' => z_root() . '/sites',
                 '$sel_all' => (($_REQUEST['project']) ? false : true),
                 '$terms' => $results
@@ -46,9 +46,6 @@ class Site_projects
 
     public static function site_sort($a, $b)
     {
-        if ($a['site_type'] === $b['site_type']) {
-            return strcasecmp($b['site_project'], $a['site_project']);
-        }
-        return (($a['site_type'] < $b['site_type']) ? -1 : 1);
+        return strcasecmp($a['site_project'], $b['site_project']);
     }
 }

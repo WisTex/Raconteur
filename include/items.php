@@ -135,7 +135,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 			// We've determined this is public. Send it also to the system channel.
 			
-			$sys = get_sys_channel();
+			$sys = Channel::get_system();
 			if ($sys && intval($item['uid']) !== intval($sys['channel_id'])) {
 				$recipients[] = $sys['channel_hash'];
 			}
@@ -516,7 +516,8 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 	}
 
 	$post = item_store($arr,$allow_code,$deliver);
-
+    $post_id = 0;
+    
 	if($post['success']) {
 		$post_id = $post['item_id'];
 		$ret['success'] = true;
@@ -529,13 +530,12 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 		 *   * \e array - the item returned from item_store()
 		 */
 		Hook::call('post_local_end', $ret['activity']);
-	}
-
+        sync_an_item($channel ? $channel['channel_id'] : $arr['uid'], $post_id);
+    }
+    
 	if($post_id && $deliver) {
 		Run::Summon([ 'Notifier','activity',$post_id ]);
 	}
-
-	$ret['success'] = true;
 
 	return $ret;
 }
@@ -724,15 +724,15 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['obj'] = $arr['obj']['asld'];
 	}
 
-	$arr['target']       = activity_sanitise($x['target']);
+	$arr['target']       = isset($x['target']) ? activity_sanitise($x['target']) : '';
 
 	if($arr['target'] && is_array($arr['target']) && array_key_exists('asld',$arr['target'])) {
 		$arr['target'] = $arr['target']['asld'];
 	}
 
 	$arr['attach']       = activity_sanitise($x['attach']);
-	$arr['replyto']      = activity_sanitise($c['replyto']);
-	$arr['term']         = decode_tags($x['tags']);
+	$arr['replyto']      = activity_sanitise($x['replyto']);
+	$arr['term']         = isset($x['tags']) ? decode_tags($x['tags']) : [];
 	$arr['iconfig']      = decode_item_meta($x['meta']);
 
 	$arr['item_private'] = 0;
@@ -874,8 +874,8 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['item_delayed'] = intval($x['item_delayed']);
 		$arr['item_pending_remove'] = intval($x['item_pending_remove']);
 		$arr['item_blocked'] = intval($x['item_blocked']);
-		$arr['item_restrict'] = intval($x['item_restrict']);
-		$arr['item_flags'] = intval($x['item_flags']);
+		$arr['item_restrict'] = isset($x['item_restrict']) ? intval($x['item_restrict']) : 0;
+		$arr['item_flags'] = isset($x['item_flags']) ? intval($x['item_flags']) : 0;
 
 	}
 
@@ -1052,17 +1052,6 @@ function encode_item($item,$mirror = false) {
 	$x['type'] = 'activity';
 	$x['encoding'] = 'zot';
 
-	$r = q("select channel_id from channel where channel_id = %d limit 1",
-		intval($item['uid'])
-	);
-
-	if($r)
-		$comment_scope = PermissionLimits::Get($item['uid'],'post_comments');
-	else
-		$comment_scope = 0;
-
-	$c_scope = map_scope($comment_scope);
-
 	$key = get_config('system','prvkey');
 
 	// If we're trying to backup an item so that it's recoverable or for export/imprt,
@@ -1142,13 +1131,11 @@ function encode_item($item,$mirror = false) {
 	if($y = encode_item_flags($item))
 		$x['flags']       = $y;
 
-	if($item['comments_closed'] > NULL_DATE)
+	if($item['comments_closed'] > NULL_DATE) {
 		$x['comments_closed'] = $item['comments_closed'];
+    }
 
-	if($item['item_nocomment'])
-		$x['comment_scope'] = 'none';
-	else
-		$x['comment_scope'] = $c_scope;
+    $x['comment_scope'] = $item['comment_policy'];
 
 	if($item['term'])
 		$x['tags']        = encode_item_terms($item['term'],$mirror);
@@ -1413,7 +1400,7 @@ function activity_sanitise($arr) {
 				if(is_array($x))
 					$ret[$k] = activity_sanitise($x);
 				else
-					$ret[$k] = htmlspecialchars($x, ENT_COMPAT, 'UTF-8', false);
+					$ret[$k] = htmlspecialchars((isset($x) ? $x : ''), ENT_COMPAT, 'UTF-8', false);
 			}
 			return $ret;
 		}
@@ -5069,6 +5056,7 @@ function copy_of_pubitem($channel,$mid) {
 			$x = item_store($rv);
 			if ($x['item_id'] && $x['item']['mid'] === $mid) {
 				$result = $x['item'];
+                sync_an_item($channel['channel_id'],$x['item_id']);
 			}
 
 		}

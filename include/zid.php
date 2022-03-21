@@ -367,6 +367,14 @@ function owt_init($token)
                 change_channel($r[0]['channel_id']);
                 $delegate_success = true;
             }
+            // experimental 2022-03-16
+//            $allowed = perm_is_allowed($r[0]['channel_id'], $hubloc['xchan_hash'], 'full_control');
+  //          if ($allowed) {
+    //            $_SESSION['account_id'] = intval($r[0]['channel_account_id']);
+      //          // this will set the local_channel authentication in the session
+        //        change_channel($r[0]['channel_id']);
+          //      $delegate_success = true;
+           // }
         }
     }
 

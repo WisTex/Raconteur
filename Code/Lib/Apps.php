@@ -358,6 +358,7 @@ class Apps
             'Chatrooms' => t('Chatrooms'),
             'Clients' => t('Clients'),
             'Comment Control' => t('Comment Control'),
+            'Communities' => t('Communities'),
             'Connections' => t('Connections'),
             'Content Filter' => t('Content Filter'),
             'Content Import' => t('Content Import'),

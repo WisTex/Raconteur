@@ -332,7 +332,7 @@ function sync_block($channel, $blocks)
                 LibBlock::remove($channel['channel_id'], $block['block_entity']);
                 continue;
             }
-            LibBlock::store($channel['channel_id'], $block);
+            LibBlock::store($block);
         }
     }
 }
@@ -764,6 +764,7 @@ function import_sysapps($channel, $apps)
         $sysapps = Apps::get_system_apps(false);
 
         foreach ($apps as $app) {
+    
             if (array_key_exists('app_system', $app) && (! intval($app['app_system']))) {
                 continue;
             }
@@ -775,7 +776,7 @@ function import_sysapps($channel, $apps)
             $term = ((array_key_exists('term', $app) && is_array($app['term'])) ? $app['term'] : null);
 
             foreach ($sysapps as $sysapp) {
-                if ($app['app_id'] === hash('whirlpool', $sysapp['app_name'])) {
+                if ($app['app_id'] === hash('whirlpool', $sysapp['name'])) {
                     // install this app on this server
                     $newapp = $sysapp;
                     $newapp['uid'] = $channel['channel_id'];
@@ -811,7 +812,7 @@ function sync_sysapps($channel, $apps)
 {
 
     $sysapps = Apps::get_system_apps(false);
-
+    
     if ($channel && $apps) {
         $columns = db_columns('app');
 
@@ -824,7 +825,7 @@ function sync_sysapps($channel, $apps)
             }
 
             foreach ($sysapps as $sysapp) {
-                if ($app['app_id'] === hash('whirlpool', $sysapp['app_name'])) {
+                if ($app['app_id'] === hash('whirlpool', $sysapp['name'])) {
                     if (array_key_exists('app_deleted', $app) && $app['app_deleted'] && $app['app_id']) {
                         q(
                             "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
@@ -1012,7 +1013,7 @@ function import_items($channel, $items, $sync = false, $relocate = null)
                 (is_array($stored)) && ($stored['id'] != $stored['parent'])
                 && ($stored['author_xchan'] === $channel['channel_hash'])
             ) {
-                retain_item($stored['item']['parent']);
+                retain_item($stored['parent']);
             }
 
             fix_attached_permissions($channel['channel_id'], $item['body'], $item['allow_cid'], $item['allow_gid'], $item['deny_cid'], $item['deny_gid']);
@@ -1052,6 +1053,11 @@ function import_events($channel, $events)
 {
 
     if ($channel && $events) {
+
+        if (isset($events['event_hash'])) {
+            $events = [ $events ];
+        }
+
         foreach ($events as $event) {
             unset($event['id']);
             $event['aid'] = $channel['channel_account_id'];
@@ -1078,6 +1084,10 @@ function sync_events($channel, $events)
     if ($channel && $events) {
         $columns = db_columns('event');
 
+        if (isset($events['event_hash'])) {
+            $events = [ $events ];
+        }
+    
         foreach ($events as $event) {
             if ((! $event['event_hash']) || (! $event['dtstart'])) {
                 continue;
@@ -1452,7 +1462,9 @@ function sync_files($channel, $files)
             if (! $f) {
                 continue;
             }
+            $is_profile_photo = false;
             $fetch_url = $f['fetch_url'];
+
             $oldbase = dirname($fetch_url);
             $original_channel = $f['original_channel'];
 
@@ -1462,8 +1474,10 @@ function sync_files($channel, $files)
 
             $has_undeleted_attachments = false;
 
+    
             if ($f['attach']) {
                 foreach ($f['attach'] as $att) {
+    
                     $attachment_stored = false;
                     convert_oldfields($att, 'data', 'content');
 
@@ -1656,6 +1670,7 @@ function sync_files($channel, $files)
                 logger('attachment store failed', LOGGER_NORMAL, LOG_ERR);
             }
             if ($f['photo']) {
+                $is_profile_photo = false;
                 foreach ($f['photo'] as $p) {
                     unset($p['id']);
                     $p['aid'] = $channel['channel_account_id'];
@@ -1670,6 +1685,7 @@ function sync_files($channel, $files)
                     // for any other photo which previously held it.
 
                     if ($p['photo_usage'] == PHOTO_PROFILE) {
+                        $is_profile_photo = true;
                         $e = q(
                             "update photo set photo_usage = %d where photo_usage = %d
 							and resource_id != '%s' and uid = %d ",
@@ -1744,6 +1760,7 @@ function sync_files($channel, $files)
                         }
                     }
 
+                    
                     if (!isset($p['display_path'])) {
                         $p['display_path'] = '';
                     }
@@ -1774,7 +1791,16 @@ function sync_files($channel, $files)
                     }
                 }
             }
-
+            
+            if ($is_profile_photo) {
+                // set this or the next channel refresh will wipe out the profile photo with one that's fetched remotely
+                // and lacks the file context; as we probably didn't receive an xchan record in the sync packet
+                q("update xchan set xchan_photo_date = '%s' where xchan_hash = '%s'",
+                    dbesc(datetime_convert()),
+                    dbesc($channel['channel_hash'])
+                );
+            }
+    
             Run::Summon([ 'Thumbnail' , $att['hash'] ]);
 
             if ($f['item']) {
