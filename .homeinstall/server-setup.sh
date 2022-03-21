@@ -90,12 +90,9 @@ function check_sanity {
     then
         die "Debian is supported only"
     fi
-    if ! grep -q 'Linux 11' /etc/issue
+    if [ -z "$(grep 'Linux 10\|Linux 11' /etc/issue)" ]
     then
-        if ! grep -q 'Linux 10' /etc/issue
-        then
-            die "Debian 11 (bullseye) or Debian 10 (buster) are supported only"
-        fi
+        die "Debian 11 (bullseye) or Debian 10 (buster) are supported only"
     fi
 }
 
@@ -299,14 +296,14 @@ function install_php {
     print_info "installing php..."
     if [ $webserver = "nginx" ]
     then
-        nocheck_install "php-fpm php php-pear php-curl php-gd php-mbstring php-xml php-zip"
+        nocheck_install "php-fpm php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
         php_version
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/fpm/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/fpm/php.ini
         systemctl reload php${phpversion}-fpm
     elif [ $webserver = "apache" ]
     then
-        nocheck_install "libapache2-mod-php php php-pear php-curl php-gd php-mbstring php-xml php-zip"
+        nocheck_install "libapache2-mod-php php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
         php_version
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/apache2/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/apache2/php.ini
@@ -421,50 +418,6 @@ function create_website_db {
     fi
 }
 
-function run_freedns {
-    print_info "run freedns (dynamic IP)..."
-    if [ -z "$freedns_key" ]
-    then
-        print_info "freedns was not started because 'freedns_key' is empty in $configfile"
-    else
-        if [ -n "$selfhost_user" ]
-        then
-            die "You can not use freeDNS AND selfHOST for dynamic IP updates ('freedns_key' AND 'selfhost_user' set in $configfile)"
-        fi
-        wget --no-check-certificate -O - http://freedns.afraid.org/dynamic/update.php?$freedns_key
-    fi
-}
-
-function install_run_selfhost {
-    print_info "install and start selfhost (dynamic IP)..."
-    if [ -z "$selfhost_user" ]
-    then
-        print_info "selfHOST was not started because 'selfhost_user' is empty in $configfile"
-    else
-        if [ -n "$freedns_key" ]
-        then
-            die "You can not use freeDNS AND selfHOST for dynamic IP updates ('freedns_key' AND 'selfhost_user' set in $configfile)"
-        fi
-        if [ -z "$selfhost_pass" ]
-        then
-            die "selfHOST was not started because 'selfhost_pass' is empty in $configfile"
-        fi
-        if [ ! -d $selfhostdir ]
-        then
-            mkdir $selfhostdir
-        fi
-        # the old way
-        # https://carol.selfhost.de/update?username=123456&password=supersafe
-        #
-        # the prefered way
-        wget --output-document=$selfhostdir/$selfhostscript http://jonaspasche.de/selfhost-updater
-        echo "router" > $selfhostdir/device
-        echo "$selfhost_user" > $selfhostdir/user
-        echo "$selfhost_pass" > $selfhostdir/pass
-        bash $selfhostdir/$selfhostscript update
-    fi
-}
-
 function ping_domain {
     print_info "ping domain $domain..."
     # Is the domain resolved? Try to ping 6 times à 10 seconds
@@ -485,44 +438,6 @@ function ping_domain {
         sleep 10
     done
     sleep 5
-}
-
-function configure_cron_freedns {
-    print_info "configure cron for freedns..."
-    if [ -z "$freedns_key" ]
-    then
-        print_info "freedns is not configured because freedns_key is empty in $configfile"
-    else
-        # Use cron for dynamich ip update
-        #   - at reboot
-        #   - every 30 minutes
-        if [ -z "`grep 'freedns.afraid.org' /etc/crontab`" ]
-        then
-            echo "@reboot root http://freedns.afraid.org/dynamic/update.php?$freedns_key > /dev/null 2>&1" >> /etc/crontab
-            echo "*/30 * * * * root wget --no-check-certificate -O - http://freedns.afraid.org/dynamic/update.php?$freedns_key > /dev/null 2>&1" >> /etc/crontab
-        else
-            print_info "cron for freedns was configured already"
-        fi
-    fi
-}
-
-function configure_cron_selfhost {
-    print_info "configure cron for selfhost..."
-    if [ -z "$selfhost_user" ]
-    then
-        print_info "selfhost is not configured because selfhost_key is empty in $configfile"
-    else
-        # Use cron for dynamich ip update
-        #   - at reboot
-        #   - every 5 minutes
-        if [ -z "`grep 'selfhost-updater.sh' /etc/crontab`" ]
-        then
-            echo "@reboot root bash /etc/selfhost/selfhost-updater.sh update > /dev/null 2>&1" >> /etc/crontab
-            echo "*/5 * * * * root /bin/bash /etc/selfhost/selfhost-updater.sh update > /dev/null 2>&1" >> /etc/crontab
-        else
-            print_info "cron for selfhost was configured already"
-        fi
-    fi
 }
 
 function install_letsencrypt {
@@ -783,6 +698,35 @@ stop_server
 update_upgrade
 install_curl
 install_wget
+
+if [ "$le_domain" != "localhost" ]
+then
+    if [ "$install_path" == "/var/www/html" ]
+    then
+        die "Please install in /var/www/html only with \$le_domain=localhost in server-config.txt (for testing purposes)"
+    fi
+    if [ ! -z $ddns_provider ]
+    source ddns/$ddns_provider.sh
+    then
+        if [ ! -f dns_cache_fail ]
+        then
+            nocheck_install "dnsutils"
+            install_run_$ddns_provider
+        fi
+        if [ -z $(dig -4 $le_domain +short | grep $(curl ip4.me/ip/)) ]
+        then
+            touch dns_cache_fail
+            die "There seems to be a DNS cache issue here, you need to wait a few minutes before running the script again"
+        fi
+    fi
+    ping_domain
+    # add something here to remove dns_cache_fail ?
+    if [ ! -z $ddns_provider ]
+    then
+        configure_cron_$ddns_provider
+    fi
+fi
+
 install_sendmail
 install_sury_repo
 if [ $webserver = "nginx" ]
@@ -798,7 +742,10 @@ install_imagemagick
 install_php
 if [ $webserver = "nginx" ]
 then
-    add_nginx_conf
+    if [ "$install_path" != "/var/www/html" ]
+    then
+        add_nginx_conf
+    fi
 elif [ $webserver = "apache" ]
 then
     if [ "$install_path" != "/var/www/html" ]
@@ -810,18 +757,6 @@ install_composer
 install_mysql
 install_adminer
 create_website_db
-if [ "$le_domain" != "localhost" ]
-then
-    run_freedns
-    install_run_selfhost
-    ping_domain
-    configure_cron_freedns
-    configure_cron_selfhost
-    install_letsencrypt
-    check_https
-else
-    print_info "domain is localhost - skipped some stuff (https, DynDNS...)"
-fi
 
 install_website
 
@@ -831,10 +766,13 @@ configure_cron_daily
 
 if [ "$le_domain" != "localhost" ]
 then
+    install_letsencrypt
+    check_https
+
     install_cryptosetup
     install_rsync
 else
-    print_info "is localhost - skipped installation of cryptosetup"
+    print_info "is localhost - skipped https configuration, and installation of cryptosetup"
 fi
 
 

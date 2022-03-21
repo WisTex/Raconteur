@@ -4,8 +4,7 @@
 ## Disclaimers
 
 - This script does work with Debian 10 or 11 only.
-- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to ins$
-
+- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to install more than one website on the same computer as long as you use a single webserver.
 ## Preconditions
 
 Hardware
@@ -24,18 +23,19 @@ You can of course run the script on a VPS or any distant server as long as the a
 
 ## How to run the script
 
-+ Register your own domain (for example at selfHOST) or a free subdomain (for example at freeDNS)
++ Register your own domain (for example at Gandi or selfHOST) or a free subdomain (for example at freeDNS)
 + Log on to your fresh Debian
   - apt-get install git
   - mkdir -p /var/www
   - cd /var/www
-  - git clone https://codeberg.org/streams/streams.git html (you can replace "html" with any name you like, which you'll have to do if you plan to have more than one hub/instance running on your server)
-  - cd html/.homeinstall
+  - git clone https://codeberg.org/streams/streams.git mywebsite (you can replace "mywebsite" with any name you like, which you'll have to do if you plan to have more than one hub/instance running on your server); if you plan to install a test server using "localhost" rather that a domain name, be sure to replace "mywebsite" with "html"
+  - cd website/.homeinstall
   - cp server-config.txt.template server-config.txt
   - nano server-config.txt
     - Read the comments carefully
     - Enter your values: db pass, domain, values for dyn DNS
     - Prepare your external disk for backups
+  - If your host your website at home with a changing IP address, you can have a domain or a subdomain automatically configured for Dynamic DNS (DDNS). Scripts are available in the "ddns" folder, you will only need to provide little information to get everything set properly (an API Key for FreeDNS and Gandi, ID/password for selfHOST.de). You will find the info you need in the scripts inside this folder.
   - ./server-setup.sh as root
     - ... wait, wait, wait until the script is finished
 + Open your domain with a browser and step throught the initial configuration of your hub/instance.
@@ -85,8 +85,9 @@ The script is known to work without adjustments with a Mini-PC or a VPS with Deb
   - Rapberry 3 with Raspbian,
   - Rapberry 4 with Raspbian,
 + DynDNS
-  - selfHOST.de
   - freedns.afraid.org
+  - Gandi.net
+  - selfHOST.de
 
 # Step-by-Step - some Details
 
@@ -100,7 +101,7 @@ Open the ports 80 and 443 on your router for your Debian. Make sure your web ser
 
 ## Preparations Dynamic IP Address
 
-Follow the instructions in .homeinstall/server-config.txt.
+Follow the instructions in .homeinstall/server-config.txt and in the dedicated scripts in the .homeinstall/ddns/ folder (freedns.sh, gandi.sh or selfhost.sh).
 
 In short...
 
@@ -116,9 +117,7 @@ There are two ways to get a domain...
 
 ### Method 1: Buy a Domain 
 
-...for example buy at selfHOST.de
-
-The cost is 1,50 € per month (2019).
+...for example buy at Gandi.net (cost will depend on the extension you choose) or selfHOST.de (1,50 € per month as of 2022).
 
 ### Method 2: Register a free subdomain
 
