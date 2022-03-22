@@ -376,6 +376,38 @@ function import_profiles($channel, $profiles)
     }
 }
 
+function import_xchans($xchans) {
+
+    // WARNING: this does not import xchan photos
+    
+    if ($xchans) {
+        foreach ($xchans as $xchan) {
+            // Provide backward compatibility for zot11 based projects
+
+            if ($xchan['xchan_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+                $xchan['xchan_network'] = 'zot6';
+            }
+
+            $hash = Libzot::make_xchan_hash($xchan['xchan_guid'], $xchan['xchan_pubkey']);
+
+            if (in_array($xchan['xchan_network'], ['nomad', 'zot6']) && $hash !== $xchan['xchan_hash']) {
+                logger('forged xchan: ' . print_r($xchan, true));
+                continue;
+            }
+
+            $r = q(
+                "select xchan_hash from xchan where xchan_hash = '%s' limit 1",
+                dbesc($xchan['xchan_hash'])
+            );
+            if ($r) {
+                continue;
+            }
+            xchan_store_lowlevel($xchan);
+        }
+    }
+}    
+
+    
 /**
  * @brief Import hublocs.
  *
