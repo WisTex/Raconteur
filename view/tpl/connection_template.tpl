@@ -1,4 +1,4 @@
-<div id="contact-entry-wrapper-{{$contact.id}}">
+<div id="contact-entry-wrapper-{{$contact.id}}" class="directory-item">
 	<div class="section-subtitle-wrapper clearfix">
 		<div class="pull-right">
 			{{if $contact.approve && $contact.ignore}}
@@ -49,7 +49,7 @@
 			</div>
 			{{/if}}
 		</div>
-
 	</div>
+<hr>
 </div>
 

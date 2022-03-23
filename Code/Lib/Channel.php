@@ -183,11 +183,14 @@ class Channel
             App::$sys_channel = $sys;
             return;
         }
-
+    
+        $basename = ucfirst(basename(z_root()));
+        $sitename = substr($basename,0,strrpos($basename,'.'));
+    
         self::create([
                 'account_id'       => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
                 'nickname'         => 'sys',
-                'name'             => 'System',
+                'name'             => $sitename,
                 'permissions_role' => 'social',
                 'pageflags'        => 0,
                 'publish'          => 0,

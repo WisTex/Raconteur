@@ -6,6 +6,7 @@ use App;
 use Code\Lib\Infocon;
 use Code\Lib\Addon;
 use Code\Render\Theme;
+use Code\Lib\Yaml;
 
 
 class Theme
@@ -179,20 +180,33 @@ class Theme
         return '';
     }
 
-    static public function get_info($theme) {
+    public static function get_info($theme) {
 
         $info =  null;
-        if (is_file("view/theme/$theme/$theme.yml")) {
+        $has_yaml = true;
+    
+        if (is_file("view/theme/$theme.yml")) {
             $info = Infocon::from_file("view/theme/$theme.yml");
         }
         elseif (is_file("view/theme/$theme/php/theme.php")) {
+            $has_yaml = false;
             $info = Infocon::from_c_comment("view/theme/$theme/php/theme.php");
         }
+
+        if ($info && ! $has_yaml) {
+            try {
+                file_put_contents("view/theme/$theme.yml",Yaml::encode($info));
+            }
+            catch (Exception $e) {
+                ;
+            }
+        }
+    
         return $info ? $info : [ 'name' => $theme ] ;
     
     }
 
-    static public function get_email_template($s, $root = '')
+    public static function get_email_template($s, $root = '')
     {
             $testroot = ($root=='') ? $testroot = "ROOT" : $root;
             $t = App::template_engine();
@@ -209,14 +223,14 @@ class Theme
                 if ($newroot != '' && substr($newroot, -1) != '/') {
                                $newroot .= '/';
                 }
-                    $template = $t->Theme::get_email_template($s, $newroot);
+                $template = $t->get_email_template($s, $newroot);
             }
-                $template = $t->Theme::get_email_template($s, $root);
-                return $template;
+            $template = $t->get_email_template($s, $root);
+            return $template;
         }
     }
 
-    static public function get_template($s, $root = '')
+    public static function get_template($s, $root = '')
     {
             $testroot = ($root=='') ? $testroot = "ROOT" : $root;
 
@@ -242,10 +256,30 @@ class Theme
     }
 
 
+    /**
+     * @brief Returns the theme's screenshot.
+     *
+     * The screenshot is expected as view/theme/$theme/img/screenshot.[png|jpg].
+     *
+     * @param string $theme The name of the theme
+     * @return string
+     */
+    public static function get_screenshot($theme)
+    {
+
+        $exts = array('.png', '.jpg');
+        foreach ($exts as $ext) {
+            if (file_exists('view/theme/' . $theme . '/img/screenshot' . $ext)) {
+                return(z_root() . '/view/theme/' . $theme . '/img/screenshot' . $ext);
+            }
+        }
+
+        return(z_root() . '/images/blank.png');
+    }
 
     
 
-    public function debug()
+    public static function debug()
     {
         logger('system_theme: ' . self::$system_theme);
         logger('session_theme: ' . self::$session_theme);

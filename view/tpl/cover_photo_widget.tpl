@@ -16,7 +16,7 @@
 		}
 
 		$('#cover-photo').removeClass('d-none');
-		cover_height = Math.ceil($(window).width()/2.75862069);
+		cover_height = calc_height();
 		$('#cover-photo').css('height', cover_height + 'px');
 		datasrc2src('#cover-photo > img');
 
@@ -52,7 +52,7 @@
 	});
 
 	$(window).resize(function () {
-		cover_height = Math.ceil($(window).width()/2.75862069);
+		cover_height = calc_height();
 		$('#cover-photo').css('height', cover_height + 'px');
 		if($(window).width() < 755) {
 			$('#cover-photo').remove();
@@ -63,6 +63,11 @@
 
 	});
 
+    function calc_height() {
+        if (! ({{$photo.height}} && {{$photo.height}} )) return Math.ceil($(window).width()/1.77777778);
+        return Math.ceil( $(window).width() / ( {{$photo.width}} / {{$photo.height}}));
+    }
+    
 	function slideUpCover() {
 		if(coverSlid) {
 			return;
@@ -95,7 +100,7 @@
 </script>
 
 <div class="d-none" id="cover-photo" title="{{$hovertitle}}">
-	{{$photo_html}}
+	<img class="zrl" width="{{$photo.width}}" height="{{$photo.height}}" data-src="{{$photo.url}}" alt="{{$alt}}" style="{{$style}}" >;
 	<div id="cover-photo-caption">
 		<h1>{{$title}}</h1>
 		<h3>{{$subtitle}}</h3>

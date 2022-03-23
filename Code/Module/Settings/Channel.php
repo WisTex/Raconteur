@@ -296,7 +296,6 @@ class Channel
 
         if ($username != $channel['channel_name']) {
             $name_change = true;
-            require_once('include/channel.php');
             $err = Zlib\Channel::validate_channelname($username);
             if ($err) {
                 notice($err);

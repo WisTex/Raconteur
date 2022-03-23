@@ -588,10 +588,10 @@ class Activity
             $atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'], true));
             if ($atts) {
                 foreach ($atts as $att) {
-                    if (strpos($att['type'], 'image')) {
+                    if (isset($att['type']) && strpos($att['type'], 'image')) {
                         $ret[] = ['type' => 'Image', 'url' => $att['href']];
                     } else {
-                        $ret[] = ['type' => 'Link', 'mediaType' => $att['type'], 'href' => $att['href']];
+                        $ret[] = ['type' => 'Link', 'mediaType' => isset($att['type']) ? $att['type'] : 'application/octet-stream', 'href' => $att['href']];
                     }
                 }
             }
@@ -613,7 +613,7 @@ class Activity
 
         $ret = [];
 
-        if (is_array($item['attachment']) && $item['attachment']) {
+        if (isset($item['attachment']) && is_array($item['attachment']) && $item['attachment']) {
             $ptr = $item['attachment'];
             if (!array_key_exists(0, $ptr)) {
                 $ptr = [$ptr];
@@ -667,7 +667,7 @@ class Activity
                     $ret[] = $entry;
                 }
             }
-        } elseif (is_string($item['attachment'])) {
+        } elseif (isset($item['attachment']) && is_string($item['attachment'])) {
             btlogger('not an array: ' . $item['attachment']);
         }
 
@@ -778,13 +778,14 @@ class Activity
 
             if (!in_array($ret['type'], ['Create', 'Update', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject'])) {
                 $ret['inReplyTo'] = $i['thr_parent'];
-                $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
-                if (!$cnv) {
-                    $cnv = get_iconfig($i['parent'], 'ostatus', 'conversation');
-                }
-                if (!$cnv) {
-                    $cnv = $ret['parent_mid'];
-                }
+            }
+    
+            $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
+            if (!$cnv) {
+                $cnv = get_iconfig($i['parent'], 'ostatus', 'conversation');
+            }
+            if (!$cnv) {
+                $cnv = $ret['parent_mid'];
             }
         }
 
@@ -2243,7 +2244,12 @@ class Activity
         }
 
         $hidden = false;
+        // Mastodon style hidden flag
         if (array_key_exists('discoverable', $person_obj) && (!intval($person_obj['discoverable']))) {
+            $hidden = true;
+        }
+        // Pleroma style hidden flag
+        if (array_key_exists('invisible', $person_obj) && (!intval($person_obj['invisible']))) {
             $hidden = true;
         }
 
@@ -2811,17 +2817,17 @@ class Activity
 
         if (array_key_exists('published', $act->data) && $act->data['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->data['published']);
-        } elseif (array_key_exists('published', $act->obj) && $act->obj['published']) {
+        } elseif (is_array($acct->obj) && array_key_exists('published', $act->obj) && $act->obj['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->obj['published']);
         }
         if (array_key_exists('updated', $act->data) && $act->data['updated']) {
             $s['edited'] = datetime_convert('UTC', 'UTC', $act->data['updated']);
-        } elseif (array_key_exists('updated', $act->obj) && $act->obj['updated']) {
+        } elseif (is_array($act->obj) && array_key_exists('updated', $act->obj) && $act->obj['updated']) {
             $s['edited'] = datetime_convert('UTC', 'UTC', $act->obj['updated']);
         }
         if (array_key_exists('expires', $act->data) && $act->data['expires']) {
             $s['expires'] = datetime_convert('UTC', 'UTC', $act->data['expires']);
-        } elseif (array_key_exists('expires', $act->obj) && $act->obj['expires']) {
+        } elseif (is_array($act->obj) && array_key_exists('expires', $act->obj) && $act->obj['expires']) {
             $s['expires'] = datetime_convert('UTC', 'UTC', $act->obj['expires']);
         }
 
@@ -2971,11 +2977,8 @@ class Activity
                     }
                 }
                 $remainder = substr($act->obj['commentPolicy'], 0, (($until) ? $until : strlen($act->obj['commentPolicy'])));
-                if ($remainder) {
+                if (isset($remainder) && $remainder) {
                     $s['comment_policy'] = $remainder;
-                }
-                if (!(isset($item['comment_policy']) && strlen($item['comment_policy']))) {
-                    $s['comment_policy'] = 'contacts';
                 }
             }
         }
@@ -3619,7 +3622,8 @@ class Activity
                     $item['obj_type'] = 'Answer';
                 }
             }
-        } else {
+        }
+        else {
             if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_system && $pubstream)) {
                 logger('allowed: permission allowed', LOGGER_DATA);
                 $allowed = true;
@@ -3816,16 +3820,23 @@ class Activity
                     $item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
                 }
             }
-
-            // Private conversation, but this comment went rogue and was published publicly
-            // Set item_restrict to indicate this condition so we can flag it in the UI
-
-            if (intval($parent[0]['item_private']) !== 0 && $act->recips && (in_array(ACTIVITY_PUBLIC_INBOX, $act->recips) || in_array('Public', $act->recips) || in_array('as:Public', $act->recips))) {
-                $item['item_restrict'] = $item['item_restrict'] | 2;
-            }
         }
 
         self::rewrite_mentions($item);
+
+        if (! isset($item['replyto'])) {
+            if (strpos($item['owner_xchan'],'http') === 0) {
+                $item['replyto'] = $item['owner_xchan'];
+            }
+            else {
+                $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1",
+                    dbesc($item['owner_xchan'])
+                );
+                if ($r) {
+                    $item['replyto'] = $r[0]['hubloc_id_url'];
+                }
+            }
+        }
 
         $r = q(
             "select id, created, edited from item where mid = '%s' and uid = %d limit 1",
@@ -3881,13 +3892,16 @@ class Activity
                     // We are the owner of this conversation, so send all received comments back downstream
                     Run::Summon(['Notifier', 'comment-import', $x['item_id']]);
                 }
-                $r = q(
-                    "select * from item where id = %d limit 1",
-                    intval($x['item_id'])
-                );
-                if ($r) {
-                    send_status_notifications($x['item_id'], $r[0]);
-                }
+            }
+            elseif ($act->client && $channel['channel_hash'] === $observer_hash) {
+                Run::Summon(['Notifier', 'wall-new', $x['item_id']]);
+            }
+            $r = q(
+                "select * from item where id = %d limit 1",
+                intval($x['item_id'])
+            );
+            if ($r) {
+                send_status_notifications($x['item_id'], $r[0]);
             }
             sync_an_item($channel['channel_id'], $x['item_id']);
         }

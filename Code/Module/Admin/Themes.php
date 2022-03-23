@@ -59,6 +59,9 @@ class Themes
         $files = glob('view/theme/*');
         if ($files) {
             foreach ($files as $file) {
+                if (! is_dir($file)) {
+                    continue;
+                }
                 $f = basename($file);
                 $is_experimental = intval(file_exists($file . '/.experimental'));
                 $is_supported = 1 - (intval(file_exists($file . '/.unsupported'))); // Is not used yet
@@ -126,7 +129,7 @@ class Themes
                 }
             }
 
-            $screenshot = array(get_theme_screenshot($theme), t('Screenshot'));
+            $screenshot = array(Theme::get_screenshot($theme), t('Screenshot'));
             if (!stristr($screenshot[0], $theme)) {
                 $screenshot = null;
             }
@@ -142,7 +145,7 @@ class Themes
                 '$plugin' => $theme,
                 '$status' => $status,
                 '$action' => $action,
-                '$info' => get_theme_info($theme),
+                '$info' => Theme::get_info($theme),
                 '$function' => 'themes',
                 '$admin_form' => $admin_form,
                 '$str_author' => t('Author: '),

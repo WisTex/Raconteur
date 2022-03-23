@@ -78,7 +78,7 @@ class AccessList
                 $user_info = array_shift($r);
                 $change = false;
 
-                if ($user_info['channel_default_group'] == $group_hash) {
+                if ($user_info['channel_default_group'] === $group_hash) {
                     $user_info['channel_default_group'] = '';
                     $change = true;
                 }
@@ -95,7 +95,7 @@ class AccessList
                     q(
                         "UPDATE channel SET channel_default_group = '%s', channel_allow_gid = '%s', channel_deny_gid = '%s' 
 						WHERE channel_id = %d",
-                        intval($user_info['channel_default_group']),
+                        dbesc($user_info['channel_default_group']),
                         dbesc($user_info['channel_allow_gid']),
                         dbesc($user_info['channel_deny_gid']),
                         intval($uid)

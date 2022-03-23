@@ -35,7 +35,10 @@ a.zrl:hover {
 .thread-separator {
 	margin-top: 0px;
 	margin-bottom: 2px;
-	border-top: 1px dotted #EEE;
+    margin-left: auto;
+    margin-right: auto;
+    width: 98%;
+	border-top: 3px solid #EEE;
 }
 
 body {
@@ -199,6 +202,13 @@ audio, video {
 	border-radius: $radius;
 	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
 
+}
+
+.panel {
+    background-color: rgb(255,255,255);
+	border: 1px solid rgba(0,0,0,.2);
+	border-radius: $radius;
+	box-shadow: 3px 3px 3px 0 #aaaaaa;
 }
 
 .heart {
@@ -1248,7 +1258,7 @@ img.mail-conv-sender-photo {
 .directory-item .divgrow-showmore {
 	background-color: $comment_item_colour;
 }
-.directory-item hr {
+.directory-item hr, .connections-separator {
 	background-color: #fff;
   	border: none;
   	border-top: 1px solid #eee;
@@ -1897,4 +1907,8 @@ dl.bb-dl > dd > li {
 .justified-gallery {
     margin: 0 10px;
     padding: 10px 0;
+}
+
+.screenshot img {
+    max-width: 100%;
 }

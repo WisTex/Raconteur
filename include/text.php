@@ -614,7 +614,7 @@ function item_message_id()
 {
 
     try {
-        $hash = Uuid::v4();
+        $hash = (string) Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -635,7 +635,7 @@ function photo_new_resource()
 {
 
     try {
-        $hash = Uuid::v4();
+        $hash = (string) Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -670,7 +670,7 @@ function new_uuid()
 {
 
     try {
-        $hash = Uuid::v4();
+        $hash = (string) Uuid::v4();
     } catch (UnsatisfiedDependencyException $e) {
         $hash = random_string(48);
     }
@@ -948,7 +948,7 @@ function get_tags($s)
     // Pull out single word tags. These can be @nickname, @first_last
     // and #hash tags.
 
-    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;])([@#]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
+    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;\#])([@#]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
         foreach ($match[1] as $mtch) {
             // Cleanup/ignore false positives
 
@@ -1515,7 +1515,7 @@ function theme_attachments(&$item)
         $attaches = [];
         foreach ($arr as $r) {
             $label = EMPTY_STR;
-            $icon = getIconFromType($r['type']);
+            $icon = getIconFromType(isset($r['type']) ? $r['type'] : 'application/octet-stream');
 
             if (isset($r['title']) && $r['title']) {
                 $label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
@@ -1991,7 +1991,7 @@ function format_poll($item, $s, $opts)
     $commentable = can_comment_on_post(((local_channel()) ? get_observer_hash() : EMPTY_STR), $item);
 
     //logger('format_poll: ' . print_r($item,true));
-    $activated = ((local_channel() && local_channel() == $item['uid']) ? true : false);
+    $activated = ((local_channel() && local_channel() == $item['uid'] && get_observer_hash() !== $item['owner_xchan']) ? true : false);
     $output = $s . EOL . EOL;
 
     $closed = false;
@@ -2020,9 +2020,13 @@ function format_poll($item, $s, $opts)
                         $total = 0;
                     }
                     if ($activated && $commentable) {
-                        $output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
                     } else {
-                        $output .= $text . ' (' . $total . ')' . EOL;
+						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
                     }
                 }
             }
@@ -2043,22 +2047,38 @@ function format_poll($item, $s, $opts)
                         $total = 0;
                     }
                     if ($activated && $commentable) {
-                        $output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
+
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
+						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '</div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
+
                     } else {
-                        $output .= $text . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
+						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '</div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
                     }
                 }
             }
         }
+
+        $message = (($totalResponses) ? sprintf(tt('%d Vote in total', '%d Votes in total', $totalResponses, 'noun'), $totalResponses) . EOL : '');
+
+
         if ($closed) {
             $message = t('Poll has ended.');
         } elseif ($closing) {
             $message = sprintf(t('Poll ends: %1$s (%2$s)'), relative_date($t), $t);
         }
-        $output .= EOL . '<div>' . $message . '</div>';
+        $output .= EOL . '<div class="mb-3">' . $message . '</div>';
 
-        if ($activated and $commentable) {
-            $output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="' . t('vote') . '" onclick="submitPoll(' . $item['id'] . '); return false;">' . '</form>';
+        if ($activated and $commentable && !$closed) {
+            $output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="' . t('Vote') . '" onclick="submitPoll(' . $item['id'] . '); return false;">' . '</form>';
         }
     }
     return $output;
@@ -3445,17 +3465,21 @@ function item_url_replace($channel, &$item, $old, $new, $oldnick = '')
     $item['sig'] = Libzot::sign($item['body'], $channel['channel_prvkey']);
     $item['item_verified'] = 1;
 
-    $item['plink'] = str_replace($old, $new, $item['plink']);
-    if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-        $item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
+    if (isset($item['plink'])) {
+        $item['plink'] = str_replace($old, $new, $item['plink']);
+        if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+            $item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
+        }
+    }
+    
+    if (isset($item['llink'])) {
+        $item['llink'] = str_replace($old, $new, $item['llink']);
+        if ($oldnick && ($oldnick !== $channel['channel_address'])) {
+            $item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
+        }
     }
 
-    $item['llink'] = str_replace($old, $new, $item['llink']);
-    if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-        $item['llink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['llink']);
-    }
-
-    if ($item['term']) {
+    if (isset($item['term']) && is_array($item['term'])) {
         for ($x = 0; $x < count($item['term']); $x++) {
             $item['term'][$x]['url'] =  str_replace($old, $new, $item['term'][$x]['url']);
             if ($oldnick && ($oldnick !== $channel['channel_address'])) {

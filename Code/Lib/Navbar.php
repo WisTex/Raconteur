@@ -73,11 +73,7 @@ class Navbar {
         $site_icon = System::get_site_icon();
 
         $banner = EMPTY_STR;
-    
-//        $banner = System::get_site_name();
-//        if (! isset(App::$page['header'])) {
-//            App::$page['header'] = EMPTY_STR;
-//        }
+  
         App::$page['header'] .= replace_macros(Theme::get_template('hdr.tpl'), array(
             //we could additionally use this to display important system notifications e.g. for updates
         ));

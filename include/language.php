@@ -229,7 +229,7 @@ function t($s, $ctx = '')
 function translate_projectname($s)
 {
     if (strpos($s, 'rojectname') !== false) {
-        return str_replace([ '$projectname','$Projectname' ], [ System::get_platform_name(), ucfirst(System::get_platform_name()) ], $s);
+        return str_replace([ '$projectname','$Projectname' ], [ System::get_project_name(), ucfirst(System::get_project_name()) ], $s);
     }
     return $s;
 }

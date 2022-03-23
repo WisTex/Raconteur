@@ -1,12 +1,12 @@
 # Generate hooks
 
-This program generates hooks.html documentation from the Hubzilla source.
+This program generates hooks.html documentation from the project source.
 
 ## Usage
 
 Download and install leiningen
 
-Change directory into  hubzilla/util/generate-hooks-index
+Change directory into  util/generate-hooks-index
 
 At shell prompt, do:
 
@@ -14,7 +14,7 @@ At shell prompt, do:
 lein run
 ```
 
-Hooks docs will get dumped into hubzilla/doc/hooks.html
+Hooks docs will get dumped into doc/hooks.html
 
 ## Requirements
 

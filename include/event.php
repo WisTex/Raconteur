@@ -587,7 +587,7 @@ function event_store_event($arr)
             $hash = $arr['event_hash'];
         } else {
             try {
-                $hash = Uuid::v4();
+                $hash = (string) Uuid::v4();
             } catch (UnsatisfiedDependencyException $e) {
                 $hash = random_string(48);
             }
@@ -631,7 +631,7 @@ function event_store_event($arr)
         intval($arr['uid'])
     );
     if ($r) {
-        return $r[0];
+        return array_shift($r);
     }
 
     return false;

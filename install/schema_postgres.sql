@@ -176,7 +176,7 @@ CREATE TABLE "attach" (
   "os_storage" smallint NOT NULL DEFAULT '0',
   "os_path" text NOT NULL,
   "display_path" text NOT NULL,
-  "content" bytea NOT NULL,
+  "content" text NOT NULL,
   "created" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "edited" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "allow_cid" text NOT NULL,
@@ -885,7 +885,7 @@ CREATE TABLE "photo" (
   "height" numeric(6) NOT NULL,
   "width" numeric(6) NOT NULL,
   "filesize" bigint  NOT NULL DEFAULT '0',
-  "content" bytea NOT NULL,
+  "content" text NOT NULL,
   "imgscale" numeric(3) NOT NULL DEFAULT '0',
   "profile" numeric(1) NOT NULL DEFAULT '0',
   "photo_usage" smallint NOT NULL DEFAULT '0',
@@ -1370,7 +1370,7 @@ CREATE UNIQUE INDEX addressbooks_ukey
 CREATE TABLE cards (
     id SERIAL NOT NULL,
     addressbookid INTEGER NOT NULL,
-    carddata BYTEA,
+    carddata text,
     uri VARCHAR(200),
     lastmodified INTEGER,
     etag VARCHAR(32),
@@ -1399,7 +1399,7 @@ CREATE INDEX addressbookchanges_addressbookid_synctoken_ix
 
 CREATE TABLE calendarobjects (
     id SERIAL NOT NULL,
-    calendardata BYTEA,
+    calendardata text NOT NULL,
     uri VARCHAR(200),
     calendarid INTEGER NOT NULL,
     lastmodified INTEGER,
@@ -1496,7 +1496,7 @@ CREATE INDEX calendarchanges_calendarid_synctoken_ix
 CREATE TABLE schedulingobjects (
     id SERIAL NOT NULL,
     principaluri VARCHAR(255),
-    calendardata BYTEA,
+    calendardata text,
     uri VARCHAR(200),
     lastmodified INTEGER,
     etag VARCHAR(32),
@@ -1553,7 +1553,7 @@ CREATE TABLE propertystorage (
     path VARCHAR(1024) NOT NULL,
     name VARCHAR(100) NOT NULL,
     valuetype INT,
-    value BYTEA
+    value text
 );
 
 ALTER TABLE ONLY propertystorage

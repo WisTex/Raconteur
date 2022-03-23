@@ -16,7 +16,7 @@ class Cover_photo
 
         $o = '';
 
-        if (App::$module == 'channel' && $_REQUEST['mid']) {
+        if (App::$module === 'channel' && $_REQUEST['mid']) {
             return '';
         }
 
@@ -83,19 +83,18 @@ class Cover_photo
             $subtitle = '';
         }
 
-        $c = Channel::get_cover_photo($channel_id, 'html');
+        $c = Channel::get_cover_photo($channel_id, 'array');
 
         if ($c) {
-            $c = str_replace('src=', 'data-src=', $c);
-            $photo_html = (($style) ? str_replace('alt=', ' style="' . $style . '" alt=', $c) : $c);
-
-            $o = replace_macros(Theme::get_template('cover_photo_widget.tpl'), array(
-                '$photo_html' => $photo_html,
+            $o = replace_macros(Theme::get_template('cover_photo_widget.tpl'), [
+                '$photo' => $c,
+                '$style' => $style,
+                '$alt' => t('cover photo'),
                 '$title' => $title,
                 '$subtitle' => $subtitle,
                 '$hovertitle' => t('Click to show more'),
                 '$hide_cover' => $hide_cover
-            ));
+            ]);
         }
         return $o;
     }

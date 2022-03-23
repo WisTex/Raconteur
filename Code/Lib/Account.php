@@ -186,20 +186,20 @@ class Account {
             set_config('system', 'prvkey', $hostkey['prvkey']);
         }
 
-        $invite_result = check_account_invite($invite_code);
+        $invite_result = self::check_invite($invite_code);
         if ($invite_result['error']) {
             $result['message'] = $invite_result['message'];
             return $result;
         }
 
-        $email_result = check_account_email($email);
+        $email_result = self::check_email($email);
 
         if ($email_result['error']) {
             $result['message'] = $email_result['message'];
             return $result;
         }
 
-        $password_result = check_account_password($password);
+        $password_result = self::check_password($password);
 
         if ($password_result['error']) {
             $result['message'] = $password_result['message'];
@@ -625,7 +625,7 @@ class Account {
             Channel::auto_create($register[0]['uid']);
         } else {
             $_SESSION['login_return_url'] = 'new_channel';
-            authenticate_success($account[0], null, true, true, false, true);
+            authenticate_success($account[0], false, true, true, false, true);
         }
 
         return true;

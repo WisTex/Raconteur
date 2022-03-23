@@ -32,7 +32,8 @@ class System
         $name = self::get_site_name();
         if ($name) {
             $words = explode(' ', $name);
-            $project = strtolower(URLify::transliterate($words[0]));
+            // restrict result to characters allowed by the nodeinfo specification
+            $project = preg_replace('/[^a-z0-9-]/', '-', strtolower(URLify::transliterate($words[0])));
         }
         if (!$project) {
             $project = self::get_platform_name();

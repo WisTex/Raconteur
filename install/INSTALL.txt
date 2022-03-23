@@ -54,7 +54,7 @@ web server platforms.
     Example config scripts are available for these platforms in the install
     directory. Apache and nginx have the most support.
 
-    - PHP 7.4 or later.
+    - PHP 8.0 or later.
 
     - PHP *command line* access with register_argc_argv set to true in the
     php.ini file - and with no hosting provider restrictions on the use of

@@ -27,6 +27,9 @@
 		{{foreach $nav.usermenu as $usermenu}}
 		<a class="dropdown-item{{if $usermenu.2}} active{{/if}}"  href="{{$usermenu.0}}" title="{{$usermenu.3}}" role="menuitem" id="{{$usermenu.4}}">{{$usermenu.1}}</a>
 		{{/foreach}}
+		{{if $nav.settings}}
+		<a class="dropdown-item{{if $sel.name == Settings}} active{{/if}}" href="{{$nav.settings.0}}" title="{{$nav.settings.3}}" role="menuitem" id="{{$nav.settings.4}}">{{$nav.settings.1}}</a>
+		{{/if}}
 		{{if $nav.group}}
 		<a class="dropdown-item" href="{{$nav.group.0}}" title="{{$nav.group.3}}" role="menuitem" id="{{$nav.group.4}}">{{$nav.group.1}}</a>
 		{{/if}}
@@ -40,14 +43,6 @@
 		{{/if}}
 		{{if $nav.profiles}}
 		<a class="dropdown-item" href="{{$nav.profiles.0}}" title="{{$nav.profiles.3}}" role="menuitem" id="{{$nav.profiles.4}}">{{$nav.profiles.1}}</a>
-		{{/if}}
-		{{if $nav.settings}}
-		<div class="dropdown-divider"></div>
-		<a class="dropdown-item{{if $sel.name == Settings}} active{{/if}}" href="{{$nav.settings.0}}" title="{{$nav.settings.3}}" role="menuitem" id="{{$nav.settings.4}}">{{$nav.settings.1}}</a>
-		{{/if}}
-		{{if $nav.admin}}
-		<div class="dropdown-divider"></div>
-		<a class="dropdown-item{{if $sel.name == Admin}} active{{/if}}" href="{{$nav.admin.0}}" title="{{$nav.admin.3}}" role="menuitem" id="{{$nav.admin.4}}">{{$nav.admin.1}}</a>
 		{{/if}}
 		{{if $nav.safe}}
 		<div class="dropdown-divider"></div>

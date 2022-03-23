@@ -27,7 +27,7 @@ require_once('version.php');
 
 define ( 'PLATFORM_NAME',           'streams' );
 
-define ( 'DB_UPDATE_VERSION',       1255 );
+define ( 'DB_UPDATE_VERSION',       1256 );
 define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -251,9 +251,9 @@ define ( 'PHOTO_RES_PROFILE_300',       4 );  // square 300 px
 define ( 'PHOTO_RES_PROFILE_80',        5 );  // square 80 px
 define ( 'PHOTO_RES_PROFILE_48',        6 );  // square 48 px
 
-define ( 'PHOTO_RES_COVER_1200',        7 );  // 1200w x 435h (2.75:1)
-define ( 'PHOTO_RES_COVER_850',         8 );  // 850w x 310h
-define ( 'PHOTO_RES_COVER_425',             9 );  // 425w x 160h
+define ( 'PHOTO_RES_COVER_1200',        7 );  // 1200w x 675h (16:9)
+define ( 'PHOTO_RES_COVER_850',         8 );  // 850w x 478h
+define ( 'PHOTO_RES_COVER_425',         9 );  // 425w x 239h
 
 
 /**
@@ -749,6 +749,7 @@ class App {
     private static $perms      = null;            // observer permissions
     private static $widgets    = [];              // widgets for this page
     public  static $config     = [];              // config cache
+    public  static $icon       = '';
 
     public  static $override_intltext_templates = [];
     public  static $override_markup_templates = [];
@@ -1164,7 +1165,7 @@ class App {
         }
 
         if (! x(self::$page,'title')) {
-            self::$page['title'] = ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : EMPTY_STR);
+            self::$page['title'] = ucfirst(App::$module) . ' | ' . ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : EMPTY_STR);
         }
 
         if (! self::$meta->get_field('og:title')) {
@@ -1182,9 +1183,12 @@ class App {
             $i = System::get_site_icon();
         }
         if ($i) {
-            Head::add_link(['rel' => 'shortcut icon', 'href' => $i ]);
-            Head::add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => str_replace('/l/','/64/', System::get_site_icon()) ]);
-            Head::add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => str_replace('/l/','/192/', System::get_site_icon()) ]);
+            // normalise the sizes if possible.
+            $i = str_replace('/s/','/l/',$i);
+            $i = str_replace('/m/','/l/',$i);
+            Head::add_link(['rel' => 'shortcut icon', 'href' => str_replace('/l/','/32/',$i) ]);
+            Head::add_link(['rel' => 'icon', 'sizes' => '64x64', 'href' => str_replace('/l/','/64/', $i) ]);
+            Head::add_link(['rel' => 'icon', 'sizes' => '192x192', 'href' => str_replace('/l/','/192/', $i) ]);
         }
 
         $x = [ 'header' => '' ];
@@ -1310,11 +1314,11 @@ class App {
     }
 
     public static function head_set_icon($icon) {
-        self::$data['pageicon'] = $icon;
+        self::$icon = $icon;
     }
 
     public static function head_get_icon() {
-        $icon = self::$data['pageicon'];
+        $icon = self::$icon;
         if ($icon && ! strpos($icon,'://')) {
             $icon = z_root() . $icon;
         }
@@ -2441,7 +2445,7 @@ function appdirpath() {
  */
 function head_set_icon($icon) {
 
-    App::$data['pageicon'] = $icon;
+    App::$icon = $icon;
 
 }
 
@@ -2452,7 +2456,7 @@ function head_set_icon($icon) {
  */
 function head_get_icon() {
 
-    $icon = ((isset(App::$data['pageicon'])) ? App::$data['pageicon'] : EMPTY_STR);
+    $icon = ((App::$icon) ? App::$icon : EMPTY_STR);
     if($icon && ! strpos($icon, '://'))
         $icon = z_root() . $icon;
 

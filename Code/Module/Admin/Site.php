@@ -160,7 +160,6 @@ class Site
 
         set_config('system', 'language', $language);
         set_config('system', 'theme', $theme);
-        //  set_config('system','site_channel', $site_channel);
         set_config('system', 'maximagesize', $maximagesize);
 
         set_config('system', 'register_policy', $register_policy);
@@ -286,8 +285,8 @@ class Site
             '$advanced' => t('Advanced'),
             '$baseurl' => z_root(),
             '$sitename' => ['sitename', t("Site name"), htmlspecialchars(get_config('system', 'sitename', App::get_hostname()), ENT_QUOTES, 'UTF-8'), ''],
-            '$admininfo' => ['admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  BBCode may be used here.")],
-            '$siteinfo' => ['siteinfo', t('Site Information'), get_config('system', 'siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  BBCode may be used here.")],
+            '$admininfo' => ['admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  Multicode may be used here.")],
+            '$siteinfo' => ['siteinfo', t('Site Information'), get_config('system', 'siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  Multicode may be used here.")],
             '$language' => ['language', t("System language"), get_config('system', 'language', 'en'), "", $lang_choices],
             '$theme' => ['theme', t("System theme"), get_config('system', 'theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices],
 //          '$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
@@ -298,7 +297,7 @@ class Site
             '$register_policy' => ['register_policy', t("Does this site allow new member registration?"), get_config('system', 'register_policy'), "", $register_choices],
             '$invite_only' => ['invite_only', t("Invitation only"), get_config('system', 'invitation_only'), t("Only allow new member registrations with an invitation code. New member registration must be allowed for this to work.")],
             '$invite_working' => defined('INVITE_WORKING'),
-            '$minimum_age' => ['minimum_age', t("Minimum age"), (x(get_config('system', 'minimum_age')) ? get_config('system', 'minimum_age') : 13), t("Minimum age (in years) for who may register on this site.")],
+            '$minimum_age' => ['minimum_age', t("Minimum age"), (x(get_config('system', 'minimum_age')) ? get_config('system', 'minimum_age') : 13), t("Minimum age (in years) for who may register on this site - this is only evaluated if Terms of Service is required.")],
             '$access_policy' => ['access_policy', t("Which best describes the types of account offered by this site?"), get_config('system', 'access_policy'), t("If a public server policy is selected, this information may be displayed on the public server site list."), $access_choices],
             '$register_text' => ['register_text', t("Register text"), htmlspecialchars(get_config('system', 'register_text'), ENT_QUOTES, 'UTF-8'), t("Will be displayed prominently on the registration page.")],
             '$tos_required' => [ 'tos_required', t('Require acceptance of Terms of Service'),get_config('system','tos_required'),'', [ t('No'), t('Yes') ] ],

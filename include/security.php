@@ -17,7 +17,7 @@ use Code\Extend\Hook;
  * @param bool $return
  * @param bool $update_lastlog
  */
-function authenticate_success($user_record, $channel = null, $login_initial = false, $interactive = false, $return = false, $update_lastlog = false)
+function authenticate_success($user_record, $channel = false, $login_initial = false, $interactive = false, $return = false, $update_lastlog = false)
 {
 
     $_SESSION['addr'] = $_SERVER['REMOTE_ADDR'];

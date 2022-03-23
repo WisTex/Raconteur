@@ -1,5 +1,5 @@
 version: 1
-url: $baseurl/sites
-name: Sites
+url: $baseurl/communities
+name: Communities
 photo: icon:cloud
 categories: Networking

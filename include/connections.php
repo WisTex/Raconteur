@@ -19,6 +19,10 @@ function abook_store_lowlevel($arr)
         'abook_channel'     => ((array_key_exists('abook_channel', $arr))     ? $arr['abook_channel']     : 0),
         'abook_xchan'       => ((array_key_exists('abook_xchan', $arr))       ? $arr['abook_xchan']       : ''),
         'abook_alias'       => ((array_key_exists('abook_alias', $arr))       ? $arr['abook_alias']       : ''),
+        // The following two fields are not present in existing schema. We need to set them in case
+        // somebody installs this code over an existing database which has these fields.
+        // create_table_from_array() will include these fields on codebases which support them,
+        // and not store them for fresh database which do not. 
         'abook_my_perms'    => ((array_key_exists('abook_my_perms', $arr))    ? $arr['abook_my_perms']    : 0),
         'abook_their_perms' => ((array_key_exists('abook_their_perms', $arr)) ? $arr['abook_their_perms'] : 0),
         'abook_closeness'   => ((array_key_exists('abook_closeness', $arr))   ? $arr['abook_closeness']   : 99),

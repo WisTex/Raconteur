@@ -95,6 +95,10 @@ class Crypto
         if (! $key) {
             return false;
         }
+        // check for passed/provided $alg that is empty
+        if (! $alg) {
+            $alg = 'sha256';
+        }
 
         try {
             $verify = openssl_verify($data, $sig, $key, $alg);

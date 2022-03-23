@@ -2,7 +2,7 @@
 
 /**
  *   * Name: Redbasic
- *   * Description: Hubzilla standard theme
+ *   * Description: standard theme
  *   * Version: 2.1
  *   * Author: Fabrixxm
  *   * Maintainer: Mike Macgirvin

@@ -3,6 +3,7 @@
 namespace Code\Extend;
 
 use App;
+use DBA;
 
 /**
  * @brief Hook class.

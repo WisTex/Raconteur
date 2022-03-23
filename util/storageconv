@@ -1,10 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-// Hubzilla thumbnails storage convertor
+// thumbnails storage convertor
 function usage() {
 	echo <<< EOT
-Hubzilla thumbnails storage convertor
+thumbnails storage convertor
 
 Usage:
 	util/storageconv stats  # show current stats
