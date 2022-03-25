@@ -591,7 +591,7 @@ class Activity
                     if (isset($att['type']) && strpos($att['type'], 'image')) {
                         $ret[] = ['type' => 'Image', 'url' => $att['href']];
                     } else {
-                        $ret[] = ['type' => 'Link', 'mediaType' => isset($att['type']) ? $att['type'] : 'application/octet-stream', 'href' => $att['href']];
+                        $ret[] = ['type' => 'Link', 'mediaType' => isset($att['type']) ? $att['type'] : 'application/octet-stream', 'href' => isset($att['href']) ? $att['href'] : ''];
                     }
                 }
             }
@@ -2817,7 +2817,7 @@ class Activity
 
         if (array_key_exists('published', $act->data) && $act->data['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->data['published']);
-        } elseif (is_array($acct->obj) && array_key_exists('published', $act->obj) && $act->obj['published']) {
+        } elseif (is_array($act->obj) && array_key_exists('published', $act->obj) && $act->obj['published']) {
             $s['created'] = datetime_convert('UTC', 'UTC', $act->obj['published']);
         }
         if (array_key_exists('updated', $act->data) && $act->data['updated']) {
