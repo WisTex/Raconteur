@@ -1013,7 +1013,7 @@ function import_items($channel, $items, $sync = false, $relocate = null)
             if (! $item) {
                 continue;
             }
-
+    
             if ($relocate && $item['mid'] === $item['parent_mid']) {
                 item_url_replace($channel, $item, $relocate['url'], z_root(), $relocate['channel_address']);
             }
