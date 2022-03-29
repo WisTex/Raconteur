@@ -674,12 +674,18 @@ function configure_cron_daily {
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
-check_sanity
+#check_sanity
 
 repo_name
 print_info "We're installing a website using the $repository repository"
 install_path="$(dirname "$(pwd)")"
 install_folder="$(basename $install_path)"
+domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
+local_regex="^([a-zA-Z0-9]){2,25}$"
+
+source easyinstall.sh
+
+exit 0
 
 # Read config file edited by user
 configfile=server-config.txt
@@ -699,11 +705,11 @@ update_upgrade
 install_curl
 install_wget
 
-if [ "$le_domain" != "localhost" ]
+if [[ "$le_domain" =~ $domain_regex ]]
 then
     if [ "$install_path" == "/var/www/html" ]
     then
-        die "Please install in /var/www/html only with \$le_domain=localhost in server-config.txt (for testing purposes)"
+        die "Please install in /var/www/html only for local testing (i.e. \$le_domain=localhost in server-config.txt)"
     fi
     if [ ! -z $ddns_provider ]
     source ddns/$ddns_provider.sh
@@ -764,7 +770,7 @@ configure_daily_update
 
 configure_cron_daily
 
-if [ "$le_domain" != "localhost" ]
+if [[ "$le_domain" =~ $domain_regex ]]
 then
     install_letsencrypt
     check_https
@@ -772,7 +778,7 @@ then
     install_cryptosetup
     install_rsync
 else
-    print_info "is localhost - skipped https configuration, and installation of cryptosetup"
+    print_info "Local domain is used - skipped https configuration, and installation of cryptosetup"
 fi
 
 
