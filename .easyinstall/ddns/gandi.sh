@@ -41,7 +41,7 @@
 #          THIS IS WHERE YOU ADD YOUR API KEY           #
 #########################################################
 
-gandi_api_key=
+gandi_api_key=$ddns_key
 
 ##########################################################
 #             SECOND LEVEL DOMAIN NAME (SLD)             #

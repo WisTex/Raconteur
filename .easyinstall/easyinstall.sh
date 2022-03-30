@@ -8,34 +8,6 @@ function script_debut {
     exitstatus=$?
     if [ $exitstatus = 0 ]
     then
-        if [ -f saved-config.txt ]
-        then
-            source saved-config.txt
-            show_saved
-        else
-            beginner_advanced
-        fi
-    else
-        die "Wokay, come back when you feel ready to test this!"
-    fi
-}
-
-function show_saved {
-    whiptail \
-        --title "Saved configuration file was found" \
-        --yesno "A previously saved configuration file was found in the .easyinstall folder, that contains the following settings:\n\n$saved_summary\n\nWould you like to use those settings (you can edit some of them)?" \
-        --yes-button "Yes, Please" --no-button "No, Thanks" \
-        20 80
-
-    exitstatus=$?
-    if [ $exitstatus = 0 ]
-    then
-        source saved-config.txt
-        using_saved=yes
-        edit_settings
-    elif [ $exitstatus = 1 ]
-    then
-        source server-config.txt.template
         beginner_advanced
     else
         die "Wokay, come back when you feel ready to test this!"
@@ -56,7 +28,36 @@ function beginner_advanced {
         enter_domain
     elif [ $exitstatus = 1 ]
     then
-        enter_domain
+        if [ -f saved-config.txt ]
+        then
+            source saved-config.txt
+            summary
+        else
+            enter_domain
+        fi
+    else
+        die "Wokay, come back when you feel ready to test this!"
+    fi
+}
+
+function show_saved {
+    saved_summary="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_namery_db_user$summary_db_name$summary_db_custompass"
+    whiptail \
+        --title "Saved configuration file was found" \
+        --yesno "A previously saved configuration file was found in the .easyinstall folder, that contains the following settings:\n\n$saved_summary\n\nWould you like to use those settings (you can edit some of them)?" \
+        --yes-button "Yes, Please" --no-button "No, Thanks" \
+        20 80
+
+    exitstatus=$?
+    if [ $exitstatus = 0 ]
+    then
+        source saved-config.txt
+        using_saved=yes
+        edit_settings
+    elif [ $exitstatus = 1 ]
+    then
+        source server-config.txt.template
+        beginner_advanced
     else
         die "Wokay, come back when you feel ready to test this!"
     fi
@@ -167,13 +168,15 @@ function webserver_check {
     then
         webserver_name="a Nginx"
         webserver=nginx
+        summary_webserver="\nWeb server : Nginx\n\n"
     elif [ "$(systemctl is-active apache2)" == "active" ]
     then
         webserver_name="an Apache"
         webserver=apache
+        summary_webserver="\nWeb server : Apache\n\n"
     fi
 
-    if [ -z "$webserver_name" ]
+    if [ ! -z "$webserver_name" ]
     then
         whiptail \
         --title "A web server is already running" \
@@ -200,12 +203,11 @@ function webserver_check {
 
 function select_webserver {
     which_web_server=$(whiptail \
-        --title "Optional - Dynamic DNS configuration" \
+        --title "Choose your web server" \
         --menu "Please choose the webserver you will be using:" \
         18 80 3 \
         "1" "Nginx (recommended for small servers)"\
-        "2" "Apache (most famous web server) "\
-        "3" "Wait... What?" 3>&1 1>&2 2>&3)
+        "2" "Apache (famous but heavier web server) " 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus = 0 ]
@@ -216,9 +218,8 @@ function select_webserver {
            ddns_choice ;;
         2) webserver=apache
            summary_webserver="\nWeb server : Apache\n\n"
-           ddns_choice ;;
-        3) echo "Get some explanations" ;;
         esac
+            ddns_choice
     else
         echo "vous avez annulé"
     fi
@@ -241,7 +242,8 @@ function ddns_choice {
         if [ $exitstatus = 0 ]
         then
             case "$provider" in
-            1) enter_db_pass ;;
+            1) unset ddns_provider ddns_key ddns_id ddns_password summary_ddns_provider summary_ddns_key summary_ddns_id summary_ddns_password
+               enter_db_pass ;;
             2|3|4) ddns_config ;;
             5) echo "Continuer vers des explications" ;;
             esac
@@ -270,26 +272,70 @@ function ddns_config {
 
     if [ $provider == 4 ]
     then
-        echo "We need selfHOST id & password"
-    else
-        if [ -z "$inputbox_api_key" ]
+        if [ -z "$inputbox_ddns_id" ]
         then
-            inputbox_api_key="Please provide your $ddns_provider_name $ddns_key_type :"
+            inputbox_ddns_id="Please provide your $ddns_provider_name ID :"
         fi
-        api_key=$(whiptail \
-        --title "$ddns_provider_name $ddns_key_type" \
-        --inputbox "$inputbox_api_key" \
+        ddns_id=$(whiptail \
+        --title "$ddns_provider_name ID" \
+        --inputbox "$inputbox_ddns_id" \
         10 60 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]
         then
-            if [ -z "$api_key" ]
+            if [ -z "$ddns_id" ]
             then
-                inputbox_api_key="You need a $ddns_provider_name $ddns_key_type to finish your DDNS configuration:"
+                inputbox_ddns_id="You need a $ddns_provider_name ID to finish your DDNS configuration:"
                 ddns_config
             else
-                summary_ddns_key="$ddns_provider_name $ddns_key_type : $api_key\n\n"
+                summary_ddns_id="$ddns_provider_name ID : $ddns_id\n"
+                if [ -z "$inputbox_ddns_password" ]
+                then
+                    inputbox_ddns_password="Please provide your $ddns_provider_name password :"
+                fi
+                ddns_password=$(whiptail \
+                --title "$ddns_provider_name password" \
+                --inputbox "$inputbox_ddns_password" \
+                10 60 3>&1 1>&2 2>&3)
+
+                exitstatus=$?
+                if [ $exitstatus = 0 ]
+                then
+                    if [ -z "$ddns_password" ]
+                    then
+                        inputbox_ddns_password="You need a $ddns_provider_name password to finish your DDNS configuration:"
+                        ddns_config
+                    else
+                        summary_ddns_password="$ddns_provider_name password : $ddns_password\n\n"
+                        enter_db_pass
+                    fi
+                else
+                    die "Run the script again when you're ready"
+                fi
+            fi
+        else
+            die "Run the script again when you're ready"
+        fi
+    else
+        if [ -z "$inputbox_ddns_key" ]
+        then
+            inputbox_ddns_key="Please provide your $ddns_provider_name $ddns_key_type :"
+        fi
+        ddns_key=$(whiptail \
+        --title "$ddns_provider_name $ddns_key_type" \
+        --inputbox "$inputbox_ddns_key" \
+        10 60 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]
+        then
+            if [ -z "$ddns_key" ]
+            then
+                inputbox_ddns_key="You need a $ddns_provider_name $ddns_key_type to finish your DDNS configuration:"
+                ddns_config
+            else
+                summary_ddns_key="$ddns_provider_name $ddns_key_type : $ddns_key\n\n"
                 enter_db_pass
             fi
         else
@@ -316,6 +362,8 @@ function enter_db_pass {
         then
             advanced_db
         else
+            unset website_db_name summary_db_name website_db_user summary_db_user website_db_pass summary_db_custompass
+            website_db_pass="$db_pass"
             summary
         fi
     else
@@ -423,11 +471,12 @@ function advanced_db_pass {
 
 
 function summary {
-    if [ -z $saved_settings ]
+    summary_display="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_user$summary_db_name$summary_db_custompass"
+    if [ ! -f saved-config.txt ]
     then
         if (whiptail \
             --title "Check your settings" \
-            --yesno "$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_db_pass$summary_db_name$summary_db_user$summary_db_custompass" \
+            --yesno "$summary_display" \
             --yes-button "Continue" --no-button "Edit" \
             20 80)
         then
@@ -435,13 +484,35 @@ function summary {
         else
             edit_settings
         fi
+    else
+        whiptail \
+            --title "Saved configuration file was found" \
+            --yesno "A previously saved configuration file was found in the .easyinstall folder, that contains the following settings:\n\n$summary_display\n\nWould you like to use those settings (you can edit some of them)?" \
+            --yes-button "Yes, Please" --no-button "No, Thanks" \
+            24 80
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]
+        then
+            using_saved=yes
+            edit_settings
+        elif [ $exitstatus = 1 ]
+        then
+            source server-config.txt.template
+            for summary_item in ${summary_index[@]}; do
+                unset $summary_item
+            done
+            enter_domain
+        else
+            die "Wokay, come back when you feel ready to test this!"
+        fi
     fi
 }
 
 function save_settings {
     if (whiptail \
         --title "Optional - Save your settings" \
-        --yesno "Would your like to save your settings?\nIf so, they'll be stored in saved-config.txt\n(You can re-use them later)" \
+        --yesno "Would your like to save your settings?\nIf so, they'll be stored in saved-config.txt\n(You can re-use them later in advanced mode)" \
         --yes-button "Yes please" --no-button "No, thanks" \
         10 80)
     then
@@ -451,15 +522,26 @@ function save_settings {
         sed -i "s/^le_email=/le_email=$le_email/" saved-config.txt
         sed -i "s/^webserver=/webserver=$webserver/" saved-config.txt
         sed -i "s/^ddns_provider=/ddns_provider=$ddns_provider/" saved-config.txt
+        sed -i "s/^ddns_key=/ddns_key=$ddns_key/" saved-config.txt
+        sed -i "s/^ddns_id=/ddns_id=$ddns_id/" saved-config.txt
+        sed -i "s/^ddns_password=/ddns_password=$ddns_password/" saved-config.txt
         sed -i "s/^backup_device_name=/backup_device_name=$backup_device_name/" saved-config.txt
         sed -i "s/^backup_device_pass=/backup_device_pass=$backup_device_pass/" saved-config.txt
         sed -i "s/^website_db_name=/website_db_name=$website_db_name/" saved-config.txt
         sed -i "s/^website_db_user=/website_db_user=$website_db_user/" saved-config.txt
-        if [ ! -z $website_db_pass ]
+        if [ ! -z "$website_db_pass" ]
         then
             sed -i "s/^website_db_pass=\"\$db_pass\"/website_db_pass=\"$website_db_pass\"/" saved-config.txt
         fi
-        echo "saved_summary=\"$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_db_pass$summary_db_name$summary_db_user$summary_db_custompass\"" >> saved-config.txt
+
+        echo "" >> saved-config.txt
+        echo "##########################################################" >> saved-config.txt
+        echo "#                   SAVED SUMMARY                        #" >> saved-config.txt
+        echo "##########################################################" >> saved-config.txt
+        echo "" >> saved-config.txt
+        for summary_item in ${summary_index[@]}; do
+            printf '%s=\"%s\"\n' "$summary_item" "${!summary_item}" >> saved-config.txt
+        done
         launch_setup
     else
         launch_setup
@@ -474,5 +556,7 @@ function launch_setup {
     printf "$summary_domain$summary_local$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_db_pass$summary_db_user"
     echo $website_db_pass
 }
+
+summary_index=(summary_domain summary_email summary_webserver summary_ddns_provider summary_ddns_key summary_ddns_id summary_ddns_password summary_db_pass summary_db_name summary_db_user summary_db_custompass)
 
 script_debut

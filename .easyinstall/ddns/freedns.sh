@@ -41,7 +41,7 @@
 #          THIS IS WHERE YOU ADD YOUR KEY               #
 #########################################################
 
-freedns_key=
+freedns_key=$ddns_key
 
 ##########################################################
 #                DO NOT EDIT AFTER THIS                  #

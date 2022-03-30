@@ -27,8 +27,8 @@
 #       THIS IS WHERE YOU ADD YOUR CREDENTIALS          #
 #########################################################
 
-selfhost_user=
-selfhost_pass=
+selfhost_user=$ddns_id
+selfhost_pass=$ddns_password
 
 ##########################################################
 #                DO NOT EDIT AFTER THIS                  #

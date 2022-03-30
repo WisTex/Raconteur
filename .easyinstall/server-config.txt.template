@@ -57,6 +57,19 @@ webserver=
 ddns_provider=
 #
 # Feel free to add scripts for other providers if you feel you can do that!
+#
+###             DDNS CREDENTIALS            ###
+#
+# You will need a key for FreeDNS (update key) of Gandi (API key)
+# Check ddns/freedns.sh or ddns/gandi.sh for more details
+#
+ddns_key=
+#
+# For selfHOST.de you need an account ID and password (see ddns/selfhost.sh)
+#
+ddns_id=
+ddns_password=
+
 
 ###############################################
 ### OPTIONAL - Backup to external device ######
