@@ -1991,7 +1991,7 @@ function format_poll($item, $s, $opts)
     $commentable = can_comment_on_post(((local_channel()) ? get_observer_hash() : EMPTY_STR), $item);
 
     //logger('format_poll: ' . print_r($item,true));
-    $activated = ((local_channel() && local_channel() == $item['uid']) ? true : false);
+    $activated = ((local_channel() && local_channel() == $item['uid'] && get_observer_hash() !== $item['owner_xchan']) ? true : false);
     $output = $s . EOL . EOL;
 
     $closed = false;
@@ -2020,9 +2020,13 @@ function format_poll($item, $s, $opts)
                         $total = 0;
                     }
                     if ($activated && $commentable) {
-                        $output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . EOL;
+						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
                     } else {
-                        $output .= $text . ' (' . $total . ')' . EOL;
+						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
                     }
                 }
             }
@@ -2043,22 +2047,38 @@ function format_poll($item, $s, $opts)
                         $total = 0;
                     }
                     if ($activated && $commentable) {
-                        $output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '"> ' . $text . '</input>' . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
+
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
+						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '</div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
+
                     } else {
-                        $output .= $text . ' (' . $total . ')' . (($totalResponses) ? ' ' . intval($total / $totalResponses * 100) . '%' : '') . EOL;
+						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
+						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+						$output .= '</div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= EOL;
                     }
                 }
             }
         }
+
+        $message = (($totalResponses) ? sprintf(tt('%d Vote in total', '%d Votes in total', $totalResponses, 'noun'), $totalResponses) . EOL : '');
+
+
         if ($closed) {
             $message = t('Poll has ended.');
         } elseif ($closing) {
             $message = sprintf(t('Poll ends: %1$s (%2$s)'), relative_date($t), $t);
         }
-        $output .= EOL . '<div>' . $message . '</div>';
+        $output .= EOL . '<div class="mb-3">' . $message . '</div>';
 
-        if ($activated and $commentable) {
-            $output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="' . t('vote') . '" onclick="submitPoll(' . $item['id'] . '); return false;">' . '</form>';
+        if ($activated and $commentable && !$closed) {
+            $output .= EOL . '<input type="button" class="btn btn-std btn-success" name="vote" value="' . t('Vote') . '" onclick="submitPoll(' . $item['id'] . '); return false;">' . '</form>';
         }
     }
     return $output;
@@ -3417,22 +3437,46 @@ function json_url_replace($old, $new, &$s)
 function item_url_replace($channel, &$item, $old, $new, $oldnick = '')
 {
 
-    if ($item['attach']) {
+    if (isset($item['attach']) && $item['attach']) {
+        $converted = false;
+        if (is_array($item['attach'])) {
+            $item['attach'] = item_json_encapsulate($item,'attach');
+            $converted = true;
+        }
         json_url_replace($old, $new, $item['attach']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
             json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['attach']);
         }
+        if ($converted) {
+            $item['attach'] = json_decode($item['attach'],true);
+        }
     }
-    if ($item['object']) {
-        json_url_replace($old, $new, $item['object']);
+    if ($item['obj']) {
+        $converted = false;
+        if (is_array($item['obj'])) {
+            $item['obj'] = item_json_encapsulate($item,'obj');
+            $converted = true;
+        }
+        json_url_replace($old, $new, $item['obj']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-            json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['object']);
+            json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['obj']);
+        }
+        if ($converted) {
+            $item['obj'] = json_decode($item['obj'],true);
         }
     }
     if ($item['target']) {
+        $converted = false;
+        if (is_array($item['target'])) {
+            $item['target'] = item_json_encapsulate($item,'target');
+            $converted = true;
+        }
         json_url_replace($old, $new, $item['target']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
             json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['target']);
+        }
+        if ($converted) {
+            $item['target'] = json_decode($item['target'],true);
         }
     }
 

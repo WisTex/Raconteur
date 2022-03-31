@@ -100,7 +100,8 @@ class Superblock extends Controller
             $sync = [];
 
             $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blocked)];
-
+            $sync['block_xchan'] = [$r];
+    
             if ($type === BLOCKTYPE_CHANNEL) {
                 $z = q(
                     "insert into xign ( uid, xchan ) values ( %d , '%s' ) ",

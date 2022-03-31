@@ -1258,7 +1258,7 @@ img.mail-conv-sender-photo {
 .directory-item .divgrow-showmore {
 	background-color: $comment_item_colour;
 }
-.directory-item hr {
+.directory-item hr, .connections-separator {
 	background-color: #fff;
   	border: none;
   	border-top: 1px solid #eee;

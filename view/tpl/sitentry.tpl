@@ -17,11 +17,11 @@
 	</div>
 	<div class="section-content-tools-wrapper directory-collapse">
 		<div class="contact-photo-wrapper" id="directory-photo-wrapper-{{$entry.hash}}" >
-			<div class="contact-photo" id="directory-photo-{{$entry.hash}}" >
+			<!--div class="contact-photo" id="directory-photo-{{$entry.hash}}" -->
 				<a href="{{$entry.profile_link}}" class="directory-profile-link" id="directory-profile-link-{{$entry.hash}}" >
 					<img class="directory-photo-img" src="{{$entry.photo}}" height="80" width="80" alt="{{$entry.alttext}}" title="{{$entry.alttext}}" >
 				</a>
-			</div>
+			<!--/div-->
 		</div>
 		<div class="contact-info">
 
@@ -80,4 +80,5 @@
 			{{/if}}
 		</div>
 	</div>
+<hr>
 </div>
