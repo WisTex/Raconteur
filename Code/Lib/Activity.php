@@ -2998,6 +2998,21 @@ class Activity
             $s['body'] = ((self::bb_content($content, 'bbcode') && (!$response_activity)) ? self::bb_content($content, 'bbcode') : self::bb_content($content, 'content'));
         }
 
+        // For the special snowflakes who can't figure out how to use attachments.
+
+        $quote_bbcode = false;
+        $quote_url = $act->get_property_obj('quoteUrl');
+        if ($quote_url) {
+            $quote_bbcode = self::get_quote_bbcode($quote_url);
+        }
+        elseif (isset($act->obj['quoteUrl'])) {
+			$quote_bbcode = self::get_quote_bbcode($act->obj['quoteUrl']);
+        }
+        if ($quote_bbcode) {
+            $s['body'] .= strlen($s['body']) ? '' : "\r\n\r\n";
+			$s['body'] .= $quote_bbcode;
+		}
+
 
         // handle some of the more widely used of the numerous and varied ways of deleting something
 
@@ -4051,6 +4066,11 @@ class Activity
                     $ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
                 }
             }
+            if (array_key_exists('type', $a) && stripos($a['type'], 'activity') !== false) {
+                if (self::media_not_in_body($a['href'], $body)) {
+                    $ret .= "\n\n" . get_quote_bbcode($a['href']);
+                }
+            }
         }
 
         return $ret;
@@ -4402,4 +4422,31 @@ class Activity
             'acceptsJoins' => 'litepub:acceptsJoins',
         ];
     }
+
+	public static function get_quote_bbcode($url) {
+
+		$ret = '';
+
+		$a = self::fetch($url);
+		if ($a) {
+			$act = new ActivityStreams($a);
+
+			if ($act->is_valid()) {
+                $content = self::get_content($act->obj);
+            }
+    
+            $ret .= "[share author='" . urlencode($act->actor['name']) .
+        		"' profile='" . $act->actor['id'] .
+	            "' avatar='" . $act->actor['icon']['url'] .
+	            "' link='" . $act->obj['id'] .
+	            "' auth='" . ((is_matrix_url($act->actor['id'])) ? 'true' : 'false') .
+                "' posted='" . $act->obj['published'] .
+	            "' message_id='" . $act->obj['id'] .
+        	"']";
+    		$ret  .= self::bb_content($content, 'content');
+			$ret  .= '[/share]';
+		}
+
+		return $ret;
+	}
 }
