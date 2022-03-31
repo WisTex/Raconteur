@@ -375,6 +375,10 @@ class Libsync
                 sync_xign($channel, $arr['xign']);
             }
 
+            if (array_key_exists('block_xchan', $arr) && $arr['block_xchan']) {
+                import_xchans($arr['block_xchan']);
+            }
+
             if (array_key_exists('block', $arr) && $arr['block']) {
                 sync_block($channel, $arr['block']);
             }

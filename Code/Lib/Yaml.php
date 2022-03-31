@@ -12,6 +12,7 @@ class Yaml
 
 	public static function decode($data)
 	{
+        $value = false;
 		try {
     		$value = Syaml::parse($data);
 		} catch (ParseException $exception) {

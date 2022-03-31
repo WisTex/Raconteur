@@ -731,6 +731,7 @@ function get_item_elements($x,$allow_code = false) {
 	}
 
 	$arr['attach']       = activity_sanitise($x['attach']);
+    
 	$arr['replyto']      = activity_sanitise($x['replyto']);
 	$arr['term']         = isset($x['tags']) ? decode_tags($x['tags']) : [];
 	$arr['iconfig']      = decode_item_meta($x['meta']);
@@ -850,7 +851,6 @@ function get_item_elements($x,$allow_code = false) {
 		$arr['postopts'] = $x['postopts'];
 		$arr['resource_id'] = $x['resource_id'];
 		$arr['resource_type'] = $x['resource_type'];
-		$arr['attach'] = $x['attach'];
 		$arr['item_origin'] = intval($x['item_origin']);
 		$arr['item_unseen'] = intval($x['item_unseen']);
 		$arr['item_starred'] = intval($x['item_starred']);
@@ -1674,8 +1674,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	if(x($arr,'attach')) {
 		$arr['attach'] = item_json_encapsulate($arr,'attach');
 	}
-
-
+    
 	$arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
 	$arr['mid']           = ((x($arr,'mid'))           ? notags(trim($arr['mid']))                     : random_string());
 	$arr['revision']      = ((x($arr,'revision') && intval($arr['revision']) > 0)   ? intval($arr['revision']) : 0);
@@ -2179,6 +2178,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		$arr['attach'] = item_json_encapsulate($arr,'attach');
 	}
 
+
 	unset($arr['id']);
 	unset($arr['uid']);
 	unset($arr['aid']);
@@ -2248,6 +2248,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
 
 	$arr['attach']        = ((array_key_exists('attach',$arr))        ? notags(trim($arr['attach']))        : $orig[0]['attach']);
+
 	$arr['app']           = ((array_key_exists('app',$arr))           ? notags(trim($arr['app']))           : $orig[0]['app']);
 
 	$arr['item_origin']    = ((array_key_exists('item_origin',$arr))    ? intval($arr['item_origin'])          : $orig[0]['item_origin'] );

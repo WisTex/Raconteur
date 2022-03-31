@@ -459,8 +459,12 @@ class Connedit extends Controller
                         );
                         $sync = LibBlock::fetch_by_entity(local_channel(), $orig_record['abook_xchan']);
                     }
+                    $r = q("select * from xchan where xchan_hash = '%s'",
+                        dbesc($orig_record['abook_xchan'])
+                    );
+
                     $ignored = ['uid' => local_channel(), 'xchan' => $orig_record['abook_xchan']];
-                    Libsync::build_sync_packet(0, ['xign' => [$ignored], 'block' => [$sync]]);
+                    Libsync::build_sync_packet(0, ['xign' => [$ignored], 'block' => [$sync], 'block_xchan' => $r]);
                     $flag_result = abook_toggle_flag($orig_record, ABOOK_FLAG_BLOCKED);
                     break;
                 case 'ignore':
