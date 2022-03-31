@@ -4784,9 +4784,24 @@ function sync_an_item($channel_id,$item_id) {
 		intval($item_id)
 	);
 	if($r) {
+        if (intval($r[0]['parent']) !== intval($r[0]['id'])) {
+            // sync the parent also. This prevents mis-deliveries from sync packets arriving out of order.
+            $y = q("select * from item where id = %d",
+                intval($r[0]['parent'])
+            );
+            if ($y) {
+                $r = array_merge($y,$r);
+            }
+        }
+        $encoded = [];
 		xchan_query($r);
-		$sync_item = fetch_post_tags($r);
-		Libsync::build_sync_packet($channel_id,array('item' => array(encode_item($sync_item[0],true))));
+		$sync_items = fetch_post_tags($r);
+        if ($sync_items) {
+            foreach ($sync_items as $i) {
+                $encoded[] = encode_item($i,true);
+            }
+        }
+		Libsync::build_sync_packet($channel_id,array('item' => $encoded));
 	}
 }
 
