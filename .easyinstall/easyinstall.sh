@@ -31,6 +31,7 @@ function beginner_advanced {
         if [ -f saved-config.txt ]
         then
             source saved-config.txt
+            show_saved=yes
             summary
         else
             enter_domain
@@ -88,6 +89,7 @@ function enter_domain {
                         then
                             webserver_check
                         else
+                            unset le_email summary_email ddns_provider summary_ddns_provider ddns_id summary_ddns_id ddns_password summary_ddns_password ddns_key summary_ddns_key
                             summary
                         fi
                     else
@@ -224,9 +226,8 @@ function ddns_choice {
         if [ $exitstatus = 0 ]
         then
             case "$provider" in
-            1) unset ddns_key ddns_id ddns_password summary_ddns_provider summary_ddns_key summary_ddns_id summary_ddns_password
-               ddns_provider=None
-               if [ -z "edit_mode" ]
+            1) unset ddns_provider ddns_key ddns_id ddns_password summary_ddns_provider summary_ddns_key summary_ddns_id summary_ddns_password
+               if [ -z "$edit_mode" ]
                then
                    enter_db_pass
                else
@@ -295,12 +296,13 @@ function ddns_config {
                         inputbox_ddns_password="You need a $ddns_provider_name password to finish your DDNS configuration:"
                         ddns_config
                     else
+                        unset ddns_key summary_ddns_key
                         summary_ddns_password="$ddns_provider_name password : $ddns_password\n\n"
                         if [ -z "$edit_mode" ]
                         then
                             enter_db_pass
                         else
-                            edit_settings
+                            summary
                         fi
                     fi
                 else
@@ -328,12 +330,13 @@ function ddns_config {
                 inputbox_ddns_key="You need a $ddns_provider_name $ddns_key_type to finish your DDNS configuration:"
                 ddns_config
             else
+                unset ddns_id summary_ddns_id ddns_password summary_ddns_password
                 summary_ddns_key="$ddns_provider_name $ddns_key_type : $ddns_key\n\n"
                 if [ -z "$edit_mode" ]
                 then
                     enter_db_pass
                 else
-                    edit_settings
+                    summary
                fi
             fi
         else
@@ -470,19 +473,9 @@ function advanced_db_pass {
 
 function summary {
     summary_display="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_user$summary_db_name$summary_db_custompass"
-    if [ ! -f saved-config.txt ] || [ ! -z "$edit_mode" ]
+    if [ ! -z "$show_saved" ]
     then
-        if (whiptail \
-            --title "Check your settings" \
-            --yesno "$summary_display" \
-            --yes-button "Continue" --no-button "Edit" \
-            20 80)
-        then
-            save_settings
-        else
-            edit_settings
-        fi
-    else
+        unset show_saved
         whiptail \
             --title "Saved configuration file was found" \
             --yesno "A previously saved configuration file was found in the .easyinstall folder, that contains the following settings:\n\n$summary_display\n\nWould you like to use those settings (you can edit some of them)?" \
@@ -492,7 +485,6 @@ function summary {
         exitstatus=$?
         if [ $exitstatus = 0 ]
         then
-            #using_saved=yes
             edit_settings
         elif [ $exitstatus = 1 ]
         then
@@ -503,6 +495,17 @@ function summary {
             enter_domain
         else
             die "Wokay, come back when you feel ready to test this!"
+        fi
+    else
+        if (whiptail \
+            --title "Check your settings" \
+            --yesno "$summary_display" \
+            --yes-button "Continue" --no-button "Edit" \
+            20 80)
+        then
+            save_settings
+        else
+            edit_settings
         fi
     fi
 }
