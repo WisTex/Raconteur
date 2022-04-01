@@ -245,11 +245,16 @@ function add_vhost {
 
 function add_nginx_conf {
     print_info "adding nginx conf files"
-    sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx-server.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    if [[ "$le_domain" =~ $domain_regex ]]
+    then
+        sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx/nginx-server.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    else
+        sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx/nginx-server.localhost.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    fi
     ln -s /etc/nginx/sites-available/${le_domain}.conf /etc/nginx/sites-enabled/
     if [ ! -f /etc/nginx/snippets/adminer-nginx.inc ]
     then
-        cp adminer-nginx.inc.template /etc/nginx/snippets/adminer-nginx.inc
+        cp nginx/adminer-nginx.inc.template /etc/nginx/snippets/adminer-nginx.inc
     fi
 }
 
@@ -683,13 +688,17 @@ install_folder="$(basename $install_path)"
 domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
 local_regex="^([a-zA-Z0-9]){2,25}$"
 
-source easyinstall.sh
-
-exit 0
-
-# Read config file edited by user
 configfile=server-config.txt
-source $configfile
+
+if [ -f $configfile ]
+then
+    # Read config file edited by user
+    source $configfile
+else
+    # Use this script to generate a config file
+    source easyinstall.sh
+    exit 0 # REMOVE THIS WHEN IT'S ALL READY
+fi
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh

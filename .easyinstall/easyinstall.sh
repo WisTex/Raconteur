@@ -40,29 +40,6 @@ function beginner_advanced {
     fi
 }
 
-function show_saved {
-    saved_summary="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_namery_db_user$summary_db_name$summary_db_custompass"
-    whiptail \
-        --title "Saved configuration file was found" \
-        --yesno "A previously saved configuration file was found in the .easyinstall folder, that contains the following settings:\n\n$saved_summary\n\nWould you like to use those settings (you can edit some of them)?" \
-        --yes-button "Yes, Please" --no-button "No, Thanks" \
-        20 80
-
-    exitstatus=$?
-    if [ $exitstatus = 0 ]
-    then
-        source saved-config.txt
-        using_saved=yes
-        edit_settings
-    elif [ $exitstatus = 1 ]
-    then
-        source server-config.txt.template
-        beginner_advanced
-    else
-        die "Wokay, come back when you feel ready to test this!"
-    fi
-}
-
 function enter_domain {
     if [ -z "$inputbox_domain" ]
     then
@@ -70,13 +47,13 @@ function enter_domain {
         then
             inputbox_domain="What is your website's address/FQDN (Fully Qualified Domain Name)?\n(i.e. mywebsite.example.com, mywesbsite.net)\nYou can also use a local domain for testing\n(i.e. \"localhost\", \"testing\"...)"
         else
-            inputbox_domain="Please enter your website's address/domain name\n(i.e. \"mywebsite.example.com\", \"mywesbsite.net\")"
+            inputbox_domain="Please enter your website's address/domain name\n(i.e. \"mywebsite.example.com\", \"mywebsite.net\")"
         fi
     fi
     le_domain=$(whiptail \
         --title "Domain name" \
         --inputbox "$inputbox_domain" \
-        12 80 3>&1 1>&2 2>&3)
+        12 80 $le_domain 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus = 0 ]
@@ -90,11 +67,16 @@ function enter_domain {
             if [[ "$le_domain" =~ $domain_regex ]]
             then
                 summary_domain="Website address : https://$le_domain/\n"
-                if [ -z "$using_saved" ]
+                if [ -z "$edit_mode" ]
                 then
                     enter_email
                 else
-                    edit_settings
+                    if [ -z "$le_email" ]
+                    then
+                        enter_email
+                    else
+                        summary
+                    fi
                 fi
             else
                 if [ "$level" != "beginner" ]
@@ -102,11 +84,11 @@ function enter_domain {
                     if [[ "$le_domain" =~ $local_regex ]]
                     then
                         summary_domain="Local site address : http://$le_domain/\n"
-                        if [ -z "$using_saved" ]
+                        if [ -z "$edit_mode" ]
                         then
                             webserver_check
                         else
-                            edit_settings
+                            summary
                         fi
                     else
                         inputbox_domain="\"$le_domain\" is not a valid FQDN or valid local domain for your test install. Please enter one of those now:"
@@ -131,7 +113,7 @@ function enter_email {
     le_email=$(whiptail \
         --title "E-mail address (for Let's Encrypt)" \
         --inputbox "$inputbox_email" \
-        10 60 3>&1 1>&2 2>&3)
+        10 60 $le_email 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus = 0 ]
@@ -147,11 +129,11 @@ function enter_email {
             if [[ "$le_email" =~ $email_regex ]]
             then
                 summary_email="Mail address : $le_email\n"
-                if [ -z "$using_saved" ]
+                if [ -z "$edit_mode" ]
                 then
                     webserver_check
                 else
-                    edit_settings
+                    summary
                 fi
             else
                 inputbox_email="\"$le_email\" doesn't remotely look like an e-mail address. Please enter something that looks like \"someone@example.com\" or \"somebody@subdomain.example.com\":"
@@ -164,7 +146,7 @@ function enter_email {
 }
 
 function webserver_check {
-    if [ "$(systemctl is-active nginx)" != "active" ]
+    if [ "$(systemctl is-active nginx)" == "active" ]
     then
         webserver_name="a Nginx"
         webserver=nginx
@@ -186,11 +168,11 @@ function webserver_check {
         exitstatus=$?
         if [ $exitstatus = 0 ]
         then
-            if [ -z "$using_saved" ]
+            if [ -z "$edit_mode" ]
             then
                 ddns_choice
             else
-                edit_settings
+                summary
             fi
         else
             die "Wokay, come back when you feel ready to test this!"
@@ -218,8 +200,8 @@ function select_webserver {
            ddns_choice ;;
         2) webserver=apache
            summary_webserver="\nWeb server : Apache\n\n"
+           ddns_choice
         esac
-            ddns_choice
     else
         echo "vous avez annulé"
     fi
@@ -235,20 +217,26 @@ function ddns_choice {
             "1" "None, I won't be using a DDNS provider"\
             "2" "FreeDNS (offers free of charge subdomains)"\
             "3" "Gandi (French domain name registrar with a nice API)"\
-            "4" "selfHOST.de (German language provider & registrar)"\
-            "5" "Sorry, what now?" 3>&1 1>&2 2>&3)
+            "4" "selfHOST.de (German language provider & registrar)" 3>&1 1>&2 2>&3)
+            ### "5" "Sorry, what now?" 3>&1 1>&2 2>&3) ### Maybe an explanation short text about DDNS could be useful
 
         exitstatus=$?
         if [ $exitstatus = 0 ]
         then
             case "$provider" in
-            1) unset ddns_provider ddns_key ddns_id ddns_password summary_ddns_provider summary_ddns_key summary_ddns_id summary_ddns_password
-               enter_db_pass ;;
+            1) unset ddns_key ddns_id ddns_password summary_ddns_provider summary_ddns_key summary_ddns_id summary_ddns_password
+               ddns_provider=None
+               if [ -z "edit_mode" ]
+               then
+                   enter_db_pass
+               else
+                   edit_settings
+               fi ;;
             2|3|4) ddns_config ;;
-            5) echo "Continuer vers des explications" ;;
+            ### 5) echo ddns_ELIF ;; ### Could link to a short explanation text
             esac
         else
-            echo "vous avez annulé"
+            die "Lost your way? Feel free to try again!"
         fi
     else
         enter_db_pass
@@ -308,7 +296,12 @@ function ddns_config {
                         ddns_config
                     else
                         summary_ddns_password="$ddns_provider_name password : $ddns_password\n\n"
-                        enter_db_pass
+                        if [ -z "$edit_mode" ]
+                        then
+                            enter_db_pass
+                        else
+                            edit_settings
+                        fi
                     fi
                 else
                     die "Run the script again when you're ready"
@@ -336,7 +329,12 @@ function ddns_config {
                 ddns_config
             else
                 summary_ddns_key="$ddns_provider_name $ddns_key_type : $ddns_key\n\n"
-                enter_db_pass
+                if [ -z "$edit_mode" ]
+                then
+                    enter_db_pass
+                else
+                    edit_settings
+               fi
             fi
         else
             die "Run the script again when you're ready"
@@ -472,7 +470,7 @@ function advanced_db_pass {
 
 function summary {
     summary_display="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_user$summary_db_name$summary_db_custompass"
-    if [ ! -f saved-config.txt ]
+    if [ ! -f saved-config.txt ] || [ ! -z "$edit_mode" ]
     then
         if (whiptail \
             --title "Check your settings" \
@@ -494,7 +492,7 @@ function summary {
         exitstatus=$?
         if [ $exitstatus = 0 ]
         then
-            using_saved=yes
+            #using_saved=yes
             edit_settings
         elif [ $exitstatus = 1 ]
         then
@@ -549,7 +547,32 @@ function save_settings {
 }
 
 function edit_settings {
-    echo "Time to edit settings"
+    edit_mode=yes
+    edit_choice=$(whiptail \
+        --title "Edit settings" \
+        --menu "Do you want to change anything? Choose from the options below:" \
+        15 80 6  \
+        "1" "We're good, nothing needs to be changed"\
+        "2" "Website domain/address"\
+        "3" "E-mail address"\
+        "4" "Dynamic DNS" \
+        "5" "Database settings" \
+        "6" "Backup settings" 3>&1 1>&2 2>&3)
+
+    exitstatus=$?
+    if [ $exitstatus = 0 ]
+    then
+        case "$edit_choice" in
+        1) summary ;;
+        2) enter_domain ;;
+        3) enter_email;;
+        4) ddns_choice ;;
+        5) enter_db_pass ;;
+        6) backup_settings ;;
+        esac
+    else
+        summary
+    fi
 }
 
 function launch_setup {
