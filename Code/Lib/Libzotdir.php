@@ -294,13 +294,15 @@ class Libzotdir
 
         $maxlen = get_max_import_size();
 
-        if ($maxlen && mb_strlen($profile['about']) > $maxlen) {
+        if ($maxlen && isset($profile['about']) && mb_strlen($profile['about']) > $maxlen) {
             $profile['about'] = mb_substr($profile['about'], 0, $maxlen, 'UTF-8');
         }
 
         $arr = [];
 
         $arr['xprof_hash'] = $hash;
+    
+        $arr['xprof_dob'] = '0000-00-00';
 		if (isset($profile['birthday'])) {
 	        $arr['xprof_dob'] = (($profile['birthday'] === '0000-00-00')
 				? $profile['birthday']
