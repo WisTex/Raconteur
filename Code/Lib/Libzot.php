@@ -3,7 +3,7 @@
 namespace Code\Lib;
 
 /**
- * @brief lowlevel implementation of Zot6 protocol.
+ * @brief lowlevel implementation of Nomad protocol.
  *
  */
 
@@ -94,9 +94,9 @@ class Libzot
     }
 
     /**
-     * @brief Builds a zot6 notification packet.
+     * @brief Builds a notification packet.
      *
-     * Builds a zot6 notification packet that you can either store in the queue with
+     * Builds a notification packet that you can either store in the queue with
      * a message array or call zot_zot to immediately zot it to the other side.
      *
      * @param array $channel
@@ -1687,12 +1687,6 @@ class Libzot
             // if any further changes are to be made, change a copy and not the original
             $arr = $msg_arr;
 
-//          if (! $msg_arr['mid']) {
-//              logger('no mid2: ' . print_r($msg_arr,true));
-//              logger('recip: ' . $d);
-//          }
-
-
             $DR = new DReport(z_root(), $sender, $d, $arr['mid']);
 
             $channel = Channel::from_hash($d);
@@ -2321,7 +2315,8 @@ class Libzot
 
 
             if ($r) {
-                $arr['author_xchan'] = $r[0]['hubloc_hash'];
+                $r = self::zot_record_preferred($r);
+                $arr['author_xchan'] = $r['hubloc_hash'];
             }
 
             if ($signer) {

@@ -105,7 +105,7 @@ class Inbox extends Controller
             Activity::actor_store($AS->obj['id'], $AS->obj);
         }
 
-        if (is_array($AS->obj) && is_array($AS->obj['actor']) && array_key_exists('id', $AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+        if (is_array($AS->obj) && array_key_exists('actor',$AS->obj) && is_array($AS->obj['actor']) && array_key_exists('id', $AS->obj['actor']) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
             Activity::actor_store($AS->obj['actor']['id'], $AS->obj['actor']);
             if (!check_channelallowed($AS->obj['actor']['id'])) {
                 http_status_exit(403, 'Permission denied');
