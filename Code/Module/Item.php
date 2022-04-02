@@ -1867,10 +1867,10 @@ class Item extends Controller
                 $complex = false;
 
                 if (intval($i[0]['item_type']) || ($local_delete && (!$can_delete))) {
-                    drop_item($i[0]['id']);
+                    drop_item($i[0]['id'], false);
                 } else {
                     // complex deletion that needs to propagate and be performed in phases
-                    drop_item($i[0]['id'], true, DROPITEM_PHASE1);
+                    drop_item($i[0]['id'], false, DROPITEM_PHASE1);
                     $complex = true;
                 }
 
@@ -1881,7 +1881,7 @@ class Item extends Controller
                 if ($r) {
                     xchan_query($r);
                     $sync_item = fetch_post_tags($r);
-                    Libsync::build_sync_packet($i[0]['uid'], array('item' => array(encode_item($sync_item[0], true))));
+                    Libsync::build_sync_packet($i[0]['uid'], [ 'item' => [ encode_item($sync_item[0], true)]]);
                 }
 
                 if ($complex) {
