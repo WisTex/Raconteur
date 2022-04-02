@@ -4068,7 +4068,7 @@ class Activity
             }
             if (array_key_exists('type', $a) && stripos($a['type'], 'activity') !== false) {
                 if (self::media_not_in_body($a['href'], $body)) {
-                    $ret .= "\n\n" . get_quote_bbcode($a['href']);
+                    $ret .= "\n\n" . self::get_quote_bbcode($a['href']);
                 }
             }
         }
