@@ -522,6 +522,9 @@ class Import extends Controller
         if (is_array($data['block'])) {
             import_block($channel, $data['block']);
         }
+        if (is_array($data['block_xchan'])) {
+            import_xchans($data['block_xchan']);
+        }
         if (is_array($data['obj'])) {
             import_objs($channel, $data['obj']);
         }
@@ -602,7 +605,7 @@ class Import extends Controller
                     break;
                 }
 
-                if (!($j['item'] || count($j['item']))) {
+                if (!(isset($j['item']) && is_array($j['item']) && count($j['item']))) {
                     break;
                 }
 

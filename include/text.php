@@ -3437,22 +3437,46 @@ function json_url_replace($old, $new, &$s)
 function item_url_replace($channel, &$item, $old, $new, $oldnick = '')
 {
 
-    if ($item['attach']) {
+    if (isset($item['attach']) && $item['attach']) {
+        $converted = false;
+        if (is_array($item['attach'])) {
+            $item['attach'] = item_json_encapsulate($item,'attach');
+            $converted = true;
+        }
         json_url_replace($old, $new, $item['attach']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
             json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['attach']);
         }
+        if ($converted) {
+            $item['attach'] = json_decode($item['attach'],true);
+        }
     }
-    if ($item['object']) {
-        json_url_replace($old, $new, $item['object']);
+    if ($item['obj']) {
+        $converted = false;
+        if (is_array($item['obj'])) {
+            $item['obj'] = item_json_encapsulate($item,'obj');
+            $converted = true;
+        }
+        json_url_replace($old, $new, $item['obj']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
-            json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['object']);
+            json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['obj']);
+        }
+        if ($converted) {
+            $item['obj'] = json_decode($item['obj'],true);
         }
     }
     if ($item['target']) {
+        $converted = false;
+        if (is_array($item['target'])) {
+            $item['target'] = item_json_encapsulate($item,'target');
+            $converted = true;
+        }
         json_url_replace($old, $new, $item['target']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
             json_url_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['target']);
+        }
+        if ($converted) {
+            $item['target'] = json_decode($item['target'],true);
         }
     }
 
