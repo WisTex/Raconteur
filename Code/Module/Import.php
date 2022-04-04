@@ -605,7 +605,7 @@ class Import extends Controller
                     break;
                 }
 
-                if (!($j['item'] || count($j['item']))) {
+                if (!(isset($j['item']) && is_array($j['item']) && count($j['item']))) {
                     break;
                 }
 
