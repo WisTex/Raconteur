@@ -398,6 +398,8 @@ function enter_db_pass {
             # If no password is entered, we generate a random one
             db_pass=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-16};echo;)
         fi
+        mysqlpass="$db_pass"
+        website_db_pass="$db_pass"
         summary_db_pass="Database main password : $db_pass\n"
         if [ "$level" != "beginner" ]
         # Advanced users can access custom website's DB settings
@@ -410,7 +412,7 @@ function enter_db_pass {
             summary
         fi
     else
-        script_debut
+        die "Okay, come back when when you feel like going a little further."
     fi
 }
 
