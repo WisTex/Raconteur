@@ -2319,12 +2319,29 @@ class Libzot
                 $arr['author_xchan'] = $r['hubloc_hash'];
             }
 
-            if ($signer) {
-                $arr['owner_xchan'] = $signer[0]['hubloc_hash'];
-            } else {
-                $arr['owner_xchan'] = $a['signature']['signer'];
-            }
+            // The default condition for owner_xchan is a top level post
+            // which is not being relayed. Wall-to-wall posts should get
+            // set correctly because they will have 'replyto'. 
 
+            $arr['owner_xchan'] = $arr['author_xchan'];
+
+            // replyTo trumps everything.
+    
+            if ($arr['replyto']) {
+                $arr['owner_xchan'] = $arr['replyto'];
+            }
+            elseif ($arr['mid'] !== $arr['parent_mid']) {
+                // Inherit owner and replyto from the parent. 
+                $r = q("select * from item where mid = '%s' and uid = %d",
+                    dbesc($arr['parent_mid']),
+                    intval($channel['channel_id'])
+                );
+                if ($r) {
+                    $arr['owner_xchan'] = $r[0]['owner_xchan'];
+                    $arr['replyto'] = $r[0]['replyto'];
+                }
+            }
+                      
             if ($AS->meta['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
                 $arr['item_verified'] = true;
             }
