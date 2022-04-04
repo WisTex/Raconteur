@@ -695,9 +695,9 @@ then
     # Read config file edited by user
     source $configfile
 else
-    # Use this script to generate a config file
+    # Use easyinstall script
+    print_info "Now using easyinstall.sh to obtain all necessary settings for the install"
     source easyinstall.sh
-    exit 0 # REMOVE THIS WHEN IT'S ALL READY
 fi
 
 selfhostdir=/etc/selfhost
