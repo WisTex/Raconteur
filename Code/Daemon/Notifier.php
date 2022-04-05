@@ -316,7 +316,8 @@ class Notifier
             }
 
             $thread_is_public = false;
-
+            $question = false;
+    
             if ($target_item['mid'] === $target_item['parent_mid']) {
                 $parent_item = $target_item;
                 $top_level_post = true;
@@ -337,6 +338,7 @@ class Notifier
                 $parent_item = array_shift($r);
                 $top_level_post = false;
                 $thread_is_public = ((intval($parent_item['item_private'])) ? false : true) ;
+                $question = ($parent_item['verb'] === 'Question') ? true : false;
             }
 
             // avoid looping of discover items 12/4/2014
@@ -423,7 +425,7 @@ class Notifier
                 $upstream = true;
                 self::$packet_type = 'response';
                 $is_moderated = their_perms_contains($parent_item['uid'], $sendto, 'moderated');
-                if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! Channel::is_group($parent_item['uid']))) {
+                if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! $question) && (! Channel::is_group($parent_item['uid']))) {
                     if (get_pconfig($target_item['uid'], 'system', 'hyperdrive', true)) {
                         Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
                     }
