@@ -479,7 +479,7 @@ class Queue
 
             if ($channel && $base) {
                 $h = q(
-                    "select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' and hubloc_network in ('zot6','nomad') order by hubloc_id desc limit 1",
+                    "select hubloc_sitekey, site_crypto from hubloc left join site on hubloc_url = site_url where site_url = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                     dbesc($base)
                 );
                 if ($h) {
