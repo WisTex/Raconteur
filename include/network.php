@@ -1727,7 +1727,7 @@ function get_repository_version($branch = 'release')
 {
 
 	if (PLATFORM_NAME === 'streams') {
-		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/raw/@$branch/boot.php";
+		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/@$branch/version.php";
 	}
 	else {
         $path = "https://raw.codeberg.page/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/@$branch/version.php";

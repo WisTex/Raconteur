@@ -14,6 +14,7 @@ If public access is allowed to the content search interface (a site security set
 The URL endpoints are:
 
   https://example.com/search?search=banana
+
   https://example.com/search?tag=banana
     
 Direct Messages
