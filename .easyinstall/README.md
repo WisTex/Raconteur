@@ -1,138 +1,53 @@
+# Easy install setup script
 
-# How to use
+Here you will find a quick and easy way to set up a website capable of joining the fediverse, using software from the Streams repository. All you have to do is run the setup script, enter some information and the magic will happen. Check the [INSTALL.md](INSTALL.md) file for step-by-step instructions.
 
-## Disclaimers
+## Requirements
 
-- This script does work with Debian 10 or 11 only.
-- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to install more than one website on the same computer as long as you use a single webserver.
-## Preconditions
+Before you start, make sure you have the following:
 
-Hardware
+- A computer/server running a freshly installed Debian GNU/Linux system , on which you can use a command line terminal.  It can be a mini-PC or a Raspberry Pi at home, a dedicated server or a VPS.
+- A domain name pointing to this computer/server (a few Dynamic DNS providers can automatically be configured as you will read below). You can register a free subdomain with providers such as FreeDNS or NoIP, or buy a domain elsewhere.
+- Ports 80 & 443 open on your firewall, forwarded to your computer/server you use an IPv4 internet connection through a router (i.e. your ISP router at home).
 
-+ Internet connection and router at home
-+ Mini-pc connected to your router (a Raspberry 3 will do for very small Hubs)
-+ USB drive for backups
+## What the setup script will do for you :
 
-Software
-
-+ Fresh installation of Debian 11 (Bullseye) or Debian 10 (Buster)
-+ Router with open ports 80 and 443 for your web server
-
-You can of course run the script on a VPS or any distant server as long as the above sotfware requirements are satisfied.
-
-
-## How to run the script
-
-+ Register your own domain (for example at Gandi or selfHOST) or a free subdomain (for example at freeDNS)
-+ Log on to your fresh Debian
-  - apt-get install git
-  - mkdir -p /var/www
-  - cd /var/www
-  - git clone https://codeberg.org/streams/streams.git mywebsite (you can replace "mywebsite" with any name you like, which you'll have to do if you plan to have more than one hub/instance running on your server); if you plan to install a test server using "localhost" rather that a domain name, be sure to replace "mywebsite" with "html"
-  - cd website/.homeinstall
-  - cp server-config.txt.template server-config.txt
-  - nano server-config.txt
-    - Read the comments carefully
-    - Enter your values: db pass, domain, values for dyn DNS
-    - Prepare your external disk for backups
-  - If your host your website at home with a changing IP address, you can have a domain or a subdomain automatically configured for Dynamic DNS (DDNS). Scripts are available in the "ddns" folder, you will only need to provide little information to get everything set properly (an API Key for FreeDNS and Gandi, ID/password for selfHOST.de). You will find the info you need in the scripts inside this folder.
-  - ./server-setup.sh as root
-    - ... wait, wait, wait until the script is finished
-+ Open your domain with a browser and step throught the initial configuration of your hub/instance.
-
-## Optional - Set path to imagemagick
-
-In Admin settings of your hub/server or via terminal
-
-    cd /var/www/html
-    util/config system.imagick_convert_path /usr/bin/convert
-
-## Optional - Switch verification of email on/off
-
-Do this just before you register the first user.
-
-In Admin settings of your hub/instance or via terminal
-
-    cd /var/www/html
-
-Check the current setting 
-
-    util/config system verify_email
-
-Switch the verification on/off (1/0)
-
-    util/config system verify_email 0
-
-## What the script will do for you...
-
-+ install everything required by your website, basically a web server (Apache or Nginx), PHP, a database (MySQL), certbot,...
-+ create a database
-+ run certbot to have everything for a secure connection (httpS)
-+ create a script for daily maintenance
-  - backup to external disk (certificates, database, /var/www/)
-  - renew certfificate (letsencrypt)
-  - update of your hub/instance (git)
-  - update of Debian (it will also add sury repository for PHP 8.*)
-  - restart
-+ create cron jobs for
-  - DynDNS (selfHOST.de or freedns.afraid.org) every 5 minutes
-  - Run.php for your hub/instance every 10 minutes
++ Install everything required by your website, basically a web server (Apache or Nginx), PHP, a database server (MariaDB/MySQL), certbot (to obtain Let’s Encrypt SSL certificates),
++ Create a database for your website
++ Run certbot to have a secure connection (http*s*)
++ Create a script for daily maintenance:
+  - backup to external disk (certificates, database, /var/www/) - Optional
+  - renew certfificate (Let’s Encrypt)
+  - update of your website software (git)
+  - update of your Debian operating system
+  - restart your computer/server
++ Create cron jobs for
+  - dynamic DNS (works with FreeDNS, Gandi or selfHOST) every 5 minutes
+  - Run.php for your website every 10 minutes
   - daily maintenance script every day at 05:30
 
-The script is known to work without adjustments with a Mini-PC or a VPS with Debian 11 (bullseye) or Debian 10 (buster) installed. It probably works but needs testing with the following:
+## Some more details
 
-+ Hardware
-  - Rapberry 3 with Raspbian,
-  - Rapberry 4 with Raspbian,
-+ DynDNS
-  - freedns.afraid.org
-  - Gandi.net
-  - selfHOST.de
+### Dynamic DNS configuration
 
-# Step-by-Step - some Details
+If you plan to run your website on a computer at home, you may have to deal with the fact that your internet provider doesn’t offer a fixed IP address. The setup script has extensions for 3 Dynamic DNS (DDNS) providers, which can help you ensure that your domain name will point to your computer/server even if its IP address changes:
 
-## Preparations
+- FreeDNS (freedns.afraid.org) is a free of charge provider that offers free subdomains. You simply need to open an account there and create your subdomain (there’s plenty of domains you can choose from). Once your subdomain is created, you will need to find the update key you will use during install.
 
-## Configure your Router
+- Gandi.net is a french domain name registrar that has a nice API for DDNS (Gandi LiveDNS). If you buy a domain there, you can generate an API key for your account that can be used during install.
 
-Your webserver has to be visible in the internet.
+- selfHOST.de is a german (and german speaking only) registrar. If you have an account and buy a domain there, you will need to provide an ID & password to use the setup script’s DDNS configuration.
 
-Open the ports 80 and 443 on your router for your Debian. Make sure your web server is marked as "exposed host".
+### USB drive backup
 
-## Preparations Dynamic IP Address
+As of April 2022, this is the only automated backup system you can configure with the setup-script. It is only accessible if you use the manually edited config file method (hopefully it should soon be available in the beginner-friendly interface).
 
-Follow the instructions in .homeinstall/server-config.txt and in the dedicated scripts in the .homeinstall/ddns/ folder (freedns.sh, gandi.sh or selfhost.sh).
+This only works if you have physical access to the machine where your website is running, you can not use this backup system with a distant computer/server. A solution for distant backups would certainly be a good idea, feel free to work on this if you have the skills to do so.
 
-In short...
+### Note on Rasperry Pi install
 
-Your server must be reachable by a domain that you can type in your browser
-
-    cooldomain.org
-
-You can use subdomains as well
-
-    my.cooldomain.org
-
-There are two ways to get a domain...
-
-### Method 1: Buy a Domain 
-
-...for example buy at Gandi.net (cost will depend on the extension you choose) or selfHOST.de (1,50 € per month as of 2022).
-
-### Method 2: Register a free subdomain
-
-...for example register at freedns.afraid.org
-
-## Note on Rasperry 
-
-It is recommended to run the Raspi without graphical frontend (X-Server). Use...
+It is recommended to run the Raspi without graphical frontend. Use the following command to boot the Raspi in console mode only:
 
     sudo raspi-config
 
-to boot the Raspi to the client console.
-
-DO NOT FORGET TO CHANGE THE DEFAULT PASSWORD FOR USER PI!
-
-## Reminder for Different Web Wervers
-
-For those of you who feel adventurous enough to use a different web server (i.e. Lighttpd...), don't forget that this script will install Apache or Nginx and that you can only have one web server listening to ports 80 & 443. Also, don't forget to tweak your daily shell script in /var/www/ accordingly.
+*Don’t forget to change the default password for user pi!*

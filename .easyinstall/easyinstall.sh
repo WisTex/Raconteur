@@ -647,7 +647,7 @@ function edit_settings {
 function launch_setup {
     whiptail \
         --title "Launch setup" \
-        --msgbox "Everyting is now ready for the installation of your website. Press \"OK\" to start the automated installation (you can press Esc to cancel)". \
+        --msgbox "Everything is now ready for the installation of your website. Press \"OK\" to start the automated installation (you can press Esc to cancel)". \
         10 60
 
     exitstatus=$?
