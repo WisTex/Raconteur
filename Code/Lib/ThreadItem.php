@@ -34,6 +34,7 @@ class ThreadItem
     private $owner_url = '';
     private $owner_photo = '';
     private $owner_name = '';
+    private $owner_addr = '';
     private $owner_censored = false;
     private $wall_to_wall = false;
     private $threaded = false;
@@ -408,7 +409,7 @@ class ThreadItem
             'conlabels' => '',
             'canvote' => $canvote,
             'linktitle' => sprintf(t('View %s\'s profile - %s'), $profile_name, (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url'])),
-            'olinktitle' => sprintf(t('View %s\'s profile - %s'), $this->get_owner_name(), (($item['owner']['xchan_addr']) ? $item['owner']['xchan_addr'] : $item['owner']['xchan_url'])),
+            'olinktitle' => sprintf(t('View %s\'s profile - %s'), $this->get_owner_name(), (($this->get_owner_addr()) ? $this->get_owner_addr() : $this->get_owner_url)),
             'llink' => $item['llink'],
             'viewthread' => $viewthread,
             'to' => t('to'),
@@ -454,6 +455,7 @@ class ThreadItem
             'owner_url' => $this->get_owner_url(),
             'owner_photo' => $this->get_owner_photo(),
             'owner_name' => $this->get_owner_name(),
+            'owner_addr' =>  $this->get_owner_addr(),
             'photo' => $body['photo'],
             'event' => $body['event'],
             'has_tags' => $has_tags,
@@ -1009,6 +1011,7 @@ class ThreadItem
             $this->owner_url = chanlink_hash($this->data['owner']['xchan_hash']);
             $this->owner_photo = $this->data['owner']['xchan_photo_m'];
             $this->owner_name = $this->data['owner']['xchan_name'];
+            $this->owner_addr = $this->data['owner']['xchan_addr'];
             $this->wall_to_wall = true;
         }
 
@@ -1022,6 +1025,7 @@ class ThreadItem
                     $this->owner_url = $friend['url'];
                     $this->owner_photo = $friend['photo'];
                     $this->owner_name = $friend['name'];
+                    $this->owner_addr = $friend['addr'];
                     $this->owner_censored = $friend['censored'];
                     $this->wall_to_wall = true;
                 }
@@ -1039,6 +1043,7 @@ class ThreadItem
                         'url'   => chanlink_hash($child['author']['xchan_hash']),
                         'photo' => $child['author']['xchan_photo_m'],
                         'name'  => $child['author']['xchan_name'],
+                        'addr'  => $child['author']['xchan_addr'],
                         'censored' => (($child['author']['xchan_censored'] || $child['author']['abook_censor']) ? true : false)
                     ];
                     if ($child['children']) {
@@ -1072,6 +1077,11 @@ class ThreadItem
     private function get_owner_name()
     {
         return $this->owner_name;
+    }
+
+    private function get_owner_addr()
+    {
+        return $this->owner_addr;
     }
 
     private function is_visiting()

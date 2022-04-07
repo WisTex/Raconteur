@@ -35,7 +35,7 @@ class Site_projects
                 '$title' => t('Community Types'),
                 '$desc' => '',
                 '$all' => t('All community types'),
-                'base' => z_root() . '/sites',
+                'base' => z_root() . '/communities',
                 '$sel_all' => (($_REQUEST['project']) ? false : true),
                 '$terms' => $results
             ]);

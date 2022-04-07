@@ -984,7 +984,7 @@ class Activity
                     }
 
                     $d = q(
-                        "select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
+                        "select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                         dbesc($i['parent_mid']),
                         intval($i['uid'])
                     );
@@ -1432,7 +1432,7 @@ class Activity
 
 
                     $d = q(
-                        "select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d limit 1",
+                        "select hubloc.*  from hubloc left join item on hubloc_hash = owner_xchan where item.parent_mid = '%s' and item.uid = %d and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                         dbesc($i['parent_mid']),
                         intval($i['uid'])
                     );
