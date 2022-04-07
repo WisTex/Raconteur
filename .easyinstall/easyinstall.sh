@@ -424,7 +424,7 @@ function advanced_db {
         10 80)
     then
         # Just in case we are in saved-settings mode, we unset a few custom website DB variables here
-        unset website_db_name summary_db_name website_db_user summary_db_user website_db_pass summary_db_custompass
+        unset website_db_name summary_db_name website_db_user summary_db_user summary_db_custompass
         summary
     else
         advanced_db_name
