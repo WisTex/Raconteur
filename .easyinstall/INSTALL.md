@@ -28,7 +28,9 @@ This brings you to the subfolder where the tools are available, i.e. the setup s
 
 ## Next step : installing your website
 
-### a. The beginner-friendly way
+There are two ways to proceed here, the first one is recommended if you're not familiar with the terminal mode.
+
+### The beginner-friendly way
 
 Simply run the setup script :
 
@@ -38,21 +40,21 @@ A series of dialog boxes will appear, in which you can enter the necessary infor
 
 There are only four mandatory settings you need to provide : your domain name, your e-mail address, the webserver your will be using (Apache or Nginx), a password for your database. Once everything is ready, the actual install process will begin and you won’t have to do anything during the install.
 
-### b. The (little) more advanced way
+### The (little) more advanced way
 
 You can enter all your installation settings in a configuration file :
 
-cp server-config.txt.template server-config.txt
-nano server-config.txt
+    cp server-config.txt.template server-config.txt
+    nano server-config.txt
 
 First be sure to read all the comments carefully. Then enter your values: database password, domain, e-mail, webserver, etc.. Then you can run the setup script :
 
-./server-setup.sh
+    ./server-setup.sh
 
 Then simply wait until the script is finished.
 
-## Final step : 
+## Final step 
 
 Open your domain with a browser and step throught the initial configuration of your website. You will need to re-enter a few settings (database & password, admin e-mail…). You will then create your first user, starting with the admin is a great idea.
 
-And that’s it, you can now log in your website and adding content to it!
+And that’s it, you can now log in your website and start adding content to it!
