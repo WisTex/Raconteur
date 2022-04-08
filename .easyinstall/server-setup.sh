@@ -721,8 +721,8 @@ then
         die "Please install in /var/www/html only for local testing (i.e. \$le_domain=localhost in server-config.txt)"
     fi
     if [ ! -z $ddns_provider ]
-    source ddns/$ddns_provider.sh
     then
+        source ddns/$ddns_provider.sh
         if [ ! -f dns_cache_fail ]
         then
             nocheck_install "dnsutils"
@@ -738,6 +738,7 @@ then
     # add something here to remove dns_cache_fail ?
     if [ ! -z $ddns_provider ]
     then
+        source ddns/$ddns_provider.sh
         configure_cron_$ddns_provider
     fi
 fi
