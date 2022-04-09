@@ -115,7 +115,8 @@ function configure_cron_gandi {
     # Use cron for dynamich ip update
     #   - at reboot
     #   - every 5 minutes
-    if [ -z "'grep $domain_name.*$subdomain /etc/crontab'" ]
+    grep "$domain_name".*"$subdomain" /etc/crontab
+    if [ $? != 0 ]
     then
         echo "@reboot root curl ip4.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $domain_name -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
         echo "*/5 * * * * root curl ip4.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $domain_name -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
