@@ -10,7 +10,7 @@ Before you start, make sure you have the following:
 - A domain name pointing to this computer/server (a few Dynamic DNS providers can automatically be configured as you will read below). You can register a free subdomain with providers such as FreeDNS or NoIP, or buy a domain elsewhere.
 - Ports 80 & 443 open on your firewall, forwarded to your computer/server you use an IPv4 internet connection through a router (i.e. your ISP router at home).
 
-## What the setup script will do for you :
+## What the setup script will do for you:
 
 + Install everything required by your website, basically a web server (Apache or Nginx), PHP, a database server (MariaDB/MySQL), certbot (to obtain Let’s Encrypt SSL certificates),
 + Create a database for your website
@@ -51,3 +51,4 @@ It is recommended to run the Raspi without graphical frontend. Use the following
     sudo raspi-config
 
 *Don’t forget to change the default password for user pi!*
+
