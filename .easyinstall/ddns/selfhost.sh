@@ -64,12 +64,13 @@ function configure_cron_selfhost {
     # Use cron for dynamich ip update
     #   - at reboot
     #   - every 5 minutes
-    if [ -z "`grep $selfhostscript /etc/crontab`" ]
+    grep $selfhostscript /etc/crontab
+    if [ $? != 0 ]
     then
         echo "@reboot root bash $selfhostdir/$selfhostscript update > /dev/null 2>&1" >> /etc/crontab
         echo "*/5 * * * * root /bin/bash $selfhostdir/$selfhostscript update > /dev/null 2>&1" >> /etc/crontab
     else
-        print_info "cron for selfhost was configured already"
+        print_info "cron for selfHOST was configured already"
     fi
 }
 

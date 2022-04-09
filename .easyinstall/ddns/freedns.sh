@@ -64,7 +64,8 @@ function configure_cron_freedns {
     # Use cron for dynamich ip update
     #   - at reboot
     #   - every 30 minutes
-    if [ -z "`grep $freedns_key /etc/crontab`" ]
+    grep $freedns_key /etc/crontab
+    if [ $? != 0 ]
     then
         echo "@reboot root http://freedns.afraid.org/dynamic/update.php?$freedns_key > /dev/null 2>&1" >> /etc/crontab
         echo "*/30 * * * * root wget --no-check-certificate -O - http://freedns.afraid.org/dynamic/update.php?$freedns_key > /dev/null 2>&1" >> /etc/crontab
