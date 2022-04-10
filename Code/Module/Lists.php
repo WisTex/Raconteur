@@ -76,9 +76,13 @@ class Lists extends Controller
 
             if (App::$pager['unset'] && $total > 100) {
                 $ret = Activity::paged_collection_init($total, App::$query_string);
+                $ret['name'] = $group['gname'];
+                $ret['attributedTo'] = Channel::url($channel);
             } else {
                 $members = AccessList::members($group['uid'], $group['id'], false, App::$pager['start'], App::$pager['itemspage']);
                 $ret = Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection', $total);
+                $ret['name'] = $group['gname'];
+                $ret['attributedTo'] = Channel::url($channel);
             }
 
             as_return_and_die($ret, $channel);
