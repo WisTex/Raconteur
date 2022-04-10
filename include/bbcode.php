@@ -1137,13 +1137,22 @@ function multicode_purify($s)
         return '[code' . $match[1] . ']' . bb_code_protect($match[2]) . '[/code]';
     }, $s);
 
+    // escape_tags anywhere html is disabled.
+    
+    $s = preg_replace_callback("/\[nohtml\](.*?)\[\/nohtml\]/ism", function ($match) {
+        return escape_tags($match[1]);
+    }, $s);
+
     $s = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', function ($match) {
         return $match[1] . $match[2] . "\n" . bb_code_protect($match[4]) . "\n" . $match[2] . (($match[5]) ? $match[5] : "\n");
     }, $s);
 
-//  if (strpos($s,'<') !== false || strpos($s,'>') !== false) {
+    try {
         $s = purify_html($s, [ 'escape' ]);
-//  }
+    }
+    catch ( \Exception $e) {
+        $s = escape_tags($s);
+    }
 
     return bb_code_unprotect($s);
 }
