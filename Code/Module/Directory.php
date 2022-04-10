@@ -401,7 +401,7 @@ class Directory extends Controller
                                 'hometown_label' => t('Hometown:'),
                                 'about' => $about,
                                 'about_label' => t('About:'),
-                                'conn_label' => t('Connect'),
+                                'conn_label' => intval($rr['type']) === 1 ? t('Join') : t('Connect'),
                                 'forum_label' => t('Group'),
                                 'collections_label' => t('Collection'),
                                 'connect' => $connect_link,
