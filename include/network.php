@@ -1854,7 +1854,7 @@ function z_mail($params)
 
 
 /**
- * @brief Discover the best API path available for redmatrix/hubzilla servers.
+ * @brief Discover the best API path available for the project servers.
  *
  * @param string $host
  * @return string
