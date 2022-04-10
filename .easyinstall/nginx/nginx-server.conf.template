@@ -25,6 +25,7 @@
 
 server {
   listen 80;
+  listen [::]:80;
   server_name SERVER_NAME;
 
 # HTTP > HTTPS #
@@ -41,7 +42,8 @@ server {
 ##
 
 server {
-  listen 443 ssl;
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
   server_name SERVER_NAME;
 
   ssl_certificate /etc/letsencrypt/live/SERVER_NAME/fullchain.pem;
@@ -135,12 +137,10 @@ server {
     deny all;
   }
 	
-#deny access to store
-
-	location ~ /store {
-        deny  all;
-	}
+  #deny access to store
+  location ~ /store {
+    deny  all;
+  }
 
 
 }
-
