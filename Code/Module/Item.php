@@ -57,8 +57,7 @@ class Item extends Controller
 
     public function init()
     {
-
-
+    
         if (ActivityStreams::is_as_request()) {
             $item_uuid = argv(1);
             if (!$item_uuid) {
@@ -921,8 +920,7 @@ class Item extends Controller
         if (!$mimetype) {
             $mimetype = 'text/x-multicode';
         }
-
-
+    
         $execflag = ((intval($uid) == intval($profile_uid)
             && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
 
