@@ -2285,7 +2285,7 @@ class Libzot
             // logger($AS->debug());
 
             $r = q(
-                "select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
+                "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
                 dbesc($AS->actor['id']),
                 dbesc($AS->actor['id'])
             );
@@ -2294,7 +2294,7 @@ class Libzot
                 $y = import_author_xchan(['url' => $AS->actor['id']]);
                 if ($y) {
                     $r = q(
-                        "select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
+                        "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
                         dbesc($AS->actor['id']),
                         dbesc($AS->actor['id'])
                     );
@@ -2327,7 +2327,7 @@ class Libzot
 
             // replyTo trumps everything.
 
-            if ($arr['replyto']) {
+            if (isset($arr['replyto']) && $arr['replyto']) {
                 $arr['owner_xchan'] = $arr['replyto'];
             }
             elseif ($arr['mid'] !== $arr['parent_mid']) {
@@ -2341,11 +2341,14 @@ class Libzot
                     $arr['replyto'] = $r[0]['replyto'];
                 }
             }
-            if ($AS->meta['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
+            if (
+                (isset($AS->meta) && isset($AS->meta['hubloc']) && $AS->meta['hubloc'])
+                || ($arr['author_xchan'] === $arr['owner_xchan'])
+            ) {
                 $arr['item_verified'] = true;
             }
 
-            if ($AS->meta['signed_data']) {
+            if (isset($AS->meta) && isset($AS->meta['signed_data']) && $AS->meta['signed_data']) {
                 IConfig::Set($arr, 'activitystreams', 'signed_data', $AS->meta['signed_data'], false);
             }
 
