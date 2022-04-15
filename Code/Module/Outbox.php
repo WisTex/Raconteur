@@ -24,7 +24,7 @@ class Outbox extends Controller
 {
 
     public function init() {
-        if (! api_user()) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ! api_user()) {
             api_login();
         }
     }
