@@ -17,6 +17,7 @@
 		{{if $selected != $channel.channel_id}}<a href="{{$channel.link}}" title="{{$channel.channel_name}}">{{/if}}
 		{{$channel.channel_name}}
 		{{if $selected != $channel.channel_id}}</a>{{/if}}
+        {{if $channel.channel_system}}&nbsp;&nbsp;&nbsp;&nbsp;<span class="descriptive-text">{{$channel.msg_system}}</span>{{/if}}
 	</h3>
 	<div class="clear"></div>
 </div>
