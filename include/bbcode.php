@@ -935,6 +935,25 @@ function bb_sanitize_style($input)
     return $css_string_san;
 }
 
+function obnetwork_callback($matches)
+{
+    $observer = App::get_observer();
+    if ($observer && $observer['xchan_network'] === $matches[1]) {
+        return $matches[2];
+    }
+    return '';
+}
+
+function obnetwork_necallback($matches)
+{
+    $observer = App::get_observer();
+    if ($observer && $observer['xchan_network'] === $matches[1]) {
+        return '';
+    }
+    return $matches[2];
+}
+
+
 function oblanguage_callback($matches)
 {
     if (strlen($matches[1]) == 2) {
@@ -1404,8 +1423,9 @@ function parseIdentityAwareHTML($Text)
 
     if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
         $Text = preg_replace_callback("/\[observer\.language\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_callback', $Text);
-
         $Text = preg_replace_callback("/\[observer\.language\!\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_necallback', $Text);
+        $Text = preg_replace_callback("/\[observer\.network\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_callback', $Text);
+        $Text = preg_replace_callback("/\[observer\.network\!\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_necallback', $Text);
 
         if ($observer) {
             $Text = preg_replace("/\[observer\=1\](.*?)\[\/observer\]/ism", '$1', $Text);
@@ -1532,7 +1552,13 @@ function bbcode($Text, $options = [])
     if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
         $Text = preg_replace_callback("/\[observer\.language\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_callback', $Text);
         $Text = preg_replace_callback("/\[observer\.language\!\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_necallback', $Text);
-
+        if ($observer) {
+            $Text = preg_replace_callback("/\[observer\.network\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_callback', $Text);
+            $Text = preg_replace_callback("/\[observer\.network\!\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_necallback', $Text);
+        }
+        else {
+            $Text = preg_replace("/\[observer\.network(.*?)\](.*?)\[\/observer\]/ism", '', $Text);
+        }
         if ($observer) {
             $Text = preg_replace("/\[observer\=1\](.*?)\[\/observer\]/ism", '$1', $Text);
             $Text = preg_replace("/\[observer\=0\].*?\[\/observer\]/ism", '', $Text);
