@@ -192,6 +192,10 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
         // handle whether we're allowing any, approved or specific ones
 
         if (! $x) {
+            // deliver_stream is assumed to be permitted unles it is prohibited for specific connections.
+            if ($perm_name === 'deliver_stream') {
+                $ret['perm_name'] = true;
+            }
             $ret[$perm_name] = false;
             continue;
         }
@@ -382,6 +386,13 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
     // handle whether we're allowing any, approved or specific ones
 
     if (! $x) {
+        // The deliver_stream permission is only evaluated for connections.
+        // It is only used to prune the delivery list of any connections that are
+        // followers-only and we specifically don't want to send stuff to.
+        // It returns true for anybody not connected. 
+        if ($permission === 'deliver_stream') {
+            return true;
+        }
         return false;
     }
 
