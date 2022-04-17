@@ -4,9 +4,9 @@ From day one the question was how to build a federated/decentralised communicati
 
 I'll highlight the most important ones: we implement cross-domain granular permissions and cross-domain (nomadic) identity and cross-domain single sign-on. All of these work together to provide a social platform which is probably unlike any you have used before. It is fully decentralised, but provides many features that were previously only available from monolithic centralised systems; which is a huge distinction from many/most other fediverse projects. 
 
-Permissions are your gate-keeper. This is how you free yourself from trolls and abuse and spam. You can also block those you don't wish to see, but you'll rarely (if ever) need to do so if you just have sensible permissions to begin with.
+Permissions are your gate-keeper. This is how you free yourself from trolls and abuse and spam. You can also block those you don't wish to see, but you'll rarely (if ever) need to do so if your platform just provides sensible permissions to begin with. You also control the visibility and distribution of your communications to any desired audience; either individuals, sharable collections of individuals, ad-hoc communities, topical interest groups, or to the world if you desire.    
 
-Nomadic identity gives you control of your own destiny. You can replicate your identity **and all your data** in near real-time to multiple service providers. If any provider goes offline, even for an hour; you are completely unaffected. If one of your providers cancels your account because they don't like your ethnic group or political belief, you are completely unaffected.
+Nomadic identity gives you control of your online existence. You can replicate your identity **and all your data** in near real-time to multiple service providers. If any provider goes offline, even for an hour; you are completely unaffected. If one of your providers cancels your account because they don't like your ethnic group or political belief, you are completely unaffected.
 
 Single sign-on works with permissions to provide access to private media content and hidden conversations that your friends publish on their own sites. 
 
