@@ -32,7 +32,7 @@ Once the new channel is created you may setup the profile photo, cover photo and
 Joining a Group
 ===============
 
-You join a group in the same way as you connect with any channel in the network. For public groups you may be automatically approved at the discretion of the group administrator. 
+You join a group in the same way as you connect with any channel in the network. If the option to connect isn't provided, open your Connections app and put the web address or url into the text input provided under "Add New Connection". For public groups you may be automatically approved at the discretion of the group administrator. 
 
 Leaving a Group
 ===============

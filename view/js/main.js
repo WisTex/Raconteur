@@ -631,23 +631,22 @@ function handleNotifications(data) {
 	if(data.stream || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums) {
 		$('.notifications-btn').css('opacity', 1);
 		$('#no_notifications').hide();
+        $('#notifications_wrapper').show();
 	}
 	else {
 		$('.notifications-btn').css('opacity', 0.5);
 		$('#navbar-collapse-1').removeClass('show');
 		$('#no_notifications').show();
+        $('#notifications_wrapper').hide();
 	}
 
 	if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
-		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
-        $('#notifications_wrapper').show();
-        
+		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');        
 	}
 	if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
-        $('#notifications_wrapper').hide();
 	}
 	if(data.all_events_today) {
 		$('.all_events-update').removeClass('badge-secondary');
