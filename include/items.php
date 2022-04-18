@@ -4,16 +4,13 @@
  * @brief Items related functions.
  */
 
-
+use Code\Lib as Zlib;
 use Code\Lib\Libzot;
 use Code\Lib\Libsync;
 use Code\Lib\AccessList;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Apps;
-use Code\Extend\Hook;
-
-use Code\Lib as Zlib;
 use Code\Lib\Enotify;
 use Code\Lib\Channel;
 use Code\Lib\MarkdownSoap;
@@ -26,6 +23,7 @@ use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
 use Code\Access\AccessControl;
 use Code\Daemon\Run;
+use Code\Extend\Hook;
 
 require_once('include/feedutils.php');
 require_once('include/photo_factory.php');
@@ -127,7 +125,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			}
 			if ($r) {
 				foreach ($r as $rv) {
-					if (! in_array($rv['author_xchan'],$recipients)) {
+					if (! in_array($rv['portable_id'],$recipients)) {
 						$recipients[] = $rv['portable_id'];
 					}
 				}
