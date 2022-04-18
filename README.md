@@ -1,6 +1,6 @@
 This repository first went public in 2010 and spawned a number of fediverse-related projects. Friendica, Hubzilla, Zap and many others. Those became branches of this tree. Some turned into independent open source communities. Some withered and sputtered out. This is the main development trunk.
 
-My name is Mike. I'm retired from open source now, but building advanced communications software is what I do; and I've been doing it since before the web existed. So this isn't a hobby or get rich scheme - it's my life's mission and this repository is where I build and test new concepts and ideas.   
+My name is Mike. I'm retired from open source now, but building decentralised communications software is what I do; and I've been doing it since before the web existed. So this isn't a hobby or get rich scheme - it's my life's mission and this repository is where I build and test new concepts and ideas.   
 
 From day one the question was how to build a federated/decentralised communication stack that provides more control over your privacy, and respects all people and cultures - including those which have a different political bias; while allowing them to all co-exist in the same space (without killing each other). We've come up with lots of creative soutions to the thorniest of decentralisation problems over the intervening years.
 
@@ -10,7 +10,7 @@ Permissions are your gate-keeper. This is how you free yourself from trolls and 
 
 Nomadic identity gives you control of your online existence. You can replicate your identity **and all your data** in near real-time to multiple service providers. If any provider goes offline, even for an hour; you are completely unaffected. If one of your providers cancels your account because they don't like your ethnic group, political/sexual belief system, or if they get hit by a bus or don't pay their hosting bills, you are completely unaffected.
 
-Single sign-on works with permissions to provide access to private media content and hidden conversations that your friends publish on their own sites.
+Single sign-on works with permissions to provide access to private media content and hidden conversations that your friends publish on their own sites. It's the glue which binds hundreds of diverse websites into a single multi-faceted entity, while your permissions regulate what others can do and see within your own space. For instance, this  allows you to pin a love note to the front page of your site with the restriction that only your partner can see it. Every other visitor sees something completely different. 
 
 There are hundreds of other features available; but these are the defining features which have been constant for about the last decade. At one point there were so many features that we couldn't manage them all, so we simplified. Now the interface is much more sleek and basic; and you can add apps from our free app store to provide any advanced features you desire or require.  
 
