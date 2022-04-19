@@ -1,5 +1,5 @@
 <div id="photo-upload-form">
-	<input id="invisible-photos-file-upload" type="file" name="files" style="visibility:hidden;position:absolute;top:-50;left:-50;width:0;height:0;" multiple data-nickname='{{$nickname}}' >
+	<input id="invisible-photos-file-upload" type="file" name="files" style="visibility:hidden;position:absolute;top:-50;left:-50;width:0;height:0;" data-nickname='{{$nickname}}' >
 	<div class="section-content-tools-wrapper">
 		<form action="#" enctype="multipart/form-data" method="post" name="photos-upload-form" id="photos-upload-form" class="acl-form" data-form_id="photos-upload-form" data-allow_cid='{{$allow_cid}}' data-allow_gid='{{$allow_gid}}' data-deny_cid='{{$deny_cid}}' data-deny_gid='{{$deny_gid}}'>
 			<input type="hidden" id="photos-upload-source" name="source" value="photos" />
