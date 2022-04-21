@@ -1,3 +1,5 @@
+TL;DR An open source fediverse server with a long history of innovation based on privacy, resilience, and ethics. 
+
 This repository first went public in 2010 and spawned a number of fediverse-related projects. Friendica, Hubzilla, Zap and many others. Those became branches of this tree. Some turned into independent open source communities. Some withered and sputtered out. This is the main development trunk.
 
 My name is Mike. I'm retired from open source now, but building decentralised communications software is what I do; and I've been doing it since before the web existed. So this isn't a hobby or get rich scheme - it's my life's mission and this repository is where I build and test new concepts and ideas.   
