@@ -586,7 +586,7 @@ class HTTPSig
 
         if ($head) {
             foreach ($head as $k => $v) {
-                $headers .= strtolower($k) . ': ' . trim($v) . "\n";
+                $headers .= strtolower($k) . ': ' . isset($v) ? trim($v) : '' . "\n";
                 if ($fields) {
                     $fields .= ' ';
                 }

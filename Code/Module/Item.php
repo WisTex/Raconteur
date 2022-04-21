@@ -1124,15 +1124,20 @@ class Item extends Controller
                     $attach_link = '';
                     $hash = substr($mtch, 0, strpos($mtch, ','));
                     $rev = intval(substr($mtch, strpos($mtch, ',')));
-                    $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
-                    if ($r['success']) {
-                        $attachments[] = array(
-                            'href' => z_root() . '/attach/' . $r['data']['hash'],
-                            'length' => $r['data']['filesize'],
-                            'type' => $r['data']['filetype'],
-                            'title' => urlencode($r['data']['filename']),
-                            'revision' => $r['data']['revision']
-                        );
+                    if (strpos($mtch,'https://') === 0) {
+                        $attachments[] = [ 'href' => $mtch, 'type' => 'application/activity+json', 'title' => $mtch ];
+                    }
+                    else {
+                        $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
+                        if ($r['success']) {
+                            $attachments[] = array(
+                                'href' => z_root() . '/attach/' . $r['data']['hash'],
+                                'length' => $r['data']['filesize'],
+                                'type' => $r['data']['filetype'],
+                                'title' => urlencode($r['data']['filename']),
+                                'revision' => $r['data']['revision']
+                            );
+                        }
                     }
                     $body = str_replace($match[1][$i], $attach_link, $body);
                     $i++;

@@ -1475,6 +1475,10 @@ function check_siteallowed($url)
 
     $retvalue = true;
 
+    if (! (isset($url) && $url)) {
+        return false;
+    }
+
     $arr = [ 'url' => $url ];
     /**
      * @hooks check_siteallowed

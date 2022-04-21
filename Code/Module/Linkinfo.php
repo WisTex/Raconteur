@@ -196,13 +196,6 @@ class Linkinfo extends Controller
             killme();
         }
 
-        if ($process_oembed) {
-            $x = Oembed::process($url);
-            if ($x) {
-                echo $x;
-                killme();
-            }
-        }
 
         if ($process_zotobj) {
             $x = Activity::fetch($url, App::get_channel());
@@ -258,6 +251,7 @@ class Linkinfo extends Controller
                         if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                             $s = new Zlib\Share($z);
                             echo $s->bbcode();
+                            echo "\n" . '[attachment]' . $z['mid'] . '[/attachment]' . "\n";
                             killme();
                         }
                     }
@@ -265,6 +259,13 @@ class Linkinfo extends Controller
             }
         }
 
+        if ($process_oembed) {
+            $x = Oembed::process($url);
+            if ($x) {
+                echo $x;
+                killme();
+            }
+        }
 
         if ($url && $title && $text) {
             $text = $br . '[quote]' . trim($text) . '[/quote]' . $br;

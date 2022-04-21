@@ -187,6 +187,7 @@ class Search extends Controller
                             // so let's see if it decodes. The boolean flag enables html
                             // cache of the item
                             $item = Activity::decode_note($AS, true);
+
                             if ($item) {
                                 Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
                                 goaway(z_root() . '/display/' . gen_link_id($item['mid']));
