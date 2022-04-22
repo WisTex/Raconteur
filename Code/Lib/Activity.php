@@ -78,6 +78,9 @@ class Activity
     public static function fetch($url, $channel = null, $hub = null, $debug = false)
     {
         $redirects = 0;
+        if (!$url) {
+            return null;
+        }
         if (!check_siteallowed($url)) {
             logger('denied: ' . $url);
             return null;
@@ -90,7 +93,7 @@ class Activity
 
         // perform IDN substitution
 
-        if ($parsed['host'] !== punify($parsed['host'])) {
+        if (isset($parsed['host']) && $parsed['host'] !== punify($parsed['host'])) {
             $url = str_replace($parsed['host'], punify($parsed['host']), $url);
         }
 
@@ -3000,19 +3003,13 @@ class Activity
 
         // For the special snowflakes who can't figure out how to use attachments.
 
-        $quote_bbcode = false;
         $quote_url = $act->get_property_obj('quoteUrl');
         if ($quote_url) {
-            $quote_bbcode = self::get_quote_bbcode($quote_url);
+            $s = self::get_quote($quote_url,$s);
         }
         elseif (isset($act->obj['quoteUrl'])) {
-			$quote_bbcode = self::get_quote_bbcode($act->obj['quoteUrl']);
+			$s = self::get_quote($act->obj['quoteUrl'],$s);
         }
-        if ($quote_bbcode) {
-            $s['body'] .= strlen($s['body']) ? '' : "\r\n\r\n";
-			$s['body'] .= $quote_bbcode;
-		}
-
 
         // handle some of the more widely used of the numerous and varied ways of deleting something
 
@@ -3112,7 +3109,7 @@ class Activity
         // We'll check specific media objects separately.
 
         if (in_array($act->obj['type'], ['Article', 'Document', 'Event', 'Note', 'Page', 'Place', 'Question']) && isset($s['attach']) && $s['attach']) {
-            $s['body'] .= self::bb_attach($s['attach'], $s['body']);
+            $s = self::bb_attach($s);
         }
 
         if ($act->obj['type'] === 'Question' && in_array($act->type, ['Create', 'Update'])) {
@@ -4032,48 +4029,48 @@ class Activity
 
     // This function is designed to work with Zot attachments and item body
 
-    public static function bb_attach($attach, $body)
+    public static function bb_attach($item)
     {
 
         $ret = false;
 
-        if (!(is_array($attach) && $attach)) {
-            return EMPTY_STR;
+        if (!(is_array($item['attach']) && $item['attach'])) {
+            return $item;
         }
 
-        foreach ($attach as $a) {
+        foreach ($item['attach'] as $a) {
             if (array_key_exists('type', $a) && stripos($a['type'], 'image') !== false) {
                 // don't add inline image if it's an svg and we already have an inline svg
-                if ($a['type'] === 'image/svg+xml' && strpos($body, '[/svg]')) {
+                if ($a['type'] === 'image/svg+xml' && strpos($item['body'], '[/svg]')) {
                     continue;
                 }
-                if (self::media_not_in_body($a['href'], $body)) {
+                if (self::media_not_in_body($a['href'], $item['body'])) {
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
-                        $ret .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
+                        $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
                     } else {
-                        $ret .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+                        $item['body'] .= "\n\n" . '[img]' . $a['href'] . '[/img]';
                     }
                 }
             }
             if (array_key_exists('type', $a) && stripos($a['type'], 'video') !== false) {
-                if (self::media_not_in_body($a['href'], $body)) {
-                    $ret .= "\n\n" . '[video]' . $a['href'] . '[/video]';
+                if (self::media_not_in_body($a['href'], $item['body'])) {
+                    $item['body'] .= "\n\n" . '[video]' . $a['href'] . '[/video]';
                 }
             }
             if (array_key_exists('type', $a) && stripos($a['type'], 'audio') !== false) {
-                if (self::media_not_in_body($a['href'], $body)) {
-                    $ret .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
+                if (self::media_not_in_body($a['href'], $item['body'])) {
+                    $item['body'] .= "\n\n" . '[audio]' . $a['href'] . '[/audio]';
                 }
             }
             if (array_key_exists('type', $a) && stripos($a['type'], 'activity') !== false) {
-                if (self::media_not_in_body($a['href'], $body)) {
-                    $ret .= "\n\n" . self::get_quote_bbcode($a['href']);
+                if (self::media_not_in_body($a['href'], $item['body'])) {
+                    $item = self::get_quote($a['href'], $item);
                 }
             }
         }
 
-        return $ret;
+        return $item;
     }
 
 
@@ -4423,30 +4420,46 @@ class Activity
         ];
     }
 
-	public static function get_quote_bbcode($url) {
-
-		$ret = '';
+	public static function get_quote($url, $item) {
 
 		$a = self::fetch($url);
 		if ($a) {
 			$act = new ActivityStreams($a);
 
-			if ($act->is_valid()) {
-                $content = self::get_content($act->obj);
-            }
-    
-            $ret .= "[share author='" . urlencode($act->actor['name']) .
-        		"' profile='" . $act->actor['id'] .
-	            "' avatar='" . $act->actor['icon']['url'] .
-	            "' link='" . $act->obj['id'] .
-	            "' auth='" . ((is_matrix_url($act->actor['id'])) ? 'true' : 'false') .
-                "' posted='" . $act->obj['published'] .
-	            "' message_id='" . $act->obj['id'] .
-        	"']";
-    		$ret  .= self::bb_content($content, 'content');
-			$ret  .= '[/share]';
-		}
+			if ($act && $act->is_valid()) {
+                $z = Activity::decode_note($act);
+                $r = q(
+                    "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
+                    dbesc(is_array($act->actor) ? $act->actor['id'] : $act->actor),
+                    dbesc(is_array($act->actor) ? $act->actor['id'] : $act->actor)
+                );
 
-		return $ret;
+                if ($r) {
+                    $r = Libzot::zot_record_preferred($r);
+                    if ($z) {
+                        $z['author_xchan'] = $r['hubloc_hash'];
+                    }
+                }
+
+                if ($z) {
+	            // do not allow somebody to embed a post that was blocked by the site admin
+                // We *will* let them over-rule any blocks they created themselves
+
+                    if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
+                        $s = new Zlib\Share($z);
+                        $item['body'] .= "\n\n" . $s->bbcode();
+                        $att = $s->get_attach();
+                        if (isset($item['attach'])) {
+                            $item['attach'] = array_merge( $item['attach'], $att);
+                        }
+                        else {
+                            $item['attach'] = [ $att ];
+                        }
+                    }
+                }
+            }
+
+		}
+		return $item;
 	}
 }

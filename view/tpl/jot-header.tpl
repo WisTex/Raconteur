@@ -621,6 +621,19 @@ let activeCommentText = '';
 		$(this).closest('.jot-poll-option').remove();
 	}
 
+	function initRecipe() {
+		$('#jot-recipe-wrap').toggleClass('d-none');
+	}
+
+	function jotAddIngredient() {
+		let option = '<div class="jot-ingredient form-group"><input class="w-100 border-0" name="poll_answers[]" type="text" value="" placeholder="Option"><div class="poll-option-close"><i class="fa fa-close"></i></div></div>';
+		$('#jot-poll-options').append(option);
+	}
+
+	function jotRemoveIngedient(e) {
+		$(this).closest('.jot-ingredient').remove();
+	}
+
 </script>
 
 <script>
