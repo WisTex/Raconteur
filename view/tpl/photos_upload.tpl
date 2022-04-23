@@ -1,5 +1,5 @@
 <div id="photo-upload-form">
-	<input id="invisible-photos-file-upload" type="file" name="files" style="visibility:hidden;position:absolute;top:-50;left:-50;width:0;height:0;" multiple data-nickname='{{$nickname}}' >
+	<input id="invisible-photos-file-upload" type="file" name="files" style="visibility:hidden;position:absolute;top:-50;left:-50;width:0;height:0;" data-nickname='{{$nickname}}' >
 	<div class="section-content-tools-wrapper">
 		<form action="#" enctype="multipart/form-data" method="post" name="photos-upload-form" id="photos-upload-form" class="acl-form" data-form_id="photos-upload-form" data-allow_cid='{{$allow_cid}}' data-allow_gid='{{$allow_gid}}' data-deny_cid='{{$deny_cid}}' data-deny_gid='{{$deny_gid}}'>
 			<input type="hidden" id="photos-upload-source" name="source" value="photos" />
@@ -16,15 +16,9 @@
 				</datalist>
 			</div>
 			{{if $default}}
-			<!-- div class="form-group">
-				<input id="photos-upload-choose" type="file" name="userfile" />
-			</div -->
 			{{include file="field_input.tpl" field=$caption}}
 			{{include file="field_input.tpl" field=$title}}
-			{{include file="field_checkbox.tpl" field=$visible}}
-			<div id="body-textarea">
-			{{include file="field_textarea.tpl" field=$body}}
-			</div>
+            <input type="hidden" name="visible" value="0" />
 			<div class="pull-right btn-group">
 				<div class="btn-group">
 					{{if $lockstate}}
@@ -42,10 +36,7 @@
 			{{if $uploader}}
 			{{include file="field_input.tpl" field=$caption}}
 			{{include file="field_input.tpl" field=$title}}
-			{{include file="field_checkbox.tpl" field=$visible}}
-			<div id="body-textarea">
-			{{include file="field_textarea.tpl" field=$body}}
-			</div>
+			<input type="hidden" name="visible" value="0" />
 			<div id="photos-upload-perms" class="btn-group pull-right">
 				{{if $lockstate}}
 				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">

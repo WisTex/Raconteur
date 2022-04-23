@@ -215,7 +215,7 @@ class HTTPSig
 
         $x = Crypto::verify($signed_data, $sig_block['signature'], $fkey['public_key'], $algorithm);
 
-        logger('verified: ' . $x, LOGGER_DEBUG);
+        logger('verified: ' . intval($x), LOGGER_DEBUG);
 
         if (!$x) {
             // try again, ignoring the local actor (xchan) cache and refetching the key
@@ -225,7 +225,7 @@ class HTTPSig
 
             if ($fkey && $fkey['public_key']) {
                 $y = Crypto::verify($signed_data, $sig_block['signature'], $fkey['public_key'], $algorithm);
-                logger('verified: (cache reload) ' . $x, LOGGER_DEBUG);
+                logger('verified: (cache reload) ' . intval($y), LOGGER_DEBUG);
             }
 
             if (!$y) {

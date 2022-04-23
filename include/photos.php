@@ -419,7 +419,7 @@ function photo_upload($channel, $observer, $args)
         $activity_format = sprintf(t('%1$s posted %2$s', 'photo_upload'), $author_link, $photo_link);
 	}
 
-    $body = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
+    $body = (isset($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 
     // If uploaded into a post, this is the text that is returned to the webapp for inclusion in the post.
 
