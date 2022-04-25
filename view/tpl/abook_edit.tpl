@@ -186,32 +186,6 @@
 			<input type="hidden" name="{{$excl.0}}" value="{{$excl.2}}" />
 			{{/if}}
 
-			{{if $rating}}
-			<div class="panel">
-				<div class="section-subtitle-wrapper" role="tab" id="rating-tool">
-					<h3>
-						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#rating-tool-collapse" aria-expanded="true" aria-controls="rating-tool-collapse">
-							{{$lbl_rating}}
-						</a>
-					</h3>
-				</div>
-				<div id="rating-tool-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rating-tool">
-					<div class="section-content-tools-wrapper">
-						<div class="section-content-warning-wrapper">
-							{{$rating_info}}
-						</div>
-						<div class="form-group"><strong>{{$lbl_rating_label}}</strong></div>
-						{{$rating}}
-						{{include file="field_textarea.tpl" field=$rating_text}}
-						<input id="contact-rating-mirror" type="hidden" name="rating" value="{{$rating_val}}" />
-						<div class="settings-submit-wrapper" >
-							<button type="submit" name="done" value="{{$submit}}" class="btn btn-primary">{{$submit}}</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			{{/if}}
-
 			{{/if}}
 
 			{{if ! $is_pending}}

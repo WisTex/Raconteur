@@ -953,7 +953,6 @@ class Activity
                 }
             } else {
                 // private activity
-
                 if ($top_level) {
                     $ret['to'] = self::map_acl($i);
                     if (isset($parent_i['to']) && is_array($parent_i['to'])) {
