@@ -1099,8 +1099,8 @@ class Activity
                     $ret = json_decode($i['obj'], true);
                 }
 
-                if (array_path_exists('actor/id', $ret)) {
-                    $ret['actor'] = $ret['actor']['id'];
+                if (array_path_exists('actor', $ret)) {
+                    $ret['actor'] = self::encode_person($ret['actor'],false);
                 }
             }
         }
@@ -1163,7 +1163,7 @@ class Activity
             $ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['comments_closed'], ATOM_TIME);
         }
 
-        $ret['attributedTo'] = ((in_array($i['author']['xchan_network'],['zot6','nomad'])) ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
+        $ret['attributedTo'] = self::encode_person($i['author'],false);
 
         if ($i['mid'] !== $i['parent_mid']) {
             $ret['inReplyTo'] = $i['thr_parent'];
