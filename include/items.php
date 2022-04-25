@@ -2439,7 +2439,8 @@ function send_status_notifications($post_id,$item) {
 	$unfollowed = false;
 
 	$parent = 0;
-
+    $thr_parent_id = 0;
+    
 	if(array_key_exists('verb',$item) && (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE))) {
 
 		$r = q("select id from item where mid = '%s' and uid = %d limit 1",
