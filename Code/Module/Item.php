@@ -1399,11 +1399,11 @@ class Item extends Controller
             else {
                 $tmp = $owner_hash ? $owner_hash : $owner_xchan['xchan_hash'];
                 if ($tmp) {
-                    $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1",
+                    $r = q("select * from xchan where xchan_hash = '%s'",
                         dbesc($tmp)
                     );
                     if ($r) {
-                        $replyto = $r[0]['hubloc_id_url'];
+                        $replyto = Activity::encode_person($r[0],false);
                     }
                 }
             }
