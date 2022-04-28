@@ -241,7 +241,7 @@ class WebServer
         }
 
         if (isset($homebase)) {
-            App::$page['content'] .= '<script>var homebase = "' . $homebase . '";</script>';
+            App::$page['content'] .= '<script>let homebase = "' . $homebase . '";</script>';
         }
     }
 }

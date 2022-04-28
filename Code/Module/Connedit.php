@@ -703,32 +703,6 @@ class Connedit extends Controller
                 ];
             }
 
-            $rating_val = 0;
-            $rating_text = '';
-
-            $xl = q(
-                "select * from xlink where xlink_xchan = '%s' and xlink_link = '%s' and xlink_static = 1",
-                dbesc($channel['channel_hash']),
-                dbesc($contact['xchan_hash'])
-            );
-
-            if ($xl) {
-                $rating_val = intval($xl[0]['xlink_rating']);
-                $rating_text = $xl[0]['xlink_rating_text'];
-            }
-
-            $rating_enabled = get_config('system', 'rating_enabled');
-
-            if ($rating_enabled) {
-                $rating = replace_macros(Theme::get_template('rating_slider.tpl'), array(
-                    '$min' => -10,
-                    '$val' => $rating_val
-                ));
-            } else {
-                $rating = false;
-            }
-
-
             $perms = [];
             $channel = App::get_channel();
 
@@ -836,18 +810,11 @@ class Connedit extends Controller
                 '$tools_label' => t('Connection Tools'),
                 '$tools' => (($self) ? '' : $tools),
                 '$lbl_slider' => t('Slide to adjust your degree of friendship'),
-                '$lbl_rating' => t('Rating'),
-                '$lbl_rating_label' => t('Slide to adjust your rating'),
-                '$lbl_rating_txt' => t('Optionally explain your rating'),
                 '$connfilter' => Apps::system_app_installed(local_channel(), 'Content Filter'),
                 '$connfilter_label' => t('Custom Filter'),
                 '$incl' => array('abook_incl', t('Only import posts with this text'), $contact['abook_incl'], t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')),
                 '$excl' => array('abook_excl', t('Do not import posts with this text'), $contact['abook_excl'], t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')),
                 '$alias' => array('abook_alias', t('Nickname'), $contact['abook_alias'], t('optional - allows you to search by a name that you have chosen')),
-                '$rating_text' => array('rating_text', t('Optionally explain your rating'), $rating_text, ''),
-                '$rating_info' => t('This information is public!'),
-                '$rating' => $rating,
-                '$rating_val' => $rating_val,
                 '$slide' => $slide,
                 '$affinity' => $affinity,
                 '$pending_label' => t('Connection Pending Approval'),

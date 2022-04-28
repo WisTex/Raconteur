@@ -118,16 +118,20 @@ function localize_item(&$item)
             return;
         }
 
-        if (isset($obj['author']) && $obj['author'] && $obj['author']['link']) {
-            $author_link = get_rel_link($obj['author']['link'], 'alternate');
-        } else {
-            $author_link = '';
+        if (isset($obj['actor']) && is_string($obj['actor']) && $obj['actor']) {
+            $author_link = $obj['actor'];
+        } elseif (isset($obj['attributedTo']) && is_string($obj['attributedTo']) && $obj['attributedTo']) {
+            $author_link = $obj['attributedTo'];
+        }
+        else {
+            $author_link = EMPTY_STR;
         }
 
-        $author_name = (($obj['author'] && $obj['author']['name']) ? $obj['author']['name'] : '');
+        $author_name = ((array_path_exists('author/name',$obj) && $obj['author']['name']) ? $obj['author']['name'] : '');
 
-        $item_url = get_rel_link($obj['link'], 'alternate');
-
+        if (isset($obj['link'])) {
+            $item_url = get_rel_link($obj['link'], 'alternate');
+        }
         $Bphoto = '';
 
         switch ($obj['type']) {

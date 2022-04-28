@@ -80,43 +80,6 @@ class Features {
                 ],
 
 
-    //          [
-    //              'profile_export',
-    //              t('Profile Import/Export'),
-    //              t('Save and load profile details across sites/channels'),
-    //              false,
-    //              get_config('feature_lock','profile_export'),
-    //              self::level('profile_export',3),
-    //          ],
-
-    //          [
-    //              'webpages',
-    //              t('Web Pages'),
-    //              t('Provide managed web pages on your channel'),
-    //              false,
-    //              get_config('feature_lock','webpages'),
-    //              self::level('webpages',3),
-    //          ],
-
-    //          [
-    //              'wiki',
-    //              t('Wiki'),
-    //              t('Provide a wiki for your channel'),
-    //              false,
-    //              get_config('feature_lock','wiki'),
-    //              self::level('wiki',2),
-    //          ],
-
-    /*
-                [
-                    'hide_rating',
-                    t('Hide Rating'),
-                    t('Hide the rating buttons on your channel and profile pages. Note: People can still rate you somewhere else.'),
-                    false,
-                    get_config('feature_lock','hide_rating'),
-                    self::level('hide_rating',3),
-                ],
-    */
                 [
                     'private_notes',
                     t('Private Notes'),
@@ -126,34 +89,6 @@ class Features {
                     self::level('private_notes', 1),
                 ],
 
-
-    //          [
-    //              'cards',
-    //              t('Cards'),
-    //              t('Create personal planning cards'),
-    //              false,
-    //              get_config('feature_lock','cards'),
-    //              self::level('cards',1),
-    //          ],
-
-
-                [
-                    'articles',
-                    t('Articles'),
-                    t('Create interactive articles'),
-                    false,
-                    get_config('feature_lock', 'articles'),
-                    self::level('articles', 1),
-                ],
-
-    //          [
-    //              'nav_channel_select',
-    //              t('Navigation Channel Select'),
-    //              t('Change channels directly from within the navigation dropdown menu'),
-    //              false,
-    //              get_config('feature_lock','nav_channel_select'),
-    //              self::level('nav_channel_select',3),
-    //          ],
 
                 [
                     'photo_location',
@@ -193,15 +128,6 @@ class Features {
                     self::level('event_tz_select', 2),
                 ],
 
-
-    //          [
-    //              'premium_channel',
-    //              t('Premium Channel'),
-    //              t('Allows you to set restrictions and terms on those that connect with your channel'),
-    //              false,
-    //              get_config('feature_lock','premium_channel'),
-    //              self::level('premium_channel',4),
-    //          ],
 
                 [
                     'advanced_dirsearch',

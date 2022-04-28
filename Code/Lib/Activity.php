@@ -953,7 +953,6 @@ class Activity
                 }
             } else {
                 // private activity
-
                 if ($top_level) {
                     $ret['to'] = self::map_acl($i);
                     if (isset($parent_i['to']) && is_array($parent_i['to'])) {
@@ -1099,8 +1098,8 @@ class Activity
                     $ret = json_decode($i['obj'], true);
                 }
 
-                if (array_path_exists('actor/id', $ret)) {
-                    $ret['actor'] = $ret['actor']['id'];
+                if (array_path_exists('actor', $ret)) {
+                    $ret['actor'] = self::encode_person($ret['actor'],false);
                 }
             }
         }
@@ -1163,7 +1162,7 @@ class Activity
             $ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['comments_closed'], ATOM_TIME);
         }
 
-        $ret['attributedTo'] = ((in_array($i['author']['xchan_network'],['zot6','nomad'])) ? $i['author']['xchan_url'] : $i['author']['xchan_hash']);
+        $ret['attributedTo'] = self::encode_person($i['author'],false);
 
         if ($i['mid'] !== $i['parent_mid']) {
             $ret['inReplyTo'] = $i['thr_parent'];
@@ -1570,13 +1569,28 @@ class Activity
     {
 
         $ret = [];
-
+        $currhub = false;
+    
         if (!$p['xchan_url']) {
             return $ret;
         }
 
+        $h = q("select * from hubloc where hubloc_hash = '%s'",
+            dbesc($p['xchan_hash'])
+        );
+        if ($h) {
+            $currhub = $h[0];
+            foreach ($h as $hub) {
+                if ($hub['hubloc_url'] === z_root()) {
+                    $currhub = $hub;
+                }
+            }
+        }
+
+        $current_url = $currhub ? $currhub['hubloc_id_url'] : $p['xchan_url'];
+
         if (!$extended) {
-            return $p['xchan_url'];
+            return $current_url;
         }
 
         $c = ((array_key_exists('channel_id', $p)) ? $p : Channel::from_hash($p['xchan_hash']));
@@ -1595,7 +1609,7 @@ class Activity
         if ($c) {
             $ret['id'] = Channel::url($c);
         } else {
-            $ret['id'] = ((strpos($p['xchan_hash'], 'http') === 0) ? $p['xchan_hash'] : $p['xchan_url']);
+            $ret['id'] = ((strpos($p['xchan_hash'], 'http') === 0) ? $p['xchan_hash'] : $current_url);
         }
         if ($p['xchan_addr'] && strpos($p['xchan_addr'], '@')) {
             $ret['preferredUsername'] = substr($p['xchan_addr'], 0, strpos($p['xchan_addr'], '@'));
@@ -1610,7 +1624,7 @@ class Activity
             'height' => 300,
             'width' => 300,
         ];
-        $ret['url'] = $p['xchan_url'];
+        $ret['url'] = $current_url;
         if (isset($p['channel_location']) && $p['channel_location']) {
             $ret['location'] = ['type' => 'Place', 'name' => $p['channel_location']];
         }
@@ -1640,8 +1654,8 @@ class Activity
 
                 $ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);
                 $ret['publicKey'] = [
-                    'id' => $p['xchan_url'] . '?operation=getkey',
-                    'owner' => $p['xchan_url'],
+                    'id' => $current_url . '?operation=getkey',
+                    'owner' => $current_url,
                     'signatureAlgorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
                     'publicKeyPem' => $p['xchan_pubkey']
                 ];
@@ -1730,8 +1744,8 @@ class Activity
             }
         } else {
             $ret['publicKey'] = [
-                'id' => $p['xchan_url'],
-                'owner' => $p['xchan_url'],
+                'id' => $current_url,
+                'owner' => $current_url,
                 'publicKeyPem' => $p['xchan_pubkey']
             ];
         }
