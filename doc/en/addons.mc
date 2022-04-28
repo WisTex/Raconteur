@@ -47,9 +47,9 @@ Authenticate an account against an enterprise LDAP directory such as Windows Act
 
 Logfile Rotator
 
-### Nodeinfo Statistics
+### Nodeinfo
 
-Generates some statistics for the-federation.info and other nodeinfo based services
+Provides site discovery using the Nodeinfo protocol. This is voluntary, and permits listing this site in online fediverse directories.  
 
 ### Not Safe For Work
 

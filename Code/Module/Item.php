@@ -1393,20 +1393,7 @@ class Item extends Controller
 
 
         if (! (isset($replyto) && $replyto)) {
-            if ($owner_hash && strpos($owner_hash,'http') === 0) {
-                $replyto = $owner_hash;
-            }
-            else {
-                $tmp = $owner_hash ? $owner_hash : $owner_xchan['xchan_hash'];
-                if ($tmp) {
-                    $r = q("select * from xchan where xchan_hash = '%s'",
-                        dbesc($tmp)
-                    );
-                    if ($r) {
-                        $replyto = Activity::encode_person($r[0],false);
-                    }
-                }
-            }
+            $replyto = Activity::encode_person($owner_xchan, false);
         }
 
 		if ($private && !$parent) {

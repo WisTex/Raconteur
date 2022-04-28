@@ -427,7 +427,7 @@ function photo_upload($channel, $observer, $args)
         . $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
         . '[/zrl]';
 
-    $attribution = (($visitor) ? $visitor['xchan_url'] : $channel['xchan_url']);
+    $attribution = (Activity::encode_person(($visitor) ? $visitor : $channel, false);
 
     // Create item object
     $object = [
@@ -906,60 +906,6 @@ function photos_album_get_db_idstr_admin($channel_id, $album)
     }
 
     return false;
-}
-
-
-
-/**
- * @brief Creates a new photo item.
- *
- * @param array $channel
- * @param string $creator_hash
- * @param array $photo
- * @param bool $visible (optional) default false
- * @return int item_id
- */
-function photos_create_item($channel, $creator_hash, $photo, $visible = false)
-{
-
-    // Create item container
-
-    $item_hidden = (($visible) ? 0 : 1 );
-
-    $uuid = new_uuid();
-    $mid = z_root() . '/item/' . $uuid;
-
-    $arr = [];
-
-    $arr['aid']             = $channel['channel_account_id'];
-    $arr['uid']             = $channel['channel_id'];
-    $arr['uuid']            = $uuid;
-    $arr['mid']             = $mid;
-    $arr['parent_mid']      = $mid;
-    $arr['item_wall']       = 1;
-    $arr['item_origin']     = 1;
-    $arr['item_thread_top'] = 1;
-    $arr['item_hidden']     = $item_hidden;
-    $arr['resource_type']   = 'photo';
-    $arr['resource_id']     = $photo['resource_id'];
-    $arr['owner_xchan']     = $channel['channel_hash'];
-    $arr['author_xchan']    = $creator_hash;
-
-    $arr['allow_cid']       = $photo['allow_cid'];
-    $arr['allow_gid']       = $photo['allow_gid'];
-    $arr['deny_cid']        = $photo['deny_cid'];
-    $arr['deny_gid']        = $photo['deny_gid'];
-
-    $arr['plink']           = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
-
-    $arr['body']            = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo['resource_id'] . ']'
-        . '[zmg]' . z_root() . '/photo/' . $photo['resource_id'] . '-' . $photo['imgscale'] . '[/zmg]'
-        . '[/zrl]';
-
-    $result = item_store($arr);
-    $item_id = $result['item_id'];
-
-    return $item_id;
 }
 
 
