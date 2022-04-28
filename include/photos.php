@@ -427,7 +427,7 @@ function photo_upload($channel, $observer, $args)
         . $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
         . '[/zrl]';
 
-    $attribution = (Activity::encode_person(($visitor) ? $visitor : $channel, false);
+    $attribution = (Activity::encode_person(($visitor) ? $visitor : $channel, false));
 
     // Create item object
     $object = [

@@ -1427,7 +1427,7 @@ class Libzot
                 if (!array_key_exists('comment_policy', $arr)) {
                     $arr['comment_policy'] = 'authenticated';
                 }
-                if ($AS->meta['signed_data']) {
+                if (isset($AS->meta['signed_data'])) {
                     IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
                     $j = json_decode($AS->meta['signed_data'], true);
                     if ($j) {
