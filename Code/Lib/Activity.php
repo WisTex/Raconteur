@@ -2901,7 +2901,7 @@ class Activity
 
             // if the object is an actor, it is not really a response activity, so reset it to a top level post
 
-            if (ActivityStreams::is_an_actor($act->obj['type'])) {
+            if (is_array($act->obj) && ActivityStreams::is_an_actor($act->obj['type'])) {
                 $s['parent_mid'] = $s['mid'];
             }
 
