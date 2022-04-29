@@ -3039,14 +3039,14 @@ class Activity
             $s['item_deleted'] = 1;
         }
 
-        if ($act->obj && array_key_exists('sensitive', $act->obj) && boolval($act->obj['sensitive'])) {
+        if ($act->obj && is_array($act->obj) && array_key_exists('sensitive', $act->obj) && boolval($act->obj['sensitive'])) {
             $s['item_nsfw'] = 1;
         }
 
         $s['verb'] = self::activity_mapper($act->type);
 
         // Mastodon does not provide update timestamps when updating poll tallies which means race conditions may occur here.
-        if (in_array($act->type,['Create','Update']) && $act->obj['type'] === 'Question' && $s['edited'] === $s['created']) {
+        if (in_array($act->type,['Create','Update']) && is_array($act->obj) && isset($act->obj['type']) && $act->obj['type'] === 'Question' && $s['edited'] === $s['created']) {
 			if (isset($act->obj['votersCount']) && intval($act->obj['votersCount'])) {
 	            $s['edited'] = datetime_convert();
 			}
