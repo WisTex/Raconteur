@@ -2921,7 +2921,7 @@ class Activity
             }
 
             // handle event RSVPs
-            if (($act->obj['type'] === 'Event') || ($act->obj['type'] === 'Invite' && array_path_exists('object/type', $act->obj) && $act->obj['object']['type'] === 'Event')) {
+            if (is_array($act->obj) && (($act->obj['type'] === 'Event') || ($act->obj['type'] === 'Invite' && array_path_exists('object/type', $act->obj) && $act->obj['object']['type'] === 'Event'))) {
                 if ($act->type === 'Accept') {
                     $content['content'] = sprintf(t('Will attend %s\'s event'), $mention) . EOL . EOL . $quoted_content;
                 }
