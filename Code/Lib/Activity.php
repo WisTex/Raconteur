@@ -2763,7 +2763,7 @@ class Activity
 
         if (is_string($act->obj)) {
             // Object was unfetchable. 
-            return false;
+            // return false;
         }
   
         if (is_array($act->obj)) {
@@ -3057,8 +3057,9 @@ class Activity
 			}
         }
 
-
-        $s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
+        if (is_array($act->obj)) {
+            $s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
+        }
         $s['obj'] = $act->obj;
         if (is_array($s['obj']) && array_path_exists('actor/id', $s['obj'])) {
             $s['obj']['actor'] = $s['obj']['actor']['id'];

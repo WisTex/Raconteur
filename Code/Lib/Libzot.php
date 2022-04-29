@@ -2305,7 +2305,7 @@ class Libzot
                 }
             }
 
-            if ($AS->obj['actor'] && $AS->obj['actor']['id'] && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+            if (array_path_exists('actor/id', $AS->obj) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
                 $y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
                 if (!$y) {
                     logger('FOF Activity: no object actor');
