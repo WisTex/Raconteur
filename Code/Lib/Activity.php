@@ -2761,6 +2761,11 @@ class Activity
 
         $s = [];
 
+        if (is_string($act->obj)) {
+            // Object was unfetchable. 
+            return false;
+        }
+  
         if (is_array($act->obj)) {
             $binary = false;
             $markdown = false;
