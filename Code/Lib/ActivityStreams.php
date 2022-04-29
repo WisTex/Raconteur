@@ -279,6 +279,11 @@ class ActivityStreams
         return $key;
     }
 
+    public function objprop($property, $default = false) {
+        $x = $this->get_property_obj($property,$this->obj);
+        return (isset($x)) ? $x : $default;
+    }
+    
     /**
      * @brief
      *
@@ -298,12 +303,7 @@ class ActivityStreams
         $base = (($base) ? $base : $this->data);
         $propname = (($prefix) ? $prefix . ':' : '') . $property;
 
-        if (!is_array($base)) {
-            btlogger('not an array: ' . print_r($base, true));
-            return null;
-        }
-
-        return ((array_key_exists($propname, $base)) ? $base[$propname] : null);
+        return ((is_array($base) && array_key_exists($propname, $base)) ? $base[$propname] : null);
     }
 
 
