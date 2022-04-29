@@ -2937,7 +2937,11 @@ class Activity
             }
 
             if ($act->type === 'Announce') {
-                $content['content'] = sprintf(t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, ((ActivityStreams::is_an_actor($act->obj['type'])) ? t('Profile') : $act->obj['type']));
+                $ann_type = isset($act->obj['type']) ? $act->obj['type'] : 'Activity';
+                if (ActivityStreams::is_an_actor($ann_type)) {
+                    $ann_type = t('Profile');
+                }
+                $content['content'] = sprintf(t('&#x1f501; Repeated %1$s\'s %2$s'), $mention, $ann_type);
             }
 
             if ($act->type === 'emojiReaction') {
