@@ -279,6 +279,14 @@ class ActivityStreams
         return $key;
     }
 
+    /**
+     * @brief get single property from Activity object
+     *
+     * @param string $property
+     * @param mixed return value if property or object not set
+     *    or object is a string id which could not be fetched.
+     * @return mixed
+     */
     public function objprop($property, $default = false) {
         $x = $this->get_property_obj($property,$this->obj);
         return (isset($x)) ? $x : $default;
