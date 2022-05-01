@@ -510,7 +510,6 @@ class Item extends Controller
         $item_flags = $item_restrict = 0;
         $expires = NULL_DATE;
 
-        $route = '';
         $parent_item = null;
         $parent_contact = null;
         $thr_parent = '';
@@ -590,7 +589,6 @@ class Item extends Controller
 
             $thr_parent = $parent_mid;
 
-            $route = $parent_item['route'];
         }
 
         if ($parent_item && isset($parent_item['replyto']) && $parent_item['replyto']) {
@@ -1462,7 +1460,6 @@ class Item extends Controller
         $datarray['comment_policy'] = ((is_numeric($comment_policy)) ? map_scope($comment_policy) : $comment_policy); // only map scope if it is numeric, otherwise use what we have
         $datarray['term'] = $post_tags;
         $datarray['plink'] = $plink;
-        $datarray['route'] = $route;
         $datarray['replyto'] = $replyto;
 
         // A specific ACL over-rides public_policy completely
