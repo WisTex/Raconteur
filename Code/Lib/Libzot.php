@@ -1922,13 +1922,13 @@ class Libzot
                 $prnt = ((strpos($arr['parent_mid'], 'token=') !== false) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
 
                 $r = q(
-                    "select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+                    "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                     dbesc($arr['parent_mid']),
                     intval($channel['channel_id'])
                 );
                 if (!$r) {
                     $r = q(
-                        "select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+                        "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                         dbesc($prnt),
                         intval($channel['channel_id'])
                     );
@@ -1949,8 +1949,6 @@ class Libzot
                     }
 
                     if ($r[0]['obj_type'] === 'Question') {
-                        // route checking doesn't work correctly here because we've changed the privacy
-                        $r[0]['route'] = EMPTY_STR;
                         // If this is a poll response, convert the obj_type to our (internal-only) "Answer" type
                         if ($arr['obj_type'] === 'Note' && $arr['title'] && (!$arr['content'])) {
                             $arr['obj_type'] = 'Answer';
@@ -2000,53 +1998,6 @@ class Libzot
                     continue;
                 }
 
-
-                if ($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {
-                    // reset the route in case it travelled a great distance upstream
-                    // use our parent's route so when we go back downstream we'll match
-                    // with whatever route our parent has.
-                    // Also friend-of-friend conversations may have been imported without a route,
-                    // but we are now getting comments via listener delivery
-                    // and if there is no privacy on this or the parent, we don't care about the route,
-                    // so just set the owner and route accordingly.
-                    $arr['route'] = $r[0]['route'];
-                    $arr['owner_xchan'] = $r[0]['owner_xchan'];
-                } else {
-                    // going downstream check that we have the same upstream provider that
-                    // sent it to us originally. Ignore it if it came from another source
-                    // (with potentially different permissions).
-                    // only compare the last hop since it could have arrived at the last location any number of ways.
-                    // Always accept empty routes and firehose items (route contains 'undefined') .
-
-                    $existing_route = explode(',', $r[0]['route']);
-                    $routes = count($existing_route);
-                    if ($routes) {
-                        $last_hop = array_pop($existing_route);
-                        $last_prior_route = implode(',', $existing_route);
-                    } else {
-                        $last_hop = '';
-                        $last_prior_route = '';
-                    }
-
-                    if (in_array('undefined', $existing_route) || $last_hop == 'undefined' || $sender == 'undefined') {
-                        $last_hop = '';
-                    }
-
-                    $current_route = ((isset($arr['route']) && $arr['route']) ? $arr['route'] . ',' : '') . $sender;
-
-                    if ($last_hop && $last_hop != $sender) {
-                        logger('comment route mismatch: parent route = ' . $r[0]['route'] . ' expected = ' . $current_route, LOGGER_DEBUG);
-                        logger('comment route mismatch: parent msg = ' . $r[0]['id'], LOGGER_DEBUG);
-                        $DR->update('comment route mismatch');
-                        $result[] = $DR->get();
-                        continue;
-                    }
-
-                    // we'll add sender onto this when we deliver it. $last_prior_route now has the previously stored route
-                    // *except* for the sender which would've been the last hop before it got to us.
-
-                    $arr['route'] = $last_prior_route;
-                }
             }
 
             // This is used to fetch allow/deny rules if either the sender
@@ -2106,9 +2057,6 @@ class Libzot
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
                     } else {
                         $DR->update('update ignored');
                         $result[] = $DR->get();
@@ -2180,10 +2128,6 @@ class Libzot
                          *   * \e array \b channel
                          */
                         Hook::call('activity_received', $parr);
-                        // don't add a source route if it's a relay or later recipients will get a route mismatch
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
                     }
                     $DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
                     $result[] = $DR->get();
