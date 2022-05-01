@@ -601,6 +601,7 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['body'] = $x['body'];
 	$arr['summary'] = $x['summary'];
 
+    $mirror = array_key_exists('revision', $x);
 	$maxlen = get_max_import_size();
 
 	if($maxlen && mb_strlen($arr['body']) > $maxlen) {
@@ -650,8 +651,9 @@ function get_item_elements($x,$allow_code = false) {
 	// convert AS1 namespaced elements to AS-JSONLD
 
 	$arr['verb'] = Activity::activity_mapper($arr['verb']);
-	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type']);
-	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type']);
+
+	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type'], $mirror);
+	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type'], $mirror);
 
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
@@ -770,7 +772,7 @@ function get_item_elements($x,$allow_code = false) {
 	// Strip old-style hubzilla bookmarks
 	// Do this after signature verification
 
-	if(strpos($x['body'],"#^[") !== false) {
+	if (strpos($x['body'],"#^[") !== false) {
 		$x['body'] = str_replace("#^[","[",$x['body']);
 	}
 
@@ -779,12 +781,12 @@ function get_item_elements($x,$allow_code = false) {
 	// Do this after signature checking as the original signature
 	// was generated on the escaped content.
 
-	if($arr['mimetype'] === 'text/markdown') {
+	if ($arr['mimetype'] === 'text/markdown') {
 		$arr['summary'] = MarkdownSoap::unescape($arr['summary']);
 		$arr['body']    = MarkdownSoap::unescape($arr['body']);
 	}
 
-	if(array_key_exists('revision',$x)) {
+	if ($mirror) {
 
 		// extended export encoding
 

@@ -1859,7 +1859,7 @@ class Activity
     }
 
 
-    public static function activity_obj_mapper($obj)
+    public static function activity_obj_mapper($obj, $sync = false)
     {
 
 
@@ -1884,6 +1884,9 @@ class Activity
         Hook::call('activity_obj_mapper', $objs);
 
         if ($obj === 'Answer') {
+            if ($sync) {
+                return $obj;
+            }
             return 'Note';
         }
 
