@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/admin/customsql
+requires: admin 
+name: Custom SQL
+photo: icon:mysql
+categories: System,nav_featured_app

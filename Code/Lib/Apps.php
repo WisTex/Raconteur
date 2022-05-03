@@ -362,6 +362,7 @@ class Apps
             'Connections' => t('Connections'),
             'Content Filter' => t('Content Filter'),
             'Content Import' => t('Content Import'),
+            'Custom SQL' => t('Custom SQL'),
             'Directory' => t('Directory'),
             'Drafts' => t('Drafts'),
             'Events' => t('Events'),
