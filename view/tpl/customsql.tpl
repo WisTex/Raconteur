@@ -3,7 +3,7 @@
 	<div class="section-content-wrapper">
     <div class="descriptive_text">{{$warn}}</div>
     <br><br>
-    <form action="dev/customsql" method="post">
+    <form action="admin/customsql" method="post">
     <input type="hidden" name="form_security_token" value="{{$form_security_token}}">
     {{include file="field_textarea.tpl" field=$query}}
     {{include file="field_checkbox.tpl" field=$ok}}
