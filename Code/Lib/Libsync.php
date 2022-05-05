@@ -654,7 +654,7 @@ class Libsync
                                 if (in_array('view_stream',$x)  && ! in_array('deliver_stream',$x)) {
                                     $x[] = 'deliver_stream'';
                                 }
-                                set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], implode(',', $x);
+                                set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], implode(',', $x));
                             }
                             else {
                                 set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], $abc['v']);
