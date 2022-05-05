@@ -525,10 +525,6 @@ function check_list_permissions($uid, $arr, $perm)
         foreach ($arr as $x) {
             if (perm_is_allowed($uid, $x, $perm)) {
                 $result[] = $x;
-                logger('approved: ' . $x);
-            }
-            else {
-                logger('rejected: ' . $x);
             }
         }
     }
