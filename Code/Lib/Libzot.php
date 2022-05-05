@@ -2741,7 +2741,7 @@ class Libzot
     public static function import_site($arr)
     {
 
-        if ((!is_array($arr)) || (!$arr['url']) || (!$arr['site_sig'])) {
+        if (!(is_array($arr) && isset($arr['url']) && isset($arr['site_sig']))) {
             return false;
         }
 
@@ -3303,79 +3303,59 @@ class Libzot
         $ret['site']['authRedirect'] = z_root() . '/magic';
         $ret['site']['sitekey'] = get_config('system', 'pubkey');
 
-        $dirmode = get_config('system', 'directory_mode');
-        if (($dirmode === false) || ($dirmode == DIRECTORY_MODE_NORMAL)) {
-            $ret['site']['directory_mode'] = 'normal';
-        }
-
-        if ($dirmode == DIRECTORY_MODE_PRIMARY) {
-            $ret['site']['directory_mode'] = 'primary';
-        } elseif ($dirmode == DIRECTORY_MODE_SECONDARY) {
-            $ret['site']['directory_mode'] = 'secondary';
-        } elseif ($dirmode == DIRECTORY_MODE_STANDALONE) {
-            $ret['site']['directory_mode'] = 'standalone';
-        }
-        if ($dirmode != DIRECTORY_MODE_NORMAL) {
-            $ret['site']['directory_url'] = z_root() . '/dirsearch';
-        }
-
-
         $ret['site']['encryption'] = Crypto::methods();
         $ret['signature_algorithm'] = $sig_method;
         $ret['site']['zot'] = System::get_zot_revision();
 
-        // hide detailed site information if you're off the grid
-
-        if ($dirmode != DIRECTORY_MODE_STANDALONE || $force) {
-            $register_policy = intval(get_config('system', 'register_policy'));
-
-            if ($register_policy == REGISTER_CLOSED) {
-                $ret['site']['register_policy'] = 'closed';
-            }
-            if ($register_policy == REGISTER_APPROVE) {
-                $ret['site']['register_policy'] = 'approve';
-            }
-            if ($register_policy == REGISTER_OPEN) {
-                $ret['site']['register_policy'] = 'open';
-            }
-
-            $access_policy = intval(get_config('system', 'access_policy'));
-
-            if ($access_policy == ACCESS_PRIVATE) {
-                $ret['site']['access_policy'] = 'private';
-            }
-            if ($access_policy == ACCESS_PAID) {
-                $ret['site']['access_policy'] = 'paid';
-            }
-            if ($access_policy == ACCESS_FREE) {
-                $ret['site']['access_policy'] = 'free';
-            }
-            if ($access_policy == ACCESS_TIERED) {
-                $ret['site']['access_policy'] = 'tiered';
-            }
-
-            $ret['site']['admin'] = get_config('system', 'admin_email');
-
-            $visible_plugins = [];
-
-            $r = q("select * from addon where hidden = 0");
-            if ($r) {
-                foreach ($r as $rr) {
-                    $visible_plugins[] = $rr['aname'];
-                }
-            }
 
 
-            $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
-            $ret['site']['plugins'] = $visible_plugins;
-            $ret['site']['sitehash'] = get_config('system', 'location_hash');
-            $ret['site']['sellpage'] = get_config('system', 'sellpage');
-            $ret['site']['location'] = get_config('system', 'site_location');
-            $ret['site']['sitename'] = System::get_site_name();
-            $ret['site']['logo'] = System::get_site_icon();
-            $ret['site']['project'] = System::get_project_name();
-            $ret['site']['version'] = System::get_project_version();
+        $register_policy = intval(get_config('system', 'register_policy'));
+
+        if ($register_policy == REGISTER_CLOSED) {
+            $ret['site']['register_policy'] = 'closed';
         }
+        if ($register_policy == REGISTER_APPROVE) {
+            $ret['site']['register_policy'] = 'approve';
+        }
+        if ($register_policy == REGISTER_OPEN) {
+            $ret['site']['register_policy'] = 'open';
+        }
+
+        $access_policy = intval(get_config('system', 'access_policy'));
+
+        if ($access_policy == ACCESS_PRIVATE) {
+            $ret['site']['access_policy'] = 'private';
+        }
+        if ($access_policy == ACCESS_PAID) {
+            $ret['site']['access_policy'] = 'paid';
+        }
+        if ($access_policy == ACCESS_FREE) {
+            $ret['site']['access_policy'] = 'free';
+        }
+        if ($access_policy == ACCESS_TIERED) {
+            $ret['site']['access_policy'] = 'tiered';
+        }
+
+        $ret['site']['admin'] = get_config('system', 'admin_email');
+
+        $visible_plugins = [];
+
+        $r = q("select * from addon where hidden = 0");
+        if ($r) {
+            foreach ($r as $rr) {
+                $visible_plugins[] = $rr['aname'];
+            }
+        }
+
+        $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
+        $ret['site']['plugins'] = $visible_plugins;
+        $ret['site']['sitehash'] = get_config('system', 'location_hash');
+        $ret['site']['sellpage'] = get_config('system', 'sellpage');
+        $ret['site']['location'] = get_config('system', 'site_location');
+        $ret['site']['sitename'] = System::get_site_name();
+        $ret['site']['logo'] = System::get_site_icon();
+        $ret['site']['project'] = System::get_project_name();
+        $ret['site']['version'] = System::get_project_version();
 
         return $ret['site'];
     }

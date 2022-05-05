@@ -506,7 +506,9 @@ class Libsync
                     $abconfig = null;
 
                     if (array_key_exists('abconfig', $abook) && is_array($abook['abconfig']) && count($abook['abconfig'])) {
+                        
                         $abconfig = $abook['abconfig'];
+                        
                     }
 
                     $clean = [];
@@ -647,7 +649,16 @@ class Libsync
                     if ($abconfig) {
                         /// @fixme does not handle sync of del_abconfig
                         foreach ($abconfig as $abc) {
-                            set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], $abc['v']);
+                            if ($abc['cat'] ===  'system' && $abc['k'] === 'my_perms') {
+                                $x = explode(',', $abc['v']);
+                                if (in_array('view_stream',$x)  && ! in_array('deliver_stream',$x)) {
+                                    $x[] = 'deliver_stream'';
+                                }
+                                set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], implode(',', $x);
+                            }
+                            else {
+                                set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], $abc['v']);
+                            }
                         }
                     }
                     if ($reconnect) {

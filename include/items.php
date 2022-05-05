@@ -164,6 +164,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
     $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
 
+
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
 	$recipients[] = $item['author_xchan'];
