@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 22.05.03\n"
+"Project-Id-Version: 22.05.04\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-03 03:46-0700\n"
+"POT-Creation-Date: 2022-05-03 15:59-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,7 +35,7 @@ msgstr ""
 msgid "Unable to verify channel signature"
 msgstr ""
 
-#: Code/Lib/Menu.php:143 Code/Lib/ThreadItem.php:159 Code/Lib/Apps.php:626
+#: Code/Lib/Menu.php:143 Code/Lib/ThreadItem.php:159 Code/Lib/Apps.php:627
 #: Code/Lib/Libprofile.php:208 Code/Lib/Libprofile.php:211
 #: Code/Module/Admin/Profs.php:192 Code/Module/Blocks.php:173
 #: Code/Module/Card_edit.php:110 Code/Module/Connections.php:318
@@ -178,7 +178,7 @@ msgstr ""
 msgid "Manage your channels"
 msgstr ""
 
-#: Code/Lib/Navbar.php:112 Code/Lib/AccessList.php:393 Code/Lib/Apps.php:379
+#: Code/Lib/Navbar.php:112 Code/Lib/AccessList.php:393 Code/Lib/Apps.php:380
 #: Code/Widget/Activity_filter.php:178
 msgid "Lists"
 msgstr ""
@@ -187,7 +187,7 @@ msgstr ""
 msgid "Manage your access lists"
 msgstr ""
 
-#: Code/Lib/Navbar.php:114 Code/Lib/Apps.php:409
+#: Code/Lib/Navbar.php:114 Code/Lib/Apps.php:410
 #: Code/Module/Admin/Addons.php:343 Code/Module/Admin/Themes.php:142
 #: Code/Widget/Newmember.php:57 Code/Widget/Settings_menu.php:138
 msgid "Settings"
@@ -222,7 +222,7 @@ msgstr ""
 msgid "End this session"
 msgstr ""
 
-#: Code/Lib/Navbar.php:126 Code/Lib/Apps.php:418 Code/Module/Connedit.php:555
+#: Code/Lib/Navbar.php:126 Code/Lib/Apps.php:419 Code/Module/Connedit.php:555
 msgid "View Profile"
 msgstr ""
 
@@ -247,7 +247,7 @@ msgstr ""
 msgid "Edit your profile"
 msgstr ""
 
-#: Code/Lib/Navbar.php:137 Code/Lib/Navbar.php:140 Code/Lib/Apps.php:380
+#: Code/Lib/Navbar.php:137 Code/Lib/Navbar.php:140 Code/Lib/Apps.php:381
 #: boot.php:1717
 msgid "Login"
 msgstr ""
@@ -273,7 +273,7 @@ msgstr ""
 msgid "Create an account"
 msgstr ""
 
-#: Code/Lib/Navbar.php:186 Code/Lib/Navbar.php:307 Code/Lib/Apps.php:376
+#: Code/Lib/Navbar.php:186 Code/Lib/Navbar.php:307 Code/Lib/Apps.php:377
 #: include/help.php:70
 msgid "Help"
 msgstr ""
@@ -282,7 +282,7 @@ msgstr ""
 msgid "Help and documentation"
 msgstr ""
 
-#: Code/Lib/Navbar.php:193 Code/Lib/Apps.php:407 Code/Lib/Libacl.php:149
+#: Code/Lib/Navbar.php:193 Code/Lib/Apps.php:408 Code/Lib/Libacl.php:149
 #: Code/Module/Connections.php:374 Code/Module/Search.php:67
 #: Code/Widget/Sitesearch.php:37 include/text.php:1052 include/text.php:1065
 msgid "Search"
@@ -342,7 +342,7 @@ msgstr ""
 msgid "Toggle System Apps"
 msgstr ""
 
-#: Code/Lib/Navbar.php:330 Code/Lib/Apps.php:387
+#: Code/Lib/Navbar.php:330 Code/Lib/Apps.php:388
 #: Code/Module/Settings/Channel.php:690 Code/Widget/Notifications.php:152
 msgid "Notifications"
 msgstr ""
@@ -364,7 +364,7 @@ msgstr ""
 msgid "Profile Details"
 msgstr ""
 
-#: Code/Lib/Navbar.php:436 Code/Lib/Apps.php:393 Code/Module/Fbrowser.php:37
+#: Code/Lib/Navbar.php:436 Code/Lib/Apps.php:394 Code/Module/Fbrowser.php:37
 #: include/conversation.php:2007
 msgid "Photos"
 msgstr ""
@@ -373,7 +373,7 @@ msgstr ""
 msgid "Photo Albums"
 msgstr ""
 
-#: Code/Lib/Navbar.php:444 Code/Lib/Apps.php:370 Code/Module/Fbrowser.php:95
+#: Code/Lib/Navbar.php:444 Code/Lib/Apps.php:371 Code/Module/Fbrowser.php:95
 #: Code/Storage/Browser.php:298 include/conversation.php:2015
 msgid "Files"
 msgstr ""
@@ -418,7 +418,7 @@ msgstr ""
 msgid "View Articles"
 msgstr ""
 
-#: Code/Lib/Navbar.php:516 Code/Lib/Apps.php:420 Code/Module/Webpages.php:266
+#: Code/Lib/Navbar.php:516 Code/Lib/Apps.php:421 Code/Module/Webpages.php:266
 #: include/conversation.php:2087
 msgid "Webpages"
 msgstr ""
@@ -431,7 +431,7 @@ msgstr ""
 msgid "Wikis"
 msgstr ""
 
-#: Code/Lib/Navbar.php:531 Code/Lib/Apps.php:421 include/conversation.php:2103
+#: Code/Lib/Navbar.php:531 Code/Lib/Apps.php:422 include/conversation.php:2103
 msgid "Wiki"
 msgstr ""
 
@@ -458,7 +458,7 @@ msgid ""
 "public. Discretion advised."
 msgstr ""
 
-#: Code/Lib/ThreadItem.php:196 Code/Lib/Apps.php:627
+#: Code/Lib/ThreadItem.php:196 Code/Lib/Apps.php:628
 #: Code/Module/Admin/Profs.php:193 Code/Module/Admin/Channels.php:177
 #: Code/Module/Admin/Accounts.php:188 Code/Module/Cdav.php:1078
 #: Code/Module/Cdav.php:1387 Code/Module/Blocks.php:175
@@ -714,32 +714,33 @@ msgstr ""
 #: Code/Module/Admin/Logs.php:87 Code/Module/Admin/Channels.php:175
 #: Code/Module/Admin/Accounts.php:181 Code/Module/Admin/Account_edit.php:81
 #: Code/Module/Admin/Addons.php:440 Code/Module/Admin/Site.php:280
-#: Code/Module/Admin/Themes.php:175 Code/Module/Affinity.php:89
-#: Code/Module/Appman.php:163 Code/Module/Cal.php:363 Code/Module/Chat.php:214
-#: Code/Module/Chat.php:250 Code/Module/Connect.php:99
-#: Code/Module/Content_filter.php:68 Code/Module/Defperms.php:258
-#: Code/Module/Editpost.php:119 Code/Module/Email_validation.php:48
-#: Code/Module/Events.php:544 Code/Module/Expire.php:50
-#: Code/Module/Filestorage.php:248 Code/Module/Finger.php:26
-#: Code/Module/Import_items.php:144 Code/Module/Invite.php:171
-#: Code/Module/Photos.php:1140 Code/Module/Photos.php:1198
-#: Code/Module/Photos.php:1308 Code/Module/Lists.php:206
-#: Code/Module/Lists.php:218 Code/Module/Connedit.php:824
-#: Code/Module/Locs.php:138 Code/Module/Mitem.php:274 Code/Module/Mood.php:170
+#: Code/Module/Admin/Themes.php:175 Code/Module/Admin/Customsql.php:38
+#: Code/Module/Affinity.php:89 Code/Module/Appman.php:163
+#: Code/Module/Cal.php:363 Code/Module/Chat.php:214 Code/Module/Chat.php:250
+#: Code/Module/Connect.php:99 Code/Module/Content_filter.php:68
+#: Code/Module/Defperms.php:258 Code/Module/Editpost.php:119
+#: Code/Module/Email_validation.php:48 Code/Module/Events.php:544
+#: Code/Module/Expire.php:50 Code/Module/Filestorage.php:248
+#: Code/Module/Finger.php:26 Code/Module/Import_items.php:144
+#: Code/Module/Invite.php:171 Code/Module/Photos.php:1140
+#: Code/Module/Photos.php:1198 Code/Module/Photos.php:1308
+#: Code/Module/Lists.php:206 Code/Module/Lists.php:218
+#: Code/Module/Connedit.php:824 Code/Module/Locs.php:138
+#: Code/Module/Mitem.php:274 Code/Module/Mood.php:170
 #: Code/Module/Import.php:727 Code/Module/Pconfig.php:129
 #: Code/Module/Pdledit.php:115 Code/Module/Poke.php:151
-#: Code/Module/Profiles.php:772 Code/Module/Dev/Customsql.php:32
-#: Code/Module/Dev/Zotfinger.php:30 Code/Module/Dev/Zot_probe.php:23
-#: Code/Module/Dev/Xchan.php:18 Code/Module/Dev/Ap_probe.php:27
-#: Code/Module/Settings/Tokens.php:317 Code/Module/Settings/Permcats.php:146
-#: Code/Module/Settings/Oauth2.php:115 Code/Module/Settings/Oauth.php:98
-#: Code/Module/Settings/Network.php:48 Code/Module/Settings/Features.php:66
-#: Code/Module/Settings/Featured.php:63 Code/Module/Settings/Account.php:117
-#: Code/Module/Settings/Channel.php:630 Code/Module/Settings/Display.php:209
-#: Code/Module/Setup.php:334 Code/Module/Setup.php:379
-#: Code/Module/Thing.php:364 Code/Module/Thing.php:419
-#: Code/Module/Sources.php:133 Code/Module/Sources.php:171
-#: Code/Module/Superblock.php:258 Code/Widget/Eventstools.php:22
+#: Code/Module/Profiles.php:772 Code/Module/Dev/Zotfinger.php:30
+#: Code/Module/Dev/Zot_probe.php:23 Code/Module/Dev/Xchan.php:18
+#: Code/Module/Dev/Ap_probe.php:27 Code/Module/Settings/Tokens.php:317
+#: Code/Module/Settings/Permcats.php:146 Code/Module/Settings/Oauth2.php:115
+#: Code/Module/Settings/Oauth.php:98 Code/Module/Settings/Network.php:48
+#: Code/Module/Settings/Features.php:66 Code/Module/Settings/Featured.php:63
+#: Code/Module/Settings/Account.php:117 Code/Module/Settings/Channel.php:630
+#: Code/Module/Settings/Display.php:209 Code/Module/Setup.php:334
+#: Code/Module/Setup.php:379 Code/Module/Thing.php:364
+#: Code/Module/Thing.php:419 Code/Module/Sources.php:133
+#: Code/Module/Sources.php:171 Code/Module/Superblock.php:258
+#: Code/Widget/Eventstools.php:22
 #: extend/addon/a/content_import/Mod_content_import.php:153
 #: extend/addon/a/faces/Mod_Faces.php:183 extend/addon/a/faces/faces.php:126
 #: extend/addon/a/flashcards/Mod_Flashcards.php:265
@@ -816,7 +817,7 @@ msgstr ""
 msgid "Your website URL (optional)"
 msgstr ""
 
-#: Code/Lib/Activity.php:2227 Code/Lib/Apps.php:1157 Code/Lib/Apps.php:1249
+#: Code/Lib/Activity.php:2227 Code/Lib/Apps.php:1158 Code/Lib/Apps.php:1250
 #: Code/Module/Cdav.php:875 Code/Module/Cdav.php:876 Code/Module/Cdav.php:882
 #: Code/Module/Embedphotos.php:218 Code/Module/Photos.php:862
 #: Code/Module/Photos.php:1337 Code/Widget/Portfolio.php:109
@@ -829,7 +830,7 @@ msgstr ""
 msgid "Activity"
 msgstr ""
 
-#: Code/Lib/Activity.php:2921 Code/Lib/Apps.php:399 Code/Lib/Libprofile.php:691
+#: Code/Lib/Activity.php:2921 Code/Lib/Apps.php:400 Code/Lib/Libprofile.php:691
 #: Code/Module/Profperm.php:131
 msgid "Profile"
 msgstr ""
@@ -1037,223 +1038,227 @@ msgstr ""
 msgid "Content Import"
 msgstr ""
 
-#: Code/Lib/Apps.php:365 Code/Module/Directory.php:477
+#: Code/Lib/Apps.php:365
+msgid "Custom SQL"
+msgstr ""
+
+#: Code/Lib/Apps.php:366 Code/Module/Directory.php:477
 msgid "Directory"
 msgstr ""
 
-#: Code/Lib/Apps.php:366 Code/Widget/Activity_filter.php:81
+#: Code/Lib/Apps.php:367 Code/Widget/Activity_filter.php:81
 msgid "Drafts"
 msgstr ""
 
-#: Code/Lib/Apps.php:367 Code/Widget/Activity_filter.php:109
+#: Code/Lib/Apps.php:368 Code/Widget/Activity_filter.php:109
 #: include/conversation.php:2026 include/conversation.php:2029
 msgid "Events"
 msgstr ""
 
-#: Code/Lib/Apps.php:368
+#: Code/Lib/Apps.php:369
 msgid "Expire Posts"
 msgstr ""
 
-#: Code/Lib/Apps.php:369
+#: Code/Lib/Apps.php:370
 msgid "Features"
 msgstr ""
 
-#: Code/Lib/Apps.php:371 extend/addon/a/followlist/Mod_followlist.php:132
+#: Code/Lib/Apps.php:372 extend/addon/a/followlist/Mod_followlist.php:132
 msgid "Followlist"
 msgstr ""
 
-#: Code/Lib/Apps.php:372 Code/Module/Connedit.php:670
+#: Code/Lib/Apps.php:373 Code/Module/Connedit.php:670
 msgid "Friend Zoom"
 msgstr ""
 
-#: Code/Lib/Apps.php:373
+#: Code/Lib/Apps.php:374
 msgid "Future Posting"
 msgstr ""
 
-#: Code/Lib/Apps.php:374 extend/addon/a/gallery/Mod_Gallery.php:141
+#: Code/Lib/Apps.php:375 extend/addon/a/gallery/Mod_Gallery.php:141
 #: extend/addon/a/gallery/gallery.php:49
 msgid "Gallery"
 msgstr ""
 
-#: Code/Lib/Apps.php:375
+#: Code/Lib/Apps.php:376
 msgid "Guest Pass"
 msgstr ""
 
-#: Code/Lib/Apps.php:377
+#: Code/Lib/Apps.php:378
 msgid "Invite"
 msgstr ""
 
-#: Code/Lib/Apps.php:378
+#: Code/Lib/Apps.php:379
 msgid "Language"
 msgstr ""
 
-#: Code/Lib/Apps.php:381
+#: Code/Lib/Apps.php:382
 msgid "Mail"
 msgstr ""
 
-#: Code/Lib/Apps.php:382
+#: Code/Lib/Apps.php:383
 msgid "Markup"
 msgstr ""
 
-#: Code/Lib/Apps.php:383 Code/Module/Mood.php:166
+#: Code/Lib/Apps.php:384 Code/Module/Mood.php:166
 msgid "Mood"
 msgstr ""
 
-#: Code/Lib/Apps.php:384
+#: Code/Lib/Apps.php:385
 msgid "My Chatrooms"
 msgstr ""
 
-#: Code/Lib/Apps.php:385
+#: Code/Lib/Apps.php:386
 msgid "No Comment"
 msgstr ""
 
-#: Code/Lib/Apps.php:386 Code/Widget/Notes.php:24
+#: Code/Lib/Apps.php:387 Code/Widget/Notes.php:24
 msgid "Notes"
 msgstr ""
 
-#: Code/Lib/Apps.php:388
+#: Code/Lib/Apps.php:389
 msgid "OAuth Apps Manager"
 msgstr ""
 
-#: Code/Lib/Apps.php:389
+#: Code/Lib/Apps.php:390
 msgid "OAuth2 Apps Manager"
 msgstr ""
 
-#: Code/Lib/Apps.php:390
+#: Code/Lib/Apps.php:391
 msgid "Order Apps"
 msgstr ""
 
-#: Code/Lib/Apps.php:391
+#: Code/Lib/Apps.php:392
 msgid "PDL Editor"
 msgstr ""
 
-#: Code/Lib/Apps.php:392 Code/Lib/Features.php:176
+#: Code/Lib/Apps.php:393 Code/Lib/Features.php:176
 msgid "Permission Categories"
 msgstr ""
 
-#: Code/Lib/Apps.php:394
+#: Code/Lib/Apps.php:395
 msgid "Photomap"
 msgstr ""
 
-#: Code/Lib/Apps.php:395 Code/Module/Poke.php:142
+#: Code/Lib/Apps.php:396 Code/Module/Poke.php:142
 msgid "Poke"
 msgstr ""
 
-#: Code/Lib/Apps.php:396
+#: Code/Lib/Apps.php:397
 msgid "Post"
 msgstr ""
 
-#: Code/Lib/Apps.php:397
+#: Code/Lib/Apps.php:398
 msgid "Premium Channel"
 msgstr ""
 
-#: Code/Lib/Apps.php:398
+#: Code/Lib/Apps.php:399
 msgid "Probe"
 msgstr ""
 
-#: Code/Lib/Apps.php:400
+#: Code/Lib/Apps.php:401
 msgid "Profile Photo"
 msgstr ""
 
-#: Code/Lib/Apps.php:401
+#: Code/Lib/Apps.php:402
 msgid "Profiles"
 msgstr ""
 
-#: Code/Lib/Apps.php:402 Code/Module/Pubstream.php:99
+#: Code/Lib/Apps.php:403 Code/Module/Pubstream.php:99
 #: Code/Widget/Notifications.php:133
 msgid "Public Stream"
 msgstr ""
 
-#: Code/Lib/Apps.php:403
+#: Code/Lib/Apps.php:404
 msgid "Random Channel"
 msgstr ""
 
-#: Code/Lib/Apps.php:404
+#: Code/Lib/Apps.php:405
 msgid "Remote Diagnostics"
 msgstr ""
 
-#: Code/Lib/Apps.php:405
+#: Code/Lib/Apps.php:406
 msgid "Report Bug"
 msgstr ""
 
-#: Code/Lib/Apps.php:406
+#: Code/Lib/Apps.php:407
 msgid "Roles"
 msgstr ""
 
-#: Code/Lib/Apps.php:408
+#: Code/Lib/Apps.php:409
 msgid "Secrets"
 msgstr ""
 
-#: Code/Lib/Apps.php:410
+#: Code/Lib/Apps.php:411
 msgid "Sites"
 msgstr ""
 
-#: Code/Lib/Apps.php:411
+#: Code/Lib/Apps.php:412
 msgid "Stream"
 msgstr ""
 
-#: Code/Lib/Apps.php:412 Code/Widget/Stream_order.php:139
+#: Code/Lib/Apps.php:413 Code/Widget/Stream_order.php:139
 msgid "Stream Order"
 msgstr ""
 
-#: Code/Lib/Apps.php:413
+#: Code/Lib/Apps.php:414
 msgid "Suggest"
 msgstr ""
 
-#: Code/Lib/Apps.php:414 Code/Lib/Features.php:371
+#: Code/Lib/Apps.php:415 Code/Lib/Features.php:371
 #: Code/Module/Settings/Network.php:116
 msgid "Suggest Channels"
 msgstr ""
 
-#: Code/Lib/Apps.php:415
+#: Code/Lib/Apps.php:416
 msgid "Tagadelic"
 msgstr ""
 
-#: Code/Lib/Apps.php:416 Code/Widget/Tasklist.php:30
+#: Code/Lib/Apps.php:417 Code/Widget/Tasklist.php:30
 msgid "Tasks"
 msgstr ""
 
-#: Code/Lib/Apps.php:417
+#: Code/Lib/Apps.php:418
 msgid "View Bookmarks"
 msgstr ""
 
-#: Code/Lib/Apps.php:419
+#: Code/Lib/Apps.php:420
 msgid "Virtual Lists"
 msgstr ""
 
-#: Code/Lib/Apps.php:422 extend/addon/a/zotpost/Mod_zotpost.php:56
+#: Code/Lib/Apps.php:423 extend/addon/a/zotpost/Mod_zotpost.php:56
 msgid "ZotPost"
 msgstr ""
 
-#: Code/Lib/Apps.php:599
+#: Code/Lib/Apps.php:600
 msgid "Installed"
 msgstr ""
 
-#: Code/Lib/Apps.php:599 Code/Module/Admin/Addons.php:424
+#: Code/Lib/Apps.php:600 Code/Module/Admin/Addons.php:424
 msgid "Install"
 msgstr ""
 
-#: Code/Lib/Apps.php:623
+#: Code/Lib/Apps.php:624
 msgid "Purchase"
 msgstr ""
 
-#: Code/Lib/Apps.php:628
+#: Code/Lib/Apps.php:629
 msgid "Undelete"
 msgstr ""
 
-#: Code/Lib/Apps.php:638
+#: Code/Lib/Apps.php:639
 msgid "Add to app-tray"
 msgstr ""
 
-#: Code/Lib/Apps.php:639
+#: Code/Lib/Apps.php:640
 msgid "Remove from app-tray"
 msgstr ""
 
-#: Code/Lib/Apps.php:640
+#: Code/Lib/Apps.php:641
 msgid "Pin to navbar"
 msgstr ""
 
-#: Code/Lib/Apps.php:641
+#: Code/Lib/Apps.php:642
 msgid "Unpin from navbar"
 msgstr ""
 
@@ -4263,6 +4268,42 @@ msgstr ""
 
 #: Code/Module/Admin/Themes.php:180
 msgid "[Unsupported]"
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:25
+msgid ""
+"Once installed, this app provides an admin-only interface to execute "
+"arbitrary SQL statements."
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:33
+msgid "Custom SQL query"
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:34
+msgid ""
+"If you do not know exactly what you are doing, please leave this page now."
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:46
+msgid "Too many results."
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:49
+#, php-format
+msgid "returned %d results"
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:54
+msgid "Query returned: "
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:54
+msgid "true"
+msgstr ""
+
+#: Code/Module/Admin/Customsql.php:54
+msgid "false"
 msgstr ""
 
 #: Code/Module/Affinity.php:34
@@ -8077,36 +8118,6 @@ msgstr ""
 
 #: Code/Module/Profperm.php:142
 msgid "Visible To"
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:27
-msgid "Custom SQL query"
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:28
-msgid ""
-"If you do not know exactly what you are doing, please leave this page now."
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:40
-msgid "Too many results."
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:43
-#, php-format
-msgid "returned %d results"
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:48
-msgid "Query returned: "
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:48
-msgid "true"
-msgstr ""
-
-#: Code/Module/Dev/Customsql.php:48
-msgid "false"
 msgstr ""
 
 #: Code/Module/Dev/Zotfinger.php:28
