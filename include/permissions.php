@@ -525,6 +525,10 @@ function check_list_permissions($uid, $arr, $perm)
         foreach ($arr as $x) {
             if (perm_is_allowed($uid, $x, $perm)) {
                 $result[] = $x;
+                logger('approved: ' . $x);
+            }
+            else {
+                logger('rejected: ' . $x);
             }
         }
     }
@@ -544,6 +548,7 @@ function site_default_perms()
 
     $typical = array(
         'view_stream'   => PERMS_PUBLIC,
+        'deliver_stream'=> PERMS_SPECIFIC,
         'view_profile'  => PERMS_PUBLIC,
         'view_contacts' => PERMS_PUBLIC,
         'view_storage'  => PERMS_PUBLIC,
