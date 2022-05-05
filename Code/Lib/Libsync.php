@@ -652,7 +652,7 @@ class Libsync
                             if ($abc['cat'] ===  'system' && $abc['k'] === 'my_perms') {
                                 $x = explode(',', $abc['v']);
                                 if (in_array('view_stream',$x)  && ! in_array('deliver_stream',$x)) {
-                                    $x[] = 'deliver_stream'';
+                                    $x[] = 'deliver_stream';
                                 }
                                 set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], implode(',', $x));
                             }
