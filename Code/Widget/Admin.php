@@ -60,12 +60,12 @@ class Admin
         Hook::call('admin_aside', $arr);
 
         $o .= replace_macros(Theme::get_template('admin_aside.tpl'), array(
-            '$admin' => $aside,
+            '$admin' => $arr['links'],
             '$admtxt' => t('Admin'),
             '$plugadmtxt' => t('Addon Features'),
-            '$plugins' => $plugins,
+            '$plugins' => $arr['plugins'],
             '$logtxt' => t('Logs'),
-            '$logs' => $logs,
+            '$logs' => $arr['logs'],
             '$h_pending' => t('Member registrations waiting for confirmation'),
             '$admurl' => z_root() . '/admin/'
         ));

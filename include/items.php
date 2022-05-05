@@ -95,8 +95,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// a different clone. We need to get the post to that hub.
 
 		// The post may be private by virtue of not being visible to anybody on the internet,
-		// but there are no envelope recipients, so set this to false. Delivery is controlled
-		// by the directives in $item['public_policy'].
+		// but there are no envelope recipients, so set this to false. 
 
 		$private_envelope = false;
 
@@ -165,18 +164,6 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
     $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
 
-	// remove any upstream recipients from our list.
-	// If it is ourself we'll add it back in a second.
-	// This should prevent complex delivery chains from getting overly complex by not
-	// sending to anybody who is on our list of those who sent it to us.
-
-	if ($item['route']) {
-		$route = explode(',',$item['route']);
-		if (count($route)) {
-			$route = array_unique($route);
-			$recipients = array_diff($recipients,$route);
-		}
-	}
 
 	// add ourself just in case we have nomadic clones that need to get a copy.
 
@@ -385,43 +372,6 @@ function absolutely_no_comments($item) {
 
 	return false;
 }
-
-
-
-/**
- * @brief Adds $hash to the item source route specified by $iid.
- *
- * $item['route'] contains a comma-separated list of xchans that sent the current message,
- * somewhat analogous to the * Received: header line in email. We can use this to perform
- * loop detection and to avoid sending a particular item to any "upstream" sender (they
- * already have a copy because they sent it to us).
- *
- * Modifies item in the database pointed to by $iid.
- *
- * @param integer $iid
- *    item['id'] of target item
- * @param string $hash
- *    xchan_hash of the channel that sent the item
- */
-function add_source_route($iid, $hash) {
-//	logger('add_source_route ' . $iid . ' ' . $hash, LOGGER_DEBUG);
-
-	if ((! $iid) || (! $hash)) {
-		return;
-	}
-
-	$r = q("select route from item where id = %d limit 1",
-		intval($iid)
-	);
-	if ($r) {
-		$new_route = (($r[0]['route']) ? $r[0]['route'] . ',' : '') . $hash;
-		q("update item set route = '%s' where id = %d",
-			dbesc($new_route),
-			intval($iid)
-		);
-	}
-}
-
 
 /**
  * @brief Post an activity.
@@ -652,6 +602,7 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['body'] = $x['body'];
 	$arr['summary'] = $x['summary'];
 
+    $mirror = array_key_exists('revision', $x);
 	$maxlen = get_max_import_size();
 
 	if($maxlen && mb_strlen($arr['body']) > $maxlen) {
@@ -685,7 +636,6 @@ function get_item_elements($x,$allow_code = false) {
 
     $arr['uuid']         = (($x['uuid'])           ? htmlspecialchars($x['uuid'],           ENT_COMPAT,'UTF-8',false) : '');
 	$arr['app']          = (($x['app'])            ? htmlspecialchars($x['app'],            ENT_COMPAT,'UTF-8',false) : '');
-	$arr['route']        = (($x['route'])          ? htmlspecialchars($x['route'],          ENT_COMPAT,'UTF-8',false) : '');
 	$arr['mid']          = (($x['message_id'])     ? htmlspecialchars($x['message_id'],     ENT_COMPAT,'UTF-8',false) : '');
 	$arr['parent_mid']   = (($x['message_top'])    ? htmlspecialchars($x['message_top'],    ENT_COMPAT,'UTF-8',false) : '');
 	$arr['thr_parent']   = (($x['message_parent']) ? htmlspecialchars($x['message_parent'], ENT_COMPAT,'UTF-8',false) : '');
@@ -702,8 +652,9 @@ function get_item_elements($x,$allow_code = false) {
 	// convert AS1 namespaced elements to AS-JSONLD
 
 	$arr['verb'] = Activity::activity_mapper($arr['verb']);
-	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type']);
-	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type']);
+
+	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type'], $mirror);
+	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type'], $mirror);
 
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
@@ -822,7 +773,7 @@ function get_item_elements($x,$allow_code = false) {
 	// Strip old-style hubzilla bookmarks
 	// Do this after signature verification
 
-	if(strpos($x['body'],"#^[") !== false) {
+	if (strpos($x['body'],"#^[") !== false) {
 		$x['body'] = str_replace("#^[","[",$x['body']);
 	}
 
@@ -831,12 +782,12 @@ function get_item_elements($x,$allow_code = false) {
 	// Do this after signature checking as the original signature
 	// was generated on the escaped content.
 
-	if($arr['mimetype'] === 'text/markdown') {
+	if ($arr['mimetype'] === 'text/markdown') {
 		$arr['summary'] = MarkdownSoap::unescape($arr['summary']);
 		$arr['body']    = MarkdownSoap::unescape($arr['body']);
 	}
 
-	if(array_key_exists('revision',$x)) {
+	if ($mirror) {
 
 		// extended export encoding
 
@@ -1115,7 +1066,6 @@ function encode_item($item,$mirror = false) {
 	$x['location']        = $item['location'];
 	$x['longlat']         = $item['coord'];
 	$x['signature']       = $item['sig'];
-	$x['route']           = $item['route'];
 	$x['replyto']         = $item['replyto'];
 	$x['owner']           = encode_item_xchan($item['owner']);
 	$x['author']          = encode_item_xchan($item['author']);
@@ -1612,7 +1562,6 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['deny_cid']      = ((x($arr,'deny_cid'))      ? trim($arr['deny_cid'])              : '');
 	$arr['deny_gid']      = ((x($arr,'deny_gid'))      ? trim($arr['deny_gid'])              : '');
 	$arr['postopts']      = ((x($arr,'postopts'))      ? trim($arr['postopts'])              : '');
-	$arr['route']         = ((x($arr,'route'))         ? trim($arr['route'])                 : '');
     $arr['uuid']          = ((x($arr,'uuid'))          ? trim($arr['uuid'])                  : '');
 	$arr['item_private']  = ((x($arr,'item_private'))  ? intval($arr['item_private'])        : 0 );
 	$arr['item_wall']     = ((x($arr,'item_wall'))     ? intval($arr['item_wall'])           : 0 );
@@ -2225,7 +2174,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
 	$arr['edited']        = ((x($arr,'edited')  !== false) ? datetime_convert('UTC','UTC',$arr['edited'])  : datetime_convert());
 	$arr['revision']      = ((x($arr,'revision') && $arr['revision'] > 0)   ? intval($arr['revision']) : 0);
-	$arr['route']         = ((array_key_exists('route',$arr)) ? trim($arr['route'])          : $orig[0]['route']);
 
 	$arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
 	$arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\Module;
+namespace Code\Module\Dev;
 
 /*
  * Zotfinger

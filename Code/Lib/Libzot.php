@@ -1922,13 +1922,13 @@ class Libzot
                 $prnt = ((strpos($arr['parent_mid'], 'token=') !== false) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
 
                 $r = q(
-                    "select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+                    "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                     dbesc($arr['parent_mid']),
                     intval($channel['channel_id'])
                 );
                 if (!$r) {
                     $r = q(
-                        "select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+                        "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                         dbesc($prnt),
                         intval($channel['channel_id'])
                     );
@@ -1949,8 +1949,6 @@ class Libzot
                     }
 
                     if ($r[0]['obj_type'] === 'Question') {
-                        // route checking doesn't work correctly here because we've changed the privacy
-                        $r[0]['route'] = EMPTY_STR;
                         // If this is a poll response, convert the obj_type to our (internal-only) "Answer" type
                         if ($arr['obj_type'] === 'Note' && $arr['title'] && (!$arr['content'])) {
                             $arr['obj_type'] = 'Answer';
@@ -2000,53 +1998,6 @@ class Libzot
                     continue;
                 }
 
-
-                if ($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {
-                    // reset the route in case it travelled a great distance upstream
-                    // use our parent's route so when we go back downstream we'll match
-                    // with whatever route our parent has.
-                    // Also friend-of-friend conversations may have been imported without a route,
-                    // but we are now getting comments via listener delivery
-                    // and if there is no privacy on this or the parent, we don't care about the route,
-                    // so just set the owner and route accordingly.
-                    $arr['route'] = $r[0]['route'];
-                    $arr['owner_xchan'] = $r[0]['owner_xchan'];
-                } else {
-                    // going downstream check that we have the same upstream provider that
-                    // sent it to us originally. Ignore it if it came from another source
-                    // (with potentially different permissions).
-                    // only compare the last hop since it could have arrived at the last location any number of ways.
-                    // Always accept empty routes and firehose items (route contains 'undefined') .
-
-                    $existing_route = explode(',', $r[0]['route']);
-                    $routes = count($existing_route);
-                    if ($routes) {
-                        $last_hop = array_pop($existing_route);
-                        $last_prior_route = implode(',', $existing_route);
-                    } else {
-                        $last_hop = '';
-                        $last_prior_route = '';
-                    }
-
-                    if (in_array('undefined', $existing_route) || $last_hop == 'undefined' || $sender == 'undefined') {
-                        $last_hop = '';
-                    }
-
-                    $current_route = ((isset($arr['route']) && $arr['route']) ? $arr['route'] . ',' : '') . $sender;
-
-                    if ($last_hop && $last_hop != $sender) {
-                        logger('comment route mismatch: parent route = ' . $r[0]['route'] . ' expected = ' . $current_route, LOGGER_DEBUG);
-                        logger('comment route mismatch: parent msg = ' . $r[0]['id'], LOGGER_DEBUG);
-                        $DR->update('comment route mismatch');
-                        $result[] = $DR->get();
-                        continue;
-                    }
-
-                    // we'll add sender onto this when we deliver it. $last_prior_route now has the previously stored route
-                    // *except* for the sender which would've been the last hop before it got to us.
-
-                    $arr['route'] = $last_prior_route;
-                }
             }
 
             // This is used to fetch allow/deny rules if either the sender
@@ -2106,9 +2057,6 @@ class Libzot
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
                     } else {
                         $DR->update('update ignored');
                         $result[] = $DR->get();
@@ -2180,10 +2128,6 @@ class Libzot
                          *   * \e array \b channel
                          */
                         Hook::call('activity_received', $parr);
-                        // don't add a source route if it's a relay or later recipients will get a route mismatch
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
                     }
                     $DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
                     $result[] = $DR->get();
@@ -2305,7 +2249,7 @@ class Libzot
                 }
             }
 
-            if ($AS->obj['actor'] && $AS->obj['actor']['id'] && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+            if (array_path_exists('actor/id', $AS->obj) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
                 $y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
                 if (!$y) {
                     logger('FOF Activity: no object actor');
@@ -2797,7 +2741,7 @@ class Libzot
     public static function import_site($arr)
     {
 
-        if ((!is_array($arr)) || (!$arr['url']) || (!$arr['site_sig'])) {
+        if (!(is_array($arr) && isset($arr['url']) && isset($arr['site_sig']))) {
             return false;
         }
 
@@ -3359,79 +3303,59 @@ class Libzot
         $ret['site']['authRedirect'] = z_root() . '/magic';
         $ret['site']['sitekey'] = get_config('system', 'pubkey');
 
-        $dirmode = get_config('system', 'directory_mode');
-        if (($dirmode === false) || ($dirmode == DIRECTORY_MODE_NORMAL)) {
-            $ret['site']['directory_mode'] = 'normal';
-        }
-
-        if ($dirmode == DIRECTORY_MODE_PRIMARY) {
-            $ret['site']['directory_mode'] = 'primary';
-        } elseif ($dirmode == DIRECTORY_MODE_SECONDARY) {
-            $ret['site']['directory_mode'] = 'secondary';
-        } elseif ($dirmode == DIRECTORY_MODE_STANDALONE) {
-            $ret['site']['directory_mode'] = 'standalone';
-        }
-        if ($dirmode != DIRECTORY_MODE_NORMAL) {
-            $ret['site']['directory_url'] = z_root() . '/dirsearch';
-        }
-
-
         $ret['site']['encryption'] = Crypto::methods();
         $ret['signature_algorithm'] = $sig_method;
         $ret['site']['zot'] = System::get_zot_revision();
 
-        // hide detailed site information if you're off the grid
-
-        if ($dirmode != DIRECTORY_MODE_STANDALONE || $force) {
-            $register_policy = intval(get_config('system', 'register_policy'));
-
-            if ($register_policy == REGISTER_CLOSED) {
-                $ret['site']['register_policy'] = 'closed';
-            }
-            if ($register_policy == REGISTER_APPROVE) {
-                $ret['site']['register_policy'] = 'approve';
-            }
-            if ($register_policy == REGISTER_OPEN) {
-                $ret['site']['register_policy'] = 'open';
-            }
-
-            $access_policy = intval(get_config('system', 'access_policy'));
-
-            if ($access_policy == ACCESS_PRIVATE) {
-                $ret['site']['access_policy'] = 'private';
-            }
-            if ($access_policy == ACCESS_PAID) {
-                $ret['site']['access_policy'] = 'paid';
-            }
-            if ($access_policy == ACCESS_FREE) {
-                $ret['site']['access_policy'] = 'free';
-            }
-            if ($access_policy == ACCESS_TIERED) {
-                $ret['site']['access_policy'] = 'tiered';
-            }
-
-            $ret['site']['admin'] = get_config('system', 'admin_email');
-
-            $visible_plugins = [];
-
-            $r = q("select * from addon where hidden = 0");
-            if ($r) {
-                foreach ($r as $rr) {
-                    $visible_plugins[] = $rr['aname'];
-                }
-            }
 
 
-            $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
-            $ret['site']['plugins'] = $visible_plugins;
-            $ret['site']['sitehash'] = get_config('system', 'location_hash');
-            $ret['site']['sellpage'] = get_config('system', 'sellpage');
-            $ret['site']['location'] = get_config('system', 'site_location');
-            $ret['site']['sitename'] = System::get_site_name();
-            $ret['site']['logo'] = System::get_site_icon();
-            $ret['site']['project'] = System::get_project_name();
-            $ret['site']['version'] = System::get_project_version();
+        $register_policy = intval(get_config('system', 'register_policy'));
+
+        if ($register_policy == REGISTER_CLOSED) {
+            $ret['site']['register_policy'] = 'closed';
         }
+        if ($register_policy == REGISTER_APPROVE) {
+            $ret['site']['register_policy'] = 'approve';
+        }
+        if ($register_policy == REGISTER_OPEN) {
+            $ret['site']['register_policy'] = 'open';
+        }
+
+        $access_policy = intval(get_config('system', 'access_policy'));
+
+        if ($access_policy == ACCESS_PRIVATE) {
+            $ret['site']['access_policy'] = 'private';
+        }
+        if ($access_policy == ACCESS_PAID) {
+            $ret['site']['access_policy'] = 'paid';
+        }
+        if ($access_policy == ACCESS_FREE) {
+            $ret['site']['access_policy'] = 'free';
+        }
+        if ($access_policy == ACCESS_TIERED) {
+            $ret['site']['access_policy'] = 'tiered';
+        }
+
+        $ret['site']['admin'] = get_config('system', 'admin_email');
+
+        $visible_plugins = [];
+
+        $r = q("select * from addon where hidden = 0");
+        if ($r) {
+            foreach ($r as $rr) {
+                $visible_plugins[] = $rr['aname'];
+            }
+        }
+
+        $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
+        $ret['site']['plugins'] = $visible_plugins;
+        $ret['site']['sitehash'] = get_config('system', 'location_hash');
+        $ret['site']['sellpage'] = get_config('system', 'sellpage');
+        $ret['site']['location'] = get_config('system', 'site_location');
+        $ret['site']['sitename'] = System::get_site_name();
+        $ret['site']['logo'] = System::get_site_icon();
+        $ret['site']['project'] = System::get_project_name();
+        $ret['site']['version'] = System::get_project_version();
 
         return $ret['site'];
     }
