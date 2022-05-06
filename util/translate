@@ -6,7 +6,7 @@ if [ $# -lt 1 ]; then
 fi
 
 if [ -e view/$1/messages.po ]; then
-    msgmerge view/$1/messages.po util/messages.po
+    msgmerge --update view/$1/messages.po util/messages.po
     poedit view/$1/messages.po
-    util/po2php view/$1/messages.po
+    php util/po2php.php view/$1/messages.po
 fi
