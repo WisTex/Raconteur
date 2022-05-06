@@ -944,6 +944,7 @@ class Channel
         $ret['compatibility'] = [
             'project'     => PLATFORM_NAME,
             'codebase'    => 'zap',
+            'schema'      => 'streams',
             'version'     => STD_VERSION,
             'database'    => DB_UPDATE_VERSION
         ];
@@ -1281,6 +1282,7 @@ class Channel
         }
 
         $ret['compatibility']['codebase'] = 'zap';
+        $ret['compatibility']['schema'] = 'streams';
 
         $r = q(
             "select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and created >= '%s' and created <= '%s'  and resource_type = '' order by created",
@@ -1350,6 +1352,7 @@ class Channel
         }
 
         $ret['compatibility']['codebase'] = 'zap';
+        $ret['compatibility']['schema'] = 'streams';
 
 
         $r = q(
