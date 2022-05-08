@@ -21,7 +21,7 @@ class Security
         $anonymous_comments = ((x($_POST, 'anonymous_comments')) ? intval($_POST['anonymous_comments']) : 0);
         set_config('system', 'anonymous_comments', $anonymous_comments);
 
-        $use_hs2019 = ((x($_POST, 'use_hs2019')) ? intval($_POST['use_hs2019']) : 1);
+        $use_hs2019 = ((x($_POST, 'use_hs2019')) ? intval($_POST['use_hs2019']) : 0);
         set_config('system', 'use_hs2019', $use_hs2019);
 
         $block_public = ((x($_POST, 'block_public')) ? true : false);
