@@ -693,6 +693,8 @@ function sys_boot() {
 
         App::$session = new Session();
         App::$session->init();
+        App::$sys_channel = Channel::get_system();
+
         Hook::load();
         /**
          * @hooks 'startup'
