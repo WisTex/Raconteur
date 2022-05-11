@@ -692,9 +692,9 @@ class Apps
                         );
                     }
                     if (intval($r[0]['app_system'])) {
-                        Libsync::build_sync_packet($uid, array('sysapp' => $r[0]));
+                        Libsync::build_sync_packet($uid, array('sysapp' => [$r[0]]));
                     } else {
-                        Libsync::build_sync_packet($uid, array('app' => $r[0]));
+                        Libsync::build_sync_packet($uid, array('app' => [$r[0]]));
                     }
                 }
             }
