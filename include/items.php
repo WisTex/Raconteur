@@ -1664,6 +1664,9 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['app']           = ((x($arr,'app'))           ? notags(trim($arr['app']))           : '');
 	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : '');
 
+    // No longer used but needs to be set to something or the database will complain.
+    $arr['route'] = '';
+    
 	$arr['public_policy'] = '';
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
