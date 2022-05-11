@@ -162,7 +162,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who doesn't have the deliver_stream permission
 
-    $recipients = check_list_permissions($item['uid'],$recipients,'view_stream');
+    $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
 
 
 	// add ourself just in case we have nomadic clones that need to get a copy.
@@ -1664,6 +1664,9 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['app']           = ((x($arr,'app'))           ? notags(trim($arr['app']))           : '');
 	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : '');
 
+    // No longer used but needs to be set to something or the database will complain.
+    $arr['route'] = '';
+    
 	$arr['public_policy'] = '';
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );

@@ -99,7 +99,8 @@ class Libsync
         $info['type'] = 'sync';
         $info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
         $info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root()];
-
+        $info['schema'] = 'streams';
+    
         if (array_key_exists($uid, App::$config) && array_key_exists('transient', App::$config[$uid])) {
             $settings = App::$config[$uid]['transient'];
             if ($settings) {
@@ -298,6 +299,7 @@ class Libsync
 
         $result = [];
 
+        $schema = (isset($arr['schema']) && $arr['schema']) ? $arr['schema'] : 'unknown';
         $keychange = ((array_key_exists('keychange', $arr)) ? true : false);
 
         foreach ($deliveries as $d) {
@@ -649,7 +651,7 @@ class Libsync
                     if ($abconfig) {
                         /// @fixme does not handle sync of del_abconfig
                         foreach ($abconfig as $abc) {
-                            if ($abc['cat'] ===  'system' && $abc['k'] === 'my_perms') {
+                            if ($abc['cat'] ===  'system' && $abc['k'] === 'my_perms' && $schema !== 'streams') {
                                 $x = explode(',', $abc['v']);
                                 if (in_array('view_stream',$x)  && ! in_array('deliver_stream',$x)) {
                                     $x[] = 'deliver_stream';

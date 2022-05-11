@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# Project translation script.
+# Pre-requisites:
+#   sudo apt install gettext poedit
+# Instructions:
+# Execute 'util/translate xx' from your webroot,
+# where 'xx' is an iso language string.
+#
+# If the language directory doesn't exist, create it
+# by copying the contents of view/en into it.
+#
+# Additionally, there are a small number of template files
+# ending in ".tpl" in the language directory which should
+# be translated manually. Do not translate template variables
+# which look like {{$variable}} or "%s" or "%d" or "%1$s".
+# The text "$projectname" or "$Projectname" should also not
+# be translated.
+#
+# The htconfig.tpl file contains code lines, so just
+# translate the comment text.
+#
+# When finished, commit the result and issue a pull request
+# to the project repository using standard git workflows.
+
+if [ $# -lt 1 ]; then
+    echo usage: $0 language
+    exit 0
+fi
+
+if [ -e view/$1/messages.po ]; then
+    msgmerge --update view/$1/messages.po util/messages.po
+    poedit view/$1/messages.po
+    php util/po2php.php view/$1/messages.po
+    php -l view/$1/strings.php
+fi

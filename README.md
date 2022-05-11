@@ -24,3 +24,6 @@ This software will install as a fediverse server using the LAMP stack. There are
 This work is dedicated and released to the public domain with no strings attached. Be advised that many others have contributed code to this repository under a number of different OSI-approved software licenses during its existence. This has no effect on any of your fundamental software freedoms; although corporate legal consultants who wish to re-appropriate our work for their employer's profit will likely find this lack of license clarity "troublesome". This is intentional.
 
 The current name of this repository implies fluidity. As a brand or product it technically does not exist. This is also intentional. The software provides general web communications infrastructure. It's your website. Your site is your brand. Not ours.    
+
+--
+Notes: If  you have issues communicating with folks on Misskey or Pleroma after installation, visit admin/security on your site and disable hs2019 signatures.

@@ -21,6 +21,9 @@ class Security
         $anonymous_comments = ((x($_POST, 'anonymous_comments')) ? intval($_POST['anonymous_comments']) : 0);
         set_config('system', 'anonymous_comments', $anonymous_comments);
 
+        $use_hs2019 = ((x($_POST, 'use_hs2019')) ? intval($_POST['use_hs2019']) : 0);
+        set_config('system', 'use_hs2019', $use_hs2019);
+
         $block_public = ((x($_POST, 'block_public')) ? true : false);
         set_config('system', 'block_public', $block_public);
 
@@ -144,6 +147,7 @@ class Security
             '$localdir_hide' => ['localdir_hide', t('Hide local directory'), intval(get_config('system', 'localdir_hide')), t('Only use the global directory')],
             '$cloud_noroot' => ['cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system', 'cloud_disable_siteroot', true)), t('The cloud root directory lists all channel names which provide public files. Otherwise only the names of connections are shown.')],
             '$cloud_disksize' => ['cloud_disksize', t('Show total disk space available to cloud uploads'), intval(get_config('system', 'cloud_report_disksize')), ''],
+            '$use_hs2019' => ['use_hs2019', t('Use hs2019 HTTP-Signature specification'), intval(get_config('system', 'use_hs2019', true)), t('Compliance with this specification is mandatory, yet still not supported by a number of fediverse platforms.')],
             '$thumbnail_security' => ['thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system', 'thumbnail_security', 0), t("WARNING: SVG images may contain malicious code.")],
 
             '$inline_pdf' => ['inline_pdf', t("Allow embedded (inline) PDF files"), get_config('system', 'inline_pdf', 0), ''],

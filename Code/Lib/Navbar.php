@@ -14,6 +14,7 @@ use Code\Render\Theme;
 use Code\Extend\Hook;
     
 require_once('include/security.php');
+require_once('include/conversation.php');
 
 
 class Navbar {
@@ -65,7 +66,6 @@ class Navbar {
             $sitelocation = ((App::$profile['reddress']) ? App::$profile['reddress'] : '@' . App::get_hostname());
         }
 
-        require_once('include/conversation.php');
 
 
         $channel_apps[] = ((isset(App::$profile)) ? self::channel_apps($is_owner, App::$profile['channel_address']) : []);

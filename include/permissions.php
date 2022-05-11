@@ -544,6 +544,7 @@ function site_default_perms()
 
     $typical = array(
         'view_stream'   => PERMS_PUBLIC,
+        'deliver_stream'=> PERMS_SPECIFIC,
         'view_profile'  => PERMS_PUBLIC,
         'view_contacts' => PERMS_PUBLIC,
         'view_storage'  => PERMS_PUBLIC,

@@ -27,7 +27,7 @@ require_once('version.php');
 
 define ( 'PLATFORM_NAME',           'streams' );
 
-define ( 'DB_UPDATE_VERSION',       1257 );
+define ( 'DB_UPDATE_VERSION',       1258 );
 define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -693,6 +693,8 @@ function sys_boot() {
 
         App::$session = new Session();
         App::$session->init();
+        App::$sys_channel = Channel::get_system();
+
         Hook::load();
         /**
          * @hooks 'startup'
