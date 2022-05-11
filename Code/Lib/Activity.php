@@ -3535,8 +3535,6 @@ class Activity
         }
 
         self::rewrite_mentions_sub($s, $pref);
-
-
         return;
     }
 

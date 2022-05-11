@@ -562,19 +562,6 @@ function photo_upload($channel, $observer, $args)
             $arr['coord'] = $lat . ' ' . $lon;
         }
 
-        // this one is tricky because the item and the photo have the same permissions, those of the photo.
-        // Use the channel read_stream permissions to get the correct public_policy for the item and recalculate the
-        // private flag accordingly. This may cause subtle bugs due to custom permissions roles. We want to use
-        // public policy when federating items to other sites, but should probably ignore them when accessing the item
-        // in the photos pages - using the photos permissions instead. We need the public policy to keep the photo
-        // linked item from leaking into the feed when somebody has a channel with read_stream restrictions.
-
-        $arr['public_policy']   = map_scope(PermissionLimits::Get($channel['channel_id'], 'view_stream'), true);
-        if ($arr['public_policy']) {
-            $arr['item_private'] = 1;
-        }
-
-
         $result = item_store($arr, false, $deliver);
         $item_id = $result['item_id'];
 

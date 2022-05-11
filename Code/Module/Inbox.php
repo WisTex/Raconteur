@@ -417,6 +417,20 @@ class Inbox extends Controller
             }
 
             if ($item) {
+
+                if (!is_array($AS->obj)) {
+                    // The initial object fetch failed using the sys channel credentials.
+                    // Try again using the delivery channel credentials.
+                    // We will also need to re-parse the $item array,
+                    // but preserve any values that were set during anonymous parsing.
+
+                    $o = Activity::fetch($AS->obj, $channel);
+                    if ($o) {
+                        $AS->obj = $o;
+                        $item = array_merge(Activity::decode_note($AS), $item);
+                    }
+                }
+    
                 logger('parsed_item: ' . print_r($item, true), LOGGER_DATA);
                 Activity::store($channel, $observer_hash, $AS, $item);
             }
