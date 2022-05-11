@@ -43,7 +43,7 @@ class Appman extends Controller
                 'categories' => escape_tags($_REQUEST['categories'])
             ];
 
-            $_REQUEST['appid'] = Apps::app_install($channel_id, $arr);
+            $_REQUEST['appid'] = Apps::app_install($channel_id, $arr, true);
 
             if (Apps::app_installed($channel_id, $arr)) {
                 info(t('App installed.') . EOL);
@@ -61,7 +61,7 @@ class Appman extends Controller
         }
 
         if ($_POST['install']) {
-            Apps::app_install($channel_id, $papp);
+            Apps::app_install($channel_id, $papp, true);
             if (Apps::app_installed($channel_id, $papp)) {
                 info(t('App installed.') . EOL);
             }
