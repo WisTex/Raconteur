@@ -532,6 +532,30 @@ function check_list_permissions($uid, $arr, $perm)
     return($result);
 }
 
+function check_deliver_permissions($uid, $arr)
+{
+    $result = [];
+    // Find actors we are not delivering to.
+    $r = q("select * from abconfig where uid = %d and cat = 'system' and k = 'my_perms' and v not like '%%deliver_stream%%'",
+        intval($uid)
+    );
+    $disallowed = ids_to_array($r,'xchan');
+
+    // Filter the recipient list accordingly.
+    if ($arr) {
+        foreach ($arr as $x) {
+            if (! in_array($x, $disallowed)) {
+                $result[] = $x;
+            }
+        }
+    }
+    return($result);
+}
+
+
+
+
+    
 /**
  * @brief Sets site wide default permissions.
  *
