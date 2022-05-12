@@ -176,6 +176,7 @@ function import_config($channel, $configs)
             }
             set_pconfig($channel['channel_id'], $config['cat'], $config['k'], $config['v']);
         }
+        set_pconfig($channel['channel_id'], 'perm_limits', 'deliver_stream', PERMS_SPECIFIC);
 
         load_pconfig($channel['channel_id']);
         $permissions_role = get_pconfig($channel['channel_id'], 'system', 'permissions_role');

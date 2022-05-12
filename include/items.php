@@ -161,11 +161,11 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who doesn't have the deliver_stream permission
+logger('recip1: ' . print_r($recipients,true));
+    $recipients = check_deliver_permissions($item['uid'],$recipients);
+logger('recip2: ' . print_r($recipients,true));
 
-    $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
-
-
-	// add ourself just in case we have nomadic clones that need to get a copy.
+	// Add both the author and owner (if different).
 
 	$recipients[] = $item['author_xchan'];
 
