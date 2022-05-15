@@ -1815,7 +1815,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
 
     $is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
-    if ($is_photo && ! $censored) {
+    if ($is_photo) {
         $object = json_decode($item['obj'], true);
         $ptr = null;
 
@@ -1833,16 +1833,9 @@ function prepare_body(&$item, $attach = false, $opts = false)
                 $ptr = $object['url'];
             }
 
-            // if original photo width is > 640px make it a cover photo
             if ($ptr) {
                 $alt_text = ' alt="' . ((isset($ptr['summary']) && $ptr['summary']) ? htmlspecialchars($ptr['summary'], ENT_QUOTES, 'UTF-8') : t('Image/photo')) . '"';
-                $title_text = ' title="' . ((isset($ptr['summary']) && $ptr['summary']) ? htmlspecialchars($ptr['summary'], ENT_QUOTES, 'UTF-8') : t('Image/photo')) . '"';
-
-                if (array_key_exists('width', $ptr) && $ptr['width'] > 640) {
-                    $photo = '<a href="' . zid(rawurldecode($object['id'])) . '"' . $title_text . ' target="_blank" rel="nofollow noopener"><img style="max-width:' . $ptr['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($ptr['href'])) . '"' . $alt_text . '></a>';
-                } else {
-                    $item['body'] = '[zmg' . $alt_text . ']' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
-                }
+                $item['body'] = '[zmg' . $alt_text . ']' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
             }
         }
     }
