@@ -520,7 +520,7 @@ class HTTPSig
 
         // Use hs2019 by default.
     
-        if (get_config('system','use_hs2019',true) && $algorithm === 'rsa-sha256') {
+        if (get_config('system', 'use_hs2019', false) && $algorithm === 'rsa-sha256') {
             $algorithm = 'hs2019';
         }
 
