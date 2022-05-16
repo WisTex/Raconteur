@@ -482,6 +482,22 @@ function photo_upload($channel, $observer, $args)
             $item = get_item_elements($i);
             $force = false;
 
+            if (intval($item['item_wall']) && $item['mid'] === $item['parent_mid']) {
+                $object['commentPolicy'] = $item['comment_policy'];
+            }
+
+            if (intval($item['item_nocomment'])) {
+                if ($object['commentPolicy']) {
+                    $object['commentPolicy'] .= ' ';
+                }
+                $object['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $item['created'], ATOM_TIME);
+            } elseif (array_key_exists('comments_closed', $item) && $item['comments_closed'] !== EMPTY_STR && $item['comments_closed'] > NULL_DATE) {
+                if ($object['commentPolicy']) {
+                    $object['commentPolicy'] .= ' ';
+                }
+                $object['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $item['comments_closed'], ATOM_TIME);
+            }
+
             if ($item['mid'] === $item['parent_mid']) {
                 $object['id'] = $item['mid'];
                 $item['summary'] = $summary;
@@ -541,7 +557,6 @@ function photo_upload($channel, $observer, $args)
             'deny_gid'        => $ac['deny_gid'],
             'verb'            => ACTIVITY_POST,
             'obj_type'        => ACTIVITY_OBJ_PHOTO,
-            'obj'             => json_encode($object),
             'tgt_type'        => 'orderedCollection',
             'target'          => json_encode($target),
             'item_wall'       => 1,
@@ -551,6 +566,12 @@ function photo_upload($channel, $observer, $args)
             'summary'         => $summary,
             'body'            => $body
         ];
+
+        if (intval($arr['item_wall']) && $arr['mid'] === $arr['parent_mid']) {
+            $object['commentPolicy'] = $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'], 'post_comments'));
+        }
+
+        $arr['obj'] = json_encode($object);
 
         if ($post_tags) {
             $arr['term'] = $post_tags;
