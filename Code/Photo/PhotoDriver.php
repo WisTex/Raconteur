@@ -362,19 +362,13 @@ abstract class PhotoDriver
             return false;
         }
 
-        /*
-         * PHP 7.2 allows you to use a stream resource, which should reduce/avoid
-         * memory exhaustion on large images.
-         */
-
-        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            $f = @fopen($filename, 'rb');
-        } else {
-            $f = $filename;
-        }
+        $f = @fopen($filename, 'rb');
 
         if ($f) {
-            return @exif_read_data($f, null, true);
+            // exif_read_data accepts a stream resource in php > 7.2
+            $x = @exif_read_data($f, null, true);
+            fclose($f);
+            return $x;
         }
 
         return false;

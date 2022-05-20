@@ -33,7 +33,7 @@ class Uexport extends Controller
             header('content-type: application/json');
             header('Content-Disposition: attachment; filename="' . $channel['channel_address'] . (($year) ? '-' . $year : '') . (($month) ? '-' . $month : '') . (($_REQUEST['sections']) ? '-' . $_REQUEST['sections'] : '') . '.json"');
 
-            $flags = ((version_compare(PHP_VERSION, '7.2.0') >= 0) ? JSON_INVALID_UTF8_SUBSTITUTE : 0);
+            $flags = JSON_INVALID_UTF8_SUBSTITUTE;
 
             if ($year) {
                 echo json_encode(Channel::export_year(local_channel(), $year, $month), $flags);
