@@ -61,14 +61,14 @@ class Features {
 
                 t('General Features'),
 
-                [
-                    'start_menu',
-                    t('New Member Links'),
-                    t('Display new member quick links menu'),
-                    (($account && $account['account_created'] > datetime_convert('', '', 'now - 30 days')) ? true : false),
-                    get_config('feature_lock', 'start_menu'),
-                    self::level('start_menu', 1),
-                ],
+//                [
+  //                  'start_menu',
+    //                t('New Member Links'),
+      //              t('Display new member quick links menu'),
+        //            (($account && $account['account_created'] > datetime_convert('', '', 'now - 30 days')) ? true : false),
+          //          get_config('feature_lock', 'start_menu'),
+            //        self::level('start_menu', 1),
+              //  ],
 
                 [
                     'advanced_profiles',

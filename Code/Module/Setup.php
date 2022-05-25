@@ -413,8 +413,8 @@ class Setup extends Controller
     {
         $help = '';
 
-        if (version_compare(PHP_VERSION, '7.1') < 0) {
-            $help .= t('PHP version 7.1 or greater is required.');
+        if (version_compare(PHP_VERSION, '7.4') < 0) {
+            $help .= t('PHP version 7.4 or greater is required.');
             $this->check_add($checks, t('PHP version'), false, true, $help);
         }
 

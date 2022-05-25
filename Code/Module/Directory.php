@@ -270,6 +270,31 @@ class Directory extends Controller
             // logger('directory: return from upstream: ' . print_r($x,true), LOGGER_DATA);
 
             if ($x['success']) {
+
+                if ($format === 'json') {
+
+                    $chan = Channel::get_system();
+    
+                    //$i = Activity::encode_actor_collection($items, 'search?' . $saved_id , 'OrderedCollection', true, count($items));
+    
+                    $x = array_merge(['@context' => [
+                        ACTIVITYSTREAMS_JSONLD_REV,
+                        'https://w3id.org/security/v1',
+                        Activity::ap_schema()
+                    ]], $i);
+
+                    $headers = [];
+                    $headers['Content-Type'] = 'application/x-nomad+json';
+                    $x['signature'] = LDSignatures::sign($x, $chan);
+                    $ret = json_encode($x, JSON_UNESCAPED_SLASHES);
+                    $headers['Digest'] = HTTPSig::generate_digest_header($ret);
+                    $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
+                    $h = HTTPSig::create_sig($headers, $chan['channel_prvkey'], Channel::url($chan));
+                    HTTPSig::set_headers($h);
+                    echo $ret;
+                    killme();
+                }
+
                 $t = 0;
                 $j = json_decode($x['body'], true);
                 if ($j) {

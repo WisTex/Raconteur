@@ -3306,6 +3306,7 @@ class Libzot
         $ret['site']['encryption'] = Crypto::methods();
         $ret['signature_algorithm'] = $sig_method;
         $ret['site']['zot'] = System::get_zot_revision();
+        $ret['site']['protocol_version'] = System::get_zot_revision();
 
 
 
