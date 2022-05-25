@@ -119,7 +119,7 @@ class Activity
                 }
             }
 
-            // Ignore fragments; as we are not in a browser and some platforms (e.g. Django or at least funkwhale) don't handle them well
+            // Ignore fragments; as we are not in a browser.
             unset($parsed['fragment']);
 
             // rebuild the url
