@@ -137,9 +137,9 @@ class Locs extends Controller
             '$drop' => t('Drop'),
             '$submit' => t('Submit'),
             '$sync' => t('Publish these settings'),
-            '$sync_text' => t('Please wait several minutes between consecutive operations.'),
-            '$drop_text' => t('When possible, drop a location by logging into that website/hub and removing your channel.'),
-            '$last_resort' => t('Use this form to drop the location if the hub is no longer operating.'),
+            '$sync_text' => t('Please wait a minute or two between consecutive operations.'),
+            '$drop_text' => t('When possible, drop a location by logging into that site and removing your channel.'),
+            '$last_resort' => t('Use this form to drop the location if the site is no longer operating.'),
             '$hubs' => $r,
             '$base_url' => z_root()
         ]);

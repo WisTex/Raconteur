@@ -267,8 +267,7 @@ class HTTPSig
     }
 
     public static function get_key($key, $keytype, $id, $force = false)
-    {
-
+    {    
         if ($key) {
             if (function_exists($key)) {
                 return $key($id);
@@ -409,7 +408,6 @@ class HTTPSig
 
         $wf = Webfinger::exec($id);
         $key = ['portable_id' => '', 'public_key' => '', 'algorithm' => '', 'hubloc' => []];
-
         if ($wf) {
             if (array_key_exists('properties', $wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem', $wf['properties'])) {
                 $key['public_key'] = self::convertKey($wf['properties']['https://w3id.org/security/v1#publicKeyPem']);
@@ -419,13 +417,38 @@ class HTTPSig
                     if (!(is_array($l) && array_key_exists('rel', $l))) {
                         continue;
                     }
+
+                    if (in_array($l['rel'], ['http://purl.org/nomad', 'http://purl.org/zot/protocol/6.0']) && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
+                        // The third argument to Zotfinger::exec() tells it not to verify signatures
+                        // Since we're inside a function that is fetching keys with which to verify signatures,
+                        // this is necessary to prevent infinite loops.
+
+                        $z = Zotfinger::exec($l['href'], null, false);
+                        if ($z) {
+                            $i = Libzot::import_xchan($z['data']);
+                            if ($i['success']) {
+                                $key['portable_id'] = $i['hash'];
+
+                                $x = q(
+                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+                                    dbesc($l['href'])
+                                );
+                                if ($x) {
+                                    $key['hubloc'] = $x[0];
+                                }
+                                $key['algorithm'] = get_xconfig($i['hash'], 'system', 'signing_algorithm');
+                            }
+                        }
+                    }
+
+
+    
                     if ($l['rel'] === 'magic-public-key' && array_key_exists('href', $l) && $key['public_key'] === EMPTY_STR) {
                         $key['public_key'] = self::convertKey($l['href']);
                     }
                 }
             }
         }
-
         return (($key['public_key']) ? $key : false);
     }
 
