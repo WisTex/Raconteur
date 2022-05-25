@@ -1626,7 +1626,7 @@ function add_children_to_list($children, &$arr)
  * to open by default - while collapsing everything else.
  */
 
-function flatten_and_order($arr)
+function flatten_and_order($arr, $order)
 {
     $narr = [];
     $ret = [];
@@ -1636,7 +1636,7 @@ function flatten_and_order($arr)
     }
 
     foreach ($narr as $n) {
-        usort($n, 'sort_flatten');
+        usort($n, ($order === 'received') ? 'sort_flatten_received' : 'sort_flatten');
         for ($x = 0; $x < count($n); $x++) {
             $n[$x]['comment_order'] = $x;
             $ret[] = $n[$x];
@@ -1735,7 +1735,7 @@ function conv_sort($arr, $order)
         return $ret;
     }
 
-    $arr = flatten_and_order($arr);
+    $arr = flatten_and_order($arr, $order);
 
 
     foreach ($arr as $x) {
@@ -1751,6 +1751,8 @@ function conv_sort($arr, $order)
         usort($parents, 'sort_thr_commented');
     } elseif (stristr($order, 'updated')) {
         usort($parents, 'sort_thr_updated');
+    } elseif (stristr($order, 'changed')) {
+        usort($parents, 'sort_thr_received');
     } elseif (stristr($order, 'ascending')) {
         usort($parents, 'sort_thr_created_rev');
     }
@@ -1804,6 +1806,27 @@ function sort_flatten($a, $b)
     return strcmp($b['created'], $a['created']);
 }
 
+function sort_flatten_received($a, $b)
+{
+
+    if ($a['parent'] === $a['id']) {
+        return -1;
+    }
+    if ($b['parent'] === $b['id']) {
+        return 1;
+    }
+
+    if (! visible_activity($a)) {
+        return 1;
+    }
+    if (! visible_activity($b)) {
+        return -1;
+    }
+
+    return strcmp($b['changed'], $a['changed']);
+}
+
+    
 
 function sort_thr_created($a, $b)
 {
@@ -1818,6 +1841,11 @@ function sort_thr_created_rev($a, $b)
 function sort_thr_commented($a, $b)
 {
     return strcmp($b['commented'], $a['commented']);
+}
+
+function sort_thr_received($a, $b)
+{
+    return strcmp($b['changed'], $a['changed']);
 }
 
 function sort_thr_updated($a, $b)

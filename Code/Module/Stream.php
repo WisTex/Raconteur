@@ -101,6 +101,9 @@ class Stream extends Controller
             case 2:
                 $nouveau = true;
                 break;
+            case 3:
+                $order = 'received';
+                break;
         }
 
         $search = (isset($_GET['search']) ? $_GET['search'] : '');
@@ -560,7 +563,7 @@ class Stream extends Controller
         }
 
         if ($nouveau && $this->loading) {
-            // "New Item View" - show all items unthreaded in reverse created date order
+            // "New Item View" - show all items unthreaded in reverse date order
 
             $items = q("SELECT item.*, item.id AS item_id, created FROM item 
 				left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
@@ -570,18 +573,19 @@ class Stream extends Controller
 				$simple_update
 				$sql_extra $sql_options $sql_nets
 				$net_query2
-				ORDER BY item.created DESC $pager_sql ");
+				ORDER BY item.edited DESC $pager_sql ");
 
             xchan_query($items);
-
             $items = fetch_post_tags($items, true);
         } elseif ($this->updating) {
             // Normal conversation view
 
             if ($order === 'post') {
-                $ordering = "created";
+                $ordering = 'created';
+            } elseif ($order === 'received') {
+                $ordering = 'changed';
             } else {
-                $ordering = "commented";
+                $ordering = 'commented';
             }
 
             if ($this->loading) {
