@@ -231,7 +231,7 @@ class Linkinfo extends Controller
                 if ($y && $y->is_valid()) {
                     $z = Activity::decode_note($y);
                     $r = q(
-                        "select hubloc_hash, hubloc_network, hubloc_id_url, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
+                        "select hubloc_hash, hubloc_network, hubloc_id_url, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s' order by hubloc_id desc",
                         dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor),
                         dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor)
                     );
