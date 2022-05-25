@@ -536,7 +536,7 @@ function check_deliver_permissions($uid, $arr)
 {
     $result = [];
     // Find actors we are not delivering to.
-    $r = q("select * from abconfig where uid = %d and cat = 'system' and k = 'my_perms' and v not like '%%deliver_stream%%'",
+    $r = q("select * from abconfig where chan = %d and cat = 'system' and k = 'my_perms' and v not like '%%deliver_stream%%'",
         intval($uid)
     );
     $disallowed = ids_to_array($r,'xchan');
