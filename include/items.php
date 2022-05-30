@@ -161,9 +161,8 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who doesn't have the deliver_stream permission
-logger('recip1: ' . print_r($recipients,true));
+
     $recipients = check_deliver_permissions($item['uid'],$recipients);
-logger('recip2: ' . print_r($recipients,true));
 
 	// Add both the author and owner (if different).
 
@@ -854,12 +853,12 @@ function import_author_xchan($x) {
 
 	$y = false;
 
-	if((! array_key_exists('network', $x)) || in_array($x['network'],['nomad','zot6'])) {
+	if((! array_key_exists('network', $x)) || in_array($x['network'], ['nomad', 'zot6'])) {
 		$y = Libzot::import_author_zot($x);
 	}
 
 	// if we were told that it's a zot connection, don't probe/import anything else
-	if(array_key_exists('network',$x) && in_array($x['network'],['nomad','zot6'])) {
+	if(array_key_exists('network', $x) && in_array($x['network'], ['nomad', 'zot6'])) {
 		return $y;
 	}
 
@@ -893,7 +892,7 @@ function import_author_activitypub($x) {
     if($r) {
 		$ptr = null;
 		foreach($r as $rv) {
-			if (strpos($rv['xchan_network'],'zot') !== false) {
+			if (strpos($rv['xchan_network'], 'zot') !== false) {
 				$ptr = $rv;
 			}
 		}
