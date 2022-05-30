@@ -1217,7 +1217,7 @@ function loadNotificationItems(notifyType) {
 		}
 
 		if(JSON.stringify(cached_data[0]) === JSON.stringify(data.notify[0])) {
-			console.log(notifyType + ' notifications cache up to date - update deferred');
+			console.log(notifyType + ' notifications cache up to date');
 		}
 		else {
 			handleNotificationsItems(notifyType, data.notify);
