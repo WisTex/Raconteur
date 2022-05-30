@@ -18,4 +18,6 @@ Guest Pass: Provide special guest access to private resources and media - on you
 
 Friend Zoom: Set your degree of closeness to any connection and then interactively zoom in to filter your stream to close friends; or zoom out to see posts by casual acquaintances.
 
+Delivery Reports: Allows you to determine what happened to your post or comment and where it actually went once you published it.
+
 Failsafe: Because the best time to have a current backup of your data is 10 seconds ago. Clone your online identity and content to multiple sites using the Nomad protocol and mirror any changes in near realtime. Then if your chosen site goes down (either temporarily or permanently) or you get booted off of it for some reason, your online life doesn't have to come to an end or force you to start over. All your friends and all your content are available on any of your cloned instances - at any time.
