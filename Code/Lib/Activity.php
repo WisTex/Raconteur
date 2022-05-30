@@ -143,7 +143,7 @@ class Activity
 
         if ($x['success']) {
             $y = json_decode($x['body'], true);
-            logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            logger('returned: ' . json_encode($y, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOGGER_DEBUG);
 
             $site_url = unparse_url(['scheme' => $parsed['scheme'], 'host' => $parsed['host'], 'port' => ((array_key_exists('port', $parsed) && intval($parsed['port'])) ? $parsed['port'] : 0)]);
             q(

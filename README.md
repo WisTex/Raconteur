@@ -25,5 +25,3 @@ This work is dedicated and released to the public domain with no strings attache
 
 The current name of this repository implies fluidity. As a brand or product it technically does not exist. This is also intentional. The software provides general web communications infrastructure. It's your website. Your site is your brand. Not ours.    
 
---
-Notes: If  you have issues communicating with folks on Misskey or Pleroma after installation, visit admin/security on your site and disable hs2019 signatures.

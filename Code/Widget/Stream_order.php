@@ -28,7 +28,8 @@ class Stream_order
         $commentord_active = '';
         $postord_active = '';
         $unthreaded_active = '';
-
+        $received_active = '';
+    
         if (x($_GET, 'order')) {
             switch ($_GET['order']) {
                 case 'post':
@@ -38,6 +39,10 @@ class Stream_order
                 case 'comment':
                     $commentord_active = 'active';
                     set_pconfig(local_channel(), $module, 'order', 0);
+                    break;
+                case 'received':
+                    $received_active = 'active';
+                    set_pconfig(local_channel(), $module, 'order', 3);
                     break;
                 case 'unthreaded':
                     $unthreaded_active = 'active';
@@ -58,6 +63,9 @@ class Stream_order
                     break;
                 case 2:
                     $unthreaded_active = 'active';
+                    break;
+                case 3:
+                    $received_active = 'active';
                     break;
                 default:
                     $commentord_active = 'active';
@@ -107,21 +115,28 @@ class Stream_order
             'icon' => '',
             'url' => z_root() . '/' . $cmd . '?f=&order=comment' . $filter,
             'sel' => $commentord_active,
-            'title' => t('Order by last commented date'),
+            'title' => t('Order by commented date'),
         ];
         $tabs[] = [
             'label' => t('Posted Date'),
             'icon' => '',
             'url' => z_root() . '/' . $cmd . '?f=&order=post' . $filter,
             'sel' => $postord_active,
-            'title' => t('Order by last posted date'),
+            'title' => t('Order by posted date'),
+        ];
+        $tabs[] = [
+            'label' => t('Received Date'),
+            'icon' => '',
+            'url' => z_root() . '/' . $cmd . '?f=&order=received' . $filter,
+            'sel' => $received_active,
+            'title' => t('Order by received date'),
         ];
         $tabs[] = array(
             'label' => t('Date Unthreaded'),
             'icon' => '',
             'url' => z_root() . '/' . $cmd . '?f=&order=unthreaded' . $filter,
             'sel' => $unthreaded_active,
-            'title' => t('Order unthreaded by date'),
+            'title' => t('Order unthreaded by received date'),
         );
 
         $arr = ['tabs' => $tabs];

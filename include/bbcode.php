@@ -15,15 +15,15 @@ use Michelf\MarkdownExtra;
 require_once('include/event.php');
 require_once('include/html2plain.php');
 
-function get_bb_tag_pos($s, $name, $occurance = 1)
+function get_bb_tag_pos($s, $name, $occurrence = 1)
 {
 
-    if ($occurance < 1) {
-        $occurance = 1;
+    if ($occurrence < 1) {
+        $occurrence = 1;
     }
 
     $start_open = -1;
-    for ($i = 1; $i <= $occurance; $i++) {
+    for ($i = 1; $i <= $occurrence; $i++) {
         if ($start_open !== false) {
             $start_open = strpos($s, '[' . $name, $start_open + 1); // allow [name= type tags
         }
@@ -62,9 +62,9 @@ function bb_tag_preg_replace($pattern, $replace, $name, $s)
 
     $string = $s;
 
-    $occurance = 1;
-    $pos = get_bb_tag_pos($string, $name, $occurance);
-    while ($pos !== false && $occurance < 1000) {
+    $occurrence = 1;
+    $pos = get_bb_tag_pos($string, $name, $occurrence);
+    while ($pos !== false && $occurrence < 1000) {
         $start = substr($string, 0, $pos['start']['open']);
         $subject = substr($string, $pos['start']['open'], $pos['end']['close'] - $pos['start']['open']);
         $end = substr($string, $pos['end']['close']);
@@ -75,8 +75,8 @@ function bb_tag_preg_replace($pattern, $replace, $name, $s)
         $subject = preg_replace($pattern, $replace, $subject);
         $string = $start . $subject . $end;
 
-        $occurance++;
-        $pos = get_bb_tag_pos($string, $name, $occurance);
+        $occurrence++;
+        $pos = get_bb_tag_pos($string, $name, $occurrence);
     }
 
     return $string;
