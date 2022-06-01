@@ -305,7 +305,6 @@ class Site
             '$frontpage' => ['frontpage', t("Site homepage to show visitors (default: login box)"), get_config('system', 'frontpage'), t("example: 'public' to show public stream, 'page/sys/home' to show a system webpage called 'home' or 'include:home.html' to include a file.")],
             '$mirror_frontpage' => ['mirror_frontpage', t("Preserve site homepage URL"), get_config('system', 'mirror_frontpage'), t('Present the site homepage in a frame at the original location instead of redirecting')],
             '$abandon_days' => ['abandon_days', t('Accounts abandoned after x days'), get_config('system', 'account_abandon_days'), t('Will not waste system resources polling external sites for abandonded accounts. Enter 0 for no time limit.')],
-            '$block_public_dir' => ['block_public_directory', t('Block directory from visitors'), get_config('system', 'block_public_directory', true), t('Only allow authenticated access to directory.')],
             '$verify_email' => ['verify_email', t("Verify Email Addresses"), get_config('system', 'verify_email'), t("Check to verify email addresses used in account registration (recommended).")],
             '$force_publish' => ['publish_all', t("Force publish in directory"), get_config('system', 'publish_all'), t("Check to force all profiles on this site to be listed in the site directory.")],
 

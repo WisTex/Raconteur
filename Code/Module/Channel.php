@@ -197,10 +197,6 @@ class Channel extends Controller
         $datequery = ((x($_GET, 'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
         $datequery2 = ((x($_GET, 'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
 
-        if (observer_prohibited(true)) {
-            return login();
-        }
-
         $category = ((x($_REQUEST, 'cat')) ? $_REQUEST['cat'] : '');
         $hashtags = ((x($_REQUEST, 'tag')) ? $_REQUEST['tag'] : '');
         $order = ((x($_GET, 'order')) ? notags($_GET['order']) : 'post');

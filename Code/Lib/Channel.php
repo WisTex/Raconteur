@@ -1578,10 +1578,6 @@ class Channel
 
         $ret = array('result' => false);
 
-        if (observer_prohibited()) {
-            return $ret;
-        }
-
         $r = q(
             "select channel_id, channel_hash from channel where channel_address = '%s' limit 1",
             dbesc($nick)
@@ -1664,10 +1660,6 @@ class Channel
     public static function is_public_profile()
     {
         if (! local_channel()) {
-            return false;
-        }
-
-        if (intval(get_config('system', 'block_public'))) {
             return false;
         }
 

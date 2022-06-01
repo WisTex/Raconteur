@@ -31,10 +31,6 @@ class Pubstream extends Controller
         $o = EMPTY_STR;
         $items = [];
 
-        if ((observer_prohibited(true))) {
-            return login();
-        }
-
         if (!intval(get_config('system', 'open_pubstream', 0))) {
             if (!local_channel()) {
                 return login();

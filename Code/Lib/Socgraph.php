@@ -480,11 +480,6 @@ class Socgraph {
 
         $system_mode = false;
 
-        if (observer_prohibited()) {
-            logger('mod_poco: block_public');
-            http_status_exit(401);
-        }
-
         $observer = App::get_observer();
 
         if (argc() > 1) {

@@ -48,11 +48,6 @@ class Display extends Controller
             $_SESSION['loadtime_display'] = datetime_convert();
         }
 
-        if (observer_prohibited()) {
-            notice(t('Public access denied.') . EOL);
-            return;
-        }
-
         if (argc() > 1) {
             $item_hash = argv(1);
             if ($module_format !== 'html') {

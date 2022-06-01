@@ -1825,10 +1825,6 @@ function remote_channel() {
 
 function can_view_public_stream() {
 
-    if (observer_prohibited(true)) {
-        return false;
-    }
-
     if (! (intval(get_config('system','open_pubstream',0)))) {
         if (! local_channel()) {
             return false;
@@ -2582,20 +2578,6 @@ function check_cron_broken() {
             )
         ]
     );
-}
-
-
-/**
- * @brief
- *
- * @param bool $allow_account (optional) default false
- * @return bool
- */
-function observer_prohibited($allow_account = false) {
-    if($allow_account) {
-        return (((get_config('system', 'block_public')) && (! get_account_id()) && (! remote_channel())) ? true : false );
-    }
-    return (((get_config('system', 'block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
 }
 
 function get_safemode() {

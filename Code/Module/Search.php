@@ -42,7 +42,7 @@ class Search extends Controller
     public function get()
     {
 
-        if ((get_config('system', 'block_public')) || (get_config('system', 'block_public_search', 1))) {
+        if (get_config('system', 'block_public_search', 1)) {
             if ((!local_channel()) && (!remote_channel())) {
                 notice(t('Public access denied.') . EOL);
                 return;

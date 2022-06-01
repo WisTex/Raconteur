@@ -24,9 +24,6 @@ class Security
         $use_hs2019 = ((x($_POST, 'use_hs2019')) ? intval($_POST['use_hs2019']) : 0);
         set_config('system', 'use_hs2019', $use_hs2019);
 
-        $block_public = ((x($_POST, 'block_public')) ? true : false);
-        set_config('system', 'block_public', $block_public);
-
         $block_public_search = ((x($_POST, 'block_public_search')) ? 1 : 0);
         set_config('system', 'block_public_search', $block_public_search);
 
@@ -141,7 +138,6 @@ class Security
             '$title' => t('Administration'),
             '$page' => t('Security'),
             '$form_security_token' => get_form_security_token('admin_security'),
-            '$block_public' => array('block_public', t("Block public"), get_config('system', 'block_public'), t("Check to block public access to all otherwise public personal pages on this site unless you are currently authenticated.")),
             '$block_public_search' => array('block_public_search', t("Block public search"), get_config('system', 'block_public_search', 1), t("Prevent access to search content unless you are currently authenticated.")),
             '$block_public_dir' => ['block_public_directory', t('Block directory from visitors'), get_config('system', 'block_public_directory', true), t('Only allow authenticated access to directory.')],
             '$localdir_hide' => ['localdir_hide', t('Hide local directory'), intval(get_config('system', 'localdir_hide')), t('Only use the global directory')],

@@ -35,10 +35,6 @@ class Photos extends Controller
     public function init()
     {
 
-        if (observer_prohibited()) {
-            return;
-        }
-
         if (argc() > 1) {
             $nick = escape_tags(argv(1));
 
@@ -582,14 +578,7 @@ class Photos extends Controller
         // photos/name/album/xxxxx (xxxxx is album name)
         // photos/name/image/xxxxx
 
-
-        if (observer_prohibited()) {
-            notice(t('Public access denied.') . EOL);
-            return;
-        }
-
         $unsafe = 1 - get_safemode();
-
 
         if (!x(App::$data, 'channel')) {
             notice(t('No photos selected') . EOL);

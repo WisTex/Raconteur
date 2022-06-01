@@ -118,13 +118,6 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
             }
         }
 
-        // system is blocked to anybody who is not authenticated
-
-        if (($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public'))) {
-            $ret[$perm_name] = false;
-            continue;
-        }
-
         // Check if this $uid is actually the $observer_xchan - if it's your content
         // you always have permission to do anything
         // if you've moved elsewhere, you will only have read only access
@@ -326,13 +319,6 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
         }
 
         $abperms = get_abconfig($uid, $observer_xchan, 'system', 'my_perms', '');
-    }
-
-
-    // system is blocked to anybody who is not authenticated
-
-    if (($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public'))) {
-        return false;
     }
 
     // Check if this $uid is actually the $observer_xchan
