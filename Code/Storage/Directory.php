@@ -94,10 +94,6 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         logger('children for ' . $this->ext_path, LOGGER_DATA);
         $this->log();
 
-        if (get_config('system', 'block_public') && (!$this->auth->channel_id) && (!$this->auth->observer)) {
-            throw new DAV\Exception\Forbidden('Permission denied.');
-        }
-
         if (($this->auth->owner_id) && (!perm_is_allowed($this->auth->owner_id, $this->auth->observer, 'view_storage'))) {
             throw new DAV\Exception\Forbidden('Permission denied.');
         }
@@ -116,10 +112,6 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
     public function getChild($name)
     {
         logger($name, LOGGER_DATA);
-
-        if (get_config('system', 'block_public') && (!$this->auth->channel_id) && (!$this->auth->observer)) {
-            throw new DAV\Exception\Forbidden('Permission denied.');
-        }
 
         if (($this->auth->owner_id) && (!perm_is_allowed($this->auth->owner_id, $this->auth->observer, 'view_storage'))) {
             throw new DAV\Exception\Forbidden('Permission denied.');

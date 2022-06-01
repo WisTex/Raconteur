@@ -20,11 +20,6 @@ class Followers extends Controller
 	
     public function init()
     {
-
-        if (observer_prohibited(true)) {
-            http_status_exit(403, 'Forbidden');
-        }
-
         if (argc() < 2) {
             http_status_exit(404, 'Not found');
         }

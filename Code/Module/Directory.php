@@ -96,12 +96,6 @@ class Directory extends Controller
 
     public function get()
     {
-
-        if (observer_prohibited()) {
-            notice(t('Public access denied.') . EOL);
-            return;
-        }
-
         $observer = get_observer_hash();
 
         if (get_config('system', 'block_public_directory', true) && (!$observer)) {

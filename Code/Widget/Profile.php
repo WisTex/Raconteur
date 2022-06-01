@@ -15,6 +15,6 @@ class Profile
             return EMPTY_STR;
         }
 
-        return Libprofile::widget(App::$profile, observer_prohibited(), true);
+        return Libprofile::widget(App::$profile, false, true);
     }
 }

@@ -6,7 +6,6 @@
 	<input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
 
 	{{include file="field_checkbox.tpl" field=$use_hs2019}}
-	{{include file="field_checkbox.tpl" field=$block_public}}
 	{{include file="field_checkbox.tpl" field=$block_public_search}}
 	{{include file="field_checkbox.tpl" field=$block_public_dir}}
 	{{include file="field_checkbox.tpl" field=$anonymous_comments}}

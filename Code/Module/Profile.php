@@ -95,13 +95,7 @@ class Profile extends Controller
 
     public function get()
     {
-
-        if (observer_prohibited(true)) {
-            return login();
-        }
-
         $groups = [];
-
 
         $tab = 'profile';
         $o = '';

@@ -282,10 +282,6 @@ class Outbox extends Controller
     public function get()
     {
 
-        if (observer_prohibited(true)) {
-            killme();
-        }
-
         if (argc() < 2) {
             killme();
         }

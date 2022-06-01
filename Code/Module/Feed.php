@@ -31,10 +31,6 @@ class Feed extends Controller
         }
 
         if (argc() > 1) {
-            if (observer_prohibited(true)) {
-                killme();
-            }
-
             $channel = Channel::from_username(argv(1));
             if (!$channel) {
                 killme();

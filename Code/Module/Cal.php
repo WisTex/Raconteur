@@ -23,10 +23,6 @@ class Cal extends Controller
 
     public function init()
     {
-        if (observer_prohibited()) {
-            return;
-        }
-
         $o = '';
 
         if (argc() > 1) {
@@ -58,11 +54,6 @@ class Cal extends Controller
 
     public function get()
     {
-
-        if (observer_prohibited()) {
-            return;
-        }
-
         $channel = null;
 
         if (argc() > 1) {
