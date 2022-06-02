@@ -42,16 +42,15 @@ class Update extends Controller
             killme();
         }
 
-        // These modules don't have a completely working liveUpdate implementation currently
-
-        if (in_array(strtolower(argv(1)), ['articles', 'cards'])) {
-            killme();
-        }
-
         $module = "\\Code\\Module\\" . ucfirst(argv(1));
         $load = (((argc() > 2) && (argv(2) == 'load')) ? 1 : 0);
 
-        $mod = new $module();
+        try {
+            $mod = new $module();
+        } catch (\Exception $e) {
+            logger('Invalid module: ' . $module);
+            killme();
+        }
 
         // Set the state flags of the relevant module (only conversational
         // modules support state flags
