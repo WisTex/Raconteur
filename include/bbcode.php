@@ -1029,11 +1029,13 @@ function bb_imgoptions($match)
     $width       = 0;
     $float       = false;
     $alt         = false;
-
+    $src         = false;
+    
     $style = EMPTY_STR;
 
     $attributes = $match[3];
 
+    
     $x = preg_match("/alt='(.*?)'/ism", $attributes, $matches);
     if ($x) {
         $alt = $matches[1];
@@ -1105,13 +1107,20 @@ function bb_imgoptions($match)
     }
 
     // legacy img options
-
+    
     if ($match[2] === '=') {
-        // pull out (optional) legacy size declarations first
-        if (preg_match("/([0-9]*)x([0-9]*)/ism", $match[3], $local_match)) {
-            $width = intval($local_match[1]);
+
+        if (strpos($attributes,'http') === 0) {
+            $alt = $match[4];
+            $src = $match[3];        
         }
-        $match[3] = substr($match[3], strpos($match[3], ' '));
+        else {
+            // pull out (optional) legacy size declarations first
+            if (preg_match("/([0-9]*)x([0-9]*)/ism", $match[3], $local_match)) {
+                $width = intval($local_match[1]);
+            }
+            $match[3] = substr($match[3], strpos($match[3], ' '));
+        }
     }
 
     // then (optional) legacy float specifiers
@@ -1128,7 +1137,7 @@ function bb_imgoptions($match)
     if ((! $alt) && ($n = strpos($match[3], 'alt=') !== false)) {
         $alt = substr($match[3], $n + 4);
     }
-
+    
     // now assemble the resulting img tag from these components
 
     $output = '<img ' . (($match[1] === 'z') ? 'class="zrl" ' : '') . ' ';
@@ -1144,7 +1153,7 @@ function bb_imgoptions($match)
 
     $output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? $alt : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ' . 'title="' . htmlentities(($alt) ? $alt : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ';
 
-    $output .= 'src="' . $match[4] . '" >';
+    $output .= 'src="' . (($src) ? $src : $match[4]) . '" >';
 
     return $output;
 }
@@ -2065,8 +2074,6 @@ function bbcode($Text, $options = [])
     // [img]pathtoimage[/img]
     if (strpos($Text, '[/img]') !== false) {
         $Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
-        // Friendica's modified bbcode img tags
-        $Text = preg_replace("/\[img=http(.*?)\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="http$1" alt="' . t('Image/photo') . '" />', $Text);
     }
     if (strpos($Text, '[/zmg]') !== false) {
         $Text = preg_replace("/\[zmg\](.*?)\[\/zmg\]/ism", '<img class="zrl" style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
