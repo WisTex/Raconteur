@@ -260,7 +260,7 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false)
         }
     }
 
-    if (! $failed && $result['return_code'] != 304) {
+    if ((! $failed) && $result['return_code'] != 304) {
         $img = photo_factory($img_str, $type);
         if ($img && $img->is_valid()) {
             $width = $img->getWidth();
@@ -396,7 +396,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
     }
 
 
-    if (! $failed && intval($result['return_code']) !== 304) {
+    if ((! $failed) && intval($result['return_code']) !== 304) {
         $img = photo_factory($result['body'], $type);
         if ($img && $img->is_valid()) {
             $width = $img->getWidth();
