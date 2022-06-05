@@ -16,7 +16,6 @@ class Gprobe
     public static function run($argc, $argv)
     {
 
-
         if ($argc != 2) {
             return;
         }
@@ -51,7 +50,7 @@ class Gprobe
             }
         }
 
-        if (! in_array('zot6', $protocols)) {
+        if ((!in_array('zot6', $protocols)) && (!in_array('nomad', $protocols))) {
             $href = Webfinger::zot_url(punify($url));
             if ($href) {
                 $zf = Zotfinger::exec($href, $channel);
