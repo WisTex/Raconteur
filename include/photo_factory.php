@@ -218,7 +218,7 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false)
     $failed     = true;
     $img_str    = EMPTY_STR;
     $hash       = photo_new_resource();
-    $os_storage = false;
+    $os_storage = 1;
 
     if (! $thing) {
         $r = q(
@@ -232,7 +232,7 @@ function import_xchan_photo($photo, $xchan, $thing = false, $force = false)
             $modified   = $r['edited'];
             $type       = $r['mimetype'];
         } else {
-            $os_storage = true;
+            $os_storage = 1;
         }
     }
 
