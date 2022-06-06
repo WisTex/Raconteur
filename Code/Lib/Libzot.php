@@ -977,7 +977,6 @@ class Libzot
             if ($photos) {
                 if ($photos[4]) {
                     // importing the photo failed somehow. Leave the photo_date alone so we can try again at a later date.
-                    // This often happens when somebody joins the matrix with a bad cert.
                     $r = q(
                         "update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
                         where xchan_hash = '%s'",
