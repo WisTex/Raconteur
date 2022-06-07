@@ -195,8 +195,6 @@ function delete_thing_photo($url, $ob_hash)
  *    channel unique hash
  * @param bool $thing
  *    TRUE if this is a thing URL
- * @param bool $force
- *    TRUE if ignore image modification date check (force fetch)
  *
  * @return array of results
  * * \e string \b 0 => local URL to full image
@@ -204,169 +202,46 @@ function delete_thing_photo($url, $ob_hash)
  * * \e string \b 2 => local URL to micro thumbnail
  * * \e string \b 3 => image type
  * * \e boolean \b 4 => TRUE if fetch failure
- * * \e string \b 5 => modification date
  */
-function import_xchan_photo($photo, $xchan, $thing = false, $force = false)
-{
-
-    logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
-
-    $flags      = (($thing) ? PHOTO_THING : PHOTO_XCHAN);
-    $album      = (($thing) ? 'Things' : 'Contact Photos');
-    $modified   = EMPTY_STR;
-    $matches    = null;
-    $failed     = true;
-    $img_str    = EMPTY_STR;
-    $hash       = photo_new_resource();
-    $os_storage = 1;
-
-    if (! $thing) {
-        $r = q(
-            "select resource_id, edited, mimetype from photo where xchan = '%s' and photo_usage = %d and imgscale = 4 limit 1",
-            dbesc($xchan),
-            intval(PHOTO_XCHAN)
-        );
-        if ($r) {
-            $r = array_shift($r);
-            $hash       = $r['resource_id'];
-            $modified   = $r['edited'];
-            $type       = $r['mimetype'];
-        } else {
-            $os_storage = 1;
-        }
-    }
-
-
-    if ($photo) {
-        if ($modified === EMPTY_STR || $force) {
-            $result = z_fetch_url($photo, true);
-        } else {
-            $h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s', strtotime($modified . 'Z')) . ' GMT' ] ];
-            $result = z_fetch_url($photo, true, 0, $h);
-        }
-
-        if ($result['success']) {
-            $img_str = $result['body'];
-            $type = guess_image_type($photo, $result['header']);
-            $modified = gmdate('Y-m-d H:i:s', (preg_match('/last-modified: (.+) \S+/i', $result['header'], $matches) ? strtotime($matches[1] . 'Z') : time()));
-            if (! is_null($type)) {
-                $failed = false;
-            }
-        } elseif ($result['return_code'] == 304) {
-            $photo = z_root() . '/photo/' . $hash . '-4';
-            $thumb = z_root() . '/photo/' . $hash . '-5';
-            $micro = z_root() . '/photo/' . $hash . '-6';
-            $failed = false;
-        }
-    }
-
-    if (! $failed && $result['return_code'] != 304) {
-        $img = photo_factory($img_str, $type);
-        if ($img && $img->is_valid()) {
-            $width = $img->getWidth();
-            $height = $img->getHeight();
-
-            if ($width && $height) {
-                if (($width / $height) > 1.2) {
-                    // crop out the sides
-                    $margin = $width - $height;
-                    $img->cropImage(300, ($margin / 2), 0, $height, $height);
-                } elseif (($height / $width) > 1.2) {
-                    // crop out the bottom
-                    $margin = $height - $width;
-                    $img->cropImage(300, 0, 0, $width, $width);
-                } else {
-                    $img->scaleImageSquare(300);
-                }
-            } else {
-                $failed = true;
-            }
-
-            $p = [
-                'xchan'       => $xchan,
-                'resource_id' => $hash,
-                'filename'    => basename($photo),
-                'album'       => $album,
-                'photo_usage' => $flags,
-                'imgscale'    => 4,
-                'edited'      => $modified,
-            ];
-
-            $r = $img->save($p);
-            if ($r === false) {
-                $failed = true;
-            }
-            $img->scaleImage(80);
-            $p['imgscale'] = 5;
-            $r = $img->save($p);
-            if ($r === false) {
-                $failed = true;
-            }
-            $img->scaleImage(48);
-            $p['imgscale'] = 6;
-            $r = $img->save($p);
-            if ($r === false) {
-                $failed = true;
-            }
-            $photo = z_root() . '/photo/' . $hash . '-4';
-            $thumb = z_root() . '/photo/' . $hash . '-5';
-            $micro = z_root() . '/photo/' . $hash . '-6';
-        } else {
-            logger('Invalid image from ' . $photo);
-            $failed = true;
-        }
-    }
-
-    if ($failed) {
-        $default  = Channel::get_default_profile_photo();
-        $photo    = z_root() . '/' . $default;
-        $thumb    = z_root() . '/' . Channel::get_default_profile_photo(80);
-        $micro    = z_root() . '/' . Channel::get_default_profile_photo(48);
-        $type     = 'image/png';
-        $modified = gmdate('Y-m-d H:i:s', filemtime($default));
-    }
-
-    logger('HTTP code: ' . $result['return_code'] . '; modified: ' . $modified
-            . '; failure: ' . ($failed ? 'yes' : 'no') . '; URL: ' . $photo, LOGGER_DEBUG);
-
-    return([$photo, $thumb, $micro, $type, $failed, $modified]);
-}
-
-
 function import_remote_xchan_photo($photo, $xchan, $thing = false)
 {
 
-//  logger('Updating channel photo from ' . $photo . ' for ' . $xchan, LOGGER_DEBUG);
-
-    // Assume the worst.
-    $failed  = true;
+    $failure  = [];
     $type = EMPTY_STR;
 
-    $path = Hashpath::path((($thing) ? $photo . $xchan : $xchan), 'cache/xp', 2);
+    $animated = get_config('system', 'animated_avatars', true);
+
+    $path = Hashpath::path((($thing) ? $src . $xchan : $xchan), 'cache/xp', 2);
     $hash = basename($path);
 
     $cached_file = $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
 
-    $animated = get_config('system', 'animated_avatars', true);
+    // Maybe it's already a cached xchan photo on our site. Do nothing.
 
-    $modified = ((file_exists($cached_file)) ? @filemtime($cached_file) : 0);
-
-    // Maybe it's already a cached xchan photo
-
-    if (strpos($photo, z_root() . '/xp/') === 0) {
+    if (strpos($src, z_root() . '/xp/') === 0) {
         return false;
     }
 
-    if ($modified) {
-        $h = [ 'headers' => [ 'If-Modified-Since: ' . gmdate('D, d M Y H:i:s', $modified) . ' GMT' ] ];
-        $recurse = 0;
-        $result = z_fetch_url($photo, true, $recurse, $h);
-    } else {
-        $result = z_fetch_url($photo, true);
+    if (file_exists($cached_file)) {
+        $info = getimagesize($cached_file);
+        if (isset($info) && is_array($info) && array_key_exists('mime', $info)) {
+            $type = $info['mime'];
+        }
+    }
+    else {
+        $type = 'image/png';
     }
 
+    // Always return these paths. The Xp module will return the default profile photo if unset.
+    
+    $photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
+    $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
+    $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
+
+    $result = z_fetch_url($src, true);
+    
     if ($result['success']) {
-        $type = guess_image_type($photo, $result['header']);
+        $type = guess_image_type($src, $result['header']);
         if ((! $type) || strpos($type, 'image') === false) {
             @file_put_contents('cache/' . $hash, $result['body']);
             $info = getimagesize('cache/' . $hash);
@@ -376,105 +251,80 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
             }
         }
         if ($type) {
-            $failed = false;
-        }
-    } elseif (intval($result['return_code']) === 304) {
-        // continue using our cached copy, although we still need to figure out the type
-        // for the benefit of upstream callers that may require it
+            $img = photo_factory($result['body'], $type);
+            if ($img && $img->is_valid()) {
+                $width = $img->getWidth();
+                $height = $img->getHeight();
 
-        if (file_exists($cached_file)) {
-            $info = getimagesize($cached_file);
-            if (isset($info) && is_array($info) && array_key_exists('mime', $info)) {
-                $type = $info['mime'];
-            }
-        }
-
-        $photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
-        $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
-        $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
-        $failed = false;
-    }
-
-
-    if (! $failed && intval($result['return_code']) !== 304) {
-        $img = photo_factory($result['body'], $type);
-        if ($img && $img->is_valid()) {
-            $width = $img->getWidth();
-            $height = $img->getHeight();
-
-            if ($width && $height) {
-                if (($width / $height) > 1.2) {
-                    // crop out the sides
-                    $margin = $width - $height;
-                    $img->cropImage(300, ($margin / 2), 0, $height, $height);
-                } elseif (($height / $width) > 1.2) {
-                    // crop out the bottom
-                    $margin = $height - $width;
-                    $img->cropImage(300, 0, 0, $width, $width);
+                if ($width && $height) {
+                    if (($width / $height) > 1.2) {
+                        // crop out the sides
+                        $margin = $width - $height;
+                        $img->cropImage(300, ($margin / 2), 0, $height, $height);
+                    } elseif (($height / $width) > 1.2) {
+                        // crop out the bottom
+                        $margin = $height - $width;
+                        $img->cropImage(300, 0, 0, $width, $width);
+                    } else {
+                        $img->scaleImageSquare(300);
+                    }
                 } else {
-                    $img->scaleImageSquare(300);
+                    $failure[] = 'No dimensions';
                 }
-            } else {
-                $failed = true;
-            }
 
-            $p = [
-                'xchan'       => $xchan,
-                'resource_id' => $hash,
-                'filename'    => basename($photo),
-                'album'       => EMPTY_STR,
-                'photo_usage' => 0,
-                'imgscale'    => 4,
-                'edited'      => $modified,
-            ];
+                $p = [
+                    'xchan'       => $xchan,
+                    'resource_id' => $hash,
+                    'filename'    => basename($src),
+                    'album'       => EMPTY_STR,
+                    'photo_usage' => 0,
+                    'imgscale'    => 4,
+                    'edited'      => $modified,
+                ];
 
-            $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-            $photo = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-            $r = $img->saveImage($savepath, $animated);
-            if ($r === false) {
-                $failed = true;
+                $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+                $r = $img->saveImage($savepath, $animated);
+                if ($r === false) {
+                    $failure[] = 'Storage failure size 4';
+                }
+                $img->scaleImage(80);
+                $p['imgscale'] = 5;
+                $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+                $r = $img->saveImage($savepath, $animated);
+                if ($r === false) {
+                    $failure[] = 'Storage failure size 5';
+                }
+                $img->scaleImage(48);
+                $p['imgscale'] = 6;
+                $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+                $r = $img->saveImage($savepath, $animated);
+                if ($r === false) {
+                    $failure[] = 'Storage failure size 6';
+                }
             }
-            $img->scaleImage(80);
-            $p['imgscale'] = 5;
-            $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-            $thumb = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-            $r = $img->saveImage($savepath, $animated);
-            if ($r === false) {
-                $failed = true;
+            else {
+                $failure[] = 'Invalid image from ' . $src;
             }
-            $img->scaleImage(48);
-            $p['imgscale'] = 6;
-            $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-            $micro = z_root() . '/xp/' . $hash . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
-            $r = $img->saveImage($savepath, $animated);
-            if ($r === false) {
-                $failed = true;
-            }
-        } else {
-            logger('Invalid image from ' . $photo);
-            $failed = true;
         }
+        else {
+            $failure[] = 'unknown filetype';
+        }
+    } else {
+        $failure[] = 'Unable to fetch ' . $src;
+        $failure[] = $result['error'];
+        $failure[] = print_array($result['debug']);
     }
 
-    if ($failed) {
-        $default  = Channel::get_default_profile_photo();
-        $photo    = z_root() . '/' . $default;
-        $thumb    = z_root() . '/' . Channel::get_default_profile_photo(80);
-        $micro    = z_root() . '/' . Channel::get_default_profile_photo(48);
-        $type     = 'image/png';
-        $modified = filemtime($default);
+    if ($failure) {
+        logger('failed: ' . $photo);
+        logger('failure: ' . print_r($failure,true), LOGGER_DEBUG);
+        file_put_contents($path . '.log', implode("\n", $failure));
+    } elseif (file_exists($path . '.log')) {
+        unlink($path . '.log');
     }
 
-    logger('HTTP code: ' . $result['return_code'] . '; modified: ' . (($modified) ? gmdate('D, d M Y H:i:s', $modified) . ' GMT' : 0 )
-            . '; failure: ' . ($failed ? 'yes' : 'no') . '; URL: ' . $photo, LOGGER_DEBUG);
-
-    return([$photo, $thumb, $micro, $type, $failed, $modified]);
+    return([$photo, $thumb, $micro, $type, ($failure ? true : false)]);
 }
-
-
-
-
-
 
 /**
   * @brief Import channel photo from a URL.
