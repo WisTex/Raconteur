@@ -102,7 +102,7 @@ class Dirsearch extends Controller
             $sync = false;
         }
 
-        if (($dirmode == DIRECTORY_MODE_STANDALONE) && (!$hub)) {
+        if (!$hub) {
             $hub = App::get_hostname();
         }
 
@@ -201,10 +201,6 @@ class Dirsearch extends Controller
 
         if ($hash) {
             $logic = 'true';
-        }
-
-        if ($dirmode == DIRECTORY_MODE_STANDALONE) {
-            $sql_extra .= " and xchan_addr like '%%" . App::get_hostname() . "' ";
         }
 
         $safesql = (($safe > 0) ? " and xchan_censored = 0 and xchan_selfcensored = 0 " : '');

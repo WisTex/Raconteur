@@ -209,11 +209,7 @@ class Register extends Controller
 
         if (intval(get_config('system', 'register_policy')) === REGISTER_CLOSED) {
             notice(t('Registration on this website is disabled.') . EOL);
-            if (intval(get_config('system', 'directory_mode')) === DIRECTORY_MODE_STANDALONE) {
-                return EMPTY_STR;
-            } else {
-                $other_sites = true;
-            }
+            $other_sites = true;
         }
 
         if (intval(get_config('system', 'register_policy')) == REGISTER_APPROVE) {

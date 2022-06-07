@@ -17,38 +17,6 @@ require_once('include/permissions.php');
 class Libzotdir
 {
 
-
-    /**
-     * Directories may come and go over time. We will need to check that our
-     * directory server is still valid occasionally, and reset to something that
-     * is if our directory has gone offline for any reason
-     */
-
-    public static function check_upstream_directory()
-    {
-
-        $directory = get_config('system', 'directory_server');
-
-        // it's possible there is no directory server configured and the local hub is being used.
-        // If so, default to preserving the absence of a specific server setting.
-
-        $isadir = true;
-
-        if ($directory) {
-            $j = Zotfinger::exec($directory);
-            if (array_path_exists('data/directory_mode', $j)) {
-                if ($j['data']['directory_mode'] === 'normal') {
-                    $isadir = false;
-                }
-            }
-        }
-
-        if (!$isadir) {
-            set_config('system', 'directory_server', '');
-        }
-    }
-
-
     public static function get_directory_setting($observer, $setting)
     {
 

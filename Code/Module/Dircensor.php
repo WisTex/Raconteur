@@ -14,12 +14,6 @@ class Dircensor extends Controller
             return;
         }
 
-        $dirmode = intval(get_config('system', 'directory_mode'));
-
-        if (!($dirmode == DIRECTORY_MODE_PRIMARY || $dirmode == DIRECTORY_MODE_STANDALONE)) {
-            return;
-        }
-
         $xchan = argv(1);
         if (!$xchan) {
             return;
