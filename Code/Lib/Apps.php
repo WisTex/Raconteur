@@ -1146,8 +1146,7 @@ class Apps
 
         if ($arr['photo'] && (strpos($arr['photo'], 'icon:') === false) && (strpos($arr['photo'], z_root()) === false)) {
             $x = import_remote_xchan_photo(str_replace('$baseurl', z_root(), $arr['photo']), get_observer_hash(), true);
-            if ((!$x) || ($x[4])) {
-                // $x[4] = true indicates storage failure of our cached/resized copy. If this failed, just keep the original url.
+            if ($x) {
                 $arr['photo'] = $x[1];
             }
         }
@@ -1240,8 +1239,7 @@ class Apps
 
         if ($arr['photo'] && (strpos($arr['photo'], 'icon:') === false) && (strpos($arr['photo'], z_root()) === false)) {
             $x = import_remote_xchan_photo(str_replace('$baseurl', z_root(), $arr['photo']), get_observer_hash(), true);
-            if ((!$x) || ($x[4])) {
-                // $x[4] = true indicates storage failure of our cached/resized copy. If this failed, just keep the original url.
+            if ($x) {
                 $arr['photo'] = $x[1];
             }
         }

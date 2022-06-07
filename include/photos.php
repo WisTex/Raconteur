@@ -81,7 +81,7 @@ function photo_upload($channel, $observer, $args)
         $height = $args['getimagesize'][1];
     }
 
-    $os_storage = 0;
+    $os_storage = 1;
 
     $max_thumb = get_config('system', 'max_thumbnail', 1600);
 

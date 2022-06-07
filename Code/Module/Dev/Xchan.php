@@ -32,8 +32,8 @@ class Xchan extends Controller
                     $o .= str_replace(array("\n", " "), array("<br>", "&nbsp;"), print_r($rr, true)) . EOL;
 
                     $s = q(
-                        "select * from hubloc where hubloc_hash like '%s'",
-                        dbesc($r[0]['xchan_hash'])
+                        "select * from hubloc where hubloc_hash = '%s'",
+                        dbesc($rr['xchan_hash'])
                     );
 
                     if ($s) {

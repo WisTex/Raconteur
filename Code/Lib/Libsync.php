@@ -922,11 +922,10 @@ class Libsync
      *
      * @param array $sender
      * @param array $arr
-     * @param bool $absolute (optional) default false
      * @return array
      */
 
-    public static function sync_locations($sender, $arr, $absolute = false)
+    public static function sync_locations($sender, $arr)
     {
 
         $ret = [];
@@ -953,10 +952,8 @@ class Libsync
                 $xchan = array_shift($x);
             }
 
-            if ($absolute) {
-                Libzot::check_location_move($sender['hash'], $arr['locations']);
-            }
-
+            Libzot::check_location_move($sender['hash'], $arr['locations']);
+    
             $xisting = q(
                 "select * from hubloc where hubloc_hash = '%s'",
                 dbesc($sender['hash'])
@@ -1115,13 +1112,6 @@ class Libsync
                         hubloc_change_primary($r[0]);
                         $what .= 'primary_hub ';
                         $changed = true;
-                    } elseif ($absolute) {
-                        // Absolute sync - make sure the current primary is correctly reflected in the xchan
-                        $pr = hubloc_change_primary($r[0]);
-                        if ($pr) {
-                            $what .= 'xchan_primary ';
-                            $changed = true;
-                        }
                     } elseif (intval($r[0]['hubloc_primary']) && $xchan && $xchan['xchan_url'] !== $r[0]['hubloc_id_url']) {
                         $pr = hubloc_change_primary($r[0]);
                         if ($pr) {
@@ -1201,7 +1191,7 @@ class Libsync
 
             // get rid of any hubs we have for this channel which weren't reported.
 
-            if ($absolute && $xisting) {
+            if ($xisting) {
                 foreach ($xisting as $x) {
                     if (!array_key_exists('updated', $x)) {
                         logger('Deleting unreferenced hub location ' . $x['hubloc_addr']);
