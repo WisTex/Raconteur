@@ -4049,7 +4049,7 @@ class Activity
                 if (self::media_not_in_body($a['href'], $item['body'])) {
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
-                        $alt = str_replace(['[', ']'], ['%5b', '%5d'], $alt);
+                        $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
                         $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
                     } else {
                         $item['body'] .= "\n\n" . '[img]' . $a['href'] . '[/img]';
