@@ -977,7 +977,6 @@ class Libzot
             if ($photos) {
                 if ($photos[4]) {
                     // importing the photo failed somehow. Leave the photo_date alone so we can try again at a later date.
-                    // This often happens when somebody joins the matrix with a bad cert.
                     $r = q(
                         "update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
                         where xchan_hash = '%s'",
@@ -2584,39 +2583,6 @@ class Libzot
         );
         if ($r) {
             Libzotdir::import_directory_profile($sender, $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);
-        }
-    }
-
-
-    /**
-     * @brief
-     *
-     * @param array $sender an associative array
-     *   * \e string \b hash a xchan_hash
-     * @param array $arr
-     * @param array $deliveries (unused) deliveries is irrelevant
-     */
-    public static function process_location_delivery($sender, $arr, $deliveries)
-    {
-
-        // deliveries is irrelevant
-        logger('process_location_delivery', LOGGER_DEBUG);
-
-        $r = q(
-            "select * from xchan where xchan_hash = '%s' limit 1",
-            dbesc($sender)
-        );
-        if ($r) {
-            $xchan = ['id' => $r[0]['xchan_guid'], 'id_sig' => $r[0]['xchan_guid_sig'],
-                'hash' => $r[0]['xchan_hash'], 'public_key' => $r[0]['xchan_pubkey']];
-        }
-        if (array_key_exists('locations', $arr) && $arr['locations']) {
-            $x = Libsync::sync_locations($xchan, $arr, true);
-            logger('results: ' . print_r($x, true), LOGGER_DEBUG);
-            if ($x['changed']) {
-                $guid = random_string() . '@' . App::get_hostname();
-                Libzotdir::update_modtime($sender, $r[0]['xchan_guid'], $arr['locations'][0]['address'], UPDATE_FLAGS_UPDATED);
-            }
         }
     }
 

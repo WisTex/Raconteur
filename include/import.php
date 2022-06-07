@@ -1930,7 +1930,6 @@ function scan_webpage_elements($path, $type, $cloud = false)
             }
         }
     }
-
     return $elements;
 }
 
