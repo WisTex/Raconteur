@@ -102,10 +102,6 @@ class Dirsearch extends Controller
             $sync = false;
         }
 
-        if (!$hub) {
-            $hub = App::get_hostname();
-        }
-
         if ($hub) {
             $hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
         } else {
