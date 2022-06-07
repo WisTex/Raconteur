@@ -285,10 +285,7 @@ function mark_orphan_hubsxchans()
 
     return;
 
-    $dirmode = intval(get_config('system', 'directory_mode'));
-    if ($dirmode == DIRECTORY_MODE_NORMAL) {
-        return;
-    }
+
 
 	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
 		and hubloc_network in ('nomad','zot6') and hubloc_connected < %s - interval %s",

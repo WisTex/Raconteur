@@ -754,7 +754,6 @@ class Libzot
         Hook::call('import_xchan', $arr);
 
         $ret = array('success' => false);
-        $dirmode = intval(get_config('system', 'directory_mode'));
 
         $changed = false;
         $what = '';
@@ -802,15 +801,6 @@ class Libzot
         if ($r) {
             if ($arr['photo'] && array_key_exists('updated', $arr['photo']) && $arr['photo']['updated'] > $r[0]['xchan_photo_date']) {
                 $import_photos = true;
-            }
-
-            // if we import an entry from a site that's not ours and either or both of us is off the grid - hide the entry.
-            /** @TODO: check if we're the same directory realm, which would mean we are allowed to see it */
-
-            $dirmode = get_config('system', 'directory_mode');
-
-            if ((($arr['site']['directory_mode'] === 'standalone') || ($dirmode & DIRECTORY_MODE_STANDALONE)) && ($arr['site']['url'] != z_root())) {
-                $arr['searchable'] = false;
             }
 
             $hidden = (1 - intval($arr['searchable']));
@@ -905,15 +895,6 @@ class Libzot
             }
         } else {
             $import_photos = true;
-
-            if (
-                (($arr['site']['directory_mode'] === 'standalone')
-                    || ($dirmode & DIRECTORY_MODE_STANDALONE))
-                && ($arr['site']['url'] != z_root())
-            ) {
-                $arr['searchable'] = false;
-            }
-
 
             if ($arr['channel_type'] === 'collection') {
                 $px = 2;
@@ -2726,14 +2707,6 @@ class Libzot
         if ($r) {
             $exists = true;
             $siterecord = $r[0];
-        }
-
-        $site_directory = 0;
-        if ($arr['directory_mode'] == 'normal') {
-            $site_directory = DIRECTORY_MODE_NORMAL;
-        }
-        if ($arr['directory_mode'] == 'standalone') {
-            $site_directory = DIRECTORY_MODE_STANDALONE;
         }
 
         $register_policy = 0;

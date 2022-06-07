@@ -102,10 +102,6 @@ class Dirsearch extends Controller
             $sync = false;
         }
 
-        if (($dirmode == DIRECTORY_MODE_STANDALONE) && (!$hub)) {
-            $hub = App::get_hostname();
-        }
-
         if ($hub) {
             $hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
         } else {
@@ -201,10 +197,6 @@ class Dirsearch extends Controller
 
         if ($hash) {
             $logic = 'true';
-        }
-
-        if ($dirmode == DIRECTORY_MODE_STANDALONE) {
-            $sql_extra .= " and xchan_addr like '%%" . App::get_hostname() . "' ";
         }
 
         $safesql = (($safe > 0) ? " and xchan_censored = 0 and xchan_selfcensored = 0 " : '');
