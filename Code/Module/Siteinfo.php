@@ -12,14 +12,6 @@ use Code\Render\Theme;
 class Siteinfo extends Controller
 {
 
-    public function init()
-    {
-        if (argv(1) === 'json' || $_REQUEST['module_format'] === 'json') {
-            $data = get_site_info();
-            json_return_and_die($data);
-        }
-    }
-
     public function get()
     {
 

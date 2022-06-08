@@ -3057,7 +3057,7 @@ class Activity
             }
             // We shouldn't need to store collection contents which could be large. We will often only require the meta-data
             if (isset($s['tgt_type']) && strpos($s['tgt_type'], 'Collection') !== false) {
-                $s['target'] = ['id' => $act->tgt['id'], 'type' => $s['tgt_type'], 'attributedTo' => ((isset($act->tgt['attributedTo'])) ? $act->tgt['attributedTo'] : $act->tgt['actor'])];
+                $s['target'] = ['id' => $act->tgt['id'], 'type' => $s['tgt_type'], 'attributedTo' => ((isset($act->tgt['attributedTo'])) ? $act->get_actor('attributedTo', $act->tgt) : $act->get_actor('actor', $act->tgt)];
             }
         }
 
@@ -4029,7 +4029,7 @@ class Activity
     }
 
 
-    // This function is designed to work with Zot attachments and item body
+    // This function is designed to work with Nomad attachments and item body
 
     public static function bb_attach($item)
     {
@@ -4049,6 +4049,8 @@ class Activity
                 if (self::media_not_in_body($a['href'], $item['body'])) {
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
+                        // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
+                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements. 
                         $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
                         $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
                     } else {
