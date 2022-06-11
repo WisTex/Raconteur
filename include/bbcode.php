@@ -1150,8 +1150,7 @@ function bb_imgoptions($match)
     if ($float) {
         $style .= 'float: ' . $float . '; ';
     }
-logger('alt: ' .  $alt);
-    $output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? str_replace('<br>', ' ', $alt) : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ' . 'title="' . htmlentities(($alt) ? str_replace('<br>', ' ' , $alt) : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ';
+    $output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? str_replace('<br>', "\n" , $alt) : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ' . 'title="' . htmlentities(($alt) ? str_replace('<br>', "\n" , $alt) : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ';
 
     $output .= 'src="' . (($src) ? $src : $match[4]) . '" >';
 
