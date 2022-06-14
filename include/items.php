@@ -3082,7 +3082,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['item_wall'] = 1;
 		$arr['item_thread_top'] = 1;
 	
-		$bb = "[share author='" . urlencode($item['author']['xchan_name']).
+		$bb = "[share author='" . urlencode($item['author']['xchan_name']) .
 			"' profile='"       . $item['author']['xchan_url'] .
 			"' portable_id='"   . $item['author']['xchan_hash'] . 
 			"' avatar='"        . $item['author']['xchan_photo_s'] .
@@ -3099,6 +3099,19 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$bb .= "[/share]";
 
 		$arr['body'] = $bb;
+
+        $tagpref = intval(PConfig::Get($channel['channel_id'], 'system', 'tag_username', Config::Get('system', 'tag_username', false)));
+
+        $mention = $item['author']['xchan_name'];
+
+        if ($tagpref === 1 && $item['author']['xchan_addr']) {
+            $mention = $item['author']['xchan_addr'];
+        }
+        if ($tagpref === 2 && $item['author']['xchan_addr']) {
+            $mention = sprintf(t('%1$s (%2$s)'), $item['author']['xchan_name'], $item['author']['xchan_addr']);
+        }
+    
+        $arr['body'] .= "\n" . '@[zrl=' . $item['author']['xchan_url'] . ']' . $mention . '[/zrl]';
 		
 		// Conversational objects shouldn't be copied, but other objects should.
 		if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) { 
@@ -3124,9 +3137,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         else {
             $arr['target'] = $item['target'];
         }
-		
-		$arr['term'] = $item['term'];
 
+        // Add a mention for the author.
+		$arr['term'] = ($item['term']) ? $item['term'] : [];
+        $arr['term'][] = [
+            'uid' => $channel['channel_id'],
+            'ttype' => TERM_MENTION,
+            'otype' => TERM_OBJ_POST,
+            'term' => '@' . $item['author']['xchan_addr'],
+            'url' => $item['author']['xchan_url']
+        ];
+
+    
 		$arr['author_xchan'] = $channel['channel_hash'];
 		$arr['owner_xchan']  = $channel['channel_hash'];
 
