@@ -3934,7 +3934,7 @@ class Activity
     {
 
         $r = q(
-            "select hubloc_hash from hubloc where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+            "select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
             dbesc($xchan)
         );
         if ($r) {

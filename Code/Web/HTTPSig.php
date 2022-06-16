@@ -327,7 +327,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $cache_url)),
                 dbesc($cache_url),
                 dbesc($cache_url)
@@ -391,7 +391,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id),
                 dbesc($id)
@@ -430,7 +430,7 @@ class HTTPSig
                                 $key['portable_id'] = $i['hash'];
 
                                 $x = q(
-                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                                     dbesc($l['href'])
                                 );
                                 if ($x) {
@@ -458,7 +458,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network in ('nomad','zot6') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id)
             );
@@ -496,7 +496,7 @@ class HTTPSig
                                 $key['portable_id'] = $i['hash'];
 
                                 $x = q(
-                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                                     dbesc($l['href'])
                                 );
                                 if ($x) {
