@@ -4255,7 +4255,7 @@ class Activity
             'type' => 'Reject',
             'actor' => Channel::url($channel),
             'name' => 'Permission denied',
-            'object' => $item['message_id']
+            'object' => $item['mid']
         ];
 
         $msg = array_merge(['@context' => [
