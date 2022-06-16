@@ -334,7 +334,7 @@ class Libzot
             // hubloc_id_url is set to the channel home, which corresponds to an ActivityStreams actor id.
 
             $r = q(
-                "select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network in ('zot6','nomad') order by hubloc_id desc",
+                "select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc($them['xchan_hash'])
             );
 
