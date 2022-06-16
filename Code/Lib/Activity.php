@@ -3401,6 +3401,15 @@ class Activity
                         dbesc($tag['url']),
                         dbesc($tag['url'])
                     );
+                    if (! $x) {
+                        // This tagged identity has never before been seen on this site. Perform discovery and retry.
+                        $hash = discover_by_webbie($tag['url']);
+                        $x = q(
+                            "select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
+                            dbesc($tag['url']),
+                            dbesc($tag['url'])
+                        );    
+                    }
                     if ($x) {
                         switch ($pref) {
                             case 0:
@@ -4246,7 +4255,7 @@ class Activity
             'type' => 'Reject',
             'actor' => Channel::url($channel),
             'name' => 'Permission denied',
-            'object' => $item['message_id']
+            'object' => $item['mid']
         ];
 
         $msg = array_merge(['@context' => [

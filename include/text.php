@@ -3162,8 +3162,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
                     $newname = $xc['xchan_addr'];
                 }
                 if ($tagpref === 2 && $xc['xchan_addr']) {
-                    $newname = sprintf(t('%1$s (%2$s)'), $xc['xchan_name'], $newname);
+                    $newname = sprintf(t('%1$s (%2$s)'), $xc['xchan_name'], $xc['xchan_addr']);
                 }
+    
                 // add the channel's xchan_hash to $access_tag if exclusive
                 if ($exclusive) {
                     $access_tag = 'cid:' . $xc['xchan_hash'];

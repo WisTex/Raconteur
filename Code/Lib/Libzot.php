@@ -2974,7 +2974,7 @@ class Libzot
         $feed = ((x($arr, 'feed')) ? intval($arr['feed']) : 0);
 
         if ($ztarget) {
-            $t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
+            $t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') order by hubloc_id desc limit 1",
                 dbesc($ztarget)
             );
             if ($t) {
