@@ -1896,13 +1896,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	logger('item_store: ' . print_r($arr,true), LOGGER_DATA);
 
-
 	create_table_from_array('item',$arr);
 
 	// find the item we just created
 
 	$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d and revision = %d ORDER BY id ASC ",
-		$arr['mid'],           // already dbesc'd
+		dbesc($arr['mid']),
 		intval($arr['uid']),
 		intval($arr['revision'])
 	);
