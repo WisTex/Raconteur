@@ -367,7 +367,7 @@ function hublocx_id_query($s, $limit = 0) {
     if ($limit) {
         $qlimit = 'limit ' . intval($limit);
     }
-    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 and $qlimit",
+    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 $qlimit",
         dbesc($s),
         dbesc($s)
     );
