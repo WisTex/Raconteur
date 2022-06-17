@@ -4165,3 +4165,7 @@ function wildmat($pattern, $string)
 {
     return preg_match("#^" . strtr(preg_quote($pattern, '#'), [ '\*' => '.*', '\?' => '.', '\[' => '[', '\]' => ']' ]) . "$#i", $string);
 }
+
+function unicode_trim($s) {
+    return preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $s);
+}
