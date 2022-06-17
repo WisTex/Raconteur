@@ -72,7 +72,7 @@ class Inspect extends Controller
 
         if ($item_type === 'xchan') {
             $items = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_hash = '%s' or hubloc_addr = '%s' ",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where (hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 ",
                 dbesc($item_id),
                 dbesc($item_id)
             );

@@ -20,16 +20,16 @@ class Gprobe
             return;
         }
 
-        $url = hex2bin($argv[1]);
+        $address = $argv[1];
         $protocols = [];
 
-        if (! strpos($url, '@')) {
+        if (! strpos($address, '@')) {
             return;
         }
 
         $r = q(
-            "select * from hubloc where hubloc_addr = '%s'",
-            dbesc($url)
+            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0",
+            dbesc($address)
         );
 
         if ($r) {
@@ -51,7 +51,7 @@ class Gprobe
         }
 
         if ((!in_array('zot6', $protocols)) && (!in_array('nomad', $protocols))) {
-            $href = Webfinger::zot_url(punify($url));
+            $href = Webfinger::zot_url(punify($address));
             if ($href) {
                 $zf = Zotfinger::exec($href, $channel);
             }

@@ -705,7 +705,7 @@ class Channel
         $modified = $r[0];
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0 ",
             dbesc($stored['old_hash']),
             dbesc(z_root())
         );
@@ -807,7 +807,7 @@ class Channel
         );
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0 ",
             dbesc($channel['channel_hash']),
             dbesc(z_root())
         );
@@ -1025,7 +1025,7 @@ class Channel
                     $ret['xchan'] = $r;
                 }
 
-                $r = q("select * from hubloc where hubloc_hash in ( " . implode(',', $xchans) . " ) ");
+                $r = q("select * from hubloc where hubloc_hash in ( " . implode(',', $xchans) . " ) and hubloc_deleted = 0");
                 if ($r) {
                     $ret['hubloc'] = $r;
                 }
@@ -1427,11 +1427,11 @@ class Channel
 
             if (! local_channel()) {
                 $r = q(
-                    "select * from hubloc where hubloc_addr = '%s' order by hubloc_connected desc limit 1",
+                    "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_connected desc limit 1",
                     dbesc($tmp_str)
                 );
                 if (! $r) {
-                    Run::Summon([ 'Gprobe', bin2hex($tmp_str) ]);
+                    Run::Summon([ 'Gprobe', $tmp_str]);
                 }
                 if ($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash']) {
                     return;
@@ -1445,7 +1445,7 @@ class Channel
                 if ($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest, '/magic')) && (! strstr($dest, '/rmagic'))) {
                     goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&bdest=' . bin2hex(z_root() . $dest));
                 } else {
-                    logger('No hubloc found.');
+                    logger(sprintf('No hubloc found for \'%s\'.', $tmp_str);
                 }
             }
         }
@@ -1611,7 +1611,7 @@ class Channel
 
         $result = false;
         $r = q(
-            "select * from hubloc where hubloc_addr = '%s' limit 1",
+            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($webbie)
         );
         if (! $r) {

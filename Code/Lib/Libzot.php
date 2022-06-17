@@ -626,6 +626,7 @@ class Libzot
                     where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
                     and hubloc_url = '%s' and hubloc_url_sig = '%s'
                     and hubloc_site_id = '%s' and hubloc_network in ('nomad','zot6')
+                    and hubloc_deleted = 0
                     $limit",
                 dbesc($arr['id']),
                 dbesc($arr['id_sig']),
@@ -648,7 +649,7 @@ class Libzot
     {
 
         $r = q(
-            "select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_site_id = '%s' limit 1",
+            "select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_site_id = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($sender),
             dbesc($site_id)
         );
@@ -1341,7 +1342,7 @@ class Libzot
                 }
 
                 $r = q(
-                    "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
+                    "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                     dbesc($AS->actor['id'])
                 );
                 if (! $r) {
@@ -1349,7 +1350,7 @@ class Libzot
                     $z = discover_by_webbie($AS->actor['id']);
                     if ($z) {
                         $r = q(
-                            "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
+                            "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                             dbesc($AS->actor['id'])
                         );
                     }
@@ -1366,7 +1367,7 @@ class Libzot
                 }
 
                 $s = q(
-                    "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') limit 1",
+                    "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 limit 1",
                     dbesc($env['sender'])
                 );
 
@@ -1746,7 +1747,7 @@ class Libzot
 
                 $siteallowed = true;
                 $h = q(
-                    "select hubloc_url from hubloc where hubloc_hash = '%s'",
+                    "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
                     dbesc($sender)
                 );
                 if ($h) {
@@ -1802,7 +1803,7 @@ class Libzot
                 $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
                 if ($blocked) {
                     $h = q(
-                        "select hubloc_url from hubloc where hubloc_hash = '%s'",
+                        "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
                         dbesc($sender)
                     );
                     if ($h) {
@@ -2183,7 +2184,7 @@ class Libzot
 
 
         $signer = q(
-            "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') limit 1",
+            "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 limit 1",
             dbesc($a['signature']['signer'])
         );
 
@@ -2208,20 +2209,12 @@ class Libzot
 
             // logger($AS->debug());
 
-            $r = q(
-                "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
-                dbesc($AS->actor['id']),
-                dbesc($AS->actor['id'])
-            );
+            $r = hubloc_id_query($AS->actor['id'], 1);
 
             if (!$r) {
                 $y = import_author_xchan(['url' => $AS->actor['id']]);
                 if ($y) {
-                    $r = q(
-                        "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
-                        dbesc($AS->actor['id']),
-                        dbesc($AS->actor['id'])
-                    );
+                    $r = hubloc_id_query($AS->actor['id'], 1);
                 }
                 if (!$r) {
                     logger('FOF Activity: no actor');
@@ -2898,7 +2891,7 @@ class Libzot
 
         $r1 = q(
             "select hubloc_url, hubloc_updated, site_dead from hubloc left join site on
-            hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 limit 1",
+            hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 and hubloc_deleted = 0 limit 1",
             dbesc($x['id']),
             dbesc($x['id_sig'])
         );
@@ -2938,7 +2931,7 @@ class Libzot
 
             $r = q(
                 "select hubloc_id_url from hubloc left join site on hubloc_url = site_url
-                where hubloc_hash = '%s' and site_dead = 0",
+                where hubloc_hash = '%s' and hubloc_deleted = 0 and site_dead = 0",
                 dbesc($hash)
             );
             if ($r) {
@@ -2974,7 +2967,7 @@ class Libzot
         $feed = ((x($arr, 'feed')) ? intval($arr['feed']) : 0);
 
         if ($ztarget) {
-            $t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') order by hubloc_id desc limit 1",
+            $t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                 dbesc($ztarget)
             );
             if ($t) {

@@ -249,7 +249,7 @@ class Outbox extends Controller
                             $item['allow_gid'] .= '<connections:' . $channel['channel_hash'] . '>';
                             continue;
                         }
-                        $r = q("select * from hubloc where hubloc_id_url = '%s'",
+                        $r = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                             dbesc($recip)
                         );
                         if ($r) {

@@ -2676,12 +2676,12 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0)
         if ($abook) {
             $chans = q(
                 "select * from xchan left join hubloc on hubloc_hash = xchan_hash left join abook on abook_xchan = xchan_hash and abook_channel = %d
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc",
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_deleted = 0 order by hubloc_primary desc",
                 intval($item['uid'])
             );
         } else {
             $chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc");
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_deleted = 0 order by hubloc_primary desc");
         }
         $xchans = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and xchan_network in ('rss','unknown', 'anon')");
         if (! $chans) {
@@ -2714,7 +2714,7 @@ function xchan_mail_query(&$item)
 
     if (count($arr)) {
         $chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-			where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1");
+			where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1 and hubloc_deleted = 0");
     }
     if ($chans) {
         $item['from'] = find_xchan_in_array($item['from_xchan'], $chans);
@@ -3108,7 +3108,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
             if ((! $r) && strpos($newname, '@')) {
                 $r = q(
                     "SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash 
-					WHERE hubloc_addr = '%s' ",
+					WHERE hubloc_addr = '%s' and hubloc_deleted = 0",
                     dbesc($newname)
                 );
             }

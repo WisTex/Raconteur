@@ -1526,7 +1526,7 @@ function fix_system_urls($oldurl, $newurl) {
     // that they can clean up their hubloc tables (this includes directories).
     // It's a very expensive operation so you don't want to have to do it often or after your site gets to be large.
 
-    $r = q("select xchan.*, hubloc.* from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url like '%s'",
+    $r = q("select xchan.*, hubloc.* from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url like '%s' and hublod_deleted = 0",
         dbesc($oldurl . '%')
     );
 

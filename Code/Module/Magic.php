@@ -70,7 +70,7 @@ class Magic extends Controller
 
             if ($delegate) {
                 $r = q(
-                    "select * from channel left join hubloc on channel_hash = hubloc_hash where hubloc_addr = '%s' limit 1",
+                    "select * from channel left join hubloc on channel_hash = hubloc_hash where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
                     dbesc($delegate)
                 );
 

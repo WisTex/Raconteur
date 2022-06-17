@@ -18,7 +18,7 @@ class Q extends Controller
         }
 
         $r = q(
-            "select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0",
+            "select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_deleted = 0 and site_dead = 0",
             dbesc($h)
         );
         if ($r) {

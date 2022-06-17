@@ -881,7 +881,7 @@ function import_author_activitypub($x) {
 
     // let somebody upgrade from an 'unknown' connection which has no xchan_addr and resolve issues with identities from multiple protocols using the same url
 
-    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
+    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
         dbesc($x['url'])
     );
     if(! $r) {
@@ -907,7 +907,7 @@ function import_author_activitypub($x) {
     $z = discover_by_webbie($x['url']);
 
     if($z) {
-	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
+	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
             dbesc($x['url'])
         );
         if(! $r) {

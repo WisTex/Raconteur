@@ -244,7 +244,7 @@ if (
             }
         } else {
             $r = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where xchan_hash = '%s' ",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where xchan_hash = '%s' and hubloc_deleted = 0",
                 dbesc($_SESSION['visitor_id'])
             );
         }

@@ -346,3 +346,56 @@ function get_hubloc_addrs_by_hash($hash)
         dbesc($hash)
     );
 }
+
+
+function hubloc_id_query($s, $limit = 0) {
+
+    if ($limit) {
+        $qlimit = 'limit ' . intval($limit);
+    }
+    $r = q("select * from hubloc where (hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 $qlimit",
+        dbesc($s),
+        dbesc($s)
+    );
+    return $r;
+}
+
+
+
+function hublocx_id_query($s, $limit = 0) {
+
+    if ($limit) {
+        $qlimit = 'limit ' . intval($limit);
+    }
+    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 and $qlimit",
+        dbesc($s),
+        dbesc($s)
+    );
+    return $r;
+}
+
+function hubloc_id_addr_query($s, $limit = 0) {
+
+    if ($limit) {
+        $qlimit = 'limit ' . intval($limit);
+    }
+    $r = q("select * from hubloc where (hubloc_id_url = '%s' or hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 $qlimit",
+        dbesc($s),
+        dbesc($s),
+        dbesc(str_replace('acct:' , '', $s))
+    );
+    return $r;
+}
+
+function hublocx_id_addr_query($s, $limit = 0) {
+
+    if ($limit) {
+        $qlimit = 'limit ' . intval($limit);
+    }
+    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 $qlimit",
+        dbesc($s),
+        dbesc($s),
+        dbesc(str_replace('acct:' , '', $s))
+    );
+    return $r;
+}

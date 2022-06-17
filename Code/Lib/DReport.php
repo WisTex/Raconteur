@@ -134,7 +134,7 @@ class DReport
         // have a channel on that site.
 
         $r = q(
-            "select hubloc_id from hubloc where hubloc_hash = '%s' and hubloc_url = '%s'",
+            "select hubloc_id from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0",
             dbesc($rxchan),
             dbesc($dr['location'])
         );
