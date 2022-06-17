@@ -1445,7 +1445,7 @@ class Channel
                 if ($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest, '/magic')) && (! strstr($dest, '/rmagic'))) {
                     goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&bdest=' . bin2hex(z_root() . $dest));
                 } else {
-                    logger(sprintf('No hubloc found for \'%s\'.', $tmp_str);
+                    logger(sprintf('No hubloc found for \'%s\'.', $tmp_str));
                 }
             }
         }
