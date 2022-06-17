@@ -1372,6 +1372,21 @@ function bb_hltag($matches)
     return '<span style="background-color: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
 }
 
+function bb_nakedlinks($Text) {
+    $urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
+
+    $Text = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
+
+    if (strpos($Text, 'http') !== false) {
+        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
+    }
+
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism', '\red_unescape_codeblock', $Text);
+    return $Text;
+}
+
 
 function bb_xss($s)
 {
@@ -1756,14 +1771,11 @@ function bbcode($Text, $options = [])
     }
 
 
+    // Replace naked urls
+
+    $Text = bb_nakedlinks($Text);
 
     // Perform URL Search
-
-    $urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
-
-    if (strpos($Text, 'http') !== false) {
-        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
-    }
 
     $count = 0;
     while (strpos($Text, '[/share]') !== false && $count < 10) {
