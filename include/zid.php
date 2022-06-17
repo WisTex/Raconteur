@@ -17,7 +17,7 @@ function is_matrix_url($url)
             return true;
         }
 
-		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network in ('nomad','zot6') limit 1",
+		$r = q("select hubloc_url from hubloc where hubloc_host = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0 limit 1",
             dbesc($m['host'])
         );
         if ($r) {
@@ -321,7 +321,7 @@ function owt_init($token)
 
     $r = q(
         "select * from hubloc left join xchan on xchan_hash = hubloc_hash
-		where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
+		where (hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
         dbesc($ob_hash),
         dbesc($ob_hash),
         dbesc($ob_hash)
@@ -333,7 +333,7 @@ function owt_init($token)
         if ($wf) {
             $r = q(
                 "select * from hubloc left join xchan on xchan_hash = hubloc_hash
-				where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
+				where (hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0  order by hubloc_id desc",
                 dbesc($ob_hash),
                 dbesc($ob_hash),
                 dbesc($ob_hash)
@@ -422,7 +422,7 @@ function observer_auth($ob_hash)
 
     $r = q(
         "select * from hubloc left join xchan on xchan_hash = hubloc_hash
-		where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
+		where (hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
         dbesc($ob_hash),
         dbesc($ob_hash),
         dbesc($ob_hash)
@@ -434,7 +434,7 @@ function observer_auth($ob_hash)
         if ($wf) {
             $r = q(
                 "select * from hubloc left join xchan on xchan_hash = hubloc_hash
-				where hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s' order by hubloc_id desc",
+				where (hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc($ob_hash),
                 dbesc($ob_hash),
                 dbesc($ob_hash)

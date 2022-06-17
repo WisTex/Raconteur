@@ -22,7 +22,7 @@ class Rmagic extends Controller
         $me = Channel::get_my_address();
         if ($me) {
             $r = q(
-                "select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",
+                "select hubloc_url from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
                 dbesc($me)
             );
             if ($r) {
@@ -58,7 +58,7 @@ class Rmagic extends Controller
             $r = null;
             if ($address) {
                 $r = q(
-                    "select hubloc_url from hubloc where hubloc_addr = '%s' limit 1",
+                    "select hubloc_url from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
                     dbesc($address)
                 );
             }

@@ -881,7 +881,7 @@ function import_author_activitypub($x) {
 
     // let somebody upgrade from an 'unknown' connection which has no xchan_addr and resolve issues with identities from multiple protocols using the same url
 
-    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
+    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
         dbesc($x['url'])
     );
     if(! $r) {
@@ -907,7 +907,7 @@ function import_author_activitypub($x) {
     $z = discover_by_webbie($x['url']);
 
     if($z) {
-	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
+	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
             dbesc($x['url'])
         );
         if(! $r) {
@@ -1896,13 +1896,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	logger('item_store: ' . print_r($arr,true), LOGGER_DATA);
 
-
 	create_table_from_array('item',$arr);
 
 	// find the item we just created
 
 	$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d and revision = %d ORDER BY id ASC ",
-		$arr['mid'],           // already dbesc'd
+		dbesc($arr['mid']),
 		intval($arr['uid']),
 		intval($arr['revision'])
 	);
@@ -4722,8 +4721,8 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 
 	$arr['obj'] = [
 		'type'      => ACTIVITY_OBJ_NOTE,
-		'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
-		'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
+		'published' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
+		'updated'   => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
 		'id'        => $arr['mid'],
 		'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'] ],
 		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/x-multicode' ],

@@ -297,8 +297,8 @@ class Cover_photo extends Controller
 
         $arr['obj'] = [
             'type' => ACTIVITY_OBJ_NOTE,
-            'published' => datetime_convert('UTC', 'UTC', $photo['created'], ATOM_TIME),
-            'updated' => datetime_convert('UTC', 'UTC', $photo['edited'], ATOM_TIME),
+            'published' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
+            'updated' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
             'id' => $arr['mid'],
             'url' => ['type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7'],
             'source' => ['content' => $arr['body'], 'mediaType' => 'text/x-multicode'],

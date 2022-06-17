@@ -565,11 +565,7 @@ class Activity
         // The xchan_url for mastodon is a text/html rendering. This is called from map_mentions where we need
         // to convert the mention url to an ActivityPub id. If this fails for any reason, return the url we have
 
-        $r = q(
-            "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
-            dbesc($url),
-            dbesc($url)
-        );
+        $r = hubloc_id_query($url, 1);
 
         if ($r) {
             if ($r[0]['hubloc_network'] === 'activitypub') {
@@ -961,7 +957,7 @@ class Activity
                         foreach ($ret['tag'] as $mention) {
                             if (is_array($mention) && array_key_exists('ttype', $mention) && in_array($mention['ttype'], [TERM_FORUM, TERM_MENTION]) && array_key_exists('href', $mention) && $mention['href']) {
                                 $h = q(
-                                    "select * from hubloc where hubloc_id_url = '%s' limit 1",
+                                    "select * from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 limit 1",
                                     dbesc($mention['href'])
                                 );
                                 if ($h) {
@@ -1399,11 +1395,7 @@ class Activity
                     if ($ret['tag']) {
                         foreach ($ret['tag'] as $mention) {
                             if (is_array($mention) && array_key_exists('ttype', $mention) && in_array($mention['ttype'], [TERM_FORUM, TERM_MENTION]) && array_key_exists('href', $mention) && $mention['href']) {
-                                $h = q(
-                                    "select * from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
-                                    dbesc($mention['href']),
-                                    dbesc($mention['href'])
-                                );
+                                $h = hubloc_id_query($mention['href'], 1);
                                 if ($h) {
                                     if ($h[0]['hubloc_network'] === 'activitypub') {
                                         $addr = $h[0]['hubloc_hash'];
@@ -1521,7 +1513,7 @@ class Activity
             $tmp = expand_acl($i['allow_cid']);
             $list = stringify_array($tmp, true);
             if ($list) {
-                $details = q("select hubloc_id_url, hubloc_hash, hubloc_network from hubloc where hubloc_hash in (" . $list . ") ");
+                $details = q("select hubloc_id_url, hubloc_hash, hubloc_network from hubloc where hubloc_hash in (" . $list . ")  and hubloc_deleted = 0");
                 if ($details) {
                     foreach ($details as $d) {
                         if ($d['hubloc_network'] === 'activitypub') {
@@ -1561,7 +1553,7 @@ class Activity
             return $ret;
         }
 
-        $h = q("select * from hubloc where hubloc_hash = '%s'",
+        $h = q("select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
             dbesc($p['xchan_hash'])
         );
         if ($h) {
@@ -2068,7 +2060,7 @@ class Activity
             logger("New ActivityPub follower for {$channel['channel_name']}");
 
             $new_connection = q(
-                "select * from abook left join xchan on abook_xchan = xchan_hash left join hubloc on hubloc_hash = xchan_hash where abook_channel = %d and abook_xchan = '%s' order by abook_created desc limit 1",
+                "select * from abook left join xchan on abook_xchan = xchan_hash left join hubloc on hubloc_hash = xchan_hash where abook_channel = %d and abook_xchan = '%s' and hubloc_deleted = 0 order by abook_created desc limit 1",
                 intval($channel['channel_id']),
                 dbesc($ret['xchan_hash'])
             );
@@ -2213,12 +2205,13 @@ class Activity
             $name = escape_tags(t('Unknown'));
         }
 
+        $webfinger = EMPTY_STR;
         $username = escape_tags($person_obj['preferredUsername']);
         $h = parse_url($url);
         if ($h && $h['host']) {
-            $username .= '@' . $h['host'];
+            $webfinger = $username . '@' . $h['host'];
         }
-
+        
         if ($person_obj['icon']) {
             if (is_array($person_obj['icon'])) {
                 if (array_key_exists('url', $person_obj['icon'])) {
@@ -2274,6 +2267,9 @@ class Activity
             foreach ($links as $link) {
                 if (is_array($link) && array_key_exists('mediaType', $link) && $link['mediaType'] === 'text/html') {
                     $profile = $link['href'];
+                } elseif (is_string($link)) {
+                    $profile = $link;
+                    break;
                 }
             }
             if (!$profile) {
@@ -2374,7 +2370,7 @@ class Activity
                     'xchan_hash' => $url,
                     'xchan_guid' => $url,
                     'xchan_pubkey' => $pubkey,
-                    'xchan_addr' => ((strpos($username, '@')) ? $username : ''),
+                    'xchan_addr' => $webfinger,
                     'xchan_url' => $profile,
                     'xchan_name' => $name,
                     'xchan_hidden' => intval($hidden),
@@ -2413,10 +2409,10 @@ class Activity
                 dbesc($url)
             );
 
-            if (strpos($username, '@') && ($r[0]['xchan_addr'] !== $username)) {
+            if ($webfinger !== $r[0]['xchan_addr']) {
                 $r = q(
                     "update xchan set xchan_addr = '%s' where xchan_hash = '%s'",
-                    dbesc($username),
+                    dbesc($webfinger),
                     dbesc($url)
                 );
             }
@@ -2480,7 +2476,7 @@ class Activity
         }
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' limit 1",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($url)
         );
 
@@ -2497,7 +2493,7 @@ class Activity
                     'hubloc_guid' => $url,
                     'hubloc_hash' => $url,
                     'hubloc_id_url' => $profile,
-                    'hubloc_addr' => ((strpos($username, '@')) ? $username : ''),
+                    'hubloc_addr' => $webfinger,
                     'hubloc_network' => 'activitypub',
                     'hubloc_url' => $baseurl,
                     'hubloc_host' => $hostname,
@@ -2507,10 +2503,10 @@ class Activity
                 ]
             );
         } else {
-            if (strpos($username, '@') && ($h[0]['hubloc_addr'] !== $username)) {
+            if ($webfinger !== $h[0]['hubloc_addr']) {
                 $r = q(
                     "update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
-                    dbesc($username),
+                    dbesc($webfinger),
                     dbesc($url)
                 );
             }
@@ -2545,11 +2541,11 @@ class Activity
 
         if (strpos($url, '/channel/') !== false) {
             $zx = q(
-                "select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad')",
+                "select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0",
                 dbesc($url)
             );
-            if (($username) && strpos($username, '@') && (!$zx)) {
-                Run::Summon(['Gprobe', bin2hex($username)]);
+            if ($webfinger && (!$zx)) {
+                Run::Summon(['Gprobe', $webfinger]);
             }
         }
 
@@ -2619,11 +2615,7 @@ class Activity
     public static function get_actor_bbmention($id)
     {
 
-        $x = q(
-            "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_hash = '%s' or hubloc_id_url = '%s' limit 1",
-            dbesc($id),
-            dbesc($id)
-        );
+        $x = hublocx_id_query($id, 1);
 
         if ($x) {
             // a name starting with a left paren can trick the markdown parser into creating a link so insert a zero-width space
@@ -3689,7 +3681,7 @@ class Activity
             // don't allow pubstream posts if the sender even has a clone on a pubstream denied site
 
             $h = q(
-                "select hubloc_url from hubloc where hubloc_hash = '%s'",
+                "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
                 dbesc($observer_hash)
             );
             if ($h) {
@@ -3852,7 +3844,7 @@ class Activity
                 $item['replyto'] = $item['owner_xchan'];
             }
             else {
-                $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1",
+                $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1 and hubloc_deleted = 0",
                     dbesc($item['owner_xchan'])
                 );
                 if ($r) {
@@ -3934,7 +3926,7 @@ class Activity
     {
 
         $r = q(
-            "select hubloc_hash from hubloc where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+            "select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
             dbesc($xchan)
         );
         if ($r) {
@@ -4242,7 +4234,7 @@ class Activity
     {
 
         $recip = q(
-            "select * from hubloc where hubloc_hash = '%s' limit 1",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($observer_hash)
         );
         if (!$recip) {
@@ -4440,12 +4432,8 @@ class Activity
 
 			if ($act && $act->is_valid()) {
                 $z = Activity::decode_note($act);
-                $r = q(
-                    "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
-                    dbesc(is_array($act->actor) ? $act->actor['id'] : $act->actor),
-                    dbesc(is_array($act->actor) ? $act->actor['id'] : $act->actor)
-                );
-
+                $r = hubloc_id_query((is_array($act->actor)) ? $act->actor['id'] : $act->actor);
+    
                 if ($r) {
                     $r = Libzot::zot_record_preferred($r);
                     if ($z) {

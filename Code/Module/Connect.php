@@ -63,7 +63,7 @@ class Connect extends Controller
             }
             if (!$url) {
                 $r = q(
-                    "select * from hubloc where hubloc_hash = '%s' order by hubloc_id desc limit 1",
+                    "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                     dbesc($observer['xchan_hash'])
                 );
                 if ($r) {

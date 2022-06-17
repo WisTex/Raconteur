@@ -103,17 +103,13 @@ class Dirsearch extends Controller
         }
 
         if ($hub) {
-            $hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
+            $hub_query = " and xchan_hash in (select hubloc_hash from hubloc where hubloc_deleted = 0 and hubloc_host =  '" . protect_sprintf(dbesc($hub)) . "') ";
         } else {
             $hub_query = '';
         }
 
         if ($url) {
-            $r = q(
-                "select xchan_name from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s'",
-                dbesc($url),
-                dbesc($url)
-            );
+            $r = hublocx_id_query($url, 1);
             if ($r && $r[0]['xchan_name']) {
                 $name = $r[0]['xchan_name'];
             }

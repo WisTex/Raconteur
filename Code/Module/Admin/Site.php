@@ -152,7 +152,7 @@ class Site
             intval($sys['channel_id'])
         );
         q(
-            "update xchan set xchan_name = '%s' , xchan_name_updated = '%s' where xchan_hash = '%s'",
+            "update xchan set xchan_name = '%s' , xchan_name_date = '%s' where xchan_hash = '%s'",
             dbesc($sitename),
             dbesc(datetime_convert()),
             dbesc($sys['channel_hash'])

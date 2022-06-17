@@ -1706,7 +1706,7 @@ function conv_sort($arr, $order)
             if ($cnt) {
                 foreach ($matches as $match) {
                     $r = q(
-                        "select hubloc_hash from hubloc where hubloc_id_url = '%s'",
+                        "select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                         dbesc($match[2])
                     );
                     if ($r) {

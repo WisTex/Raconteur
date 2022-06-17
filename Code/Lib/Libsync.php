@@ -955,7 +955,7 @@ class Libsync
             Libzot::check_location_move($sender['hash'], $arr['locations']);
     
             $xisting = q(
-                "select * from hubloc where hubloc_hash = '%s'",
+                "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
                 dbesc($sender['hash'])
             );
 
@@ -1012,7 +1012,7 @@ class Libsync
                 // match as many fields as possible in case anything at all changed.
 
                 $r = q(
-                    "select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
+                    "select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' and hubloc_deleted = 0 ",
                     dbesc($sender['hash']),
                     dbesc($sender['id']),
                     dbesc($sender['id_sig']),
@@ -1256,7 +1256,7 @@ class Libsync
         $channel = $r[0];
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0",
             dbesc($arr['keychange']['old_hash']),
             dbesc(z_root())
         );
