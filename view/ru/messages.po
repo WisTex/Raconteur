@@ -383,7 +383,7 @@ msgstr "Настройки публикаций в Dreamwidth"
 msgid "Submit"
 msgstr "Отправить"
 
-#: ../../extend/addon/hzaddons/mdpost/mdpost.php:40 ../../include/text.php:1886
+#: ../../extend/addon/hzaddons/mdpost/mdpost.php:40 ../../include/misc.php:1886
 #: ../../Code/Widget/Wiki_pages.php:36
 #: ../../Code/Widget/Wiki_pages.php:95 ../../Code/Module/Wiki.php:208
 #: ../../Code/Module/Wiki.php:350
@@ -1727,7 +1727,7 @@ msgstr ""
 #: ../../extend/addon/hzaddons/pubcrawl/as.php:1509
 #: ../../extend/addon/hzaddons/diaspora/Receiver.php:1530
 #: ../../extend/addon/hzaddons/redphotos/redphotohelper.php:71
-#: ../../include/conversation.php:116 ../../include/text.php:2022
+#: ../../include/conversation.php:116 ../../include/misc.php:2022
 #: ../../Code/Module/Subthread.php:111 ../../Code/Module/Tagger.php:69
 #: ../../Code/Module/Like.php:384
 msgid "photo"
@@ -1735,7 +1735,7 @@ msgstr "фото"
 
 #: ../../extend/addon/hzaddons/pubcrawl/as.php:1509
 #: ../../extend/addon/hzaddons/diaspora/Receiver.php:1530
-#: ../../include/conversation.php:144 ../../include/text.php:2028
+#: ../../include/conversation.php:144 ../../include/misc.php:2028
 #: ../../Code/Module/Subthread.php:111 ../../Code/Module/Like.php:384
 msgid "status"
 msgstr "статус"
@@ -3380,7 +3380,7 @@ msgstr "Задания Cron / планировщика не запущены."
 msgid "never"
 msgstr "никогда"
 
-#: ../../view/theme/redbasic/php/config.php:15 ../../include/text.php:3078
+#: ../../view/theme/redbasic/php/config.php:15 ../../include/misc.php:3078
 #: ../../Code/Module/Admin/Site.php:198
 msgid "Default"
 msgstr "По умолчанию"
@@ -3644,7 +3644,7 @@ msgid "Failed authentication"
 msgstr "Ошибка аутентификации"
 
 #: ../../include/conversation.php:119 ../../include/event.php:1153
-#: ../../include/text.php:2025 ../../Code/Module/Events.php:260
+#: ../../include/misc.php:2025 ../../Code/Module/Events.php:260
 #: ../../Code/Module/Tagger.php:73 ../../Code/Module/Like.php:386
 msgid "event"
 msgstr "событие"
@@ -3653,7 +3653,7 @@ msgstr "событие"
 msgid "channel"
 msgstr "канал"
 
-#: ../../include/conversation.php:146 ../../include/text.php:2030
+#: ../../include/conversation.php:146 ../../include/misc.php:2030
 #: ../../Code/Module/Tagger.php:79
 msgid "comment"
 msgstr "комментарий"
@@ -3678,8 +3678,8 @@ msgstr "%1$s теперь в контакте с %2$s"
 msgid "%1$s poked %2$s"
 msgstr "%1$s ткнул %2$s"
 
-#: ../../include/conversation.php:251 ../../include/text.php:1140
-#: ../../include/text.php:1144
+#: ../../include/conversation.php:251 ../../include/misc.php:1140
+#: ../../include/misc.php:1144
 msgid "poked"
 msgstr "ткнут"
 
@@ -4495,7 +4495,7 @@ msgstr "ошибка при записи базы данных."
 msgid "Empty path"
 msgstr "Пустое имя пути"
 
-#: ../../include/feedutils.php:860 ../../include/text.php:1451
+#: ../../include/feedutils.php:860 ../../include/misc.php:1451
 msgid "unknown"
 msgstr "неизвестный"
 
@@ -4675,7 +4675,7 @@ msgid "Help and documentation"
 msgstr "Справочная информация и документация"
 
 #: ../../include/nav.php:185 ../../include/acl_selectors.php:118
-#: ../../include/text.php:1062 ../../include/text.php:1074
+#: ../../include/misc.php:1062 ../../include/misc.php:1074
 #: ../../Code/Lib/Apps.php:322 ../../Code/Widget/Sitesearch.php:31
 #: ../../Code/Widget/Activity_filter.php:148
 #: ../../Code/Module/Connections.php:335 ../../Code/Module/Search.php:44
@@ -4855,7 +4855,7 @@ msgstr "не нравится"
 msgid "OpenWebAuth: %1$s welcomes %2$s"
 msgstr "OpenWebAuth: %1$s приветствует %2$s"
 
-#: ../../include/language.php:397 ../../include/text.php:1866
+#: ../../include/language.php:397 ../../include/misc.php:1866
 msgid "default"
 msgstr "по умолчанию"
 
@@ -5062,414 +5062,414 @@ msgstr "С Днем рождения %1$s !"
 msgid "Cannot locate DNS info for database server '%s'"
 msgstr "Не удается найти DNS информацию для сервера базы данных '%s'"
 
-#: ../../include/text.php:492
+#: ../../include/misc.php:492
 msgid "prev"
 msgstr "предыдущий"
 
-#: ../../include/text.php:494
+#: ../../include/misc.php:494
 msgid "first"
 msgstr "первый"
 
-#: ../../include/text.php:523
+#: ../../include/misc.php:523
 msgid "last"
 msgstr "последний"
 
-#: ../../include/text.php:526
+#: ../../include/misc.php:526
 msgid "next"
 msgstr "следующий"
 
-#: ../../include/text.php:537
+#: ../../include/misc.php:537
 msgid "older"
 msgstr "старше"
 
-#: ../../include/text.php:539
+#: ../../include/misc.php:539
 msgid "newer"
 msgstr "новее"
 
-#: ../../include/text.php:963
+#: ../../include/misc.php:963
 msgid "No connections"
 msgstr "Нет контактов"
 
-#: ../../include/text.php:975 ../../Code/Lib/Apps.php:302
+#: ../../include/misc.php:975 ../../Code/Lib/Apps.php:302
 #: ../../Code/Module/Connections.php:331
 msgid "Connections"
 msgstr "Контакты"
 
-#: ../../include/text.php:995
+#: ../../include/misc.php:995
 #, php-format
 msgid "View all %s connections"
 msgstr "Просмотреть все %s контактов"
 
-#: ../../include/text.php:1051
+#: ../../include/misc.php:1051
 #, php-format
 msgid "Network: %s"
 msgstr "Сеть: %s"
 
-#: ../../include/text.php:1063 ../../include/text.php:1075
+#: ../../include/misc.php:1063 ../../include/misc.php:1075
 #: ../../Code/Widget/Notes.php:18 ../../Code/Module/Rbmark.php:32
 #: ../../Code/Module/Rbmark.php:104 ../../Code/Module/Admin/Profs.php:94
 #: ../../Code/Module/Admin/Profs.php:114 ../../Code/Module/Filer.php:53
 msgid "Save"
 msgstr "Запомнить"
 
-#: ../../include/text.php:1140 ../../include/text.php:1144
+#: ../../include/misc.php:1140 ../../include/misc.php:1144
 msgid "poke"
 msgstr "Ткнуть"
 
-#: ../../include/text.php:1145
+#: ../../include/misc.php:1145
 msgid "ping"
 msgstr "Пингануть"
 
-#: ../../include/text.php:1145
+#: ../../include/misc.php:1145
 msgid "pinged"
 msgstr "Отпингован"
 
-#: ../../include/text.php:1146
+#: ../../include/misc.php:1146
 msgid "prod"
 msgstr "Подтолкнуть"
 
-#: ../../include/text.php:1146
+#: ../../include/misc.php:1146
 msgid "prodded"
 msgstr "Подтолкнут"
 
-#: ../../include/text.php:1147
+#: ../../include/misc.php:1147
 msgid "slap"
 msgstr "Шлёпнуть"
 
-#: ../../include/text.php:1147
+#: ../../include/misc.php:1147
 msgid "slapped"
 msgstr "Шлёпнут"
 
-#: ../../include/text.php:1148
+#: ../../include/misc.php:1148
 msgid "finger"
 msgstr "Указать"
 
-#: ../../include/text.php:1148
+#: ../../include/misc.php:1148
 msgid "fingered"
 msgstr "Указан"
 
-#: ../../include/text.php:1149
+#: ../../include/misc.php:1149
 msgid "rebuff"
 msgstr "Дать отпор"
 
-#: ../../include/text.php:1149
+#: ../../include/misc.php:1149
 msgid "rebuffed"
 msgstr "Дан отпор"
 
-#: ../../include/text.php:1172
+#: ../../include/misc.php:1172
 msgid "happy"
 msgstr "счастливый"
 
-#: ../../include/text.php:1173
+#: ../../include/misc.php:1173
 msgid "sad"
 msgstr "грустный"
 
-#: ../../include/text.php:1174
+#: ../../include/misc.php:1174
 msgid "mellow"
 msgstr "спокойный"
 
-#: ../../include/text.php:1175
+#: ../../include/misc.php:1175
 msgid "tired"
 msgstr "усталый"
 
-#: ../../include/text.php:1176
+#: ../../include/misc.php:1176
 msgid "perky"
 msgstr "весёлый"
 
-#: ../../include/text.php:1177
+#: ../../include/misc.php:1177
 msgid "angry"
 msgstr "сердитый"
 
-#: ../../include/text.php:1178
+#: ../../include/misc.php:1178
 msgid "stupefied"
 msgstr "отупевший"
 
-#: ../../include/text.php:1179
+#: ../../include/misc.php:1179
 msgid "puzzled"
 msgstr "недоумевающий"
 
-#: ../../include/text.php:1180
+#: ../../include/misc.php:1180
 msgid "interested"
 msgstr "заинтересованный"
 
-#: ../../include/text.php:1181
+#: ../../include/misc.php:1181
 msgid "bitter"
 msgstr "едкий"
 
-#: ../../include/text.php:1182
+#: ../../include/misc.php:1182
 msgid "cheerful"
 msgstr "бодрый"
 
-#: ../../include/text.php:1183
+#: ../../include/misc.php:1183
 msgid "alive"
 msgstr "энергичный"
 
-#: ../../include/text.php:1184
+#: ../../include/misc.php:1184
 msgid "annoyed"
 msgstr "раздражённый"
 
-#: ../../include/text.php:1185
+#: ../../include/misc.php:1185
 msgid "anxious"
 msgstr "обеспокоенный"
 
-#: ../../include/text.php:1186
+#: ../../include/misc.php:1186
 msgid "cranky"
 msgstr "капризный"
 
-#: ../../include/text.php:1187
+#: ../../include/misc.php:1187
 msgid "disturbed"
 msgstr "встревоженный"
 
-#: ../../include/text.php:1188
+#: ../../include/misc.php:1188
 msgid "frustrated"
 msgstr "разочарованный"
 
-#: ../../include/text.php:1189
+#: ../../include/misc.php:1189
 msgid "depressed"
 msgstr "подавленный"
 
-#: ../../include/text.php:1190
+#: ../../include/misc.php:1190
 msgid "motivated"
 msgstr "мотивированный"
 
-#: ../../include/text.php:1191
+#: ../../include/misc.php:1191
 msgid "relaxed"
 msgstr "расслабленный"
 
-#: ../../include/text.php:1192
+#: ../../include/misc.php:1192
 msgid "surprised"
 msgstr "удивленный"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:86
+#: ../../include/misc.php:1371 ../../include/js_strings.php:86
 msgid "Monday"
 msgstr "Понедельник"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:87
+#: ../../include/misc.php:1371 ../../include/js_strings.php:87
 msgid "Tuesday"
 msgstr "Вторник"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:88
+#: ../../include/misc.php:1371 ../../include/js_strings.php:88
 msgid "Wednesday"
 msgstr "Среда"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:89
+#: ../../include/misc.php:1371 ../../include/js_strings.php:89
 msgid "Thursday"
 msgstr "Четверг"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:90
+#: ../../include/misc.php:1371 ../../include/js_strings.php:90
 msgid "Friday"
 msgstr "Пятница"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:91
+#: ../../include/misc.php:1371 ../../include/js_strings.php:91
 msgid "Saturday"
 msgstr "Суббота"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:85
+#: ../../include/misc.php:1371 ../../include/js_strings.php:85
 msgid "Sunday"
 msgstr "Воскресенье"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:61
+#: ../../include/misc.php:1375 ../../include/js_strings.php:61
 msgid "January"
 msgstr "Январь"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:62
+#: ../../include/misc.php:1375 ../../include/js_strings.php:62
 msgid "February"
 msgstr "Февраль"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:63
+#: ../../include/misc.php:1375 ../../include/js_strings.php:63
 msgid "March"
 msgstr "Март"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:64
+#: ../../include/misc.php:1375 ../../include/js_strings.php:64
 msgid "April"
 msgstr "Апрель"
 
-#: ../../include/text.php:1375
+#: ../../include/misc.php:1375
 msgid "May"
 msgstr "Май"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:66
+#: ../../include/misc.php:1375 ../../include/js_strings.php:66
 msgid "June"
 msgstr "Июнь"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:67
+#: ../../include/misc.php:1375 ../../include/js_strings.php:67
 msgid "July"
 msgstr "Июль"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:68
+#: ../../include/misc.php:1375 ../../include/js_strings.php:68
 msgid "August"
 msgstr "Август"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:69
+#: ../../include/misc.php:1375 ../../include/js_strings.php:69
 msgid "September"
 msgstr "Сентябрь"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:70
+#: ../../include/misc.php:1375 ../../include/js_strings.php:70
 msgid "October"
 msgstr "Октябрь"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:71
+#: ../../include/misc.php:1375 ../../include/js_strings.php:71
 msgid "November"
 msgstr "Ноябрь"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:72
+#: ../../include/misc.php:1375 ../../include/js_strings.php:72
 msgid "December"
 msgstr "Декабрь"
 
-#: ../../include/text.php:1449
+#: ../../include/misc.php:1449
 msgid "Unknown Attachment"
 msgstr "Неизвестное вложение"
 
-#: ../../include/text.php:1451 ../../Code/Module/Sharedwithme.php:107
+#: ../../include/misc.php:1451 ../../Code/Module/Sharedwithme.php:107
 #: ../../Code/Storage/Browser.php:287
 msgid "Size"
 msgstr "Размер"
 
-#: ../../include/text.php:1487
+#: ../../include/misc.php:1487
 msgid "remove category"
 msgstr "удалить категорию"
 
-#: ../../include/text.php:1561
+#: ../../include/misc.php:1561
 msgid "remove from file"
 msgstr "удалить из файла"
 
-#: ../../include/text.php:1703 ../../include/message.php:12
+#: ../../include/misc.php:1703 ../../include/message.php:12
 msgid "Download binary/encrypted content"
 msgstr "Загрузить двоичное / зашифрованное содержимое"
 
-#: ../../include/text.php:1844 ../../Code/Module/Events.php:660
+#: ../../include/misc.php:1844 ../../Code/Module/Events.php:660
 #: ../../Code/Module/Cal.php:315
 msgid "Link to Source"
 msgstr "Ссылка на источник"
 
-#: ../../include/text.php:1874
+#: ../../include/misc.php:1874
 msgid "Page layout"
 msgstr "Шаблон страницы"
 
-#: ../../include/text.php:1874
+#: ../../include/misc.php:1874
 msgid "You can create your own with the layouts tool"
 msgstr "Вы можете создать свой собственный с помощью инструмента шаблонов"
 
-#: ../../include/text.php:1884 ../../Code/Widget/Wiki_pages.php:36
+#: ../../include/misc.php:1884 ../../Code/Widget/Wiki_pages.php:36
 #: ../../Code/Widget/Wiki_pages.php:95 ../../Code/Module/Wiki.php:208
 #: ../../Code/Module/Wiki.php:350
 msgid "BBcode"
 msgstr ""
 
-#: ../../include/text.php:1885
+#: ../../include/misc.php:1885
 msgid "HTML"
 msgstr ""
 
-#: ../../include/text.php:1887 ../../Code/Widget/Wiki_pages.php:36
+#: ../../include/misc.php:1887 ../../Code/Widget/Wiki_pages.php:36
 #: ../../Code/Widget/Wiki_pages.php:95 ../../Code/Module/Wiki.php:208
 msgid "Text"
 msgstr "Текст"
 
-#: ../../include/text.php:1888
+#: ../../include/misc.php:1888
 msgid "Comanche Layout"
 msgstr "Шаблон Comanche"
 
-#: ../../include/text.php:1893
+#: ../../include/misc.php:1893
 msgid "PHP"
 msgstr ""
 
-#: ../../include/text.php:1902
+#: ../../include/misc.php:1902
 msgid "Page content type"
 msgstr "Тип содержимого страницы"
 
-#: ../../include/text.php:2035
+#: ../../include/misc.php:2035
 msgid "activity"
 msgstr "активность"
 
-#: ../../include/text.php:2135
+#: ../../include/misc.php:2135
 msgid "a-z, 0-9, -, and _ only"
 msgstr "Только a-z, 0-9, -, и _"
 
-#: ../../include/text.php:2455
+#: ../../include/misc.php:2455
 msgid "Design Tools"
 msgstr "Инструменты дизайна"
 
-#: ../../include/text.php:2458 ../../Code/Module/Blocks.php:154
+#: ../../include/misc.php:2458 ../../Code/Module/Blocks.php:154
 msgid "Blocks"
 msgstr "Блокировки"
 
-#: ../../include/text.php:2459 ../../Code/Module/Menu.php:170
+#: ../../include/misc.php:2459 ../../Code/Module/Menu.php:170
 msgid "Menus"
 msgstr "Меню"
 
-#: ../../include/text.php:2460 ../../Code/Module/Layouts.php:184
+#: ../../include/misc.php:2460 ../../Code/Module/Layouts.php:184
 msgid "Layouts"
 msgstr "Шаблоны"
 
-#: ../../include/text.php:2461
+#: ../../include/misc.php:2461
 msgid "Pages"
 msgstr "Страницы"
 
-#: ../../include/text.php:2482 ../../Code/Module/Cal.php:344
+#: ../../include/misc.php:2482 ../../Code/Module/Cal.php:344
 msgid "Import"
 msgstr "Импортировать"
 
-#: ../../include/text.php:2483
+#: ../../include/misc.php:2483
 msgid "Import website..."
 msgstr "Импорт веб-сайта..."
 
-#: ../../include/text.php:2484
+#: ../../include/misc.php:2484
 msgid "Select folder to import"
 msgstr "Выбрать каталог для импорта"
 
-#: ../../include/text.php:2485
+#: ../../include/misc.php:2485
 msgid "Import from a zipped folder:"
 msgstr "Импортировать из каталога в zip-архиве:"
 
-#: ../../include/text.php:2486
+#: ../../include/misc.php:2486
 msgid "Import from cloud files:"
 msgstr "Импортировать из сетевых файлов:"
 
-#: ../../include/text.php:2487
+#: ../../include/misc.php:2487
 msgid "/cloud/channel/path/to/folder"
 msgstr ""
 
-#: ../../include/text.php:2488
+#: ../../include/misc.php:2488
 msgid "Enter path to website files"
 msgstr "Введите путь к файлам веб-сайта"
 
-#: ../../include/text.php:2489
+#: ../../include/misc.php:2489
 msgid "Select folder"
 msgstr "Выбрать каталог"
 
-#: ../../include/text.php:2490
+#: ../../include/misc.php:2490
 msgid "Export website..."
 msgstr "Экспорт веб-сайта..."
 
-#: ../../include/text.php:2491
+#: ../../include/misc.php:2491
 msgid "Export to a zip file"
 msgstr "Экспортировать в ZIP файл."
 
-#: ../../include/text.php:2492
+#: ../../include/misc.php:2492
 msgid "website.zip"
 msgstr ""
 
-#: ../../include/text.php:2493
+#: ../../include/misc.php:2493
 msgid "Enter a name for the zip file."
 msgstr "Введите имя для ZIP файла."
 
-#: ../../include/text.php:2494
+#: ../../include/misc.php:2494
 msgid "Export to cloud files"
 msgstr "Эскпортировать в сетевые файлы:"
 
-#: ../../include/text.php:2495
+#: ../../include/misc.php:2495
 msgid "/path/to/export/folder"
 msgstr ""
 
-#: ../../include/text.php:2496
+#: ../../include/misc.php:2496
 msgid "Enter a path to a cloud files destination."
 msgstr "Введите путь к расположению сетевых файлов."
 
-#: ../../include/text.php:2497
+#: ../../include/misc.php:2497
 msgid "Specify folder"
 msgstr "Указать каталог"
 
-#: ../../include/text.php:2817 ../../Code/Storage/Browser.php:131
+#: ../../include/misc.php:2817 ../../Code/Storage/Browser.php:131
 msgid "Collection"
 msgstr "Коллекция"
 

@@ -10,11 +10,7 @@ use Code\Lib\Apps;
 use Code\Daemon\Run;
 
 require_once('include/conversation.php');
-require_once('include/bbcode.php');
-require_once('include/datetime.php');
 require_once('include/event.php');
-require_once('include/items.php');
-require_once('include/text.php');
 require_once('include/html2plain.php');
 require_once('include/security.php');
 

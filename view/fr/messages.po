@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: Lokalize 2.0\n"
 
 #: ../../view/theme/redbasic/php/config.php:15
-#: ../../Code/Module/Admin/Site.php:189 ../../include/text.php:3246
+#: ../../Code/Module/Admin/Site.php:189 ../../include/misc.php:3246
 msgid "Default"
 msgstr "Défaut"
 
@@ -657,7 +657,7 @@ msgstr "dossier parent"
 
 #: ../../Code/Storage/Browser.php:141 ../../Code/Module/Manage.php:73
 #: ../../Code/Module/Manage.php:170 ../../Code/Module/Directory.php:375
-#: ../../Code/Access/PermissionRoles.php:187 ../../include/text.php:2976
+#: ../../Code/Access/PermissionRoles.php:187 ../../include/misc.php:2976
 msgid "Collection"
 msgstr "Collection"
 
@@ -743,7 +743,7 @@ msgid "Type"
 msgstr "Type"
 
 #: ../../Code/Storage/Browser.php:304
-#: ../../Code/Module/Sharedwithme.php:106 ../../include/text.php:1396
+#: ../../Code/Module/Sharedwithme.php:106 ../../include/misc.php:1396
 msgid "Size"
 msgstr "Taille"
 
@@ -1253,7 +1253,7 @@ msgstr "Sources du canal"
 #: ../../Code/Widget/Sitesearch.php:31
 #: ../../Code/Module/Connections.php:373 ../../Code/Module/Search.php:47
 #: ../../Code/Lib/Apps.php:354 ../../include/nav.php:174
-#: ../../include/text.php:974 ../../include/text.php:986
+#: ../../include/misc.php:974 ../../include/misc.php:986
 #: ../../include/acl_selectors.php:133
 msgid "Search"
 msgstr "Recherche"
@@ -1672,8 +1672,8 @@ msgstr "Notes"
 
 #: ../../Code/Widget/Notes.php:22 ../../Code/Module/Admin/Profs.php:94
 #: ../../Code/Module/Admin/Profs.php:114 ../../Code/Module/Filer.php:51
-#: ../../Code/Lib/ThreadItem.php:249 ../../include/text.php:975
-#: ../../include/text.php:987
+#: ../../Code/Lib/ThreadItem.php:249 ../../include/misc.php:975
+#: ../../include/misc.php:987
 msgid "Save"
 msgstr "Enregistrer"
 
@@ -3017,37 +3017,37 @@ msgstr "La semaine calendaire débute le"
 msgid "This varies by country/culture"
 msgstr "Ceci est en fonction du pays ou de la culture"
 
-#: ../../Code/Module/Settings/Channel.php:712 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:712 ../../include/misc.php:1307
 #: ../../include/js_strings.php:88
 msgid "Sunday"
 msgstr "Dimanche"
 
-#: ../../Code/Module/Settings/Channel.php:713 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:713 ../../include/misc.php:1307
 #: ../../include/js_strings.php:89
 msgid "Monday"
 msgstr "Lundi"
 
-#: ../../Code/Module/Settings/Channel.php:714 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:714 ../../include/misc.php:1307
 #: ../../include/js_strings.php:90
 msgid "Tuesday"
 msgstr "Mardi"
 
-#: ../../Code/Module/Settings/Channel.php:715 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:715 ../../include/misc.php:1307
 #: ../../include/js_strings.php:91
 msgid "Wednesday"
 msgstr "Mercredi"
 
-#: ../../Code/Module/Settings/Channel.php:716 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:716 ../../include/misc.php:1307
 #: ../../include/js_strings.php:92
 msgid "Thursday"
 msgstr "Jeudi"
 
-#: ../../Code/Module/Settings/Channel.php:717 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:717 ../../include/misc.php:1307
 #: ../../include/js_strings.php:93
 msgid "Friday"
 msgstr "Vendredi"
 
-#: ../../Code/Module/Settings/Channel.php:718 ../../include/text.php:1307
+#: ../../Code/Module/Settings/Channel.php:718 ../../include/misc.php:1307
 #: ../../include/js_strings.php:94
 msgid "Saturday"
 msgstr "Samedi"
@@ -3082,7 +3082,7 @@ msgstr "Événement introuvable."
 #: ../../Code/Module/Events.php:284 ../../Code/Module/Like.php:350
 #: ../../Code/Module/Tagger.php:75 ../../Code/Module/Calendar.php:252
 #: ../../include/event.php:1209 ../../include/conversation.php:123
-#: ../../include/text.php:2111
+#: ../../include/misc.php:2111
 msgid "event"
 msgstr "événement"
 
@@ -3228,7 +3228,7 @@ msgid "Delete event"
 msgstr "Supprimer l'événement"
 
 #: ../../Code/Module/Events.php:699 ../../Code/Module/Cal.php:320
-#: ../../include/text.php:1934
+#: ../../include/misc.php:1934
 msgid "Link to Source"
 msgstr "Lien vers la Source"
 
@@ -3963,12 +3963,12 @@ msgstr "Accès refusé"
 
 #: ../../Code/Module/Like.php:348 ../../Code/Module/Subthread.php:112
 #: ../../Code/Module/Tagger.php:71 ../../include/conversation.php:120
-#: ../../include/text.php:2108
+#: ../../include/misc.php:2108
 msgid "photo"
 msgstr "photo"
 
 #: ../../Code/Module/Like.php:348 ../../Code/Module/Subthread.php:112
-#: ../../include/text.php:2114
+#: ../../include/misc.php:2114
 msgid "status"
 msgstr "état"
 
@@ -4575,7 +4575,7 @@ msgstr "Le menu pourra être utilisé pour stocker des marque-pages"
 msgid "Submit and proceed"
 msgstr "Valider et continuer"
 
-#: ../../Code/Module/Menu.php:173 ../../include/text.php:2556
+#: ../../Code/Module/Menu.php:173 ../../include/misc.php:2556
 msgid "Menus"
 msgstr "Menus"
 
@@ -6252,7 +6252,7 @@ msgstr "Paramètres du filtre de contenus"
 msgid "Permissions denied."
 msgstr "Accès refusé."
 
-#: ../../Code/Module/Cal.php:349 ../../include/text.php:2579
+#: ../../Code/Module/Cal.php:349 ../../include/misc.php:2579
 msgid "Import"
 msgstr "Importer"
 
@@ -7950,7 +7950,7 @@ msgid "post"
 msgstr "publication"
 
 #: ../../Code/Module/Tagger.php:81 ../../include/conversation.php:153
-#: ../../include/text.php:2116
+#: ../../include/misc.php:2116
 msgid "comment"
 msgstr "commentaire"
 
@@ -8851,7 +8851,7 @@ msgstr "Veuillez rafraîchir la page"
 msgid "Unknown error"
 msgstr "Erreur inconnue"
 
-#: ../../Code/Module/Blocks.php:158 ../../include/text.php:2555
+#: ../../Code/Module/Blocks.php:158 ../../include/misc.php:2555
 msgid "Blocks"
 msgstr "Blocs"
 
@@ -9045,7 +9045,7 @@ msgstr "Source supprimée"
 msgid "Unable to remove source."
 msgstr "Impossible de supprimer la source."
 
-#: ../../Code/Module/Layouts.php:190 ../../include/text.php:2557
+#: ../../Code/Module/Layouts.php:190 ../../include/misc.php:2557
 msgid "Layouts"
 msgstr "Mises-en-page"
 
@@ -10029,7 +10029,7 @@ msgstr "Participera peut-être à l'évènement de %s"
 msgid "May not attend %s's event"
 msgstr "Ne participera peut-être pas à l'évènement de %s"
 
-#: ../../Code/Lib/Activity.php:2656 ../../include/text.php:2842
+#: ../../Code/Lib/Activity.php:2656 ../../include/misc.php:2842
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr "%1$s (%2$s)"
@@ -11303,7 +11303,7 @@ msgstr "Voir les pages web"
 msgid "Wikis"
 msgstr "Wikis"
 
-#: ../../include/language.php:396 ../../include/text.php:1952
+#: ../../include/language.php:396 ../../include/misc.php:1952
 msgid "default"
 msgstr "défaut"
 
@@ -11567,8 +11567,8 @@ msgstr "%1$s est maintenant en connexion avec %2$s"
 msgid "%1$s poked %2$s"
 msgstr "%1$s a fait signe à %2$s"
 
-#: ../../include/conversation.php:267 ../../include/text.php:1076
-#: ../../include/text.php:1080
+#: ../../include/conversation.php:267 ../../include/misc.php:1076
+#: ../../include/misc.php:1080
 msgid "poked"
 msgstr "a fait signe à"
 
@@ -12074,356 +12074,356 @@ msgstr "Contenu imbriqué"
 msgid "Embedding disabled"
 msgstr "Imbrication désactivée"
 
-#: ../../include/text.php:497
+#: ../../include/misc.php:497
 msgid "prev"
 msgstr "préc."
 
-#: ../../include/text.php:499
+#: ../../include/misc.php:499
 msgid "first"
 msgstr "premier"
 
-#: ../../include/text.php:528
+#: ../../include/misc.php:528
 msgid "last"
 msgstr "dernier"
 
-#: ../../include/text.php:531
+#: ../../include/misc.php:531
 msgid "next"
 msgstr "suivant"
 
-#: ../../include/text.php:542
+#: ../../include/misc.php:542
 msgid "older"
 msgstr "plus ancien"
 
-#: ../../include/text.php:544
+#: ../../include/misc.php:544
 msgid "newer"
 msgstr "plus récent"
 
-#: ../../include/text.php:1076 ../../include/text.php:1080
+#: ../../include/misc.php:1076 ../../include/misc.php:1080
 msgid "poke"
 msgstr "faire signe"
 
-#: ../../include/text.php:1081
+#: ../../include/misc.php:1081
 msgid "ping"
 msgstr "ping"
 
-#: ../../include/text.php:1081
+#: ../../include/misc.php:1081
 msgid "pinged"
 msgstr "pingé"
 
-#: ../../include/text.php:1082
+#: ../../include/misc.php:1082
 msgid "prod"
 msgstr "encourager"
 
-#: ../../include/text.php:1082
+#: ../../include/misc.php:1082
 msgid "prodded"
 msgstr "a encouragé"
 
-#: ../../include/text.php:1083
+#: ../../include/misc.php:1083
 msgid "slap"
 msgstr "gifler"
 
-#: ../../include/text.php:1083
+#: ../../include/misc.php:1083
 msgid "slapped"
 msgstr "a giflé"
 
-#: ../../include/text.php:1084
+#: ../../include/misc.php:1084
 msgid "finger"
 msgstr "faire un doigt d'honneur"
 
-#: ../../include/text.php:1084
+#: ../../include/misc.php:1084
 msgid "fingered"
 msgstr "a fait un doigt d'honneur à"
 
-#: ../../include/text.php:1085
+#: ../../include/misc.php:1085
 msgid "rebuff"
 msgstr "rejetter"
 
-#: ../../include/text.php:1085
+#: ../../include/misc.php:1085
 msgid "rebuffed"
 msgstr "a rejeté"
 
-#: ../../include/text.php:1108
+#: ../../include/misc.php:1108
 msgid "happy"
 msgstr "heureux"
 
-#: ../../include/text.php:1109
+#: ../../include/misc.php:1109
 msgid "sad"
 msgstr "triste"
 
-#: ../../include/text.php:1110
+#: ../../include/misc.php:1110
 msgid "mellow"
 msgstr "mélancolique"
 
-#: ../../include/text.php:1111
+#: ../../include/misc.php:1111
 msgid "tired"
 msgstr "fatigué"
 
-#: ../../include/text.php:1112
+#: ../../include/misc.php:1112
 msgid "perky"
 msgstr "impertinent"
 
-#: ../../include/text.php:1113
+#: ../../include/misc.php:1113
 msgid "angry"
 msgstr "en colère"
 
-#: ../../include/text.php:1114
+#: ../../include/misc.php:1114
 msgid "stupefied"
 msgstr "stupéfait"
 
-#: ../../include/text.php:1115
+#: ../../include/misc.php:1115
 msgid "puzzled"
 msgstr "perplexe"
 
-#: ../../include/text.php:1116
+#: ../../include/misc.php:1116
 msgid "interested"
 msgstr "intéressé"
 
-#: ../../include/text.php:1117
+#: ../../include/misc.php:1117
 msgid "bitter"
 msgstr "amer"
 
-#: ../../include/text.php:1118
+#: ../../include/misc.php:1118
 msgid "cheerful"
 msgstr "plein d'entrain"
 
-#: ../../include/text.php:1119
+#: ../../include/misc.php:1119
 msgid "alive"
 msgstr "vivant"
 
-#: ../../include/text.php:1120
+#: ../../include/misc.php:1120
 msgid "annoyed"
 msgstr "agaçé"
 
-#: ../../include/text.php:1121
+#: ../../include/misc.php:1121
 msgid "anxious"
 msgstr "anxieux"
 
-#: ../../include/text.php:1122
+#: ../../include/misc.php:1122
 msgid "cranky"
 msgstr "énervé"
 
-#: ../../include/text.php:1123
+#: ../../include/misc.php:1123
 msgid "disturbed"
 msgstr "perturbé"
 
-#: ../../include/text.php:1124
+#: ../../include/misc.php:1124
 msgid "frustrated"
 msgstr "frustré"
 
-#: ../../include/text.php:1125
+#: ../../include/misc.php:1125
 msgid "depressed"
 msgstr "déprimé"
 
-#: ../../include/text.php:1126
+#: ../../include/misc.php:1126
 msgid "motivated"
 msgstr "motivé"
 
-#: ../../include/text.php:1127
+#: ../../include/misc.php:1127
 msgid "relaxed"
 msgstr "détendu"
 
-#: ../../include/text.php:1128
+#: ../../include/misc.php:1128
 msgid "surprised"
 msgstr "surpris"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:64
+#: ../../include/misc.php:1311 ../../include/js_strings.php:64
 msgid "January"
 msgstr "Janvier"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:65
+#: ../../include/misc.php:1311 ../../include/js_strings.php:65
 msgid "February"
 msgstr "Février"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:66
+#: ../../include/misc.php:1311 ../../include/js_strings.php:66
 msgid "March"
 msgstr "Mars"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:67
+#: ../../include/misc.php:1311 ../../include/js_strings.php:67
 msgid "April"
 msgstr "Avril"
 
-#: ../../include/text.php:1311
+#: ../../include/misc.php:1311
 msgid "May"
 msgstr "Mai"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:69
+#: ../../include/misc.php:1311 ../../include/js_strings.php:69
 msgid "June"
 msgstr "Juin"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:70
+#: ../../include/misc.php:1311 ../../include/js_strings.php:70
 msgid "July"
 msgstr "Juillet"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:71
+#: ../../include/misc.php:1311 ../../include/js_strings.php:71
 msgid "August"
 msgstr "Août"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:72
+#: ../../include/misc.php:1311 ../../include/js_strings.php:72
 msgid "September"
 msgstr "Septembre"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:73
+#: ../../include/misc.php:1311 ../../include/js_strings.php:73
 msgid "October"
 msgstr "Octobre"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:74
+#: ../../include/misc.php:1311 ../../include/js_strings.php:74
 msgid "November"
 msgstr "Novembre"
 
-#: ../../include/text.php:1311 ../../include/js_strings.php:75
+#: ../../include/misc.php:1311 ../../include/js_strings.php:75
 msgid "December"
 msgstr "Décembre"
 
-#: ../../include/text.php:1393
+#: ../../include/misc.php:1393
 msgid "Unknown Attachment"
 msgstr "Pièce jointe inconnue"
 
-#: ../../include/text.php:1396
+#: ../../include/misc.php:1396
 msgid "unknown"
 msgstr "inconnu"
 
-#: ../../include/text.php:1436
+#: ../../include/misc.php:1436
 msgid "remove category"
 msgstr "supprimer la catégorie"
 
-#: ../../include/text.php:1510
+#: ../../include/misc.php:1510
 msgid "remove from file"
 msgstr "retirer du fichier"
 
-#: ../../include/text.php:1650
+#: ../../include/misc.php:1650
 msgid "Added to your calendar"
 msgstr "Ajouté à votre agenda"
 
-#: ../../include/text.php:1730
+#: ../../include/misc.php:1730
 msgid "Link"
 msgstr "Lien"
 
-#: ../../include/text.php:1816
+#: ../../include/misc.php:1816
 msgid "Poll has ended."
 msgstr "Le sondage est terminé"
 
-#: ../../include/text.php:1819
+#: ../../include/misc.php:1819
 #, php-format
 msgid "Poll ends: %s"
 msgstr "Fin du sondage&nbsp;: %s"
 
-#: ../../include/text.php:1824
+#: ../../include/misc.php:1824
 msgid "vote"
 msgstr "voter"
 
-#: ../../include/text.php:1836
+#: ../../include/misc.php:1836
 msgid "Download binary/encrypted content"
 msgstr "Télécharger le contenu binaire/chiffré"
 
-#: ../../include/text.php:1960
+#: ../../include/misc.php:1960
 msgid "Page layout"
 msgstr "Mise en page"
 
-#: ../../include/text.php:1960
+#: ../../include/misc.php:1960
 msgid "You can create your own with the layouts tool"
 msgstr "Créez les vôtres avec les outils de mise en page"
 
-#: ../../include/text.php:1970
+#: ../../include/misc.php:1970
 msgid "BBcode"
 msgstr "BBcode"
 
-#: ../../include/text.php:1971
+#: ../../include/misc.php:1971
 msgid "HTML"
 msgstr "HTML"
 
-#: ../../include/text.php:1972
+#: ../../include/misc.php:1972
 msgid "Markdown"
 msgstr "Markdown"
 
-#: ../../include/text.php:1973
+#: ../../include/misc.php:1973
 msgid "Text"
 msgstr "Texte"
 
-#: ../../include/text.php:1974
+#: ../../include/misc.php:1974
 msgid "Comanche Layout"
 msgstr "mise en page Comanche"
 
-#: ../../include/text.php:1979
+#: ../../include/misc.php:1979
 msgid "PHP"
 msgstr "PHP"
 
-#: ../../include/text.php:1988
+#: ../../include/misc.php:1988
 msgid "Page content type"
 msgstr "Type de contenu de la page"
 
-#: ../../include/text.php:2121
+#: ../../include/misc.php:2121
 msgid "activity"
 msgstr "activité"
 
-#: ../../include/text.php:2225
+#: ../../include/misc.php:2225
 msgid "a-z, 0-9, -, and _ only"
 msgstr "a-z, 0-9, -, -, et _ seulement"
 
-#: ../../include/text.php:2552
+#: ../../include/misc.php:2552
 msgid "Design Tools"
 msgstr "Outils de conception"
 
-#: ../../include/text.php:2558
+#: ../../include/misc.php:2558
 msgid "Pages"
 msgstr "Pages"
 
-#: ../../include/text.php:2580
+#: ../../include/misc.php:2580
 msgid "Import website..."
 msgstr "Importer le site web…"
 
-#: ../../include/text.php:2581
+#: ../../include/misc.php:2581
 msgid "Select folder to import"
 msgstr "Sélectionner le dossier à importer"
 
-#: ../../include/text.php:2582
+#: ../../include/misc.php:2582
 msgid "Import from a zipped folder:"
 msgstr "Importer à partir d'un dossier zippé&nbsp;"
 
-#: ../../include/text.php:2583
+#: ../../include/misc.php:2583
 msgid "Import from cloud files:"
 msgstr "Importer à partir de fichiers dans le cloud&nbsp;:"
 
-#: ../../include/text.php:2584
+#: ../../include/misc.php:2584
 msgid "/cloud/channel/path/to/folder"
 msgstr "/cloud/canal/chemin/du/repertoire"
 
-#: ../../include/text.php:2585
+#: ../../include/misc.php:2585
 msgid "Enter path to website files"
 msgstr "Entrer le chemin vers les fichiers du site web"
 
-#: ../../include/text.php:2586
+#: ../../include/misc.php:2586
 msgid "Select folder"
 msgstr "Sélectionner un répertoire"
 
-#: ../../include/text.php:2587
+#: ../../include/misc.php:2587
 msgid "Export website..."
 msgstr "Exporter le site web…"
 
-#: ../../include/text.php:2588
+#: ../../include/misc.php:2588
 msgid "Export to a zip file"
 msgstr "Exporter dans un fichier zip"
 
-#: ../../include/text.php:2589
+#: ../../include/misc.php:2589
 msgid "website.zip"
 msgstr "website.zip"
 
-#: ../../include/text.php:2590
+#: ../../include/misc.php:2590
 msgid "Enter a name for the zip file."
 msgstr "Entrer un nom pour le fichier zip."
 
-#: ../../include/text.php:2591
+#: ../../include/misc.php:2591
 msgid "Export to cloud files"
 msgstr "Exporter dans des fichiers sur le cloud"
 
-#: ../../include/text.php:2592
+#: ../../include/misc.php:2592
 msgid "/path/to/export/folder"
 msgstr "/chemin/vers/le/dossier/d'export"
 
-#: ../../include/text.php:2593
+#: ../../include/misc.php:2593
 msgid "Enter a path to a cloud files destination."
 msgstr "Entrer le chemin vers le cloud de fichiers"
 
-#: ../../include/text.php:2594
+#: ../../include/misc.php:2594
 msgid "Specify folder"
 msgstr "Spécifier un répertoire"
 

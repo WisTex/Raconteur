@@ -9,9 +9,6 @@ use Code\Lib\Features;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-
-require_once('include/text.php');
-
 /**
  * A thread item
  */

@@ -6,8 +6,6 @@ namespace Code\Lib;
 
 use App;
 
-require_once('boot.php');
-require_once('include/text.php');
 
 /**
  * A list of threads

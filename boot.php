@@ -49,7 +49,7 @@ if (file_exists('addon/version.php')) {
 
 require_once('include/config.php');
 require_once('include/network.php');
-require_once('include/text.php');
+require_once('include/misc.php');
 require_once('include/datetime.php');
 require_once('include/language.php');
 require_once('include/permissions.php');

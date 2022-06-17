@@ -7,7 +7,7 @@
  */
 
 /** required, it is the file under test */
-require_once('include/text.php');
+require_once('include/misc.php');
 
 /**
  * TestCase for the expand_acl function

@@ -39,360 +39,360 @@ msgstr "Não foi possível localizar a informação de DNS para o servidor de ba
 msgid "Profile Photos"
 msgstr "Fotos do perfil"
 
-#: ../../include/text.php:329
+#: ../../include/misc.php:329
 msgid "prev"
 msgstr "anterior"
 
-#: ../../include/text.php:331
+#: ../../include/misc.php:331
 msgid "first"
 msgstr "primeiro"
 
-#: ../../include/text.php:360
+#: ../../include/misc.php:360
 msgid "last"
 msgstr "último"
 
-#: ../../include/text.php:363
+#: ../../include/misc.php:363
 msgid "next"
 msgstr "próximo"
 
-#: ../../include/text.php:373
+#: ../../include/misc.php:373
 msgid "older"
 msgstr "mais antigo"
 
-#: ../../include/text.php:375
+#: ../../include/misc.php:375
 msgid "newer"
 msgstr "mais recente"
 
-#: ../../include/text.php:768
+#: ../../include/misc.php:768
 msgid "No connections"
 msgstr "Nenhuma conexão"
 
-#: ../../include/text.php:782
+#: ../../include/misc.php:782
 #, php-format
 msgid "%d Connection"
 msgid_plural "%d Connections"
 msgstr[0] "%d conexão"
 msgstr[1] "%d conexões"
 
-#: ../../include/text.php:795 ../../mod/viewconnections.php:104
+#: ../../include/misc.php:795 ../../mod/viewconnections.php:104
 msgid "View Connections"
 msgstr "Ver conexões"
 
-#: ../../include/text.php:852 ../../include/text.php:864
+#: ../../include/misc.php:852 ../../include/misc.php:864
 #: ../../include/nav.php:165 ../../include/apps.php:147
 #: ../../mod/search.php:38
 msgid "Search"
 msgstr "Pesquisar"
 
-#: ../../include/text.php:853 ../../include/text.php:865
+#: ../../include/misc.php:853 ../../include/misc.php:865
 #: ../../include/widgets.php:192 ../../mod/rbmark.php:28
 #: ../../mod/rbmark.php:98 ../../mod/filer.php:50 ../../mod/admin.php:1416
 #: ../../mod/admin.php:1436
 msgid "Save"
 msgstr "Salvar"
 
-#: ../../include/text.php:928
+#: ../../include/misc.php:928
 msgid "poke"
 msgstr "cutucar"
 
-#: ../../include/text.php:928 ../../include/conversation.php:243
+#: ../../include/misc.php:928 ../../include/conversation.php:243
 msgid "poked"
 msgstr "cutucado"
 
-#: ../../include/text.php:929
+#: ../../include/misc.php:929
 msgid "ping"
 msgstr "pingar"
 
-#: ../../include/text.php:929
+#: ../../include/misc.php:929
 msgid "pinged"
 msgstr "pingou"
 
-#: ../../include/text.php:930
+#: ../../include/misc.php:930
 msgid "prod"
 msgstr "espetar"
 
-#: ../../include/text.php:930
+#: ../../include/misc.php:930
 msgid "prodded"
 msgstr "espetou"
 
-#: ../../include/text.php:931
+#: ../../include/misc.php:931
 msgid "slap"
 msgstr "estapear"
 
-#: ../../include/text.php:931
+#: ../../include/misc.php:931
 msgid "slapped"
 msgstr "estapeou"
 
-#: ../../include/text.php:932
+#: ../../include/misc.php:932
 msgid "finger"
 msgstr "dar um toque"
 
-#: ../../include/text.php:932
+#: ../../include/misc.php:932
 msgid "fingered"
 msgstr "deu um toque"
 
-#: ../../include/text.php:933
+#: ../../include/misc.php:933
 msgid "rebuff"
 msgstr "rebater"
 
-#: ../../include/text.php:933
+#: ../../include/misc.php:933
 msgid "rebuffed"
 msgstr "rebateu"
 
-#: ../../include/text.php:943
+#: ../../include/misc.php:943
 msgid "happy"
 msgstr "feliz"
 
-#: ../../include/text.php:944
+#: ../../include/misc.php:944
 msgid "sad"
 msgstr "triste"
 
-#: ../../include/text.php:945
+#: ../../include/misc.php:945
 msgid "mellow"
 msgstr "suave"
 
-#: ../../include/text.php:946
+#: ../../include/misc.php:946
 msgid "tired"
 msgstr "cansad@"
 
-#: ../../include/text.php:947
+#: ../../include/misc.php:947
 msgid "perky"
 msgstr "animad@"
 
-#: ../../include/text.php:948
+#: ../../include/misc.php:948
 msgid "angry"
 msgstr "nervos@"
 
-#: ../../include/text.php:949
+#: ../../include/misc.php:949
 msgid "stupified"
 msgstr "embasbacad@"
 
-#: ../../include/text.php:950
+#: ../../include/misc.php:950
 msgid "puzzled"
 msgstr "confus@"
 
-#: ../../include/text.php:951
+#: ../../include/misc.php:951
 msgid "interested"
 msgstr "interessad@"
 
-#: ../../include/text.php:952
+#: ../../include/misc.php:952
 msgid "bitter"
 msgstr "amarg@"
 
-#: ../../include/text.php:953
+#: ../../include/misc.php:953
 msgid "cheerful"
 msgstr "animad@"
 
-#: ../../include/text.php:954
+#: ../../include/misc.php:954
 msgid "alive"
 msgstr "viv@"
 
-#: ../../include/text.php:955
+#: ../../include/misc.php:955
 msgid "annoyed"
 msgstr "aborrecid@"
 
-#: ../../include/text.php:956
+#: ../../include/misc.php:956
 msgid "anxious"
 msgstr "ansios@"
 
-#: ../../include/text.php:957
+#: ../../include/misc.php:957
 msgid "cranky"
 msgstr "irritad@"
 
-#: ../../include/text.php:958
+#: ../../include/misc.php:958
 msgid "disturbed"
 msgstr "perturbad@"
 
-#: ../../include/text.php:959
+#: ../../include/misc.php:959
 msgid "frustrated"
 msgstr "frustrad@"
 
-#: ../../include/text.php:960
+#: ../../include/misc.php:960
 msgid "depressed"
 msgstr "deprimido"
 
-#: ../../include/text.php:961
+#: ../../include/misc.php:961
 msgid "motivated"
 msgstr "motivad@"
 
-#: ../../include/text.php:962
+#: ../../include/misc.php:962
 msgid "relaxed"
 msgstr "relaxad@"
 
-#: ../../include/text.php:963
+#: ../../include/misc.php:963
 msgid "surprised"
 msgstr "surpres@"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Monday"
 msgstr "Segunda"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Tuesday"
 msgstr "Terça"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Wednesday"
 msgstr "Quarta"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Thursday"
 msgstr "Quinta"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Friday"
 msgstr "Sexta"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Saturday"
 msgstr "Sábado"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "Sunday"
 msgstr "Domingo"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "January"
 msgstr "Janeiro"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "February"
 msgstr "Fevereiro"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "March"
 msgstr "Março"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "April"
 msgstr "Abril"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "May"
 msgstr "Maio"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "June"
 msgstr "Junho"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "July"
 msgstr "Julho"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "August"
 msgstr "Agosto"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "September"
 msgstr "Setembro"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "October"
 msgstr "Outubro"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "November"
 msgstr "Novembro"
 
-#: ../../include/text.php:1139
+#: ../../include/misc.php:1139
 msgid "December"
 msgstr "Dezembro"
 
-#: ../../include/text.php:1244
+#: ../../include/misc.php:1244
 msgid "unknown.???"
 msgstr "desconhecido.???"
 
-#: ../../include/text.php:1245
+#: ../../include/misc.php:1245
 msgid "bytes"
 msgstr "bytes"
 
-#: ../../include/text.php:1281
+#: ../../include/misc.php:1281
 msgid "remove category"
 msgstr "remover categoria"
 
-#: ../../include/text.php:1356
+#: ../../include/misc.php:1356
 msgid "remove from file"
 msgstr "remover do arquivo"
 
-#: ../../include/text.php:1432 ../../include/text.php:1443
+#: ../../include/misc.php:1432 ../../include/misc.php:1443
 #: ../../mod/connedit.php:661
 msgid "Click to open/close"
 msgstr "Clique para abrir/fechar"
 
-#: ../../include/text.php:1599 ../../mod/events.php:444
+#: ../../include/misc.php:1599 ../../mod/events.php:444
 msgid "Link to Source"
 msgstr "Link para a origem"
 
-#: ../../include/text.php:1620 ../../include/text.php:1691
+#: ../../include/misc.php:1620 ../../include/misc.php:1691
 msgid "default"
 msgstr "default"
 
-#: ../../include/text.php:1628
+#: ../../include/misc.php:1628
 msgid "Page layout"
 msgstr "aparência da página"
 
-#: ../../include/text.php:1628
+#: ../../include/misc.php:1628
 msgid "You can create your own with the layouts tool"
 msgstr "Você pode criar sua própria com as ferramentas de layouts"
 
-#: ../../include/text.php:1669
+#: ../../include/misc.php:1669
 msgid "Page content type"
 msgstr "Tipo de conteúdo da página"
 
-#: ../../include/text.php:1703
+#: ../../include/misc.php:1703
 msgid "Select an alternate language"
 msgstr "Selecione um idioma alternativo"
 
-#: ../../include/text.php:1822 ../../include/conversation.php:120
+#: ../../include/misc.php:1822 ../../include/conversation.php:120
 #: ../../include/diaspora.php:2081 ../../mod/like.php:346
 #: ../../mod/subthread.php:72 ../../mod/subthread.php:174
 #: ../../mod/tagger.php:43
 msgid "photo"
 msgstr "foto"
 
-#: ../../include/text.php:1825 ../../include/conversation.php:123
+#: ../../include/misc.php:1825 ../../include/conversation.php:123
 #: ../../mod/like.php:348 ../../mod/tagger.php:47
 msgid "event"
 msgstr "evento"
 
-#: ../../include/text.php:1828 ../../include/conversation.php:148
+#: ../../include/misc.php:1828 ../../include/conversation.php:148
 #: ../../include/diaspora.php:2081 ../../mod/like.php:346
 #: ../../mod/subthread.php:72 ../../mod/subthread.php:174
 #: ../../mod/tagger.php:51
 msgid "status"
 msgstr "status"
 
-#: ../../include/text.php:1830 ../../include/conversation.php:150
+#: ../../include/misc.php:1830 ../../include/conversation.php:150
 #: ../../mod/tagger.php:53
 msgid "comment"
 msgstr "comentário"
 
-#: ../../include/text.php:1835
+#: ../../include/misc.php:1835
 msgid "activity"
 msgstr "atividade"
 
-#: ../../include/text.php:2130
+#: ../../include/misc.php:2130
 msgid "Design Tools"
 msgstr "Ferramentas de Design"
 
-#: ../../include/text.php:2133 ../../mod/blocks.php:147
+#: ../../include/misc.php:2133 ../../mod/blocks.php:147
 msgid "Blocks"
 msgstr "Blocos"
 
-#: ../../include/text.php:2134 ../../mod/menu.php:95
+#: ../../include/misc.php:2134 ../../mod/menu.php:95
 msgid "Menus"
 msgstr "Menus"
 
-#: ../../include/text.php:2135 ../../mod/layouts.php:174
+#: ../../include/misc.php:2135 ../../mod/layouts.php:174
 msgid "Layouts"
 msgstr "Layouts"
 
-#: ../../include/text.php:2136
+#: ../../include/misc.php:2136
 msgid "Pages"
 msgstr "Páginas"
 
-#: ../../include/text.php:2487 ../../include/RedDAV/RedBrowser.php:131
+#: ../../include/misc.php:2487 ../../include/RedDAV/RedBrowser.php:131
 msgid "Collection"
 msgstr "Coleção"
 

@@ -6,11 +6,6 @@ use App;
 use Code\Access\PermissionLimits;
 use Code\Access\Permissions;
 
-require_once("include/permissions.php");
-require_once("include/language.php");
-require_once("include/text.php");
-
-
 /**
  * Encapsulates information the ACL dialog requires to describe
  * permission settings for an item with an empty ACL.
