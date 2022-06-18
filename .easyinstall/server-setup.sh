@@ -245,11 +245,16 @@ function add_vhost {
 
 function add_nginx_conf {
     print_info "adding nginx conf files"
-    sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx-server.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    if [[ "$le_domain" =~ $domain_regex ]]
+    then
+        sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx/nginx-server.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    else
+        sed "s|SERVER_NAME|${le_domain}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${le_domain}.log|;" nginx/nginx-server.localhost.conf.template >> /etc/nginx/sites-available/${le_domain}.conf
+    fi
     ln -s /etc/nginx/sites-available/${le_domain}.conf /etc/nginx/sites-enabled/
     if [ ! -f /etc/nginx/snippets/adminer-nginx.inc ]
     then
-        cp adminer-nginx.inc.template /etc/nginx/snippets/adminer-nginx.inc
+        cp nginx/adminer-nginx.inc.template /etc/nginx/snippets/adminer-nginx.inc
     fi
 }
 
@@ -674,16 +679,26 @@ function configure_cron_daily {
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
-check_sanity
+#check_sanity
 
 repo_name
 print_info "We're installing a website using the $repository repository"
 install_path="$(dirname "$(pwd)")"
 install_folder="$(basename $install_path)"
+domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
+local_regex="^([a-zA-Z0-9]){2,25}$"
 
-# Read config file edited by user
 configfile=server-config.txt
-source $configfile
+
+if [ -f $configfile ]
+then
+    # Read config file edited by user
+    source $configfile
+else
+    # Use easyinstall script
+    print_info "Now using easyinstall.sh to obtain all necessary settings for the install"
+    source easyinstall.sh
+fi
 
 selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
@@ -699,15 +714,15 @@ update_upgrade
 install_curl
 install_wget
 
-if [ "$le_domain" != "localhost" ]
+if [[ "$le_domain" =~ $domain_regex ]]
 then
     if [ "$install_path" == "/var/www/html" ]
     then
-        die "Please install in /var/www/html only with \$le_domain=localhost in server-config.txt (for testing purposes)"
+        die "Please install in /var/www/html only for local testing (i.e. \$le_domain=localhost in server-config.txt)"
     fi
     if [ ! -z $ddns_provider ]
-    source ddns/$ddns_provider.sh
     then
+        source ddns/$ddns_provider.sh
         if [ ! -f dns_cache_fail ]
         then
             nocheck_install "dnsutils"
@@ -723,6 +738,7 @@ then
     # add something here to remove dns_cache_fail ?
     if [ ! -z $ddns_provider ]
     then
+        source ddns/$ddns_provider.sh
         configure_cron_$ddns_provider
     fi
 fi
@@ -764,7 +780,7 @@ configure_daily_update
 
 configure_cron_daily
 
-if [ "$le_domain" != "localhost" ]
+if [[ "$le_domain" =~ $domain_regex ]]
 then
     install_letsencrypt
     check_https
@@ -772,7 +788,7 @@ then
     install_cryptosetup
     install_rsync
 else
-    print_info "is localhost - skipped https configuration, and installation of cryptosetup"
+    print_info "Local domain is used - skipped https configuration, and installation of cryptosetup"
 fi
 
 

@@ -176,6 +176,9 @@ input[type=text], textarea {
 	color: #F00 !important;
 }
 
+.form-text.text-muted {
+    margin-left: 10px;
+}
 #help-content pre code {
 	overflow-x: auto;
 	white-space: pre;
@@ -1905,7 +1908,6 @@ dl.bb-dl > dd > li {
 }
 
 .justified-gallery {
-    margin: 0 10px;
     padding: 10px 0;
 }
 

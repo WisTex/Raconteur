@@ -352,11 +352,13 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
         $enclosures = json_decode($item['attach'], true);
         if ($enclosures) {
             foreach ($enclosures as $enc) {
-                $o .= '<link rel="enclosure" '
-                . (($enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
-                . (($enc['length']) ? 'length="' . $enc['length'] . '" ' : '')
-                . (($enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
-                . ' />' . "\r\n";
+                if (is_array($enc)) {
+                    $o .= '<link rel="enclosure" '
+                    . (isset($enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
+                    . (isset($enc['length']) ? 'length="' . $enc['length'] . '" ' : '')  
+                   . (isset($enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
+                    . ' />' . "\r\n";
+                }
             }
         }
     }

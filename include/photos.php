@@ -81,7 +81,7 @@ function photo_upload($channel, $observer, $args)
         $height = $args['getimagesize'][1];
     }
 
-    $os_storage = 0;
+    $os_storage = 1;
 
     $max_thumb = get_config('system', 'max_thumbnail', 1600);
 
@@ -419,7 +419,7 @@ function photo_upload($channel, $observer, $args)
         $activity_format = sprintf(t('%1$s posted %2$s', 'photo_upload'), $author_link, $photo_link);
 	}
 
-    $body = (($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
+    $body = (isset($args['body']) ? $args['body'] : '') . '[footer]' . $activity_format . '[/footer]';
 
     // If uploaded into a post, this is the text that is returned to the webapp for inclusion in the post.
 
@@ -427,7 +427,7 @@ function photo_upload($channel, $observer, $args)
         . $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
         . '[/zrl]';
 
-    $attribution = (($visitor) ? $visitor['xchan_url'] : $channel['xchan_url']);
+    $attribution = (Activity::encode_person(($visitor) ? $visitor : $channel, false));
 
     // Create item object
     $object = [
@@ -481,6 +481,22 @@ function photo_upload($channel, $observer, $args)
         foreach ($args['item'] as $i) {
             $item = get_item_elements($i);
             $force = false;
+
+            if (intval($item['item_wall']) && $item['mid'] === $item['parent_mid']) {
+                $object['commentPolicy'] = $item['comment_policy'];
+            }
+
+            if (intval($item['item_nocomment'])) {
+                if ($object['commentPolicy']) {
+                    $object['commentPolicy'] .= ' ';
+                }
+                $object['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $item['created'], ATOM_TIME);
+            } elseif (array_key_exists('comments_closed', $item) && $item['comments_closed'] !== EMPTY_STR && $item['comments_closed'] > NULL_DATE) {
+                if ($object['commentPolicy']) {
+                    $object['commentPolicy'] .= ' ';
+                }
+                $object['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $item['comments_closed'], ATOM_TIME);
+            }
 
             if ($item['mid'] === $item['parent_mid']) {
                 $object['id'] = $item['mid'];
@@ -541,7 +557,6 @@ function photo_upload($channel, $observer, $args)
             'deny_gid'        => $ac['deny_gid'],
             'verb'            => ACTIVITY_POST,
             'obj_type'        => ACTIVITY_OBJ_PHOTO,
-            'obj'             => json_encode($object),
             'tgt_type'        => 'orderedCollection',
             'target'          => json_encode($target),
             'item_wall'       => 1,
@@ -552,6 +567,12 @@ function photo_upload($channel, $observer, $args)
             'body'            => $body
         ];
 
+        if (intval($arr['item_wall']) && $arr['mid'] === $arr['parent_mid']) {
+            $object['commentPolicy'] = $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'], 'post_comments'));
+        }
+
+        $arr['obj'] = json_encode($object);
+
         if ($post_tags) {
             $arr['term'] = $post_tags;
         }
@@ -561,19 +582,6 @@ function photo_upload($channel, $observer, $args)
         if ($lat && $lon) {
             $arr['coord'] = $lat . ' ' . $lon;
         }
-
-        // this one is tricky because the item and the photo have the same permissions, those of the photo.
-        // Use the channel read_stream permissions to get the correct public_policy for the item and recalculate the
-        // private flag accordingly. This may cause subtle bugs due to custom permissions roles. We want to use
-        // public policy when federating items to other sites, but should probably ignore them when accessing the item
-        // in the photos pages - using the photos permissions instead. We need the public policy to keep the photo
-        // linked item from leaking into the feed when somebody has a channel with read_stream restrictions.
-
-        $arr['public_policy']   = map_scope(PermissionLimits::Get($channel['channel_id'], 'view_stream'), true);
-        if ($arr['public_policy']) {
-            $arr['item_private'] = 1;
-        }
-
 
         $result = item_store($arr, false, $deliver);
         $item_id = $result['item_id'];
@@ -906,60 +914,6 @@ function photos_album_get_db_idstr_admin($channel_id, $album)
     }
 
     return false;
-}
-
-
-
-/**
- * @brief Creates a new photo item.
- *
- * @param array $channel
- * @param string $creator_hash
- * @param array $photo
- * @param bool $visible (optional) default false
- * @return int item_id
- */
-function photos_create_item($channel, $creator_hash, $photo, $visible = false)
-{
-
-    // Create item container
-
-    $item_hidden = (($visible) ? 0 : 1 );
-
-    $uuid = new_uuid();
-    $mid = z_root() . '/item/' . $uuid;
-
-    $arr = [];
-
-    $arr['aid']             = $channel['channel_account_id'];
-    $arr['uid']             = $channel['channel_id'];
-    $arr['uuid']            = $uuid;
-    $arr['mid']             = $mid;
-    $arr['parent_mid']      = $mid;
-    $arr['item_wall']       = 1;
-    $arr['item_origin']     = 1;
-    $arr['item_thread_top'] = 1;
-    $arr['item_hidden']     = $item_hidden;
-    $arr['resource_type']   = 'photo';
-    $arr['resource_id']     = $photo['resource_id'];
-    $arr['owner_xchan']     = $channel['channel_hash'];
-    $arr['author_xchan']    = $creator_hash;
-
-    $arr['allow_cid']       = $photo['allow_cid'];
-    $arr['allow_gid']       = $photo['allow_gid'];
-    $arr['deny_cid']        = $photo['deny_cid'];
-    $arr['deny_gid']        = $photo['deny_gid'];
-
-    $arr['plink']           = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
-
-    $arr['body']            = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo['resource_id'] . ']'
-        . '[zmg]' . z_root() . '/photo/' . $photo['resource_id'] . '-' . $photo['imgscale'] . '[/zmg]'
-        . '[/zrl]';
-
-    $result = item_store($arr);
-    $item_id = $result['item_id'];
-
-    return $item_id;
 }
 
 

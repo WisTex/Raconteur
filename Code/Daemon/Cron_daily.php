@@ -5,7 +5,6 @@ namespace Code\Daemon;
 use Code\Lib\ServiceClass;    
 use Code\Lib\Libzotdir;
 use Code\Lib\Libzot;
-use Code\Lib\Statistics;
 use Code\Extend\Hook;
     
 class Cron_daily
@@ -55,15 +54,6 @@ class Cron_daily
             db_utcnow(),
             db_quoteinterval('1 YEAR')
         );
-
-
-        // update statistics counters (ignore values, they will be stored in config)
-
-        Statistics::get_channels_all();
-        Statistics::get_channels_6mo();
-        Statistics::get_channels_1mo();
-        Statistics::get_posts();
-        Statistics::get_comments();
 
         // expire old delivery reports
 

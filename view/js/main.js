@@ -605,8 +605,7 @@ function notificationsUpdate(cached_data) {
 			if(! data) return;
 
 			// Put the object into storage
-			sessionStorage.setItem('notifications_cache',
-			JSON.stringify(data));
+			sessionStorage.setItem('notifications_cache', JSON.stringify(data));
 
 			let fnotifs = []; if(data.forums) {
 			$.each(data.forums_sub, function() { fnotifs.push(this);
@@ -631,23 +630,24 @@ function handleNotifications(data) {
 	if(data.stream || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums) {
 		$('.notifications-btn').css('opacity', 1);
 		$('#no_notifications').hide();
+        $('#notifications_wrapper').show();
 	}
 	else {
 		$('.notifications-btn').css('opacity', 0.5);
 		$('#navbar-collapse-1').removeClass('show');
 		$('#no_notifications').show();
+        $('#notifications_wrapper').hide();
+        sessionStorage.removeItem('notifications_cache');
+
 	}
 
 	if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
-		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');
-        $('#notifications_wrapper').show();
-        
+		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');        
 	}
 	if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
-        $('#notifications_wrapper').hide();
 	}
 	if(data.all_events_today) {
 		$('.all_events-update').removeClass('badge-secondary');
@@ -1218,7 +1218,7 @@ function loadNotificationItems(notifyType) {
 		}
 
 		if(JSON.stringify(cached_data[0]) === JSON.stringify(data.notify[0])) {
-			console.log(notifyType + ' notifications cache up to date - update deferred');
+			console.log(notifyType + ' notifications cache up to date');
 		}
 		else {
 			handleNotificationsItems(notifyType, data.notify);

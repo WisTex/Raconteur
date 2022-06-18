@@ -27,7 +27,7 @@ require_once('version.php');
 
 define ( 'PLATFORM_NAME',           'streams' );
 
-define ( 'DB_UPDATE_VERSION',       1256 );
+define ( 'DB_UPDATE_VERSION',       1258 );
 define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -693,6 +693,8 @@ function sys_boot() {
 
         App::$session = new Session();
         App::$session->init();
+        App::$sys_channel = Channel::get_system();
+
         Hook::load();
         /**
          * @hooks 'startup'
@@ -1524,7 +1526,7 @@ function fix_system_urls($oldurl, $newurl) {
     // that they can clean up their hubloc tables (this includes directories).
     // It's a very expensive operation so you don't want to have to do it often or after your site gets to be large.
 
-    $r = q("select xchan.*, hubloc.* from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url like '%s'",
+    $r = q("select xchan.*, hubloc.* from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url like '%s' and hublod_deleted = 0",
         dbesc($oldurl . '%')
     );
 
@@ -1822,10 +1824,6 @@ function remote_channel() {
 
 
 function can_view_public_stream() {
-
-    if (observer_prohibited(true)) {
-        return false;
-    }
 
     if (! (intval(get_config('system','open_pubstream',0)))) {
         if (! local_channel()) {
@@ -2580,20 +2578,6 @@ function check_cron_broken() {
             )
         ]
     );
-}
-
-
-/**
- * @brief
- *
- * @param bool $allow_account (optional) default false
- * @return bool
- */
-function observer_prohibited($allow_account = false) {
-    if($allow_account) {
-        return (((get_config('system', 'block_public')) && (! get_account_id()) && (! remote_channel())) ? true : false );
-    }
-    return (((get_config('system', 'block_public')) && (! local_channel()) && (! remote_channel())) ? true : false );
 }
 
 function get_safemode() {

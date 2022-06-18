@@ -1351,7 +1351,6 @@ function get_site_info()
 {
 
     $register_policy = array('REGISTER_CLOSED', 'REGISTER_APPROVE', 'REGISTER_OPEN');
-    $directory_mode = array('DIRECTORY_MODE_NORMAL', 'DIRECTORY_MODE_PRIMARY', 'DIRECTORY_MODE_SECONDARY', 256 => 'DIRECTORY_MODE_STANDALONE');
 
     $sql_extra = '';
 
@@ -1428,7 +1427,7 @@ function get_site_info()
         }
     }
 
-    $protocols = [ 'nomad' ];
+    $protocols = [ 'nomad', 'zot6' ];
     if (get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) {
         $protocols[] = 'activitypub';
     }
@@ -1438,17 +1437,13 @@ function get_site_info()
         'platform'                     => System::get_project_name(),
         'site_name'                    => (($site_name) ? $site_name : ''),
         'version'                      => $version,
-//      'version_tag'                  => $tag,
         'addon_version'                => defined('ADDON_VERSION') ? ADDON_VERSION : 'unknown',
         'commit'                       => $commit,
         'protocols'                    => $protocols,
         'plugins'                      => $visible_plugins,
         'register_policy'              => $register_policy[get_config('system', 'register_policy')],
         'invitation_only'              => (bool) (defined('INVITE_WORKING') && intval(get_config('system', 'invitation_only'))),
-        'directory_mode'               => $directory_mode[get_config('system', 'directory_mode')],
-//      'directory_server'             => get_config('system','directory_server'),
         'language'                     => get_config('system', 'language'),
-//      'rss_connections'              => (bool) intval(get_config('system','feed_contacts')),
         'expiration'                   => $site_expire,
         'default_service_restrictions' => $service_class,
         'locked_features'              => $locked_features,
@@ -1474,6 +1469,10 @@ function check_siteallowed($url)
 {
 
     $retvalue = true;
+
+    if (! (isset($url) && $url)) {
+        return false;
+    }
 
     $arr = [ 'url' => $url ];
     /**
@@ -1727,7 +1726,7 @@ function get_repository_version($branch = 'release')
 {
 
 	if (PLATFORM_NAME === 'streams') {
-		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/raw/@$branch/boot.php";
+		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/@$branch/version.php";
 	}
 	else {
         $path = "https://raw.codeberg.page/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/@$branch/version.php";
@@ -1854,7 +1853,7 @@ function z_mail($params)
 
 
 /**
- * @brief Discover the best API path available for redmatrix/hubzilla servers.
+ * @brief Discover the best API path available for the project servers.
  *
  * @param string $host
  * @return string

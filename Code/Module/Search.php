@@ -42,7 +42,7 @@ class Search extends Controller
     public function get()
     {
 
-        if ((get_config('system', 'block_public')) || (get_config('system', 'block_public_search', 1))) {
+        if (get_config('system', 'block_public_search', 1)) {
             if ((!local_channel()) && (!remote_channel())) {
                 notice(t('Public access denied.') . EOL);
                 return;
@@ -187,6 +187,7 @@ class Search extends Controller
                             // so let's see if it decodes. The boolean flag enables html
                             // cache of the item
                             $item = Activity::decode_note($AS, true);
+
                             if ($item) {
                                 Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
                                 goaway(z_root() . '/display/' . gen_link_id($item['mid']));

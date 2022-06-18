@@ -1815,7 +1815,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
 
     $is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
-    if ($is_photo && ! $censored) {
+    if ($is_photo) {
         $object = json_decode($item['obj'], true);
         $ptr = null;
 
@@ -1833,16 +1833,9 @@ function prepare_body(&$item, $attach = false, $opts = false)
                 $ptr = $object['url'];
             }
 
-            // if original photo width is > 640px make it a cover photo
             if ($ptr) {
                 $alt_text = ' alt="' . ((isset($ptr['summary']) && $ptr['summary']) ? htmlspecialchars($ptr['summary'], ENT_QUOTES, 'UTF-8') : t('Image/photo')) . '"';
-                $title_text = ' title="' . ((isset($ptr['summary']) && $ptr['summary']) ? htmlspecialchars($ptr['summary'], ENT_QUOTES, 'UTF-8') : t('Image/photo')) . '"';
-
-                if (array_key_exists('width', $ptr) && $ptr['width'] > 640) {
-                    $photo = '<a href="' . zid(rawurldecode($object['id'])) . '"' . $title_text . ' target="_blank" rel="nofollow noopener"><img style="max-width:' . $ptr['width'] . 'px; width:100%; height:auto;" src="' . zid(rawurldecode($ptr['href'])) . '"' . $alt_text . '></a>';
-                } else {
-                    $item['body'] = '[zmg' . $alt_text . ']' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
-                }
+                $item['body'] = '[zmg' . $alt_text . ']' . $ptr['href'] . '[/zmg]' . "\n\n" . $item['body'];
             }
         }
     }
@@ -2021,11 +2014,11 @@ function format_poll($item, $s, $opts)
                     }
                     if ($activated && $commentable) {
 						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '</small></div>';
 						$output .= EOL;
                     } else {
 						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '</small></div>';
 						$output .= EOL;
                     }
                 }
@@ -2049,7 +2042,7 @@ function format_poll($item, $s, $opts)
                     if ($activated && $commentable) {
 
 						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
+						$output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
 						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
 						$output .= '</div>';
 						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
@@ -2683,12 +2676,12 @@ function xchan_query(&$items, $abook = true, $effective_uid = 0)
         if ($abook) {
             $chans = q(
                 "select * from xchan left join hubloc on hubloc_hash = xchan_hash left join abook on abook_xchan = xchan_hash and abook_channel = %d
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc",
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_deleted = 0 order by hubloc_primary desc",
                 intval($item['uid'])
             );
         } else {
             $chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") order by hubloc_primary desc");
+				where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_deleted = 0 order by hubloc_primary desc");
         }
         $xchans = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and xchan_network in ('rss','unknown', 'anon')");
         if (! $chans) {
@@ -2721,7 +2714,7 @@ function xchan_mail_query(&$item)
 
     if (count($arr)) {
         $chans = q("select xchan.*,hubloc.* from xchan left join hubloc on hubloc_hash = xchan_hash
-			where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1");
+			where xchan_hash in (" . protect_sprintf(implode(',', $arr)) . ") and hubloc_primary = 1 and hubloc_deleted = 0");
     }
     if ($chans) {
         $item['from'] = find_xchan_in_array($item['from_xchan'], $chans);
@@ -3115,7 +3108,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
             if ((! $r) && strpos($newname, '@')) {
                 $r = q(
                     "SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash 
-					WHERE hubloc_addr = '%s' ",
+					WHERE hubloc_addr = '%s' and hubloc_deleted = 0",
                     dbesc($newname)
                 );
             }
@@ -3169,8 +3162,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
                     $newname = $xc['xchan_addr'];
                 }
                 if ($tagpref === 2 && $xc['xchan_addr']) {
-                    $newname = sprintf(t('%1$s (%2$s)'), $xc['xchan_name'], $newname);
+                    $newname = sprintf(t('%1$s (%2$s)'), $xc['xchan_name'], $xc['xchan_addr']);
                 }
+    
                 // add the channel's xchan_hash to $access_tag if exclusive
                 if ($exclusive) {
                     $access_tag = 'cid:' . $xc['xchan_hash'];
@@ -3976,7 +3970,7 @@ function featured_sort($a, $b)
 
 function unpunify($s)
 {
-    if (function_exists('idn_to_utf8')) {
+    if (function_exists('idn_to_utf8') && isset($s)) {
         return idn_to_utf8($s);
     }
     return $s;
@@ -3985,7 +3979,7 @@ function unpunify($s)
 
 function punify($s)
 {
-    if (function_exists('idn_to_ascii')) {
+    if (function_exists('idn_to_ascii') && isset($s)) {
         return idn_to_ascii($s);
     }
     return $s;
@@ -4056,7 +4050,7 @@ function print_val($v, $escape = true)
 function array_path_exists($str, $arr)
 {
 
-    if (! ($arr && is_array($arr))) {
+    if (! (isset($arr) && is_array($arr))) {
         return false;
     }
 

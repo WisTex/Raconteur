@@ -294,11 +294,6 @@ class Acloader extends Controller
 
         //  logger('navbar_complete');
 
-        if (observer_prohibited()) {
-            return;
-        }
-
-        $dirmode = intval(get_config('system', 'directory_mode'));
         $search = ((x($_REQUEST, 'search')) ? htmlentities($_REQUEST['search'], ENT_COMPAT, 'UTF-8', false) : '');
         if (!$search || mb_strlen($search) < 2) {
             return [];

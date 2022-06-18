@@ -316,6 +316,9 @@ class Libprofile
 
             $connect_url = rconnect_url($profile['uid'], get_observer_hash());
             $connect = (($connect_url) ? t('Connect') : '');
+            if ($connect && $is_group) {
+                $connect = t('Join');
+            }
             if ($connect_url) {
                 $connect_url = sprintf($connect_url, urlencode(Channel::get_webfinger($profile)));
             }

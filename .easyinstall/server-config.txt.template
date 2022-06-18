@@ -18,12 +18,12 @@ db_pass=
 #     Example: my.cooldomain.org
 #     Example: cooldomain.org
 #
-# You might use "localhost" for a LOCAL TEST installation.
+# You might use "localhost" or any local domain for a LOCAL TEST installation.
 # This is usefull if you want to debug the server inside a VM.
 #
-#     Example: localhost
+#     Example: le_domain=localhost
 #
-# Email is optional if you use "localhost".
+# Email is optional if you use a local domain.
 #
 #
 le_domain=
@@ -38,7 +38,7 @@ le_email=
 # Valid strings are nginx or apache (lower case),
 # any other will stop the setup script.
 # 
-webserver=apache
+webserver=
 
 
 ###############################################
@@ -57,6 +57,19 @@ webserver=apache
 ddns_provider=
 #
 # Feel free to add scripts for other providers if you feel you can do that!
+#
+###             DDNS CREDENTIALS            ###
+#
+# You will need a key for FreeDNS (update key) of Gandi (API key)
+# Check ddns/freedns.sh or ddns/gandi.sh for more details
+#
+ddns_key=
+#
+# For selfHOST.de you need an account ID and password (see ddns/selfhost.sh)
+#
+ddns_id=
+ddns_password=
+
 
 ###############################################
 ### OPTIONAL - Backup to external device ######
@@ -130,11 +143,11 @@ backup_device_pass=
 #
 website_db_name=
 website_db_user=
-website_db_pass=$db_pass
+website_db_pass="$db_pass"
 # 
 #
 # Password for package mysql-server
 #   Example: mysqlpass=aberhallo
 #   Example: mysqlpass="aber hallo has blanks in it"
 #
-mysqlpass=$db_pass
+mysqlpass="$db_pass"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Code\Module;
+namespace Code\Module\Dev;
 
 use Code\Web\Controller;
 
@@ -12,7 +12,7 @@ class Xchan extends Controller
 
         $o = '<h3>' . t('Xchan Lookup') . '</h3>';
 
-        $o .= '<form action="xchan" method="get">';
+        $o .= '<form action="dev/xchan" method="get">';
         $o .= t('Lookup xchan beginning with (or webbie): ');
         $o .= '<input type="text" style="width:250px;" name="addr" value="' . $_GET['addr'] . '">';
         $o .= '<input type="submit" name="submit" value="' . t('Submit') . '"></form>';
@@ -32,8 +32,8 @@ class Xchan extends Controller
                     $o .= str_replace(array("\n", " "), array("<br>", "&nbsp;"), print_r($rr, true)) . EOL;
 
                     $s = q(
-                        "select * from hubloc where hubloc_hash like '%s'",
-                        dbesc($r[0]['xchan_hash'])
+                        "select * from hubloc where hubloc_hash = '%s'",
+                        dbesc($rr['xchan_hash'])
                     );
 
                     if ($s) {

@@ -45,7 +45,7 @@ class Chanview extends Controller
             // the most useful consistently ascending table item we have.
 
             $r = q(
-                "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_url = '%s' or hubloc_id_url = '%s' order by xchan_name_date desc limit 1",
+                "select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_url = '%s' or hubloc_id_url = '%s') and hubloc_deleted = 0 order by xchan_name_date desc limit 1",
                 dbesc($_REQUEST['url']),
                 dbesc($_REQUEST['url'])
             );

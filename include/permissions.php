@@ -118,13 +118,6 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
             }
         }
 
-        // system is blocked to anybody who is not authenticated
-
-        if (($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public'))) {
-            $ret[$perm_name] = false;
-            continue;
-        }
-
         // Check if this $uid is actually the $observer_xchan - if it's your content
         // you always have permission to do anything
         // if you've moved elsewhere, you will only have read only access
@@ -192,6 +185,10 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
         // handle whether we're allowing any, approved or specific ones
 
         if (! $x) {
+            // deliver_stream is assumed to be permitted unles it is prohibited for specific connections.
+            if ($perm_name === 'deliver_stream') {
+                $ret['perm_name'] = true;
+            }
             $ret[$perm_name] = false;
             continue;
         }
@@ -324,13 +321,6 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
         $abperms = get_abconfig($uid, $observer_xchan, 'system', 'my_perms', '');
     }
 
-
-    // system is blocked to anybody who is not authenticated
-
-    if (($check_siteblock) && (! $observer_xchan) && intval(get_config('system', 'block_public'))) {
-        return false;
-    }
-
     // Check if this $uid is actually the $observer_xchan
     // you will have full access unless the channel was moved -
     // in which case you will have read_only access
@@ -382,6 +372,13 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
     // handle whether we're allowing any, approved or specific ones
 
     if (! $x) {
+        // The deliver_stream permission is only evaluated for connections.
+        // It is only used to prune the delivery list of any connections that are
+        // followers-only and we specifically don't want to send stuff to.
+        // It returns true for anybody not connected. 
+        if ($permission === 'deliver_stream') {
+            return true;
+        }
         return false;
     }
 
@@ -521,6 +518,30 @@ function check_list_permissions($uid, $arr, $perm)
     return($result);
 }
 
+function check_deliver_permissions($uid, $arr)
+{
+    $result = [];
+    // Find actors we are not delivering to.
+    $r = q("select * from abconfig where chan = %d and cat = 'system' and k = 'my_perms' and v not like '%%deliver_stream%%'",
+        intval($uid)
+    );
+    $disallowed = ids_to_array($r,'xchan');
+
+    // Filter the recipient list accordingly.
+    if ($arr) {
+        foreach ($arr as $x) {
+            if (! in_array($x, $disallowed)) {
+                $result[] = $x;
+            }
+        }
+    }
+    return($result);
+}
+
+
+
+
+    
 /**
  * @brief Sets site wide default permissions.
  *
@@ -533,6 +554,7 @@ function site_default_perms()
 
     $typical = array(
         'view_stream'   => PERMS_PUBLIC,
+        'deliver_stream'=> PERMS_SPECIFIC,
         'view_profile'  => PERMS_PUBLIC,
         'view_contacts' => PERMS_PUBLIC,
         'view_storage'  => PERMS_PUBLIC,

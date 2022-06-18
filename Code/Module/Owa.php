@@ -35,7 +35,7 @@ class Owa extends Controller
                 if ($keyId) {
                     $r = q(
                         "select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-						where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and xchan_pubkey != '' ",
+						where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_deleted = 0 and xchan_pubkey != '' ",
                         dbesc(str_replace('acct:', '', $keyId)),
                         dbesc($keyId)
                     );
@@ -44,7 +44,7 @@ class Owa extends Controller
                         if ($found) {
                             $r = q(
                                 "select * from hubloc left join xchan on hubloc_hash = xchan_hash 
-								where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and xchan_pubkey != '' ",
+								where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_deleted = 0 and xchan_pubkey != '' ",
                                 dbesc(str_replace('acct:', '', $keyId)),
                                 dbesc($keyId)
                             );

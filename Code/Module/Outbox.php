@@ -24,7 +24,7 @@ class Outbox extends Controller
 {
 
     public function init() {
-        if (! api_user()) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ! api_user()) {
             api_login();
         }
     }
@@ -249,7 +249,7 @@ class Outbox extends Controller
                             $item['allow_gid'] .= '<connections:' . $channel['channel_hash'] . '>';
                             continue;
                         }
-                        $r = q("select * from hubloc where hubloc_id_url = '%s'",
+                        $r = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                             dbesc($recip)
                         );
                         if ($r) {
@@ -281,10 +281,6 @@ class Outbox extends Controller
 
     public function get()
     {
-
-        if (observer_prohibited(true)) {
-            killme();
-        }
 
         if (argc() < 2) {
             killme();

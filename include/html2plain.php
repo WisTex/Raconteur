@@ -90,6 +90,7 @@ function collecturls($message)
     preg_match_all($pattern, $message, $result, PREG_SET_ORDER);
 
     $urls = [];
+    $ignore = false;
     foreach ($result as $treffer) {
         // A list of some links that should be ignored
         $list = array("/user/", "/tag/", "/group/", "/profile/", "/channel/", "/search?search=", "/search?tag=", "mailto:", "/u/", "/node/",

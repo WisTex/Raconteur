@@ -46,7 +46,7 @@ class Suggestions
                 'name' => $rr['xchan_name'],
                 'photo' => $rr['xchan_photo_m'],
                 'ignlnk' => z_root() . '/directory?return=' . base64_encode(App::$query_string) . '&ignore=' . $rr['xchan_hash'],
-                'conntxt' => t('Connect'),
+                'conntxt' => intval($rr['xchan_type']) === 1 ? t('Join') : t('Connect'),
                 'connlnk' => $connlnk,
                 'ignore' => t('Ignore/Hide')
             ];

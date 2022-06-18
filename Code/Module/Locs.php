@@ -24,7 +24,7 @@ class Locs extends Controller
             $hubloc_id = intval($_REQUEST['primary']);
             if ($hubloc_id) {
                 $r = q(
-                    "select hubloc_id from hubloc where hubloc_id = %d and hubloc_hash = '%s' limit 1",
+                    "select hubloc_id from hubloc where hubloc_id = %d and hubloc_hash = '%s' and hubloc_deleted = 0 limit 1",
                     intval($hubloc_id),
                     dbesc($channel['channel_hash'])
                 );
@@ -45,7 +45,7 @@ class Locs extends Controller
                 );
 
                 $x = q(
-                    "select * from hubloc where hubloc_id = %d and hubloc_hash = '%s' ",
+                    "select * from hubloc where hubloc_id = %d and hubloc_hash = '%s' and hubloc_deleted = 0 ",
                     intval($hubloc_id),
                     dbesc($channel['channel_hash'])
                 );
@@ -64,7 +64,7 @@ class Locs extends Controller
 
             if ($hubloc_id) {
                 $r = q(
-                    "select * from hubloc where hubloc_id = %d and hubloc_url != '%s' and hubloc_hash = '%s' limit 1",
+                    "select * from hubloc where hubloc_id = %d and hubloc_url != '%s' and hubloc_hash = '%s' and hubloc_deleted = 0 limit 1",
                     intval($hubloc_id),
                     dbesc(z_root()),
                     dbesc($channel['channel_hash'])
@@ -76,7 +76,7 @@ class Locs extends Controller
                 }
                 if (intval($r[0]['hubloc_primary'])) {
                     $x = q(
-                        "select hubloc_id from hubloc where hubloc_primary = 1 and hubloc_hash = '%s'",
+                        "select hubloc_id from hubloc where hubloc_primary = 1 and hubloc_hash = '%s' and hubloc_deleted = 0 ",
                         dbesc($channel['channel_hash'])
                     );
                     if (!$x) {
@@ -120,7 +120,7 @@ class Locs extends Controller
 
 
         $r = q(
-            "select * from hubloc where hubloc_hash = '%s'",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
             dbesc($channel['channel_hash'])
         );
 
@@ -137,9 +137,9 @@ class Locs extends Controller
             '$drop' => t('Drop'),
             '$submit' => t('Submit'),
             '$sync' => t('Publish these settings'),
-            '$sync_text' => t('Please wait several minutes between consecutive operations.'),
-            '$drop_text' => t('When possible, drop a location by logging into that website/hub and removing your channel.'),
-            '$last_resort' => t('Use this form to drop the location if the hub is no longer operating.'),
+            '$sync_text' => t('Please wait a minute or two between consecutive operations.'),
+            '$drop_text' => t('When possible, drop a location by logging into that site and removing your channel.'),
+            '$last_resort' => t('Use this form to drop the location if the site is no longer operating.'),
             '$hubs' => $r,
             '$base_url' => z_root()
         ]);

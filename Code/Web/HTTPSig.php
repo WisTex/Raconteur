@@ -215,7 +215,7 @@ class HTTPSig
 
         $x = Crypto::verify($signed_data, $sig_block['signature'], $fkey['public_key'], $algorithm);
 
-        logger('verified: ' . $x, LOGGER_DEBUG);
+        logger('verified: ' . intval($x), LOGGER_DEBUG);
 
         if (!$x) {
             // try again, ignoring the local actor (xchan) cache and refetching the key
@@ -225,7 +225,7 @@ class HTTPSig
 
             if ($fkey && $fkey['public_key']) {
                 $y = Crypto::verify($signed_data, $sig_block['signature'], $fkey['public_key'], $algorithm);
-                logger('verified: (cache reload) ' . $x, LOGGER_DEBUG);
+                logger('verified: (cache reload) ' . intval($y), LOGGER_DEBUG);
             }
 
             if (!$y) {
@@ -267,8 +267,7 @@ class HTTPSig
     }
 
     public static function get_key($key, $keytype, $id, $force = false)
-    {
-
+    {    
         if ($key) {
             if (function_exists($key)) {
                 return $key($id);
@@ -328,7 +327,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $cache_url)),
                 dbesc($cache_url),
                 dbesc($cache_url)
@@ -392,7 +391,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' or hubloc_hash = '%s') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id),
                 dbesc($id)
@@ -409,7 +408,6 @@ class HTTPSig
 
         $wf = Webfinger::exec($id);
         $key = ['portable_id' => '', 'public_key' => '', 'algorithm' => '', 'hubloc' => []];
-
         if ($wf) {
             if (array_key_exists('properties', $wf) && array_key_exists('https://w3id.org/security/v1#publicKeyPem', $wf['properties'])) {
                 $key['public_key'] = self::convertKey($wf['properties']['https://w3id.org/security/v1#publicKeyPem']);
@@ -419,13 +417,38 @@ class HTTPSig
                     if (!(is_array($l) && array_key_exists('rel', $l))) {
                         continue;
                     }
+
+                    if (in_array($l['rel'], ['http://purl.org/nomad', 'http://purl.org/zot/protocol/6.0']) && array_key_exists('href',$l) && $l['href'] !== EMPTY_STR) {
+                        // The third argument to Zotfinger::exec() tells it not to verify signatures
+                        // Since we're inside a function that is fetching keys with which to verify signatures,
+                        // this is necessary to prevent infinite loops.
+
+                        $z = Zotfinger::exec($l['href'], null, false);
+                        if ($z) {
+                            $i = Libzot::import_xchan($z['data']);
+                            if ($i['success']) {
+                                $key['portable_id'] = $i['hash'];
+
+                                $x = q(
+                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
+                                    dbesc($l['href'])
+                                );
+                                if ($x) {
+                                    $key['hubloc'] = $x[0];
+                                }
+                                $key['algorithm'] = get_xconfig($i['hash'], 'system', 'signing_algorithm');
+                            }
+                        }
+                    }
+
+
+    
                     if ($l['rel'] === 'magic-public-key' && array_key_exists('href', $l) && $key['public_key'] === EMPTY_STR) {
                         $key['public_key'] = self::convertKey($l['href']);
                     }
                 }
             }
         }
-
         return (($key['public_key']) ? $key : false);
     }
 
@@ -435,7 +458,7 @@ class HTTPSig
 
         if (!$force) {
             $x = q(
-                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network in ('nomad','zot6') order by hubloc_id desc",
+                "select * from xchan left join hubloc on xchan_hash = hubloc_hash where ( hubloc_addr = '%s' or hubloc_id_url = '%s' ) and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc(str_replace('acct:', '', $id)),
                 dbesc($id)
             );
@@ -473,7 +496,7 @@ class HTTPSig
                                 $key['portable_id'] = $i['hash'];
 
                                 $x = q(
-                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' order by hubloc_id desc limit 1",
+                                    "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                                     dbesc($l['href'])
                                 );
                                 if ($x) {
@@ -510,6 +533,7 @@ class HTTPSig
 
         $return_headers = [];
 
+    
         if ($alg === 'sha256') {
             $algorithm = 'rsa-sha256';
         }
@@ -517,9 +541,15 @@ class HTTPSig
             $algorithm = 'rsa-sha512';
         }
 
+        // Use hs2019 by default.
+    
+        if (get_config('system', 'use_hs2019', false) && $algorithm === 'rsa-sha256') {
+            $algorithm = 'hs2019';
+        }
+
         $x = self::sign($head, $prvkey, $alg);
 
-        $headerval = 'keyId="' . $keyid . '",algorithm="' . (($algorithm === 'rsa-sha256') ? 'hs2019' : $algorithm) . '",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
+        $headerval = 'keyId="' . $keyid . '",algorithm="' . $algorithm . '",headers="' . $x['headers'] . '",signature="' . $x['signature'] . '"';
 
         if ($encryption) {
             $x = Crypto::encapsulate($headerval, $encryption['key'], $encryption['algorithm']);

@@ -83,7 +83,7 @@ class Like extends Controller
         // create a copy of the parent in your stream.
 
         if ($r) {
-            if (local_channel() && (! Channel::is_system(local_channel()))) {
+            if (local_channel() && Channel::is_system($r[0]['uid']) && (! Channel::is_system(local_channel()))) {
                 $r = [ copy_of_pubitem(App::get_channel(), $r[0]['mid']) ];
             }
         }
@@ -135,7 +135,7 @@ class Like extends Controller
         if ($undo) {
             $r = q(
                 "select * from item where thr_parent = '%s' and verb = '%s' and author_xchan = '%s' and uid = %d and item_deleted = 0 limit 1",
-                dbesc($item['thr_parent']),
+                dbesc($item['mid']),
                 dbesc($activity),
                 dbesc($observer['xchan_hash']),
                 intval($owner_uid)

@@ -4,16 +4,13 @@
  * @brief Items related functions.
  */
 
-
+use Code\Lib as Zlib;
 use Code\Lib\Libzot;
 use Code\Lib\Libsync;
 use Code\Lib\AccessList;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Apps;
-use Code\Extend\Hook;
-
-use Code\Lib as Zlib;
 use Code\Lib\Enotify;
 use Code\Lib\Channel;
 use Code\Lib\MarkdownSoap;
@@ -26,6 +23,7 @@ use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
 use Code\Access\AccessControl;
 use Code\Daemon\Run;
+use Code\Extend\Hook;
 
 require_once('include/feedutils.php');
 require_once('include/photo_factory.php');
@@ -97,8 +95,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 		// a different clone. We need to get the post to that hub.
 
 		// The post may be private by virtue of not being visible to anybody on the internet,
-		// but there are no envelope recipients, so set this to false. Delivery is controlled
-		// by the directives in $item['public_policy'].
+		// but there are no envelope recipients, so set this to false. 
 
 		$private_envelope = false;
 
@@ -127,7 +124,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 			}
 			if ($r) {
 				foreach ($r as $rv) {
-					if (! in_array($rv['author_xchan'],$recipients)) {
+					if (! in_array($rv['portable_id'],$recipients)) {
 						$recipients[] = $rv['portable_id'];
 					}
 				}
@@ -165,22 +162,9 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
 	// This is a somewhat expensive operation but important.
 	// Don't send this item to anybody who doesn't have the deliver_stream permission
 
-    $recipients = check_list_permissions($item['uid'],$recipients,'deliver_stream');
+    $recipients = check_deliver_permissions($item['uid'],$recipients);
 
-	// remove any upstream recipients from our list.
-	// If it is ourself we'll add it back in a second.
-	// This should prevent complex delivery chains from getting overly complex by not
-	// sending to anybody who is on our list of those who sent it to us.
-
-	if ($item['route']) {
-		$route = explode(',',$item['route']);
-		if (count($route)) {
-			$route = array_unique($route);
-			$recipients = array_diff($recipients,$route);
-		}
-	}
-
-	// add ourself just in case we have nomadic clones that need to get a copy.
+	// Add both the author and owner (if different).
 
 	$recipients[] = $item['author_xchan'];
 
@@ -387,43 +371,6 @@ function absolutely_no_comments($item) {
 
 	return false;
 }
-
-
-
-/**
- * @brief Adds $hash to the item source route specified by $iid.
- *
- * $item['route'] contains a comma-separated list of xchans that sent the current message,
- * somewhat analogous to the * Received: header line in email. We can use this to perform
- * loop detection and to avoid sending a particular item to any "upstream" sender (they
- * already have a copy because they sent it to us).
- *
- * Modifies item in the database pointed to by $iid.
- *
- * @param integer $iid
- *    item['id'] of target item
- * @param string $hash
- *    xchan_hash of the channel that sent the item
- */
-function add_source_route($iid, $hash) {
-//	logger('add_source_route ' . $iid . ' ' . $hash, LOGGER_DEBUG);
-
-	if ((! $iid) || (! $hash)) {
-		return;
-	}
-
-	$r = q("select route from item where id = %d limit 1",
-		intval($iid)
-	);
-	if ($r) {
-		$new_route = (($r[0]['route']) ? $r[0]['route'] . ',' : '') . $hash;
-		q("update item set route = '%s' where id = %d",
-			dbesc($new_route),
-			intval($iid)
-		);
-	}
-}
-
 
 /**
  * @brief Post an activity.
@@ -654,6 +601,7 @@ function get_item_elements($x,$allow_code = false) {
 	$arr['body'] = $x['body'];
 	$arr['summary'] = $x['summary'];
 
+    $mirror = array_key_exists('revision', $x);
 	$maxlen = get_max_import_size();
 
 	if($maxlen && mb_strlen($arr['body']) > $maxlen) {
@@ -687,7 +635,6 @@ function get_item_elements($x,$allow_code = false) {
 
     $arr['uuid']         = (($x['uuid'])           ? htmlspecialchars($x['uuid'],           ENT_COMPAT,'UTF-8',false) : '');
 	$arr['app']          = (($x['app'])            ? htmlspecialchars($x['app'],            ENT_COMPAT,'UTF-8',false) : '');
-	$arr['route']        = (($x['route'])          ? htmlspecialchars($x['route'],          ENT_COMPAT,'UTF-8',false) : '');
 	$arr['mid']          = (($x['message_id'])     ? htmlspecialchars($x['message_id'],     ENT_COMPAT,'UTF-8',false) : '');
 	$arr['parent_mid']   = (($x['message_top'])    ? htmlspecialchars($x['message_top'],    ENT_COMPAT,'UTF-8',false) : '');
 	$arr['thr_parent']   = (($x['message_parent']) ? htmlspecialchars($x['message_parent'], ENT_COMPAT,'UTF-8',false) : '');
@@ -704,8 +651,9 @@ function get_item_elements($x,$allow_code = false) {
 	// convert AS1 namespaced elements to AS-JSONLD
 
 	$arr['verb'] = Activity::activity_mapper($arr['verb']);
-	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type']);
-	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type']);
+
+	$arr['obj_type'] = Activity::activity_obj_mapper($arr['obj_type'], $mirror);
+	$arr['tgt_type'] = Activity::activity_obj_mapper($arr['tgt_type'], $mirror);
 
 	$arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
@@ -824,7 +772,7 @@ function get_item_elements($x,$allow_code = false) {
 	// Strip old-style hubzilla bookmarks
 	// Do this after signature verification
 
-	if(strpos($x['body'],"#^[") !== false) {
+	if (strpos($x['body'],"#^[") !== false) {
 		$x['body'] = str_replace("#^[","[",$x['body']);
 	}
 
@@ -833,12 +781,12 @@ function get_item_elements($x,$allow_code = false) {
 	// Do this after signature checking as the original signature
 	// was generated on the escaped content.
 
-	if($arr['mimetype'] === 'text/markdown') {
+	if ($arr['mimetype'] === 'text/markdown') {
 		$arr['summary'] = MarkdownSoap::unescape($arr['summary']);
 		$arr['body']    = MarkdownSoap::unescape($arr['body']);
 	}
 
-	if(array_key_exists('revision',$x)) {
+	if ($mirror) {
 
 		// extended export encoding
 
@@ -905,12 +853,12 @@ function import_author_xchan($x) {
 
 	$y = false;
 
-	if((! array_key_exists('network', $x)) || in_array($x['network'],['nomad','zot6'])) {
+	if((! array_key_exists('network', $x)) || in_array($x['network'], ['nomad', 'zot6'])) {
 		$y = Libzot::import_author_zot($x);
 	}
 
 	// if we were told that it's a zot connection, don't probe/import anything else
-	if(array_key_exists('network',$x) && in_array($x['network'],['nomad','zot6'])) {
+	if(array_key_exists('network', $x) && in_array($x['network'], ['nomad', 'zot6'])) {
 		return $y;
 	}
 
@@ -933,7 +881,7 @@ function import_author_activitypub($x) {
 
     // let somebody upgrade from an 'unknown' connection which has no xchan_addr and resolve issues with identities from multiple protocols using the same url
 
-    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
+    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
         dbesc($x['url'])
     );
     if(! $r) {
@@ -944,7 +892,7 @@ function import_author_activitypub($x) {
     if($r) {
 		$ptr = null;
 		foreach($r as $rv) {
-			if (strpos($rv['xchan_network'],'zot') !== false) {
+			if (strpos($rv['xchan_network'], 'zot') !== false) {
 				$ptr = $rv;
 			}
 		}
@@ -959,7 +907,7 @@ function import_author_activitypub($x) {
     $z = discover_by_webbie($x['url']);
 
     if($z) {
-	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s'",
+	    $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
             dbesc($x['url'])
         );
         if(! $r) {
@@ -1117,7 +1065,6 @@ function encode_item($item,$mirror = false) {
 	$x['location']        = $item['location'];
 	$x['longlat']         = $item['coord'];
 	$x['signature']       = $item['sig'];
-	$x['route']           = $item['route'];
 	$x['replyto']         = $item['replyto'];
 	$x['owner']           = encode_item_xchan($item['owner']);
 	$x['author']          = encode_item_xchan($item['author']);
@@ -1614,7 +1561,6 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['deny_cid']      = ((x($arr,'deny_cid'))      ? trim($arr['deny_cid'])              : '');
 	$arr['deny_gid']      = ((x($arr,'deny_gid'))      ? trim($arr['deny_gid'])              : '');
 	$arr['postopts']      = ((x($arr,'postopts'))      ? trim($arr['postopts'])              : '');
-	$arr['route']         = ((x($arr,'route'))         ? trim($arr['route'])                 : '');
     $arr['uuid']          = ((x($arr,'uuid'))          ? trim($arr['uuid'])                  : '');
 	$arr['item_private']  = ((x($arr,'item_private'))  ? intval($arr['item_private'])        : 0 );
 	$arr['item_wall']     = ((x($arr,'item_wall'))     ? intval($arr['item_wall'])           : 0 );
@@ -1717,6 +1663,9 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	$arr['app']           = ((x($arr,'app'))           ? notags(trim($arr['app']))           : '');
 	$arr['replyto']       = ((x($arr,'replyto'))       ? serialise($arr['replyto'])          : '');
 
+    // No longer used but needs to be set to something or the database will complain.
+    $arr['route'] = '';
+    
 	$arr['public_policy'] = '';
 
 	$arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
@@ -1947,13 +1896,12 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
 	logger('item_store: ' . print_r($arr,true), LOGGER_DATA);
 
-
 	create_table_from_array('item',$arr);
 
 	// find the item we just created
 
 	$r = q("SELECT * FROM item WHERE mid = '%s' AND uid = %d and revision = %d ORDER BY id ASC ",
-		$arr['mid'],           // already dbesc'd
+		dbesc($arr['mid']),
 		intval($arr['uid']),
 		intval($arr['revision'])
 	);
@@ -2227,7 +2175,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
 	$arr['edited']        = ((x($arr,'edited')  !== false) ? datetime_convert('UTC','UTC',$arr['edited'])  : datetime_convert());
 	$arr['revision']      = ((x($arr,'revision') && $arr['revision'] > 0)   ? intval($arr['revision']) : 0);
-	$arr['route']         = ((array_key_exists('route',$arr)) ? trim($arr['route'])          : $orig[0]['route']);
 
 	$arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
 	$arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
@@ -2441,7 +2388,8 @@ function send_status_notifications($post_id,$item) {
 	$unfollowed = false;
 
 	$parent = 0;
-
+    $thr_parent_id = 0;
+    
 	if(array_key_exists('verb',$item) && (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE))) {
 
 		$r = q("select id from item where mid = '%s' and uid = %d limit 1",
@@ -3133,7 +3081,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$arr['item_wall'] = 1;
 		$arr['item_thread_top'] = 1;
 	
-		$bb = "[share author='" . urlencode($item['author']['xchan_name']).
+		$bb = "[share author='" . urlencode($item['author']['xchan_name']) .
 			"' profile='"       . $item['author']['xchan_url'] .
 			"' portable_id='"   . $item['author']['xchan_hash'] . 
 			"' avatar='"        . $item['author']['xchan_photo_s'] .
@@ -3150,6 +3098,19 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 		$bb .= "[/share]";
 
 		$arr['body'] = $bb;
+
+        $tagpref = intval(PConfig::Get($channel['channel_id'], 'system', 'tag_username', Config::Get('system', 'tag_username', false)));
+
+        $mention = $item['author']['xchan_name'];
+
+        if ($tagpref === 1 && $item['author']['xchan_addr']) {
+            $mention = $item['author']['xchan_addr'];
+        }
+        if ($tagpref === 2 && $item['author']['xchan_addr']) {
+            $mention = sprintf(t('%1$s (%2$s)'), $item['author']['xchan_name'], $item['author']['xchan_addr']);
+        }
+    
+        $arr['body'] .= "\n" . '@[zrl=' . $item['author']['xchan_url'] . ']' . $mention . '[/zrl]';
 		
 		// Conversational objects shouldn't be copied, but other objects should.
 		if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) { 
@@ -3175,9 +3136,18 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         else {
             $arr['target'] = $item['target'];
         }
-		
-		$arr['term'] = $item['term'];
 
+        // Add a mention for the author.
+		$arr['term'] = ($item['term']) ? $item['term'] : [];
+        $arr['term'][] = [
+            'uid' => $channel['channel_id'],
+            'ttype' => TERM_MENTION,
+            'otype' => TERM_OBJ_POST,
+            'term' => '@' . $item['author']['xchan_addr'],
+            'url' => $item['author']['xchan_url']
+        ];
+
+    
 		$arr['author_xchan'] = $channel['channel_hash'];
 		$arr['owner_xchan']  = $channel['channel_hash'];
 
@@ -4751,8 +4721,8 @@ function send_profile_photo_activity($channel,$photo,$profile) {
 
 	$arr['obj'] = [
 		'type'      => ACTIVITY_OBJ_NOTE,
-		'published' => datetime_convert('UTC','UTC',$photo['created'],ATOM_TIME),
-		'updated'   => datetime_convert('UTC','UTC',$photo['edited'],ATOM_TIME),
+		'published' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
+		'updated'   => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
 		'id'        => $arr['mid'],
 		'url'       => [ 'type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/profile/l/' . $channel['channel_id'] ],
 		'source'    => [ 'content' => $arr['body'], 'mediaType' => 'text/x-multicode' ],

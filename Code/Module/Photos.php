@@ -35,10 +35,6 @@ class Photos extends Controller
     public function init()
     {
 
-        if (observer_prohibited()) {
-            return;
-        }
-
         if (argc() > 1) {
             $nick = escape_tags(argv(1));
 
@@ -582,14 +578,7 @@ class Photos extends Controller
         // photos/name/album/xxxxx (xxxxx is album name)
         // photos/name/image/xxxxx
 
-
-        if (observer_prohibited()) {
-            notice(t('Public access denied.') . EOL);
-            return;
-        }
-
         $unsafe = 1 - get_safemode();
-
 
         if (!x(App::$data, 'channel')) {
             notice(t('No photos selected') . EOL);
@@ -735,10 +724,10 @@ class Photos extends Controller
                 '$nickname' => App::$data['channel']['channel_address'],
                 '$newalbum_label' => t('Enter an album name'),
                 '$newalbum_placeholder' => t('or select an existing album (doubleclick)'),
-                '$visible' => array('visible', t('Create a status post for this upload'), 0, t('If multiple files are selected, the message will be repeated for each photo'), array(t('No'), t('Yes')), 'onclick="showHideBodyTextarea();"'),
-                '$caption' => array('description', t('Please briefly describe this photo for vision-impaired viewers')),
-                'title' => ['title', t('Title (optional)')],
-                '$body' => array('body', t('Your message (optional)'), '', 'This will only appear in the status post'),
+                '$caption' => [ 'description', t('Please briefly describe this photo for vision-impaired viewers'), '',
+                    t('If uploading multiple photos this description will be added to every photo.') ],
+                'title' => ['title', t('Title (optional)'), '',
+                    t('If uploading multiple photos this title/caption will be added to every photo.') ],
                 '$albums' => $albums['albums'],
                 '$selname' => $selname,
                 '$permissions' => t('Permissions'),

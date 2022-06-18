@@ -14,7 +14,7 @@ use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
 use Code\Lib\LibBlock;
 use Code\Lib\Activity;
-use Code\Lib\Channel;    
+use Code\Lib\Channel;
 use Code\Lib\ASCollection;
 use Code\Lib\LDSignatures;
 use Code\Daemon\Run;
@@ -255,27 +255,27 @@ class Libzot
         return z_post_url($url, $data, $redirects, ((empty($h)) ? [] : ['headers' => $h]));
     }
 
-	public static function nomad($url, $data, $channel = null,$crypto = null) {
+    public static function nomad($url, $data, $channel = null, $crypto = null) {
 
-		if ($channel) {
-			$headers = [ 
-				'X-Nomad-Token'    => random_string(), 
-				'Digest'           => HTTPSig::generate_digest_header($data), 
-				'Content-type'     => 'application/x-nomad+json',
-				'(request-target)' => 'post ' . get_request_string($url)
-			];
+        if ($channel) {
+            $headers = [
+                'X-Nomad-Token'    => random_string(),
+                'Digest'           => HTTPSig::generate_digest_header($data),
+                'Content-type'     => 'application/x-nomad+json',
+                '(request-target)' => 'post ' . get_request_string($url)
+            ];
 
-			$h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],Channel::url($channel),false,'sha512', 
-				(($crypto) ? [ 'key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto']) ] : false));
-		}
-		else {
-			$h = [];
-		}
+            $h = HTTPSig::create_sig($headers,$channel['channel_prvkey'],Channel::url($channel),false,'sha512',
+                (($crypto) ? [ 'key' => $crypto['hubloc_sitekey'], 'algorithm' => self::best_algorithm($crypto['site_crypto']) ] : false));
+        }
+        else {
+            $h = [];
+        }
 
-		$redirects = 0;
+        $redirects = 0;
 
-		return z_post_url($url,$data,$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
-	}
+        return z_post_url($url,$data,$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
+    }
 
 
 
@@ -334,7 +334,7 @@ class Libzot
             // hubloc_id_url is set to the channel home, which corresponds to an ActivityStreams actor id.
 
             $r = q(
-                "select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network in ('zot6','nomad') order by hubloc_id desc",
+                "select hubloc_id_url, hubloc_primary from hubloc where hubloc_hash = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 order by hubloc_id desc",
                 dbesc($them['xchan_hash'])
             );
 
@@ -432,8 +432,8 @@ class Libzot
 
                 $y = q(
                     "update abook set abook_dob = '%s'
-					where abook_xchan = '%s' and abook_channel = %d
-					and abook_self = 0 ",
+                    where abook_xchan = '%s' and abook_channel = %d
+                    and abook_self = 0 ",
                     dbescdate($next_birthday),
                     dbesc($x['hash']),
                     intval($channel['channel_id'])
@@ -623,10 +623,11 @@ class Libzot
 
             $r = q(
                 "select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url
-					where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
-					and hubloc_url = '%s' and hubloc_url_sig = '%s'
-					and hubloc_site_id = '%s' and hubloc_network in ('nomad','zot6') 
-					$limit",
+                    where hubloc_guid = '%s' and hubloc_guid_sig = '%s'
+                    and hubloc_url = '%s' and hubloc_url_sig = '%s'
+                    and hubloc_site_id = '%s' and hubloc_network in ('nomad','zot6')
+                    and hubloc_deleted = 0
+                    $limit",
                 dbesc($arr['id']),
                 dbesc($arr['id_sig']),
                 dbesc($arr['location']),
@@ -648,7 +649,7 @@ class Libzot
     {
 
         $r = q(
-            "select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_site_id = '%s' limit 1",
+            "select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_site_id = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($sender),
             dbesc($site_id)
         );
@@ -754,7 +755,6 @@ class Libzot
         Hook::call('import_xchan', $arr);
 
         $ret = array('success' => false);
-        $dirmode = intval(get_config('system', 'directory_mode'));
 
         $changed = false;
         $what = '';
@@ -804,15 +804,6 @@ class Libzot
                 $import_photos = true;
             }
 
-            // if we import an entry from a site that's not ours and either or both of us is off the grid - hide the entry.
-            /** @TODO: check if we're the same directory realm, which would mean we are allowed to see it */
-
-            $dirmode = get_config('system', 'directory_mode');
-
-            if ((($arr['site']['directory_mode'] === 'standalone') || ($dirmode & DIRECTORY_MODE_STANDALONE)) && ($arr['site']['url'] != z_root())) {
-                $arr['searchable'] = false;
-            }
-
             $hidden = (1 - intval($arr['searchable']));
 
             $hidden_changed = $adult_changed = $deleted_changed = $type_changed = 0;
@@ -827,14 +818,14 @@ class Libzot
                 $deleted_changed = 1;
             }
 
-			$px = 0;
-			if (isset($arr['channel_type'])) {
-	            if ($arr['channel_type'] === 'collection') {
-    	            $px = 2;
-        	    } elseif ($arr['channel_type'] === 'group') {
-                	$px = 1;
-				}
-			}
+            $px = 0;
+            if (isset($arr['channel_type'])) {
+                if ($arr['channel_type'] === 'collection') {
+                    $px = 2;
+                } elseif ($arr['channel_type'] === 'group') {
+                    $px = 1;
+                }
+            }
             if (array_key_exists('public_forum', $arr) && intval($arr['public_forum'])) {
                 $px = 1;
             }
@@ -881,8 +872,8 @@ class Libzot
             ) {
                 $rup = q(
                     "update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
-					xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
-					xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
+                    xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
+                    xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
                     dbesc(datetime_convert()),
                     dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
                     dbesc($arr['name_updated']),
@@ -906,15 +897,6 @@ class Libzot
         } else {
             $import_photos = true;
 
-            if (
-                (($arr['site']['directory_mode'] === 'standalone')
-                    || ($dirmode & DIRECTORY_MODE_STANDALONE))
-                && ($arr['site']['url'] != z_root())
-            ) {
-                $arr['searchable'] = false;
-            }
-
-
             if ($arr['channel_type'] === 'collection') {
                 $px = 2;
             } elseif ($arr['channel_type'] === 'group') {
@@ -927,7 +909,7 @@ class Libzot
                 $px = 1;
             }
 
-			$network = isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10 ? 'nomad' : 'zot6';
+            $network = isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10 ? 'nomad' : 'zot6';
 
 
             $x = xchan_store_lowlevel(
@@ -977,10 +959,9 @@ class Libzot
             if ($photos) {
                 if ($photos[4]) {
                     // importing the photo failed somehow. Leave the photo_date alone so we can try again at a later date.
-                    // This often happens when somebody joins the matrix with a bad cert.
                     $r = q(
                         "update xchan set xchan_updated = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
-						where xchan_hash = '%s'",
+                        where xchan_hash = '%s'",
                         dbesc(datetime_convert()),
                         dbesc($photos[0]),
                         dbesc($photos[1]),
@@ -991,7 +972,7 @@ class Libzot
                 } else {
                     $r = q(
                         "update xchan set xchan_updated = '%s', xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s'
-						where xchan_hash = '%s'",
+                        where xchan_hash = '%s'",
                         dbesc(datetime_convert()),
                         dbesc(datetime_convert('UTC', 'UTC', ((isset($arr['photo_updated'])) ? $arr['photo_updated'] : 'now'))),
                         dbesc($photos[0]),
@@ -1354,27 +1335,27 @@ class Libzot
 
         if ($has_data) {
             if (in_array($env['type'], ['activity', 'response'])) {
-    
+
                 if (!(is_array($AS->actor) && isset($AS->actor['id']))) {
                     logger('No author!');
                     return;
                 }
 
                 $r = q(
-                    "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
+                    "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                     dbesc($AS->actor['id'])
                 );
                 if (! $r) {
-                    // Author is unknown to this site. Perform channel discovery and try again. 
+                    // Author is unknown to this site. Perform channel discovery and try again.
                     $z = discover_by_webbie($AS->actor['id']);
                     if ($z) {
                         $r = q(
-                            "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s'",
+                            "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                             dbesc($AS->actor['id'])
                         );
                     }
                 }
-    
+
                 if ($r) {
                     $r = self::zot_record_preferred($r);
                     $arr['author_xchan'] = $r['hubloc_hash'];
@@ -1386,7 +1367,7 @@ class Libzot
                 }
 
                 $s = q(
-                    "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') limit 1",
+                    "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 limit 1",
                     dbesc($env['sender'])
                 );
 
@@ -1427,7 +1408,7 @@ class Libzot
                 if (!array_key_exists('comment_policy', $arr)) {
                     $arr['comment_policy'] = 'authenticated';
                 }
-                if ($AS->meta['signed_data']) {
+                if (isset($AS->meta['signed_data'])) {
                     IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
                     $j = json_decode($AS->meta['signed_data'], true);
                     if ($j) {
@@ -1583,7 +1564,7 @@ class Libzot
                             if ($address) {
                                 $z = q(
                                     "select channel_hash as hash from channel where channel_address = '%s'
-									and channel_hash != '%s' and channel_removed = 0 limit 1",
+                                    and channel_hash != '%s' and channel_removed = 0 limit 1",
                                     dbesc($address),
                                     dbesc($msg['sender'])
                                 );
@@ -1597,7 +1578,7 @@ class Libzot
                             if ($address) {
                                 $z = q(
                                     "select channel_hash as hash from channel where channel_address = '%s'
-									and channel_hash != '%s' and channel_removed = 0 limit 1",
+                                    and channel_hash != '%s' and channel_removed = 0 limit 1",
                                     dbesc($address),
                                     dbesc($msg['sender'])
                                 );
@@ -1766,7 +1747,7 @@ class Libzot
 
                 $siteallowed = true;
                 $h = q(
-                    "select hubloc_url from hubloc where hubloc_hash = '%s'",
+                    "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
                     dbesc($sender)
                 );
                 if ($h) {
@@ -1822,7 +1803,7 @@ class Libzot
                 $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
                 if ($blocked) {
                     $h = q(
-                        "select hubloc_url from hubloc where hubloc_hash = '%s'",
+                        "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
                         dbesc($sender)
                     );
                     if ($h) {
@@ -1922,13 +1903,13 @@ class Libzot
                 $prnt = ((strpos($arr['parent_mid'], 'token=') !== false) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
 
                 $r = q(
-                    "select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+                    "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                     dbesc($arr['parent_mid']),
                     intval($channel['channel_id'])
                 );
                 if (!$r) {
                     $r = q(
-                        "select route, id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
+                        "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                         dbesc($prnt),
                         intval($channel['channel_id'])
                     );
@@ -1949,8 +1930,6 @@ class Libzot
                     }
 
                     if ($r[0]['obj_type'] === 'Question') {
-                        // route checking doesn't work correctly here because we've changed the privacy
-                        $r[0]['route'] = EMPTY_STR;
                         // If this is a poll response, convert the obj_type to our (internal-only) "Answer" type
                         if ($arr['obj_type'] === 'Note' && $arr['title'] && (!$arr['content'])) {
                             $arr['obj_type'] = 'Answer';
@@ -2000,53 +1979,6 @@ class Libzot
                     continue;
                 }
 
-
-                if ($relay || $friendofriend || (intval($r[0]['item_private']) === 0 && intval($arr['item_private']) === 0)) {
-                    // reset the route in case it travelled a great distance upstream
-                    // use our parent's route so when we go back downstream we'll match
-                    // with whatever route our parent has.
-                    // Also friend-of-friend conversations may have been imported without a route,
-                    // but we are now getting comments via listener delivery
-                    // and if there is no privacy on this or the parent, we don't care about the route,
-                    // so just set the owner and route accordingly.
-                    $arr['route'] = $r[0]['route'];
-                    $arr['owner_xchan'] = $r[0]['owner_xchan'];
-                } else {
-                    // going downstream check that we have the same upstream provider that
-                    // sent it to us originally. Ignore it if it came from another source
-                    // (with potentially different permissions).
-                    // only compare the last hop since it could have arrived at the last location any number of ways.
-                    // Always accept empty routes and firehose items (route contains 'undefined') .
-
-                    $existing_route = explode(',', $r[0]['route']);
-                    $routes = count($existing_route);
-                    if ($routes) {
-                        $last_hop = array_pop($existing_route);
-                        $last_prior_route = implode(',', $existing_route);
-                    } else {
-                        $last_hop = '';
-                        $last_prior_route = '';
-                    }
-
-                    if (in_array('undefined', $existing_route) || $last_hop == 'undefined' || $sender == 'undefined') {
-                        $last_hop = '';
-                    }
-
-                    $current_route = ((isset($arr['route']) && $arr['route']) ? $arr['route'] . ',' : '') . $sender;
-
-                    if ($last_hop && $last_hop != $sender) {
-                        logger('comment route mismatch: parent route = ' . $r[0]['route'] . ' expected = ' . $current_route, LOGGER_DEBUG);
-                        logger('comment route mismatch: parent msg = ' . $r[0]['id'], LOGGER_DEBUG);
-                        $DR->update('comment route mismatch');
-                        $result[] = $DR->get();
-                        continue;
-                    }
-
-                    // we'll add sender onto this when we deliver it. $last_prior_route now has the previously stored route
-                    // *except* for the sender which would've been the last hop before it got to us.
-
-                    $arr['route'] = $last_prior_route;
-                }
             }
 
             // This is used to fetch allow/deny rules if either the sender
@@ -2106,9 +2038,6 @@ class Libzot
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
                     } else {
                         $DR->update('update ignored');
                         $result[] = $DR->get();
@@ -2180,10 +2109,6 @@ class Libzot
                          *   * \e array \b channel
                          */
                         Hook::call('activity_received', $parr);
-                        // don't add a source route if it's a relay or later recipients will get a route mismatch
-                        if (!$relay) {
-                            add_source_route($item_id, $sender);
-                        }
                     }
                     $DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
                     $result[] = $DR->get();
@@ -2259,7 +2184,7 @@ class Libzot
 
 
         $signer = q(
-            "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') limit 1",
+            "select hubloc_hash, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0 limit 1",
             dbesc($a['signature']['signer'])
         );
 
@@ -2284,20 +2209,12 @@ class Libzot
 
             // logger($AS->debug());
 
-            $r = q(
-                "select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
-                dbesc($AS->actor['id']),
-                dbesc($AS->actor['id'])
-            );
+            $r = hubloc_id_query($AS->actor['id'], 1);
 
             if (!$r) {
                 $y = import_author_xchan(['url' => $AS->actor['id']]);
                 if ($y) {
-                    $r = q(
-                        "select hubloc_hash from hubloc where hubloc_id_url = '%s' or hubloc_hash = '%s' limit 1",
-                        dbesc($AS->actor['id']),
-                        dbesc($AS->actor['id'])
-                    );
+                    $r = hubloc_id_query($AS->actor['id'], 1);
                 }
                 if (!$r) {
                     logger('FOF Activity: no actor');
@@ -2305,7 +2222,7 @@ class Libzot
                 }
             }
 
-            if ($AS->obj['actor'] && $AS->obj['actor']['id'] && $AS->obj['actor']['id'] !== $AS->actor['id']) {
+            if (array_path_exists('actor/id', $AS->obj) && $AS->obj['actor']['id'] !== $AS->actor['id']) {
                 $y = import_author_xchan(['url' => $AS->obj['actor']['id']]);
                 if (!$y) {
                     logger('FOF Activity: no object actor');
@@ -2321,17 +2238,17 @@ class Libzot
 
             // The default condition for owner_xchan is a top level post
             // which is not being relayed. Wall-to-wall posts should get
-            // set correctly because they will have 'replyto'. 
+            // set correctly because they will have 'replyto'.
 
             $arr['owner_xchan'] = $arr['author_xchan'];
 
             // replyTo trumps everything.
-    
-            if ($arr['replyto']) {
+
+            if (isset($arr['replyto']) && $arr['replyto']) {
                 $arr['owner_xchan'] = $arr['replyto'];
             }
             elseif ($arr['mid'] !== $arr['parent_mid']) {
-                // Inherit owner and replyto from the parent. 
+                // Inherit owner and replyto from the parent.
                 $r = q("select * from item where mid = '%s' and uid = %d",
                     dbesc($arr['parent_mid']),
                     intval($channel['channel_id'])
@@ -2341,12 +2258,14 @@ class Libzot
                     $arr['replyto'] = $r[0]['replyto'];
                 }
             }
-                      
-            if ($AS->meta['hubloc'] || $arr['author_xchan'] === $arr['owner_xchan']) {
+            if (
+                (isset($AS->meta) && isset($AS->meta['hubloc']) && $AS->meta['hubloc'])
+                || ($arr['author_xchan'] === $arr['owner_xchan'])
+            ) {
                 $arr['item_verified'] = true;
             }
 
-            if ($AS->meta['signed_data']) {
+            if (isset($AS->meta) && isset($AS->meta['signed_data']) && $AS->meta['signed_data']) {
                 IConfig::Set($arr, 'activitystreams', 'signed_data', $AS->meta['signed_data'], false);
             }
 
@@ -2529,7 +2448,7 @@ class Libzot
 
         $r = q(
             "select * from item where ( author_xchan = '%s' or owner_xchan = '%s' or source_xchan = '%s' )
-			and mid in ('%s','%s')  and uid = %d limit 1",
+            and mid in ('%s','%s')  and uid = %d limit 1",
             dbesc($sender),
             dbesc($sender),
             dbesc($sender),
@@ -2638,39 +2557,6 @@ class Libzot
         );
         if ($r) {
             Libzotdir::import_directory_profile($sender, $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);
-        }
-    }
-
-
-    /**
-     * @brief
-     *
-     * @param array $sender an associative array
-     *   * \e string \b hash a xchan_hash
-     * @param array $arr
-     * @param array $deliveries (unused) deliveries is irrelevant
-     */
-    public static function process_location_delivery($sender, $arr, $deliveries)
-    {
-
-        // deliveries is irrelevant
-        logger('process_location_delivery', LOGGER_DEBUG);
-
-        $r = q(
-            "select * from xchan where xchan_hash = '%s' limit 1",
-            dbesc($sender)
-        );
-        if ($r) {
-            $xchan = ['id' => $r[0]['xchan_guid'], 'id_sig' => $r[0]['xchan_guid_sig'],
-                'hash' => $r[0]['xchan_hash'], 'public_key' => $r[0]['xchan_pubkey']];
-        }
-        if (array_key_exists('locations', $arr) && $arr['locations']) {
-            $x = Libsync::sync_locations($xchan, $arr, true);
-            logger('results: ' . print_r($x, true), LOGGER_DEBUG);
-            if ($x['changed']) {
-                $guid = random_string() . '@' . App::get_hostname();
-                Libzotdir::update_modtime($sender, $r[0]['xchan_guid'], $arr['locations'][0]['address'], UPDATE_FLAGS_UPDATED);
-            }
         }
     }
 
@@ -2795,7 +2681,7 @@ class Libzot
     public static function import_site($arr)
     {
 
-        if ((!is_array($arr)) || (!$arr['url']) || (!$arr['site_sig'])) {
+        if (!(is_array($arr) && isset($arr['url']) && isset($arr['site_sig']))) {
             return false;
         }
 
@@ -2814,14 +2700,6 @@ class Libzot
         if ($r) {
             $exists = true;
             $siterecord = $r[0];
-        }
-
-        $site_directory = 0;
-        if ($arr['directory_mode'] == 'normal') {
-            $site_directory = DIRECTORY_MODE_NORMAL;
-        }
-        if ($arr['directory_mode'] == 'standalone') {
-            $site_directory = DIRECTORY_MODE_STANDALONE;
         }
 
         $register_policy = 0;
@@ -2914,7 +2792,7 @@ class Libzot
 
                 $r = q(
                     "update site set site_dead = 0, site_location = '%s', site_flags = %d, site_access = %d, site_register = %d, site_update = '%s', site_sellpage = '%s', site_type = %d, site_project = '%s', site_version = '%s', site_crypto = '%s'
-					where site_url = '%s'",
+                    where site_url = '%s'",
                     dbesc($site_location),
                     intval($site_flags),
                     intval($access_policy),
@@ -2980,11 +2858,11 @@ class Libzot
             return EMPTY_STR;
         }
 
-		if (in_array($observer['xchan_network'],['zot6','nomad'])) {
-	        $parsed = parse_url($observer['xchan_url']);
-	    	return $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '') . '/rpost?f=';
-		}
-		return EMPTY_STR;
+        if (in_array($observer['xchan_network'],['zot6','nomad'])) {
+            $parsed = parse_url($observer['xchan_url']);
+            return $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '') . '/rpost?f=';
+        }
+        return EMPTY_STR;
     }
 
     /**
@@ -3013,7 +2891,7 @@ class Libzot
 
         $r1 = q(
             "select hubloc_url, hubloc_updated, site_dead from hubloc left join site on
-			hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 limit 1",
+            hubloc_url = site_url where hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_primary = 1 and hubloc_deleted = 0 limit 1",
             dbesc($x['id']),
             dbesc($x['id_sig'])
         );
@@ -3053,7 +2931,7 @@ class Libzot
 
             $r = q(
                 "select hubloc_id_url from hubloc left join site on hubloc_url = site_url
-				where hubloc_hash = '%s' and site_dead = 0",
+                where hubloc_hash = '%s' and hubloc_deleted = 0 and site_dead = 0",
                 dbesc($hash)
             );
             if ($r) {
@@ -3089,7 +2967,7 @@ class Libzot
         $feed = ((x($arr, 'feed')) ? intval($arr['feed']) : 0);
 
         if ($ztarget) {
-            $t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
+            $t = q("select * from hubloc where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                 dbesc($ztarget)
             );
             if ($t) {
@@ -3108,13 +2986,13 @@ class Libzot
         if (strlen($zhash)) {
             $r = q(
                 "select channel.*, xchan.* from channel left join xchan on channel_hash = xchan_hash
-				where channel_hash = '%s' limit 1",
+                where channel_hash = '%s' limit 1",
                 dbesc($zhash)
             );
         } elseif (strlen($zguid) && strlen($zguid_sig)) {
             $r = q(
                 "select channel.*, xchan.* from channel left join xchan on channel_hash = xchan_hash
-				where channel_guid = '%s' and channel_guid_sig = '%s' limit 1",
+                where channel_guid = '%s' and channel_guid_sig = '%s' limit 1",
                 dbesc($zguid),
                 dbesc($zguid_sig)
             );
@@ -3122,7 +3000,7 @@ class Libzot
             if (strpos($zaddr, '[system]') === false) {       /* normal address lookup */
                 $r = q(
                     "select channel.*, xchan.* from channel left join xchan on channel_hash = xchan_hash
-					where ( channel_address = '%s' or xchan_addr = '%s' ) limit 1",
+                    where ( channel_address = '%s' or xchan_addr = '%s' ) limit 1",
                     dbesc($zaddr),
                     dbesc($zaddr)
                 );
@@ -3140,10 +3018,10 @@ class Libzot
                  */
 
                 $r = q("select channel.*, xchan.* from channel left join xchan on channel_hash = xchan_hash
-					where channel_system = 1 order by channel_id limit 1");
+                    where channel_system = 1 order by channel_id limit 1");
                 if (!$r) {
                     $r = q("select channel.*, xchan.* from channel left join xchan on channel_hash = xchan_hash
-						where channel_removed = 0 order by channel_id limit 1");
+                        where channel_removed = 0 order by channel_id limit 1");
                 }
             }
         } else {
@@ -3357,79 +3235,60 @@ class Libzot
         $ret['site']['authRedirect'] = z_root() . '/magic';
         $ret['site']['sitekey'] = get_config('system', 'pubkey');
 
-        $dirmode = get_config('system', 'directory_mode');
-        if (($dirmode === false) || ($dirmode == DIRECTORY_MODE_NORMAL)) {
-            $ret['site']['directory_mode'] = 'normal';
-        }
-
-        if ($dirmode == DIRECTORY_MODE_PRIMARY) {
-            $ret['site']['directory_mode'] = 'primary';
-        } elseif ($dirmode == DIRECTORY_MODE_SECONDARY) {
-            $ret['site']['directory_mode'] = 'secondary';
-        } elseif ($dirmode == DIRECTORY_MODE_STANDALONE) {
-            $ret['site']['directory_mode'] = 'standalone';
-        }
-        if ($dirmode != DIRECTORY_MODE_NORMAL) {
-            $ret['site']['directory_url'] = z_root() . '/dirsearch';
-        }
-
-
         $ret['site']['encryption'] = Crypto::methods();
         $ret['signature_algorithm'] = $sig_method;
         $ret['site']['zot'] = System::get_zot_revision();
-
-        // hide detailed site information if you're off the grid
-
-        if ($dirmode != DIRECTORY_MODE_STANDALONE || $force) {
-            $register_policy = intval(get_config('system', 'register_policy'));
-
-            if ($register_policy == REGISTER_CLOSED) {
-                $ret['site']['register_policy'] = 'closed';
-            }
-            if ($register_policy == REGISTER_APPROVE) {
-                $ret['site']['register_policy'] = 'approve';
-            }
-            if ($register_policy == REGISTER_OPEN) {
-                $ret['site']['register_policy'] = 'open';
-            }
-
-            $access_policy = intval(get_config('system', 'access_policy'));
-
-            if ($access_policy == ACCESS_PRIVATE) {
-                $ret['site']['access_policy'] = 'private';
-            }
-            if ($access_policy == ACCESS_PAID) {
-                $ret['site']['access_policy'] = 'paid';
-            }
-            if ($access_policy == ACCESS_FREE) {
-                $ret['site']['access_policy'] = 'free';
-            }
-            if ($access_policy == ACCESS_TIERED) {
-                $ret['site']['access_policy'] = 'tiered';
-            }
-
-            $ret['site']['admin'] = get_config('system', 'admin_email');
-
-            $visible_plugins = [];
-
-            $r = q("select * from addon where hidden = 0");
-            if ($r) {
-                foreach ($r as $rr) {
-                    $visible_plugins[] = $rr['aname'];
-                }
-            }
+        $ret['site']['protocol_version'] = System::get_zot_revision();
 
 
-            $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
-            $ret['site']['plugins'] = $visible_plugins;
-            $ret['site']['sitehash'] = get_config('system', 'location_hash');
-            $ret['site']['sellpage'] = get_config('system', 'sellpage');
-            $ret['site']['location'] = get_config('system', 'site_location');
-            $ret['site']['sitename'] = System::get_site_name();
-            $ret['site']['logo'] = System::get_site_icon();
-            $ret['site']['project'] = System::get_project_name();
-            $ret['site']['version'] = System::get_project_version();
+
+        $register_policy = intval(get_config('system', 'register_policy'));
+
+        if ($register_policy == REGISTER_CLOSED) {
+            $ret['site']['register_policy'] = 'closed';
         }
+        if ($register_policy == REGISTER_APPROVE) {
+            $ret['site']['register_policy'] = 'approve';
+        }
+        if ($register_policy == REGISTER_OPEN) {
+            $ret['site']['register_policy'] = 'open';
+        }
+
+        $access_policy = intval(get_config('system', 'access_policy'));
+
+        if ($access_policy == ACCESS_PRIVATE) {
+            $ret['site']['access_policy'] = 'private';
+        }
+        if ($access_policy == ACCESS_PAID) {
+            $ret['site']['access_policy'] = 'paid';
+        }
+        if ($access_policy == ACCESS_FREE) {
+            $ret['site']['access_policy'] = 'free';
+        }
+        if ($access_policy == ACCESS_TIERED) {
+            $ret['site']['access_policy'] = 'tiered';
+        }
+
+        $ret['site']['admin'] = get_config('system', 'admin_email');
+
+        $visible_plugins = [];
+
+        $r = q("select * from addon where hidden = 0");
+        if ($r) {
+            foreach ($r as $rr) {
+                $visible_plugins[] = $rr['aname'];
+            }
+        }
+
+        $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
+        $ret['site']['plugins'] = $visible_plugins;
+        $ret['site']['sitehash'] = get_config('system', 'location_hash');
+        $ret['site']['sellpage'] = get_config('system', 'sellpage');
+        $ret['site']['location'] = get_config('system', 'site_location');
+        $ret['site']['sitename'] = System::get_site_name();
+        $ret['site']['logo'] = System::get_site_icon();
+        $ret['site']['project'] = System::get_project_name();
+        $ret['site']['version'] = System::get_project_version();
 
         return $ret['site'];
     }
@@ -3547,7 +3406,7 @@ class Libzot
 
     public static function is_zot_request()
     {
-		$x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad+json' ]);
+        $x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad+json' ]);
         return (($x) ? true : false);
     }
 
@@ -3558,11 +3417,11 @@ class Libzot
         if (!$arr) {
             return $arr;
         }
-		foreach ($arr as $v) {
-			if($v[$check] === 'nomad') {
-				return $v;
-			}
-		}
+        foreach ($arr as $v) {
+            if($v[$check] === 'nomad') {
+                return $v;
+            }
+        }
         foreach ($arr as $v) {
             if ($v[$check] === 'zot6') {
                 return $v;

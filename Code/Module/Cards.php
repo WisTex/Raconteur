@@ -36,11 +36,6 @@ class Cards extends Controller
      */
     public function get()
     {
-
-        if (observer_prohibited(true)) {
-            return login();
-        }
-
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;

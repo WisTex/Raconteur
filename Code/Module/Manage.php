@@ -81,6 +81,7 @@ class Manage extends Controller
                 $channels[$x]['default_links'] = '1';
                 $channels[$x]['collections_label'] = t('Collection');
                 $channels[$x]['forum_label'] = t('Group');
+                $channels[$x]['msg_system'] = t('System | Site Channel');
 
                 $c = q(
                     "SELECT id, item_wall FROM item

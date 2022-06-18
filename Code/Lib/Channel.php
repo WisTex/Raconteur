@@ -705,7 +705,7 @@ class Channel
         $modified = $r[0];
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0 ",
             dbesc($stored['old_hash']),
             dbesc(z_root())
         );
@@ -807,7 +807,7 @@ class Channel
         );
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0 ",
             dbesc($channel['channel_hash']),
             dbesc(z_root())
         );
@@ -944,6 +944,7 @@ class Channel
         $ret['compatibility'] = [
             'project'     => PLATFORM_NAME,
             'codebase'    => 'zap',
+            'schema'      => 'streams',
             'version'     => STD_VERSION,
             'database'    => DB_UPDATE_VERSION
         ];
@@ -1024,7 +1025,7 @@ class Channel
                     $ret['xchan'] = $r;
                 }
 
-                $r = q("select * from hubloc where hubloc_hash in ( " . implode(',', $xchans) . " ) ");
+                $r = q("select * from hubloc where hubloc_hash in ( " . implode(',', $xchans) . " ) and hubloc_deleted = 0");
                 if ($r) {
                     $ret['hubloc'] = $r;
                 }
@@ -1281,6 +1282,7 @@ class Channel
         }
 
         $ret['compatibility']['codebase'] = 'zap';
+        $ret['compatibility']['schema'] = 'streams';
 
         $r = q(
             "select * from item where ( item_wall = 1 or item_type != %d ) and item_deleted = 0 and uid = %d and created >= '%s' and created <= '%s'  and resource_type = '' order by created",
@@ -1350,6 +1352,7 @@ class Channel
         }
 
         $ret['compatibility']['codebase'] = 'zap';
+        $ret['compatibility']['schema'] = 'streams';
 
 
         $r = q(
@@ -1424,11 +1427,11 @@ class Channel
 
             if (! local_channel()) {
                 $r = q(
-                    "select * from hubloc where hubloc_addr = '%s' order by hubloc_connected desc limit 1",
+                    "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_connected desc limit 1",
                     dbesc($tmp_str)
                 );
                 if (! $r) {
-                    Run::Summon([ 'Gprobe', bin2hex($tmp_str) ]);
+                    Run::Summon([ 'Gprobe', $tmp_str]);
                 }
                 if ($r && remote_channel() && remote_channel() === $r[0]['hubloc_hash']) {
                     return;
@@ -1442,7 +1445,7 @@ class Channel
                 if ($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest, '/magic')) && (! strstr($dest, '/rmagic'))) {
                     goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&bdest=' . bin2hex(z_root() . $dest));
                 } else {
-                    logger('No hubloc found.');
+                    logger(sprintf('No hubloc found for \'%s\'.', $tmp_str));
                 }
             }
         }
@@ -1575,10 +1578,6 @@ class Channel
 
         $ret = array('result' => false);
 
-        if (observer_prohibited()) {
-            return $ret;
-        }
-
         $r = q(
             "select channel_id, channel_hash from channel where channel_address = '%s' limit 1",
             dbesc($nick)
@@ -1612,7 +1611,7 @@ class Channel
 
         $result = false;
         $r = q(
-            "select * from hubloc where hubloc_addr = '%s' limit 1",
+            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($webbie)
         );
         if (! $r) {
@@ -1661,10 +1660,6 @@ class Channel
     public static function is_public_profile()
     {
         if (! local_channel()) {
-            return false;
-        }
-
-        if (intval(get_config('system', 'block_public'))) {
             return false;
         }
 

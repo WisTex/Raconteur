@@ -57,8 +57,7 @@ class Item extends Controller
 
     public function init()
     {
-
-
+    
         if (ActivityStreams::is_as_request()) {
             $item_uuid = argv(1);
             if (!$item_uuid) {
@@ -511,7 +510,6 @@ class Item extends Controller
         $item_flags = $item_restrict = 0;
         $expires = NULL_DATE;
 
-        $route = '';
         $parent_item = null;
         $parent_contact = null;
         $thr_parent = '';
@@ -591,7 +589,6 @@ class Item extends Controller
 
             $thr_parent = $parent_mid;
 
-            $route = $parent_item['route'];
         }
 
         if ($parent_item && isset($parent_item['replyto']) && $parent_item['replyto']) {
@@ -921,8 +918,7 @@ class Item extends Controller
         if (!$mimetype) {
             $mimetype = 'text/x-multicode';
         }
-
-
+    
         $execflag = ((intval($uid) == intval($profile_uid)
             && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
 
@@ -1052,7 +1048,7 @@ class Item extends Controller
             if (array_key_exists('collections', $_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
                 foreach ($_REQUEST['collections'] as $clct) {
                     $r = q(
-                        "select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' limit 1",
+                        "select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
                         dbesc($clct)
                     );
                     if ($r) {
@@ -1126,15 +1122,20 @@ class Item extends Controller
                     $attach_link = '';
                     $hash = substr($mtch, 0, strpos($mtch, ','));
                     $rev = intval(substr($mtch, strpos($mtch, ',')));
-                    $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
-                    if ($r['success']) {
-                        $attachments[] = array(
-                            'href' => z_root() . '/attach/' . $r['data']['hash'],
-                            'length' => $r['data']['filesize'],
-                            'type' => $r['data']['filetype'],
-                            'title' => urlencode($r['data']['filename']),
-                            'revision' => $r['data']['revision']
-                        );
+                    if (strpos($mtch,'https://') === 0) {
+                        $attachments[] = [ 'href' => $mtch, 'type' => 'application/activity+json', 'title' => $mtch ];
+                    }
+                    else {
+                        $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
+                        if ($r['success']) {
+                            $attachments[] = array(
+                                'href' => z_root() . '/attach/' . $r['data']['hash'],
+                                'length' => $r['data']['filesize'],
+                                'type' => $r['data']['filetype'],
+                                'title' => urlencode($r['data']['filename']),
+                                'revision' => $r['data']['revision']
+                            );
+                        }
                     }
                     $body = str_replace($match[1][$i], $attach_link, $body);
                     $i++;
@@ -1390,20 +1391,7 @@ class Item extends Controller
 
 
         if (! (isset($replyto) && $replyto)) {
-            if ($owner_hash && strpos($owner_hash,'http') === 0) {
-                $replyto = $owner_hash;
-            }
-            else {
-                $tmp = $owner_hash ? $owner_hash : $owner_xchan['xchan_hash'];
-                if ($tmp) {
-                    $r = q("select hubloc_id_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1",
-                        dbesc($tmp)
-                    );
-                    if ($r) {
-                        $replyto = $r[0]['hubloc_id_url'];
-                    }
-                }
-            }
+            $replyto = Activity::encode_person($owner_xchan, false);
         }
 
 		if ($private && !$parent) {
@@ -1472,7 +1460,6 @@ class Item extends Controller
         $datarray['comment_policy'] = ((is_numeric($comment_policy)) ? map_scope($comment_policy) : $comment_policy); // only map scope if it is numeric, otherwise use what we have
         $datarray['term'] = $post_tags;
         $datarray['plink'] = $plink;
-        $datarray['route'] = $route;
         $datarray['replyto'] = $replyto;
 
         // A specific ACL over-rides public_policy completely

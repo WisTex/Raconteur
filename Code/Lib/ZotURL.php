@@ -79,7 +79,7 @@ class ZotURL
     {
 
         $r = q(
-            "select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and site_dead = 0 order by hubloc_primary desc",
+            "select * from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_deleted = 0 and site_dead = 0 order by hubloc_primary desc",
             dbesc($portable_id)
         );
 

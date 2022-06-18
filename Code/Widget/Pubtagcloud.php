@@ -9,9 +9,6 @@ class Pubtagcloud
     {
 
         $trending = ((array_key_exists('trending', $arr)) ? intval($arr['trending']) : 0);
-        if ((observer_prohibited(true))) {
-            return EMPTY_STR;
-        }
 
         if (!intval(get_config('system', 'open_pubstream', 0))) {
             if (!local_channel()) {

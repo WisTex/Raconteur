@@ -79,7 +79,7 @@ function rconnect_url($channel_id, $xchan)
     }
 
     $r = q(
-        "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1 limit 1",
+        "select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_primary = 1 and hubloc_deleted = 0 limit 1",
         dbesc($xchan)
     );
 
@@ -285,10 +285,7 @@ function mark_orphan_hubsxchans()
 
     return;
 
-    $dirmode = intval(get_config('system', 'directory_mode'));
-    if ($dirmode == DIRECTORY_MODE_NORMAL) {
-        return;
-    }
+
 
 	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
 		and hubloc_network in ('nomad','zot6') and hubloc_connected < %s - interval %s",
@@ -583,7 +580,7 @@ function random_profile()
 
     for ($i = 0; $i < $retryrandom; $i++) {
 		$r = q("select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where
-			xchan_hidden = 0 and xchan_network in ('nomad','zot6') and xchan_deleted = 0
+			xchan_hidden = 0 and xchan_network in ('nomad','zot6') and xchan_deleted = 0 and hubloc_deleted = 0 
 			and hubloc_connected > %s - interval %s order by $randfunc limit 1",
             db_utcnow(),
             db_quoteinterval('30 day')

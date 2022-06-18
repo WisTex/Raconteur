@@ -99,7 +99,8 @@ class Libsync
         $info['type'] = 'sync';
         $info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
         $info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root()];
-
+        $info['schema'] = 'streams';
+    
         if (array_key_exists($uid, App::$config) && array_key_exists('transient', App::$config[$uid])) {
             $settings = App::$config[$uid]['transient'];
             if ($settings) {
@@ -298,6 +299,7 @@ class Libsync
 
         $result = [];
 
+        $schema = (isset($arr['schema']) && $arr['schema']) ? $arr['schema'] : 'unknown';
         $keychange = ((array_key_exists('keychange', $arr)) ? true : false);
 
         foreach ($deliveries as $d) {
@@ -506,7 +508,9 @@ class Libsync
                     $abconfig = null;
 
                     if (array_key_exists('abconfig', $abook) && is_array($abook['abconfig']) && count($abook['abconfig'])) {
+                        
                         $abconfig = $abook['abconfig'];
+                        
                     }
 
                     $clean = [];
@@ -647,7 +651,16 @@ class Libsync
                     if ($abconfig) {
                         /// @fixme does not handle sync of del_abconfig
                         foreach ($abconfig as $abc) {
-                            set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], $abc['v']);
+                            if ($abc['cat'] ===  'system' && $abc['k'] === 'my_perms' && $schema !== 'streams') {
+                                $x = explode(',', $abc['v']);
+                                if (in_array('view_stream',$x)  && ! in_array('deliver_stream',$x)) {
+                                    $x[] = 'deliver_stream';
+                                }
+                                set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], implode(',', $x));
+                            }
+                            else {
+                                set_abconfig($channel['channel_id'], $abc['xchan'], $abc['cat'], $abc['k'], $abc['v']);
+                            }
                         }
                     }
                     if ($reconnect) {
@@ -909,11 +922,10 @@ class Libsync
      *
      * @param array $sender
      * @param array $arr
-     * @param bool $absolute (optional) default false
      * @return array
      */
 
-    public static function sync_locations($sender, $arr, $absolute = false)
+    public static function sync_locations($sender, $arr)
     {
 
         $ret = [];
@@ -940,12 +952,10 @@ class Libsync
                 $xchan = array_shift($x);
             }
 
-            if ($absolute) {
-                Libzot::check_location_move($sender['hash'], $arr['locations']);
-            }
-
+            Libzot::check_location_move($sender['hash'], $arr['locations']);
+    
             $xisting = q(
-                "select * from hubloc where hubloc_hash = '%s'",
+                "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
                 dbesc($sender['hash'])
             );
 
@@ -1002,7 +1012,7 @@ class Libsync
                 // match as many fields as possible in case anything at all changed.
 
                 $r = q(
-                    "select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' ",
+                    "select * from hubloc where hubloc_hash = '%s' and hubloc_guid = '%s' and hubloc_guid_sig = '%s' and hubloc_id_url = '%s' and hubloc_url = '%s' and hubloc_url_sig = '%s' and hubloc_host = '%s' and hubloc_addr = '%s' and hubloc_callback = '%s' and hubloc_sitekey = '%s' and hubloc_deleted = 0 ",
                     dbesc($sender['hash']),
                     dbesc($sender['id']),
                     dbesc($sender['id_sig']),
@@ -1102,13 +1112,6 @@ class Libsync
                         hubloc_change_primary($r[0]);
                         $what .= 'primary_hub ';
                         $changed = true;
-                    } elseif ($absolute) {
-                        // Absolute sync - make sure the current primary is correctly reflected in the xchan
-                        $pr = hubloc_change_primary($r[0]);
-                        if ($pr) {
-                            $what .= 'xchan_primary ';
-                            $changed = true;
-                        }
                     } elseif (intval($r[0]['hubloc_primary']) && $xchan && $xchan['xchan_url'] !== $r[0]['hubloc_id_url']) {
                         $pr = hubloc_change_primary($r[0]);
                         if ($pr) {
@@ -1188,7 +1191,7 @@ class Libsync
 
             // get rid of any hubs we have for this channel which weren't reported.
 
-            if ($absolute && $xisting) {
+            if ($xisting) {
                 foreach ($xisting as $x) {
                     if (!array_key_exists('updated', $x)) {
                         logger('Deleting unreferenced hub location ' . $x['hubloc_addr']);
@@ -1253,7 +1256,7 @@ class Libsync
         $channel = $r[0];
 
         $h = q(
-            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' ",
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_url = '%s' and hubloc_deleted = 0",
             dbesc($arr['keychange']['old_hash']),
             dbesc(z_root())
         );

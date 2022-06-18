@@ -13,11 +13,6 @@ class Viewconnections extends Controller
 
     public function init()
     {
-
-        if (observer_prohibited()) {
-            return;
-        }
-
         if (argc() > 1) {
             Libprofile::load(argv(1));
         }
@@ -25,14 +20,6 @@ class Viewconnections extends Controller
 
     public function get()
     {
-
-        // logger('request: ' . print_r($_REQUEST,true));
-
-        if (observer_prohibited()) {
-            notice(t('Public access denied.') . EOL);
-            return;
-        }
-
         if (((!(is_array(App::$profile) && count(App::$profile))) || (App::$profile['hide_friends']))) {
             notice(t('Permission denied.') . EOL);
             return;

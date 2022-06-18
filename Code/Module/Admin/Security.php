@@ -21,8 +21,8 @@ class Security
         $anonymous_comments = ((x($_POST, 'anonymous_comments')) ? intval($_POST['anonymous_comments']) : 0);
         set_config('system', 'anonymous_comments', $anonymous_comments);
 
-        $block_public = ((x($_POST, 'block_public')) ? true : false);
-        set_config('system', 'block_public', $block_public);
+        $use_hs2019 = ((x($_POST, 'use_hs2019')) ? intval($_POST['use_hs2019']) : 0);
+        set_config('system', 'use_hs2019', $use_hs2019);
 
         $block_public_search = ((x($_POST, 'block_public_search')) ? 1 : 0);
         set_config('system', 'block_public_search', $block_public_search);
@@ -138,12 +138,12 @@ class Security
             '$title' => t('Administration'),
             '$page' => t('Security'),
             '$form_security_token' => get_form_security_token('admin_security'),
-            '$block_public' => array('block_public', t("Block public"), get_config('system', 'block_public'), t("Check to block public access to all otherwise public personal pages on this site unless you are currently authenticated.")),
             '$block_public_search' => array('block_public_search', t("Block public search"), get_config('system', 'block_public_search', 1), t("Prevent access to search content unless you are currently authenticated.")),
             '$block_public_dir' => ['block_public_directory', t('Block directory from visitors'), get_config('system', 'block_public_directory', true), t('Only allow authenticated access to directory.')],
             '$localdir_hide' => ['localdir_hide', t('Hide local directory'), intval(get_config('system', 'localdir_hide')), t('Only use the global directory')],
             '$cloud_noroot' => ['cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system', 'cloud_disable_siteroot', true)), t('The cloud root directory lists all channel names which provide public files. Otherwise only the names of connections are shown.')],
             '$cloud_disksize' => ['cloud_disksize', t('Show total disk space available to cloud uploads'), intval(get_config('system', 'cloud_report_disksize')), ''],
+            '$use_hs2019' => ['use_hs2019', t('Use hs2019 HTTP-Signature specification'), intval(get_config('system', 'use_hs2019', false)), t('This is not yet supported by many fediverse servers.')],
             '$thumbnail_security' => ['thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system', 'thumbnail_security', 0), t("WARNING: SVG images may contain malicious code.")],
 
             '$inline_pdf' => ['inline_pdf', t("Allow embedded (inline) PDF files"), get_config('system', 'inline_pdf', 0), ''],

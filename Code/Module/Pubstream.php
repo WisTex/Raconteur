@@ -31,10 +31,6 @@ class Pubstream extends Controller
         $o = EMPTY_STR;
         $items = [];
 
-        if ((observer_prohibited(true))) {
-            return login();
-        }
-
         if (!intval(get_config('system', 'open_pubstream', 0))) {
             if (!local_channel()) {
                 return login();
@@ -163,7 +159,6 @@ class Pubstream extends Controller
             $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
         }
 
-        require_once('include/channel.php');
         require_once('include/security.php');
 
         if ($public_stream_mode === PUBLIC_STREAM_SITE) {

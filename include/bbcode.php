@@ -15,15 +15,15 @@ use Michelf\MarkdownExtra;
 require_once('include/event.php');
 require_once('include/html2plain.php');
 
-function get_bb_tag_pos($s, $name, $occurance = 1)
+function get_bb_tag_pos($s, $name, $occurrence = 1)
 {
 
-    if ($occurance < 1) {
-        $occurance = 1;
+    if ($occurrence < 1) {
+        $occurrence = 1;
     }
 
     $start_open = -1;
-    for ($i = 1; $i <= $occurance; $i++) {
+    for ($i = 1; $i <= $occurrence; $i++) {
         if ($start_open !== false) {
             $start_open = strpos($s, '[' . $name, $start_open + 1); // allow [name= type tags
         }
@@ -62,9 +62,9 @@ function bb_tag_preg_replace($pattern, $replace, $name, $s)
 
     $string = $s;
 
-    $occurance = 1;
-    $pos = get_bb_tag_pos($string, $name, $occurance);
-    while ($pos !== false && $occurance < 1000) {
+    $occurrence = 1;
+    $pos = get_bb_tag_pos($string, $name, $occurrence);
+    while ($pos !== false && $occurrence < 1000) {
         $start = substr($string, 0, $pos['start']['open']);
         $subject = substr($string, $pos['start']['open'], $pos['end']['close'] - $pos['start']['open']);
         $end = substr($string, $pos['end']['close']);
@@ -75,8 +75,8 @@ function bb_tag_preg_replace($pattern, $replace, $name, $s)
         $subject = preg_replace($pattern, $replace, $subject);
         $string = $start . $subject . $end;
 
-        $occurance++;
-        $pos = get_bb_tag_pos($string, $name, $occurance);
+        $occurrence++;
+        $pos = get_bb_tag_pos($string, $name, $occurrence);
     }
 
     return $string;
@@ -935,6 +935,25 @@ function bb_sanitize_style($input)
     return $css_string_san;
 }
 
+function obnetwork_callback($matches)
+{
+    $observer = App::get_observer();
+    if ($observer && $observer['xchan_network'] === $matches[1]) {
+        return $matches[2];
+    }
+    return '';
+}
+
+function obnetwork_necallback($matches)
+{
+    $observer = App::get_observer();
+    if ($observer && $observer['xchan_network'] === $matches[1]) {
+        return '';
+    }
+    return $matches[2];
+}
+
+
 function oblanguage_callback($matches)
 {
     if (strlen($matches[1]) == 2) {
@@ -1010,11 +1029,13 @@ function bb_imgoptions($match)
     $width       = 0;
     $float       = false;
     $alt         = false;
-
+    $src         = false;
+    
     $style = EMPTY_STR;
 
     $attributes = $match[3];
 
+    
     $x = preg_match("/alt='(.*?)'/ism", $attributes, $matches);
     if ($x) {
         $alt = $matches[1];
@@ -1086,13 +1107,20 @@ function bb_imgoptions($match)
     }
 
     // legacy img options
-
+    
     if ($match[2] === '=') {
-        // pull out (optional) legacy size declarations first
-        if (preg_match("/([0-9]*)x([0-9]*)/ism", $match[3], $local_match)) {
-            $width = intval($local_match[1]);
+
+        if (strpos($attributes,'http') === 0) {
+            $alt = $match[4];
+            $src = $match[3];        
         }
-        $match[3] = substr($match[3], strpos($match[3], ' '));
+        else {
+            // pull out (optional) legacy size declarations first
+            if (preg_match("/([0-9]*)x([0-9]*)/ism", $match[3], $local_match)) {
+                $width = intval($local_match[1]);
+            }
+            $match[3] = substr($match[3], strpos($match[3], ' '));
+        }
     }
 
     // then (optional) legacy float specifiers
@@ -1109,7 +1137,7 @@ function bb_imgoptions($match)
     if ((! $alt) && ($n = strpos($match[3], 'alt=') !== false)) {
         $alt = substr($match[3], $n + 4);
     }
-
+    
     // now assemble the resulting img tag from these components
 
     $output = '<img ' . (($match[1] === 'z') ? 'class="zrl" ' : '') . ' ';
@@ -1122,10 +1150,9 @@ function bb_imgoptions($match)
     if ($float) {
         $style .= 'float: ' . $float . '; ';
     }
+    $output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? str_replace('<br>', "\n" , $alt) : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ' . 'title="' . htmlentities(($alt) ? str_replace('<br>', "\n" , $alt) : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ';
 
-    $output .= (($style) ? 'style="' . $style . '" ' : '') . 'alt="' . htmlentities(($alt) ? $alt : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ' . 'title="' . htmlentities(($alt) ? $alt : t('Image/photo'), ENT_COMPAT, 'UTF-8') . '" ';
-
-    $output .= 'src="' . $match[4] . '" >';
+    $output .= 'src="' . (($src) ? $src : $match[4]) . '" >';
 
     return $output;
 }
@@ -1137,13 +1164,22 @@ function multicode_purify($s)
         return '[code' . $match[1] . ']' . bb_code_protect($match[2]) . '[/code]';
     }, $s);
 
+    // escape_tags anywhere html is disabled.
+    
+    $s = preg_replace_callback("/\[nohtml\](.*?)\[\/nohtml\]/ism", function ($match) {
+        return escape_tags($match[1]);
+    }, $s);
+
     $s = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', function ($match) {
         return $match[1] . $match[2] . "\n" . bb_code_protect($match[4]) . "\n" . $match[2] . (($match[5]) ? $match[5] : "\n");
     }, $s);
 
-//  if (strpos($s,'<') !== false || strpos($s,'>') !== false) {
+    try {
         $s = purify_html($s, [ 'escape' ]);
-//  }
+    }
+    catch ( \Exception $e) {
+        $s = escape_tags($s);
+    }
 
     return bb_code_unprotect($s);
 }
@@ -1336,6 +1372,21 @@ function bb_hltag($matches)
     return '<span style="background-color: ' . bb_xss($matches[1]) . ';">' . $matches[2] . '</span>';
 }
 
+function bb_nakedlinks($Text) {
+    $urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
+
+    $Text = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
+
+    if (strpos($Text, 'http') !== false) {
+        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
+    }
+
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism', '\red_unescape_codeblock', $Text);
+    return $Text;
+}
+
 
 function bb_xss($s)
 {
@@ -1395,8 +1446,9 @@ function parseIdentityAwareHTML($Text)
 
     if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
         $Text = preg_replace_callback("/\[observer\.language\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_callback', $Text);
-
         $Text = preg_replace_callback("/\[observer\.language\!\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_necallback', $Text);
+        $Text = preg_replace_callback("/\[observer\.network\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_callback', $Text);
+        $Text = preg_replace_callback("/\[observer\.network\!\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_necallback', $Text);
 
         if ($observer) {
             $Text = preg_replace("/\[observer\=1\](.*?)\[\/observer\]/ism", '$1', $Text);
@@ -1523,7 +1575,13 @@ function bbcode($Text, $options = [])
     if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
         $Text = preg_replace_callback("/\[observer\.language\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_callback', $Text);
         $Text = preg_replace_callback("/\[observer\.language\!\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_necallback', $Text);
-
+        if ($observer) {
+            $Text = preg_replace_callback("/\[observer\.network\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_callback', $Text);
+            $Text = preg_replace_callback("/\[observer\.network\!\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_necallback', $Text);
+        }
+        else {
+            $Text = preg_replace("/\[observer\.network(.*?)\](.*?)\[\/observer\]/ism", '', $Text);
+        }
         if ($observer) {
             $Text = preg_replace("/\[observer\=1\](.*?)\[\/observer\]/ism", '$1', $Text);
             $Text = preg_replace("/\[observer\=0\].*?\[\/observer\]/ism", '', $Text);
@@ -1713,14 +1771,11 @@ function bbcode($Text, $options = [])
     }
 
 
+    // Replace naked urls
+
+    $Text = bb_nakedlinks($Text);
 
     // Perform URL Search
-
-    $urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
-
-    if (strpos($Text, 'http') !== false) {
-        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
-    }
 
     $count = 0;
     while (strpos($Text, '[/share]') !== false && $count < 10) {
@@ -2030,8 +2085,6 @@ function bbcode($Text, $options = [])
     // [img]pathtoimage[/img]
     if (strpos($Text, '[/img]') !== false) {
         $Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);
-        // Friendica's modified bbcode img tags
-        $Text = preg_replace("/\[img=http(.*?)\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="http$1" alt="' . t('Image/photo') . '" />', $Text);
     }
     if (strpos($Text, '[/zmg]') !== false) {
         $Text = preg_replace("/\[zmg\](.*?)\[\/zmg\]/ism", '<img class="zrl" style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" />', $Text);

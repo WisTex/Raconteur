@@ -196,14 +196,6 @@ class Linkinfo extends Controller
             killme();
         }
 
-        if ($process_oembed) {
-            $x = Oembed::process($url);
-            if ($x) {
-                echo $x;
-                killme();
-            }
-        }
-
         if ($process_zotobj) {
             $x = Activity::fetch($url, App::get_channel());
             $y = null;
@@ -239,7 +231,7 @@ class Linkinfo extends Controller
                 if ($y && $y->is_valid()) {
                     $z = Activity::decode_note($y);
                     $r = q(
-                        "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_hash = '%s' OR hubloc_id_url = '%s'",
+                        "select hubloc_hash, hubloc_network, hubloc_id_url, hubloc_url from hubloc where hubloc_deleted = 0 and ( hubloc_hash = '%s' OR hubloc_id_url = '%s') order by hubloc_id desc",
                         dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor),
                         dbesc(is_array($y->actor) ? $y->actor['id'] : $y->actor)
                     );
@@ -250,21 +242,26 @@ class Linkinfo extends Controller
                             $z['author_xchan'] = $r['hubloc_hash'];
                         }
                     }
-
                     if ($z) {
                         // do not allow somebody to embed a post that was blocked by the site admin
                         // We *will* let them over-rule any blocks they created themselves
-
                         if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                             $s = new Zlib\Share($z);
                             echo $s->bbcode();
+                            echo "\n" . '[attachment]' . $z['mid'] . '[/attachment]' . "\n";
                             killme();
                         }
                     }
                 }
             }
         }
-
+        if ($process_oembed) {
+            $x = Oembed::process($url);
+            if ($x) {
+                echo $x;
+                killme();
+            }
+        }
 
         if ($url && $title && $text) {
             $text = $br . '[quote]' . trim($text) . '[/quote]' . $br;

@@ -270,7 +270,7 @@ class Profile_photo
                 notice(t('Image upload failed.') . EOL);
                 return;
             }
-            $os_storage = false;
+            $os_storage = 1;
 
             foreach ($i as $ii) {
                 if (intval($ii['imgscale']) < PHOTO_RES_640) {

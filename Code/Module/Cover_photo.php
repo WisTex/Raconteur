@@ -26,7 +26,6 @@ require_once('include/photos.php');
 
 /* @brief Initalize the cover-photo edit view
  *
- * @param $a Current application
  * @return void
  *
  */
@@ -292,14 +291,14 @@ class Cover_photo extends Controller
 
         $ptext = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $photo['resource_id'] . ']' . t('cover photo') . '[/zrl]';
 
-        $ltext = '[zrl=' . z_root() . '/profile/' . $channel['channel_address'] . ']' . '[zmg]' . z_root() . '/photo/' . $photo['resource_id'] . '-8[/zmg][/zrl]';
+        $ltext = '[zrl=' . z_root() . '/profile/' . $channel['channel_address'] . ']' . '[zmg alt="' . t('cover photo') . '"]' . z_root() . '/photo/' . $photo['resource_id'] . '-8[/zmg][/zrl]';
 
         $arr['body'] = sprintf($t, $channel['channel_name'], $ptext) . "\n\n" . $ltext;
 
         $arr['obj'] = [
             'type' => ACTIVITY_OBJ_NOTE,
-            'published' => datetime_convert('UTC', 'UTC', $photo['created'], ATOM_TIME),
-            'updated' => datetime_convert('UTC', 'UTC', $photo['edited'], ATOM_TIME),
+            'published' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
+            'updated' => datetime_convert('UTC', 'UTC', 'now', ATOM_TIME),
             'id' => $arr['mid'],
             'url' => ['type' => 'Link', 'mediaType' => $photo['mimetype'], 'href' => z_root() . '/photo/' . $photo['resource_id'] . '-7'],
             'source' => ['content' => $arr['body'], 'mediaType' => 'text/x-multicode'],

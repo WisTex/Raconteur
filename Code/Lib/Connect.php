@@ -91,7 +91,7 @@ class Connect
 
             if (in_array($r['xchan_network'], ['nomad', 'zot6', 'activitypub'])) {
                 $h = q(
-                    "select * from hubloc where hubloc_hash = '%s'",
+                    "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
                     dbesc($r['xchan_hash'])
                 );
                 if (!$h) {

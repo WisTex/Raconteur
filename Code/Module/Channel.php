@@ -141,9 +141,10 @@ class Channel extends Controller
             $sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
             if ($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {
+
                 $data = json_encode(Libzot::zotinfo(['guid_hash' => $channel['channel_hash'], 'target_url' => $sigdata['signer']]));
                 $s = q(
-                    "select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') limit 1",
+                    "select site_crypto, hubloc_sitekey from site left join hubloc on hubloc_url = site_url where hubloc_id_url = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                     dbesc($sigdata['signer'])
                 );
 
@@ -153,7 +154,7 @@ class Channel extends Controller
             } else {
                 $data = json_encode(Libzot::zotinfo(['guid_hash' => $channel['channel_hash']]));
             }
-
+    
             $headers = [
                 'Content-Type' => 'application/x-nomad+json',
                 'Digest' => HTTPSig::generate_digest_header($data),
@@ -196,10 +197,6 @@ class Channel extends Controller
 
         $datequery = ((x($_GET, 'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
         $datequery2 = ((x($_GET, 'dbegin') && is_a_date_arg($_GET['dbegin'])) ? notags($_GET['dbegin']) : '');
-
-        if (observer_prohibited(true)) {
-            return login();
-        }
 
         $category = ((x($_REQUEST, 'cat')) ? $_REQUEST['cat'] : '');
         $hashtags = ((x($_REQUEST, 'tag')) ? $_REQUEST['tag'] : '');

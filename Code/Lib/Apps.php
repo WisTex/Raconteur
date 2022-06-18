@@ -149,7 +149,7 @@ class Apps
                 $app['uid'] = local_channel();
                 $app['guid'] = hash('whirlpool', $app['name']);
                 $app['system'] = 1;
-                self::app_install(local_channel(), $app);
+                self::app_install(local_channel(), $app, true);
             }
         }
     }
@@ -362,6 +362,7 @@ class Apps
             'Connections' => t('Connections'),
             'Content Filter' => t('Content Filter'),
             'Content Import' => t('Content Import'),
+            'Custom SQL' => t('Custom SQL'),
             'Directory' => t('Directory'),
             'Drafts' => t('Drafts'),
             'Events' => t('Events'),
@@ -642,7 +643,7 @@ class Apps
         ]);
     }
 
-    public static function app_install($uid, $app)
+    public static function app_install($uid, $app, $sync = false)
     {
 
         if (!is_array($app)) {
@@ -676,27 +677,28 @@ class Apps
         }
 
         if ($x['success']) {
-            $r = q(
-                "select * from app where app_id = '%s' and app_channel = %d limit 1",
-                dbesc($x['app_id']),
-                intval($uid)
-            );
-            if ($r) {
-                if (($app['uid']) && (!$r[0]['app_system'])) {
+            if ($sync && $app['uid']) {
+                $r = q(
+                    "select * from app where app_id = '%s' and app_channel = %d limit 1",
+                    dbesc($x['app_id']),
+                    intval($uid)
+                );
+                if ($r) {
                     if ($app['categories'] && (!$app['term'])) {
                         $r[0]['term'] = q(
                             "select * from term where otype = %d and oid = %d",
                             intval(TERM_OBJ_APP),
                             intval($r[0]['id'])
                         );
-                        if (intval($r[0]['app_system'])) {
-                            Libsync::build_sync_packet($uid, array('sysapp' => $r[0]));
-                        } else {
-                            Libsync::build_sync_packet($uid, array('app' => $r[0]));
-                        }
+                    }
+                    if (intval($r[0]['app_system'])) {
+                        Libsync::build_sync_packet($uid, array('sysapp' => [$r[0]]));
+                    } else {
+                        Libsync::build_sync_packet($uid, array('app' => [$r[0]]));
                     }
                 }
             }
+
             return $x['app_id'];
         }
         return false;
@@ -1144,8 +1146,7 @@ class Apps
 
         if ($arr['photo'] && (strpos($arr['photo'], 'icon:') === false) && (strpos($arr['photo'], z_root()) === false)) {
             $x = import_remote_xchan_photo(str_replace('$baseurl', z_root(), $arr['photo']), get_observer_hash(), true);
-            if ((!$x) || ($x[4])) {
-                // $x[4] = true indicates storage failure of our cached/resized copy. If this failed, just keep the original url.
+            if ($x) {
                 $arr['photo'] = $x[1];
             }
         }
@@ -1238,8 +1239,7 @@ class Apps
 
         if ($arr['photo'] && (strpos($arr['photo'], 'icon:') === false) && (strpos($arr['photo'], z_root()) === false)) {
             $x = import_remote_xchan_photo(str_replace('$baseurl', z_root(), $arr['photo']), get_observer_hash(), true);
-            if ((!$x) || ($x[4])) {
-                // $x[4] = true indicates storage failure of our cached/resized copy. If this failed, just keep the original url.
+            if ($x) {
                 $arr['photo'] = $x[1];
             }
         }

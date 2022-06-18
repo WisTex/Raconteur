@@ -543,7 +543,7 @@ class ThreadItem
                     }
                 }
                 if ($additional_mentions) {
-                    $r = q("select hubloc_addr, hubloc_id_url, hubloc_hash from hubloc where hubloc_id_url in (" . protect_sprintf(stringify_array($additional_mentions, true)) . ") ");
+                    $r = q("select hubloc_addr, hubloc_id_url, hubloc_hash from hubloc where hubloc_deleted = 0 and hubloc_id_url in (" . protect_sprintf(stringify_array($additional_mentions, true)) . ") ");
                     if ($r) {
                         foreach ($r as $rv) {
                             $ment = (($r[0]['hubloc_addr']) ? $r[0]['hubloc_addr'] : $r[0]['hubloc_id_url']);

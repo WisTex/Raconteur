@@ -280,6 +280,19 @@ class ActivityStreams
     }
 
     /**
+     * @brief get single property from Activity object
+     *
+     * @param string $property
+     * @param mixed return value if property or object not set
+     *    or object is a string id which could not be fetched.
+     * @return mixed
+     */
+    public function objprop($property, $default = false) {
+        $x = $this->get_property_obj($property,$this->obj);
+        return (isset($x)) ? $x : $default;
+    }
+    
+    /**
      * @brief
      *
      * @param string $property
@@ -298,12 +311,7 @@ class ActivityStreams
         $base = (($base) ? $base : $this->data);
         $propname = (($prefix) ? $prefix . ':' : '') . $property;
 
-        if (!is_array($base)) {
-            btlogger('not an array: ' . print_r($base, true));
-            return null;
-        }
-
-        return ((array_key_exists($propname, $base)) ? $base[$propname] : null);
+        return ((is_array($base) && array_key_exists($propname, $base)) ? $base[$propname] : null);
     }
 
 
@@ -495,7 +503,7 @@ class ActivityStreams
             'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
             'application/activity+json',
             'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
-            'application/ld+json', // required for Friendica ~2021-09, can possibly be removed after next release of that project
+            'application/ld+json', 
             'application/x-zot-activity+json'
         ]);
 
