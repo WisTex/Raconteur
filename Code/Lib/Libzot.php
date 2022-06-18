@@ -1631,7 +1631,7 @@ class Libzot
      * @param array $deliveries
      * @param bool $relay
      * @param bool $public (optional) default false
-     * @param bool $request (optional) default false
+     * @param bool $request (optional) default false - message was fetched, not posted
      * @return array
      */
 
@@ -1657,7 +1657,7 @@ class Libzot
             }
         }
 
-        if ($act->implied_create) {
+        if ($act->implied_create && !$request) {
             logger('implied create activity. Not delivering/storing.');
             return;
         }
