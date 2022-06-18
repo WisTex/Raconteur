@@ -172,10 +172,7 @@ function remove_obsolete_hublocs()
             ? intval(get_config('system', 'delivery_interval')) : 2 );
 
     foreach ($r as $rr) {
-        q(
-            "update hubloc set hubloc_deleted = 1 where hubloc_id = %d",
-            intval($rr['hubloc_id'])
-        );
+        hubloc_delete($rr['hubloc_id']);
 
         $x = q(
             "select channel_id from channel where channel_hash = '%s' limit 1",
