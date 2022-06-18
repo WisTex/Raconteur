@@ -875,7 +875,7 @@ class Libzot
                     xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
                     xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
                     dbesc(datetime_convert()),
-                    dbesc(($arr['name']) ? escape_tags($arr['name']) : '-'),
+                    dbesc(($arr['name']) ? unicode_trim(escape_tags($arr['name'])) : '-'),
                     dbesc($arr['name_updated']),
                     dbesc($arr['primary_location']['connections_url']),
                     dbesc($arr['primary_location']['follow_url']),
@@ -925,7 +925,7 @@ class Libzot
                     'xchan_connurl' => $arr['primary_location']['connections_url'],
                     'xchan_follow' => $arr['primary_location']['follow_url'],
                     'xchan_connpage' => $arr['connect_url'],
-                    'xchan_name' => (($arr['name']) ? escape_tags($arr['name']) : '-'),
+                    'xchan_name' => (($arr['name']) ? unicode_trim(escape_tags($arr['name'])) : '-'),
                     'xchan_network' => $network,
                     'xchan_updated' => datetime_convert(),
                     'xchan_photo_date' => $arr['photo']['updated'],
@@ -1631,7 +1631,7 @@ class Libzot
      * @param array $deliveries
      * @param bool $relay
      * @param bool $public (optional) default false
-     * @param bool $request (optional) default false
+     * @param bool $request (optional) default false - message was fetched, not posted
      * @return array
      */
 
@@ -1657,7 +1657,7 @@ class Libzot
             }
         }
 
-        if ($act->implied_create) {
+        if ($act->implied_create && !$request) {
             logger('implied create activity. Not delivering/storing.');
             return;
         }

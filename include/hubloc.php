@@ -5,6 +5,7 @@
  * @brief Hubloc related functions.
  */
 
+use Code\Lib\Channel;
 use Code\Daemon\Run;
 
 /**
@@ -171,18 +172,12 @@ function remove_obsolete_hublocs()
     $interval = ((get_config('system', 'delivery_interval') !== false)
             ? intval(get_config('system', 'delivery_interval')) : 2 );
 
+    // mark the hublocs deleted; spread out the notifications
     foreach ($r as $rr) {
-        q(
-            "update hubloc set hubloc_deleted = 1 where hubloc_id = %d",
-            intval($rr['hubloc_id'])
-        );
-
-        $x = q(
-            "select channel_id from channel where channel_hash = '%s' limit 1",
-            dbesc($rr['hubloc_hash'])
-        );
+        hubloc_delete($rr);
+        $x = Channel::from_hash($rr['hubloc_hash']);
         if ($x) {
-            Run::Summon([ 'Notifier', 'refresh_all', $x[0]['channel_id'] ]);
+            Run::Summon([ 'Notifier', 'refresh_all', $x['channel_id'] ]);
             if ($interval) {
                 @time_sleep_until(microtime(true) + (float) $interval);
             }
@@ -213,15 +208,12 @@ function hubloc_change_primary($hubloc)
     // See if this is a local hubloc and if so update the primary for the corresponding channel record.
 
     if ($hubloc['hubloc_url'] === z_root()) {
-        $r = q(
-            "select channel_id from channel where channel_hash = '%s' limit 1",
-            dbesc($hubloc['hubloc_hash'])
-        );
+        $r = Channel::from_hash($hubloc['hubloc_hash']);
         if ($r) {
             q(
                 "update channel set channel_primary = %d where channel_id = %d",
                 intval($hubloc['hubloc_primary']),
-                intval($r[0]['channel_id'])
+                intval($r['channel_id'])
             );
         }
     }
@@ -295,8 +287,9 @@ function hubloc_mark_as_down($posturl)
 
 function hubloc_delete($hubloc) {
     if (is_array($hubloc) && array_key_exists('hubloc_id',$hubloc)) {
-        q("update hubloc set hubloc_deleted = 1 where hubloc_id = %d",
-            intval($hubloc['hubloc_id'])
+        q("update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
+            intval($hubloc['hubloc_id']),
+            dbesc(datetime_convert())
         );
     }
 }

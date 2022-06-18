@@ -1130,11 +1130,7 @@ class Libsync
                         $changed = true;
                     } elseif ((!intval($r[0]['hubloc_deleted'])) && (intval($location['deleted']))) {
                         logger('deleting hubloc: ' . $r[0]['hubloc_addr']);
-                        $n = q(
-                            "update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
-                            dbesc(datetime_convert()),
-                            intval($r[0]['hubloc_id'])
-                        );
+                        hubloc_delete($r[0]);
                         $what .= 'delete_hub ';
                         $changed = true;
                     }
@@ -1195,11 +1191,7 @@ class Libsync
                 foreach ($xisting as $x) {
                     if (!array_key_exists('updated', $x)) {
                         logger('Deleting unreferenced hub location ' . $x['hubloc_addr']);
-                        $r = q(
-                            "update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
-                            dbesc(datetime_convert()),
-                            intval($x['hubloc_id'])
-                        );
+                        hubloc_delete($x);
                         $what .= 'removed_hub ';
                         $changed = true;
                     }

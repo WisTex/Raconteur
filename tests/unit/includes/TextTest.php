@@ -5,7 +5,7 @@ namespace Code\Tests\Unit\includes;
 use Code\Tests\Unit\UnitTestCase;
 
 /**
- * @brief Unit Test case for include/text.php file.
+ * @brief Unit Test case for include/misc.php file.
  *
  * @author ken restivo
  */

@@ -22,7 +22,7 @@ msgstr ""
 msgid "parent"
 msgstr "opp et nivå"
 
-#: ../../Code/Storage/Browser.php:131 ../../include/text.php:2620
+#: ../../Code/Storage/Browser.php:131 ../../include/misc.php:2620
 msgid "Collection"
 msgstr "Samling"
 
@@ -93,7 +93,7 @@ msgid "Type"
 msgstr "Type"
 
 #: ../../Code/Storage/Browser.php:237
-#: ../../Code/Module/Sharedwithme.php:101 ../../include/text.php:1344
+#: ../../Code/Module/Sharedwithme.php:101 ../../include/misc.php:1344
 msgid "Size"
 msgstr "Størrelse"
 
@@ -267,7 +267,7 @@ msgstr "En standardtekst om hva du bør gjøre som ny her"
 msgid "Block Name"
 msgstr "Byggeklossens navn"
 
-#: ../../Code/Module/Blocks.php:151 ../../include/text.php:2265
+#: ../../Code/Module/Blocks.php:151 ../../include/misc.php:2265
 msgid "Blocks"
 msgstr "Byggeklosser"
 
@@ -313,7 +313,7 @@ msgid "l, F j"
 msgstr "l, F j"
 
 #: ../../Code/Module/Cal.php:308 ../../Code/Module/Events.php:637
-#: ../../include/text.php:1732
+#: ../../include/misc.php:1732
 msgid "Link to Source"
 msgstr "Lenke til kilde"
 
@@ -1164,13 +1164,13 @@ msgid "Recent activity"
 msgstr "Nylig aktivitet"
 
 #: ../../Code/Module/Connections.php:302 ../../Code/Lib/Apps.php:208
-#: ../../include/text.php:875 ../../include/nav.php:186
+#: ../../include/misc.php:875 ../../include/nav.php:186
 msgid "Connections"
 msgstr "Forbindelser"
 
 #: ../../Code/Module/Connections.php:306 ../../Code/Module/Search.php:44
-#: ../../Code/Lib/Apps.php:228 ../../include/text.php:945
-#: ../../include/text.php:957 ../../include/nav.php:165
+#: ../../Code/Lib/Apps.php:228 ../../include/misc.php:945
+#: ../../include/misc.php:957 ../../include/nav.php:165
 #: ../../include/acl_selectors.php:276
 msgid "Search"
 msgstr "Søk"
@@ -1327,7 +1327,7 @@ msgstr "Hendelsen ble ikke funnet."
 
 #: ../../Code/Module/Events.php:254 ../../Code/Module/Like.php:373
 #: ../../Code/Module/Tagger.php:51 ../../include/event.php:949
-#: ../../include/text.php:1943 ../../include/conversation.php:123
+#: ../../include/misc.php:1943 ../../include/conversation.php:123
 msgid "event"
 msgstr "hendelse"
 
@@ -1475,8 +1475,8 @@ msgstr "- velg -"
 
 #: ../../Code/Module/Filer.php:53 ../../Code/Module/Admin.php:2033
 #: ../../Code/Module/Admin.php:2053 ../../Code/Module/Rbmark.php:32
-#: ../../Code/Module/Rbmark.php:104 ../../include/text.php:946
-#: ../../include/text.php:958 ../../include/widgets.php:201
+#: ../../Code/Module/Rbmark.php:104 ../../include/misc.php:946
+#: ../../include/misc.php:958 ../../include/widgets.php:201
 msgid "Save"
 msgstr "Lagre"
 
@@ -1853,7 +1853,7 @@ msgstr "Du har nådd din grense på %1$.0f startinnlegg."
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr "Du har nådd din grense på %1$.0f websider."
 
-#: ../../Code/Module/Layouts.php:181 ../../include/text.php:2267
+#: ../../Code/Module/Layouts.php:181 ../../include/misc.php:2267
 msgid "Layouts"
 msgstr "Layout"
 
@@ -2034,13 +2034,13 @@ msgid "Previous action reversed."
 msgstr "Forrige handling er omgjort."
 
 #: ../../Code/Module/Like.php:371 ../../Code/Module/Subthread.php:87
-#: ../../Code/Module/Tagger.php:47 ../../include/text.php:1940
+#: ../../Code/Module/Tagger.php:47 ../../include/misc.php:1940
 #: ../../include/conversation.php:120
 msgid "photo"
 msgstr "foto"
 
 #: ../../Code/Module/Like.php:371 ../../Code/Module/Subthread.php:87
-#: ../../include/text.php:1946 ../../include/conversation.php:148
+#: ../../include/misc.php:1946 ../../include/conversation.php:148
 msgid "status"
 msgstr "status"
 
@@ -2495,7 +2495,7 @@ msgstr "Menyen kan brukes til å lagre lagrede bokmerker"
 msgid "Submit and proceed"
 msgstr "Send inn og fortsett"
 
-#: ../../Code/Module/Menu.php:107 ../../include/text.php:2266
+#: ../../Code/Module/Menu.php:107 ../../include/misc.php:2266
 msgid "Menus"
 msgstr "Menyer"
 
@@ -3665,7 +3665,7 @@ msgstr ""
 msgid "Site settings updated."
 msgstr "Nettstedsinnstillinger er oppdatert."
 
-#: ../../Code/Module/Admin.php:400 ../../include/text.php:2841
+#: ../../Code/Module/Admin.php:400 ../../include/misc.php:2841
 msgid "Default"
 msgstr "Standard"
 
@@ -6084,7 +6084,7 @@ msgstr "Ignorer/Skjul"
 msgid "post"
 msgstr "innlegg"
 
-#: ../../Code/Module/Tagger.php:57 ../../include/text.php:1948
+#: ../../Code/Module/Tagger.php:57 ../../include/misc.php:1948
 #: ../../include/conversation.php:150
 msgid "comment"
 msgstr "kommentar"
@@ -6918,293 +6918,293 @@ msgstr "Kan ikke avgjøre avsender."
 msgid "Stored post could not be verified."
 msgstr "Lagret innlegg kunne ikke bekreftes."
 
-#: ../../include/text.php:428
+#: ../../include/misc.php:428
 msgid "prev"
 msgstr "forrige"
 
-#: ../../include/text.php:430
+#: ../../include/misc.php:430
 msgid "first"
 msgstr "første"
 
-#: ../../include/text.php:459
+#: ../../include/misc.php:459
 msgid "last"
 msgstr "siste"
 
-#: ../../include/text.php:462
+#: ../../include/misc.php:462
 msgid "next"
 msgstr "neste"
 
-#: ../../include/text.php:472
+#: ../../include/misc.php:472
 msgid "older"
 msgstr "eldre"
 
-#: ../../include/text.php:474
+#: ../../include/misc.php:474
 msgid "newer"
 msgstr "nyere"
 
-#: ../../include/text.php:863
+#: ../../include/misc.php:863
 msgid "No connections"
 msgstr "Ingen forbindelser"
 
-#: ../../include/text.php:888
+#: ../../include/misc.php:888
 #, php-format
 msgid "View all %s connections"
 msgstr "Vis alle %s forbindelser"
 
-#: ../../include/text.php:1033 ../../include/text.php:1038
+#: ../../include/misc.php:1033 ../../include/misc.php:1038
 msgid "poke"
 msgstr "prikk"
 
-#: ../../include/text.php:1033 ../../include/text.php:1038
+#: ../../include/misc.php:1033 ../../include/misc.php:1038
 #: ../../include/conversation.php:243
 msgid "poked"
 msgstr "prikket"
 
-#: ../../include/text.php:1039
+#: ../../include/misc.php:1039
 msgid "ping"
 msgstr "varsle"
 
-#: ../../include/text.php:1039
+#: ../../include/misc.php:1039
 msgid "pinged"
 msgstr "varslet"
 
-#: ../../include/text.php:1040
+#: ../../include/misc.php:1040
 msgid "prod"
 msgstr "oppildne"
 
-#: ../../include/text.php:1040
+#: ../../include/misc.php:1040
 msgid "prodded"
 msgstr "oppildnet"
 
-#: ../../include/text.php:1041
+#: ../../include/misc.php:1041
 msgid "slap"
 msgstr "daske"
 
-#: ../../include/text.php:1041
+#: ../../include/misc.php:1041
 msgid "slapped"
 msgstr "dasket"
 
-#: ../../include/text.php:1042
+#: ../../include/misc.php:1042
 msgid "finger"
 msgstr "fingre"
 
-#: ../../include/text.php:1042
+#: ../../include/misc.php:1042
 msgid "fingered"
 msgstr "fingret"
 
-#: ../../include/text.php:1043
+#: ../../include/misc.php:1043
 msgid "rebuff"
 msgstr "tilbakevise"
 
-#: ../../include/text.php:1043
+#: ../../include/misc.php:1043
 msgid "rebuffed"
 msgstr "tilbakeviste"
 
-#: ../../include/text.php:1055
+#: ../../include/misc.php:1055
 msgid "happy"
 msgstr "glad"
 
-#: ../../include/text.php:1056
+#: ../../include/misc.php:1056
 msgid "sad"
 msgstr "trist"
 
-#: ../../include/text.php:1057
+#: ../../include/misc.php:1057
 msgid "mellow"
 msgstr "dempet"
 
-#: ../../include/text.php:1058
+#: ../../include/misc.php:1058
 msgid "tired"
 msgstr "trøtt"
 
-#: ../../include/text.php:1059
+#: ../../include/misc.php:1059
 msgid "perky"
 msgstr "oppkvikket"
 
-#: ../../include/text.php:1060
+#: ../../include/misc.php:1060
 msgid "angry"
 msgstr "sint"
 
-#: ../../include/text.php:1061
+#: ../../include/misc.php:1061
 msgid "stupefied"
 msgstr "lamslått"
 
-#: ../../include/text.php:1062
+#: ../../include/misc.php:1062
 msgid "puzzled"
 msgstr "forundret"
 
-#: ../../include/text.php:1063
+#: ../../include/misc.php:1063
 msgid "interested"
 msgstr "interessert"
 
-#: ../../include/text.php:1064
+#: ../../include/misc.php:1064
 msgid "bitter"
 msgstr "bitter"
 
-#: ../../include/text.php:1065
+#: ../../include/misc.php:1065
 msgid "cheerful"
 msgstr "munter"
 
-#: ../../include/text.php:1066
+#: ../../include/misc.php:1066
 msgid "alive"
 msgstr "levende"
 
-#: ../../include/text.php:1067
+#: ../../include/misc.php:1067
 msgid "annoyed"
 msgstr "irritert"
 
-#: ../../include/text.php:1068
+#: ../../include/misc.php:1068
 msgid "anxious"
 msgstr "nervøs"
 
-#: ../../include/text.php:1069
+#: ../../include/misc.php:1069
 msgid "cranky"
 msgstr "gretten"
 
-#: ../../include/text.php:1070
+#: ../../include/misc.php:1070
 msgid "disturbed"
 msgstr "foruroliget"
 
-#: ../../include/text.php:1071
+#: ../../include/misc.php:1071
 msgid "frustrated"
 msgstr "frustrert"
 
-#: ../../include/text.php:1072
+#: ../../include/misc.php:1072
 msgid "depressed"
 msgstr "lei seg"
 
-#: ../../include/text.php:1073
+#: ../../include/misc.php:1073
 msgid "motivated"
 msgstr "motivert"
 
-#: ../../include/text.php:1074
+#: ../../include/misc.php:1074
 msgid "relaxed"
 msgstr "avslappet"
 
-#: ../../include/text.php:1075
+#: ../../include/misc.php:1075
 msgid "surprised"
 msgstr "overrasket"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:70
+#: ../../include/misc.php:1257 ../../include/js_strings.php:70
 msgid "Monday"
 msgstr "mandag"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:71
+#: ../../include/misc.php:1257 ../../include/js_strings.php:71
 msgid "Tuesday"
 msgstr "tirsdag"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:72
+#: ../../include/misc.php:1257 ../../include/js_strings.php:72
 msgid "Wednesday"
 msgstr "onsdag"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:73
+#: ../../include/misc.php:1257 ../../include/js_strings.php:73
 msgid "Thursday"
 msgstr "torsdag"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:74
+#: ../../include/misc.php:1257 ../../include/js_strings.php:74
 msgid "Friday"
 msgstr "fredag"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:75
+#: ../../include/misc.php:1257 ../../include/js_strings.php:75
 msgid "Saturday"
 msgstr "lørdag"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:69
+#: ../../include/misc.php:1257 ../../include/js_strings.php:69
 msgid "Sunday"
 msgstr "søndag"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:45
+#: ../../include/misc.php:1261 ../../include/js_strings.php:45
 msgid "January"
 msgstr "januar"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:46
+#: ../../include/misc.php:1261 ../../include/js_strings.php:46
 msgid "February"
 msgstr "februar"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:47
+#: ../../include/misc.php:1261 ../../include/js_strings.php:47
 msgid "March"
 msgstr "mars"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:48
+#: ../../include/misc.php:1261 ../../include/js_strings.php:48
 msgid "April"
 msgstr "april"
 
-#: ../../include/text.php:1261
+#: ../../include/misc.php:1261
 msgid "May"
 msgstr "mai"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:50
+#: ../../include/misc.php:1261 ../../include/js_strings.php:50
 msgid "June"
 msgstr "juni"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:51
+#: ../../include/misc.php:1261 ../../include/js_strings.php:51
 msgid "July"
 msgstr "juli"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:52
+#: ../../include/misc.php:1261 ../../include/js_strings.php:52
 msgid "August"
 msgstr "august"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:53
+#: ../../include/misc.php:1261 ../../include/js_strings.php:53
 msgid "September"
 msgstr "september"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:54
+#: ../../include/misc.php:1261 ../../include/js_strings.php:54
 msgid "October"
 msgstr "oktober"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:55
+#: ../../include/misc.php:1261 ../../include/js_strings.php:55
 msgid "November"
 msgstr "november"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:56
+#: ../../include/misc.php:1261 ../../include/js_strings.php:56
 msgid "December"
 msgstr "desember"
 
-#: ../../include/text.php:1338 ../../include/text.php:1342
+#: ../../include/misc.php:1338 ../../include/misc.php:1342
 msgid "Unknown Attachment"
 msgstr "Ukjent vedlegg"
 
-#: ../../include/text.php:1344
+#: ../../include/misc.php:1344
 msgid "unknown"
 msgstr "ukjent"
 
-#: ../../include/text.php:1380
+#: ../../include/misc.php:1380
 msgid "remove category"
 msgstr "fjern kategori"
 
-#: ../../include/text.php:1457
+#: ../../include/misc.php:1457
 msgid "remove from file"
 msgstr "fjern fra fil"
 
-#: ../../include/text.php:1753 ../../include/text.php:1824
+#: ../../include/misc.php:1753 ../../include/misc.php:1824
 msgid "default"
 msgstr "standard"
 
-#: ../../include/text.php:1761
+#: ../../include/misc.php:1761
 msgid "Page layout"
 msgstr "Sidens layout"
 
-#: ../../include/text.php:1761
+#: ../../include/misc.php:1761
 msgid "You can create your own with the layouts tool"
 msgstr "Du kan lage din egen med layout-verktøyet"
 
-#: ../../include/text.php:1803
+#: ../../include/misc.php:1803
 msgid "Page content type"
 msgstr "Sidens innholdstype"
 
-#: ../../include/text.php:1836
+#: ../../include/misc.php:1836
 msgid "Select an alternate language"
 msgstr "Velg et annet språk"
 
-#: ../../include/text.php:1953
+#: ../../include/misc.php:1953
 msgid "activity"
 msgstr "aktivitet"
 
-#: ../../include/text.php:2262
+#: ../../include/misc.php:2262
 msgid "Design Tools"
 msgstr "Designverktøy"
 
-#: ../../include/text.php:2268
+#: ../../include/misc.php:2268
 msgid "Pages"
 msgstr "Sider"
 

@@ -252,7 +252,7 @@ msgstr "Toegang geweigerd."
 msgid "Block Name"
 msgstr "Bloknaam"
 
-#: ../../Code/Module/Blocks.php:154 ../../include/text.php:2422
+#: ../../Code/Module/Blocks.php:154 ../../include/misc.php:2422
 msgid "Blocks"
 msgstr "Blokken"
 
@@ -929,7 +929,7 @@ msgstr "Openbare toegang geweigerd."
 
 #: ../../Code/Module/Search.php:44 ../../Code/Module/Connections.php:335
 #: ../../Code/Lib/Apps.php:256 ../../Code/Widget/Sitesearch.php:31
-#: ../../include/text.php:1051 ../../include/text.php:1063
+#: ../../include/misc.php:1051 ../../include/misc.php:1063
 #: ../../include/acl_selectors.php:118 ../../include/nav.php:179
 msgid "Search"
 msgstr "Zoeken"
@@ -1276,7 +1276,7 @@ msgstr "Gebeurtenis niet gevonden"
 
 #: ../../Code/Module/Events.php:260 ../../Code/Module/Tagger.php:73
 #: ../../Code/Module/Like.php:386 ../../include/conversation.php:119
-#: ../../include/text.php:2008 ../../include/event.php:1153
+#: ../../include/misc.php:2008 ../../include/event.php:1153
 msgid "event"
 msgstr "gebeurtenis"
 
@@ -1368,7 +1368,7 @@ msgid "Delete event"
 msgstr "Gebeurtenis verwijderen"
 
 #: ../../Code/Module/Events.php:660 ../../Code/Module/Cal.php:315
-#: ../../include/text.php:1827
+#: ../../include/misc.php:1827
 msgid "Link to Source"
 msgstr "Originele locatie"
 
@@ -1461,13 +1461,13 @@ msgstr "Hub niet gevonden."
 #: ../../Code/Module/Like.php:384
 #: ../../addon/redphotos/redphotohelper.php:71
 #: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
-#: ../../include/conversation.php:116 ../../include/text.php:2005
+#: ../../include/conversation.php:116 ../../include/misc.php:2005
 msgid "photo"
 msgstr "foto"
 
 #: ../../Code/Module/Subthread.php:111 ../../Code/Module/Like.php:384
 #: ../../addon/diaspora/Receiver.php:1500 ../../addon/pubcrawl/as.php:1405
-#: ../../include/conversation.php:144 ../../include/text.php:2011
+#: ../../include/conversation.php:144 ../../include/misc.php:2011
 msgid "status"
 msgstr "bericht"
 
@@ -1672,7 +1672,7 @@ msgid "NEW"
 msgstr "NIEUW"
 
 #: ../../Code/Module/Sharedwithme.php:107
-#: ../../Code/Storage/Browser.php:285 ../../include/text.php:1434
+#: ../../Code/Storage/Browser.php:285 ../../include/misc.php:1434
 msgid "Size"
 msgstr "Grootte"
 
@@ -2667,7 +2667,7 @@ msgstr "Hub-instellingen bijgewerkt."
 
 #: ../../Code/Module/Admin/Site.php:191
 #: ../../view/theme/redbasic_c/php/config.php:15
-#: ../../view/theme/redbasic/php/config.php:15 ../../include/text.php:3106
+#: ../../view/theme/redbasic/php/config.php:15 ../../include/misc.php:3106
 msgid "Default"
 msgstr "Standaard"
 
@@ -3166,8 +3166,8 @@ msgstr "Extra informatie (niet verplicht)"
 #: ../../Code/Module/Admin/Profs.php:94
 #: ../../Code/Module/Admin/Profs.php:114 ../../Code/Module/Rbmark.php:32
 #: ../../Code/Module/Rbmark.php:104 ../../Code/Module/Filer.php:53
-#: ../../Code/Widget/Notes.php:18 ../../include/text.php:1052
-#: ../../include/text.php:1064
+#: ../../Code/Widget/Notes.php:18 ../../include/misc.php:1052
+#: ../../include/misc.php:1064
 msgid "Save"
 msgstr "Opslaan"
 
@@ -4448,7 +4448,7 @@ msgstr "Authenticeren"
 msgid "Permissions denied."
 msgstr "Permissies niet toegestaan"
 
-#: ../../Code/Module/Cal.php:344 ../../include/text.php:2446
+#: ../../Code/Module/Cal.php:344 ../../include/misc.php:2446
 msgid "Import"
 msgstr "Importeren"
 
@@ -4650,7 +4650,7 @@ msgid "Recent activity"
 msgstr "Recente activiteit"
 
 #: ../../Code/Module/Connections.php:331 ../../Code/Lib/Apps.php:235
-#: ../../include/text.php:973
+#: ../../include/misc.php:973
 msgid "Connections"
 msgstr "Connecties"
 
@@ -5009,18 +5009,18 @@ msgstr "Opmaaktype"
 #: ../../Code/Module/Wiki.php:208 ../../Code/Module/Wiki.php:350
 #: ../../Code/Widget/Wiki_pages.php:36
 #: ../../Code/Widget/Wiki_pages.php:93 ../../addon/mdpost/mdpost.php:40
-#: ../../include/text.php:1869
+#: ../../include/misc.php:1869
 msgid "Markdown"
 msgstr "Markdown"
 
 #: ../../Code/Module/Wiki.php:208 ../../Code/Module/Wiki.php:350
 #: ../../Code/Widget/Wiki_pages.php:36
-#: ../../Code/Widget/Wiki_pages.php:93 ../../include/text.php:1867
+#: ../../Code/Widget/Wiki_pages.php:93 ../../include/misc.php:1867
 msgid "BBcode"
 msgstr "BBcode"
 
 #: ../../Code/Module/Wiki.php:208 ../../Code/Widget/Wiki_pages.php:36
-#: ../../Code/Widget/Wiki_pages.php:93 ../../include/text.php:1870
+#: ../../Code/Widget/Wiki_pages.php:93 ../../include/misc.php:1870
 msgid "Text"
 msgstr "Tekst"
 
@@ -5881,7 +5881,7 @@ msgstr "Menu kan gebruikt worden om bladwijzers in op te slaan"
 msgid "Submit and proceed"
 msgstr "Opslaan en doorgaan"
 
-#: ../../Code/Module/Menu.php:107 ../../include/text.php:2423
+#: ../../Code/Module/Menu.php:107 ../../include/misc.php:2423
 msgid "Menus"
 msgstr "Menu's"
 
@@ -5933,7 +5933,7 @@ msgstr "Titel van menu zoals anderen dat zien."
 msgid "Allow bookmarks"
 msgstr "Bladwijzers toestaan"
 
-#: ../../Code/Module/Layouts.php:184 ../../include/text.php:2424
+#: ../../Code/Module/Layouts.php:184 ../../include/misc.php:2424
 msgid "Layouts"
 msgstr "Lay-outs"
 
@@ -5998,7 +5998,7 @@ msgid "post"
 msgstr "bericht"
 
 #: ../../Code/Module/Tagger.php:79 ../../include/conversation.php:146
-#: ../../include/text.php:2013
+#: ../../include/misc.php:2013
 msgid "comment"
 msgstr "reactie"
 
@@ -8514,7 +8514,7 @@ msgstr "Welkom %s. Authenticatie op afstand geslaagd."
 msgid "parent"
 msgstr "omhoog"
 
-#: ../../Code/Storage/Browser.php:131 ../../include/text.php:2845
+#: ../../Code/Storage/Browser.php:131 ../../include/misc.php:2845
 msgid "Collection"
 msgstr "map"
 
@@ -12052,8 +12052,8 @@ msgstr "%1$s is nu met %2$s verbonden"
 msgid "%1$s poked %2$s"
 msgstr "%1$s heeft %2$s aangestoten"
 
-#: ../../include/conversation.php:251 ../../include/text.php:1129
-#: ../../include/text.php:1133
+#: ../../include/conversation.php:251 ../../include/misc.php:1129
+#: ../../include/misc.php:1133
 msgid "poked"
 msgstr "aangestoten"
 
@@ -12368,364 +12368,364 @@ msgstr "Kan geen dubbele kanaal-identificator op deze hub aanmaken. Importeren m
 msgid "Cloned channel not found. Import failed."
 msgstr "Gekloond kanaal niet gevonden. Importeren mislukt."
 
-#: ../../include/text.php:492
+#: ../../include/misc.php:492
 msgid "prev"
 msgstr "vorige"
 
-#: ../../include/text.php:494
+#: ../../include/misc.php:494
 msgid "first"
 msgstr "eerste"
 
-#: ../../include/text.php:523
+#: ../../include/misc.php:523
 msgid "last"
 msgstr "laatste"
 
-#: ../../include/text.php:526
+#: ../../include/misc.php:526
 msgid "next"
 msgstr "volgende"
 
-#: ../../include/text.php:537
+#: ../../include/misc.php:537
 msgid "older"
 msgstr "ouder"
 
-#: ../../include/text.php:539
+#: ../../include/misc.php:539
 msgid "newer"
 msgstr "nieuwer"
 
-#: ../../include/text.php:961
+#: ../../include/misc.php:961
 msgid "No connections"
 msgstr "Geen connecties"
 
-#: ../../include/text.php:993
+#: ../../include/misc.php:993
 #, php-format
 msgid "View all %s connections"
 msgstr "Toon alle %s connecties"
 
-#: ../../include/text.php:1129 ../../include/text.php:1133
+#: ../../include/misc.php:1129 ../../include/misc.php:1133
 msgid "poke"
 msgstr "aanstoten"
 
-#: ../../include/text.php:1134
+#: ../../include/misc.php:1134
 msgid "ping"
 msgstr "ping"
 
-#: ../../include/text.php:1134
+#: ../../include/misc.php:1134
 msgid "pinged"
 msgstr "gepingd"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "prod"
 msgstr "por"
 
-#: ../../include/text.php:1135
+#: ../../include/misc.php:1135
 msgid "prodded"
 msgstr "gepord"
 
-#: ../../include/text.php:1136
+#: ../../include/misc.php:1136
 msgid "slap"
 msgstr "slaan"
 
-#: ../../include/text.php:1136
+#: ../../include/misc.php:1136
 msgid "slapped"
 msgstr "sloeg"
 
-#: ../../include/text.php:1137
+#: ../../include/misc.php:1137
 msgid "finger"
 msgstr "finger"
 
-#: ../../include/text.php:1137
+#: ../../include/misc.php:1137
 msgid "fingered"
 msgstr "gefingerd"
 
-#: ../../include/text.php:1138
+#: ../../include/misc.php:1138
 msgid "rebuff"
 msgstr "afpoeieren"
 
-#: ../../include/text.php:1138
+#: ../../include/misc.php:1138
 msgid "rebuffed"
 msgstr "afgepoeierd"
 
-#: ../../include/text.php:1161
+#: ../../include/misc.php:1161
 msgid "happy"
 msgstr "gelukkig"
 
-#: ../../include/text.php:1162
+#: ../../include/misc.php:1162
 msgid "sad"
 msgstr "bedroefd"
 
-#: ../../include/text.php:1163
+#: ../../include/misc.php:1163
 msgid "mellow"
 msgstr "mellow"
 
-#: ../../include/text.php:1164
+#: ../../include/misc.php:1164
 msgid "tired"
 msgstr "moe"
 
-#: ../../include/text.php:1165
+#: ../../include/misc.php:1165
 msgid "perky"
 msgstr "parmantig"
 
-#: ../../include/text.php:1166
+#: ../../include/misc.php:1166
 msgid "angry"
 msgstr "boos"
 
-#: ../../include/text.php:1167
+#: ../../include/misc.php:1167
 msgid "stupefied"
 msgstr "verbijsterd"
 
-#: ../../include/text.php:1168
+#: ../../include/misc.php:1168
 msgid "puzzled"
 msgstr "verward"
 
-#: ../../include/text.php:1169
+#: ../../include/misc.php:1169
 msgid "interested"
 msgstr "geïnteresseerd"
 
-#: ../../include/text.php:1170
+#: ../../include/misc.php:1170
 msgid "bitter"
 msgstr "verbitterd"
 
-#: ../../include/text.php:1171
+#: ../../include/misc.php:1171
 msgid "cheerful"
 msgstr "vrolijk"
 
-#: ../../include/text.php:1172
+#: ../../include/misc.php:1172
 msgid "alive"
 msgstr "levendig"
 
-#: ../../include/text.php:1173
+#: ../../include/misc.php:1173
 msgid "annoyed"
 msgstr "geërgerd"
 
-#: ../../include/text.php:1174
+#: ../../include/misc.php:1174
 msgid "anxious"
 msgstr "bezorgd"
 
-#: ../../include/text.php:1175
+#: ../../include/misc.php:1175
 msgid "cranky"
 msgstr "humeurig"
 
-#: ../../include/text.php:1176
+#: ../../include/misc.php:1176
 msgid "disturbed"
 msgstr "verontrust"
 
-#: ../../include/text.php:1177
+#: ../../include/misc.php:1177
 msgid "frustrated"
 msgstr "gefrustreerd "
 
-#: ../../include/text.php:1178
+#: ../../include/misc.php:1178
 msgid "depressed"
 msgstr "gedeprimeerd"
 
-#: ../../include/text.php:1179
+#: ../../include/misc.php:1179
 msgid "motivated"
 msgstr "gemotiveerd"
 
-#: ../../include/text.php:1180
+#: ../../include/misc.php:1180
 msgid "relaxed"
 msgstr "ontspannen"
 
-#: ../../include/text.php:1181
+#: ../../include/misc.php:1181
 msgid "surprised"
 msgstr "verrast"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:76
+#: ../../include/misc.php:1360 ../../include/js_strings.php:76
 msgid "Monday"
 msgstr "maandag"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:77
+#: ../../include/misc.php:1360 ../../include/js_strings.php:77
 msgid "Tuesday"
 msgstr "dinsdag"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:78
+#: ../../include/misc.php:1360 ../../include/js_strings.php:78
 msgid "Wednesday"
 msgstr "woensdag"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:79
+#: ../../include/misc.php:1360 ../../include/js_strings.php:79
 msgid "Thursday"
 msgstr "donderdag"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:80
+#: ../../include/misc.php:1360 ../../include/js_strings.php:80
 msgid "Friday"
 msgstr "vrijdag"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:81
+#: ../../include/misc.php:1360 ../../include/js_strings.php:81
 msgid "Saturday"
 msgstr "zaterdag"
 
-#: ../../include/text.php:1360 ../../include/js_strings.php:75
+#: ../../include/misc.php:1360 ../../include/js_strings.php:75
 msgid "Sunday"
 msgstr "zondag"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:51
+#: ../../include/misc.php:1364 ../../include/js_strings.php:51
 msgid "January"
 msgstr "januari"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:52
+#: ../../include/misc.php:1364 ../../include/js_strings.php:52
 msgid "February"
 msgstr "februari"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:53
+#: ../../include/misc.php:1364 ../../include/js_strings.php:53
 msgid "March"
 msgstr "maart"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:54
+#: ../../include/misc.php:1364 ../../include/js_strings.php:54
 msgid "April"
 msgstr "april"
 
-#: ../../include/text.php:1364
+#: ../../include/misc.php:1364
 msgid "May"
 msgstr "mei"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:56
+#: ../../include/misc.php:1364 ../../include/js_strings.php:56
 msgid "June"
 msgstr "juni"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:57
+#: ../../include/misc.php:1364 ../../include/js_strings.php:57
 msgid "July"
 msgstr "juli"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:58
+#: ../../include/misc.php:1364 ../../include/js_strings.php:58
 msgid "August"
 msgstr "augustus"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:59
+#: ../../include/misc.php:1364 ../../include/js_strings.php:59
 msgid "September"
 msgstr "september"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:60
+#: ../../include/misc.php:1364 ../../include/js_strings.php:60
 msgid "October"
 msgstr "oktober"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:61
+#: ../../include/misc.php:1364 ../../include/js_strings.php:61
 msgid "November"
 msgstr "november"
 
-#: ../../include/text.php:1364 ../../include/js_strings.php:62
+#: ../../include/misc.php:1364 ../../include/js_strings.php:62
 msgid "December"
 msgstr "december"
 
-#: ../../include/text.php:1428 ../../include/text.php:1432
+#: ../../include/misc.php:1428 ../../include/misc.php:1432
 msgid "Unknown Attachment"
 msgstr "Onbekende bijlage"
 
-#: ../../include/text.php:1434 ../../include/feedutils.php:860
+#: ../../include/misc.php:1434 ../../include/feedutils.php:860
 msgid "unknown"
 msgstr "onbekend"
 
-#: ../../include/text.php:1470
+#: ../../include/misc.php:1470
 msgid "remove category"
 msgstr "categorie verwijderen"
 
-#: ../../include/text.php:1544
+#: ../../include/misc.php:1544
 msgid "remove from file"
 msgstr "uit map verwijderen"
 
-#: ../../include/text.php:1686 ../../include/message.php:12
+#: ../../include/misc.php:1686 ../../include/message.php:12
 msgid "Download binary/encrypted content"
 msgstr "Binaire/versleutelende inhoud downloaden"
 
-#: ../../include/text.php:1849 ../../include/language.php:397
+#: ../../include/misc.php:1849 ../../include/language.php:397
 msgid "default"
 msgstr "standaard"
 
-#: ../../include/text.php:1857
+#: ../../include/misc.php:1857
 msgid "Page layout"
 msgstr "Pagina-lay-out"
 
-#: ../../include/text.php:1857
+#: ../../include/misc.php:1857
 msgid "You can create your own with the layouts tool"
 msgstr "Je kan jouw eigen lay-out ontwerpen onder lay-outs"
 
-#: ../../include/text.php:1868
+#: ../../include/misc.php:1868
 msgid "HTML"
 msgstr "HTML"
 
-#: ../../include/text.php:1871
+#: ../../include/misc.php:1871
 msgid "Comanche Layout"
 msgstr "Comanche-layout"
 
-#: ../../include/text.php:1876
+#: ../../include/misc.php:1876
 msgid "PHP"
 msgstr "PHP"
 
-#: ../../include/text.php:1885
+#: ../../include/misc.php:1885
 msgid "Page content type"
 msgstr "Opmaaktype"
 
-#: ../../include/text.php:2018
+#: ../../include/misc.php:2018
 msgid "activity"
 msgstr "activiteit"
 
-#: ../../include/text.php:2100
+#: ../../include/misc.php:2100
 msgid "a-z, 0-9, -, and _ only"
 msgstr "alleen a-z, 0-9, - en _"
 
-#: ../../include/text.php:2419
+#: ../../include/misc.php:2419
 msgid "Design Tools"
 msgstr "Ontwerp-hulpmiddelen"
 
-#: ../../include/text.php:2425
+#: ../../include/misc.php:2425
 msgid "Pages"
 msgstr "Pagina's"
 
-#: ../../include/text.php:2447
+#: ../../include/misc.php:2447
 msgid "Import website..."
 msgstr "Website importeren..."
 
-#: ../../include/text.php:2448
+#: ../../include/misc.php:2448
 msgid "Select folder to import"
 msgstr "Kies een map om te importeren"
 
-#: ../../include/text.php:2449
+#: ../../include/misc.php:2449
 msgid "Import from a zipped folder:"
 msgstr "Vanuit een zipbestand importeren:"
 
-#: ../../include/text.php:2450
+#: ../../include/misc.php:2450
 msgid "Import from cloud files:"
 msgstr "Vanuit de cloud importeren:"
 
-#: ../../include/text.php:2451
+#: ../../include/misc.php:2451
 msgid "/cloud/channel/path/to/folder"
 msgstr "/cloud/channel/maplocatie"
 
-#: ../../include/text.php:2452
+#: ../../include/misc.php:2452
 msgid "Enter path to website files"
 msgstr "Voer de locatie in van de websitebestanden"
 
-#: ../../include/text.php:2453
+#: ../../include/misc.php:2453
 msgid "Select folder"
 msgstr "Kies een map"
 
-#: ../../include/text.php:2454
+#: ../../include/misc.php:2454
 msgid "Export website..."
 msgstr "Website exporteren..."
 
-#: ../../include/text.php:2455
+#: ../../include/misc.php:2455
 msgid "Export to a zip file"
 msgstr "Naar een zipbestand exporteren"
 
-#: ../../include/text.php:2456
+#: ../../include/misc.php:2456
 msgid "website.zip"
 msgstr "website.zip"
 
-#: ../../include/text.php:2457
+#: ../../include/misc.php:2457
 msgid "Enter a name for the zip file."
 msgstr "Vul een naam in voor het zipbestand."
 
-#: ../../include/text.php:2458
+#: ../../include/misc.php:2458
 msgid "Export to cloud files"
 msgstr "Naar de cloud exporteren"
 
-#: ../../include/text.php:2459
+#: ../../include/misc.php:2459
 msgid "/path/to/export/folder"
 msgstr "/locatie/van/export/map"
 
-#: ../../include/text.php:2460
+#: ../../include/misc.php:2460
 msgid "Enter a path to a cloud files destination."
 msgstr "Voer de locatie in van de cloudbestemming"
 
-#: ../../include/text.php:2461
+#: ../../include/misc.php:2461
 msgid "Specify folder"
 msgstr "Selecteer een map"
 

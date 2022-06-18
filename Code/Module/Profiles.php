@@ -376,7 +376,6 @@ class Profiles extends Controller
             $profile_vcard = update_vcard($_REQUEST, $orig_vcard);
 
 
-            require_once('include/text.php');
             linkify_tags($likes, local_channel());
             linkify_tags($dislikes, local_channel());
             linkify_tags($about, local_channel());

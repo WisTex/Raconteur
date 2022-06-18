@@ -22,10 +22,8 @@ use Code\Render\Theme;
 
 require_once('include/photo_factory.php');
 require_once('include/photos.php');
-require_once('include/bbcode.php');
 require_once('include/security.php');
 require_once('include/attach.php');
-require_once('include/text.php');
 require_once('include/conversation.php');
 
 

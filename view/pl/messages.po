@@ -47,7 +47,7 @@ msgstr "Grupa - moderowana"
 
 #: Code/Access/PermissionRoles.php:192 Code/Module/Directory.php:401
 #: Code/Module/Manage.php:77 Code/Module/Manage.php:174
-#: Code/Storage/Browser.php:148 include/text.php:3274
+#: Code/Storage/Browser.php:148 include/misc.php:3274
 msgid "Collection"
 msgstr "Kolekcja"
 
@@ -188,7 +188,7 @@ msgid "%1$s wrote the following %2$s %3$s"
 msgstr "%1$s napisał ten %2$s %3$s"
 
 #: Code/Lib/Markdown.php:221 Code/Module/Tagger.php:92
-#: include/conversation.php:161 include/bbcode.php:677 include/text.php:2375
+#: include/conversation.php:161 include/bbcode.php:677 include/misc.php:2375
 msgid "post"
 msgstr "wpis"
 
@@ -473,8 +473,8 @@ msgstr "Raport błędów"
 
 #: Code/Lib/Apps.php:398 Code/Module/Connections.php:375
 #: Code/Module/Search.php:61 Code/Widget/Sitesearch.php:35
-#: include/acl_selectors.php:147 include/nav.php:184 include/text.php:1042
-#: include/text.php:1055
+#: include/acl_selectors.php:147 include/nav.php:184 include/misc.php:1042
+#: include/misc.php:1055
 msgid "Search"
 msgstr "Wyszukaj"
 
@@ -723,8 +723,8 @@ msgstr "Zganienia"
 #: Code/Lib/ThreadItem.php:282 Code/Module/Admin/Profs.php:99
 #: Code/Module/Admin/Profs.php:120 Code/Module/Filer.php:60
 #: Code/Widget/Notes.php:24
-#: extend/addon/a/queueworker/Mod_Queueworker.php:116 include/text.php:1043
-#: include/text.php:1056
+#: extend/addon/a/queueworker/Mod_Queueworker.php:116 include/misc.php:1043
+#: include/misc.php:1056
 msgid "Save"
 msgstr "Zapisz"
 
@@ -1693,7 +1693,7 @@ msgstr "Nie może uczestniczyć w wydarzeniu %s"
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr "&#x1f501; Powtórzony %2$s %1$s"
 
-#: Code/Lib/Activity.php:3352 include/text.php:1687 include/text.php:3141
+#: Code/Lib/Activity.php:3352 include/misc.php:1687 include/misc.php:3141
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr "Szukaj %1$s (%2$s)"
@@ -1766,7 +1766,7 @@ msgid "This is your default setting for the audience of your webpages"
 msgstr ""
 "To jest domyślne ustawienie dotyczące odbiorców Twoich stron internetowych"
 
-#: Code/Lib/Language.php:408 include/language.php:429 include/text.php:2186
+#: Code/Lib/Language.php:408 include/language.php:429 include/misc.php:2186
 msgid "default"
 msgstr "domyślnie"
 
@@ -1838,7 +1838,7 @@ msgstr "Nie znaleziono wydarzenia."
 
 #: Code/Module/Calendar.php:254 Code/Module/Events.php:295
 #: Code/Module/Like.php:174 Code/Module/Tagger.php:88
-#: include/conversation.php:132 include/event.php:1338 include/text.php:2372
+#: include/conversation.php:132 include/event.php:1338 include/misc.php:2372
 msgid "event"
 msgstr "wydarzenie"
 
@@ -2933,7 +2933,7 @@ msgstr "Zablokuj osadzony kod HTML z tych domen"
 msgid "Site settings updated."
 msgstr "Zaktualizowano ustawienia portalu."
 
-#: Code/Module/Admin/Site.php:221 include/text.php:3568
+#: Code/Module/Admin/Site.php:221 include/misc.php:3568
 #: view/theme/redbasic/php/config.php:15
 msgid "Default"
 msgstr "Domyślnie"
@@ -3602,7 +3602,7 @@ msgid "l, F j"
 msgstr "l, F j"
 
 #: Code/Module/Cal.php:331 Code/Module/Events.php:727
-#: include/text.php:2167
+#: include/misc.php:2167
 msgid "Link to Source"
 msgstr "Link do źródła"
 
@@ -3627,7 +3627,7 @@ msgstr "Poprzedni"
 msgid "Next"
 msgstr "Następny"
 
-#: Code/Module/Cal.php:358 include/text.php:2875
+#: Code/Module/Cal.php:358 include/misc.php:2875
 msgid "Import"
 msgstr "Import"
 
@@ -3760,7 +3760,7 @@ msgstr "Utwórz"
 msgid "Block Name"
 msgstr "Nazwa bloku"
 
-#: Code/Module/Blocks.php:167 include/text.php:2850
+#: Code/Module/Blocks.php:167 include/misc.php:2850
 msgid "Blocks"
 msgstr "Bloki"
 
@@ -5215,7 +5215,7 @@ msgstr "Token walidacyjny"
 
 #: Code/Module/Embedphotos.php:103 include/bbcode.php:258
 #: include/bbcode.php:1125 include/bbcode.php:2031 include/bbcode.php:2033
-#: include/bbcode.php:2036 include/text.php:1828 include/text.php:1829
+#: include/bbcode.php:2036 include/misc.php:1828 include/misc.php:1829
 msgid "Image/photo"
 msgstr "Obraz/zdjęcie"
 
@@ -6356,7 +6356,7 @@ msgstr "Nie ma na tej liście"
 msgid "Select a channel to toggle membership"
 msgstr "Wybierz kanał w celu przełączenia członkostwa"
 
-#: Code/Module/Layouts.php:198 include/text.php:2852
+#: Code/Module/Layouts.php:198 include/misc.php:2852
 msgid "Layouts"
 msgstr "Układy"
 
@@ -6626,7 +6626,7 @@ msgstr "Edytuj blok"
 
 #: Code/Module/Like.php:172 Code/Module/Subthread.php:124
 #: Code/Module/Tagger.php:84 include/conversation.php:129
-#: include/text.php:2369
+#: include/misc.php:2369
 msgid "photo"
 msgstr "zdjęcie"
 
@@ -6768,7 +6768,7 @@ msgstr "Menu może służyć do przechowywania zapisanych zakładek"
 msgid "Submit and proceed"
 msgstr "Prześlij i kontynuuj"
 
-#: Code/Module/Menu.php:176 include/text.php:2851
+#: Code/Module/Menu.php:176 include/misc.php:2851
 msgid "Menus"
 msgstr "Kolekcja menu"
 
@@ -8543,37 +8543,37 @@ msgid "This varies by country/culture"
 msgstr "To zależy od kraju/kultury"
 
 #: Code/Module/Settings/Channel.php:755 include/js_strings.php:93
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Sunday"
 msgstr "Niedziela"
 
 #: Code/Module/Settings/Channel.php:756 include/js_strings.php:94
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Monday"
 msgstr "Poniedziałek"
 
 #: Code/Module/Settings/Channel.php:757 include/js_strings.php:95
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Tuesday"
 msgstr "Wtorek"
 
 #: Code/Module/Settings/Channel.php:758 include/js_strings.php:96
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Wednesday"
 msgstr "Środa"
 
 #: Code/Module/Settings/Channel.php:759 include/js_strings.php:97
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Thursday"
 msgstr "Czwartek"
 
 #: Code/Module/Settings/Channel.php:760 include/js_strings.php:98
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Friday"
 msgstr "Piątek"
 
 #: Code/Module/Settings/Channel.php:761 include/js_strings.php:99
-#: include/text.php:1427
+#: include/misc.php:1427
 msgid "Saturday"
 msgstr "Sobota"
 
@@ -9013,7 +9013,7 @@ msgid "NEW"
 msgstr "NOWE"
 
 #: Code/Module/Sharedwithme.php:109 Code/Storage/Browser.php:315
-#: include/text.php:1534
+#: include/misc.php:1534
 msgid "Size"
 msgstr "Rozmiar"
 
@@ -9433,7 +9433,7 @@ msgid "Post not found."
 msgstr "Nie znaleziono wpisu."
 
 #: Code/Module/Tagger.php:94 include/conversation.php:163
-#: include/text.php:2377
+#: include/misc.php:2377
 msgid "comment"
 msgstr "komentarz"
 
@@ -11058,7 +11058,7 @@ msgstr "%1$s jest teraz połączony z %2$s"
 msgid "%1$s poked %2$s"
 msgstr "%1$s zaczepił %2$s"
 
-#: include/conversation.php:278 include/text.php:1182 include/text.php:1186
+#: include/conversation.php:278 include/misc.php:1182 include/misc.php:1186
 msgid "poked"
 msgstr "zaczepiony"
 
@@ -12233,19 +12233,19 @@ msgstr " "
 msgid "timeago.numbers"
 msgstr "timeago.numbers"
 
-#: include/js_strings.php:69 include/text.php:1433
+#: include/js_strings.php:69 include/misc.php:1433
 msgid "January"
 msgstr "Styczeń"
 
-#: include/js_strings.php:70 include/text.php:1433
+#: include/js_strings.php:70 include/misc.php:1433
 msgid "February"
 msgstr "Luty"
 
-#: include/js_strings.php:71 include/text.php:1433
+#: include/js_strings.php:71 include/misc.php:1433
 msgid "March"
 msgstr "Marzec"
 
-#: include/js_strings.php:72 include/text.php:1433
+#: include/js_strings.php:72 include/misc.php:1433
 msgid "April"
 msgstr "Kwiecień"
 
@@ -12254,31 +12254,31 @@ msgctxt "long"
 msgid "May"
 msgstr "Maj"
 
-#: include/js_strings.php:74 include/text.php:1433
+#: include/js_strings.php:74 include/misc.php:1433
 msgid "June"
 msgstr "Czerwiec"
 
-#: include/js_strings.php:75 include/text.php:1433
+#: include/js_strings.php:75 include/misc.php:1433
 msgid "July"
 msgstr "Lipiec"
 
-#: include/js_strings.php:76 include/text.php:1433
+#: include/js_strings.php:76 include/misc.php:1433
 msgid "August"
 msgstr "Sierpień"
 
-#: include/js_strings.php:77 include/text.php:1433
+#: include/js_strings.php:77 include/misc.php:1433
 msgid "September"
 msgstr "Wrzesień"
 
-#: include/js_strings.php:78 include/text.php:1433
+#: include/js_strings.php:78 include/misc.php:1433
 msgid "October"
 msgstr "Październik"
 
-#: include/js_strings.php:79 include/text.php:1433
+#: include/js_strings.php:79 include/misc.php:1433
 msgid "November"
 msgstr "Listopad"
 
-#: include/js_strings.php:80 include/text.php:1433
+#: include/js_strings.php:80 include/misc.php:1433
 msgid "December"
 msgstr "Grudzień"
 
@@ -12740,312 +12740,312 @@ msgstr "Osadzone treści"
 msgid "Embedding disabled"
 msgstr "Osadzanie wyłączone"
 
-#: include/text.php:522
+#: include/misc.php:522
 msgid "prev"
 msgstr "poprzedni"
 
-#: include/text.php:525
+#: include/misc.php:525
 msgid "first"
 msgstr "pierwszy"
 
-#: include/text.php:556
+#: include/misc.php:556
 msgid "last"
 msgstr "ostatni"
 
-#: include/text.php:559
+#: include/misc.php:559
 msgid "next"
 msgstr "następny"
 
-#: include/text.php:572
+#: include/misc.php:572
 msgid "older"
 msgstr "starszy"
 
-#: include/text.php:575
+#: include/misc.php:575
 msgid "newer"
 msgstr "nowszy"
 
-#: include/text.php:1182 include/text.php:1186
+#: include/misc.php:1182 include/misc.php:1186
 msgid "poke"
 msgstr "szturchnij"
 
-#: include/text.php:1187
+#: include/misc.php:1187
 msgid "ping"
 msgstr "spinguj"
 
-#: include/text.php:1187
+#: include/misc.php:1187
 msgid "pinged"
 msgstr "spingowany"
 
-#: include/text.php:1188
+#: include/misc.php:1188
 msgid "prod"
 msgstr "zaczep"
 
-#: include/text.php:1188
+#: include/misc.php:1188
 msgid "prodded"
 msgstr "zaczepiony"
 
-#: include/text.php:1189
+#: include/misc.php:1189
 msgid "slap"
 msgstr "uderz"
 
-#: include/text.php:1189
+#: include/misc.php:1189
 msgid "slapped"
 msgstr "uderzony"
 
-#: include/text.php:1190
+#: include/misc.php:1190
 msgid "finger"
 msgstr "dotknij"
 
-#: include/text.php:1190
+#: include/misc.php:1190
 msgid "fingered"
 msgstr "dotknięty"
 
-#: include/text.php:1191
+#: include/misc.php:1191
 msgid "rebuff"
 msgstr "odpraw"
 
-#: include/text.php:1191
+#: include/misc.php:1191
 msgid "rebuffed"
 msgstr "odprawiony"
 
-#: include/text.php:1215
+#: include/misc.php:1215
 msgid "happy"
 msgstr "szczęśliwy"
 
-#: include/text.php:1216
+#: include/misc.php:1216
 msgid "sad"
 msgstr "smutny"
 
-#: include/text.php:1217
+#: include/misc.php:1217
 msgid "mellow"
 msgstr "łagodny"
 
-#: include/text.php:1218
+#: include/misc.php:1218
 msgid "tired"
 msgstr "zmęczony"
 
-#: include/text.php:1219
+#: include/misc.php:1219
 msgid "perky"
 msgstr "dziarski"
 
-#: include/text.php:1220
+#: include/misc.php:1220
 msgid "angry"
 msgstr "gniewny"
 
-#: include/text.php:1221
+#: include/misc.php:1221
 msgid "stupefied"
 msgstr "oszołomiony"
 
-#: include/text.php:1222
+#: include/misc.php:1222
 msgid "puzzled"
 msgstr "zdziwiony"
 
-#: include/text.php:1223
+#: include/misc.php:1223
 msgid "interested"
 msgstr "zainteresowany"
 
-#: include/text.php:1224
+#: include/misc.php:1224
 msgid "bitter"
 msgstr "gorzki"
 
-#: include/text.php:1225
+#: include/misc.php:1225
 msgid "cheerful"
 msgstr "wesoły"
 
-#: include/text.php:1226
+#: include/misc.php:1226
 msgid "alive"
 msgstr "ożywiony"
 
-#: include/text.php:1227
+#: include/misc.php:1227
 msgid "annoyed"
 msgstr "zirytowany"
 
-#: include/text.php:1228
+#: include/misc.php:1228
 msgid "anxious"
 msgstr "niespokojny"
 
-#: include/text.php:1229
+#: include/misc.php:1229
 msgid "cranky"
 msgstr "zepsuty"
 
-#: include/text.php:1230
+#: include/misc.php:1230
 msgid "disturbed"
 msgstr "zaniepokojony"
 
-#: include/text.php:1231
+#: include/misc.php:1231
 msgid "frustrated"
 msgstr "sfrustrowany"
 
-#: include/text.php:1232
+#: include/misc.php:1232
 msgid "depressed"
 msgstr "przygnębiony"
 
-#: include/text.php:1233
+#: include/misc.php:1233
 msgid "motivated"
 msgstr "zmotywowany"
 
-#: include/text.php:1234
+#: include/misc.php:1234
 msgid "relaxed"
 msgstr "zrelaksowany"
 
-#: include/text.php:1235
+#: include/misc.php:1235
 msgid "surprised"
 msgstr "zaskoczony"
 
-#: include/text.php:1433
+#: include/misc.php:1433
 msgid "May"
 msgstr "Maj"
 
-#: include/text.php:1531
+#: include/misc.php:1531
 msgid "Unknown Attachment"
 msgstr "Nieznany załącznik"
 
-#: include/text.php:1534
+#: include/misc.php:1534
 msgid "unknown"
 msgstr "nieznany"
 
-#: include/text.php:1588
+#: include/misc.php:1588
 msgid "remove category"
 msgstr "usuń kategorię"
 
-#: include/text.php:1727
+#: include/misc.php:1727
 msgid "remove from file"
 msgstr "usuń z pliku"
 
-#: include/text.php:1873
+#: include/misc.php:1873
 msgid "Added to your calendar"
 msgstr "Dodano do Twojego kalendarza"
 
-#: include/text.php:1961
+#: include/misc.php:1961
 msgid "Link"
 msgstr "Link"
 
-#: include/text.php:2044
+#: include/misc.php:2044
 msgid "Poll has ended."
 msgstr "Ankieta zakończyła się."
 
-#: include/text.php:2046
+#: include/misc.php:2046
 #, php-format
 msgid "Poll ends: %1$s (%2$s)"
 msgstr "Ankieta kończy się : %1$s (%2$s)"
 
-#: include/text.php:2051
+#: include/misc.php:2051
 msgid "vote"
 msgstr "głosuj"
 
-#: include/text.php:2062
+#: include/misc.php:2062
 msgid "Download binary/encrypted content"
 msgstr "Pobierz zawartość binarną/zaszyfrowaną"
 
-#: include/text.php:2194
+#: include/misc.php:2194
 msgid "Page layout"
 msgstr "Układ strony"
 
-#: include/text.php:2194
+#: include/misc.php:2194
 msgid "You can create your own with the layouts tool"
 msgstr "Możesz tworzyć własne za pomocą narzędzia układów"
 
-#: include/text.php:2205
+#: include/misc.php:2205
 msgid "BBcode"
 msgstr "BBcode"
 
-#: include/text.php:2206
+#: include/misc.php:2206
 msgid "HTML"
 msgstr "HTML"
 
-#: include/text.php:2207
+#: include/misc.php:2207
 msgid "Markdown"
 msgstr "Markdown"
 
-#: include/text.php:2208
+#: include/misc.php:2208
 msgid "Text"
 msgstr "Tekst"
 
-#: include/text.php:2209
+#: include/misc.php:2209
 msgid "Comanche Layout"
 msgstr "Układ Comanche"
 
-#: include/text.php:2214
+#: include/misc.php:2214
 msgid "PHP"
 msgstr "PHP"
 
-#: include/text.php:2223
+#: include/misc.php:2223
 msgid "Page content type"
 msgstr "Typ treści strony"
 
-#: include/text.php:2383
+#: include/misc.php:2383
 msgid "activity"
 msgstr "aktywność"
 
-#: include/text.php:2497
+#: include/misc.php:2497
 msgid "a-z, 0-9, -, and _ only"
 msgstr "tylko a-z, 0-9, - i _"
 
-#: include/text.php:2847
+#: include/misc.php:2847
 msgid "Design Tools"
 msgstr "Narzędzia projektanckie"
 
-#: include/text.php:2853
+#: include/misc.php:2853
 msgid "Pages"
 msgstr "Strony"
 
-#: include/text.php:2876
+#: include/misc.php:2876
 msgid "Import website..."
 msgstr "Import witryny..."
 
-#: include/text.php:2877
+#: include/misc.php:2877
 msgid "Select folder to import"
 msgstr "Wybierz folder do zaimportowania"
 
-#: include/text.php:2878
+#: include/misc.php:2878
 msgid "Import from a zipped folder:"
 msgstr "Import z pliku archiwum ZIP:"
 
-#: include/text.php:2879
+#: include/misc.php:2879
 msgid "Import from cloud files:"
 msgstr "Import plików z chmury:"
 
-#: include/text.php:2880
+#: include/misc.php:2880
 msgid "/cloud/channel/path/to/folder"
 msgstr "/chmura/kanał/ścieżka/do/folderu"
 
-#: include/text.php:2881
+#: include/misc.php:2881
 msgid "Enter path to website files"
 msgstr "Wprowadź ścieżkę do plików witryny internetowej"
 
-#: include/text.php:2882
+#: include/misc.php:2882
 msgid "Select folder"
 msgstr "Wybierz folder"
 
-#: include/text.php:2883
+#: include/misc.php:2883
 msgid "Export website..."
 msgstr "Eksport witryny..."
 
-#: include/text.php:2884
+#: include/misc.php:2884
 msgid "Export to a zip file"
 msgstr "Eksport do pliku ZIP"
 
-#: include/text.php:2885
+#: include/misc.php:2885
 msgid "website.zip"
 msgstr "nazwa_witryny.zip"
 
-#: include/text.php:2886
+#: include/misc.php:2886
 msgid "Enter a name for the zip file."
 msgstr "Wprowadź nazwę pliku zip."
 
-#: include/text.php:2887
+#: include/misc.php:2887
 msgid "Export to cloud files"
 msgstr "Eksport do plików w chmurze"
 
-#: include/text.php:2888
+#: include/misc.php:2888
 msgid "/path/to/export/folder"
 msgstr "/ścieżka/do/eksportu/folder"
 
-#: include/text.php:2889
+#: include/misc.php:2889
 msgid "Enter a path to a cloud files destination."
 msgstr "Wprowadź ścieżkę do miejsca docelowego plików w chmurze."
 
-#: include/text.php:2890
+#: include/misc.php:2890
 msgid "Specify folder"
 msgstr "Wybierz folder"
 

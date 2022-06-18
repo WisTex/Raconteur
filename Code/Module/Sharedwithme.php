@@ -8,8 +8,6 @@ use Code\Render\Theme;
 
 
 require_once('include/conversation.php');
-require_once('include/text.php');
-
 
 /**
  * @file Code/Module/Sharedwithme.php

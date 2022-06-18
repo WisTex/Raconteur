@@ -820,11 +820,7 @@ class Channel
                         intval($hv['hubloc_id'])
                     );
                 }
-                q(
-                    "update hubloc set hubloc_deleted = 1 where hubloc_id = %d",
-                    intval($hv['hubloc_id'])
-                );
-
+                hubloc_delete($hv);
                 unset($hv['hubloc_id']);
                 $hv['hubloc_addr'] = $new_address . '@' . App::get_hostname();
                 hubloc_store_lowlevel($hv);
