@@ -89,11 +89,7 @@ class Locs extends Controller
                     }
                 }
 
-                $r = q(
-                    "update hubloc set hubloc_deleted = 1 where hubloc_id = %d and hubloc_hash = '%s'",
-                    intval($hubloc_id),
-                    dbesc($channel['channel_hash'])
-                );
+                hubloc_delete($r[0]);
                 Run::Summon(['Notifier', 'refresh_all', $channel['channel_id']]);
                 return;
             }
