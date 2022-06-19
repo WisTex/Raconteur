@@ -189,7 +189,7 @@ function delete_thing_photo($url, $ob_hash)
 /**
  * @brief Fetches a photo from external site and prepares its miniatures.
  *
- * @param string $photo
+ * @param string $src
  *    external URL to fetch base image
  * @param string $xchan
  *    channel unique hash
@@ -203,12 +203,14 @@ function delete_thing_photo($url, $ob_hash)
  * * \e string \b 3 => image type
  * * \e boolean \b 4 => TRUE if fetch failure
  */
-function import_remote_xchan_photo($photo, $xchan, $thing = false)
+function import_remote_xchan_photo($src, $xchan, $thing = false)
 {
 
     $failure  = [];
     $type = EMPTY_STR;
 
+    logger(sprintf('importing %s for %s', $src, $xchan), LOGGER_DEBUG);
+    
     $animated = get_config('system', 'animated_avatars', true);
 
     $path = Hashpath::path((($thing) ? $src . $xchan : $xchan), 'cache/xp', 2);
@@ -243,6 +245,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
     if ($result['success']) {
         $type = guess_image_type($src, $result['header']);
         if ((! $type) || strpos($type, 'image') === false) {
+            logger('fetching type from file', LOGGER_DEBUG);
             @file_put_contents('cache/' . $hash, $result['body']);
             $info = getimagesize('cache/' . $hash);
             @unlink('cache/' . $hash);
@@ -271,7 +274,6 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
                 } else {
                     $failure[] = 'No dimensions';
                 }
-
                 $p = [
                     'xchan'       => $xchan,
                     'resource_id' => $hash,
@@ -281,7 +283,6 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
                     'imgscale'    => 4,
                     'edited'      => $modified,
                 ];
-
                 $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
                 $r = $img->saveImage($savepath, $animated);
                 if ($r === false) {
@@ -314,7 +315,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
         $failure[] = $result['error'];
         $failure[] = print_array($result['debug']);
     }
-
+    
     if ($failure) {
         logger('failed: ' . $photo);
         logger('failure: ' . print_r($failure,true), LOGGER_DEBUG);
@@ -323,6 +324,7 @@ function import_remote_xchan_photo($photo, $xchan, $thing = false)
         unlink($path . '.log');
     }
 
+    logger('cached photo: ' . $photo, LOGGER_DEBUG);    
     return([$photo, $thumb, $micro, $type, ($failure ? true : false)]);
 }
 
