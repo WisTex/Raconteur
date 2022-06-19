@@ -859,21 +859,23 @@ class Libzot
                 set_xconfig($xchan_hash, 'system', 'signing_algorithm', $arr['signing_algorithm']);
             }
 
+            $network = (isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10) ? 'nomad' : 'zot6';
 
             if (
-                ($r[0]['xchan_name_date'] != $arr['name_updated'])
-                || ($r[0]['xchan_connurl'] != $arr['primary_location']['connections_url'])
-                || ($r[0]['xchan_addr'] != $arr['primary_location']['address'])
-                || ($r[0]['xchan_follow'] != $arr['primary_location']['follow_url'])
-                || ($r[0]['xchan_connpage'] != $arr['connect_url'])
-                || ($r[0]['xchan_url'] != $arr['primary_location']['url'])
+                ($r[0]['xchan_name_date'] !== $arr['name_updated'])
+                || ($r[0]['xchan_connurl'] !== $arr['primary_location']['connections_url'])
+                || ($r[0]['xchan_addr'] !== $arr['primary_location']['address'])
+                || ($r[0]['xchan_follow'] !== $arr['primary_location']['follow_url'])
+                || ($r[0]['xchan_connpage'] !== $arr['connect_url'])
+                || ($r[0]['xchan_url'] !== $arr['primary_location']['url'])
+                || ($r[0]['xchan_network'] !== $network)
                 || ($r[0]['xchan_updated'] < datetime_convert('UTC', 'UTC', 'now - 7 days'))
                 || $hidden_changed || $adult_changed || $deleted_changed || $type_changed
             ) {
                 $rup = q(
                     "update xchan set xchan_updated = '%s', xchan_name = '%s', xchan_name_date = '%s', xchan_connurl = '%s', xchan_follow = '%s',
                     xchan_connpage = '%s', xchan_hidden = %d, xchan_selfcensored = %d, xchan_deleted = %d, xchan_type = %d,
-                    xchan_addr = '%s', xchan_url = '%s' where xchan_hash = '%s'",
+                    xchan_addr = '%s', xchan_url = '%s', xchan_network = '%s' where xchan_hash = '%s'",
                     dbesc(datetime_convert()),
                     dbesc(($arr['name']) ? unicode_trim(escape_tags($arr['name'])) : '-'),
                     dbesc($arr['name_updated']),
@@ -886,6 +888,7 @@ class Libzot
                     intval($px),
                     dbesc(escape_tags($arr['primary_location']['address'])),
                     dbesc(escape_tags($arr['primary_location']['url'])),
+                    dbesc($network),
                     dbesc($xchan_hash)
                 );
 
@@ -908,9 +911,6 @@ class Libzot
             if (array_key_exists('public_forum', $arr) && intval($arr['public_forum'])) {
                 $px = 1;
             }
-
-            $network = isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10 ? 'nomad' : 'zot6';
-
 
             $x = xchan_store_lowlevel(
                 [
@@ -2650,8 +2650,8 @@ class Libzot
                 if (intval($channel['channel_removed']) && $hub['hubloc_url'] === z_root()) {
                     $hub['hubloc_deleted'] = 1;
                 }
-
-                $ret[] = [
+                
+                $tmp = [
                     'host' => $hub['hubloc_host'],
                     'address' => $hub['hubloc_addr'],
                     'id_url' => $hub['hubloc_id_url'],
@@ -2663,6 +2663,12 @@ class Libzot
                     'sitekey' => $hub['hubloc_sitekey'],
                     'deleted' => (intval($hub['hubloc_deleted']) ? true : false)
                 ];
+                if ($hub['hubloc_url'] === z_root() && version_compare(ZOT_REVISION, '11.0') >= 0) {
+                    $tmp['driver'] = 'nomad';
+                }
+    
+                $ret[] = $tmp;    
+    
             }
         }
 
