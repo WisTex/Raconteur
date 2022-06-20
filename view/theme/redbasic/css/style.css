@@ -1570,7 +1570,7 @@ blockquote {
 .textcomplete-item.active .dropdown-item,
 .textcomplete-item:active .dropdown-item {
 	color: $font_colour;
-	background-color: $item_colour;
+	background-color: #ddd;
 }
 
 .dropdown-item.active {
