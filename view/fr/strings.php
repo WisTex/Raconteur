@@ -568,7 +568,7 @@ App::$strings["Accept messages from strangers which include any of the following
 App::$strings["comma separated, do not include the #"] = "séparés par des virgules, ne mettez pas le #";
 App::$strings["Notify me of events this many days in advance"] = "Me prévenir d’événements à venir tant de jours en avance";
 App::$strings["Must be greater than 0"] = "Doit être supérieur à 0";
-App::$strings["Date and time"] = "Date et heure";
+App::$strings["Date and Time"] = "Date et heure";
 App::$strings["This section is reserved for use by optional addons and apps to provide additional settings."] = "Cette section est réservée pour les addons optionnels et les applications qui fournissent des réglages additionnels.";
 App::$strings["Advanced Account/Page Type Settings"] = "Paramètres avancés de compte/type de page";
 App::$strings["Change the behaviour of this account for special situations"] = "Modifie le comportement de ce compte pour des situations particulières";

@@ -1812,7 +1812,7 @@ App::$strings["Accept messages from strangers which include any of the following
 App::$strings["comma separated, do not include the #"] = "oddzielone przecinkami, nie dołączaj #";
 App::$strings["Notify me of events this many days in advance"] = "Powiadamiaj mnie o wydarzeniach z kilkudniowym wyprzedzeniem";
 App::$strings["Must be greater than 0"] = "Musi być większa niż 0";
-App::$strings["Date and time"] = "Data i czas";
+App::$strings["Date and Time"] = "Data i czas";
 App::$strings["This section is reserved for use by optional addons and apps to provide additional settings."] = "Ta sekcja jest zarezerwowana do wykorzystania przez opcjonalne dodatki i aplikacje w celu zapewnienia dodatkowych ustawień.";
 App::$strings["Advanced Account/Page Type Settings"] = "Zaawansowane ustawienia konta/typu strony";
 App::$strings["Change the behaviour of this account for special situations"] = "Zmień zachowanie tego konta w szczególnych sytuacjach";

@@ -735,7 +735,7 @@ class Channel
             '$sec_addon' => $plugin['security'],
             '$notify_addon' => $plugin['notify'],
             '$misc_addon' => $plugin['misc'],
-            '$lbl_time' => t('Date and time'),
+            '$lbl_time' => t('Date and Time'),
             '$miscdoc' => t('This section is reserved for use by optional addons and apps to provide additional settings.'),
             '$h_advn' => t('Advanced Account/Page Type Settings'),
             '$h_descadvn' => t('Change the behaviour of this account for special situations'),
