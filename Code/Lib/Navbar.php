@@ -109,10 +109,6 @@ class Navbar {
                 $nav['manage'] = array('manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn');
             }
 
-            $nav['group'] = array('lists', t('Lists'),"", t('Manage your access lists'),'group_nav_btn');
-
-            $nav['settings'] = array('settings', t('Settings'),"", t('Account/Channel Settings'),'settings_nav_btn');
-
             $nav['safe'] = array('safe', t('Safe Mode'), ((get_safemode()) ? t('(is on)') : t('(is off)')) , t('Content filtering'),'safe_nav_btn');
 
 

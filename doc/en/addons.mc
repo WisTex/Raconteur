@@ -47,10 +47,6 @@ Authenticate an account against an enterprise LDAP directory such as Windows Act
 
 Logfile Rotator
 
-### Nodeinfo
-
-Provides site discovery using the Nodeinfo protocol. This is voluntary, and permits listing this site in online fediverse directories.  
-
 ### Not Safe For Work
 
 Collapse posts with inappropriate content

@@ -127,51 +127,19 @@ class Activity_filter
             intval(local_channel())
         );
 
-        if ($groups || Apps::system_app_installed(local_channel(), 'Virtual Lists')) {
-            if ($groups) {
-                foreach ($groups as $g) {
-                    if (x($_GET, 'gid')) {
-                        $group_active = (($_GET['gid'] == $g['id']) ? 'active' : '');
-                        $filter_active = 'group';
-                    }
-                    $gsub[] = [
-                        'label' => $g['gname'],
-                        'icon' => '',
-                        'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $g['id'],
-                        'sel' => $group_active,
-                        'title' => sprintf(t('Show posts related to the %s access list'), $g['gname'])
-                    ];
+        if ($groups) {
+            foreach ($groups as $g) {
+                if (x($_GET, 'gid')) {
+                    $group_active = (($_GET['gid'] == $g['id']) ? 'active' : '');
+                    $filter_active = 'group';
                 }
-            }
-            if (Apps::system_app_installed(local_channel(), 'Virtual Lists')) {
-                foreach ([':1', ':2', ':3'] as $l) {
-                    switch ($l) {
-                        case ':1':
-                            $gname = t('Connections');
-                            break;
-                        case ':2':
-                            $gname = t('Nomad');
-                            break;
-                        case ':3':
-                            $gname = t('ActivityPub');
-                            break;
-                        default:
-                            break;
-                    }
-
-                    if (x($_GET, 'gid')) {
-                        $group_active = (($_GET['gid'] == $l) ? 'active' : '');
-                        $filter_active = 'group';
-                    }
-
-                    $gsub[] = [
-                        'label' => $gname,
-                        'icon' => '',
-                        'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $l,
-                        'sel' => $group_active,
-                        'title' => sprintf(t('Show posts related to the %s access list'), $gname)
-                    ];
-                }
+                $gsub[] = [
+                    'label' => $g['gname'],
+                    'icon' => '',
+                    'url' => z_root() . '/' . $cmd . '/?f=&gid=' . $g['id'],
+                    'sel' => $group_active,
+                    'title' => sprintf(t('Show posts related to the %s access list'), $g['gname'])
+                ];
             }
             $tabs[] = [
                 'id' => 'privacy_groups',

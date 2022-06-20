@@ -1,6 +1,0 @@
-version: 1
-url: $baseurl/vlists
-requires: local_channel
-name: Virtual Lists
-photo: icon:user-secret
-categories: Networking, Productivity

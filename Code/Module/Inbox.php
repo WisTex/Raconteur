@@ -64,8 +64,6 @@ class Inbox extends Controller
         // By convention, fediverse server-to-server communications require a valid HTTP Signature
         // which includes a signed digest header.
 
-        // This check may need to move elsewhere or be modified in order to fully implement ActivityPub C2S.
-
         if (!($hsig['header_signed'] && $hsig['header_valid'] && $hsig['content_signed'] && $hsig['content_valid'])) {
             http_status_exit(403, 'Permission denied');
         }
