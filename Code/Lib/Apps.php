@@ -417,7 +417,6 @@ class Apps
             'Tasks' => t('Tasks'),
             'View Bookmarks' => t('View Bookmarks'),
             'View Profile' => t('View Profile'),
-            'Virtual Lists' => t('Virtual Lists'),
             'Webpages' => t('Webpages'),
             'Wiki' => t('Wiki'),
             'ZotPost' => t('ZotPost'),
