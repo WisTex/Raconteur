@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 22.06.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-19 18:40-0700\n"
+"POT-Creation-Date: 2022-06-19 20:58-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,7 @@ msgstr ""
 msgid "Update %s failed. See error logs."
 msgstr ""
 
-#: Code/Lib/Menu.php:143 Code/Lib/ThreadItem.php:156 Code/Lib/Apps.php:627
+#: Code/Lib/Menu.php:143 Code/Lib/ThreadItem.php:156 Code/Lib/Apps.php:626
 #: Code/Lib/Libprofile.php:208 Code/Lib/Libprofile.php:211
 #: Code/Module/Admin/Profs.php:192 Code/Module/Blocks.php:173
 #: Code/Module/Card_edit.php:110 Code/Module/Connections.php:318
@@ -69,7 +69,7 @@ msgid ""
 "public. Discretion advised."
 msgstr ""
 
-#: Code/Lib/ThreadItem.php:193 Code/Lib/Apps.php:628
+#: Code/Lib/ThreadItem.php:193 Code/Lib/Apps.php:627
 #: Code/Module/Admin/Profs.php:193 Code/Module/Admin/Channels.php:177
 #: Code/Module/Admin/Accounts.php:188 Code/Module/Blocks.php:175
 #: Code/Module/Photos.php:1258 Code/Module/Card_edit.php:140
@@ -290,7 +290,7 @@ msgstr ""
 msgid "Mark all seen"
 msgstr ""
 
-#: Code/Lib/ThreadItem.php:504 Code/Lib/Libacl.php:156
+#: Code/Lib/ThreadItem.php:504 Code/Lib/Libacl.php:144
 #: Code/Module/Photos.php:1344 Code/Module/Settings/Channel.php:689
 #: include/conversation.php:1504
 msgid "Close"
@@ -552,7 +552,7 @@ msgstr ""
 #: Code/Lib/Apps.php:363 Code/Module/Affinity.php:68
 #: Code/Module/Connections.php:367 Code/Module/Stream.php:142
 #: Code/Module/Connedit.php:681 Code/Widget/Affinity.php:33
-#: Code/Widget/Activity_filter.php:150 include/connections.php:969
+#: include/connections.php:969
 msgid "Connections"
 msgstr ""
 
@@ -742,7 +742,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: Code/Lib/Apps.php:408 Code/Lib/Navbar.php:189 Code/Lib/Libacl.php:149
+#: Code/Lib/Apps.php:408 Code/Lib/Navbar.php:189 Code/Lib/Libacl.php:137
 #: Code/Module/Connections.php:374 Code/Module/Search.php:67
 #: Code/Widget/Sitesearch.php:37 include/misc.php:1052 include/misc.php:1065
 msgid "Search"
@@ -795,56 +795,52 @@ msgstr ""
 msgid "View Profile"
 msgstr ""
 
-#: Code/Lib/Apps.php:420
-msgid "Virtual Lists"
-msgstr ""
-
-#: Code/Lib/Apps.php:421 Code/Lib/Navbar.php:512 Code/Module/Webpages.php:266
+#: Code/Lib/Apps.php:420 Code/Lib/Navbar.php:512 Code/Module/Webpages.php:266
 #: include/conversation.php:2115
 msgid "Webpages"
 msgstr ""
 
-#: Code/Lib/Apps.php:422 Code/Lib/Navbar.php:527 include/conversation.php:2131
+#: Code/Lib/Apps.php:421 Code/Lib/Navbar.php:527 include/conversation.php:2131
 msgid "Wiki"
 msgstr ""
 
-#: Code/Lib/Apps.php:423 extend/addon/a/zotpost/Mod_zotpost.php:56
+#: Code/Lib/Apps.php:422 extend/addon/a/zotpost/Mod_zotpost.php:56
 msgid "ZotPost"
 msgstr ""
 
-#: Code/Lib/Apps.php:600
+#: Code/Lib/Apps.php:599
 msgid "Installed"
 msgstr ""
 
-#: Code/Lib/Apps.php:600 Code/Module/Admin/Addons.php:424
+#: Code/Lib/Apps.php:599 Code/Module/Admin/Addons.php:424
 msgid "Install"
 msgstr ""
 
-#: Code/Lib/Apps.php:624
+#: Code/Lib/Apps.php:623
 msgid "Purchase"
 msgstr ""
 
-#: Code/Lib/Apps.php:629
+#: Code/Lib/Apps.php:628
 msgid "Undelete"
 msgstr ""
 
-#: Code/Lib/Apps.php:639
+#: Code/Lib/Apps.php:638
 msgid "Add to app-tray"
 msgstr ""
 
-#: Code/Lib/Apps.php:640
+#: Code/Lib/Apps.php:639
 msgid "Remove from app-tray"
 msgstr ""
 
-#: Code/Lib/Apps.php:641
+#: Code/Lib/Apps.php:640
 msgid "Pin to navbar"
 msgstr ""
 
-#: Code/Lib/Apps.php:642
+#: Code/Lib/Apps.php:641
 msgid "Unpin from navbar"
 msgstr ""
 
-#: Code/Lib/Apps.php:1158 Code/Lib/Apps.php:1249 Code/Lib/Activity.php:2205
+#: Code/Lib/Apps.php:1157 Code/Lib/Apps.php:1248 Code/Lib/Activity.php:2205
 #: Code/Module/Photos.php:849 Code/Module/Photos.php:1324
 #: Code/Module/Embedphotos.php:218 Code/Module/Cdav.php:872
 #: Code/Module/Cdav.php:873 Code/Module/Cdav.php:879
@@ -1067,7 +1063,7 @@ msgid "Add emoji reaction ability to posts"
 msgstr ""
 
 #: Code/Lib/Features.php:424 Code/Widget/Filer.php:36
-#: Code/Widget/Activity_filter.php:242
+#: Code/Widget/Activity_filter.php:210
 msgid "Saved Folders"
 msgstr ""
 
@@ -1204,7 +1200,7 @@ msgstr ""
 msgid "edit"
 msgstr ""
 
-#: Code/Lib/AccessList.php:393 Code/Widget/Activity_filter.php:178
+#: Code/Lib/AccessList.php:393 Code/Widget/Activity_filter.php:146
 msgid "Lists"
 msgstr ""
 
@@ -2202,7 +2198,7 @@ msgstr ""
 msgid "Visible to your default audience"
 msgstr ""
 
-#: Code/Lib/PermissionDescription.php:112 Code/Lib/Libacl.php:137
+#: Code/Lib/PermissionDescription.php:112 Code/Lib/Libacl.php:125
 msgid "Only me"
 msgstr ""
 
@@ -2289,53 +2285,37 @@ msgstr ""
 msgid "(List)"
 msgstr ""
 
-#: Code/Lib/Libacl.php:102
-msgid "My connections"
-msgstr ""
-
-#: Code/Lib/Libacl.php:102 Code/Lib/Libacl.php:105 Code/Lib/Libacl.php:108
-msgid "(Virtual List)"
-msgstr ""
-
 #: Code/Lib/Libacl.php:105
-msgid "My ActivityPub connections"
-msgstr ""
-
-#: Code/Lib/Libacl.php:108
-msgid "My Nomad connections"
-msgstr ""
-
-#: Code/Lib/Libacl.php:117
 msgid "(Group)"
 msgstr ""
 
-#: Code/Lib/Libacl.php:130
+#: Code/Lib/Libacl.php:118
 msgid "(DM)"
 msgstr ""
 
-#: Code/Lib/Libacl.php:144
+#: Code/Lib/Libacl.php:132
 msgid "Who can see this?"
 msgstr ""
 
-#: Code/Lib/Libacl.php:145
+#: Code/Lib/Libacl.php:133
 msgid "Custom selection"
 msgstr ""
 
-#: Code/Lib/Libacl.php:146
+#: Code/Lib/Libacl.php:134
 msgid ""
 "Select \"Show\" to allow viewing. \"Don't show\" lets you override and limit "
 "the scope of \"Show\"."
 msgstr ""
 
-#: Code/Lib/Libacl.php:147
+#: Code/Lib/Libacl.php:135
 msgid "Show"
 msgstr ""
 
-#: Code/Lib/Libacl.php:148
+#: Code/Lib/Libacl.php:136
 msgid "Don't show"
 msgstr ""
 
-#: Code/Lib/Libacl.php:154 Code/Module/Photos.php:731
+#: Code/Lib/Libacl.php:142 Code/Module/Photos.php:731
 #: Code/Module/Photos.php:1116 Code/Module/Chat.php:243
 #: Code/Module/Filestorage.php:233 Code/Module/Connedit.php:644
 #: Code/Module/Thing.php:357 Code/Module/Thing.php:412
@@ -2344,7 +2324,7 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
-#: Code/Lib/Libacl.php:182
+#: Code/Lib/Libacl.php:170
 msgid ""
 "Post permissions cannot be changed after a post is shared.<br>These "
 "permissions set who is allowed to view the post."
@@ -3308,7 +3288,7 @@ msgstr ""
 #: Code/Module/Connedit.php:843 Code/Module/Cdav.php:1367
 #: Code/Module/Settings/Oauth2.php:117 Code/Module/Settings/Oauth2.php:147
 #: Code/Module/Settings/Oauth.php:100 Code/Module/Settings/Oauth.php:128
-#: Code/Module/Sharedwithme.php:107 Code/Widget/Activity_filter.php:298
+#: Code/Module/Sharedwithme.php:107 Code/Widget/Activity_filter.php:266
 #: Code/Storage/Browser.php:313
 msgid "Name"
 msgstr ""
@@ -5987,13 +5967,11 @@ msgstr ""
 msgid "Contents"
 msgstr ""
 
-#: Code/Module/Stream.php:146 Code/Widget/Activity_filter.php:153
-#: include/network.php:1764 include/network.php:1765
+#: Code/Module/Stream.php:146 include/network.php:1764 include/network.php:1765
 msgid "Nomad"
 msgstr ""
 
-#: Code/Module/Stream.php:150 Code/Widget/Activity_filter.php:156
-#: include/network.php:1760
+#: Code/Module/Stream.php:150 include/network.php:1760
 msgid "ActivityPub"
 msgstr ""
 
@@ -9884,18 +9862,6 @@ msgstr ""
 msgid "Import complete."
 msgstr ""
 
-#: Code/Module/Vlists.php:16
-msgid ""
-"This app creates dynamic access lists corresponding to [1] all connections, "
-"[2] all ActivityPub protocol connections, and [3] all Nomad or Zot/6 "
-"protocol connections. These additional selections will be found within the "
-"Permissions setting tool."
-msgstr ""
-
-#: Code/Module/Vlists.php:23
-msgid "This app is installed. "
-msgstr ""
-
 #: Code/Module/Tagger.php:63
 msgid "Post not found."
 msgstr ""
@@ -10049,7 +10015,7 @@ msgid "Examples: bob@example.com, https://example.com/barbara"
 msgstr ""
 
 #: Code/Widget/Groups.php:114 Code/Widget/Notifications.php:110
-#: Code/Widget/Notifications.php:111 Code/Widget/Activity_filter.php:209
+#: Code/Widget/Notifications.php:111 Code/Widget/Activity_filter.php:177
 msgid "Groups"
 msgstr ""
 
@@ -10559,54 +10525,54 @@ msgstr ""
 msgid "Show posts that include polls"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:142 Code/Widget/Activity_filter.php:172
+#: Code/Widget/Activity_filter.php:141
 #, php-format
 msgid "Show posts related to the %s access list"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:182
+#: Code/Widget/Activity_filter.php:150
 msgid "Show my access lists"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:200
+#: Code/Widget/Activity_filter.php:168
 msgid "Show posts to this group"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:202
+#: Code/Widget/Activity_filter.php:170
 msgid "New post"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:213
+#: Code/Widget/Activity_filter.php:181
 msgid "Show groups"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:236
+#: Code/Widget/Activity_filter.php:204
 #, php-format
 msgid "Show posts that I have filed to %s"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:246
+#: Code/Widget/Activity_filter.php:214
 msgid "Show filed post categories"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:266
+#: Code/Widget/Activity_filter.php:234
 #, php-format
 msgid "Show posts with hashtag %s"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:272
+#: Code/Widget/Activity_filter.php:240
 msgid "Followed Hashtags"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:276
+#: Code/Widget/Activity_filter.php:244
 msgid "Show followed hashtags"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:312
+#: Code/Widget/Activity_filter.php:280
 msgid "Remove active filter"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:328
+#: Code/Widget/Activity_filter.php:296
 msgid "Stream Filters"
 msgstr ""
 
@@ -11707,6 +11673,12 @@ msgstr ""
 msgid "Specify folder"
 msgstr ""
 
+#: include/security.php:646
+msgid ""
+"The form security token was not correct. This probably happened because the "
+"form has been opened for too long (>3 hours) before submitting it."
+msgstr ""
+
 #: include/auth.php:210
 msgid "Delegation session ended."
 msgstr ""
@@ -12277,12 +12249,6 @@ msgstr ""
 
 #: include/language.php:445
 msgid "Select an alternate language"
-msgstr ""
-
-#: include/security.php:646
-msgid ""
-"The form security token was not correct. This probably happened because the "
-"form has been opened for too long (>3 hours) before submitting it."
 msgstr ""
 
 #: include/items.php:966
