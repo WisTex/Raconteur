@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 22.06.20\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-19 18:09-0700\n"
+"POT-Creation-Date: 2022-06-19 18:40-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -472,37 +472,41 @@ msgstr ""
 msgid "Embedding disabled"
 msgstr ""
 
-#: Code/Lib/Apps.php:346
+#: Code/Lib/Apps.php:346 Code/Module/Lists.php:198 Code/Module/Lists.php:209
+msgid "Access Lists"
+msgstr ""
+
+#: Code/Lib/Apps.php:347
 msgid "Site Admin"
 msgstr ""
 
-#: Code/Lib/Apps.php:347 Code/Lib/Navbar.php:326
+#: Code/Lib/Apps.php:348 Code/Lib/Navbar.php:322
 msgid "Apps"
 msgstr ""
 
-#: Code/Lib/Apps.php:348 Code/Lib/Navbar.php:504
+#: Code/Lib/Apps.php:349 Code/Lib/Navbar.php:500
 msgid "Articles"
 msgstr ""
 
-#: Code/Lib/Apps.php:349
+#: Code/Lib/Apps.php:350
 msgid "CalDAV"
 msgstr ""
 
-#: Code/Lib/Apps.php:350
+#: Code/Lib/Apps.php:351
 msgid "CardDAV"
 msgstr ""
 
-#: Code/Lib/Apps.php:351 Code/Lib/Navbar.php:493 Code/Module/Cards.php:210
+#: Code/Lib/Apps.php:352 Code/Lib/Navbar.php:489 Code/Module/Cards.php:210
 #: include/conversation.php:2093
 msgid "Cards"
 msgstr ""
 
-#: Code/Lib/Apps.php:352 Code/Lib/Navbar.php:455 Code/Lib/Navbar.php:458
+#: Code/Lib/Apps.php:353 Code/Lib/Navbar.php:451 Code/Lib/Navbar.php:454
 #: Code/Storage/Browser.php:157
 msgid "Calendar"
 msgstr ""
 
-#: Code/Lib/Apps.php:353 Code/Module/Cdav.php:1088
+#: Code/Lib/Apps.php:354 Code/Module/Cdav.php:1088
 #: Code/Widget/Appcategories.php:52 Code/Widget/Categories.php:87
 #: Code/Widget/Categories.php:135 Code/Widget/Categories.php:186
 #: include/taxonomy.php:467 include/taxonomy.php:561 include/taxonomy.php:583
@@ -510,127 +514,122 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-#: Code/Lib/Apps.php:354
+#: Code/Lib/Apps.php:355
 msgid "Channel Home"
 msgstr ""
 
-#: Code/Lib/Apps.php:355
+#: Code/Lib/Apps.php:356
 msgid "Channel Manager"
 msgstr ""
 
-#: Code/Lib/Apps.php:356 Code/Module/Sources.php:115
+#: Code/Lib/Apps.php:357 Code/Module/Sources.php:115
 msgid "Channel Sources"
 msgstr ""
 
-#: Code/Lib/Apps.php:357
+#: Code/Lib/Apps.php:358
 msgid "Chat"
 msgstr ""
 
-#: Code/Lib/Apps.php:358 Code/Lib/Navbar.php:469 Code/Lib/Navbar.php:472
+#: Code/Lib/Apps.php:359 Code/Lib/Navbar.php:465 Code/Lib/Navbar.php:468
 #: Code/Widget/Chatroom_list.php:24 include/conversation.php:2068
 #: include/conversation.php:2071
 msgid "Chatrooms"
 msgstr ""
 
-#: Code/Lib/Apps.php:359
+#: Code/Lib/Apps.php:360
 msgid "Clients"
 msgstr ""
 
-#: Code/Lib/Apps.php:360 include/conversation.php:1449
+#: Code/Lib/Apps.php:361 include/conversation.php:1449
 msgid "Comment Control"
 msgstr ""
 
-#: Code/Lib/Apps.php:361 Code/Module/Communities.php:155
+#: Code/Lib/Apps.php:362 Code/Module/Communities.php:155
 #: Code/Widget/Findpeople.php:40
 msgid "Communities"
 msgstr ""
 
-#: Code/Lib/Apps.php:362 Code/Module/Affinity.php:68
+#: Code/Lib/Apps.php:363 Code/Module/Affinity.php:68
 #: Code/Module/Connections.php:367 Code/Module/Stream.php:142
 #: Code/Module/Connedit.php:681 Code/Widget/Affinity.php:33
 #: Code/Widget/Activity_filter.php:150 include/connections.php:969
 msgid "Connections"
 msgstr ""
 
-#: Code/Lib/Apps.php:363
+#: Code/Lib/Apps.php:364
 msgid "Content Filter"
 msgstr ""
 
-#: Code/Lib/Apps.php:364
+#: Code/Lib/Apps.php:365
 #: extend/addon/a/content_import/Mod_content_import.php:145
 msgid "Content Import"
 msgstr ""
 
-#: Code/Lib/Apps.php:365
+#: Code/Lib/Apps.php:366
 msgid "Custom SQL"
 msgstr ""
 
-#: Code/Lib/Apps.php:366 Code/Module/Directory.php:496
+#: Code/Lib/Apps.php:367 Code/Module/Directory.php:496
 msgid "Directory"
 msgstr ""
 
-#: Code/Lib/Apps.php:367 Code/Widget/Activity_filter.php:81
+#: Code/Lib/Apps.php:368 Code/Widget/Activity_filter.php:81
 msgid "Drafts"
 msgstr ""
 
-#: Code/Lib/Apps.php:368 Code/Widget/Activity_filter.php:109
+#: Code/Lib/Apps.php:369 Code/Widget/Activity_filter.php:109
 #: include/conversation.php:2054 include/conversation.php:2057
 msgid "Events"
 msgstr ""
 
-#: Code/Lib/Apps.php:369
+#: Code/Lib/Apps.php:370
 msgid "Expire Posts"
 msgstr ""
 
-#: Code/Lib/Apps.php:370
+#: Code/Lib/Apps.php:371
 msgid "Features"
 msgstr ""
 
-#: Code/Lib/Apps.php:371 Code/Lib/Navbar.php:444 Code/Module/Fbrowser.php:95
+#: Code/Lib/Apps.php:372 Code/Lib/Navbar.php:440 Code/Module/Fbrowser.php:95
 #: Code/Storage/Browser.php:298 include/conversation.php:2043
 msgid "Files"
 msgstr ""
 
-#: Code/Lib/Apps.php:372 extend/addon/a/followlist/Mod_followlist.php:132
+#: Code/Lib/Apps.php:373 extend/addon/a/followlist/Mod_followlist.php:132
 msgid "Followlist"
 msgstr ""
 
-#: Code/Lib/Apps.php:373 Code/Module/Connedit.php:670
+#: Code/Lib/Apps.php:374 Code/Module/Connedit.php:670
 msgid "Friend Zoom"
 msgstr ""
 
-#: Code/Lib/Apps.php:374
+#: Code/Lib/Apps.php:375
 msgid "Future Posting"
 msgstr ""
 
-#: Code/Lib/Apps.php:375 extend/addon/a/gallery/gallery.php:49
+#: Code/Lib/Apps.php:376 extend/addon/a/gallery/gallery.php:49
 #: extend/addon/a/gallery/Mod_Gallery.php:137
 msgid "Gallery"
 msgstr ""
 
-#: Code/Lib/Apps.php:376
+#: Code/Lib/Apps.php:377
 msgid "Guest Pass"
 msgstr ""
 
-#: Code/Lib/Apps.php:377 Code/Lib/Navbar.php:186 Code/Lib/Navbar.php:307
+#: Code/Lib/Apps.php:378 Code/Lib/Navbar.php:182 Code/Lib/Navbar.php:303
 #: include/help.php:70
 msgid "Help"
 msgstr ""
 
-#: Code/Lib/Apps.php:378
+#: Code/Lib/Apps.php:379
 msgid "Invite"
 msgstr ""
 
-#: Code/Lib/Apps.php:379
+#: Code/Lib/Apps.php:380
 msgid "Language"
 msgstr ""
 
-#: Code/Lib/Apps.php:380 Code/Lib/AccessList.php:393 Code/Lib/Navbar.php:112
-#: Code/Widget/Activity_filter.php:178
-msgid "Lists"
-msgstr ""
-
-#: Code/Lib/Apps.php:381 Code/Lib/Navbar.php:137 Code/Lib/Navbar.php:140
+#: Code/Lib/Apps.php:381 Code/Lib/Navbar.php:133 Code/Lib/Navbar.php:136
 #: boot.php:1719
 msgid "Login"
 msgstr ""
@@ -659,7 +658,7 @@ msgstr ""
 msgid "Notes"
 msgstr ""
 
-#: Code/Lib/Apps.php:388 Code/Lib/Navbar.php:330
+#: Code/Lib/Apps.php:388 Code/Lib/Navbar.php:326
 #: Code/Module/Settings/Channel.php:690 Code/Widget/Notifications.php:152
 msgid "Notifications"
 msgstr ""
@@ -684,7 +683,7 @@ msgstr ""
 msgid "Permission Categories"
 msgstr ""
 
-#: Code/Lib/Apps.php:394 Code/Lib/Navbar.php:436 Code/Module/Fbrowser.php:37
+#: Code/Lib/Apps.php:394 Code/Lib/Navbar.php:432 Code/Module/Fbrowser.php:37
 #: include/conversation.php:2035
 msgid "Photos"
 msgstr ""
@@ -743,7 +742,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: Code/Lib/Apps.php:408 Code/Lib/Navbar.php:193 Code/Lib/Libacl.php:149
+#: Code/Lib/Apps.php:408 Code/Lib/Navbar.php:189 Code/Lib/Libacl.php:149
 #: Code/Module/Connections.php:374 Code/Module/Search.php:67
 #: Code/Widget/Sitesearch.php:37 include/misc.php:1052 include/misc.php:1065
 msgid "Search"
@@ -753,9 +752,9 @@ msgstr ""
 msgid "Secrets"
 msgstr ""
 
-#: Code/Lib/Apps.php:410 Code/Lib/Navbar.php:114
-#: Code/Module/Admin/Addons.php:343 Code/Module/Admin/Themes.php:142
-#: Code/Widget/Newmember.php:57 Code/Widget/Settings_menu.php:138
+#: Code/Lib/Apps.php:410 Code/Module/Admin/Addons.php:343
+#: Code/Module/Admin/Themes.php:142 Code/Widget/Newmember.php:57
+#: Code/Widget/Settings_menu.php:138
 msgid "Settings"
 msgstr ""
 
@@ -792,7 +791,7 @@ msgstr ""
 msgid "View Bookmarks"
 msgstr ""
 
-#: Code/Lib/Apps.php:419 Code/Lib/Navbar.php:126 Code/Module/Connedit.php:555
+#: Code/Lib/Apps.php:419 Code/Lib/Navbar.php:122 Code/Module/Connedit.php:555
 msgid "View Profile"
 msgstr ""
 
@@ -800,12 +799,12 @@ msgstr ""
 msgid "Virtual Lists"
 msgstr ""
 
-#: Code/Lib/Apps.php:421 Code/Lib/Navbar.php:516 Code/Module/Webpages.php:266
+#: Code/Lib/Apps.php:421 Code/Lib/Navbar.php:512 Code/Module/Webpages.php:266
 #: include/conversation.php:2115
 msgid "Webpages"
 msgstr ""
 
-#: Code/Lib/Apps.php:422 Code/Lib/Navbar.php:531 include/conversation.php:2131
+#: Code/Lib/Apps.php:422 Code/Lib/Navbar.php:527 include/conversation.php:2131
 msgid "Wiki"
 msgstr ""
 
@@ -1205,6 +1204,10 @@ msgstr ""
 msgid "edit"
 msgstr ""
 
+#: Code/Lib/AccessList.php:393 Code/Widget/Activity_filter.php:178
+msgid "Lists"
+msgstr ""
+
 #: Code/Lib/AccessList.php:394
 msgid "Edit list"
 msgstr ""
@@ -1225,7 +1228,7 @@ msgstr ""
 msgid "Directory Options"
 msgstr ""
 
-#: Code/Lib/Libzotdir.php:92 Code/Lib/Navbar.php:116
+#: Code/Lib/Libzotdir.php:92 Code/Lib/Navbar.php:112
 msgid "Safe Mode"
 msgstr ""
 
@@ -1423,7 +1426,7 @@ msgstr ""
 msgid "Change profile photo"
 msgstr ""
 
-#: Code/Lib/Libprofile.php:208 Code/Lib/Navbar.php:129
+#: Code/Lib/Libprofile.php:208 Code/Lib/Navbar.php:125
 #: Code/Module/Profiles.php:881
 msgid "Edit Profiles"
 msgstr ""
@@ -1432,7 +1435,7 @@ msgstr ""
 msgid "Create New Profile"
 msgstr ""
 
-#: Code/Lib/Libprofile.php:211 Code/Lib/Navbar.php:131
+#: Code/Lib/Libprofile.php:211 Code/Lib/Navbar.php:127
 msgid "Edit Profile"
 msgstr ""
 
@@ -1668,167 +1671,159 @@ msgid "Manage your channels"
 msgstr ""
 
 #: Code/Lib/Navbar.php:112
-msgid "Manage your access lists"
-msgstr ""
-
-#: Code/Lib/Navbar.php:114
-msgid "Account/Channel Settings"
-msgstr ""
-
-#: Code/Lib/Navbar.php:116
 msgid "(is on)"
 msgstr ""
 
-#: Code/Lib/Navbar.php:116
+#: Code/Lib/Navbar.php:112
 msgid "(is off)"
 msgstr ""
 
-#: Code/Lib/Navbar.php:116
+#: Code/Lib/Navbar.php:112
 msgid "Content filtering"
 msgstr ""
 
-#: Code/Lib/Navbar.php:123 Code/Lib/Navbar.php:150 Code/Lib/Navbar.php:168
+#: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:146 Code/Lib/Navbar.php:164
 #: boot.php:1718
 msgid "Logout"
 msgstr ""
 
-#: Code/Lib/Navbar.php:123 Code/Lib/Navbar.php:150
+#: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:146
 msgid "End this session"
 msgstr ""
 
-#: Code/Lib/Navbar.php:126
+#: Code/Lib/Navbar.php:122
 msgid "Your profile page"
 msgstr ""
 
-#: Code/Lib/Navbar.php:129
+#: Code/Lib/Navbar.php:125
 msgid "Manage/Edit profiles"
 msgstr ""
 
-#: Code/Lib/Navbar.php:131 Code/Widget/Newmember.php:39
+#: Code/Lib/Navbar.php:127 Code/Widget/Newmember.php:39
 msgid "Edit your profile"
 msgstr ""
 
-#: Code/Lib/Navbar.php:137 Code/Lib/Navbar.php:140
+#: Code/Lib/Navbar.php:133 Code/Lib/Navbar.php:136
 msgid "Sign in"
 msgstr ""
 
-#: Code/Lib/Navbar.php:166
+#: Code/Lib/Navbar.php:162
 msgid "Take me home"
 msgstr ""
 
-#: Code/Lib/Navbar.php:168
+#: Code/Lib/Navbar.php:164
 msgid "Log me out of this site"
 msgstr ""
 
-#: Code/Lib/Navbar.php:173 Code/Module/Register.php:304
+#: Code/Lib/Navbar.php:169 Code/Module/Register.php:304
 #: Code/Module/Communities.php:82 boot.php:1699
 msgid "Register"
 msgstr ""
 
-#: Code/Lib/Navbar.php:173
+#: Code/Lib/Navbar.php:169
 msgid "Create an account"
 msgstr ""
 
-#: Code/Lib/Navbar.php:186
+#: Code/Lib/Navbar.php:182
 msgid "Help and documentation"
 msgstr ""
 
-#: Code/Lib/Navbar.php:193
+#: Code/Lib/Navbar.php:189
 msgid "Search site @name, #tag, ?doc, content"
 msgstr ""
 
-#: Code/Lib/Navbar.php:199 Code/Widget/Admin.php:64
+#: Code/Lib/Navbar.php:195 Code/Widget/Admin.php:64
 msgid "Admin"
 msgstr ""
 
-#: Code/Lib/Navbar.php:199
+#: Code/Lib/Navbar.php:195
 msgid "Site Setup and Configuration"
 msgstr ""
 
-#: Code/Lib/Navbar.php:306
+#: Code/Lib/Navbar.php:302
 msgid "Powered by $Projectname"
 msgstr ""
 
-#: Code/Lib/Navbar.php:311 Code/Module/Defperms.php:249
+#: Code/Lib/Navbar.php:307 Code/Module/Defperms.php:249
 #: Code/Module/Connedit.php:794 Code/Module/New_channel.php:174
 #: Code/Module/New_channel.php:181 Code/Widget/Notifications.php:154
 msgid "Loading"
 msgstr ""
 
-#: Code/Lib/Navbar.php:317
+#: Code/Lib/Navbar.php:313
 msgid "Side Panel"
 msgstr ""
 
-#: Code/Lib/Navbar.php:318
+#: Code/Lib/Navbar.php:314
 msgid "@name, #tag, ?doc, content"
 msgstr ""
 
-#: Code/Lib/Navbar.php:319
+#: Code/Lib/Navbar.php:315
 msgid "Please wait..."
 msgstr ""
 
-#: Code/Lib/Navbar.php:325 Code/Module/Apps.php:59 Code/Widget/Appstore.php:17
+#: Code/Lib/Navbar.php:321 Code/Module/Apps.php:59 Code/Widget/Appstore.php:17
 msgid "Installed Apps"
 msgstr ""
 
-#: Code/Lib/Navbar.php:327 Code/Module/Apps.php:59 Code/Widget/Appstore.php:18
+#: Code/Lib/Navbar.php:323 Code/Module/Apps.php:59 Code/Widget/Appstore.php:18
 msgid "Available Apps"
 msgstr ""
 
-#: Code/Lib/Navbar.php:328 Code/Module/Apporder.php:53
+#: Code/Lib/Navbar.php:324 Code/Module/Apporder.php:53
 msgid "Arrange Apps"
 msgstr ""
 
-#: Code/Lib/Navbar.php:329
+#: Code/Lib/Navbar.php:325
 msgid "Toggle System Apps"
 msgstr ""
 
-#: Code/Lib/Navbar.php:413 Code/Module/Admin/Channels.php:182
+#: Code/Lib/Navbar.php:409 Code/Module/Admin/Channels.php:182
 #: include/conversation.php:2012
 msgid "Channel"
 msgstr ""
 
-#: Code/Lib/Navbar.php:416 include/conversation.php:2015
+#: Code/Lib/Navbar.php:412 include/conversation.php:2015
 msgid "Status Messages and Posts"
 msgstr ""
 
-#: Code/Lib/Navbar.php:426 include/conversation.php:2025
+#: Code/Lib/Navbar.php:422 include/conversation.php:2025
 msgid "About"
 msgstr ""
 
-#: Code/Lib/Navbar.php:429 include/conversation.php:2028
+#: Code/Lib/Navbar.php:425 include/conversation.php:2028
 msgid "Profile Details"
 msgstr ""
 
-#: Code/Lib/Navbar.php:439 include/conversation.php:2038 include/photos.php:767
+#: Code/Lib/Navbar.php:435 include/conversation.php:2038 include/photos.php:767
 msgid "Photo Albums"
 msgstr ""
 
-#: Code/Lib/Navbar.php:447 include/conversation.php:2046
+#: Code/Lib/Navbar.php:443 include/conversation.php:2046
 msgid "Files and Storage"
 msgstr ""
 
-#: Code/Lib/Navbar.php:482 include/conversation.php:2082
+#: Code/Lib/Navbar.php:478 include/conversation.php:2082
 msgid "Bookmarks"
 msgstr ""
 
-#: Code/Lib/Navbar.php:485 include/conversation.php:2085
+#: Code/Lib/Navbar.php:481 include/conversation.php:2085
 msgid "Saved Bookmarks"
 msgstr ""
 
-#: Code/Lib/Navbar.php:496 include/conversation.php:2096
+#: Code/Lib/Navbar.php:492 include/conversation.php:2096
 msgid "View Cards"
 msgstr ""
 
-#: Code/Lib/Navbar.php:507 include/conversation.php:2107
+#: Code/Lib/Navbar.php:503 include/conversation.php:2107
 msgid "View Articles"
 msgstr ""
 
-#: Code/Lib/Navbar.php:519 include/conversation.php:2118
+#: Code/Lib/Navbar.php:515 include/conversation.php:2118
 msgid "View Webpages"
 msgstr ""
 
-#: Code/Lib/Navbar.php:528 include/conversation.php:2128
+#: Code/Lib/Navbar.php:524 include/conversation.php:2128
 msgid "Wikis"
 msgstr ""
 
@@ -6425,10 +6420,6 @@ msgstr ""
 
 #: Code/Module/Lists.php:154
 msgid "Access list updated."
-msgstr ""
-
-#: Code/Module/Lists.php:198 Code/Module/Lists.php:209
-msgid "Access Lists"
 msgstr ""
 
 #: Code/Module/Lists.php:199
