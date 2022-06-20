@@ -736,21 +736,6 @@ function get_security_ids($channel_id, $ob_hash)
                 }
             }
 
-            // virtual groups this identity is a member of
-
-            $r = q("select channel_hash from channel left join abook on channel_id = abook_channel where abook_xchan in ( " . protect_sprintf($hashes) . " ) and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ");
-            if ($r) {
-                foreach ($r as $rv) {
-                    $groups[] = 'connections:' . $rv['channel_hash'];
-					if (in_array($xchans[0]['xchan_network'],['nomad','zot6'])) {
-                        $groups[] = 'zot:' . $rv['channel_hash'];
-                    }
-                    if ($xchans[0]['xchan_network'] === 'activitypub') {
-                        $groups[] = 'activitypub:' . $rv['channel_hash'];
-                    }
-                }
-            }
-
             $ret['allow_gid'] = $groups;
         }
     }
