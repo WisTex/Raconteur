@@ -102,7 +102,7 @@ class Search extends Controller
             $j = Activity::fetch($search, $channel);
             if ($j) {
                 if (isset($j['type']) && ActivityStreams::is_an_actor($j['type'])) {
-                    Activity::actor_store($j['id'], $j);
+                    Activity::actor_store($j['id'], $j, true);
                     goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
                 }
                 $AS = new ActivityStreams($j, null, true);

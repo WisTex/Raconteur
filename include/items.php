@@ -892,7 +892,7 @@ function import_author_activitypub($x) {
     if($r) {
 		$ptr = null;
 		foreach($r as $rv) {
-			if (strpos($rv['xchan_network'], 'zot') !== false) {
+			if (strpos($rv['xchan_network'], 'zot') !== false || strpos($rv['xchan_network'], 'nomad') !== false) {
 				$ptr = $rv;
 			}
 		}

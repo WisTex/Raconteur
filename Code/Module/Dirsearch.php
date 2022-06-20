@@ -277,7 +277,7 @@ class Dirsearch extends Controller
             foreach ($r as $rr) {
                 // If it's an activitypub record and the channel also has a zot6 address, don't return it.
 
-                if (array_key_exists($rr['xchan_url'], $dups)) {
+                if (array_key_exists($rr['xchan_url'], $dups) && $rr['xchan_network'] === 'activitypub' ) {
                     continue;
                 }
 
