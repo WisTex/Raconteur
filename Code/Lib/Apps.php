@@ -76,6 +76,7 @@ class Apps
         }
 
         $default_apps = [
+            'Access Lists',
             'Admin',
             'Channel Home',
             'Connections',
@@ -83,7 +84,6 @@ class Apps
             'Events',
             'Files',
             'Help',
-            'Lists',
             'Photos',
             'Profile Photo',
             'Search',
@@ -343,6 +343,7 @@ class Apps
     public static function translate_system_apps(&$arr)
     {
         $apps = array(
+            'Access Lists' => t('Access Lists'),
             'Admin' => t('Site Admin'),
             'Apps' => t('Apps'),
             'Articles' => t('Articles'),
@@ -377,7 +378,6 @@ class Apps
             'Help' => t('Help'),
             'Invite' => t('Invite'),
             'Language' => t('Language'),
-            'Lists' => t('Lists'),
             'Login' => t('Login'),
             'Mail' => t('Mail'),
             'Markup' => t('Markup'),
