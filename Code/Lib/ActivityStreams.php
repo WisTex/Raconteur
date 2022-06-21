@@ -65,7 +65,7 @@ class ActivityStreams
             if (is_array($this->data) && array_key_exists('signed', $this->data)) {
                 $ret = JSalmon::verify($this->data);
                 $tmp = JSalmon::unpack($this->data['data']);
-                if ($ret && $ret['success']) {
+                if ($ret && $ret['success'] && $tmp) {
                     if ($ret['signer']) {
                         logger('Unpacked: ' . json_encode($tmp, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), LOGGER_DATA, LOG_DEBUG);
                         $saved = json_encode($this->data, JSON_UNESCAPED_SLASHES);

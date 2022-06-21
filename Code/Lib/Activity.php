@@ -8,6 +8,7 @@ use Code\Access\Permissions;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Daemon\Run;
+use Code\Lib as Zlib;
 use Code\Lib\PConfig;
 use Code\Lib\XConfig;
 use Code\Lib\Config;
