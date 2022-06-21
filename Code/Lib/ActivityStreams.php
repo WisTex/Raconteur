@@ -59,10 +59,23 @@ class ActivityStreams
         }
 
         if ($this->data) {
+            // This indicates only that we have sucessfully decoded JSON.
+            $this->valid = true;
+
+            // Special handling for Mastodon "delete actor" activities which will often fail to verify
+            // because the key cannot be fetched. We will catch this condition elsewhere.
+
+            if (array_key_exists('type', $this->data) && array_key_exists('actor', $this->data) && array_key_exists('object', $this->data)) {
+                if ($this->data['type'] === 'Delete' && $this->data['actor'] === $this->data['object']) {
+                    $this->deleted = $this->data['actor'];
+                    $this->valid = false;
+                }
+            }
+
             // verify and unpack JSalmon signature if present
             // This will only be the case for Zot6 packets
 
-            if (is_array($this->data) && array_key_exists('signed', $this->data)) {
+            if ($this->valid && is_array($this->data) && array_key_exists('signed', $this->data)) {
                 $ret = JSalmon::verify($this->data);
                 $tmp = JSalmon::unpack($this->data['data']);
                 if ($ret && $ret['success'] && $tmp) {
@@ -77,19 +90,10 @@ class ActivityStreams
                         }
                     }
                 }
-            }
-
-            // This indicates only that we have sucessfully decoded JSON.
-            $this->valid = true;
-
-            // Special handling for Mastodon "delete actor" activities which will often fail to verify
-            // because the key cannot be fetched. We will catch this condition elsewhere.
-
-            if (array_key_exists('type', $this->data) && array_key_exists('actor', $this->data) && array_key_exists('object', $this->data)) {
-                if ($this->data['type'] === 'Delete' && $this->data['actor'] === $this->data['object']) {
-                    $this->deleted = $this->data['actor'];
+                else {
+                    logger('JSalmon verification failure.');
                     $this->valid = false;
-                }
+                }                
             }
         }
 
