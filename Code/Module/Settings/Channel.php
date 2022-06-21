@@ -650,7 +650,7 @@ class Channel
             '$permiss_arr' => $permiss,
             '$comment_perms' => $comment_perms,
             '$mail_perms' => $mail_perms,
-            '$noindex' => ['noindex', t('Forbid indexing of your channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
+            '$noindex' => ['noindex', t('Forbid indexing of your public channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
             '$close_comments' => ['close_comments', t('Disable acceptance of comments on my posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
             '$blocktags' => array('blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
 
