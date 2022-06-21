@@ -10,6 +10,7 @@ use Code\Lib\LibBlock;
 use Code\Lib\Channel;
 use Code\Lib\Navbar;
 use Code\Lib\Socgraph;
+use Code\Lib\XConfig;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -42,6 +43,7 @@ class Directory extends Controller
 
         $observer = get_observer_hash();
         $global_changed = false;
+        $covers_changed = false;
         $safe_changed = false;
         $type_changed = false;
         $active_changed = false;
@@ -57,6 +59,17 @@ class Directory extends Controller
             $_SESSION['globaldir'] = $globaldir;
             if ($observer) {
                 set_xconfig($observer, 'directory', 'globaldir', $globaldir);
+            }
+        }
+
+        if (array_key_exists('covers', $_REQUEST)) {
+            $covers = intval($_REQUEST['covers']);
+            $covers_changed = true;
+        }
+        if ($covers_changed) {
+            $_SESSION['covers'] = $covers;
+            if ($observer) {
+                set_xconfig($observer, 'directory', 'covers', $covers);
             }
         }
 
@@ -111,6 +124,8 @@ class Directory extends Controller
         }
 
         $safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
+
+        $covers = Libzotdir::get_directory_setting($observer, 'covers');
 
         $type = Libzotdir::get_directory_setting($observer, 'chantype');
 
@@ -393,6 +408,8 @@ class Directory extends Controller
                                 'profile_link' => $profile_link,
                                 'type' => $rr['type'],
                                 'photo' => $rr['photo'],
+                                'cover' => (($covers) ? XConfig::Get($rr['hash'],'system','cover_photo') : false),
+                                'altcover' => t('Cover photo for this directory entry'),
                                 'hash' => $rr['hash'],
                                 'alttext' => $rr['name'] . ((local_channel() || remote_channel()) ? ' ' . $rr['address'] : ''),
                                 'name' => $rr['name'],
