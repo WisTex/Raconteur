@@ -4,6 +4,7 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
+use Code\Lib\Config;
 use Code\Lib\Libzotdir;
 use Code\Lib\Libsync;
 use Code\Lib\LibBlock;
@@ -61,7 +62,7 @@ class Directory extends Controller
                 set_xconfig($observer, 'directory', 'globaldir', $globaldir);
             }
         }
-
+    
         if (array_key_exists('covers', $_REQUEST)) {
             $covers = intval($_REQUEST['covers']);
             $covers_changed = true;
@@ -125,8 +126,12 @@ class Directory extends Controller
 
         $safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 
-        $covers = Libzotdir::get_directory_setting($observer, 'covers');
-
+        if (Config::Get('system','remote_cover_photos')) {
+            $covers = Libzotdir::get_directory_setting($observer, 'covers');
+        } else {
+            $covers = false;
+        }
+    
         $type = Libzotdir::get_directory_setting($observer, 'chantype');
 
         $active = Libzotdir::get_directory_setting($observer, 'activedir');
