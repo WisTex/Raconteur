@@ -23,7 +23,7 @@ msgstr ""
 msgid "parent"
 msgstr "הורה"
 
-#: ../../Code/Storage/Browser.php:131 ../../include/text.php:2621
+#: ../../Code/Storage/Browser.php:131 ../../include/misc.php:2621
 msgid "Collection"
 msgstr "אוסף"
 
@@ -96,7 +96,7 @@ msgid "Type"
 msgstr "טיפוס"
 
 #: ../../Code/Storage/Browser.php:237
-#: ../../Code/Module/Sharedwithme.php:101 ../../include/text.php:1344
+#: ../../Code/Module/Sharedwithme.php:101 ../../include/misc.php:1344
 msgid "Size"
 msgstr "גודל"
 
@@ -270,7 +270,7 @@ msgstr ""
 msgid "Block Name"
 msgstr ""
 
-#: ../../Code/Module/Blocks.php:154 ../../include/text.php:2266
+#: ../../Code/Module/Blocks.php:154 ../../include/misc.php:2266
 msgid "Blocks"
 msgstr ""
 
@@ -316,7 +316,7 @@ msgid "l, F j"
 msgstr "l, F j"
 
 #: ../../Code/Module/Cal.php:308 ../../Code/Module/Events.php:637
-#: ../../include/text.php:1732
+#: ../../include/misc.php:1732
 msgid "Link to Source"
 msgstr "קישור למקור"
 
@@ -1168,13 +1168,13 @@ msgid "Recent activity"
 msgstr "פעילות אחרונה"
 
 #: ../../Code/Module/Connections.php:302 ../../Code/Lib/Apps.php:208
-#: ../../include/text.php:875 ../../include/nav.php:186
+#: ../../include/misc.php:875 ../../include/nav.php:186
 msgid "Connections"
 msgstr "חיבורים"
 
 #: ../../Code/Module/Connections.php:306 ../../Code/Module/Search.php:44
-#: ../../Code/Lib/Apps.php:229 ../../include/text.php:945
-#: ../../include/text.php:957 ../../include/nav.php:165
+#: ../../Code/Lib/Apps.php:229 ../../include/misc.php:945
+#: ../../include/misc.php:957 ../../include/nav.php:165
 #: ../../include/acl_selectors.php:276
 msgid "Search"
 msgstr "חיפוש"
@@ -1330,7 +1330,7 @@ msgid "Event not found."
 msgstr "אירוע לא נמצא."
 
 #: ../../Code/Module/Events.php:254 ../../Code/Module/Like.php:373
-#: ../../Code/Module/Tagger.php:51 ../../include/text.php:1944
+#: ../../Code/Module/Tagger.php:51 ../../include/misc.php:1944
 #: ../../include/event.php:949 ../../include/conversation.php:123
 msgid "event"
 msgstr "אירוע"
@@ -1480,8 +1480,8 @@ msgstr "- בחר -"
 
 #: ../../Code/Module/Filer.php:53 ../../Code/Module/Admin.php:2033
 #: ../../Code/Module/Admin.php:2053 ../../Code/Module/Rbmark.php:32
-#: ../../Code/Module/Rbmark.php:104 ../../include/text.php:946
-#: ../../include/text.php:958 ../../include/widgets.php:201
+#: ../../Code/Module/Rbmark.php:104 ../../include/misc.php:946
+#: ../../include/misc.php:958 ../../include/widgets.php:201
 msgid "Save"
 msgstr "שמור"
 
@@ -1858,7 +1858,7 @@ msgstr ""
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr ""
 
-#: ../../Code/Module/Layouts.php:183 ../../include/text.php:2268
+#: ../../Code/Module/Layouts.php:183 ../../include/misc.php:2268
 msgid "Layouts"
 msgstr ""
 
@@ -2039,13 +2039,13 @@ msgid "Previous action reversed."
 msgstr ""
 
 #: ../../Code/Module/Like.php:371 ../../Code/Module/Subthread.php:87
-#: ../../Code/Module/Tagger.php:47 ../../include/text.php:1941
+#: ../../Code/Module/Tagger.php:47 ../../include/misc.php:1941
 #: ../../include/conversation.php:120
 msgid "photo"
 msgstr "תצלום"
 
 #: ../../Code/Module/Like.php:371 ../../Code/Module/Subthread.php:87
-#: ../../include/text.php:1947 ../../include/conversation.php:148
+#: ../../include/misc.php:1947 ../../include/conversation.php:148
 msgid "status"
 msgstr "סטטוס"
 
@@ -2500,7 +2500,7 @@ msgstr ""
 msgid "Submit and proceed"
 msgstr "שלח והמשך"
 
-#: ../../Code/Module/Menu.php:107 ../../include/text.php:2267
+#: ../../Code/Module/Menu.php:107 ../../include/misc.php:2267
 msgid "Menus"
 msgstr "תפריטים"
 
@@ -3671,7 +3671,7 @@ msgstr ""
 msgid "Site settings updated."
 msgstr "הגדרות אתר עודכנו."
 
-#: ../../Code/Module/Admin.php:400 ../../include/text.php:2845
+#: ../../Code/Module/Admin.php:400 ../../include/misc.php:2845
 msgid "Default"
 msgstr "ברירת מחדל"
 
@@ -6090,7 +6090,7 @@ msgstr "התעלם/הסתר"
 msgid "post"
 msgstr "פוסט"
 
-#: ../../Code/Module/Tagger.php:57 ../../include/text.php:1949
+#: ../../Code/Module/Tagger.php:57 ../../include/misc.php:1949
 #: ../../include/conversation.php:150
 msgid "comment"
 msgstr "תגובה"
@@ -6857,293 +6857,293 @@ msgstr "אלבומי תמונה"
 msgid "Upload New Photos"
 msgstr "העלה תצלומים חדשים"
 
-#: ../../include/text.php:428
+#: ../../include/misc.php:428
 msgid "prev"
 msgstr "קודם"
 
-#: ../../include/text.php:430
+#: ../../include/misc.php:430
 msgid "first"
 msgstr "ראשון"
 
-#: ../../include/text.php:459
+#: ../../include/misc.php:459
 msgid "last"
 msgstr "אחרון"
 
-#: ../../include/text.php:462
+#: ../../include/misc.php:462
 msgid "next"
 msgstr "הבא"
 
-#: ../../include/text.php:472
+#: ../../include/misc.php:472
 msgid "older"
 msgstr "ישן יותר"
 
-#: ../../include/text.php:474
+#: ../../include/misc.php:474
 msgid "newer"
 msgstr "חדש יותר"
 
-#: ../../include/text.php:863
+#: ../../include/misc.php:863
 msgid "No connections"
 msgstr "אין חיבורים"
 
-#: ../../include/text.php:888
+#: ../../include/misc.php:888
 #, php-format
 msgid "View all %s connections"
 msgstr ""
 
-#: ../../include/text.php:1033 ../../include/text.php:1038
+#: ../../include/misc.php:1033 ../../include/misc.php:1038
 msgid "poke"
 msgstr ""
 
-#: ../../include/text.php:1033 ../../include/text.php:1038
+#: ../../include/misc.php:1033 ../../include/misc.php:1038
 #: ../../include/conversation.php:243
 msgid "poked"
 msgstr ""
 
-#: ../../include/text.php:1039
+#: ../../include/misc.php:1039
 msgid "ping"
 msgstr ""
 
-#: ../../include/text.php:1039
+#: ../../include/misc.php:1039
 msgid "pinged"
 msgstr ""
 
-#: ../../include/text.php:1040
+#: ../../include/misc.php:1040
 msgid "prod"
 msgstr ""
 
-#: ../../include/text.php:1040
+#: ../../include/misc.php:1040
 msgid "prodded"
 msgstr ""
 
-#: ../../include/text.php:1041
+#: ../../include/misc.php:1041
 msgid "slap"
 msgstr ""
 
-#: ../../include/text.php:1041
+#: ../../include/misc.php:1041
 msgid "slapped"
 msgstr ""
 
-#: ../../include/text.php:1042
+#: ../../include/misc.php:1042
 msgid "finger"
 msgstr ""
 
-#: ../../include/text.php:1042
+#: ../../include/misc.php:1042
 msgid "fingered"
 msgstr ""
 
-#: ../../include/text.php:1043
+#: ../../include/misc.php:1043
 msgid "rebuff"
 msgstr ""
 
-#: ../../include/text.php:1043
+#: ../../include/misc.php:1043
 msgid "rebuffed"
 msgstr ""
 
-#: ../../include/text.php:1055
+#: ../../include/misc.php:1055
 msgid "happy"
 msgstr "שמח"
 
-#: ../../include/text.php:1056
+#: ../../include/misc.php:1056
 msgid "sad"
 msgstr "עצוב"
 
-#: ../../include/text.php:1057
+#: ../../include/misc.php:1057
 msgid "mellow"
 msgstr "מתון"
 
-#: ../../include/text.php:1058
+#: ../../include/misc.php:1058
 msgid "tired"
 msgstr "עייף"
 
-#: ../../include/text.php:1059
+#: ../../include/misc.php:1059
 msgid "perky"
 msgstr "חצוף"
 
-#: ../../include/text.php:1060
+#: ../../include/misc.php:1060
 msgid "angry"
 msgstr "כועס"
 
-#: ../../include/text.php:1061
+#: ../../include/misc.php:1061
 msgid "stupefied"
 msgstr ""
 
-#: ../../include/text.php:1062
+#: ../../include/misc.php:1062
 msgid "puzzled"
 msgstr "נבוך"
 
-#: ../../include/text.php:1063
+#: ../../include/misc.php:1063
 msgid "interested"
 msgstr "מגלה עניין"
 
-#: ../../include/text.php:1064
+#: ../../include/misc.php:1064
 msgid "bitter"
 msgstr "מר"
 
-#: ../../include/text.php:1065
+#: ../../include/misc.php:1065
 msgid "cheerful"
 msgstr "עליז"
 
-#: ../../include/text.php:1066
+#: ../../include/misc.php:1066
 msgid "alive"
 msgstr "חי"
 
-#: ../../include/text.php:1067
+#: ../../include/misc.php:1067
 msgid "annoyed"
 msgstr "נרגז"
 
-#: ../../include/text.php:1068
+#: ../../include/misc.php:1068
 msgid "anxious"
 msgstr "נרגז"
 
-#: ../../include/text.php:1069
+#: ../../include/misc.php:1069
 msgid "cranky"
 msgstr "נרגז"
 
-#: ../../include/text.php:1070
+#: ../../include/misc.php:1070
 msgid "disturbed"
 msgstr "מופרע"
 
-#: ../../include/text.php:1071
+#: ../../include/misc.php:1071
 msgid "frustrated"
 msgstr "מתוסכל"
 
-#: ../../include/text.php:1072
+#: ../../include/misc.php:1072
 msgid "depressed"
 msgstr "מדוכא"
 
-#: ../../include/text.php:1073
+#: ../../include/misc.php:1073
 msgid "motivated"
 msgstr "מונע"
 
-#: ../../include/text.php:1074
+#: ../../include/misc.php:1074
 msgid "relaxed"
 msgstr "רגוע"
 
-#: ../../include/text.php:1075
+#: ../../include/misc.php:1075
 msgid "surprised"
 msgstr "מופתע"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:70
+#: ../../include/misc.php:1257 ../../include/js_strings.php:70
 msgid "Monday"
 msgstr "יום שני"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:71
+#: ../../include/misc.php:1257 ../../include/js_strings.php:71
 msgid "Tuesday"
 msgstr "יום שלישי"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:72
+#: ../../include/misc.php:1257 ../../include/js_strings.php:72
 msgid "Wednesday"
 msgstr "יום רביעי"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:73
+#: ../../include/misc.php:1257 ../../include/js_strings.php:73
 msgid "Thursday"
 msgstr "יום חמישי"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:74
+#: ../../include/misc.php:1257 ../../include/js_strings.php:74
 msgid "Friday"
 msgstr "יום שישי"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:75
+#: ../../include/misc.php:1257 ../../include/js_strings.php:75
 msgid "Saturday"
 msgstr "יום שבת"
 
-#: ../../include/text.php:1257 ../../include/js_strings.php:69
+#: ../../include/misc.php:1257 ../../include/js_strings.php:69
 msgid "Sunday"
 msgstr "יום ראשון"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:45
+#: ../../include/misc.php:1261 ../../include/js_strings.php:45
 msgid "January"
 msgstr "ינואר"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:46
+#: ../../include/misc.php:1261 ../../include/js_strings.php:46
 msgid "February"
 msgstr "פברואר"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:47
+#: ../../include/misc.php:1261 ../../include/js_strings.php:47
 msgid "March"
 msgstr "מרץ"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:48
+#: ../../include/misc.php:1261 ../../include/js_strings.php:48
 msgid "April"
 msgstr "אפריל"
 
-#: ../../include/text.php:1261
+#: ../../include/misc.php:1261
 msgid "May"
 msgstr "מאי"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:50
+#: ../../include/misc.php:1261 ../../include/js_strings.php:50
 msgid "June"
 msgstr "יוני"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:51
+#: ../../include/misc.php:1261 ../../include/js_strings.php:51
 msgid "July"
 msgstr "יולי"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:52
+#: ../../include/misc.php:1261 ../../include/js_strings.php:52
 msgid "August"
 msgstr "אוגוסט"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:53
+#: ../../include/misc.php:1261 ../../include/js_strings.php:53
 msgid "September"
 msgstr "ספטמבר"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:54
+#: ../../include/misc.php:1261 ../../include/js_strings.php:54
 msgid "October"
 msgstr "אוקטובר"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:55
+#: ../../include/misc.php:1261 ../../include/js_strings.php:55
 msgid "November"
 msgstr "נובמבר"
 
-#: ../../include/text.php:1261 ../../include/js_strings.php:56
+#: ../../include/misc.php:1261 ../../include/js_strings.php:56
 msgid "December"
 msgstr "דצמבר"
 
-#: ../../include/text.php:1338 ../../include/text.php:1342
+#: ../../include/misc.php:1338 ../../include/misc.php:1342
 msgid "Unknown Attachment"
 msgstr "תצריף לא מוכר"
 
-#: ../../include/text.php:1344
+#: ../../include/misc.php:1344
 msgid "unknown"
 msgstr "לא מוכר"
 
-#: ../../include/text.php:1380
+#: ../../include/misc.php:1380
 msgid "remove category"
 msgstr "הסר קטגוריה"
 
-#: ../../include/text.php:1457
+#: ../../include/misc.php:1457
 msgid "remove from file"
 msgstr "הסר מתוך קובץ"
 
-#: ../../include/text.php:1754 ../../include/text.php:1825
+#: ../../include/misc.php:1754 ../../include/misc.php:1825
 msgid "default"
 msgstr "ברירת מחדל"
 
-#: ../../include/text.php:1762
+#: ../../include/misc.php:1762
 msgid "Page layout"
 msgstr ""
 
-#: ../../include/text.php:1762
+#: ../../include/misc.php:1762
 msgid "You can create your own with the layouts tool"
 msgstr ""
 
-#: ../../include/text.php:1804
+#: ../../include/misc.php:1804
 msgid "Page content type"
 msgstr "טיפוס תוכן עמוד"
 
-#: ../../include/text.php:1837
+#: ../../include/misc.php:1837
 msgid "Select an alternate language"
 msgstr "בחר שפה חלופית"
 
-#: ../../include/text.php:1954
+#: ../../include/misc.php:1954
 msgid "activity"
 msgstr "פעילות"
 
-#: ../../include/text.php:2263
+#: ../../include/misc.php:2263
 msgid "Design Tools"
 msgstr "כלי עיצוב"
 
-#: ../../include/text.php:2269
+#: ../../include/misc.php:2269
 msgid "Pages"
 msgstr "עמודים"
 

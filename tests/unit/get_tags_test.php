@@ -9,7 +9,7 @@
 /**
  * required, because it contains the get_tags() function
  */
-require_once 'include/text.php';
+require_once 'include/misc.php';
 /**
  * required, because it contains the tag handling
  */

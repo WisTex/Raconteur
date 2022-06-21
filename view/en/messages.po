@@ -284,7 +284,7 @@ msgstr ""
 
 #: Code/Lib/Navbar.php:193 Code/Lib/Apps.php:408 Code/Lib/Libacl.php:149
 #: Code/Module/Connections.php:374 Code/Module/Search.php:67
-#: Code/Widget/Sitesearch.php:37 include/text.php:1052 include/text.php:1065
+#: Code/Widget/Sitesearch.php:37 include/misc.php:1052 include/misc.php:1065
 msgid "Search"
 msgstr ""
 
@@ -537,7 +537,7 @@ msgstr ""
 #: Code/Lib/ThreadItem.php:287 Code/Module/Admin/Profs.php:103
 #: Code/Module/Admin/Profs.php:124 Code/Module/Filer.php:62
 #: Code/Widget/Notes.php:26 extend/addon/a/queueworker/Mod_Queueworker.php:118
-#: include/text.php:1053 include/text.php:1066
+#: include/misc.php:1053 include/misc.php:1066
 msgid "Save"
 msgstr ""
 
@@ -637,7 +637,7 @@ msgstr ""
 msgid "Attendance Options"
 msgstr ""
 
-#: Code/Lib/ThreadItem.php:449 include/text.php:2081
+#: Code/Lib/ThreadItem.php:449 include/misc.php:2081
 msgid "Vote"
 msgstr ""
 
@@ -871,7 +871,7 @@ msgstr ""
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:3429 include/text.php:1697 include/text.php:3172
+#: Code/Lib/Activity.php:3429 include/misc.php:1697 include/misc.php:3172
 #, php-format
 msgid "%1$s (%2$s)"
 msgstr ""
@@ -2266,7 +2266,7 @@ msgid "%1$s wrote the following %2$s %3$s"
 msgstr ""
 
 #: Code/Lib/Markdown.php:221 Code/Module/Tagger.php:93 include/bbcode.php:678
-#: include/text.php:2406 include/conversation.php:171
+#: include/misc.php:2406 include/conversation.php:171
 msgid "post"
 msgstr ""
 
@@ -2551,19 +2551,19 @@ msgstr ""
 msgid "timeago.numbers"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:71 include/text.php:1443
+#: Code/Lib/Stringsjs.php:71 include/misc.php:1443
 msgid "January"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:72 include/text.php:1443
+#: Code/Lib/Stringsjs.php:72 include/misc.php:1443
 msgid "February"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:73 include/text.php:1443
+#: Code/Lib/Stringsjs.php:73 include/misc.php:1443
 msgid "March"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:74 include/text.php:1443
+#: Code/Lib/Stringsjs.php:74 include/misc.php:1443
 msgid "April"
 msgstr ""
 
@@ -2572,31 +2572,31 @@ msgctxt "long"
 msgid "May"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:76 include/text.php:1443
+#: Code/Lib/Stringsjs.php:76 include/misc.php:1443
 msgid "June"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:77 include/text.php:1443
+#: Code/Lib/Stringsjs.php:77 include/misc.php:1443
 msgid "July"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:78 include/text.php:1443
+#: Code/Lib/Stringsjs.php:78 include/misc.php:1443
 msgid "August"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:79 include/text.php:1443
+#: Code/Lib/Stringsjs.php:79 include/misc.php:1443
 msgid "September"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:80 include/text.php:1443
+#: Code/Lib/Stringsjs.php:80 include/misc.php:1443
 msgid "October"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:81 include/text.php:1443
+#: Code/Lib/Stringsjs.php:81 include/misc.php:1443
 msgid "November"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:82 include/text.php:1443
+#: Code/Lib/Stringsjs.php:82 include/misc.php:1443
 msgid "December"
 msgstr ""
 
@@ -2650,37 +2650,37 @@ msgid "Dec"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:95 Code/Module/Settings/Channel.php:759
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Sunday"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:96 Code/Module/Settings/Channel.php:760
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Monday"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:97 Code/Module/Settings/Channel.php:761
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Tuesday"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:98 Code/Module/Settings/Channel.php:762
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Wednesday"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:99 Code/Module/Settings/Channel.php:763
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Thursday"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:100 Code/Module/Settings/Channel.php:764
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Friday"
 msgstr ""
 
 #: Code/Lib/Stringsjs.php:101 Code/Module/Settings/Channel.php:765
-#: include/text.php:1437
+#: include/misc.php:1437
 msgid "Saturday"
 msgstr ""
 
@@ -3787,7 +3787,7 @@ msgstr ""
 msgid "Site settings updated."
 msgstr ""
 
-#: Code/Module/Admin/Site.php:212 include/text.php:3627
+#: Code/Module/Admin/Site.php:212 include/misc.php:3627
 #: view/theme/redbasic/php/config.php:19
 msgid "Default"
 msgstr ""
@@ -4730,7 +4730,7 @@ msgstr ""
 msgid "Block Name"
 msgstr ""
 
-#: Code/Module/Blocks.php:167 include/text.php:2881
+#: Code/Module/Blocks.php:167 include/misc.php:2881
 msgid "Blocks"
 msgstr ""
 
@@ -4768,7 +4768,7 @@ msgstr ""
 msgid "l, F j"
 msgstr ""
 
-#: Code/Module/Cal.php:335 Code/Module/Events.php:730 include/text.php:2198
+#: Code/Module/Cal.php:335 Code/Module/Events.php:730 include/misc.php:2198
 msgid "Link to Source"
 msgstr ""
 
@@ -4780,7 +4780,7 @@ msgstr ""
 msgid "Create Event"
 msgstr ""
 
-#: Code/Module/Cal.php:362 include/text.php:2906
+#: Code/Module/Cal.php:362 include/misc.php:2906
 msgid "Import"
 msgstr ""
 
@@ -4805,7 +4805,7 @@ msgstr ""
 
 #: Code/Module/Calendar.php:254 Code/Module/Events.php:300
 #: Code/Module/Like.php:176 Code/Module/Tagger.php:89 include/event.php:1339
-#: include/text.php:2403 include/conversation.php:142
+#: include/misc.php:2403 include/conversation.php:142
 msgid "event"
 msgstr ""
 
@@ -4862,7 +4862,7 @@ msgstr ""
 
 #: Code/Module/Manage.php:82 Code/Module/Manage.php:180
 #: Code/Module/Directory.php:406 Code/Storage/Browser.php:148
-#: include/text.php:3305
+#: include/misc.php:3305
 msgid "Collection"
 msgstr ""
 
@@ -5684,7 +5684,7 @@ msgstr ""
 
 #: Code/Module/Embedphotos.php:107 include/bbcode.php:259
 #: include/bbcode.php:1145 include/bbcode.php:2067 include/bbcode.php:2069
-#: include/bbcode.php:2072 include/text.php:1838 include/text.php:1839
+#: include/bbcode.php:2072 include/misc.php:1838 include/misc.php:1839
 msgid "Image/photo"
 msgstr ""
 
@@ -6224,7 +6224,7 @@ msgstr ""
 msgid "Change UI language"
 msgstr ""
 
-#: Code/Module/Layouts.php:200 include/text.php:2883
+#: Code/Module/Layouts.php:200 include/misc.php:2883
 msgid "Layouts"
 msgstr ""
 
@@ -6429,7 +6429,7 @@ msgid "Recent Photos"
 msgstr ""
 
 #: Code/Module/Like.php:174 Code/Module/Tagger.php:85
-#: Code/Module/Subthread.php:126 include/text.php:2400
+#: Code/Module/Subthread.php:126 include/misc.php:2400
 #: include/conversation.php:139
 msgid "photo"
 msgstr ""
@@ -6959,7 +6959,7 @@ msgstr ""
 msgid "Submit and proceed"
 msgstr ""
 
-#: Code/Module/Menu.php:179 include/text.php:2882
+#: Code/Module/Menu.php:179 include/misc.php:2882
 msgid "Menus"
 msgstr ""
 
@@ -9543,7 +9543,7 @@ msgid "NEW"
 msgstr ""
 
 #: Code/Module/Sharedwithme.php:111 Code/Storage/Browser.php:315
-#: include/text.php:1544
+#: include/misc.php:1544
 msgid "Size"
 msgstr ""
 
@@ -9943,7 +9943,7 @@ msgstr ""
 msgid "Post not found."
 msgstr ""
 
-#: Code/Module/Tagger.php:95 include/text.php:2408 include/conversation.php:173
+#: Code/Module/Tagger.php:95 include/misc.php:2408 include/conversation.php:173
 msgid "comment"
 msgstr ""
 
@@ -11624,192 +11624,192 @@ msgstr ""
 msgid "Upload New Photos"
 msgstr ""
 
-#: include/text.php:526
+#: include/misc.php:526
 msgid "prev"
 msgstr ""
 
-#: include/text.php:529
+#: include/misc.php:529
 msgid "first"
 msgstr ""
 
-#: include/text.php:560
+#: include/misc.php:560
 msgid "last"
 msgstr ""
 
-#: include/text.php:563
+#: include/misc.php:563
 msgid "next"
 msgstr ""
 
-#: include/text.php:576
+#: include/misc.php:576
 msgid "older"
 msgstr ""
 
-#: include/text.php:579
+#: include/misc.php:579
 msgid "newer"
 msgstr ""
 
-#: include/text.php:1192 include/text.php:1196
+#: include/misc.php:1192 include/misc.php:1196
 msgid "poke"
 msgstr ""
 
-#: include/text.php:1192 include/text.php:1196 include/conversation.php:288
+#: include/misc.php:1192 include/misc.php:1196 include/conversation.php:288
 msgid "poked"
 msgstr ""
 
-#: include/text.php:1197
+#: include/misc.php:1197
 msgid "ping"
 msgstr ""
 
-#: include/text.php:1197
+#: include/misc.php:1197
 msgid "pinged"
 msgstr ""
 
-#: include/text.php:1198
+#: include/misc.php:1198
 msgid "prod"
 msgstr ""
 
-#: include/text.php:1198
+#: include/misc.php:1198
 msgid "prodded"
 msgstr ""
 
-#: include/text.php:1199
+#: include/misc.php:1199
 msgid "slap"
 msgstr ""
 
-#: include/text.php:1199
+#: include/misc.php:1199
 msgid "slapped"
 msgstr ""
 
-#: include/text.php:1200
+#: include/misc.php:1200
 msgid "finger"
 msgstr ""
 
-#: include/text.php:1200
+#: include/misc.php:1200
 msgid "fingered"
 msgstr ""
 
-#: include/text.php:1201
+#: include/misc.php:1201
 msgid "rebuff"
 msgstr ""
 
-#: include/text.php:1201
+#: include/misc.php:1201
 msgid "rebuffed"
 msgstr ""
 
-#: include/text.php:1225
+#: include/misc.php:1225
 msgid "happy"
 msgstr ""
 
-#: include/text.php:1226
+#: include/misc.php:1226
 msgid "sad"
 msgstr ""
 
-#: include/text.php:1227
+#: include/misc.php:1227
 msgid "mellow"
 msgstr ""
 
-#: include/text.php:1228
+#: include/misc.php:1228
 msgid "tired"
 msgstr ""
 
-#: include/text.php:1229
+#: include/misc.php:1229
 msgid "perky"
 msgstr ""
 
-#: include/text.php:1230
+#: include/misc.php:1230
 msgid "angry"
 msgstr ""
 
-#: include/text.php:1231
+#: include/misc.php:1231
 msgid "stupefied"
 msgstr ""
 
-#: include/text.php:1232
+#: include/misc.php:1232
 msgid "puzzled"
 msgstr ""
 
-#: include/text.php:1233
+#: include/misc.php:1233
 msgid "interested"
 msgstr ""
 
-#: include/text.php:1234
+#: include/misc.php:1234
 msgid "bitter"
 msgstr ""
 
-#: include/text.php:1235
+#: include/misc.php:1235
 msgid "cheerful"
 msgstr ""
 
-#: include/text.php:1236
+#: include/misc.php:1236
 msgid "alive"
 msgstr ""
 
-#: include/text.php:1237
+#: include/misc.php:1237
 msgid "annoyed"
 msgstr ""
 
-#: include/text.php:1238
+#: include/misc.php:1238
 msgid "anxious"
 msgstr ""
 
-#: include/text.php:1239
+#: include/misc.php:1239
 msgid "cranky"
 msgstr ""
 
-#: include/text.php:1240
+#: include/misc.php:1240
 msgid "disturbed"
 msgstr ""
 
-#: include/text.php:1241
+#: include/misc.php:1241
 msgid "frustrated"
 msgstr ""
 
-#: include/text.php:1242
+#: include/misc.php:1242
 msgid "depressed"
 msgstr ""
 
-#: include/text.php:1243
+#: include/misc.php:1243
 msgid "motivated"
 msgstr ""
 
-#: include/text.php:1244
+#: include/misc.php:1244
 msgid "relaxed"
 msgstr ""
 
-#: include/text.php:1245
+#: include/misc.php:1245
 msgid "surprised"
 msgstr ""
 
-#: include/text.php:1443
+#: include/misc.php:1443
 msgid "May"
 msgstr ""
 
-#: include/text.php:1541
+#: include/misc.php:1541
 msgid "Unknown Attachment"
 msgstr ""
 
-#: include/text.php:1544
+#: include/misc.php:1544
 msgid "unknown"
 msgstr ""
 
-#: include/text.php:1598
+#: include/misc.php:1598
 msgid "remove category"
 msgstr ""
 
-#: include/text.php:1737
+#: include/misc.php:1737
 msgid "remove from file"
 msgstr ""
 
-#: include/text.php:1883
+#: include/misc.php:1883
 msgid "Added to your calendar"
 msgstr ""
 
-#: include/text.php:1971
+#: include/misc.php:1971
 msgid "Link"
 msgstr ""
 
-#: include/text.php:2024 include/text.php:2028 include/text.php:2055
-#: include/text.php:2063
+#: include/misc.php:2024 include/misc.php:2028 include/misc.php:2055
+#: include/misc.php:2063
 #, php-format
 msgctxt "noun"
 msgid "%d Vote"
@@ -11817,7 +11817,7 @@ msgid_plural "%d Votes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/text.php:2070
+#: include/misc.php:2070
 #, php-format
 msgctxt "noun"
 msgid "%d Vote in total"
@@ -11825,136 +11825,136 @@ msgid_plural "%d Votes in total"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/text.php:2074
+#: include/misc.php:2074
 msgid "Poll has ended."
 msgstr ""
 
-#: include/text.php:2076
+#: include/misc.php:2076
 #, php-format
 msgid "Poll ends: %1$s (%2$s)"
 msgstr ""
 
-#: include/text.php:2092
+#: include/misc.php:2092
 msgid "Download binary/encrypted content"
 msgstr ""
 
-#: include/text.php:2217 include/language.php:432
+#: include/misc.php:2217 include/language.php:432
 msgid "default"
 msgstr ""
 
-#: include/text.php:2225
+#: include/misc.php:2225
 msgid "Page layout"
 msgstr ""
 
-#: include/text.php:2225
+#: include/misc.php:2225
 msgid "You can create your own with the layouts tool"
 msgstr ""
 
-#: include/text.php:2236
+#: include/misc.php:2236
 msgid "BBcode"
 msgstr ""
 
-#: include/text.php:2237
+#: include/misc.php:2237
 msgid "Multicode"
 msgstr ""
 
-#: include/text.php:2238
+#: include/misc.php:2238
 msgid "HTML"
 msgstr ""
 
-#: include/text.php:2239
+#: include/misc.php:2239
 msgid "Markdown"
 msgstr ""
 
-#: include/text.php:2240
+#: include/misc.php:2240
 msgid "Text"
 msgstr ""
 
-#: include/text.php:2241
+#: include/misc.php:2241
 msgid "Comanche Layout"
 msgstr ""
 
-#: include/text.php:2245
+#: include/misc.php:2245
 msgid "PHP"
 msgstr ""
 
-#: include/text.php:2254
+#: include/misc.php:2254
 msgid "Page content type"
 msgstr ""
 
-#: include/text.php:2414
+#: include/misc.php:2414
 msgid "activity"
 msgstr ""
 
-#: include/text.php:2528
+#: include/misc.php:2528
 msgid "a-z, 0-9, -, and _ only"
 msgstr ""
 
-#: include/text.php:2878
+#: include/misc.php:2878
 msgid "Design Tools"
 msgstr ""
 
-#: include/text.php:2884
+#: include/misc.php:2884
 msgid "Pages"
 msgstr ""
 
-#: include/text.php:2907
+#: include/misc.php:2907
 msgid "Import website..."
 msgstr ""
 
-#: include/text.php:2908
+#: include/misc.php:2908
 msgid "Select folder to import"
 msgstr ""
 
-#: include/text.php:2909
+#: include/misc.php:2909
 msgid "Import from a zipped folder:"
 msgstr ""
 
-#: include/text.php:2910
+#: include/misc.php:2910
 msgid "Import from cloud files:"
 msgstr ""
 
-#: include/text.php:2911
+#: include/misc.php:2911
 msgid "/cloud/channel/path/to/folder"
 msgstr ""
 
-#: include/text.php:2912
+#: include/misc.php:2912
 msgid "Enter path to website files"
 msgstr ""
 
-#: include/text.php:2913
+#: include/misc.php:2913
 msgid "Select folder"
 msgstr ""
 
-#: include/text.php:2914
+#: include/misc.php:2914
 msgid "Export website..."
 msgstr ""
 
-#: include/text.php:2915
+#: include/misc.php:2915
 msgid "Export to a zip file"
 msgstr ""
 
-#: include/text.php:2916
+#: include/misc.php:2916
 msgid "website.zip"
 msgstr ""
 
-#: include/text.php:2917
+#: include/misc.php:2917
 msgid "Enter a name for the zip file."
 msgstr ""
 
-#: include/text.php:2918
+#: include/misc.php:2918
 msgid "Export to cloud files"
 msgstr ""
 
-#: include/text.php:2919
+#: include/misc.php:2919
 msgid "/path/to/export/folder"
 msgstr ""
 
-#: include/text.php:2920
+#: include/misc.php:2920
 msgid "Enter a path to a cloud files destination."
 msgstr ""
 
-#: include/text.php:2921
+#: include/misc.php:2921
 msgid "Specify folder"
 msgstr ""
 

@@ -128,7 +128,6 @@ class Site
         if ($admininfo == '') {
             del_config('system', 'admininfo');
         } else {
-            require_once('include/text.php');
             linkify_tags($admininfo, local_channel());
             set_config('system', 'admininfo', $admininfo);
         }

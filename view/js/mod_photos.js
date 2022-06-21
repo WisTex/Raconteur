@@ -174,7 +174,7 @@ function formatSizeUnits(bytes){
 	return bytes;
 }
 
-// this is basically a js port of include/text.php getIconFromType() function
+// this is basically a js port of include/misc.php getIconFromType() function
 function getIconFromType(type) {
 	var map = {
 		//Common file

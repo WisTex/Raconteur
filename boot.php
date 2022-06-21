@@ -27,7 +27,7 @@ require_once('version.php');
 
 define ( 'PLATFORM_NAME',           'streams' );
 
-define ( 'DB_UPDATE_VERSION',       1258 );
+define ( 'DB_UPDATE_VERSION',       1259 );
 define ( 'ZOT_REVISION',            '11.0' );
 
 define ( 'PLATFORM_ARCHITECTURE',   'zap' );
@@ -49,7 +49,7 @@ if (file_exists('addon/version.php')) {
 
 require_once('include/config.php');
 require_once('include/network.php');
-require_once('include/text.php');
+require_once('include/misc.php');
 require_once('include/datetime.php');
 require_once('include/language.php');
 require_once('include/permissions.php');

@@ -8,7 +8,7 @@
 
 /** required, it is the file under test */
 require_once('include/template_processor.php');
-require_once('include/text.php');
+require_once('include/misc.php');
 
 class TemplateMockApp
 {

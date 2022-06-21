@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/settings
+requires: local_channel
+name: Settings
+photo: icon:gear
+categories: nav_featured_app, Personal

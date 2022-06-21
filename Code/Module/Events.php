@@ -17,8 +17,6 @@ use Code\Render\Theme;
 
     
 require_once('include/conversation.php');
-require_once('include/bbcode.php');
-require_once('include/datetime.php');
 require_once('include/event.php');
 require_once('include/html2plain.php');
 
@@ -133,7 +131,6 @@ class Events extends Controller
             $count = MAX_EVENT_REPEAT_COUNT;
         }
 
-        require_once('include/text.php');
         linkify_tags($desc, local_channel());
         linkify_tags($location, local_channel());
 

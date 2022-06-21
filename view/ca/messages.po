@@ -256,7 +256,7 @@ msgstr "S'ha denegat el permís."
 msgid "Block Name"
 msgstr "Nom del bloc"
 
-#: ../../Code/Module/Blocks.php:154 ../../include/text.php:2458
+#: ../../Code/Module/Blocks.php:154 ../../include/misc.php:2458
 msgid "Blocks"
 msgstr "Blocs"
 
@@ -953,8 +953,8 @@ msgstr "L'accés públic no està permès."
 
 #: ../../Code/Module/Search.php:44 ../../Code/Module/Connections.php:335
 #: ../../Code/Lib/Apps.php:318 ../../Code/Widget/Sitesearch.php:31
-#: ../../Code/Widget/Activity_filter.php:148 ../../include/text.php:1062
-#: ../../include/text.php:1074 ../../include/acl_selectors.php:118
+#: ../../Code/Widget/Activity_filter.php:148 ../../include/misc.php:1062
+#: ../../include/misc.php:1074 ../../include/acl_selectors.php:118
 #: ../../include/nav.php:185
 msgid "Search"
 msgstr "Cerca"
@@ -1318,7 +1318,7 @@ msgstr "No s'ha trobat l'esdeveniment."
 
 #: ../../Code/Module/Events.php:260 ../../Code/Module/Tagger.php:73
 #: ../../Code/Module/Like.php:386 ../../include/conversation.php:119
-#: ../../include/text.php:2025 ../../include/event.php:1153
+#: ../../include/misc.php:2025 ../../include/event.php:1153
 msgid "event"
 msgstr "esdeveniment"
 
@@ -1410,7 +1410,7 @@ msgid "Delete event"
 msgstr "Esborra l'esdeveniment"
 
 #: ../../Code/Module/Events.php:660 ../../Code/Module/Cal.php:315
-#: ../../include/text.php:1844
+#: ../../include/misc.php:1844
 msgid "Link to Source"
 msgstr "Enllaç a la font"
 
@@ -1503,13 +1503,13 @@ msgstr "No s'ha trobat el hub."
 #: ../../Code/Module/Like.php:384
 #: ../../addon/redphotos/redphotohelper.php:71
 #: ../../addon/diaspora/Receiver.php:1530 ../../addon/pubcrawl/as.php:1509
-#: ../../include/conversation.php:116 ../../include/text.php:2022
+#: ../../include/conversation.php:116 ../../include/misc.php:2022
 msgid "photo"
 msgstr "foto"
 
 #: ../../Code/Module/Subthread.php:111 ../../Code/Module/Like.php:384
 #: ../../addon/diaspora/Receiver.php:1530 ../../addon/pubcrawl/as.php:1509
-#: ../../include/conversation.php:144 ../../include/text.php:2028
+#: ../../include/conversation.php:144 ../../include/misc.php:2028
 msgid "status"
 msgstr "estat"
 
@@ -1718,7 +1718,7 @@ msgid "NEW"
 msgstr "NOU"
 
 #: ../../Code/Module/Sharedwithme.php:107
-#: ../../Code/Storage/Browser.php:287 ../../include/text.php:1451
+#: ../../Code/Storage/Browser.php:287 ../../include/misc.php:1451
 msgid "Size"
 msgstr "Mida"
 
@@ -2621,7 +2621,7 @@ msgstr "S'ha actualitzat la configuració del lloc"
 
 #: ../../Code/Module/Admin/Site.php:198
 #: ../../view/theme/redbasic_c/php/config.php:15
-#: ../../view/theme/redbasic/php/config.php:15 ../../include/text.php:3078
+#: ../../view/theme/redbasic/php/config.php:15 ../../include/misc.php:3078
 msgid "Default"
 msgstr "Predeterminat"
 
@@ -3235,8 +3235,8 @@ msgstr "Informació adicional (opcional)"
 #: ../../Code/Module/Admin/Profs.php:94
 #: ../../Code/Module/Admin/Profs.php:114 ../../Code/Module/Rbmark.php:32
 #: ../../Code/Module/Rbmark.php:104 ../../Code/Module/Filer.php:53
-#: ../../Code/Widget/Notes.php:18 ../../include/text.php:1063
-#: ../../include/text.php:1075
+#: ../../Code/Widget/Notes.php:18 ../../include/misc.php:1063
+#: ../../include/misc.php:1075
 msgid "Save"
 msgstr "Guardar"
 
@@ -4556,7 +4556,7 @@ msgstr "Autentica't"
 msgid "Permissions denied."
 msgstr "Permís denegat."
 
-#: ../../Code/Module/Cal.php:344 ../../include/text.php:2482
+#: ../../Code/Module/Cal.php:344 ../../include/misc.php:2482
 msgid "Import"
 msgstr "Importar"
 
@@ -4758,7 +4758,7 @@ msgid "Recent activity"
 msgstr "Activitat recent"
 
 #: ../../Code/Module/Connections.php:331 ../../Code/Lib/Apps.php:298
-#: ../../include/text.php:975
+#: ../../include/misc.php:975
 msgid "Connections"
 msgstr "Connexions"
 
@@ -5115,18 +5115,18 @@ msgstr "Llenguatge de formatació"
 #: ../../Code/Module/Wiki.php:208 ../../Code/Module/Wiki.php:350
 #: ../../Code/Widget/Wiki_pages.php:36
 #: ../../Code/Widget/Wiki_pages.php:93 ../../addon/mdpost/mdpost.php:40
-#: ../../include/text.php:1886
+#: ../../include/misc.php:1886
 msgid "Markdown"
 msgstr "Markdown"
 
 #: ../../Code/Module/Wiki.php:208 ../../Code/Module/Wiki.php:350
 #: ../../Code/Widget/Wiki_pages.php:36
-#: ../../Code/Widget/Wiki_pages.php:93 ../../include/text.php:1884
+#: ../../Code/Widget/Wiki_pages.php:93 ../../include/misc.php:1884
 msgid "BBcode"
 msgstr "BBCode"
 
 #: ../../Code/Module/Wiki.php:208 ../../Code/Widget/Wiki_pages.php:36
-#: ../../Code/Widget/Wiki_pages.php:93 ../../include/text.php:1887
+#: ../../Code/Widget/Wiki_pages.php:93 ../../include/misc.php:1887
 msgid "Text"
 msgstr "Cap (text pla)"
 
@@ -5996,7 +5996,7 @@ msgstr "El menú es pot emprar per a desar marcadors"
 msgid "Submit and proceed"
 msgstr "Envia i procedeix"
 
-#: ../../Code/Module/Menu.php:170 ../../include/text.php:2459
+#: ../../Code/Module/Menu.php:170 ../../include/misc.php:2459
 msgid "Menus"
 msgstr "Menús"
 
@@ -6048,7 +6048,7 @@ msgstr "Títol del menú vist pels altres"
 msgid "Allow bookmarks"
 msgstr "Activa els marcadors"
 
-#: ../../Code/Module/Layouts.php:184 ../../include/text.php:2460
+#: ../../Code/Module/Layouts.php:184 ../../include/misc.php:2460
 msgid "Layouts"
 msgstr "Dissenys"
 
@@ -6113,7 +6113,7 @@ msgid "post"
 msgstr "entrada"
 
 #: ../../Code/Module/Tagger.php:79 ../../include/conversation.php:146
-#: ../../include/text.php:2030
+#: ../../include/misc.php:2030
 msgid "comment"
 msgstr "comentari"
 
@@ -8655,7 +8655,7 @@ msgstr "Benvingut %s. Autenticació remota reeixida."
 msgid "parent"
 msgstr "amunt"
 
-#: ../../Code/Storage/Browser.php:131 ../../include/text.php:2817
+#: ../../Code/Storage/Browser.php:131 ../../include/misc.php:2817
 msgid "Collection"
 msgstr "Col·lecció"
 
@@ -12457,8 +12457,8 @@ msgstr "%1$s esta ara connectat amb %2$s"
 msgid "%1$s poked %2$s"
 msgstr "%1$s  a esperonat %2$s"
 
-#: ../../include/conversation.php:251 ../../include/text.php:1140
-#: ../../include/text.php:1144
+#: ../../include/conversation.php:251 ../../include/misc.php:1140
+#: ../../include/misc.php:1144
 msgid "poked"
 msgstr "esperonat"
 
@@ -12777,369 +12777,369 @@ msgstr "No s'ha pogut importar el canal perquè l'identificador del canal no s'h
 msgid "Cloned channel not found. Import failed."
 msgstr "No s'ha pogut importar el canal perquè el canal clonat no s'ha trobat."
 
-#: ../../include/text.php:492
+#: ../../include/misc.php:492
 msgid "prev"
 msgstr "prev"
 
-#: ../../include/text.php:494
+#: ../../include/misc.php:494
 msgid "first"
 msgstr "primer"
 
-#: ../../include/text.php:523
+#: ../../include/misc.php:523
 msgid "last"
 msgstr "últim"
 
-#: ../../include/text.php:526
+#: ../../include/misc.php:526
 msgid "next"
 msgstr "pròxim"
 
-#: ../../include/text.php:537
+#: ../../include/misc.php:537
 msgid "older"
 msgstr "el més antic"
 
-#: ../../include/text.php:539
+#: ../../include/misc.php:539
 msgid "newer"
 msgstr "El més nou"
 
-#: ../../include/text.php:963
+#: ../../include/misc.php:963
 msgid "No connections"
 msgstr "Sense Connexions"
 
-#: ../../include/text.php:995
+#: ../../include/misc.php:995
 #, php-format
 msgid "View all %s connections"
 msgstr "Veure totes les connexions de %s"
 
-#: ../../include/text.php:1051
+#: ../../include/misc.php:1051
 #, php-format
 msgid "Network: %s"
 msgstr "Xarxa: %s"
 
-#: ../../include/text.php:1140 ../../include/text.php:1144
+#: ../../include/misc.php:1140 ../../include/misc.php:1144
 msgid "poke"
 msgstr "esperona"
 
-#: ../../include/text.php:1145
+#: ../../include/misc.php:1145
 msgid "ping"
 msgstr "coloca"
 
-#: ../../include/text.php:1145
+#: ../../include/misc.php:1145
 msgid "pinged"
 msgstr "colocat"
 
-#: ../../include/text.php:1146
+#: ../../include/misc.php:1146
 msgid "prod"
 msgstr "picar"
 
-#: ../../include/text.php:1146
+#: ../../include/misc.php:1146
 msgid "prodded"
 msgstr "picat"
 
-#: ../../include/text.php:1147
+#: ../../include/misc.php:1147
 msgid "slap"
 msgstr "bufetada"
 
-#: ../../include/text.php:1147
+#: ../../include/misc.php:1147
 msgid "slapped"
 msgstr "bufetejat"
 
-#: ../../include/text.php:1148
+#: ../../include/misc.php:1148
 msgid "finger"
 msgstr "senyal"
 
-#: ../../include/text.php:1148
+#: ../../include/misc.php:1148
 msgid "fingered"
 msgstr "senyalat"
 
-#: ../../include/text.php:1149
+#: ../../include/misc.php:1149
 msgid "rebuff"
 msgstr "menyspreu"
 
-#: ../../include/text.php:1149
+#: ../../include/misc.php:1149
 msgid "rebuffed"
 msgstr "menyspreuat"
 
-#: ../../include/text.php:1172
+#: ../../include/misc.php:1172
 msgid "happy"
 msgstr "feliç"
 
-#: ../../include/text.php:1173
+#: ../../include/misc.php:1173
 msgid "sad"
 msgstr "trist"
 
-#: ../../include/text.php:1174
+#: ../../include/misc.php:1174
 msgid "mellow"
 msgstr "melós"
 
-#: ../../include/text.php:1175
+#: ../../include/misc.php:1175
 msgid "tired"
 msgstr "cansat"
 
-#: ../../include/text.php:1176
+#: ../../include/misc.php:1176
 msgid "perky"
 msgstr "turgent"
 
-#: ../../include/text.php:1177
+#: ../../include/misc.php:1177
 msgid "angry"
 msgstr "enfadat"
 
-#: ../../include/text.php:1178
+#: ../../include/misc.php:1178
 msgid "stupefied"
 msgstr "estupefacte"
 
-#: ../../include/text.php:1179
+#: ../../include/misc.php:1179
 msgid "puzzled"
 msgstr "perplexe"
 
-#: ../../include/text.php:1180
+#: ../../include/misc.php:1180
 msgid "interested"
 msgstr "Interessat"
 
-#: ../../include/text.php:1181
+#: ../../include/misc.php:1181
 msgid "bitter"
 msgstr "amargat"
 
-#: ../../include/text.php:1182
+#: ../../include/misc.php:1182
 msgid "cheerful"
 msgstr "feliç"
 
-#: ../../include/text.php:1183
+#: ../../include/misc.php:1183
 msgid "alive"
 msgstr "viu"
 
-#: ../../include/text.php:1184
+#: ../../include/misc.php:1184
 msgid "annoyed"
 msgstr "molest"
 
-#: ../../include/text.php:1185
+#: ../../include/misc.php:1185
 msgid "anxious"
 msgstr "ansiós"
 
-#: ../../include/text.php:1186
+#: ../../include/misc.php:1186
 msgid "cranky"
 msgstr "malagaitós"
 
-#: ../../include/text.php:1187
+#: ../../include/misc.php:1187
 msgid "disturbed"
 msgstr "transtornat"
 
-#: ../../include/text.php:1188
+#: ../../include/misc.php:1188
 msgid "frustrated"
 msgstr "frustrat"
 
-#: ../../include/text.php:1189
+#: ../../include/misc.php:1189
 msgid "depressed"
 msgstr "deprimit"
 
-#: ../../include/text.php:1190
+#: ../../include/misc.php:1190
 msgid "motivated"
 msgstr "motivat"
 
-#: ../../include/text.php:1191
+#: ../../include/misc.php:1191
 msgid "relaxed"
 msgstr "relaxat"
 
-#: ../../include/text.php:1192
+#: ../../include/misc.php:1192
 msgid "surprised"
 msgstr "sorprès"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:86
+#: ../../include/misc.php:1371 ../../include/js_strings.php:86
 msgid "Monday"
 msgstr "Dilluns"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:87
+#: ../../include/misc.php:1371 ../../include/js_strings.php:87
 msgid "Tuesday"
 msgstr "Dimarts"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:88
+#: ../../include/misc.php:1371 ../../include/js_strings.php:88
 msgid "Wednesday"
 msgstr "Dimecres"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:89
+#: ../../include/misc.php:1371 ../../include/js_strings.php:89
 msgid "Thursday"
 msgstr "Dijous"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:90
+#: ../../include/misc.php:1371 ../../include/js_strings.php:90
 msgid "Friday"
 msgstr "Divendres"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:91
+#: ../../include/misc.php:1371 ../../include/js_strings.php:91
 msgid "Saturday"
 msgstr "Dissabte"
 
-#: ../../include/text.php:1371 ../../include/js_strings.php:85
+#: ../../include/misc.php:1371 ../../include/js_strings.php:85
 msgid "Sunday"
 msgstr "Diumenge"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:61
+#: ../../include/misc.php:1375 ../../include/js_strings.php:61
 msgid "January"
 msgstr "Gener"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:62
+#: ../../include/misc.php:1375 ../../include/js_strings.php:62
 msgid "February"
 msgstr "Febrer"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:63
+#: ../../include/misc.php:1375 ../../include/js_strings.php:63
 msgid "March"
 msgstr "Març"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:64
+#: ../../include/misc.php:1375 ../../include/js_strings.php:64
 msgid "April"
 msgstr "Abril"
 
-#: ../../include/text.php:1375
+#: ../../include/misc.php:1375
 msgid "May"
 msgstr "Maig"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:66
+#: ../../include/misc.php:1375 ../../include/js_strings.php:66
 msgid "June"
 msgstr "Juny"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:67
+#: ../../include/misc.php:1375 ../../include/js_strings.php:67
 msgid "July"
 msgstr "Juliol"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:68
+#: ../../include/misc.php:1375 ../../include/js_strings.php:68
 msgid "August"
 msgstr "Agost"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:69
+#: ../../include/misc.php:1375 ../../include/js_strings.php:69
 msgid "September"
 msgstr "Setembre"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:70
+#: ../../include/misc.php:1375 ../../include/js_strings.php:70
 msgid "October"
 msgstr "Octubre"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:71
+#: ../../include/misc.php:1375 ../../include/js_strings.php:71
 msgid "November"
 msgstr "Novembre"
 
-#: ../../include/text.php:1375 ../../include/js_strings.php:72
+#: ../../include/misc.php:1375 ../../include/js_strings.php:72
 msgid "December"
 msgstr "Desembre"
 
-#: ../../include/text.php:1449
+#: ../../include/misc.php:1449
 msgid "Unknown Attachment"
 msgstr "Adjunt Desconegut"
 
-#: ../../include/text.php:1451 ../../include/feedutils.php:860
+#: ../../include/misc.php:1451 ../../include/feedutils.php:860
 msgid "unknown"
 msgstr "desconegut"
 
-#: ../../include/text.php:1487
+#: ../../include/misc.php:1487
 msgid "remove category"
 msgstr "elimina categoria"
 
-#: ../../include/text.php:1561
+#: ../../include/misc.php:1561
 msgid "remove from file"
 msgstr "elimina del arxiu"
 
-#: ../../include/text.php:1703 ../../include/message.php:12
+#: ../../include/misc.php:1703 ../../include/message.php:12
 msgid "Download binary/encrypted content"
 msgstr "Descarrega el binari o contingut xifrat"
 
-#: ../../include/text.php:1866 ../../include/language.php:397
+#: ../../include/misc.php:1866 ../../include/language.php:397
 msgid "default"
 msgstr "per defecte"
 
-#: ../../include/text.php:1874
+#: ../../include/misc.php:1874
 msgid "Page layout"
 msgstr "Disseny de pàgina"
 
-#: ../../include/text.php:1874
+#: ../../include/misc.php:1874
 msgid "You can create your own with the layouts tool"
 msgstr "Pots crear el teu propi amb l'editor de dissenys de pàgina."
 
-#: ../../include/text.php:1885
+#: ../../include/misc.php:1885
 msgid "HTML"
 msgstr "HTML"
 
-#: ../../include/text.php:1888
+#: ../../include/misc.php:1888
 msgid "Comanche Layout"
 msgstr "Disseny Comanche"
 
-#: ../../include/text.php:1893
+#: ../../include/misc.php:1893
 msgid "PHP"
 msgstr "PHP"
 
-#: ../../include/text.php:1902
+#: ../../include/misc.php:1902
 msgid "Page content type"
 msgstr "Tipus de contingut de la pàgina"
 
-#: ../../include/text.php:2035
+#: ../../include/misc.php:2035
 msgid "activity"
 msgstr "activitat"
 
-#: ../../include/text.php:2135
+#: ../../include/misc.php:2135
 msgid "a-z, 0-9, -, and _ only"
 msgstr "només caràcters alfanumèrics en minúscula (a-z, 0-9), guió (-) i guió baix (_)"
 
-#: ../../include/text.php:2455
+#: ../../include/misc.php:2455
 msgid "Design Tools"
 msgstr "Eines de disseny"
 
-#: ../../include/text.php:2461
+#: ../../include/misc.php:2461
 msgid "Pages"
 msgstr "Pàgines"
 
-#: ../../include/text.php:2483
+#: ../../include/misc.php:2483
 msgid "Import website..."
 msgstr "Importa un lloc web"
 
-#: ../../include/text.php:2484
+#: ../../include/misc.php:2484
 msgid "Select folder to import"
 msgstr "Escull la carpeta a on importar"
 
-#: ../../include/text.php:2485
+#: ../../include/misc.php:2485
 msgid "Import from a zipped folder:"
 msgstr "Importa des d'una carpeta comprimida:"
 
-#: ../../include/text.php:2486
+#: ../../include/misc.php:2486
 msgid "Import from cloud files:"
 msgstr "Importa des de fitxers penjats a un núvol:"
 
-#: ../../include/text.php:2487
+#: ../../include/misc.php:2487
 msgid "/cloud/channel/path/to/folder"
 msgstr "/núvol/canal/ruta/a/la/carpeta"
 
-#: ../../include/text.php:2488
+#: ../../include/misc.php:2488
 msgid "Enter path to website files"
 msgstr "Introdueix la ruta als arxius de la web"
 
-#: ../../include/text.php:2489
+#: ../../include/misc.php:2489
 msgid "Select folder"
 msgstr "Escull la carpeta"
 
-#: ../../include/text.php:2490
+#: ../../include/misc.php:2490
 msgid "Export website..."
 msgstr "Exporta un lloc web"
 
-#: ../../include/text.php:2491
+#: ../../include/misc.php:2491
 msgid "Export to a zip file"
 msgstr "Exporta a una carpeta comprimida"
 
-#: ../../include/text.php:2492
+#: ../../include/misc.php:2492
 msgid "website.zip"
 msgstr "lloc-web.zip"
 
-#: ../../include/text.php:2493
+#: ../../include/misc.php:2493
 msgid "Enter a name for the zip file."
 msgstr "Introdueix un nom per al fitxer comprimit."
 
-#: ../../include/text.php:2494
+#: ../../include/misc.php:2494
 msgid "Export to cloud files"
 msgstr "Exporta a arxius de núvol"
 
-#: ../../include/text.php:2495
+#: ../../include/misc.php:2495
 msgid "/path/to/export/folder"
 msgstr "/ruta/a/la/carpeta/exportació"
 
-#: ../../include/text.php:2496
+#: ../../include/misc.php:2496
 msgid "Enter a path to a cloud files destination."
 msgstr "Introdueix la ruta dels fitxers de núvol de destí."
 
-#: ../../include/text.php:2497
+#: ../../include/misc.php:2497
 msgid "Specify folder"
 msgstr "Escull una carpeta"
 

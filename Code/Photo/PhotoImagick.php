@@ -222,7 +222,6 @@ class PhotoImagick extends PhotoDriver
         if (! $this->is_valid()) {
             return false;
         }
-
         /* Clean it */
         $this->image = $this->image->deconstructImages();
         if ($animated) {

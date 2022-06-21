@@ -2197,7 +2197,7 @@ class Activity
         // store the actor record in XConfig
         XConfig::Set($url, 'system', 'actor_record', $person_obj);
 
-        $name = escape_tags($person_obj['name']);
+        $name = unicode_trim(escape_tags($person_obj['name']));
         if (!$name) {
             $name = escape_tags($person_obj['preferredUsername']);
         }

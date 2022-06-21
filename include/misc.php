@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file include/text.php
+ * @file include/misc.php
  * This file started as some additional text handling functions but has grown to include
  * a number of miscellaneous functions that didn't really fit anywhere else.  Perhaps it should be named "misc.php" instead.
  */
@@ -3750,7 +3750,6 @@ function array2XML($obj, $array)
 /**
  * @brief Inserts an array into $table.
  *
- * @TODO Why is this function in include/text.php?
  *
  * @param string $table
  * @param array $arr
@@ -4164,4 +4163,8 @@ function is_phone_number($s)
 function wildmat($pattern, $string)
 {
     return preg_match("#^" . strtr(preg_quote($pattern, '#'), [ '\*' => '.*', '\?' => '.', '\[' => '[', '\]' => ']' ]) . "$#i", $string);
+}
+
+function unicode_trim($s) {
+    return preg_replace('/^[\pZ\pC]+|[\pZ\pC]+$/u', '', $s);
 }
