@@ -30,7 +30,7 @@ class Libzotdir
         if ($ret === false) {
             $ret = get_config('directory', $setting);
             if ($ret === false) {
-                $ret = (in_array($setting, ['globaldir', 'safemode', 'activedir']) ? 1 : 0);
+                $ret = (in_array($setting, ['globaldir', 'covers', 'safemode', 'activedir']) ? 1 : 0);
             }
         }
 
@@ -55,6 +55,7 @@ class Libzotdir
         $globaldir = self::get_directory_setting($observer, 'globaldir');
         $pubforums = self::get_directory_setting($observer, 'chantype');
         $activedir = self::get_directory_setting($observer, 'activedir');
+        $covers = self::get_directory_setting($observer, 'covers');
 
         $hide_local = intval(get_config('system', 'localdir_hide'));
         if ($hide_local) {
@@ -79,6 +80,7 @@ class Libzotdir
         unset($tmp['pubforums']);
         unset($tmp['type']);
         unset($tmp['global']);
+        unset($tmp['covers']);
         unset($tmp['safe']);
         unset($tmp['active']);
         unset($tmp['req']);
@@ -95,6 +97,7 @@ class Libzotdir
             '$hide_local' => $hide_local,
             '$globaldir' => array('globaldir', t('This Website Only'), 1 - intval($globaldir), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
             '$activedir' => array('activedir', t('Recently Updated'), intval($activedir), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''),
+            '$covers' => (Config::Get('system','remote_cover_photos')) ? [ 'covers', t('Show cover photos'), intval($covers), t('May slow page loading'), [ t('No'), t('Yes')], ' onchange=\'window.location.href="' . $forumsurl . '&covers="+(this.checked ? 1 : 0)\''] : '',
         ]);
 
         return $o;

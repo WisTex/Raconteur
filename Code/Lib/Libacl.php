@@ -39,7 +39,7 @@ class Libacl
             $showall_caption = t('Visible to your default audience');
         } elseif (is_a($emptyACL_description, '\\Code\\Lib\\PermissionDescription')) {
             $showall_caption = $emptyACL_description->get_permission_description();
-            $showall_origin  = (($role === 'custom') ? $emptyACL_description->get_permission_origin_description() : '');
+            $showall_origin  = '';
             $showall_icon    = $emptyACL_description->get_permission_icon();
         } else {
             // For backwards compatibility we still accept a string... for now!

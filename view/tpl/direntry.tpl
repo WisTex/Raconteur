@@ -78,5 +78,8 @@
 			</div>
 			{{/if}}
 		</div>
+        {{if $entry.cover}}
+        <img class="directory-photo-cover" src="{{$entry.cover}}" alt="{{$entry.altcover}}" style="margin-top: 1rem; width: 100%; maxwidth: 100%;" title={{$entry.altcover}}" />
+        {{/if}}
 	</div>
 </div>
