@@ -703,5 +703,15 @@ class Account {
         return $r;
     }
 
+    static public function from_id($n) {
+        if (! intval($n)) {
+            return false;
+        }
+        $r = q(
+            "select * from account where account_id = %d limit 1",
+            intval($n)
+        );
+        return ($r) ? array_shift($r) : false;
+    }
 
 }
