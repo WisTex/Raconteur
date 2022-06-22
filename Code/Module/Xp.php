@@ -3,6 +3,7 @@ namespace Code\Module;
 
 use Code\Web\Controller;
 use Code\Lib\Channel;
+use Code\Storage\Stdio;
 
 class Xp extends Controller
 {
@@ -51,13 +52,7 @@ class Xp extends Controller
             $smaxage = intval($cache / 12);
             header('Cache-Control: s-maxage=' . $smaxage . '; max-age=' . $cache . ';');
 
-            $infile = fopen($path, 'rb');
-            $outfile = fopen('php://output', 'wb');
-            if ($infile && $outfile) {
-                pipe_streams($infile, $outfile);
-            }
-            fclose($infile);
-            fclose($outfile);
+            Stdio::fpipe($path,'php://output');
             killme();
         }
 
