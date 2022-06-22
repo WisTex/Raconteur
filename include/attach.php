@@ -1203,7 +1203,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
     logger('basepath: ' . $os_basepath, LOGGER_DEBUG);
 
     if (! is_dir($os_basepath)) {
-        os_mkdir($os_basepath, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir($os_basepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
     $os_basepath .= '/';
@@ -1317,7 +1317,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
     );
 
     if ($r) {
-        if (os_mkdir($os_basepath . $os_path, STORAGE_DEFAULT_PERMISSIONS, true)) {
+        if (Stdio::mkdir($os_basepath . $os_path, STORAGE_DEFAULT_PERMISSIONS, true)) {
             $ret['success'] = true;
 
             // update the parent folder's lastmodified timestamp
@@ -1376,7 +1376,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null)
     logger('basepath: ' . $basepath, LOGGER_DEBUG);
 
     if (! is_dir($basepath)) {
-        os_mkdir($basepath, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir($basepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
     if (! perm_is_allowed($channel_id, $observer_hash, 'write_storage')) {
@@ -2791,7 +2791,7 @@ function save_chunk($channel, $start, $end, $len)
     $tmp_path = $_FILES['files']['tmp_name'];
     $new_base = 'cache/' . $channel['channel_address'] . '/tmp';
 
-    os_mkdir($new_base, STORAGE_DEFAULT_PERMISSIONS, true);
+    Stdio::mkdir($new_base, STORAGE_DEFAULT_PERMISSIONS, true);
 
     if (! is_dir($new_base)) {
         logger('directory create failed for ' . $new_base);

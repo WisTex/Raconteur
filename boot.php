@@ -1385,14 +1385,6 @@ function absurl($path) {
     return $path;
 }
 
-function os_mkdir($path, $mode = 0777, $recursive = false) {
-    $oldumask = @umask(0);
-    $result = @mkdir($path, $mode, $recursive);
-    @umask($oldumask);
-    return $result;
-}
-
-
 /**
  * @brief Recursively delete a directory.
  *

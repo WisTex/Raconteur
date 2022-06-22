@@ -2,6 +2,8 @@
 
 namespace Code\Module;
 
+use Code\Storage\Stdio;
+
 /**
  * @file Code/Module/Dav.php
  * @brief Initialize Hubzilla's cloud (SabreDAV).
@@ -98,7 +100,7 @@ class Dav extends Controller
         }
 
         if (!is_dir('store')) {
-            os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
+            Stdio::mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
         }
 
         if (argc() > 1) {

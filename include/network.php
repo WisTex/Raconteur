@@ -15,6 +15,7 @@ use Code\Lib\Addon;
 use Code\Web\HTTPSig;
 use Code\Daemon\Run;
 use Code\Extend\Hook;
+use Code\Storage\Stdio;
 
 /**
  * @file include/network.php
@@ -1973,7 +1974,7 @@ function jsonld_document_loader($url)
 
     $cachepath = 'cache/ldcache';
     if (! is_dir($cachepath)) {
-        os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
     $filename = $cachepath . '/' . urlencode($url);
