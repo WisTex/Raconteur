@@ -4451,10 +4451,10 @@ class Activity
                         $item['body'] .= "\n\n" . $s->bbcode();
                         $att = $s->get_attach();
                         if (isset($item['attach'])) {
-                            $item['attach'] = array_merge( $item['attach'], $att);
+                            $item['attach'] = array_merge( $item['attach'], ($att) ? $att : []);
                         }
                         else {
-                            $item['attach'] = [ $att ];
+                            $item['attach'] = ($att) ? [ $att ] : [];
                         }
                     }
                 }
