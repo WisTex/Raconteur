@@ -2,7 +2,21 @@
 
 namespace Code\Storage;
 
+use Exception;
+
 Class Stdio {
+
+    static public function mkdir($path, $mode = 0777, $recursive = false) {
+        try {
+            $oldumask = umask(0);
+            $result = mkdir($path, $mode, $recursive);
+            umask($oldumask);
+        } catch (Exception $e) {
+            // null operation
+        }
+        return $result;
+    }
+
 
     /**
      * @brief Pipes $infile to $outfile in $bufsize chunks
