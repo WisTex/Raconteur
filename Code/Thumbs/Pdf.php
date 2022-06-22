@@ -2,6 +2,8 @@
 
 namespace Code\Thumbs;
 
+use Code\Storage\Stdio;
+
 class Pdf
 {
 
@@ -19,13 +21,7 @@ class Pdf
         $tmpfile = $file . '.pdf';
         $outfile = $file . '.jpg';
 
-        $istream = fopen($file, 'rb');
-        $ostream = fopen($tmpfile, 'wb');
-        if ($istream && $ostream) {
-            pipe_streams($istream, $ostream);
-            fclose($istream);
-            fclose($ostream);
-        }
+        Stdio::fpipe($file,$tmpfile);
 
         $imagick_path = get_config('system', 'imagick_convert_path');
         if ($imagick_path && @file_exists($imagick_path)) {

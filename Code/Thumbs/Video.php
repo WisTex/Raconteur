@@ -2,6 +2,8 @@
 
 namespace Code\Thumbs;
 
+use Code\Storage\Stdio;
+
 class Video
 {
 
@@ -27,14 +29,8 @@ class Video
         $tmpfile = $file . $extension;
         $outfile = $file . '.jpg';
 
-        $istream = fopen($file, 'rb');
-        $ostream = fopen($tmpfile, 'wb');
-        if ($istream && $ostream) {
-            pipe_streams($istream, $ostream);
-            fclose($istream);
-            fclose($ostream);
-        }
-
+        Stdio::fpipe($file,$tmpfile);
+    
         /*
          * Note: imagick convert may try to call 'ffmpeg' (or other conversion utilities) under
          * the covers for this particular operation. If this is not installed or not in the path

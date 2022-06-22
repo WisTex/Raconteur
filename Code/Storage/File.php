@@ -203,7 +203,7 @@ class File extends DAV\Node implements DAV\IFile {
 					if (is_resource($data)) {
 						$fp = fopen($f,'wb');
 						if ($fp) {
-							pipe_streams($data,$fp);
+							Stdio::pipe_streams($data,$fp);
 							fclose($fp);
 						}
 					}
