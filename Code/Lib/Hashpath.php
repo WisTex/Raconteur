@@ -2,6 +2,8 @@
 
 namespace Code\Lib;
 
+use Code\Storage\Stdio;
+
 /*
  * Code\Lib\Hashpath
  *
@@ -24,7 +26,6 @@ namespace Code\Lib;
  *    path/7d/7d1a54127b222502f5b79b5fb0803061152a44f92b37e23c6527baf665d4da9a
  *    path/7d/1a/54/7d1a54127b222502f5b79b5fb0803061152a44f92b37e23c6527baf665d4da9a
  *
- * see also: boot.php:os_mkdir() - here we provide the equivalent of mkdir -p with permissions of 770.
  *
  */
 
@@ -49,7 +50,7 @@ class Hashpath
         } while ($sluglen);
 
         if ($mkdir) {
-            os_mkdir($prefix, STORAGE_DEFAULT_PERMISSIONS, true);
+            Stdio::mkdir($prefix, STORAGE_DEFAULT_PERMISSIONS, true);
         }
 
         return $prefix . '/' . $hash;
