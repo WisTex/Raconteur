@@ -10,8 +10,9 @@
  * Also provides a function for OpenID identiy matching.
  */
 
-use Code\Lib\Libzot;
+use Code\Lib\Account;
 use Code\Lib\Channel;
+use Code\Lib\Libzot;
 use Code\Extend\Hook;
 
 require_once('include/api_auth.php');
@@ -261,15 +262,10 @@ if (
     // already logged in user returning
 
     if (x($_SESSION, 'uid') || x($_SESSION, 'account_id')) {
-        App::$session->return_check();
 
-        $r = q(
-            "select * from account where account_id = %d limit 1",
-            intval($_SESSION['account_id'])
-        );
-
-        if (($r) && (($r[0]['account_flags'] == ACCOUNT_OK) || ($r[0]['account_flags'] == ACCOUNT_UNVERIFIED))) {
-            App::$account = $r[0];
+        $r = Account::from_id($_SESSION['account_id']);
+        if (($r) && (($r['account_flags'] == ACCOUNT_OK) || ($r['account_flags'] == ACCOUNT_UNVERIFIED))) {
+            App::$account = $r;
             $login_refresh = false;
             if (! x($_SESSION, 'last_login_date')) {
                 $_SESSION['last_login_date'] = datetime_convert('UTC', 'UTC');
@@ -280,7 +276,7 @@ if (
                 $login_refresh = true;
             }
             $ch = (($_SESSION['uid']) ? Channel::from_id($_SESSION['uid']) : null);
-            authenticate_success($r[0], false, $ch, false, false, $login_refresh);
+            authenticate_success(App::$account, false, $ch, false, false, $login_refresh);
         } else {
             $_SESSION['account_id'] = 0;
             App::$session->nuke();
