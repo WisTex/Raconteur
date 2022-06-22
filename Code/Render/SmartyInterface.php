@@ -6,6 +6,7 @@ namespace Code\Render;
 
 use Smarty;
 use App;
+use Code\Storage\Stdio;
 
 class SmartyInterface extends Smarty
 {
@@ -38,7 +39,7 @@ class SmartyInterface extends Smarty
             $basecompiledir = str_replace('Code', '', dirname(__DIR__)) . TEMPLATE_BUILD_PATH;
         }
         if (!is_dir($basecompiledir)) {
-            @os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
+            Stdio::mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
         }
         if (!is_dir($basecompiledir)) {
             echo "<b>ERROR:</b> folder <tt>$basecompiledir</tt> does not exist.";

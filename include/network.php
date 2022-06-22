@@ -15,6 +15,7 @@ use Code\Lib\Addon;
 use Code\Web\HTTPSig;
 use Code\Daemon\Run;
 use Code\Extend\Hook;
+use Code\Storage\Stdio;
 
 /**
  * @file include/network.php
@@ -1725,12 +1726,7 @@ function deliverable_singleton($channel_id, $xchan)
 function get_repository_version($branch = 'release')
 {
 
-	if (PLATFORM_NAME === 'streams') {
-		$path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/@$branch/version.php";
-	}
-	else {
-        $path = "https://raw.codeberg.page/zot/" . ((PLATFORM_NAME === 'mistpark') ? 'misty' : PLATFORM_NAME) . "/@$branch/version.php";
-	}
+    $path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/@$branch/version.php";
 
     $x = z_fetch_url($path);
     if ($x['success']) {
@@ -1752,21 +1748,11 @@ function network_to_name($s)
 {
 
     $nets = array(
-        NETWORK_DFRN        => t('Friendica'),
-        NETWORK_FRND        => t('Friendica'),
-        NETWORK_OSTATUS     => t('OStatus'),
-        NETWORK_GNUSOCIAL   => t('GNU-Social'),
         NETWORK_FEED        => t('RSS/Atom'),
         NETWORK_ACTIVITYPUB => t('ActivityPub'),
-        NETWORK_MAIL        => t('Email'),
         NETWORK_DIASPORA    => t('Diaspora'),
-        NETWORK_FACEBOOK    => t('Facebook'),
-		NETWORK_NOMAD       => t('Nomad'),
-        NETWORK_ZOT6        => t('Nomad'),
-        NETWORK_ZOT         => t('Zot'),
-        NETWORK_LINKEDIN    => t('LinkedIn'),
-        NETWORK_XMPP        => t('XMPP/IM'),
-        NETWORK_MYSPACE     => t('MySpace'),
+        NETWORK_NOMAD       => t('Nomad'),
+        NETWORK_ZOT6        => t('Zot6'),
     );
 
     /**
@@ -1988,7 +1974,7 @@ function jsonld_document_loader($url)
 
     $cachepath = 'cache/ldcache';
     if (! is_dir($cachepath)) {
-        os_mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
     $filename = $cachepath . '/' . urlencode($url);

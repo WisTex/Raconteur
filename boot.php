@@ -267,52 +267,19 @@ define ( 'MENU_BOOKMARK',        0x0002 );
  * Network and protocol family types
  */
 
-define ( 'NETWORK_FRND',             'friendica-over-diaspora');    // Friendica, Mistpark, other DFRN implementations
-define ( 'NETWORK_DFRN',             'dfrn');    // Friendica, Mistpark, other DFRN implementations
 define ( 'NETWORK_ZOT',              'zot');     // Zot!
 define ( 'NETWORK_ZOT6',             'zot6');
 define ( 'NETWORK_NOMAD',            'nomad');
-define ( 'NETWORK_OSTATUS',          'stat');    // status.net, identi.ca, GNU-social, other OStatus implementations
 define ( 'NETWORK_GNUSOCIAL',        'gnusoc');    // status.net, identi.ca, GNU-social, other OStatus implementations
 define ( 'NETWORK_FEED',             'rss');    // RSS/Atom feeds with no known "post/notify" protocol
 define ( 'NETWORK_DIASPORA',         'diaspora');    // Diaspora
 define ( 'NETWORK_ACTIVITYPUB',      'activitypub');
-define ( 'NETWORK_MAIL',             'mail');    // IMAP/POP
-define ( 'NETWORK_MAIL2',            'mai2');    // extended IMAP/POP
-define ( 'NETWORK_FACEBOOK',         'face');    // Facebook API
-define ( 'NETWORK_LINKEDIN',         'lnkd');    // LinkedIn
-define ( 'NETWORK_XMPP',             'xmpp');    // XMPP
-define ( 'NETWORK_MYSPACE',          'mysp');    // MySpace
-define ( 'NETWORK_GPLUS',            'goog');    // Google+
-define ( 'NETWORK_PHANTOM',          'unkn');    // Place holder
 
 
 /**
  * Permissions
  */
 
-define ( 'PERMS_R_STREAM',         0x00001);
-define ( 'PERMS_R_PROFILE',        0x00002);
-define ( 'PERMS_R_PHOTOS',         0x00004);
-define ( 'PERMS_R_ABOOK',          0x00008);
-
-define ( 'PERMS_W_STREAM',         0x00010);
-define ( 'PERMS_W_WALL',           0x00020);
-define ( 'PERMS_W_TAGWALL',        0x00040);
-define ( 'PERMS_W_COMMENT',        0x00080);
-define ( 'PERMS_W_MAIL',           0x00100);
-define ( 'PERMS_W_PHOTOS',         0x00200);
-define ( 'PERMS_W_CHAT',           0x00400);
-define ( 'PERMS_A_DELEGATE',       0x00800);
-
-define ( 'PERMS_R_STORAGE',        0x01000);
-define ( 'PERMS_W_STORAGE',        0x02000);
-define ( 'PERMS_R_PAGES',          0x04000);
-define ( 'PERMS_W_PAGES',          0x08000);
-define ( 'PERMS_A_REPUBLISH',      0x10000);
-define ( 'PERMS_W_LIKE',           0x20000);
-
-// General channel permissions
                                         // 0 = Only you
 define ( 'PERMS_PUBLIC'     , 0x0001 ); // anybody
 define ( 'PERMS_NETWORK'    , 0x0002 ); // anybody in this network
@@ -1417,14 +1384,6 @@ function absurl($path) {
 
     return $path;
 }
-
-function os_mkdir($path, $mode = 0777, $recursive = false) {
-    $oldumask = @umask(0);
-    $result = @mkdir($path, $mode, $recursive);
-    @umask($oldumask);
-    return $result;
-}
-
 
 /**
  * @brief Recursively delete a directory.

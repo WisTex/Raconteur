@@ -59,26 +59,6 @@ class ActivityStreams
         }
 
         if ($this->data) {
-            // verify and unpack JSalmon signature if present
-            // This will only be the case for Zot6 packets
-
-            if (is_array($this->data) && array_key_exists('signed', $this->data)) {
-                $ret = JSalmon::verify($this->data);
-                $tmp = JSalmon::unpack($this->data['data']);
-                if ($ret && $ret['success']) {
-                    if ($ret['signer']) {
-                        logger('Unpacked: ' . json_encode($tmp, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), LOGGER_DATA, LOG_DEBUG);
-                        $saved = json_encode($this->data, JSON_UNESCAPED_SLASHES);
-                        $this->data = $tmp;
-                        $this->meta['signer'] = $ret['signer'];
-                        $this->meta['signed_data'] = $saved;
-                        if ($ret['hubloc']) {
-                            $this->meta['hubloc'] = $ret['hubloc'];
-                        }
-                    }
-                }
-            }
-
             // This indicates only that we have sucessfully decoded JSON.
             $this->valid = true;
 
@@ -90,6 +70,30 @@ class ActivityStreams
                     $this->deleted = $this->data['actor'];
                     $this->valid = false;
                 }
+            }
+
+            // verify and unpack JSalmon signature if present
+            // This will only be the case for Zot6 packets
+
+            if ($this->valid && is_array($this->data) && array_key_exists('signed', $this->data)) {
+                $ret = JSalmon::verify($this->data);
+                $tmp = JSalmon::unpack($this->data['data']);
+                if ($ret && $ret['success'] && $tmp) {
+                    if ($ret['signer']) {
+                        logger('Unpacked: ' . json_encode($tmp, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT), LOGGER_DATA, LOG_DEBUG);
+                        $saved = json_encode($this->data, JSON_UNESCAPED_SLASHES);
+                        $this->data = $tmp;
+                        $this->meta['signer'] = $ret['signer'];
+                        $this->meta['signed_data'] = $saved;
+                        if ($ret['hubloc']) {
+                            $this->meta['hubloc'] = $ret['hubloc'];
+                        }
+                    }
+                }
+                else {
+                    logger('JSalmon verification failure.');
+                    $this->valid = false;
+                }                
             }
         }
 

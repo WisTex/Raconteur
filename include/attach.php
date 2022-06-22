@@ -18,6 +18,8 @@ use Code\Daemon\Run;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
+use Code\Storage\Stdio;
+
 require_once('include/permissions.php');
 require_once('include/security.php');
 
@@ -870,13 +872,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
     $display_path = ltrim($pathname . '/' . $filename, '/');
 
     if ($src) {
-        $istream = @fopen($src, 'rb');
-        $ostream = @fopen($os_basepath . $os_relpath, 'wb');
-        if ($istream && $ostream) {
-            pipe_streams($istream, $ostream, 65535);
-            fclose($istream);
-            fclose($ostream);
-        }
+        Stdio::fpipe($src, $os_basepath . $os_relpath);
     }
 
     if (array_key_exists('created', $arr)) {
@@ -1207,7 +1203,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
     logger('basepath: ' . $os_basepath, LOGGER_DEBUG);
 
     if (! is_dir($os_basepath)) {
-        os_mkdir($os_basepath, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir($os_basepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
     $os_basepath .= '/';
@@ -1321,7 +1317,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
     );
 
     if ($r) {
-        if (os_mkdir($os_basepath . $os_path, STORAGE_DEFAULT_PERMISSIONS, true)) {
+        if (Stdio::mkdir($os_basepath . $os_path, STORAGE_DEFAULT_PERMISSIONS, true)) {
             $ret['success'] = true;
 
             // update the parent folder's lastmodified timestamp
@@ -1380,7 +1376,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null)
     logger('basepath: ' . $basepath, LOGGER_DEBUG);
 
     if (! is_dir($basepath)) {
-        os_mkdir($basepath, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir($basepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
     if (! perm_is_allowed($channel_id, $observer_hash, 'write_storage')) {
@@ -1868,23 +1864,6 @@ function find_filename_by_hash($channel_id, $attachHash)
     }
 
     return $filename;
-}
-
-/**
- * @brief Pipes $in to $out in 16KB chunks.
- *
- * @param resource $in File pointer of input
- * @param resource $out File pointer of output
- * @param int $bufsize size of chunk, default 16384
- * @return number with the size
- */
-function pipe_streams($in, $out, $bufsize = 16384)
-{
-    $size = 0;
-    while (!feof($in)) {
-        $size += fwrite($out, fread($in, $bufsize));
-    }
-    return $size;
 }
 
 /**
@@ -2812,7 +2791,7 @@ function save_chunk($channel, $start, $end, $len)
     $tmp_path = $_FILES['files']['tmp_name'];
     $new_base = 'cache/' . $channel['channel_address'] . '/tmp';
 
-    os_mkdir($new_base, STORAGE_DEFAULT_PERMISSIONS, true);
+    Stdio::mkdir($new_base, STORAGE_DEFAULT_PERMISSIONS, true);
 
     if (! is_dir($new_base)) {
         logger('directory create failed for ' . $new_base);

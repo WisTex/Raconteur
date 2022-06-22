@@ -5,7 +5,8 @@ namespace Code\Module;
 use Code\Web\Controller;
 use Code\Web\HTTPSig;
 use Code\Lib\Channel;
-
+use Code\Storage\Stdio;
+    
 /**
  * module: getfile
  *
@@ -95,17 +96,10 @@ class Getfile extends Controller
 
                 if (intval($r[0]['os_storage'])) {
                     $fname = dbunescbin($r[0]['content']);
-                    if (strpos($fname, 'store') !== false) {
-                        $istream = fopen($fname, 'rb');
-                    } else {
-                        $istream = fopen('store/' . $channel['channel_address'] . '/' . $fname, 'rb');
-                    }
-                    $ostream = fopen('php://output', 'wb');
-                    if ($istream && $ostream) {
-                        pipe_streams($istream, $ostream);
-                        fclose($istream);
-                        fclose($ostream);
-                    }
+                    Stdio::fpipe((strpos($fname, 'store') !== false)
+                        ? $fname
+                        : 'store/' . $channel['channel_address'] . '/' . $fname,
+                        'php://output');
                 } else {
                     echo dbunescbin($r[0]['content']);
                 }
@@ -125,17 +119,10 @@ class Getfile extends Controller
         header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
         if (intval($r['data']['os_storage'])) {
             $fname = dbunescbin($r['data']['content']);
-            if (strpos($fname, 'store') !== false) {
-                $istream = fopen($fname, 'rb');
-            } else {
-                $istream = fopen('store/' . $channel['channel_address'] . '/' . $fname, 'rb');
-            }
-            $ostream = fopen('php://output', 'wb');
-            if ($istream && $ostream) {
-                pipe_streams($istream, $ostream);
-                fclose($istream);
-                fclose($ostream);
-            }
+            Stdio::fpipe((strpos($fname, 'store') !== false)
+                ? $fname
+                : 'store/' . $channel['channel_address'] . '/' . $fname,
+                'php://output');
         } else {
             echo dbunescbin($r['data']['content']);
         }

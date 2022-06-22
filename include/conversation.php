@@ -828,12 +828,7 @@ function best_link_url($item)
 
     if ((local_channel()) && (local_channel() == $item['uid'])) {
         if (isset(App::$contacts) && x(App::$contacts, $clean_url)) {
-            if (App::$contacts[$clean_url]['network'] === NETWORK_DFRN) {
-                $best_url = z_root() . '/redir/' . App::$contacts[$clean_url]['id'];
-                $sparkle = true;
-            } else {
-                $best_url = App::$contacts[$clean_url]['url'];
-            }
+            $best_url = App::$contacts[$clean_url]['url'];
         }
     }
     if (! $best_url) {

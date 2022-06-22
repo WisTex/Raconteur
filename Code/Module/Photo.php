@@ -10,6 +10,7 @@ use Code\Lib\Channel;
 use Code\Lib\LDSignatures;
 use Code\Web\HTTPSig;
 use Code\Extend\Hook;
+use Code\Storage\Stdio;
 
 require_once('include/security.php');
 require_once('include/attach.php');
@@ -306,17 +307,10 @@ class Photo extends Controller
         // If it's a file resource, stream it.
 
         if ($streaming && $channel) {
-            if (strpos($streaming, 'store') !== false) {
-                $istream = fopen($streaming, 'rb');
-            } else {
-                $istream = fopen('store/' . $channel['channel_address'] . '/' . $streaming, 'rb');
-            }
-            $ostream = fopen('php://output', 'wb');
-            if ($istream && $ostream) {
-                pipe_streams($istream, $ostream);
-                fclose($istream);
-                fclose($ostream);
-            }
+            Stdio::fpipe((strpos($streaming, 'store') !== false)
+                ? $streaming
+                : 'store/' . $channel['channel_address'] . '/' . $streaming,
+                'php://output');
         } else {
             echo $data;
         }

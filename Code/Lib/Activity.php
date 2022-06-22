@@ -8,6 +8,7 @@ use Code\Access\Permissions;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Daemon\Run;
+use Code\Lib as Zlib;
 use Code\Lib\PConfig;
 use Code\Lib\XConfig;
 use Code\Lib\Config;
@@ -4450,10 +4451,10 @@ class Activity
                         $item['body'] .= "\n\n" . $s->bbcode();
                         $att = $s->get_attach();
                         if (isset($item['attach'])) {
-                            $item['attach'] = array_merge( $item['attach'], $att);
+                            $item['attach'] = array_merge( $item['attach'], ($att) ? $att : []);
                         }
                         else {
-                            $item['attach'] = [ $att ];
+                            $item['attach'] = ($att) ? [ $att ] : [];
                         }
                     }
                 }

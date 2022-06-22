@@ -2,7 +2,7 @@
 
 use Code\Lib\Channel;
 use Code\Extend\Hook;
-        
+use Code\Storage\Stdio;        
 /**
  * @file include/security.php
  *
@@ -332,7 +332,7 @@ function change_channel($change_channel)
             App::set_perms(get_all_perms(local_channel(), $hash));
         }
         if (! is_dir('store/' . $r[0]['channel_address'])) {
-            @os_mkdir('store/' . $r[0]['channel_address'], STORAGE_DEFAULT_PERMISSIONS, true);
+            Stdio::mkdir('store/' . $r[0]['channel_address'], STORAGE_DEFAULT_PERMISSIONS, true);
         }
 
         $arr = [ 'channel_id' => $change_channel, 'chanx' => $ret ];

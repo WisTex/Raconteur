@@ -17,6 +17,7 @@ use Code\Lib\System;
 use Code\Web\Controller;
 use Code\Lib\Channel;
 use Code\Render\Theme;
+use Code\Storage\Stdio;
 
 /**
  * @brief Initialisation for the setup module.
@@ -640,7 +641,7 @@ class Setup extends Controller
         $status = true;
         $help = '';
 
-        @os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
 
         if (!is_writable(TEMPLATE_BUILD_PATH)) {
             $status = false;
@@ -662,7 +663,7 @@ class Setup extends Controller
         $status = true;
         $help = '';
 
-        @os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir('store', STORAGE_DEFAULT_PERMISSIONS, true);
 
         if (!is_writable('store')) {
             $status = false;

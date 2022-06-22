@@ -13,6 +13,7 @@ use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Lib\Menu;
 use Code\Lib\MenuItem;
+use Code\Storage\Stdio;
 
 /**
  * @brief Import a channel.
@@ -1645,7 +1646,7 @@ function sync_files($channel, $files)
                     // is this a directory?
 
                     if ($att['filetype'] === 'multipart/mixed' && $att['is_dir']) {
-                        os_mkdir($newfname, STORAGE_DEFAULT_PERMISSIONS, true);
+                        Stdio::mkdir($newfname, STORAGE_DEFAULT_PERMISSIONS, true);
                         $attachment_stored = true;
                         continue;
                     } else {

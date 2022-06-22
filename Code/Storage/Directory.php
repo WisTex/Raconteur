@@ -290,7 +290,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         if (is_resource($data)) {
             $fp = fopen($f, 'wb');
             if ($fp) {
-                pipe_streams($data, $fp);
+                Stdio::pipe_streams($data, $fp);
                 fclose($fp);
             }
             $size = filesize($f);
