@@ -2913,6 +2913,7 @@ function tgroup_check($uid, $item) {
 		return true;
 	}
 
+    $tag_result = false;
 	$terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_HASHTAG) : false);
 	if ($terms) {
 		$followed_tags = PConfig::Get($uid,'system','followed_tags');
@@ -2923,13 +2924,17 @@ function tgroup_check($uid, $item) {
 		foreach ($terms as $term) {
 			foreach ($followed_tags as $tag) {
 				if (strcasecmp($term['term'],$tag) === 0) {
-					return true;
+					$tag_result = true;
 				}
 			}
 		}
-	}
-
-	return false;
+        $unless = intval(get_pconfig($channel['channel_id'], 'system', 'unless_tag_count',
+            get_config('system', 'unless_tag_count', 20)));
+        if ($unless && count($terms) > $unless) {
+            $tag_result= false;
+	    }
+    }
+	return $tag_result;
 }
 
 
@@ -2958,6 +2963,10 @@ function i_am_mentioned($channel,$item) {
 			}
 		}
 	}
+    $unless = intval(get_pconfig($channel['channel_id'], 'system', 'unless_mention_count', get_config('system', 'unless_mention_count', 20)));
+    if ($unless && count($terms) > $unless) {
+        $tagged = false;
+    }
 	return $tagged;
 }
 

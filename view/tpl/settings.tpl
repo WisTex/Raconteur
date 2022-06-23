@@ -55,7 +55,9 @@
 						{{include file="field_input.tpl" field=$close_comments}}
 						{{include file="field_select.tpl" field=$mail_perms}}
 						{{include file="field_checkbox.tpl" field=$permit_all_mentions}}
+						{{include file="field_input.tpl" field=$unless_mention_count}}
 						{{include file="field_input.tpl" field=$followed_tags}}
+						{{include file="field_input.tpl" field=$unless_tag_count}}
 						
 						<div id="advanced-perm" style="display:{{if $permissions_set}}none{{else}}block{{/if}};">
 							<div class="form-group">
