@@ -2964,7 +2964,7 @@ function i_am_mentioned($channel,$item) {
 		}
 	}
     $unless = intval(get_pconfig($channel['channel_id'], 'system', 'unless_mention_count', get_config('system', 'unless_mention_count', 20)));
-    if ($unless && count($terms) > $unless) {
+    if ($unless && $terms && count($terms) > $unless) {
         $tagged = false;
     }
 	return $tagged;
