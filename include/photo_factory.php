@@ -3,9 +3,11 @@
 use Code\Photo\PhotoDriver;
 use Code\Photo\PhotoGd;
 use Code\Photo\PhotoImagick;
+use Code\Lib\Config;
 use Code\Lib\Img_cache;
 use Code\Lib\Hashpath;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 
 /**
  * @brief Return a PhotoDriver object.
@@ -240,7 +242,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
     $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 
-    $result = z_fetch_url($src, true);
+    $result = Url::get($src);
     
     if ($result['success']) {
         $type = guess_image_type($src, $result['header']);
@@ -274,30 +276,19 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
                 } else {
                     $failure[] = 'No dimensions';
                 }
-                $p = [
-                    'xchan'       => $xchan,
-                    'resource_id' => $hash,
-                    'filename'    => basename($src),
-                    'album'       => EMPTY_STR,
-                    'photo_usage' => 0,
-                    'imgscale'    => 4,
-                    'edited'      => $modified,
-                ];
-                $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+                $savepath = $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
                 $r = $img->saveImage($savepath, $animated);
                 if ($r === false) {
                     $failure[] = 'Storage failure size 4';
                 }
                 $img->scaleImage(80);
-                $p['imgscale'] = 5;
-                $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+                $savepath = $path . '-5' . (($thing) ? '.obj' : EMPTY_STR);
                 $r = $img->saveImage($savepath, $animated);
                 if ($r === false) {
                     $failure[] = 'Storage failure size 5';
                 }
                 $img->scaleImage(48);
-                $p['imgscale'] = 6;
-                $savepath = $path . '-' . $p['imgscale'] . (($thing) ? '.obj' : EMPTY_STR);
+                $savepath = $path . '-6' . (($thing) ? '.obj' : EMPTY_STR);
                 $r = $img->saveImage($savepath, $animated);
                 if ($r === false) {
                     $failure[] = 'Storage failure size 6';
@@ -328,6 +319,59 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     return([$photo, $thumb, $micro, $type, ($failure ? true : false)]);
 }
 
+
+
+function import_remote_cover_photo($src, $xchan)
+{
+
+    $failure  = [];
+    $type = EMPTY_STR;
+
+    if (!Config::Get('system','remote_cover_photos')) {
+        return false;
+    }
+
+    logger(sprintf('importing %s for %s', $src, $xchan), LOGGER_DEBUG);
+
+    $path = Hashpath::path($xchan, 'cache/xp', 2);
+    $hash = basename($path);
+
+    // Maybe it's already a cached xchan photo on our site. Do nothing.
+
+    if (strpos($src, z_root() . '/xp/') === 0) {
+        return false;
+    }
+
+    $orig = $path . '.orig';
+
+    $fp = fopen($orig, 'wb');
+    if (!$fp) {
+        logger('failed to create storage file.', LOGGER_NORMAL);
+        return false;
+    }
+    $result = Url::get($src, ['filep' => $fp]);
+    fclose($fp);
+
+    if ($result['success']) {
+        $info = getimagesize($orig);
+        if (!$info) {
+            logger('storage failed.');
+            return false;
+        }
+        $type = $info['mime'];
+        $imagick_path = Config::Get('system','imagick_convert_path');
+        if ($imagick_path && file_exists($imagick_path)) {
+            exec($imagick_path . ' '
+                . escapeshellarg(PROJECT_BASE . '/' . $orig)
+                . ' -resize 425x139 '
+                . escapeshellarg(PROJECT_BASE . '/' . $path . '-9')
+            );
+        }
+    }
+    unlink($orig);
+    return file_exists($path . '-9');
+}
+
 /**
   * @brief Import channel photo from a URL.
  *
@@ -341,7 +385,7 @@ function import_channel_photo_from_url($photo, $aid, $uid)
     $type = null;
 
     if ($photo) {
-        $result = z_fetch_url($photo, true);
+        $result = Url::get($photo);
 
         if ($result['success']) {
             $img_str = $result['body'];

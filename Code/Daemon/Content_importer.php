@@ -4,6 +4,7 @@ namespace Code\Daemon;
 
 use Code\Web\HTTPSig;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 
 require_once('include/cli_startup.php');
 require_once('include/attach.php');
@@ -39,7 +40,7 @@ class Content_importer
 
         $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
-        $x = z_fetch_url($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page, false, $redirects, [ 'headers' => $headers ]);
+        $x = Url::get($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page, [ 'headers' => $headers ]);
 
         if (! $x['success']) {
             logger('no API response', LOGGER_DEBUG);

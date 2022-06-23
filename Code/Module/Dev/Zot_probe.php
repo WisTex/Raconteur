@@ -3,6 +3,7 @@
 namespace Code\Module\Dev;
 
 use App;
+use Code\Lib\Url;
 use Code\Lib\ZotURL;
 use Code\Lib\Zotfinger;
 use Code\Web\Controller;
@@ -36,8 +37,7 @@ class Zot_probe extends Controller
 
 				$headers = 'Accept: application/x-nomad+json, application/x-zot+json, application/jrd+json, application/json';
 
-                $redirects = 0;
-                $x = z_fetch_url($resource, true, $redirects, ['headers' => [$headers]]);
+                $x = Url::get($resource, ['headers' => [$headers]]);
             }
 
             if ($x['success']) {
