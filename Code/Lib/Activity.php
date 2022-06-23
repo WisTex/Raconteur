@@ -19,6 +19,7 @@ use Code\Lib\Libzot;
 use Code\Lib\Nodeinfo;
 use Code\Lib\System;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 use Code\Extend\Hook;
 use Emoji;
 
@@ -78,7 +79,6 @@ class Activity
 
     public static function fetch($url, $channel = null, $hub = null, $debug = false)
     {
-        $redirects = 0;
         if (!$url) {
             return null;
         }
@@ -139,7 +139,7 @@ class Activity
                 $headers['Authorization'] = 'Bearer ' . $token;
             }
             $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
-            $x = z_fetch_url($url, true, $redirects, ['headers' => $h]);
+            $x = Url::get($url, ['headers' => $h]);
         }
 
         if ($x['success']) {
@@ -3289,7 +3289,7 @@ class Activity
                         $purl = $act->obj['url'];
                     }
                     if ($purl) {
-                        $li = z_fetch_url(z_root() . '/linkinfo?binurl=' . bin2hex($purl));
+                        $li = Url::get(z_root() . '/linkinfo?binurl=' . bin2hex($purl));
                         if ($li['success'] && $li['body']) {
                             $s['body'] .= "\n" . $li['body'];
                         } else {

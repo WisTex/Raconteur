@@ -2,7 +2,9 @@
 
 namespace Code\Storage;
 
-// The Hubzilla CalDAV client will store calendar information in the 'cal' DB table.
+use Code\Lib\Url;
+    
+// The CalDAV client will store calendar information in the 'cal' DB table.
 // Event information will remain in the 'event' table. In order to implement CalDAV on top of our
 // existing system, there is an event table column called vdata. This will hold the "one true record"
 // of the event in VCALENDAR format. When we receive a foreign event, we will pick out the fields
@@ -102,12 +104,8 @@ class CalDAVClient
 
         $auth = $this->username . ':' . $this->password;
 
-        $recurse = 0;
-
-        $x = z_fetch_url(
+        $x = Url::get(
             $this->url,
-            true,
-            $recurse,
             ['headers' => $headers,
                 'http_auth' => $auth,
                 'custom' => 'PROPFIND',
@@ -143,10 +141,8 @@ class CalDAVClient
         $auth = $this->username . ':' . $this->password;
 
         $recurse = 0;
-        $x = z_fetch_url(
+        $x = Url::get(
             $this->url,
-            true,
-            $recurse,
             ['headers' => $headers,
                 'http_auth' => $auth,
                 'custom' => 'REPORT',

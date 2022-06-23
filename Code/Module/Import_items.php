@@ -5,7 +5,7 @@ namespace Code\Module;
 use App;
 use Code\Web\Controller;
 use Code\Render\Theme;
-
+use Code\Lib\Url;
 
 require_once('include/import.php');
 
@@ -67,13 +67,11 @@ class Import_items extends Controller
 
             $scheme = 'https://';
             $api_path = '/api/red/channel/export/items?f=&zap_compat=1&channel=' . $channelname . '&year=' . intval($year);
-            $binary = false;
-            $redirects = 0;
             $opts = array('http_auth' => $email . ':' . $password);
             $url = $scheme . $servername . $api_path;
-            $ret = z_fetch_url($url, $binary, $redirects, $opts);
+            $ret = Url::get($url, $opts);
             if (!$ret['success']) {
-                $ret = z_fetch_url('http://' . $servername . $api_path, $binary, $redirects, $opts);
+                $ret = Url::get('http://' . $servername . $api_path, $opts);
             }
             if ($ret['success']) {
                 $data = $ret['body'];

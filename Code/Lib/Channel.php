@@ -19,6 +19,7 @@ use Code\Access\PermissionLimits;
 use Code\Access\Permissions;
 use Code\Daemon\Run;
 use Code\Lib\System;
+use Code\Lib\Url;
 use Code\Render\Comanche;
 use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
@@ -1615,7 +1616,7 @@ class Channel
         }
         $url = $r[0]['hubloc_url'] . '/online/' . substr($webbie, 0, strpos($webbie, '@'));
 
-        $x = z_fetch_url($url);
+        $x = Url::get($url);
         if ($x['success']) {
             $j = json_decode($x['body'], true);
             if ($j) {

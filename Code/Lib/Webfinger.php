@@ -2,6 +2,8 @@
 
 namespace Code\Lib;
 
+use Code\Lib\Url;
+
 /**
  * @brief Fetch and return a webfinger for a resource
  *
@@ -36,8 +38,8 @@ class Webfinger
 
         $url = 'https://' . self::$server . '/.well-known/webfinger?f=&resource=' . self::$resource;
 
-        $counter = 0;
-        $s = z_fetch_url($url, false, $counter, ['headers' => ['Accept: application/jrd+json, */*']]);
+
+        $s = Url::get($url, ['headers' => ['Accept: application/jrd+json, */*']]);
 
         if ($s['success']) {
             $j = json_decode($s['body'], true);

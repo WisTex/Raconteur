@@ -8,7 +8,7 @@ use DOMXPath;
 use Code\Lib\Cache;
 use Code\Extend\Hook;
 use Code\Render\Theme;
-
+use Code\Lib\Url;
 
 class Oembed
 {
@@ -178,11 +178,8 @@ class Oembed
 
             if ($action !== 'block') {
                 // try oembed autodiscovery
-                $redirects = 0;
-                $result = z_fetch_url(
+                $result = Url::get(
                     $furl,
-                    false,
-                    $redirects,
                     [
                         'timeout'        => 30,
                         'accept_content' => "text/*",
@@ -209,7 +206,7 @@ class Oembed
                         foreach ($entries as $e) {
                             $href = $e->getAttributeNode("href")->nodeValue;
 
-                            $x = z_fetch_url($href . '&maxwidth=' . App::$videowidth);
+                            $x = Url::get($href . '&maxwidth=' . App::$videowidth);
                             if ($x['success']) {
                                 $txt = $x['body'];
                             } else {
@@ -222,7 +219,7 @@ class Oembed
                         $entries = $xpath->query("//link[@type='text/json+oembed']");
                         foreach ($entries as $e) {
                             $href = $e->getAttributeNode("href")->nodeValue;
-                            $x = z_fetch_url($href . '&maxwidth=' . App::$videowidth);
+                            $x = Url::get($href . '&maxwidth=' . App::$videowidth);
                             if ($x['success']) {
                                 $txt = $x['body'];
                             } else {
@@ -275,7 +272,7 @@ class Oembed
                 // as the embed content - which will still need to be purified.
 
                 if (preg_match('#\<iframe(.*?)src\=[\'\"](.*?)[\'\"]#', $j['html'], $matches)) {
-                    $x = z_fetch_url($matches[2]);
+                    $x = Url::get($matches[2]);
                     $orig = $j['html'] = $x['body'];
                 }
 

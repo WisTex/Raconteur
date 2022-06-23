@@ -12,6 +12,7 @@ use Code\Access\PermissionLimits;
 use Code\Web\HTTPHeaders;
 use Code\Daemon\Run;
 use Code\Lib\ServiceClass;
+use Code\Lib\Url;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -1077,9 +1078,7 @@ function profile_photo_set_profile_perms($uid, $profileid = 0)
 
 function fetch_image_from_url($url, &$mimetype)
 {
-
-    $redirects = 0;
-    $x = z_fetch_url($url, true, $redirects, [ 'novalidate' => true ]);
+    $x = Url::get($url, [ 'novalidate' => true ]);
     if ($x['success']) {
         $ht = new HTTPHeaders($x['header']);
         $hdrs = $ht->fetcharr();

@@ -4,6 +4,7 @@ namespace Code\Lib;
 
 use Code\Web\HTTPSig;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 
 class ZotURL
 {
@@ -37,8 +38,6 @@ class ZotURL
 
             $m = parse_url($newurl);
 
-            $data = json_encode([ 'zot_token' => random_string() ]);
-
             if ($channel && $m) {
                 $headers = [
 					'Accept'           => 'application/x-nomad+json, application/x-zot+json', 
@@ -53,10 +52,7 @@ class ZotURL
                 $h = [ 'Accept: application/x-nomad+json, application/x-zot+json' ];
             }
 
-            $result = [];
-
-            $redirects = 0;
-            $x = z_post_url($newurl, $data, $redirects, [ 'headers' => $h  ]);
+            $x = Url::get($newurl, [ 'headers' => $h  ]);
             if ($x['success']) {
                 return $x;
             }
@@ -90,10 +86,8 @@ class ZotURL
 
             // first check sending hub since they have recently communicated with this object
 
-            $redirects = 0;
-
             if ($hub) {
-                $x = z_fetch_url($hub['hubloc_url'] . $path, false, $redirects);
+                $x = Url::get($hub['hubloc_url'] . $path);
                 $u = self::parse_response($x);
                 if ($u) {
                     return $u;

@@ -7,6 +7,7 @@ use Code\Lib\Config;
 use Code\Lib\Img_cache;
 use Code\Lib\Hashpath;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 
 /**
  * @brief Return a PhotoDriver object.
@@ -241,7 +242,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
     $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 
-    $result = z_fetch_url($src, true);
+    $result = Url::get($src);
     
     if ($result['success']) {
         $type = guess_image_type($src, $result['header']);
@@ -348,8 +349,7 @@ function import_remote_cover_photo($src, $xchan)
         logger('failed to create storage file.', LOGGER_NORMAL);
         return false;
     }
-    $redirects = 0;
-    $result = z_fetch_url($src, true, $redirects, ['filep' => $fp]);
+    $result = Url::get($src, ['filep' => $fp]);
     fclose($fp);
 
     if ($result['success']) {
@@ -385,7 +385,7 @@ function import_channel_photo_from_url($photo, $aid, $uid)
     $type = null;
 
     if ($photo) {
-        $result = z_fetch_url($photo, true);
+        $result = Url::get($photo);
 
         if ($result['success']) {
             $img_str = $result['body'];

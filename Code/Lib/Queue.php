@@ -4,11 +4,12 @@
 
 namespace Code\Lib;
 
-use Code\Lib\Libzot;
 use Code\Web\HTTPSig;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Channel;
+use Code\Lib\Libzot;
+use Code\Lib\Url;
 use Code\Nomad\Receiver;
 use Code\Nomad\NomadHandler;
 use Code\Extend\Hook;
@@ -235,7 +236,7 @@ class Queue
         // "post" queue driver - used for diaspora and friendica-over-diaspora communications.
 
         if ($outq['outq_driver'] === 'post') {
-            $result = z_post_url($outq['outq_posturl'], $outq['outq_msg']);
+            $result = Url::post($outq['outq_posturl'], $outq['outq_msg']);
             if ($result['success'] && $result['return_code'] < 300) {
                 logger('deliver: queue post success to ' . $outq['outq_posturl'], LOGGER_DEBUG);
                 if ($base) {
@@ -349,8 +350,6 @@ class Queue
                 return;
             }
 
-
-            $retries = 0;
             $m = parse_url($outq['outq_posturl']);
 
             $headers = [];
@@ -368,7 +367,7 @@ class Queue
                 self::remove($outq['outq_hash']);
             }
 
-            $result = z_post_url($outq['outq_posturl'], $outq['outq_msg'], $retries, ['headers' => $xhead]);
+            $result = Url::post($outq['outq_posturl'], $outq['outq_msg'], ['headers' => $xhead]);
 
             if ($result['success'] && $result['return_code'] < 300) {
                 logger('deliver: queue post success to ' . $outq['outq_posturl'], LOGGER_DEBUG);
@@ -427,7 +426,7 @@ class Queue
                     // update every queue entry going to this site with the most recent communication error
                     q(
                         "update dreport set dreport_log = '%s' where dreport_site = '%s'",
-                         dbesc(z_curl_error($result)),
+                        dbesc(Url::format_error($result)),
                         dbesc($dr[0]['dreport_site'])
                     );
                 }
@@ -508,7 +507,7 @@ class Queue
                 // update every queue entry going to this site with the most recent communication error
                 q(
                     "update dreport set dreport_log = '%s' where dreport_site = '%s'",
-                    dbesc(z_curl_error($result)),
+                    dbesc(Url::format_error($result)),
                     dbesc($dr[0]['dreport_site'])
                 );
 
