@@ -4071,7 +4071,7 @@ class Activity
                 }
             }
             if (array_key_exists('type', $a) && stripos($a['type'], 'activity') !== false) {
-                if (self::media_not_in_body($a['href'], $item['body'])) {
+                if (self::share_not_in_body($item['body'])) {
                     $item = self::get_quote($a['href'], $item);
                 }
             }
@@ -4102,6 +4102,16 @@ class Activity
             (strpos($body, ']' . $s_alt . '[/audio]') === false) &&
             (strpos($body, ']' . $s_alt . '[/zaudio]') === false)
         ) {
+            return true;
+        }
+        return false;
+    }
+
+    // check for the existence of existing media link in body
+
+    public static function share_not_in_body($body)
+    {
+        if (strpos($body, '[/share]') === false) {
             return true;
         }
         return false;
