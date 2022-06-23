@@ -634,7 +634,7 @@ class Activity
                 if ($att['type'] === 'PropertyValue') {
                     if (array_key_exists('name', $att) && $att['name']) {
                         $key = explode('.', $att['name']);
-                        if (count($key) === 3 && in_array($key[0], ['nomad', 'zot']) {
+                        if (count($key) === 3 && in_array($key[0], ['nomad', 'zot'])) {
                             $entry['cat'] = $key[1];
                             $entry['k'] = $key[2];
                             $entry['v'] = $att['value'];
