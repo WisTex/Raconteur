@@ -14,6 +14,7 @@ use Code\Lib\Socgraph;
 use Code\Lib\XConfig;
 use Code\Extend\Hook;
 use Code\Render\Theme;
+use Code\Lib\Url;
 
 
 require_once('include/bbcode.php');
@@ -280,7 +281,7 @@ class Directory extends Controller
 
             // logger('mod_directory: query: ' . $query);
 
-            $x = z_fetch_url($query);
+            $x = Url::get($query);
             // logger('directory: return from upstream: ' . print_r($x,true), LOGGER_DATA);
 
             if ($x['success']) {

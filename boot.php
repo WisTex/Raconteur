@@ -16,6 +16,7 @@ use Code\Lib\Navbar;
 use Code\Lib\Stringsjs;
 use Code\Extend\Hook;
 use Code\Lib\Head;
+use Code\Lib\Url;
 
 /**
  * @file boot.php
@@ -2457,10 +2458,10 @@ function z_get_temp_dir() {
  */
 function z_check_cert() {
     if(strpos(z_root(), 'https://') !== false) {
-        $x = z_fetch_url(z_root() . '/siteinfo.json');
+        $x = Url::get(z_root() . '/siteinfo');
         if(! $x['success']) {
             $recurse = 0;
-            $y = z_fetch_url(z_root() . '/siteinfo.json', false, $recurse, ['novalidate' => true]);
+            $y = Url::get(z_root() . '/siteinfo', ['novalidate' => true]);
             if($y['success'])
                 cert_bad_email();
         }

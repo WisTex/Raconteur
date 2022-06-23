@@ -5,7 +5,7 @@ namespace Code\Module;
 use Code\Lib\Libzotdir;
 use Code\Lib\AccessList;
 use Code\Web\Controller;
-
+use Code\Lib\Url;
 
 /**
  * @brief ACL selector json backend.
@@ -327,7 +327,7 @@ class Acloader extends Controller
             $query = $url . '?f=';
             $query .= '&name=' . urlencode($search) . "&limit=$count" . (($address) ? '&address=' . urlencode(punify($search)) : '');
 
-            $x = z_fetch_url($query);
+            $x = Url::get($query);
             if ($x['success']) {
                 $t = 0;
                 $j = json_decode($x['body'], true);

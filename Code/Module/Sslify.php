@@ -3,13 +3,14 @@
 namespace Code\Module;
 
 use Code\Web\Controller;
+use Code\Lib\Url;
 
 class Sslify extends Controller
 {
 
     public function init()
     {
-        $x = z_fetch_url($_REQUEST['url']);
+        $x = Url::get($_REQUEST['url']);
         if ($x['success']) {
             $h = explode("\n", $x['header']);
             foreach ($h as $l) {

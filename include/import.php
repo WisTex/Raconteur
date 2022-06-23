@@ -8,6 +8,7 @@ use Code\Lib\Connect;
 use Code\Lib\LibBlock;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;
+use Code\Lib\Url;
 use Code\Daemon\Run;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
@@ -1675,8 +1676,6 @@ function sync_files($channel, $files)
                             continue;
                         }
 
-                        $redirects = 0;
-
                         $m = parse_url($fetch_url);
 
                         $headers = [
@@ -1688,7 +1687,7 @@ function sync_files($channel, $files)
 
                         $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
-                        $x = z_post_url($fetch_url . '/' . $att['hash'], $parr, $redirects, [ 'filep' => $fp, 'headers' => $headers]);
+                        $x = Url::post($fetch_url . '/' . $att['hash'], $parr, [ 'filep' => $fp, 'headers' => $headers]);
 
                         fclose($fp);
 
@@ -1771,7 +1770,6 @@ function sync_files($channel, $files)
                             logger('failed to open storage file.', LOGGER_NORMAL, LOG_ERR);
                             continue;
                         }
-                        $redirects = 0;
 
                         $m = parse_url($fetch_url);
 
@@ -1784,7 +1782,7 @@ function sync_files($channel, $files)
 
                         $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
-                        $x = z_post_url($fetch_url . '/' . $att['hash'], $parr, $redirects, [ 'filep' => $fp, 'headers' => $headers]);
+                        $x = Url::post($fetch_url . '/' . $att['hash'], $parr, [ 'filep' => $fp, 'headers' => $headers]);
 
                         fclose($fp);
 

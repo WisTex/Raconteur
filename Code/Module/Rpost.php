@@ -10,6 +10,7 @@ use Code\Lib\Libzot;
 use Code\Lib\Navbar;
 use Code\Lib\Libacl;
 use Code\Lib\Addon;
+use Code\Lib\Url;
 use Code\Render\Theme;
 
     
@@ -212,7 +213,7 @@ class Rpost extends Controller
         $channel_acl = $acl->get();
 
         if ($_REQUEST['url']) {
-            $x = z_fetch_url(z_root() . '/linkinfo?f=&url=' . urlencode($_REQUEST['url']) . '&oembed=1&zotobj=1');
+            $x = Url::get(z_root() . '/linkinfo?f=&url=' . urlencode($_REQUEST['url']) . '&oembed=1&zotobj=1');
             if ($x['success']) {
                 $_REQUEST['body'] = $_REQUEST['body'] . $x['body'];
             }

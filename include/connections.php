@@ -9,7 +9,7 @@ use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Render\Theme;
-
+use Code\Lib\Url;
 
 function abook_store_lowlevel($arr)
 {
@@ -590,7 +590,7 @@ function random_profile()
             return EMPTY_STR; // Couldn't get a random channel
         }
         if ($checkrandom) {
-            $x = z_fetch_url($r[0]['xchan_url']);
+            $x = Url::get($r[0]['xchan_url']);
             if ($x['success']) {
                 return $r[0]['xchan_hash'];
             } else {

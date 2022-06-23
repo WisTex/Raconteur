@@ -11,6 +11,7 @@ use Code\Lib\ActivityStreams;
 use Code\Lib\Libzot;
 use Code\Lib\Channel;
 use Code\Lib\Oembed;
+use Code\Lib\Url;
 use Code\Lib as Zlib;
 use Code\Extend\Hook;
 
@@ -121,7 +122,7 @@ class Linkinfo extends Controller
             killme();
         }
 
-        $result = z_fetch_url($url, false, 0, ['novalidate' => true, 'nobody' => true]);
+        $result = Url::get($url, ['novalidate' => true, 'nobody' => true]);
         if ($result['success']) {
             $hdrs = [];
             $h = explode("\n", $result['header']);
@@ -169,7 +170,7 @@ class Linkinfo extends Controller
                     killme();
                 }
                 if (strtolower($type) === 'text/calendar') {
-                    $content = z_fetch_url($url, false, 0, array('novalidate' => true));
+                    $content = Url::get($url, ['novalidate' => true]);
                     if ($content['success']) {
                         $ev = ical_to_ev($content['body']);
                         if ($ev) {
@@ -423,7 +424,7 @@ class Linkinfo extends Controller
         $siteinfo = [];
 
 
-        $result = z_fetch_url($url, false, 0, array('novalidate' => true));
+        $result = Url::get($url, ['novalidate' => true]);
         if (!$result['success']) {
             return $siteinfo;
         }
