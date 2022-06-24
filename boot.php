@@ -2019,7 +2019,7 @@ function load_contact_links($uid) {
 
     $ret = [];
 
-    if(! $uid || x(App::$contacts,'empty'))
+    if (! $uid || x(App::$contacts,'empty')) 
         return;
 
 //  logger('load_contact_links');
@@ -2027,14 +2027,14 @@ function load_contact_links($uid) {
     $r = q("SELECT abook_id, abook_flags, abook_self, abook_incl, abook_excl, xchan_hash, xchan_photo_m, xchan_name, xchan_url, xchan_addr, xchan_network, xchan_type from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d ",
         intval($uid)
     );
-    if($r) {
-        foreach($r as $rv) {
+    if ($r) {
+        foreach ($r as $rv) {
             $ret[$rv['xchan_hash']] = $rv;
         }
     }
-    else
+    else {
         $ret['empty'] = true;
-
+    }
     App::$contacts = $ret;
 }
 

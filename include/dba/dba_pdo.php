@@ -92,9 +92,12 @@ class dba_pdo extends dba_driver
             $result = $this->db->query($sql, PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
+            // Filter error 1062 which happens on race conditions and should be inside a transaction
+            // and rolled back. Put the message in the regular logfile just in case it is not; but
+            // keep the dbfail.out file clean to discover new development issues and bad sql.
             if ($this->error) {
                 db_logger('dba_pdo: ERROR: ' . printable($sql) . "\n" . $this->error, LOGGER_NORMAL, LOG_ERR);
-                if (file_exists('dbfail.out')) {
+                if (file_exists('dbfail.out') && strpos($this->error, 'Duplicate entry') === false) {
                     file_put_contents('dbfail.out', datetime_convert() . "\n" . printable($sql) . "\n" . $this->error . "\n", FILE_APPEND);
                 }
             }
