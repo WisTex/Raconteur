@@ -3781,12 +3781,18 @@ function create_table_from_array($table, $arr, $binary_fields = [])
             $clean[$k] = dbesc($v);
         }
     }
+    q("START TRANSACTION");
     $r = dbq("INSERT INTO " . TQUOT . $table . TQUOT . " (" . TQUOT
         . implode(TQUOT . ', ' . TQUOT, array_keys($clean))
         . TQUOT . ") VALUES ('"
         . implode("', '", array_values($clean))
         . "')");
-
+    if ($r) {
+        q("COMMIT");
+    } else {
+        q("ROLLBACK");
+    }
+  
     return $r;
 }
 
