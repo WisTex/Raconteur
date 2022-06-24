@@ -496,13 +496,6 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false)
     );
 
     $r = q(
-        "delete from mail where ( from_xchan = '%s' or to_xchan = '%s' ) and channel_id = %d ",
-        dbesc($abook['abook_xchan']),
-        dbesc($abook['abook_xchan']),
-        intval($channel_id)
-    );
-
-    $r = q(
         "delete from abconfig where chan = %d and xchan = '%s'",
         intval($channel_id),
         dbesc($abook['abook_xchan'])

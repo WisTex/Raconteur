@@ -1433,6 +1433,9 @@ function import_conv($channel, $convs)
  */
 function import_mail($channel, $mails, $sync = false)
 {
+    // No longer used.
+    return;
+    
     if ($channel && $mails) {
         foreach ($mails as $mail) {
             if (array_key_exists('flags', $mail) && in_array('deleted', $mail['flags'])) {
