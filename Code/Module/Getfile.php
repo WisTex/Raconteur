@@ -114,7 +114,7 @@ class Getfile extends Controller
         header('Content-type: ' . $r['data']['filetype']);
         header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
         if (intval($r['data']['os_storage'])) {
-            Stdio::fcopy(dbunescbin($r['data']['content'],'php://output');
+            Stdio::fcopy(dbunescbin($r['data']['content']),'php://output');
         } else {
             echo dbunescbin($r['data']['content']);
         }
