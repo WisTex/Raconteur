@@ -29,7 +29,7 @@ class Video
         $tmpfile = $file . $extension;
         $outfile = $file . '.jpg';
 
-        Stdio::fpipe($file,$tmpfile);
+        Stdio::fcopy($file,$tmpfile);
     
         /*
          * Note: imagick convert may try to call 'ffmpeg' (or other conversion utilities) under

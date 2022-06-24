@@ -40,10 +40,7 @@ class Attach extends Controller
         header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
         if (intval($r['data']['os_storage'])) {
             $fname = dbunescbin($r['data']['content']);
-            Stdio::fpipe((strpos($fname, 'store') !== false)
-                ? $fname
-                : 'store/' . $channel['channel_address'] . '/' . $fname,
-                'php://output');
+            Stdio::fcopy($fname, 'php://output');
         } else {
             echo dbunescbin($r['data']['content']);
         }

@@ -872,7 +872,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
     $display_path = ltrim($pathname . '/' . $filename, '/');
 
     if ($src) {
-        Stdio::fpipe($src, $os_basepath . $os_relpath);
+        Stdio::fcopy($src, $os_basepath . $os_relpath);
     }
 
     if (array_key_exists('created', $arr)) {
@@ -1603,13 +1603,7 @@ function attach_delete($channel_id, $resource, $is_photo = 0)
         );
 
         if ($y) {
-            $y[0]['content'] = dbunescbin($y[0]['content']);
-            if (strpos($y[0]['content'], 'store') === false) {
-                $f = 'store/' . $channel_address . '/' . $y[0]['content'];
-            } else {
-                $f = $y[0]['content'];
-            }
-
+            $f = dbunescbin($y[0]['content']);
             if (is_dir($f)) {
                 @rmdir($f);
             } elseif (file_exists($f)) {
@@ -2808,7 +2802,7 @@ function save_chunk($channel, $start, $end, $len)
     if (! file_exists($new_path)) {
         rename($tmp_path, $new_path);
     } else {
-        Stdio::fpipe($tmp_path, $new_path, 65535, 'ab');
+        Stdio::fcopy($tmp_path, $new_path, write_mode: 'ab');
     }
     if (($len - 1) == $end) {
         unlink($tmp_path);

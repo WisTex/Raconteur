@@ -48,7 +48,7 @@ class Ca extends Controller
                     . '; max-age=' . $cache . ';'
                 );
 
-                Stdio::fpipe($path,'php://output');
+                Stdio::fcopy($path,'php://output');
                 killme();
             }
 

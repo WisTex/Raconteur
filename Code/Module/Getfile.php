@@ -95,11 +95,7 @@ class Getfile extends Controller
                 header('Content-type: ' . $r[0]['mimetype']);
 
                 if (intval($r[0]['os_storage'])) {
-                    $fname = dbunescbin($r[0]['content']);
-                    Stdio::fpipe((strpos($fname, 'store') !== false)
-                        ? $fname
-                        : 'store/' . $channel['channel_address'] . '/' . $fname,
-                        'php://output');
+                    Stdio::fcopy(dbunescbin($r[0]['content']), 'php://output');
                 } else {
                     echo dbunescbin($r[0]['content']);
                 }
@@ -118,11 +114,7 @@ class Getfile extends Controller
         header('Content-type: ' . $r['data']['filetype']);
         header('Content-Disposition: attachment; filename="' . $r['data']['filename'] . '"');
         if (intval($r['data']['os_storage'])) {
-            $fname = dbunescbin($r['data']['content']);
-            Stdio::fpipe((strpos($fname, 'store') !== false)
-                ? $fname
-                : 'store/' . $channel['channel_address'] . '/' . $fname,
-                'php://output');
+            Stdio::fcopy(dbunescbin($r['data']['content'],'php://output');
         } else {
             echo dbunescbin($r['data']['content']);
         }
