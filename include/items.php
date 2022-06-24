@@ -3426,23 +3426,23 @@ function check_item_source($uid, $item) {
 // Checks an incoming item against the per-channel and per-connection content filter.
 // This implements the backend of the 'Content Filter' system app
 
-function post_is_importable($channel_id,$item,$abook) {
+function post_is_importable($channel_id, $item, $abook) {
 
 	if (! $item) {
 		return false;
 	}
 
-	if (! Apps::system_app_installed($channel_id,'Content Filter')) {
+	if (! Apps::system_app_installed($channel_id, 'Content Filter')) {
 		return true;
 	}
 
 
-	$incl = PConfig::get($channel_id,'system','message_filter_incl',EMPTY_STR);
-	$excl = PConfig::get($channel_id,'system','message_filter_excl',EMPTY_STR);
+	$incl = PConfig::get($channel_id, 'system', 'message_filter_incl', EMPTY_STR);
+	$excl = PConfig::get($channel_id, 'system', 'message_filter_excl', EMPTY_STR);
 	if ($incl || $excl) {
-		$x = MessageFilter::evaluate($item,$incl,$excl);
+		$x = MessageFilter::evaluate($item, $incl, $excl);
 		if (! $x) {
-			logger('MessageFilter: channel blocked content',LOGGER_DEBUG,LOG_INFO);
+			logger('MessageFilter: channel blocked content', LOGGER_DEBUG, LOG_INFO);
 			return false;
 		}
 	}
@@ -3460,9 +3460,8 @@ function post_is_importable($channel_id,$item,$abook) {
 		if (! ($ab['abook_incl'] || $ab['abook_excl']) ) {
 			continue;
 		}
-		$evaluator = MessageFilter::evaluate($item,$ab['abook_incl'],$ab['abook_excl']);
-		// A negative assessment for any individual connections
-		// is an instant fail
+		$evaluator = MessageFilter::evaluate($item, $ab['abook_incl'], $ab['abook_excl']);
+		// A negative assessment for any individual connections is an instant fail.
 		if (! $evaluator) {
 			return false;
 		}
