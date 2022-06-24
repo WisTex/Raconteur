@@ -23,11 +23,11 @@ Class Stdio {
      *
      * @return int bytes written | false
      */
-    static public function fpipe($infile, $outfile, $bufsize = 65535)
+    static public function fpipe($infile, $outfile, $bufsize = 65535, $filemode = 'wb')
     {
-        $size = false;
+        $size = 0;
         $in = fopen($infile, 'rb');
-        $out = fopen('php://output', 'wb');
+        $out = fopen($outfile, $filemode);
         if ($in && $out) {
             $size = self::pipe_streams($in, $out, $bufsize);
         }

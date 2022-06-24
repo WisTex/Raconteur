@@ -2808,7 +2808,7 @@ function save_chunk($channel, $start, $end, $len)
     if (! file_exists($new_path)) {
         rename($tmp_path, $new_path);
     } else {
-        Stdio::fpipe($tmp_path, $new_path);
+        Stdio::fpipe($tmp_path, $new_path, 65535, 'ab');
     }
     if (($len - 1) == $end) {
         unlink($tmp_path);
