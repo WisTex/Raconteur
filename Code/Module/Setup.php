@@ -16,7 +16,9 @@ use PDO;
 use Code\Lib\System;
 use Code\Web\Controller;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 use Code\Render\Theme;
+use Code\Storage\Stdio;
 
 /**
  * @brief Initialisation for the setup module.
@@ -122,7 +124,7 @@ class Setup extends Controller
                 $siteurl = trim($_POST['siteurl']);
 
                 if ($siteurl != z_root()) {
-                    $test = z_fetch_url($siteurl . '/setup/testrewrite');
+                    $test = Url::get($siteurl . '/setup/testrewrite');
                     if ((!$test['success']) || ($test['body'] !== 'ok')) {
                         App::$data['url_fail'] = true;
                         App::$data['url_error'] = $test['error'];
@@ -640,7 +642,7 @@ class Setup extends Controller
         $status = true;
         $help = '';
 
-        @os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
 
         if (!is_writable(TEMPLATE_BUILD_PATH)) {
             $status = false;
@@ -662,7 +664,7 @@ class Setup extends Controller
         $status = true;
         $help = '';
 
-        @os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, true);
+        Stdio::mkdir('store', STORAGE_DEFAULT_PERMISSIONS, true);
 
         if (!is_writable('store')) {
             $status = false;
@@ -687,15 +689,15 @@ class Setup extends Controller
         $url = z_root() . '/setup/testrewrite';
 
         if (function_exists('curl_init')) {
-            $test = z_fetch_url($url);
+            $test = Url::get($url);
             if (!$test['success']) {
                 if (strstr($url, 'https://')) {
-                    $test = z_fetch_url($url, false, 0, ['novalidate' => true]);
+                    $test = Url::get($url, ['novalidate' => true]);
                     if ($test['success']) {
                         $ssl_error = true;
                     }
                 } else {
-                    $test = z_fetch_url(str_replace('http://', 'https://', $url), false, 0, ['novalidate' => true]);
+                    $test = Url::get(str_replace('http://', 'https://', $url), ['novalidate' => true]);
                     if ($test['success']) {
                         $ssl_error = true;
                     }
@@ -790,7 +792,7 @@ class Setup extends Controller
         // this can set via config. Many distros are now disabling RC4,
         // but many existing sites still use it and are unable to change it.
         // We do not use SSL for encryption, only to protect session cookies.
-        // z_fetch_url() is also used to import shared links and other content
+        // Url::get() is also used to import shared links and other content
         // so in theory most any cipher could show up and we should do our best
         // to make the content available rather than tell folks that there's a
         // weird SSL error which they can't do anything about. This does not affect

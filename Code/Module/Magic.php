@@ -8,6 +8,7 @@ use Code\Web\HTTPSig;
 use Code\Lib\Libzot;
 use Code\Lib\SConfig;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 use Code\Extend\Hook;
 
 class Magic extends Controller
@@ -100,10 +101,6 @@ class Magic extends Controller
                 $dest = strip_zids($dest);
                 $dest = strip_query_param($dest, 'f');
 
-                // We now post to the OWA endpoint. This improves security by providing a signed digest
-
-                $data = json_encode(['OpenWebAuth' => random_string()]);
-
                 $headers = [];
 				$headers['Accept'] = 'application/x-nomad+json, application/x-zot+json';
 				$headers['Content-Type'] = 'application/x-nomad+json';
@@ -113,7 +110,7 @@ class Magic extends Controller
                 $headers['(request-target)'] = 'post ' . '/owa';
 
                 $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
-                $x = z_post_url($owapath, $data, $redirects, ['headers' => $headers]);
+                $x = Url::get($owapath, ['headers' => $headers]);
                 logger('owa fetch returned: ' . print_r($x, true), LOGGER_DATA);
                 if ($x['success']) {
                     $j = json_decode($x['body'], true);

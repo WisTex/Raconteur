@@ -7,7 +7,7 @@ use Code\Lib\Libzotdir;
 use Code\Lib\Zotfinger;
 use Code\Lib\ASCollection;
 use Code\Render\Theme;
-
+use Code\Lib\Url;
 
 class Socgraph {
 
@@ -65,7 +65,7 @@ class Socgraph {
 
         logger('poco_load: ' . $url, LOGGER_DEBUG);
 
-        $s = z_fetch_url($url);
+        $s = Url::get($url);
 
         if (! $s['success']) {
             if ($s['return_code'] == 401) {

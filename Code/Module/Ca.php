@@ -7,6 +7,7 @@
 namespace Code\Module;
 
 use Code\Web\Controller;
+use Code\Storage\Stdio;
 
 /**
  * Ca
@@ -47,13 +48,7 @@ class Ca extends Controller
                     . '; max-age=' . $cache . ';'
                 );
 
-                $infile = fopen($path, 'rb');
-                $outfile = fopen('php://output', 'wb');
-                if ($infile && $outfile) {
-                    pipe_streams($infile, $outfile);
-                }
-                fclose($infile);
-                fclose($outfile);
+                Stdio::fpipe($path,'php://output');
                 killme();
             }
 

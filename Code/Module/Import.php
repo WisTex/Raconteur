@@ -14,7 +14,7 @@ use Code\Import\Friendica;
 use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
 use Code\Render\Theme;
-
+use Code\Lib\Url;
 
 require_once('include/import.php');
 require_once('include/photo_factory.php');
@@ -98,10 +98,8 @@ class Import extends Controller
             if ($import_posts) {
                 $api_path .= '&posts=1';
             }
-            $binary = false;
-            $redirects = 0;
             $opts = ['http_auth' => $email . ':' . $password];
-            $ret = z_fetch_url($api_path, $binary, $redirects, $opts);
+            $ret = Url::get($api_path, $opts);
             if ($ret['success']) {
                 $data = $ret['body'];
             } else {
@@ -600,9 +598,7 @@ class Import extends Controller
 
                 $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
-                $x = z_fetch_url($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page, false, $redirects, ['headers' => $headers]);
-
-                // logger('z_fetch: ' . print_r($x,true));
+                $x = Url::get($hz_server . '/api/z/1.0/item/export_page?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until) . '&page=' . $page, ['headers' => $headers]);
 
                 if (!$x['success']) {
                     logger('no API response');
@@ -635,7 +631,7 @@ class Import extends Controller
 
             $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
 
-            $x = z_fetch_url($hz_server . '/api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until), false, $redirects, ['headers' => $headers]);
+            $x = Url::get($hz_server . '/api/z/1.0/files?f=&zap_compat=1&since=' . urlencode($since) . '&until=' . urlencode($until), ['headers' => $headers]);
 
             if (!$x['success']) {
                 logger('no API response');

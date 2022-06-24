@@ -159,6 +159,8 @@ class Channel
         $noindex = ((x($_POST, 'noindex')) ? intval($_POST['noindex']) : 0);
         $channel_menu = ((x($_POST['channel_menu'])) ? htmlspecialchars_decode(trim($_POST['channel_menu']), ENT_QUOTES) : '');
 
+        $unless_mention_count = ((x($_POST, 'unless_mention_count')) ? intval($_POST['unless_mention_count']) : 0);
+        $unless_tag_count = ((x($_POST, 'unless_tag_count')) ? intval($_POST['unless_tag_count']) : 0);
         $expire_items = ((x($_POST, 'expire_items')) ? intval($_POST['expire_items']) : 0);
         $expire_starred = ((x($_POST, 'expire_starred')) ? intval($_POST['expire_starred']) : 0);
         $expire_photos = ((x($_POST, 'expire_photos')) ? intval($_POST['expire_photos']) : 0);
@@ -339,12 +341,14 @@ class Channel
         set_pconfig(local_channel(), 'system', 'default_permcat', $defpermcat);
         set_pconfig(local_channel(), 'system', 'email_notify_host', $mailhost);
         set_pconfig(local_channel(), 'system', 'profile_assign', $profile_assign);
-//      set_pconfig(local_channel(),'system','anymention',$anymention);
+//      set_pconfig(local_channel(), 'system', 'anymention', $anymention);
         set_pconfig(local_channel(), 'system', 'hyperdrive', $hyperdrive);
         set_pconfig(local_channel(), 'system', 'activitypub', $activitypub);
         set_pconfig(local_channel(), 'system', 'autoperms', $autoperms);
         set_pconfig(local_channel(), 'system', 'tag_username', $tag_username);
         set_pconfig(local_channel(), 'system', 'permit_all_mentions', $permit_all_mentions);
+        set_pconfig(local_channel(), 'system', 'unless_mention_count', $unless_mention_count);
+        set_pconfig(local_channel(), 'system', 'unless_tag_count', $unless_tag_count);
         set_pconfig(local_channel(), 'system', 'noindex', $noindex);
 
 
@@ -624,7 +628,11 @@ class Channel
             $followed = EMPTY_STR;
         }
 
-
+        $mention_count = get_pconfig(local_channel(), 'system', 'unless_mention_count',
+            get_config('system', 'unless_mention_count', 20));
+        $tag_count = get_pconfig(local_channel(), 'system', 'unless_tag_count',
+            get_config('system', 'unless_tag_count', 20));
+  
         $o .= replace_macros(Theme::get_template('settings.tpl'), [
             '$ptitle' => t('Channel Settings'),
             '$submit' => t('Submit'),
@@ -650,7 +658,7 @@ class Channel
             '$permiss_arr' => $permiss,
             '$comment_perms' => $comment_perms,
             '$mail_perms' => $mail_perms,
-            '$noindex' => ['noindex', t('Forbid indexing of your channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
+            '$noindex' => ['noindex', t('Forbid indexing of your public channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
             '$close_comments' => ['close_comments', t('Disable acceptance of comments on my posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
             '$blocktags' => array('blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
 
@@ -730,6 +738,8 @@ class Channel
             '$always_show_in_notices' => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
             '$permit_all_mentions' => ['permit_all_mentions', t('Accept messages from strangers which mention you'), get_pconfig(local_channel(), 'system', 'permit_all_mentions'), t('This setting bypasses normal permissions'), $yes_no],
             '$followed_tags' => ['followed_tags', t('Accept messages from strangers which include any of the following hashtags'), $followed, t('comma separated, do not include the #')],
+            '$unless_mention_count' => ['unless_mention_count', t('Unless more than this many channels are mentioned'), $mention_count, t('0 for unlimited')],
+            '$unless_tag_count' => ['unless_tag_count', t('Unless more than this many hashtags are used'), $tag_count, t('0 for unlimited')],
             '$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),
             '$basic_addon' => $plugin['basic'],
             '$sec_addon' => $plugin['security'],

@@ -17,6 +17,7 @@ use Code\Lib\Activity;
 use Code\Lib\Channel;
 use Code\Lib\ASCollection;
 use Code\Lib\LDSignatures;
+use Code\Lib\Url;
 use Code\Daemon\Run;
 use Code\Extend\Hook;
 
@@ -222,8 +223,7 @@ class Libzot
      * @param array $data
      * @param array $channel (required if using zot6 delivery)
      * @param array $crypto (required if encrypted httpsig, requires hubloc_sitekey and site_crypto elements)
-     * @return array see z_post_url() for returned data format
-     * @see z_post_url()
+     * @return array see Url::post() for returned data format
      *
      */
 
@@ -250,9 +250,7 @@ class Libzot
             $h = [];
         }
 
-        $redirects = 0;
-
-        return z_post_url($url, $data, $redirects, ((empty($h)) ? [] : ['headers' => $h]));
+        return Url::post($url, $data, ((empty($h)) ? [] : ['headers' => $h]));
     }
 
     public static function nomad($url, $data, $channel = null, $crypto = null) {
@@ -272,9 +270,7 @@ class Libzot
             $h = [];
         }
 
-        $redirects = 0;
-
-        return z_post_url($url,$data,$redirects,((empty($h)) ? [] : [ 'headers' => $h ]));
+        return Url::post($url, $data, ((empty($h)) ? [] : ['headers' => $h]));
     }
 
 
@@ -1069,7 +1065,7 @@ class Libzot
      * returned to aid communications troubleshooting.
      *
      * @param string $hub - url of site we just contacted
-     * @param array $arr - output of z_post_url()
+     * @param array $arr - output of Url::post()
      * @param array $outq - The queue structure attached to this request
      */
 
@@ -2742,7 +2738,7 @@ class Libzot
         }
 
         if ($access_policy != ACCESS_PRIVATE) {
-            $x = z_fetch_url($arr['url'] . '/siteinfo.json');
+            $x = Url::get($arr['url'] . '/siteinfo.json');
             if (!$x['success']) {
                 $access_policy = ACCESS_PRIVATE;
             }

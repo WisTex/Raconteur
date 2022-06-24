@@ -87,6 +87,8 @@ Content may be rich multi-media and renders nicely as HTML. Multicode is used an
 
 Mastodon 'summary' does not invoke any special handling so 'summary' can be used for its intended purpose as a content summary. Mastodon 'sensitive' is honoured and results in invoking whatever mechanisms the user has selected to deal with this type of content. By default images are obscured and are 'click to view'. Sensitive text is not treated specially, but may be obscured using the NSFW plugin or filtered per connection based on string match, tags, patterns, languages, or other criteria.
 
+Mastodon "custom emojis" are supported for post content, but **not** in display names, which are restricted to UTF-8. 
+    
 Edits
 
 Edited posts and comments are sent with Update/Note and an 'updated' timestamp along with the original 'published' timestamp. 

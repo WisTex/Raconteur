@@ -6,7 +6,7 @@ namespace Code\Render;
 
 use App;
 use Code\Render\Theme;
-
+use Code\Storage\Stdio;
 
 class SmartyTemplate implements TemplateEngine
 {
@@ -25,7 +25,7 @@ class SmartyTemplate implements TemplateEngine
             $basecompiledir = str_replace('Code', '', dirname(__dir__)) . "/" . TEMPLATE_BUILD_PATH;
         }
         if (! is_dir($basecompiledir)) {
-            @os_mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
+            Stdio::mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
             if (! is_dir($basecompiledir)) {
                 echo "<b>ERROR:</b> folder <tt>$basecompiledir</tt> does not exist.";
                 killme();

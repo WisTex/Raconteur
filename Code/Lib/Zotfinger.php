@@ -4,6 +4,7 @@ namespace Code\Lib;
 
 use Code\Web\HTTPSig;
 use Code\Lib\Channel;
+use Code\Lib\Url;
     
 class Zotfinger
 {
@@ -41,8 +42,7 @@ class Zotfinger
 
         $result = [];
 
-        $redirects = 0;
-        $x = z_post_url($resource, $data, $redirects, ['headers' => $h]);
+        $x = Url::post($resource, $data, ['headers' => $h]);
 
         if (in_array(intval($x['return_code']), [ 404, 410 ]) && $recurse) {
 

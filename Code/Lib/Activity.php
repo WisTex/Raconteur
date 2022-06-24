@@ -8,6 +8,7 @@ use Code\Access\Permissions;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Daemon\Run;
+use Code\Lib as Zlib;
 use Code\Lib\PConfig;
 use Code\Lib\XConfig;
 use Code\Lib\Config;
@@ -18,6 +19,7 @@ use Code\Lib\Libzot;
 use Code\Lib\Nodeinfo;
 use Code\Lib\System;
 use Code\Lib\Channel;
+use Code\Lib\Url;
 use Code\Extend\Hook;
 use Emoji;
 
@@ -77,7 +79,6 @@ class Activity
 
     public static function fetch($url, $channel = null, $hub = null, $debug = false)
     {
-        $redirects = 0;
         if (!$url) {
             return null;
         }
@@ -138,7 +139,7 @@ class Activity
                 $headers['Authorization'] = 'Bearer ' . $token;
             }
             $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
-            $x = z_fetch_url($url, true, $redirects, ['headers' => $h]);
+            $x = Url::get($url, ['headers' => $h]);
         }
 
         if ($x['success']) {
@@ -577,6 +578,9 @@ class Activity
         return $url;
     }
 
+    /**
+     * Convert an item attach list to an ActivityStreams attachment array
+     */
 
     public static function encode_attachment($item)
     {
@@ -587,10 +591,18 @@ class Activity
             $atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'], true));
             if ($atts) {
                 foreach ($atts as $att) {
-                    if (isset($att['type']) && strpos($att['type'], 'image')) {
-                        $ret[] = ['type' => 'Image', 'url' => $att['href']];
+                    if (isset($att['type']) && strpos($att['type'], 'image') !== false) {
+                        $ret[] = [
+                            'type' => 'Image',
+                            'url' => $arr['href'],
+                            'name' => ($arr['name']) ? $arr['name'] : '',
+                        ];
                     } else {
-                        $ret[] = ['type' => 'Link', 'mediaType' => isset($att['type']) ? $att['type'] : 'application/octet-stream', 'href' => isset($att['href']) ? $att['href'] : ''];
+                        $ret[] = [
+                            'type' => 'Link',
+                            'mediaType' => isset($att['type']) ? $att['type'] : 'application/octet-stream',
+                            'href' => isset($att['href']) ? $att['href'] : ''
+                        ];
                     }
                 }
             }
@@ -598,7 +610,7 @@ class Activity
         if (array_key_exists('iconfig', $item) && is_array($item['iconfig'])) {
             foreach ($item['iconfig'] as $att) {
                 if ($att['sharing']) {
-                    $ret[] = ['type' => 'PropertyValue', 'name' => 'zot.' . $att['cat'] . '.' . $att['k'], 'value' => unserialise($att['v'])];
+                    $ret[] = ['type' => 'PropertyValue', 'name' => 'nomad.' . $att['cat'] . '.' . $att['k'], 'value' => unserialise($att['v'])];
                 }
             }
         }
@@ -622,7 +634,7 @@ class Activity
                 if ($att['type'] === 'PropertyValue') {
                     if (array_key_exists('name', $att) && $att['name']) {
                         $key = explode('.', $att['name']);
-                        if (count($key) === 3 && $key[0] === 'zot') {
+                        if (count($key) === 3 && in_array($key[0], ['nomad', 'zot'])) {
                             $entry['cat'] = $key[1];
                             $entry['k'] = $key[2];
                             $entry['v'] = $att['value'];
@@ -636,14 +648,17 @@ class Activity
         return $ret;
     }
 
-
-    public static function decode_attachment($item)
+    /**
+     * Decodes and Activity object attachment structure to store in an item.
+     */
+    
+    public static function decode_attachment($obj)
     {
 
         $ret = [];
 
-        if (array_key_exists('attachment', $item) && is_array($item['attachment'])) {
-            $ptr = $item['attachment'];
+        if (array_key_exists('attachment', $obj) && is_array($obj['attachment'])) {
+            $ptr = $obj['attachment'];
             if (!array_key_exists(0, $ptr)) {
                 $ptr = [$ptr];
             }
@@ -666,8 +681,8 @@ class Activity
                     $ret[] = $entry;
                 }
             }
-        } elseif (isset($item['attachment']) && is_string($item['attachment'])) {
-            btlogger('not an array: ' . $item['attachment']);
+        } elseif (isset($obj['attachment']) && is_string($obj['attachment'])) {
+            btlogger('not an array: ' . $obj['attachment']);
         }
 
         return $ret;
@@ -3288,7 +3303,7 @@ class Activity
                         $purl = $act->obj['url'];
                     }
                     if ($purl) {
-                        $li = z_fetch_url(z_root() . '/linkinfo?binurl=' . bin2hex($purl));
+                        $li = Url::get(z_root() . '/linkinfo?binurl=' . bin2hex($purl));
                         if ($li['success'] && $li['body']) {
                             $s['body'] .= "\n" . $li['body'];
                         } else {
@@ -3345,7 +3360,7 @@ class Activity
         }
 
 
-        set_iconfig($s, 'activitypub', 'rawmsg', $act->raw, 1);
+        set_iconfig($s, 'activitypub', 'rawmsg', $act->raw, 0);
 
         // Restrict html caching to ActivityPub senders.
         // Zot has dynamic content and this library is used by both.
@@ -3654,8 +3669,8 @@ class Activity
         }
 
         if (tgroup_check($channel['channel_id'], $item) && (!$is_child_node)) {
-            // for forum deliveries, make sure we keep a copy of the signed original
-            set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 1);
+            // for relayed deliveries, make sure we keep a copy of the signed original
+            set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 0);
             logger('allowed: tgroup');
             $allowed = true;
         }
@@ -4070,7 +4085,7 @@ class Activity
                 }
             }
             if (array_key_exists('type', $a) && stripos($a['type'], 'activity') !== false) {
-                if (self::media_not_in_body($a['href'], $item['body'])) {
+                if (self::share_not_in_body($item['body'])) {
                     $item = self::get_quote($a['href'], $item);
                 }
             }
@@ -4101,6 +4116,16 @@ class Activity
             (strpos($body, ']' . $s_alt . '[/audio]') === false) &&
             (strpos($body, ']' . $s_alt . '[/zaudio]') === false)
         ) {
+            return true;
+        }
+        return false;
+    }
+
+    // check for the existence of existing media link in body
+
+    public static function share_not_in_body($body)
+    {
+        if (strpos($body, '[/share]') === false) {
             return true;
         }
         return false;
@@ -4450,10 +4475,10 @@ class Activity
                         $item['body'] .= "\n\n" . $s->bbcode();
                         $att = $s->get_attach();
                         if (isset($item['attach'])) {
-                            $item['attach'] = array_merge( $item['attach'], $att);
+                            $item['attach'] = array_merge( $item['attach'], ($att) ? $att : []);
                         }
                         else {
-                            $item['attach'] = [ $att ];
+                            $item['attach'] = ($att) ? [ $att ] : [];
                         }
                     }
                 }

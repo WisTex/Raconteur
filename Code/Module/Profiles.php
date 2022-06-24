@@ -977,8 +977,7 @@ class Profiles extends Controller
         $i = $res['item_id'];
 
         if ($i) {
-            // FIXME - limit delivery in notifier.php to those specificed in the perms argument
-            Run::Summon(['Notifier', 'activity', $i, 'PERMS_R_PROFILE']);
+            Run::Summon(['Notifier', 'wall-new', $i]);
         }
     }
 

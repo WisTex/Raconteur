@@ -159,30 +159,4 @@ class PermissionDescription
                 return '';
         }
     }
-
-    /**
-     * Returns a localized description of where the permission came from, if this is known.
-     * If it's not know, or if the permission is standalone and didn't come from a default
-     * permission setting, then empty string is returned.
-     *
-     * @return string description or empty string
-    */
-    public function get_permission_origin_description()
-    {
-
-        switch ($this->global_perm) {
-            case PERMS_R_STREAM:
-                return t('This is your default setting for the audience of your normal stream, and posts.');
-            case PERMS_R_PROFILE:
-                return t('This is your default setting for who can view your default channel profile');
-            case PERMS_R_ABOOK:
-                return t('This is your default setting for who can view your connections');
-            case PERMS_R_STORAGE:
-                return t('This is your default setting for who can view your file storage and photos');
-            case PERMS_R_PAGES:
-                return t('This is your default setting for the audience of your webpages');
-            default:
-                return '';
-        }
-    }
 }

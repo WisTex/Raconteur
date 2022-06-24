@@ -19,7 +19,7 @@ use Code\Extend\Hook;
 use Code\Web\HTTPHeaders;
 use Sabre\VObject\Reader;
 use Code\Render\Theme;
-
+use Code\Lib\Url;
 
 /**
  * @file connedit.php
@@ -391,8 +391,7 @@ class Connedit extends Controller
 
             if ($cmd === 'fetchvc') {
                 $url = str_replace('/channel/', '/profile/', $orig_record['xchan_url']) . '/vcard';
-                $recurse = 0;
-                $x = z_fetch_url(zid($url), false, $recurse, ['session' => true]);
+                $x = Url::get(zid($url), ['session' => true]);
                 if ($x['success']) {
                     $h = new HTTPHeaders($x['header']);
                     $fields = $h->fetcharr();

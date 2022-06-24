@@ -4,6 +4,7 @@ namespace Code\Lib;
 
 use Code\Lib\Hashpath;
 use Code\Daemon\Run;
+use Code\Lib\Url;
 
 class Img_cache
 {
@@ -59,8 +60,7 @@ class Img_cache
         // This is a compromise. We want to cache all the slow sites we can,
         // but don't want to rack up too many processes doing so.
 
-        $redirects = 0;
-        $x = z_fetch_url($url, true, $redirects, ['filep' => $fp, 'novalidate' => true, 'timeout' => 120]);
+        $x = Url::get($url, ['filep' => $fp, 'novalidate' => true, 'timeout' => 120]);
 
         fclose($fp);
 

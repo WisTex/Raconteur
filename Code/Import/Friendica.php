@@ -9,6 +9,7 @@ use Code\Lib\Connect;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;     
 use Code\Lib\AccessList;
+use Code\Lib\Url;
 use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
 use Code\Access\Permissions;
@@ -148,7 +149,7 @@ class Friendica
 
 
         if ($self_contact['avatar']) {
-            $p = z_fetch_url($self_contact['avatar'], true);
+            $p = Url::get($self_contact['avatar'], true);
             if ($p['success']) {
                 $h = explode("\n", $p['header']);
                 foreach ($h as $l) {
