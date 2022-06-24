@@ -1980,10 +1980,11 @@ class Libzot
             // This is used to fetch allow/deny rules if either the sender
             // or  owner is  a connection. post_is_importable() evaluates all of them
             $abook = q(
-                "select * from abook where abook_channel = %d and ( abook_xchan = '%s' OR abook_xchan = '%s' )",
+                "select * from abook where abook_channel = %d and ( abook_xchan = '%s' OR abook_xchan = '%s' OR abook_xchan = '%s')",
                 intval($channel['channel_id']),
                 dbesc($arr['owner_xchan']),
-                dbesc($arr['author_xchan'])
+                dbesc($arr['author_xchan']),
+                dbesc($sender)
             );
 
             if (isset($arr['item_deleted']) && intval($arr['item_deleted'])) {
