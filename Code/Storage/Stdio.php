@@ -7,13 +7,16 @@ use Exception;
 Class Stdio {
 
     static public function mkdir($path, $mode = 0777, $recursive = false) {
+        $result = false;
         try {
             $oldumask = umask(0);
             $result = mkdir($path, $mode, $recursive);
-            umask($oldumask);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // null operation
+        } finally {
+            umask($oldumask);
         }
+
         return $result;
     }
 
