@@ -403,10 +403,7 @@ function age($dob, $owner_tz = '', $viewer_tz = '')
  */
 function get_dim($y, $m)
 {
-    $dim = array( 0,
-            31, 28, 31, 30, 31, 30,
-            31, 31, 30, 31, 30, 31
-    );
+    $dim = [ 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
     if ($m != 2) {
         return $dim[$m];
