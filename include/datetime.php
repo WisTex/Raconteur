@@ -92,12 +92,12 @@ function get_timezones()
  *
  * @param string $from source timezone
  * @param string $to dest timezone
- * @param string $s some parseable date/time string
- * @param string $fmt output format recognised from php's DateTime class
+ * @param string $datetime some parseable date/time string
+ * @param string $format output format recognised from php's DateTime class
  *   http://www.php.net/manual/en/datetime.format.php
  * @return string
  */
-function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d H:i:s")
+function datetime_convert($from = 'UTC', $to = 'UTC', $datetime = 'now', $format = "Y-m-d H:i:s")
 {
 
     // Defaults to UTC if nothing is set, but throws an exception if set to empty string.
@@ -109,13 +109,13 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
     if ($to === '') {
         $to = 'UTC';
     }
-    if (($s === '') || (! is_string($s))) {
-        $s = 'now';
+    if (($datetime === '') || (! is_string($datetime))) {
+        $datetime = 'now';
     }
 
-    if (is_null_date($s)) {
+    if (is_null_date($datetime)) {
         $d = new DateTime('0001-01-01 00:00:00', new DateTimeZone('UTC'));
-        return $d->format($fmt);
+        return $d->format($format);
     }
 
     try {
@@ -125,7 +125,7 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
     }
 
     try {
-        $d = new DateTime($s, $from_obj);
+        $d = new DateTime($datetime, $from_obj);
     } catch (Exception $e) {
         logger('exception: ' . $e->getMessage());
         $d = new DateTime('now', $from_obj);
@@ -139,7 +139,7 @@ function datetime_convert($from = 'UTC', $to = 'UTC', $s = 'now', $fmt = "Y-m-d 
 
     $d->setTimeZone($to_obj);
 
-    return($d->format($fmt));
+    return($d->format($format));
 }
 
 /**
