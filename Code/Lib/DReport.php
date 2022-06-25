@@ -6,6 +6,7 @@ use Code\Extend\Hook;
 
 class DReport
 {
+    const EXPIRE_DAYS = 10;
 
     private $location;
     private $sender;
@@ -64,6 +65,16 @@ class DReport
             'status' => $this->status,
             'date' => $this->date
         );
+    }
+
+    public static function is_expired($item, $expire_days = 0) {
+        if ($expire_days === 0) {
+            $expire_days = self::EXPIRE_DAYS;
+        }
+        if (strcmp(datetime_convert(datetime: $item['created']), datetime_convert(datetime: "now - $expire_days days")) > 0) {
+            return false;
+        }
+        return true;
     }
 
     /**
