@@ -3659,7 +3659,7 @@ function retain_item($id) {
 
 // Items is array of item.id
 
-function drop_items($items,$stage = DROPITEM_NORMAL,$force = false) {
+function drop_items($items, $stage = DROPITEM_NORMAL,$ force = false) {
 
 	$uid = 0;
 
@@ -3669,7 +3669,7 @@ function drop_items($items,$stage = DROPITEM_NORMAL,$force = false) {
 
 	if (count($items)) {
 		foreach ($items as $item) {
-			$owner = drop_item($item,$stage,$force);
+			$owner = drop_item($item, $stage, $force);
 			if ($owner && (! $uid)) {
 				$uid = $owner;
 			}
@@ -3679,7 +3679,7 @@ function drop_items($items,$stage = DROPITEM_NORMAL,$force = false) {
 	// multiple threads may have been deleted, send an expire notification
 
 	if ($uid) {
-		Run::Summon([ 'Notifier','expire',$uid ]);
+		Run::Summon(['Notifier', 'expire', $uid]);
 	}
 }
 
@@ -3693,10 +3693,7 @@ function drop_items($items,$stage = DROPITEM_NORMAL,$force = false) {
 // $stage = 1 => set deleted flag on the item and perform intial notifications
 // $stage = 2 => perform low level delete at a later stage
 
-// @FIXME: interactive mode is deprecated and should no longer be used.
-// It should be removed however doing this will require significant testing. 
-    
-function drop_item($id,$stage = DROPITEM_NORMAL,$force = false) {
+function drop_item($id, $stage = DROPITEM_NORMAL, $force = false) {
 
 	// These resource types have linked items that should only be removed at the same time
 	// as the linked resource; if we encounter one set it to item_hidden rather than item_deleted.
@@ -3710,16 +3707,10 @@ function drop_item($id,$stage = DROPITEM_NORMAL,$force = false) {
 	);
 
 	if ((! $r) || (intval($r[0]['item_deleted']) && ($stage === DROPITEM_NORMAL))) {
-		if (! $interactive) {
-			return 0;
-		}
-		notice( t('Item not found.') . EOL);
-		goaway(z_root() . '/' . $_SESSION['return_url']);
-	}
+        return false;
+    }
 
-	$item = $r[0];
-
-	// logger('dropped_item: ' . print_r($item,true),LOGGER_ALL);
+	$item = array_shift($r);
 
 	$ok_to_delete = false;
 
@@ -3764,7 +3755,7 @@ function drop_item($id,$stage = DROPITEM_NORMAL,$force = false) {
 		}
 
 		if ($item['resource_type'] === 'photo' ) {
-			attach_delete($item['uid'],$item['resource_id'],true);
+			attach_delete($item['uid'], $item['resource_id'], true);
 		}
 
 		$arr = [
@@ -3785,38 +3776,18 @@ function drop_item($id,$stage = DROPITEM_NORMAL,$force = false) {
 		);
 		if ($items) {
 			foreach ($items as $i) {
-				delete_item_lowlevel($i,$stage,$force);
+				delete_item_lowlevel($i, $stage, $force);
 			}
 		}
 		else {
-			delete_item_lowlevel($item,$stage,$force);
+			delete_item_lowlevel($item, $stage, $force);
 		}
 
-		if (! $interactive) {
-			return 1;
-		}
-
-		// send the notification upstream/downstream as the case may be
-		// only send notifications to others if this is the owner's wall item.
-
-		// This isn't optimal. We somehow need to pass to this function whether or not
-		// to call the notifier, or we need to call the notifier from the calling function.
-		// We'll rely on the undocumented behaviour that DROPITEM_PHASE1 is (hopefully) only
-		// set if we know we're going to send delete notifications out to others.
-
-		if ((intval($item['item_wall']) && ($stage != DROPITEM_PHASE2)) || ($stage == DROPITEM_PHASE1)) {
-			Run::Summon([ 'Notifier','drop',$notify_id ]);
-		}
-
-		goaway(z_root() . '/' . $_SESSION['return_url']);
+        return true;
 	}
 	else {
-		if (! $interactive) {
-			return 0;
-		}
-		notice( t('Permission denied.') . EOL);
-		goaway(z_root() . '/' . $_SESSION['return_url']);
-	}
+        return false;
+    }
 }
 
 /**
