@@ -27,6 +27,9 @@ class Xp extends Controller
                         case '6':
                             $path = Channel::get_default_profile_photo(48);
                             break;
+                        case '8':
+                            $path = Channel::get_default_cover_photo(850);
+                            break;
                         default:
                             break;
                     }

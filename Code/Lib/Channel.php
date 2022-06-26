@@ -1931,8 +1931,7 @@ class Channel
             $cover = $r[0];
             $cover['href'] = z_root() . '/photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];
         } else {
-            $default_cover = get_config('system', 'default_cover_photo', 'pexels-94622');
-            $cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.jpg' ];
+            $cover = [ 'href' => z_root() . '/' . get_default_cover_photo($cover_width) ];
         }
 
         $o .= replace_macros(Theme::get_template('zcard.tpl'), array(
@@ -2004,8 +2003,7 @@ class Channel
             $cover = $r[0];
             $cover['href'] = z_root() . '/photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];
         } else {
-            $default_cover = get_config('system', 'default_cover_photo', 'pexels-94622');
-            $cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.jpg' ];
+            $cover = [ 'href' => z_root() . '/' . get_default_cover_photo($cover_width) ];
         }
 
         $o .= replace_macros(Theme::get_template('zcard_embed.tpl'), array(

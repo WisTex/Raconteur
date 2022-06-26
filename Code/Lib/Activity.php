@@ -2435,6 +2435,7 @@ class Activity
 
         if ($cover_photo) {
             set_xconfig($url, 'system', 'cover_photo', $cover_photo);
+            import_remote_cover_photo($url, $xchan_hash);
         }
 
 
