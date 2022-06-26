@@ -7,13 +7,16 @@ use Exception;
 Class Stdio {
 
     static public function mkdir($path, $mode = 0777, $recursive = false) {
+        $result = false;
         try {
             $oldumask = umask(0);
             $result = mkdir($path, $mode, $recursive);
-            umask($oldumask);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // null operation
+        } finally {
+            umask($oldumask);
         }
+
         return $result;
     }
 
@@ -23,11 +26,11 @@ Class Stdio {
      *
      * @return int bytes written | false
      */
-    static public function fpipe($infile, $outfile, $bufsize = 65535, $filemode = 'wb')
+    static public function fcopy($infile, $outfile, $bufsize = 65535, $read_mode = 'rb', $write_mode = 'wb')
     {
-        $size = 0;
-        $in = fopen($infile, 'rb');
-        $out = fopen($outfile, $filemode);
+        $size = false;
+        $in = fopen($infile, $read_mode);
+        $out = fopen($outfile, $write_mode);
         if ($in && $out) {
             $size = self::pipe_streams($in, $out, $bufsize);
         }

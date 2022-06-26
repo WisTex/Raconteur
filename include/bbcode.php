@@ -664,7 +664,7 @@ function bb_ShareAttributes($match)
 
     $reldate = '<span class="autotime" title="' . datetime_convert('UTC', date_default_timezone_get(), $posted, 'c') . '" >' . datetime_convert('UTC', date_default_timezone_get(), $posted, 'r') . '</span>';
 
-    $headline = '<div class="shared_container"> <div class="shared_header">';
+    $headline = '<article><div class="shared_container"> <div class="shared_header">';
 
     if ($avatar != "") {
         $headline .= '<a href="' . (($auth) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . htmlspecialchars($author, ENT_COMPAT, 'UTF-8', false) . '" height="32" width="32" loading="lazy" /></a>';
@@ -689,7 +689,7 @@ function bb_ShareAttributes($match)
 
     $headline .= '<span>' . $fmt . '</span></div>';
 
-    $text = $headline . '<div class="reshared-content">' . trim($match[2]) . '</div></div>';
+    $text = $headline . '<div class="reshared-content">' . trim($match[2]) . '</div></div></article>';
 
     return $text;
 }

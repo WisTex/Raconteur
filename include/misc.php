@@ -1792,18 +1792,33 @@ function generate_named_map($location)
     return (($arr['html']) ? $arr['html'] : $location);
 }
 
+function item_is_censored($item, $observer) {
+
+    // Don't censor your own posts.
+    if ($observer && $item['author_xchan'] === $observer) {
+        return false;
+    }
+
+    $censored = ((($item['author']['abook_censor'] 
+        || $item['owner']['abook_censor'] 
+        || $item['author']['xchan_selfcensored'] 
+        || $item['owner']['xchan_selfcensored'] 
+        || $item['author']['xchan_censored'] 
+        || $item['owner']['xchan_censored'] 
+        || intval($item['item_nsfw'])) && (get_safemode()))
+        ? true
+        : false
+    );
+            
+    return $censored;
+}
 
 function prepare_body(&$item, $attach = false, $opts = false)
 {
 
     Hook::call('prepare_body_init', $item);
 
-    $censored = ((($item['author']['abook_censor'] || $item['owner']['abook_censor'] || $item['author']['xchan_selfcensored'] || $item['owner']['xchan_selfcensored'] || $item['author']['xchan_censored'] || $item['owner']['xchan_censored'] || intval($item['item_nsfw'])) && (get_safemode()))
-        ? true
-        : false
-    );
-
-    if ($censored) {
+    if (item_is_censored($item, get_observer_hash())) {
         if (! $opts) {
             $opts = [];
         }

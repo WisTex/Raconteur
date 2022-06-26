@@ -192,14 +192,7 @@ class File extends DAV\Node implements DAV\IFile {
 							$direct = $f1[0];
 						}
 					}
-					$fname = dbunescbin($d[0]['content']);
-					if (strpos($fname,'store/') === false) {
-						$f = 'store/' . $this->auth->owner_nick . '/' . $fname ;
-					}
-					else {
-						$f = $fname;
-					}
-					
+					$f = dbunescbin($d[0]['content']);					
 					if (is_resource($data)) {
 						$fp = fopen($f,'wb');
 						if ($fp) {

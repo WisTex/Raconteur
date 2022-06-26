@@ -2498,28 +2498,28 @@ function cert_bad_email() {
  */
 function check_cron_broken() {
 
-    $d = get_config('system','lastcron');
+    $d = get_config('system', 'lastcron');
 
-    if((! $d) || ($d < datetime_convert('UTC','UTC','now - 4 hours'))) {
+    if((! $d) || ($d < datetime_convert(datetime: 'now - 4 hours'))) {
         Run::Summon( [ 'Cron' ] );
-        set_config('system','lastcron',datetime_convert());
+        set_config('system', 'lastcron', datetime_convert());
     }
 
-    $t = get_config('system','lastcroncheck');
+    $t = get_config('system', 'lastcroncheck');
     if(! $t) {
         // never checked before. Start the timer.
-        set_config('system','lastcroncheck',datetime_convert());
+        set_config('system', 'lastcroncheck', datetime_convert());
         return true;
     }
 
-    if($t > datetime_convert('UTC','UTC','now - 3 days')) {
+    if($t > datetime_convert(datetime: 'now - 3 days')) {
         // Wait for 3 days before we do anything so as not to swamp the admin with messages
         return true;
     }
 
-    set_config('system','lastcroncheck',datetime_convert());
+    set_config('system', 'lastcroncheck', datetime_convert());
 
-    if(($d) && ($d > datetime_convert('UTC','UTC','now - 3 days'))) {
+    if(($d) && ($d > datetime_convert(datetime: 'now - 3 days'))) {
         // Scheduled tasks have run successfully in the last 3 days.
         return true;
     }

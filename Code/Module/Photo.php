@@ -307,10 +307,7 @@ class Photo extends Controller
         // If it's a file resource, stream it.
 
         if ($streaming && $channel) {
-            Stdio::fpipe((strpos($streaming, 'store') !== false)
-                ? $streaming
-                : 'store/' . $channel['channel_address'] . '/' . $streaming,
-                'php://output');
+            Stdio::fcopy($streaming, 'php://output');
         } else {
             echo $data;
         }

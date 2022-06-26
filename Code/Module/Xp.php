@@ -52,7 +52,7 @@ class Xp extends Controller
             $smaxage = intval($cache / 12);
             header('Cache-Control: s-maxage=' . $smaxage . '; max-age=' . $cache . ';');
 
-            Stdio::fpipe($path,'php://output');
+            Stdio::fcopy($path,'php://output');
             killme();
         }
 

@@ -3759,9 +3759,10 @@ class Activity
         // provided by either of these entities.
 
         $abook = q(
-            "select * from abook where ( abook_xchan = '%s' OR abook_xchan  = '%s') and abook_channel = %d ",
+            "select * from abook where ( abook_xchan = '%s' OR abook_xchan  = '%s' OR abook_xchan = '%s') and abook_channel = %d ",
             dbesc($item['author_xchan']),
             dbesc($item['owner_xchan']),
+            dbesc($observer_hash),
             intval($channel['channel_id'])
         );
 
@@ -4010,12 +4011,6 @@ class Activity
 
                 if (intval($channel['channel_system']) && intval($item['item_private'])) {
                     logger('private conversation ignored');
-                    $p = [];
-                    break;
-                }
-
-                if (count($p) > 100) {
-                    logger('Conversation overflow');
                     $p = [];
                     break;
                 }

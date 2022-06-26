@@ -827,7 +827,7 @@ class Events extends Controller
                                 drop_item($i[0]['id']);
                             } else {
                                 // complex deletion that needs to propagate and be performed in phases
-                                drop_item($i[0]['id'], true, DROPITEM_PHASE1);
+                                drop_item($i[0]['id'], false, DROPITEM_PHASE1);
                                 $complex = true;
                             }
 
@@ -843,6 +843,9 @@ class Events extends Controller
 
                             if ($complex) {
                                 tag_deliver($i[0]['uid'], $i[0]['id']);
+                                if (intval($i[0]['item_wall']) && $complex) {
+                                    Run::Summon(['Notifier', 'drop', $i[0]['id']]);
+                                }
                             }
                         }
                     }

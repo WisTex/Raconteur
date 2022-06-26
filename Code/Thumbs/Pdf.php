@@ -21,7 +21,7 @@ class Pdf
         $tmpfile = $file . '.pdf';
         $outfile = $file . '.jpg';
 
-        Stdio::fpipe($file,$tmpfile);
+        Stdio::fcopy($file,$tmpfile);
 
         $imagick_path = get_config('system', 'imagick_convert_path');
         if ($imagick_path && @file_exists($imagick_path)) {
