@@ -827,7 +827,7 @@ class Events extends Controller
                                 drop_item($i[0]['id']);
                             } else {
                                 // complex deletion that needs to propagate and be performed in phases
-                                drop_item($i[0]['id'], false, DROPITEM_PHASE1);
+                                drop_item($i[0]['id'], DROPITEM_PHASE1);
                                 $complex = true;
                             }
 

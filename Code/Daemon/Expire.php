@@ -22,7 +22,7 @@ class Expire
         );
         if ($r) {
             foreach ($r as $rr) {
-                drop_item($rr['id'], false, DROPITEM_PHASE2);
+                drop_item($rr['id'], DROPITEM_PHASE2);
             }
         }
 

@@ -44,7 +44,7 @@ class Importdoc
         );
         if ($i) {
             foreach ($i as $iv) {
-                drop_item($iv['id'], false, DROPITEM_NORMAL, true);
+                drop_item($iv['id'], DROPITEM_NORMAL, true);
             }
         }
     }

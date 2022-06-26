@@ -62,7 +62,7 @@ class Cron
         if ($r) {
             require_once('include/items.php');
             foreach ($r as $rr) {
-                drop_item($rr['id'], false, (($rr['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
+                drop_item($rr['id'], (($rr['item_wall']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
                 if ($rr['item_wall']) {
                     // The notifier isn't normally invoked unless item_drop is interactive.
                     Run::Summon([ 'Notifier', 'drop', $rr['id'] ]);

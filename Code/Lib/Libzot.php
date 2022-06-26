@@ -1684,7 +1684,7 @@ class Libzot
 //              );
 //              if ($r) {
 //                  if (($r[0]['author_xchan'] === $sender) || ($r[0]['owner_xchan'] === $sender)) {
-//                      drop_item($r[0]['id'],false);
+//                      drop_item($r[0]['id']);
 //                  }
 //                  $DR->update('item deleted');
 //                  $result[] = $DR->get();
@@ -2525,7 +2525,7 @@ class Libzot
             // Use phased deletion to set the deleted flag, call both tag_deliver and the notifier to notify downstream channels
             // and then clean up after ourselves with a cron job after several days to do the delete_item_lowlevel() (DROPITEM_PHASE2).
 
-            drop_item($post_id, false, DROPITEM_PHASE1);
+            drop_item($post_id, DROPITEM_PHASE1);
             tag_deliver($uid, $post_id);
         }
 

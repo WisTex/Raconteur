@@ -1650,7 +1650,7 @@ function attach_drop_photo($channel_id, $resource)
         intval($channel_id)
     );
     if ($x) {
-        drop_item($x[0]['id'], false, (($x[0]['item_hidden']) ? DROPITEM_NORMAL : DROPITEM_PHASE1), true);
+        drop_item($x[0]['id'], (($x[0]['item_hidden']) ? DROPITEM_NORMAL : DROPITEM_PHASE1), true);
     }
     $r = q(
         "select content from photo where uid = %d and resource_id = '%s' and os_storage = 1",
