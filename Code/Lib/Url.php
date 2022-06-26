@@ -1,7 +1,6 @@
 <?php
 namespace Code\Lib;
 
-
 class Url {
 
     /**
@@ -68,7 +67,7 @@ class Url {
         if (x($opts, 'useragent')) {
             curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
         } else {
-            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; zot)");
+            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible)");
         }
 
         if (x($opts, 'upload')) {
@@ -293,7 +292,7 @@ class Url {
         if (x($opts, 'useragent')) {
             curl_setopt($ch, CURLOPT_USERAGENT, $opts['useragent']);
         } else {
-            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; zot)");
+            curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible)");
         }
 
 
