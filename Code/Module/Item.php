@@ -1873,6 +1873,9 @@ class Item extends Controller
 
                 if ($complex) {
                     tag_deliver($i[0]['uid'], $i[0]['id']);
+                    if (intval($i[0]['item_wall']) && $complex) {
+                        Run::Summon(['Notifier', 'drop', $i[0]['id']]);
+                    }
                 }
             }
         }

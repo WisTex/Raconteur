@@ -3693,6 +3693,9 @@ function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force 
 // $stage = 1 => set deleted flag on the item and perform intial notifications
 // $stage = 2 => perform low level delete at a later stage
 
+// @FIXME: interactive mode is deprecated and should no longer be used.
+// It should be removed however doing this will require significant testing. 
+    
 function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = false) {
 
 	// These resource types have linked items that should only be removed at the same time
