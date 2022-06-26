@@ -1140,7 +1140,7 @@ function sync_events($channel, $events)
                     intval($channel['channel_id'])
                 );
                 if ($r) {
-                    drop_item($r[0]['id'], false, (($event['event_xchan'] === $channel['channel_hash']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
+                    drop_item($r[0]['id'], (($event['event_xchan'] === $channel['channel_hash']) ? DROPITEM_PHASE1 : DROPITEM_NORMAL));
                 }
                 continue;
             }

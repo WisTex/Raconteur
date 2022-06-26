@@ -1854,10 +1854,10 @@ class Item extends Controller
                 $complex = false;
 
                 if (intval($i[0]['item_type']) || ($local_delete && (!$can_delete))) {
-                    drop_item($i[0]['id'], false);
+                    drop_item($i[0]['id']);
                 } else {
                     // complex deletion that needs to propagate and be performed in phases
-                    drop_item($i[0]['id'], false, DROPITEM_PHASE1);
+                    drop_item($i[0]['id'], DROPITEM_PHASE1);
                     $complex = true;
                 }
 

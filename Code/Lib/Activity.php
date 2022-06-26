@@ -2590,9 +2590,9 @@ class Activity
         }
 
         if (in_array($observer, [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
-            drop_item($r[0]['id'], false);
+            drop_item($r[0]['id']);
         } elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
-            drop_item($r[0]['id'], false);
+            drop_item($r[0]['id']);
         }
     }
 

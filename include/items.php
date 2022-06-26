@@ -3054,7 +3054,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 			);
 			if ($r) {
 				if (intval($item['item_deleted'])) {
-					drop_item($r[0]['id'],false,DROPITEM_PHASE1);
+					drop_item($r[0]['id'],DROPITEM_PHASE1);
 					Run::Summon([ 'Notifier','drop',$r[0]['id'] ]);
 					return;
 				}
@@ -3220,7 +3220,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
 		if ($edit) {
 			if (intval($item['item_deleted'])) {
-				drop_item($item['id'],false,DROPITEM_PHASE1);
+				drop_item($item['id'],DROPITEM_PHASE1);
 				Run::Summon([ 'Notifier','drop',$item['id'] ]);
 				return;
 			}
@@ -3646,7 +3646,7 @@ function item_expire($uid,$days,$comment_days = 7) {
 			continue;
 		}
 
-		drop_item($item['id'],false);
+		drop_item($item['id']);
 	}
 
 }
@@ -3659,7 +3659,7 @@ function retain_item($id) {
 
 // Items is array of item.id
 
-function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force = false) {
+function drop_items($items,$stage = DROPITEM_NORMAL,$force = false) {
 
 	$uid = 0;
 
@@ -3669,7 +3669,7 @@ function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force 
 
 	if (count($items)) {
 		foreach ($items as $item) {
-			$owner = drop_item($item,$interactive,$stage,$force);
+			$owner = drop_item($item,$stage,$force);
 			if ($owner && (! $uid)) {
 				$uid = $owner;
 			}
@@ -3696,7 +3696,7 @@ function drop_items($items,$interactive = false,$stage = DROPITEM_NORMAL,$force 
 // @FIXME: interactive mode is deprecated and should no longer be used.
 // It should be removed however doing this will require significant testing. 
     
-function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = false) {
+function drop_item($id,$stage = DROPITEM_NORMAL,$force = false) {
 
 	// These resource types have linked items that should only be removed at the same time
 	// as the linked resource; if we encounter one set it to item_hidden rather than item_deleted.
@@ -3769,7 +3769,6 @@ function drop_item($id,$interactive = true,$stage = DROPITEM_NORMAL,$force = fal
 
 		$arr = [
 			'item' => $item,
-			'interactive' => $interactive,
 			'stage' => $stage
 		];
 		/**

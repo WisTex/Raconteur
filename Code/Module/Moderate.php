@@ -80,7 +80,7 @@ class Moderate extends Controller
 
                     notice(t('Comment approved') . EOL);
                 } elseif ($action === 'drop') {
-                    drop_item($post_id, false);
+                    drop_item($post_id);
                     notice(t('Comment deleted') . EOL);
                 }
 

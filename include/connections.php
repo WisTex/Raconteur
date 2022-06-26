@@ -365,7 +365,7 @@ function remove_all_xchan_resources($xchan, $channel_id = 0)
         );
         if ($r) {
             foreach ($r as $rr) {
-                drop_item($rr['id'], false);
+                drop_item($rr['id']);
             }
         }
         $r = q(
@@ -556,7 +556,7 @@ function remove_abook_items($channel_id, $xchan_hash)
         if ($y) {
             continue;
         }
-        drop_item($rr['id'], false);
+        drop_item($rr['id']);
     }
 }
 

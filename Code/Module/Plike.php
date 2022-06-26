@@ -180,7 +180,7 @@ class Plike extends Controller
                         intval($channel['channel_id'])
                     );
                     if ($r) {
-                        drop_item($r[0]['id'], false);
+                        drop_item($r[0]['id']);
                     }
                 }
                 killme();
