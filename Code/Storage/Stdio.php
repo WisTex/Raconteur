@@ -8,18 +8,13 @@ Class Stdio {
 
     static public function mkdir($path, $mode = 0777, $recursive = false) {
         $result = false;
-        try {
-            $oldumask = umask(0);
-            $result = mkdir($path, $mode, $recursive);
-        } catch (\Exception $e) {
-            // null operation
-        } finally {
-            umask($oldumask);
-        }
-
+        $oldumask = umask(0);
+        set_error_handler(function() { /* ignore warnings */ });
+        $result = mkdir($path, $mode, $recursive);
+        restore_error_handler();
+        umask($oldumask);
         return $result;
     }
-
 
     /**
      * @brief Pipes $infile to $outfile in $bufsize chunks
@@ -29,6 +24,7 @@ Class Stdio {
     static public function fcopy($infile, $outfile, $bufsize = 65535, $read_mode = 'rb', $write_mode = 'wb')
     {
         $size = false;
+        set_error_handler(function() { /* ignore warnings */ });
         $in = fopen($infile, $read_mode);
         $out = fopen($outfile, $write_mode);
         if ($in && $out) {
@@ -36,6 +32,7 @@ Class Stdio {
         }
         fclose($in);
         fclose($out);
+        restore_error_handler();
         return $size;
     }
 
@@ -56,4 +53,11 @@ Class Stdio {
         return $size;
     }
 
+
+    static public function is_executable($path) {
+        set_error_handler(function() { /* ignore warnings */ });
+        $result = is_executable($path);
+        restore_error_handler();
+        return $result;
+    }
 }
