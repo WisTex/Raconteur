@@ -363,8 +363,8 @@ function import_remote_cover_photo($src, $xchan)
         if ($imagick_path && file_exists($imagick_path)) {
             exec($imagick_path . ' '
                 . escapeshellarg(PROJECT_BASE . '/' . $orig)
-                . ' -resize 850x478 '
-                . escapeshellarg(PROJECT_BASE . '/' . $path . '-8')
+                . ' -resize 425x239 '
+                . escapeshellarg(PROJECT_BASE . '/' . $path . '-9')
             );
         }
     }

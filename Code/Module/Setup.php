@@ -782,7 +782,10 @@ class Setup extends Controller
         set_config('system', 'allowed_themes', 'redbasic');
 
         // if imagick converter is installed, use it
-        if (@is_executable('/usr/bin/convert')) {
+        if (@is_executable('/usr/bin/magick')) {
+            set_config('system', 'imagick_convert_path', '/usr/bin/magick');
+        }
+        elseif (@is_executable('/usr/bin/convert')) {
             set_config('system', 'imagick_convert_path', '/usr/bin/convert');
         }
 
