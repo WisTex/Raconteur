@@ -641,6 +641,10 @@ function sys_boot() {
         define('DEFAULT_COVER_PHOTO','pexels-7599590');
     }
 
+    if (! defined('DEFAULT_PROFILE_PHOTO')) {
+        define('DEFAULT_PROFILE_PHOTO','rainbow_man');
+    }
+
     /*
      * Try to open the database;
      */
@@ -2589,7 +2593,3 @@ function get_loadtime($module) {
 
 }
 
-function get_default_cover_photo($size) {
-    $default_cover = get_config('system', 'default_cover_photo', DEFAULT_COVER_PHOTO);
-    return 'images/default_cover_photos/' . $default_cover . '/' . $size . '.jpg';
-}
