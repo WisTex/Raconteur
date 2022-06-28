@@ -417,6 +417,7 @@ define ( 'TERM_HIERARCHY',    9 );
 define ( 'TERM_COMMUNITYTAG', 10 );
 define ( 'TERM_FORUM',        11 );
 define ( 'TERM_EMOJI',        12 );
+define ( 'TERM_QUOTED',       13 );
 
 define ( 'TERM_OBJ_POST',    1 );
 define ( 'TERM_OBJ_PHOTO',   2 );
@@ -637,6 +638,13 @@ function sys_boot() {
         define( 'DEFAULT_NOTIFY_ICON', '/images/z1-64.png' );
     }
 
+    if (! defined('DEFAULT_COVER_PHOTO')) {
+        define('DEFAULT_COVER_PHOTO','pexels-7599590');
+    }
+
+    if (! defined('DEFAULT_PROFILE_PHOTO')) {
+        define('DEFAULT_PROFILE_PHOTO','rainbow_man');
+    }
 
     /*
      * Try to open the database;
@@ -2585,3 +2593,4 @@ function get_loadtime($module) {
     return datetime_convert();
 
 }
+

@@ -355,15 +355,15 @@ function import_remote_cover_photo($src, $xchan)
     if ($result['success']) {
         $info = getimagesize($orig);
         if (!$info) {
-            logger('storage failed.');
+            unlink($orig);
+            logger('storage failure: unrecognisable photo.');
             return false;
         }
-        $type = $info['mime'];
         $imagick_path = Config::Get('system','imagick_convert_path');
         if ($imagick_path && file_exists($imagick_path)) {
             exec($imagick_path . ' '
                 . escapeshellarg(PROJECT_BASE . '/' . $orig)
-                . ' -resize 425x139 '
+                . ' -resize 425x239 '
                 . escapeshellarg(PROJECT_BASE . '/' . $path . '-9')
             );
         }

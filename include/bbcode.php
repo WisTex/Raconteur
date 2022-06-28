@@ -664,7 +664,10 @@ function bb_ShareAttributes($match)
 
     $reldate = '<span class="autotime" title="' . datetime_convert('UTC', date_default_timezone_get(), $posted, 'c') . '" >' . datetime_convert('UTC', date_default_timezone_get(), $posted, 'r') . '</span>';
 
-    $headline = '<article><div class="shared_container"> <div class="shared_header">';
+    // I was going to wrap this in <article> to make it semantically correct HTML and permit cross-platform styling, but doing so results in text/plain
+    // projects stripping out the content completely. Hence that effort was reverted. 
+    
+    $headline = '<div class="shared_container"><div class="shared_header">';
 
     if ($avatar != "") {
         $headline .= '<a href="' . (($auth) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . htmlspecialchars($author, ENT_COMPAT, 'UTF-8', false) . '" height="32" width="32" loading="lazy" /></a>';
@@ -689,7 +692,7 @@ function bb_ShareAttributes($match)
 
     $headline .= '<span>' . $fmt . '</span></div>';
 
-    $text = $headline . '<div class="reshared-content">' . trim($match[2]) . '</div></div></article>';
+    $text = $headline . '<div class="reshared-content">' . trim($match[2]) . '</div></div>';
 
     return $text;
 }

@@ -849,6 +849,7 @@ class Libzot
 
             if (isset($arr['cover_photo']) && isset($arr['cover_photo']['url']) && strlen($arr['cover_photo']['url'])) {
                 set_xconfig($xchan_hash, 'system', 'cover_photo', $arr['cover_photo']['url']);
+                import_remote_cover_photo($arr['cover_photo']['url'], $xchan_hash);
             }
 
             if (isset($arr['signing_algorithm']) && strlen($arr['signing_algorithm'])) {
@@ -939,6 +940,7 @@ class Libzot
 
         if (isset($arr['cover_photo']) && isset($arr['cover_photo']['url']) && strlen($arr['cover_photo']['url'])) {
             set_xconfig($xchan_hash, 'system', 'cover_photo', $arr['cover_photo']['url']);
+            import_remote_cover_photo($arr['cover_photo']['url'], $xchan_hash);
         }
 
         if ($import_photos) {

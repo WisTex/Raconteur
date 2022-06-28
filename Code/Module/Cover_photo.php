@@ -10,7 +10,9 @@ use Code\Web\Controller;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Render\Theme;
-
+use Code\Lib\XConfig;
+use Code\Lib\Hashpath;
+use Code\Storage\Stdio;
 
 /*
    @file cover_photo.php
@@ -210,6 +212,9 @@ class Cover_photo extends Controller
 
                     $channel = App::get_channel();
                     $this->send_cover_photo_activity($channel, $base_image, $profile);
+                    // put the url and a copy in the places we look for remote cover photos.
+                    XConfig::Set($channel['channel_hash'], 'system', 'cover_photo', z_root() . '/photo/' . $base_image['resource_id'] . '-7');
+                    Stdio::fcopy('store/' . $channel['channel_address'] . '/' . $p['os_path'] . '-9', Hashpath::path($channel['channel_hash'], 'cache/xp' , 2) . '-9');
                 } else {
                     notice(t('Unable to process image') . EOL);
                 }

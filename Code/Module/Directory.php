@@ -127,7 +127,9 @@ class Directory extends Controller
 
         $safe_mode = Libzotdir::get_directory_setting($observer, 'safemode');
 
-        if (Config::Get('system','remote_cover_photos')) {
+        // replace with system.remote_cover_photos once work on this feature is complete
+    
+        if (Config::Get('system','remote_cover_photos_directory')) {
             $covers = Libzotdir::get_directory_setting($observer, 'covers');
         } else {
             $covers = false;

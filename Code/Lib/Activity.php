@@ -434,6 +434,20 @@ class Activity
                 if (!array_key_exists('type', $t)) {
                     $t['type'] = 'Hashtag';
                 }
+
+                // Handle quoted posts as taxonomy for the special snowflakes that can't figure out how to use attachments.
+                // For links, look for mediaType containing 'activity' OR link relations containing either 'via' or 'cite-as'
+                if ($t['type'] === 'Note' && isset($t['id'])) {
+                    $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['id'], 'term' => 'quoted_post'];
+                    continue;
+                }
+                elseif ($t['type'] === 'Link' && isset($t['href'])
+                        && ((isset($t['mediaType']) && strpos($t['mediaType'], 'activity') !== false)
+                        || (isset($t['rel']) && (attribute_contains($t['rel'],'via') || attribute_contains($t['rel'],'cite-as'))))) {
+                    $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['href'], 'term' => 'quoted_post'];
+                    continue;
+                }
+    
                 if (!(array_key_exists('name', $t))) {
                     continue;
                 }
@@ -2435,6 +2449,7 @@ class Activity
 
         if ($cover_photo) {
             set_xconfig($url, 'system', 'cover_photo', $cover_photo);
+            import_remote_cover_photo($url, $xchan_hash);
         }
 
 
@@ -3018,12 +3033,14 @@ class Activity
 
         // For the special snowflakes who can't figure out how to use attachments.
 
-        $quote_url = $act->get_property_obj('quoteUrl');
-        if ($quote_url) {
-            $s = self::get_quote($quote_url,$s);
-        }
-        elseif ($act->objprop('quoteUrl')) {
-			$s = self::get_quote($act->obj['quoteUrl'],$s);
+        foreach ( ['quoteUrl', 'quoteUri', '_misskey_quote'] as $quote) {
+            $quote_url = $act->get_property_obj($quote);
+            if ($quote_url) {
+                $s = self::get_quote($quote_url,$s);
+            }
+            elseif ($act->objprop($quote)) {
+    			$s = self::get_quote($act->obj[$quote],$s);
+            }
         }
 
         // handle some of the more widely used of the numerous and varied ways of deleting something
@@ -3129,6 +3146,7 @@ class Activity
                 && isset($s['attach']) && $s['attach']) {
             $s = self::bb_attach($s);
         }
+
 
         if ($act->objprop('type') === 'Question' && in_array($act->type, ['Create', 'Update'])) {
             if ($act->objprop['endTime']) {
@@ -3383,6 +3401,15 @@ class Activity
             }
         }
 
+        if ($s['term']) {
+            foreach ($s['term'] as $t) {
+                if ($t['ttype'] === TERM_QUOTED && self::share_not_in_body($s['body'])) {
+                    $s = self::get_quote($t['url'], $s);
+                }
+            }
+        }
+
+    
         $hookinfo = [
             'act' => $act,
             's' => $s
@@ -4084,6 +4111,7 @@ class Activity
                     $item = self::get_quote($a['href'], $item);
                 }
             }
+
         }
 
         return $item;
@@ -4468,13 +4496,7 @@ class Activity
                     if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                         $s = new Zlib\Share($z);
                         $item['body'] .= "\n\n" . $s->bbcode();
-                        $att = $s->get_attach();
-                        if (isset($item['attach'])) {
-                            $item['attach'] = array_merge( $item['attach'], ($att) ? $att : []);
-                        }
-                        else {
-                            $item['attach'] = ($att) ? [ $att ] : [];
-                        }
+                        $item['attach'] = $s->get_attach();
                     }
                 }
             }

@@ -1521,10 +1521,7 @@ class Channel
     */
     public static function get_default_profile_photo($size = 300)
     {
-        $scheme = get_config('system', 'default_profile_photo');
-        if (! $scheme) {
-            $scheme = 'rainbow_man';
-        }
+        $scheme = get_config('system', 'default_profile_photo', DEFAULT_PROFILE_PHOTO);
 
         if (! is_dir('images/default_profile_photos/' . $scheme)) {
             $x = [ 'scheme' => $scheme, 'size' => $size, 'url' => '' ];
@@ -1532,12 +1529,18 @@ class Channel
             if ($x['url']) {
                 return $x['url'];
             } else {
-                $scheme = 'rainbow_man';
+                $scheme = DEFAULT_PROFILE_PHOTO;
             }
         }
 
         return 'images/default_profile_photos/' . $scheme . '/' . $size . '.png';
     }
+
+    public static function get_default_cover_photo($size) {
+        $default_cover = get_config('system', 'default_cover_photo', DEFAULT_COVER_PHOTO);
+        return 'images/default_cover_photos/' . $default_cover . '/' . $size . '.jpg';
+    }
+
 
     /**
      * @brief Test whether a given identity is NOT a member of the Hubzilla.
@@ -1931,8 +1934,7 @@ class Channel
             $cover = $r[0];
             $cover['href'] = z_root() . '/photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];
         } else {
-            $default_cover = get_config('system', 'default_cover_photo', 'pexels-94622');
-            $cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.jpg' ];
+            $cover = [ 'href' => z_root() . '/' . self::get_default_cover_photo($cover_width) ];
         }
 
         $o .= replace_macros(Theme::get_template('zcard.tpl'), array(
@@ -2004,8 +2006,7 @@ class Channel
             $cover = $r[0];
             $cover['href'] = z_root() . '/photo/' . $r[0]['resource_id'] . '-' . $r[0]['imgscale'];
         } else {
-            $default_cover = get_config('system', 'default_cover_photo', 'pexels-94622');
-            $cover = [ 'href' => z_root() . '/images/default_cover_photos/' . $default_cover . '/' . $cover_width . '.jpg' ];
+            $cover = [ 'href' => z_root() . '/' . self::get_default_cover_photo($cover_width) ];
         }
 
         $o .= replace_macros(Theme::get_template('zcard_embed.tpl'), array(
