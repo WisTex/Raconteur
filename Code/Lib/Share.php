@@ -105,7 +105,7 @@ class Share
     
         $this->attach[] = [
             'href' => $this->item['mid'],
-            'rel' => 'cite-as',
+            'rel' => 'cite-as via',
             'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
             'title' => $this->item['mid']            
         ];
