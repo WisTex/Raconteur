@@ -3131,6 +3131,7 @@ class Activity
             $s = self::bb_attach($s);
         }
 
+
         if ($act->objprop('type') === 'Question' && in_array($act->type, ['Create', 'Update'])) {
             if ($act->objprop['endTime']) {
                 $s['comments_closed'] = datetime_convert('UTC', 'UTC', $act->obj['endTime']);
@@ -4469,13 +4470,7 @@ class Activity
                     if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                         $s = new Zlib\Share($z);
                         $item['body'] .= "\n\n" . $s->bbcode();
-                        $att = $s->get_attach();
-                        if (isset($item['attach'])) {
-                            $item['attach'] = array_merge( $item['attach'], ($att) ? $att : []);
-                        }
-                        else {
-                            $item['attach'] = ($att) ? [ $att ] : [];
-                        }
+                        $item['attach'] = $s->get_attach();
                     }
                 }
             }

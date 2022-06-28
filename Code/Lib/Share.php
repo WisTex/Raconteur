@@ -96,13 +96,16 @@ class Share
             return;
         }
 
-        if (! $this->attach) {
+        if ($this->item['attach']) {
+            $this->attach = json_decode($this->item['attach'],true);
+        }
+        else {
             $this->attach = [];
         }
     
         $this->attach[] = [
             'href' => $this->item['mid'],
-            'type' => 'application/activity+json',
+            'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
             'title' => $this->item['mid']            
         ];
     
