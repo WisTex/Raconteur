@@ -2096,7 +2096,12 @@ function bbcode($Text, $options = [])
     $Text = preg_replace_callback("/\[([zi])mg([ \=])(.*?)\](.*?)\[\/[zi]mg\]/ism", 'bb_imgoptions', $Text);
 
     if ($censored) {
-        $Text = separate_img_links($Text);
+        // This function in include/misc.php separates images wrapped in links
+        // so the links are still accessible when censored (where clicking the img views it).
+        // Unfortunately this destroys the formatting of reshares by a censored author.
+        // To visit the original links attached to the image, one must turn off safe mode.
+        // Leaving commented out in case somebody has a desire to fix it.
+        // $Text = separate_img_links($Text);
         $Text = preg_replace_callback("/\<img(.*?)src=\"(.*?)\"(.*?)\>/ism", "bb_colorbox", $Text);
     }
 
