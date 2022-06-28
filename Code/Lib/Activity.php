@@ -434,6 +434,19 @@ class Activity
                 if (!array_key_exists('type', $t)) {
                     $t['type'] = 'Hashtag';
                 }
+
+                // Handle quoted posts as taxonomy for the special snowflakes that can't figure out how to use attachments.
+    
+                if ($t['type'] === 'Note' && isset($t['id']) && self::share_not_in_body($item['body'])) {
+                    $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['id'], 'term' => 'quoted_post'];
+                    continue;
+                }
+                elseif ($t['type'] === 'Link' && isset($t['href'])
+                        && isset($t['mediaType']) && strpos($t['mediaType'], 'activity') !== false) {
+                    $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['href'], 'term' => 'quoted_post'];
+                    continue;
+                }
+    
                 if (!(array_key_exists('name', $t))) {
                     continue;
                 }
@@ -3019,12 +3032,14 @@ class Activity
 
         // For the special snowflakes who can't figure out how to use attachments.
 
-        $quote_url = $act->get_property_obj('quoteUrl');
-        if ($quote_url) {
-            $s = self::get_quote($quote_url,$s);
-        }
-        elseif ($act->objprop('quoteUrl')) {
-			$s = self::get_quote($act->obj['quoteUrl'],$s);
+        foreach ( ['quoteUrl', 'quoteUri', '_misskey_quote'] as $quote) {
+            $quote_url = $act->get_property_obj($quote);
+            if ($quote_url) {
+                $s = self::get_quote($quote_url,$s);
+            }
+            elseif ($act->objprop($quote)) {
+    			$s = self::get_quote($act->obj[$quote],$s);
+            }
         }
 
         // handle some of the more widely used of the numerous and varied ways of deleting something
@@ -3385,6 +3400,15 @@ class Activity
             }
         }
 
+        if ($s['term']) {
+            foreach ($s['term'] as $t) {
+                if ($t['ttype'] === TERM_QUOTED && self::share_not_in_body($s['body'])) {
+                    $s = self::get_quote($t['url'], $s);
+                }
+            }
+        }
+
+    
         $hookinfo = [
             'act' => $act,
             's' => $s
@@ -4086,6 +4110,7 @@ class Activity
                     $item = self::get_quote($a['href'], $item);
                 }
             }
+
         }
 
         return $item;
