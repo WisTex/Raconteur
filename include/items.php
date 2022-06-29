@@ -1813,7 +1813,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 				$arr['item_private'] = 0;
 
 			if(in_array($arr['obj_type'], ['Note','Answer']) && $r[0]['obj_type'] === 'Question' && intval($r[0]['item_wall'])) {
-				Activity::update_poll($r[0],$arr);
+				Activity::update_poll($r[0], $arr, $deliver);
 			}
 		}
 		else {

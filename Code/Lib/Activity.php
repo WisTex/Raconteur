@@ -2654,7 +2654,7 @@ class Activity
         return '@{' . $id . '}';
     }
 
-    public static function update_poll($item, $post)
+    public static function update_poll($item, $post, $deliver = true)
     {
 
         logger('updating poll');
@@ -2745,7 +2745,7 @@ class Activity
         }
 
         logger('updated_poll: ' . print_r($o, true), LOGGER_DATA);
-        if ($answer_found && !$found) {
+        if ($answer_found && !$found && $deliver) {
             $x = q(
                 "update item set obj = '%s', edited = '%s' where id = %d",
                 dbesc(json_encode($o)),
