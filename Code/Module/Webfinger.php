@@ -121,6 +121,18 @@ class Webfinger extends Controller
             $result['links'] = [
 
                 [
+                    'rel' => 'self',
+                    'type' => 'application/activity+json',
+                    'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
+                ],
+
+                [
+                    'rel' => 'self',
+                    'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+                    'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
+                ],
+
+                [
                     'rel' => 'http://webfinger.net/rel/avatar',
                     'type' => $channel_target['xchan_photo_mimetype'],
                     'href' => $channel_target['xchan_photo_l']
@@ -142,18 +154,6 @@ class Webfinger extends Controller
 					'type' => 'application/x-nomad+json',
 					'href' => z_root() . '/owa'
 				],
-
-                [
-                    'rel' => 'self',
-                    'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-                    'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
-                ],
-
-                [
-                    'rel' => 'self',
-                    'type' => 'application/activity+json',
-                    'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
-                ],
 
                 [
                     'rel' => 'http://purl.org/zot/protocol/6.0',

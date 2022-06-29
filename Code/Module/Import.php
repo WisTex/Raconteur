@@ -231,6 +231,7 @@ class Import extends Controller
                     'xchan_photo_l' => z_root() . "/photo/profile/l/" . $channel['channel_id'],
                     'xchan_photo_m' => z_root() . "/photo/profile/m/" . $channel['channel_id'],
                     'xchan_photo_s' => z_root() . "/photo/profile/s/" . $channel['channel_id'],
+                    'xchan_photo_mimetype' => $data['photo']['type'],
                     'xchan_addr' => Channel::get_webfinger($channel),
                     'xchan_url' => z_root() . '/channel/' . $channel['channel_address'],
                     'xchan_connurl' => z_root() . '/poco/' . $channel['channel_address'],
