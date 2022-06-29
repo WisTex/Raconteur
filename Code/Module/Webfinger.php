@@ -104,8 +104,7 @@ class Webfinger extends Controller
             $result['properties'] = [
                 'http://webfinger.net/ns/name' => $site_query ? System::get_site_name() : $channel_target['channel_name'],
                 'http://xmlns.com/foaf/0.1/name' => $site_query ? System::get_site_name() : $channel_target['channel_name'],
-                'https://w3id.org/security/v1#publicKeyPem' => (($site_query) ? get_config('system', 'pubkey') : $channel_target['xchan_pubkey']),
-                'http://purl.org/nomad/federation' => ((get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) ? 'nomad,zot6,activitypub' : 'nomad,zot6')
+                'https://w3id.org/security/v1#publicKeyPem' => (($site_query) ? get_config('system', 'pubkey') : $channel_target['xchan_pubkey'])
             ];
 
             if ($site_query) {
@@ -132,12 +131,6 @@ class Webfinger extends Controller
                     'href' => z_root() . '/channel/' . $channel_target['channel_address'],
                 ],
 
-                [
-                    'rel' => 'http://purl.org/zot/protocol/6.0',
-                    'type' => 'application/x-zot+json',
-                    'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
-                ],
-
 				[ 
 					'rel'  => 'http://purl.org/nomad', 
 					'type' => 'application/x-nomad+json', 
@@ -160,6 +153,12 @@ class Webfinger extends Controller
                     'rel' => 'self',
                     'type' => 'application/activity+json',
                     'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address'])
+                ],
+
+                [
+                    'rel' => 'http://purl.org/zot/protocol/6.0',
+                    'type' => 'application/x-zot+json',
+                    'href' => (($site_query) ? z_root() : z_root() . '/channel/' . $channel_target['channel_address']),
                 ],
 
                 [
