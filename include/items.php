@@ -1736,18 +1736,20 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 		}
 
 		if ($r) {
+    
+            $parent_item = array_shift($r);
 
 			// in case item_store was killed before the parent's parent attribute got set,
 			// set it now. This happens with some regularity on Dreamhost. This will keep
 			// us from getting notifications for threads that exist but which we can't see.
 
-			if(($r[0]['mid'] === $r[0]['parent_mid']) && (! intval($r[0]['parent']))) {
+			if(($parent_item['mid'] === $parent_item['parent_mid']) && (! intval($parent_item['parent']))) {
 				q("update item set parent = id where id = %d",
-					intval($r[0]['id'])
+					intval($parent_item['id'])
 				);
 			}
 
-			if(comments_are_now_closed($r[0])) {
+			if(comments_are_now_closed($parent_item)) {
 				logger('item_store: comments closed');
 				$ret['message'] = 'Comments closed.';
 				return $ret;
@@ -1760,60 +1762,60 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 			// even though we don't support it now, preserve the info
 			// and re-attach to the conversation parent.
 
-			if($r[0]['mid'] != $r[0]['parent_mid']) {
-				$arr['parent_mid'] = $r[0]['parent_mid'];
+			if($parent_item['mid'] != $parent_item['parent_mid']) {
+				$arr['parent_mid'] = $parent_item['parent_mid'];
 				$z = q("SELECT * FROM item WHERE mid = '%s' AND parent_mid = '%s' AND uid = %d
 					ORDER BY id ASC LIMIT 1",
-					dbesc($r[0]['parent_mid']),
-					dbesc($r[0]['parent_mid']),
+					dbesc($parent_item['parent_mid']),
+					dbesc($parent_item['parent_mid']),
 					intval($arr['uid'])
 				);
 				if($z && count($z))
 					$r = $z;
 			}
 
-			$parent_id       = $r[0]['id'];
-			$parent_deleted  = $r[0]['item_deleted'];
+			$parent_id       = $parent_item['id'];
+			$parent_deleted  = $parent_item['item_deleted'];
 
 			// item_restrict indicates an activitypub reply with a different 
 			// delivery algorithm than the "parent-relay" or inherited privacy mode
 
 			if(! (intval($arr['item_restrict']) & 1)) {
-				$allow_cid       = $r[0]['allow_cid'];
-				$allow_gid       = $r[0]['allow_gid'];
-				$deny_cid        = $r[0]['deny_cid'];
-				$deny_gid        = $r[0]['deny_gid'];
+				$allow_cid       = $parent_item['allow_cid'];
+				$allow_gid       = $parent_item['allow_gid'];
+				$deny_cid        = $parent_item['deny_cid'];
+				$deny_gid        = $parent_item['deny_gid'];
 			}
 
-			$comments_closed = $r[0]['comments_closed'];
+			$comments_closed = $parent_item['comments_closed'];
 
-			if(intval($r[0]['item_wall']))
+			if(intval($parent_item['item_wall']))
 				$arr['item_wall'] = 1;
 
 			// An uplinked comment might arrive with a downstream owner.
 			// Fix it.
 
-			if($r[0]['owner_xchan'] !== $arr['owner_xchan']) {
-				$arr['owner_xchan'] = $r[0]['owner_xchan'];
+			if($parent_item['owner_xchan'] !== $arr['owner_xchan']) {
+				$arr['owner_xchan'] = $parent_item['owner_xchan'];
 				//				$uplinked_comment = true;
 			}
 
 			// if the parent is private and the child is not, force privacy for the entire conversation
 			// if the child is private, leave it alone regardless of the parent privacy state
 			
-			if(intval($r[0]['item_private']) && (! intval($arr['item_private']))) {
-				$arr['item_private'] = $r[0]['item_private'];
+			if(intval($parent_item['item_private']) && (! intval($arr['item_private']))) {
+				$arr['item_private'] = $parent_item['item_private'];
 			}
 
 			// Edge case. We host a public forum that was originally posted to privately.
 			// The original author commented, but as this is a comment, the permissions
 			// weren't fixed up so it will still show the comment as private unless we fix it here.
 
-			if(intval($r[0]['item_uplink']) && (! $r[0]['item_private']))
+			if(intval($parent_item['item_uplink']) && (! $parent_item['item_private']))
 				$arr['item_private'] = 0;
 
-			if(in_array($arr['obj_type'], ['Note','Answer']) && $r[0]['obj_type'] === 'Question' && intval($r[0]['item_wall'])) {
-				Activity::update_poll($r[0], $arr, $deliver);
+			if(in_array($arr['obj_type'], ['Note','Answer']) && $parent_item['obj_type'] === 'Question' && intval($parent_item['item_wall'])) {
+				Activity::update_poll($parent_item, $arr, $deliver);
 			}
 		}
 		else {
