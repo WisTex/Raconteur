@@ -100,47 +100,43 @@ class Activity
 
         logger('fetch: ' . $url, LOGGER_DEBUG);
 
-        if (isset($parsed['scheme']) && $parsed['scheme'] === 'x-zot') {
-            $x = ZotURL::fetch($url, $channel, $hub);
-        } else {
-            // handle bearcaps
-            if (isset($parsed['scheme']) && isset($parsed['query']) && $parsed['scheme'] === 'bear' && $parsed['query'] !== EMPTY_STR) {
-                $params = explode('&', $parsed['query']);
-                if ($params) {
-                    foreach ($params as $p) {
-                        if (substr($p, 0, 2) === 'u=') {
-                            $url = substr($p, 2);
-                        }
-                        if (substr($p, 0, 2) === 't=') {
-                            $token = substr($p, 2);
-                        }
+        // handle bearcaps
+        if (isset($parsed['scheme']) && isset($parsed['query']) && $parsed['scheme'] === 'bear' && $parsed['query'] !== EMPTY_STR) {
+            $params = explode('&', $parsed['query']);
+            if ($params) {
+                foreach ($params as $p) {
+                    if (substr($p, 0, 2) === 'u=') {
+                        $url = substr($p, 2);
                     }
-                    // the entire URL just changed so parse it again
-                    $parsed = parse_url($url);
+                    if (substr($p, 0, 2) === 't=') {
+                        $token = substr($p, 2);
+                    }
                 }
+                // the entire URL just changed so parse it again
+                $parsed = parse_url($url);
             }
-
-            // Ignore fragments; as we are not in a browser.
-            unset($parsed['fragment']);
-
-            // rebuild the url
-            $url = unparse_url($parsed);
-
-            logger('fetch_actual: ' . $url, LOGGER_DEBUG);
-
-            $headers = [
-                'Accept' => 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-                'Host' => $parsed['host'],
-                'Date' => datetime_convert('UTC', 'UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
-                '(request-target)' => 'get ' . get_request_string($url)
-            ];
-
-            if (isset($token)) {
-                $headers['Authorization'] = 'Bearer ' . $token;
-            }
-            $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
-            $x = Url::get($url, ['headers' => $h]);
         }
+
+        // Ignore fragments; as we are not in a browser.
+        unset($parsed['fragment']);
+
+        // rebuild the url
+        $url = unparse_url($parsed);
+
+        logger('fetch_actual: ' . $url, LOGGER_DEBUG);
+
+        $headers = [
+            'Accept' => 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+            'Host' => $parsed['host'],
+            'Date' => datetime_convert('UTC', 'UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
+            '(request-target)' => 'get ' . get_request_string($url)
+        ];
+
+        if (isset($token)) {
+            $headers['Authorization'] = 'Bearer ' . $token;
+        }
+        $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
+        $x = Url::get($url, ['headers' => $h]);
 
         if ($x['success']) {
             $y = json_decode($x['body'], true);
@@ -4443,7 +4439,7 @@ class Activity
     {
 
         return [
-            'zot' => z_root() . '/apschema#',
+            'nomad' => z_root() . '/apschema#',
             'toot' => 'http://joinmastodon.org/ns#',
             'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
@@ -4455,14 +4451,14 @@ class Activity
             'copiedTo' => 'as:copiedTo',
             'alsoKnownAs' => 'as:alsoKnownAs',
             'EmojiReact' => 'as:EmojiReact',
-            'commentPolicy' => 'zot:commentPolicy',
-            'topicalCollection' => 'zot:topicalCollection',
-            'eventRepeat' => 'zot:eventRepeat',
-            'emojiReaction' => 'zot:emojiReaction',
-            'expires' => 'zot:expires',
-            'directMessage' => 'zot:directMessage',
-            'Category' => 'zot:Category',
-            'replyTo' => 'zot:replyTo',
+            'commentPolicy' => 'nomad:commentPolicy',
+            'topicalCollection' => 'nomad:topicalCollection',
+            'eventRepeat' => 'nomad:eventRepeat',
+            'emojiReaction' => 'nomad:emojiReaction',
+            'expires' => 'nomad:expires',
+            'directMessage' => 'nomad:directMessage',
+            'Category' => 'nomad:Category',
+            'replyTo' => 'nomadd:replyTo',
             'PropertyValue' => 'schema:PropertyValue',
             'value' => 'schema:value',
             'discoverable' => 'toot:discoverable',

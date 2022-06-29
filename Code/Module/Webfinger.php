@@ -105,7 +105,7 @@ class Webfinger extends Controller
                 'http://webfinger.net/ns/name' => $site_query ? System::get_site_name() : $channel_target['channel_name'],
                 'http://xmlns.com/foaf/0.1/name' => $site_query ? System::get_site_name() : $channel_target['channel_name'],
                 'https://w3id.org/security/v1#publicKeyPem' => (($site_query) ? get_config('system', 'pubkey') : $channel_target['xchan_pubkey']),
-                'http://purl.org/zot/federation' => ((get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) ? 'nomad,zot6,activitypub' : 'nomad,zot6')
+                'http://purl.org/nomad/federation' => ((get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) ? 'nomad,zot6,activitypub' : 'nomad,zot6')
             ];
 
             if ($site_query) {

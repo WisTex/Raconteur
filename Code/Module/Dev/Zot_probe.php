@@ -4,7 +4,6 @@ namespace Code\Module\Dev;
 
 use App;
 use Code\Lib\Url;
-use Code\Lib\ZotURL;
 use Code\Lib\Zotfinger;
 use Code\Web\Controller;
 use Code\Web\HTTPSig;
@@ -28,17 +27,13 @@ class Zot_probe extends Controller
             $resource = $_GET['resource'];
             $channel = (($_GET['authf']) ? App::get_channel() : null);
 
-            if (strpos($resource, 'x-zot:') === 0) {
-                $x = ZotURL::fetch($resource, $channel);
-            } else {
-                $x = Zotfinger::exec($resource, $channel);
+            $x = Zotfinger::exec($resource, $channel);
 
-                $o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
+            $o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
 
-				$headers = 'Accept: application/x-nomad+json, application/x-zot+json, application/jrd+json, application/json';
+            $headers = 'Accept: application/x-nomad+json, application/x-zot+json, application/jrd+json, application/json';
 
-                $x = Url::get($resource, ['headers' => [$headers]]);
-            }
+            $x = Url::get($resource, ['headers' => [$headers]]);
 
             if ($x['success']) {
                 $o .= '<pre>' . htmlspecialchars($x['header']) . '</pre>' . EOL;
