@@ -50,7 +50,7 @@ class Router
     {
 
         $module = App::$module;
-        $modname = "Code\\Module\\" . ucfirst($module);
+        $modname = 'Code\Module\\' . ucfirst($module);
 
         if (strlen($module)) {
             /*

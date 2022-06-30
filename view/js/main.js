@@ -231,12 +231,6 @@ function handle_comment_form(e) {
 		
 		form.find(':not(:visible)').show();
 		commentAuthors(commentId);
-
-		let quoted = getSelectedText();
-		let tmpStr = $("#comment-edit-text-" + commentId).val();
-		if(quoted != '') {
-			$("#comment-edit-text-" + commentId).val(tmpStr + '[quote]' + quoted + '[/quote]');
-		}
 	}
 
 	
