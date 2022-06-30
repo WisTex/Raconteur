@@ -817,7 +817,7 @@ class Activity
             }
         }
         if (isset($cnv) && $cnv) {
-            if (strpos($cnv, z_root()) === 0) {
+            if (is_string($cnv) && strpos($cnv, z_root()) === 0) {
                 $cnv = str_replace(['/item/', '/activity/'], ['/conversation/', '/conversation/'], $cnv);
             }
             $ret['context'] = $cnv;
@@ -1212,7 +1212,7 @@ class Activity
             }
         }
         if (isset($cnv) && $cnv) {
-            if (strpos($cnv, z_root()) === 0) {
+            if (is_string($cnv) && strpos($cnv, z_root()) === 0) {
                 $cnv = str_replace(['/item/', '/activity/'], ['/conversation/', '/conversation/'], $cnv);
             }
             $ret['context'] = $cnv;
