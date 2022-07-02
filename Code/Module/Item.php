@@ -1582,6 +1582,13 @@ class Item extends Controller
             $datarray['id'] = $post_id;
 
             $x = item_store_update($datarray, $execflag);
+
+            if ($x['success']) {
+                Hook::call('after_item_store', $x['item']);
+            }
+
+            // Sync packets for edited comments are generated elsewhere.
+            // @FIXME: where exactly? 
             if (!$parent) {
                 $r = q(
                     "select * from item where id = %d",
@@ -1601,11 +1608,9 @@ class Item extends Controller
                 return ($x);
             }
 
-
             if (intval($datarray['item_unpublished'])) {
                 info($draft_msg);
             }
-
 
             if ((x($_REQUEST, 'return')) && strlen($return_path)) {
                 logger('return: ' . $return_path);
@@ -1618,6 +1623,10 @@ class Item extends Controller
 
         $post = item_store($datarray, $execflag);
 
+        if ($post['success']) {
+            Hook::call('after_item_store', $post['item']);
+        }
+    
         if ($pub_copy) {
             info(t('Your comment has been posted.') . EOL);
         }

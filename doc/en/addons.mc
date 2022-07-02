@@ -90,7 +90,3 @@ Allow site administrator to access/administer protected channels and content
 ### Twitter API
 
 Implements a reasonable and useful subset the Twitter V1 and V1.1 API with StatusNet extensions
-
-### Zot Crosspost Connector (zotpost)
-
-Republish public posts to another Zot or Zot6 channel
