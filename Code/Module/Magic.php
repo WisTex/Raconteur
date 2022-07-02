@@ -107,7 +107,7 @@ class Magic extends Controller
                 $headers['X-Open-Web-Auth'] = random_string();
                 $headers['Digest'] = HTTPSig::generate_digest_header($data);
                 $headers['Host'] = $parsed['host'];
-                $headers['(request-target)'] = 'post ' . '/owa';
+                $headers['(request-target)'] = 'get ' . '/owa';
 
                 $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
                 $x = Url::get($owapath, ['headers' => $headers]);
