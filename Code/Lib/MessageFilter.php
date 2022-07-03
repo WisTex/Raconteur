@@ -127,6 +127,7 @@ class MessageFilter
      * - ?foo {} baz which will check if 'baz' is an array element in item.foo
      * - ?foo {*} baz which will check if 'baz' is an array key in item.foo
      * - ?foo which will check for a return of a true condition for item.foo;
+     * - ?!foo which will check for a return of a false condition for item.foo;
      *
      * The values 0, '', an empty array, and an unset value will all evaluate to false.
      *
@@ -204,6 +205,15 @@ class MessageFilter
         if (preg_match('/(.*?)\s\{\*\}\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if (is_array($x) && array_key_exists(trim($matches[2]), $x)) {
+                return true;
+            }
+            return false;
+        }
+    
+        // Ordering of this check (for falsiness) with relation to the following one (check for truthiness) is important.
+        if (preg_match('/\!(.*?)$/', $s, $matches)) {
+            $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
+            if (!$x) {
                 return true;
             }
             return false;
