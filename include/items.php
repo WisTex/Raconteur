@@ -3438,7 +3438,6 @@ function post_is_importable($channel_id, $item, $abook) {
 		return true;
 	}
 
-
 	$incl = PConfig::get($channel_id, 'system', 'message_filter_incl', EMPTY_STR);
 	$excl = PConfig::get($channel_id, 'system', 'message_filter_excl', EMPTY_STR);
 	if ($incl || $excl) {
@@ -3448,7 +3447,6 @@ function post_is_importable($channel_id, $item, $abook) {
 			return false;
 		}
 	}
-
 
 	if (! $abook) {
 		return true;
