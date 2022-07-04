@@ -33,7 +33,7 @@ use Code\Web\HTTPSig;
  *
  * @covers Code\Web\HTTPSig
  */
-class PermissionDescriptionTest extends UnitTestCase
+class HttpSigTest extends UnitTestCase
 {
 
     use PHPMock;
@@ -45,7 +45,7 @@ class PermissionDescriptionTest extends UnitTestCase
     {
         $this->assertSame(
             $digest,
-            HTTPSig::generate_digest($text, false)
+            HTTPSig::generate_digest_header($text, 'sha256')
         );
     }
 
@@ -54,15 +54,15 @@ class PermissionDescriptionTest extends UnitTestCase
         return [
             'empty body text' => [
                 '',
-                '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+                'SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
             ],
             'sample body text' => [
                 'body text',
-                '2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI='
+                'SHA-256=2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI='
             ],
             'NULL body text' => [
                 null,
-                '47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
+                'SHA-256=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='
             ],
         ];
     }
@@ -70,67 +70,10 @@ class PermissionDescriptionTest extends UnitTestCase
     public function testGeneratedDigestsOfDifferentTextShouldNotBeEqual()
     {
         $this->assertNotSame(
-            HTTPSig::generate_digest('text1', false),
-            HTTPSig::generate_digest('text2', false)
+            HTTPSig::generate_digest_header('text1'),
+            HTTPSig::generate_digest_header('text2')
         );
     }
 
-    /**
-     * Process separation needed for header() check.
-     * @runInSeparateProcess
-     */
-    public function testGenerate_digestSendsHttpHeader()
-    {
-        $ret = HTTPSig::generate_digest('body text', true);
 
-        $this->assertSame('2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI=', $ret);
-        $this->assertContains(
-            'Digest: SHA-256=2fu8kUkvuzuo5XyhWwORNOcJgDColXgxWkw1T5EXzPI=',
-            xdebug_get_headers(),
-            'HTTP header Digest does not match'
-        );
-    }
-
-    /**
-     * @uses ::crypto_unencapsulate
-     */
-    public function testDecrypt_sigheader()
-    {
-        $header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';
-        $result = [
-            'iv' => 'value_iv',
-            'key' => 'value_key',
-            'alg' => 'value_alg',
-            'data' => 'value_data'
-        ];
-
-        $this->assertSame($result, HTTPSig::decrypt_sigheader($header, 'site private key'));
-    }
-
-    /**
-     * @uses ::crypto_unencapsulate
-     */
-    public function testDecrypt_sigheaderUseSitePrivateKey()
-    {
-        // Create a stub for global function get_config() with expectation
-        $t = $this->getFunctionMock('Code\Web', 'get_config');
-        $t->expects($this->once())->willReturn('system.prvkey');
-
-        $header = 'Header: iv="value_iv" key="value_key" alg="value_alg" data="value_data"';
-        $result = [
-            'iv' => 'value_iv',
-            'key' => 'value_key',
-            'alg' => 'value_alg',
-            'data' => 'value_data'
-        ];
-
-        $this->assertSame($result, HTTPSig::decrypt_sigheader($header));
-    }
-
-    public function testDecrypt_sigheaderIncompleteHeaderShouldReturnEmptyString()
-    {
-        $header = 'Header: iv="value_iv" key="value_key"';
-
-        $this->assertEmpty(HTTPSig::decrypt_sigheader($header, 'site private key'));
-    }
 }
