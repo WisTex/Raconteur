@@ -20,30 +20,31 @@ class LanguageDetect
     const MINLENGTH = 48;
     const MINCONFIDENCE = 0.01;
 
-    public function detect($string)
+    /**
+     * Detect language from provided string.
+     * When successful, return the 2-letter language code.
+     * Lack of confidence in the result returns empty string.
+     */
+    public function detect(string $string,
+    	int $minlength = self::MINLENGTH,
+    	float $confidence = self::MINCONFIDENCE) : string
     {
         $detector = new Text_LanguageDetect();
 
-        if (mb_strlen($string) < self::MINLENGTH) {
+        if (mb_strlen($string) < $minlength) {
             return '';
         }
 
         try {
-            // return 2-letter ISO 639-1 (en) language code
+            // return 2-letter ISO 639-1 language code (e.g.  'en') 
             $detector->setNameMode(2);
             $result = $detector->detectConfidence($string);
+    		if (isset($result['language']) && $result['confidence'] >= $confidence) {
+    			return $result['language'];
+    		}
         } catch (Text_LanguageDetect_Exception $e) {
-            // null operation
-        }
-
-        if (!($result && isset($result['language']))) {
-            return '';
-        }
-
-        if ($result['confidence'] < self::MINCONFIDENCE) {
-            return '';
-        }
-
-        return($result['language']);
+			// pass
+    	}
+        return '';
     }
 }
