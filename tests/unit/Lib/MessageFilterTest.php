@@ -42,6 +42,9 @@ class MessageFilterTest extends UnitTestCase
 
         $x = MessageFilter::evaluate([ 'body' => 'the quick brown fox jumped over the lazy dog. Therefore the world is flat.' ], '', 'lang!=en');
         $this->assertTrue($x);
-        
+
+		$x = MessageFilter::evaluate(['body' => 'Die Botschafter der 30 Nato-Länder bringen den Beitritt von zwei jahrzehntelang neutralen Staaten auf den Weg. Schweden und Finnland können nun an Treffen des Militärbündnisses teilnehmen, aber noch nicht abstimmen.' ], 'lang=de', '');
+    	$this->assertTrue($x);
+            
     }   
 }
