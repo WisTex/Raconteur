@@ -3,11 +3,7 @@
 namespace Code\Tests\Unit\Lib;
 
 use Code\Tests\Unit\UnitTestCase;
-use phpmock\phpunit\PHPMock;
 use Code\Lib\MessageFilter;
-
-include 'boot.php';
-sys_boot();
 
 /**
  * @brief Unit Test case for HTTPSig class.
@@ -16,10 +12,8 @@ sys_boot();
  */
 class MessageFilterTest extends UnitTestCase
 {
-    use PHPMock;
-    
-    /** @test */
-    public function languageFilterTests()
+
+    public function testLanguageFilter()
     {
         // Check accept language rules
     
@@ -48,13 +42,6 @@ class MessageFilterTest extends UnitTestCase
 
         $x = MessageFilter::evaluate([ 'body' => 'the quick brown fox jumped over the lazy dog. Therefore the world is flat.' ], '', 'lang!=en');
         $this->assertTrue($x);
-
-
-
-    
-    
+        
     }   
-
-
-
 }

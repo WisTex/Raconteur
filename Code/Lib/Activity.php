@@ -3768,8 +3768,11 @@ class Activity
             return;
         }
 
+        $plaintext = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
+        $plaintext = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $plaintext : $plaintext);
+        
         if ($channel['channel_system']) {
-            if (!MessageFilter::evaluate($item, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'))) {
+            if (!MessageFilter::evaluate($item, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'), ['plaintext' => $plaintext])) {
                 logger('post is filtered');
                 return;
             }
