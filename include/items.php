@@ -13,8 +13,10 @@ use Code\Lib\ActivityStreams;
 use Code\Lib\Apps;
 use Code\Lib\Enotify;
 use Code\Lib\Channel;
+use Code\Lib\LanguageDetect;
 use Code\Lib\MarkdownSoap;
 use Code\Lib\MessageFilter;
+use Code\Lib\Config;
 use Code\Lib\IConfig;
 use Code\Lib\PConfig;
 use Code\Lib\LibBlock;
@@ -1570,8 +1572,11 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 	// obsolete, but needed so as not to throw not-null constraints on some database driveres
 	$arr['item_flags']    = ((x($arr,'item_flags'))    ? intval($arr['item_flags'])          : 0 );
 
+    $languagetext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
+    $languagetext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $languagetext : $languagetext);
 
-	$arr['lang'] = detect_language($arr['body']);
+    $detector = new LanguageDetect();
+    $arr['lang'] = $detector->detect($languagetext);
 
 	// apply the input filter here
 
@@ -2080,7 +2085,11 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 		return $ret;
 	}
 
-	$arr['lang'] = detect_language($arr['body']);
+    $languagetext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
+    $languagetext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $languagetext : $languagetext);
+
+    $detector = new LanguageDetect();
+    $arr['lang'] = $detector->detect($languagetext);
 
 	// apply the input filter here
 
@@ -3438,10 +3447,13 @@ function post_is_importable($channel_id, $item, $abook) {
 		return true;
 	}
 
+    $text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
+    $text = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $text : $text);
+  
 	$incl = PConfig::get($channel_id, 'system', 'message_filter_incl', EMPTY_STR);
 	$excl = PConfig::get($channel_id, 'system', 'message_filter_excl', EMPTY_STR);
 	if ($incl || $excl) {
-		$x = MessageFilter::evaluate($item, $incl, $excl);
+		$x = MessageFilter::evaluate($item, $incl, $excl, ['plaintext' => $text]);
 		if (! $x) {
 			logger('MessageFilter: channel blocked content', LOGGER_DEBUG, LOG_INFO);
 			return false;
@@ -3460,7 +3472,7 @@ function post_is_importable($channel_id, $item, $abook) {
 		if (! ($ab['abook_incl'] || $ab['abook_excl']) ) {
 			continue;
 		}
-		$evaluator = MessageFilter::evaluate($item, $ab['abook_incl'], $ab['abook_excl']);
+		$evaluator = MessageFilter::evaluate($item, $ab['abook_incl'], $ab['abook_excl'], ['plaintext' => $text]);
 		// A negative assessment for any individual connections is an instant fail.
 		if (! $evaluator) {
 			return false;

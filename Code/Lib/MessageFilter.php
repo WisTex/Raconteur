@@ -7,21 +7,27 @@ require_once('include/html2plain.php');
 class MessageFilter
 {
 
-
-    public static function evaluate($item, $incl, $excl)
+    public static function evaluate($item, $incl, $excl, $opts = [])
     {
-
-
-        $text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
-        $text = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $text : $text);
+    
+        // Option: plaintext
+        // Improve language detection by providing a plaintext version of $item['body'] which has no markup constructs/tags.
+       
+        if (array_key_exists('plaintext', $opts)) {
+            $text = $opts['plaintext'];
+        }
+        else {
+            $text = $item['body'];
+        }
 
         $lang = null;
 
         // Language matching is a bit tricky, because the language can be ambiguous (detect_language() returns '').
-        // If the language is ambiguous, the message will be accepted regardless of language rules.
+        // If the language is ambiguous, the message will pass (be accepted) regardless of language rules.
 
         if ((strpos($incl, 'lang=') !== false) || (strpos($excl, 'lang=') !== false) || (strpos($incl, 'lang!=') !== false) || (strpos($excl, 'lang!=') !== false)) {
-            $lang = detect_language($text);
+            $detector = new LanguageDetect();
+            $lang = $detector->detect($text);
         }
 
         $tags = ((isset($item['term']) && is_array($item['term']) && count($item['term'])) ? $item['term'] : false);
@@ -68,9 +74,9 @@ class MessageFilter
                     if (self::test_condition(substr($word, 1), $item)) {
                         return false;
                     }
-                } elseif ((strpos($word, '/') === 0) && preg_match($word, $text)) {
+                } elseif ((strpos($word, '/') === 0) && preg_match($word, $item['body'])) {
                     return false;
-                } elseif (stristr($text, $word) !== false) {
+                } elseif (stristr($item['body'], $word) !== false) {
                     return false;
                 }
             }
