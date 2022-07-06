@@ -25,7 +25,10 @@ class MessageFilter
         // Language matching is a bit tricky, because the language can be ambiguous (detect_language() returns '').
         // If the language is ambiguous, the message will pass (be accepted) regardless of language rules.
 
-        if ((strpos($incl, 'lang=') !== false) || (strpos($excl, 'lang=') !== false) || (strpos($incl, 'lang!=') !== false) || (strpos($excl, 'lang!=') !== false)) {
+        if (strpos($incl, 'lang=') !== false
+                || strpos($excl, 'lang=') !== false
+                || strpos($incl, 'lang!=') !== false
+                || strpos($excl, 'lang!=') !== false) {
             $detector = new LanguageDetect();
             $lang = $detector->detect($text);
         }
