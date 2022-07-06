@@ -1401,7 +1401,7 @@ function z_status_editor($x, $popup = false)
 
     $sharebutton = (x($x, 'button') ? $x['button'] : t('Share'));
     $placeholdtext = (x($x, 'content_label') ? $x['content_label'] : $sharebutton);
-
+    
     $o .= replace_macros($tpl, array(
         '$return_path' => ((x($x, 'return_path')) ? $x['return_path'] : App::$query_string),
         '$action' =>  z_root() . '/item',
@@ -1422,6 +1422,7 @@ function z_status_editor($x, $popup = false)
         '$attach' => t('Attach/Upload file'),
         '$weblink' => $weblink,
         '$linkurl' => t('Please enter a link location (URL)'),
+        '$hidden_mentions' => ((x($x, 'hidden_mentions')) ? $x['hidden_mentions'] : ''),
         '$weblink_style' => [ t('Insert link only'), t('Embed content if possible') ],
         '$embedPhotos' => $embedPhotos,
         '$embedPhotosModalTitle' => t('Embed an image from your albums'),
@@ -1438,7 +1439,6 @@ function z_status_editor($x, $popup = false)
         '$nocommenttitle' => t('Disable comments'),
         '$nocommenttitlesub' => t('Toggle comments'),
         '$comments_allowed' => [ 'comments_allowed', t('Allow comments on this post'), ((array_key_exists('item', $x)) ? 1 - $x['item']['item_nocomment'] : 1), '', [ t('No'), t('Yes')]],
-
         '$commentstate' => ((array_key_exists('item', $x)) ? 1 - $x['item']['item_nocomment'] : 1),
         '$feature_comment_control' => $feature_comment_control,
         '$commctrl' => t('Comment Control'),
