@@ -76,12 +76,12 @@ empty line above';
 
         // test our own CSS configuration
         $this->assertEquals('<div>position removed</div>', purify_html('<div style="position:absolut">position removed</div>'));
-        $this->assertEquals('<div style="position:fixed;">position preserved</div>', purify_html('<div style="position:fixed">position preserved</div>', true));
-        $this->assertEquals('<div>invalid position removed</div>', purify_html('<div style="position:invalid">invalid position removed</div>', true));
+        $this->assertEquals('<div style="position:fixed;">position preserved</div>', purify_html('<div style="position:fixed">position preserved</div>', ['allow_position']));
+        $this->assertEquals('<div>invalid position removed</div>', purify_html('<div style="position:invalid">invalid position removed</div>', ['allow_position']));
 
         $this->assertEquals('<div>position removed</div>', purify_html('<div style="top:10px; left:3em;">position removed</div>'));
-        $this->assertEquals('<div style="top:10px;left:3em;right:50%;">position preserved</div>', purify_html('<div style="top:10px; left:3em; right:50%;">position preserved</div>', true));
-        $this->assertEquals('<div>invalid position removed</div>', purify_html('<div style="top:10p">invalid position removed</div>', true));
+        $this->assertEquals('<div style="top:10px;left:3em;right:50%;">position preserved</div>', purify_html('<div style="top:10px; left:3em; right:50%;">position preserved</div>', ['allow_position']));
+        $this->assertEquals('<div>invalid position removed</div>', purify_html('<div style="top:10p">invalid position removed</div>', ['allow_position']));
     }
 
     /**

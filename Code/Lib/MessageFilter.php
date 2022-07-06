@@ -7,23 +7,31 @@ require_once('include/html2plain.php');
 class MessageFilter
 {
 
-
-    public static function evaluate($item, $incl, $excl)
+    public static function evaluate($item, $incl, $excl, $opts = [])
     {
-
-
-		$text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
-        $text = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $text : $text);
+    
+        // Option: plaintext
+        // Improve language detection by providing a plaintext version of $item['body'] which has no markup constructs/tags.
+       
+        if (array_key_exists('plaintext', $opts)) {
+            $text = $opts['plaintext'];
+        }
+        else {
+            $text = $item['body'];
+        }
 
         $lang = null;
 
         // Language matching is a bit tricky, because the language can be ambiguous (detect_language() returns '').
-        // If the language is ambiguous, the message will be accepted regardless of language rules.
+        // If the language is ambiguous, the message will pass (be accepted) regardless of language rules.
 
-        if ((strpos($incl, 'lang=') !== false) || (strpos($excl, 'lang=') !== false) || (strpos($incl, 'lang!=') !== false) || (strpos($excl, 'lang!=') !== false)) {
-            $lang = detect_language($text);
+        if (strpos($incl, 'lang=') !== false
+                || strpos($excl, 'lang=') !== false
+                || strpos($incl, 'lang!=') !== false
+                || strpos($excl, 'lang!=') !== false) {
+            $detector = new LanguageDetect();
+            $lang = $detector->detect($text);
         }
-
 
         $tags = ((isset($item['term']) && is_array($item['term']) && count($item['term'])) ? $item['term'] : false);
 
@@ -40,7 +48,7 @@ class MessageFilter
                 if (isset($lang) && ((strpos($word, 'lang=') === 0) || (strpos($word, 'lang!=') === 0))) {
                     if (! strlen($lang)) {
                         // Result is ambiguous. As we are matching deny rules only at this time, continue tests.
-                        // Any matching deny rule concludes testing. 
+                        // Any matching deny rule concludes testing.
                         continue;
                     }
                     if (strpos($word, 'lang=') === 0 && strcasecmp($lang, trim(substr($word, 5))) == 0) {
@@ -64,14 +72,14 @@ class MessageFilter
                 } elseif (substr($word, 0, 2) === '?+') {
                     if (self::test_condition(substr($word, 2), $item['obj'])) {
                         return false;
-                    }                                         
+                    }
                 } elseif (substr($word, 0, 1) === '?') {
                     if (self::test_condition(substr($word, 1), $item)) {
                         return false;
-                    }                                         
-                } elseif ((strpos($word, '/') === 0) && preg_match($word, $text)) {
+                    }
+                } elseif ((strpos($word, '/') === 0) && preg_match($word, $item['body'])) {
                     return false;
-                } elseif (stristr($text, $word) !== false) {
+                } elseif (stristr($item['body'], $word) !== false) {
                     return false;
                 }
             }
@@ -88,7 +96,7 @@ class MessageFilter
                 if (isset($lang) && ((strpos($word, 'lang=') === 0) || (strpos($word, 'lang!=') === 0))) {
                     if (! strlen($lang))  {
                         // Result is ambiguous. However we are checking allow rules
-                        // and an ambiguous language is always permitted. 
+                        // and an ambiguous language is always permitted.
                         return true;
                     }
                     if (strpos($word, 'lang=') === 0 && strcasecmp($lang, trim(substr($word, 5))) == 0) {
@@ -112,11 +120,11 @@ class MessageFilter
                 } elseif (substr($word, 0, 2) === '?+') {
                     if (self::test_condition(substr($word, 2), $item['obj'])) {
                         return true;
-                    }                                         
+                    }
                 } elseif (substr($word, 0, 1) === '?') {
                     if (self::test_condition(substr($word, 1), $item)) {
                         return true;
-                    }                                         
+                    }
                 } elseif ((strpos($word, '/') === 0) && preg_match($word, $text)) {
                     return true;
                 } elseif (stristr($text, $word) !== false) {
@@ -157,7 +165,7 @@ class MessageFilter
      */
     public static function test_condition($s,$item)
     {
-    
+
         if (preg_match('/(.*?)\s\~\=\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if (stripos($x, trim($matches[2])) !== false) {
@@ -229,7 +237,7 @@ class MessageFilter
             }
             return false;
         }
-    
+
         // Ordering of this check (for falsiness) with relation to the following one (check for truthiness) is important.
         if (preg_match('/\!(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
@@ -248,8 +256,4 @@ class MessageFilter
         }
         return false;
     }
-
-
-
-
 }

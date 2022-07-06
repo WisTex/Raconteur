@@ -448,6 +448,7 @@ class Url {
         if (isset($ret['debug'])) {
             $output .= datetime_convert() . EOL;
             $output .= t('url: ') . $ret['debug']['url'] . EOL;
+            $output .= t('http_code: ') . ((isset($ret['debug']['http_code'])) ? $ret['debug']['http_code'] : 0) . EOL;
             $output .= t('error_code: ') . $ret['debug']['error_code'] . EOL;
             $output .= t('error_string: ') . $ret['error'] . EOL;
             $output .= t('content-type: ') . $ret['debug']['content_type'] . EOL;

@@ -65,6 +65,7 @@ class Editpost extends Controller
         $channel = App::get_channel();
 
         $category = '';
+        $hidden_mentions = '';
         $collections = [];
         $catsenabled = ((Apps::system_app_installed($owner_uid, 'Categories')) ? 'categories' : '');
 
@@ -89,6 +90,16 @@ class Editpost extends Controller
         if ($clcts) {
             foreach ($clcts as $clct) {
                 $collections[] = $clct['term'];
+            }
+        }
+
+        $mentions = get_terms_oftype($item['term'], TERM_MENTION);
+        if ($mentions) {
+            foreach ($mentions as $mention) {
+                if (strlen($hidden_mentions) && strpos($item['body'], $mention['url']) === false ) {
+                    $hidden_mentions .= ', ';
+                }
+                $hidden_mentions .= '@{' . $mention['url'] . '}';
             }
         }
 
@@ -130,6 +141,7 @@ class Editpost extends Controller
             'visitor' => true,
             'title' => htmlspecialchars_decode($item['title'], ENT_COMPAT),
             'category' => $category,
+            'hidden_mentions' => $hidden_mentions,
             'showacl' => ((intval($item['item_unpublished'])) ? true : false),
             'lockstate' => (($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) ? 'lock' : 'unlock'),
             'acl' => Libacl::populate($item, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),

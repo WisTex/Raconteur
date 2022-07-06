@@ -2872,8 +2872,15 @@ class Activity
             $response_activity = true;
 
             $s['mid'] = $act->id;
+
             $s['parent_mid'] = ($act->objprop('id')) ? $act->objprop('id') : $act->obj;
 
+            // Something went horribly wrong. The activity object isn't a string but doesn't have an id.
+            // Seen in the wild with a post from jasonrobinson.me being liked by a Friendica account.
+          
+            if (! is_string($s['parent_mid'])) {
+                return false;
+            }
 
             // over-ride the object timestamp with the activity
 
@@ -3570,7 +3577,6 @@ class Activity
 
     public static function store($channel, $observer_hash, $act, $item, $fetch_parents = true, $force = false)
     {
-
         if ($act && $act->implied_create && !$force) {
             // This is originally a S2S object with no associated activity
             logger('Not storing implied create activity!');
@@ -3768,8 +3774,11 @@ class Activity
             return;
         }
 
+        $plaintext = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
+        $plaintext = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $plaintext : $plaintext);
+        
         if ($channel['channel_system']) {
-            if (!MessageFilter::evaluate($item, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'))) {
+            if (!MessageFilter::evaluate($item, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'), ['plaintext' => $plaintext])) {
                 logger('post is filtered');
                 return;
             }

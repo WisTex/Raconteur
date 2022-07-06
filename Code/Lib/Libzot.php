@@ -1666,6 +1666,10 @@ class Libzot
             // if any further changes are to be made, change a copy and not the original
             $arr = $msg_arr;
 
+            $plaintext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
+            $plaintext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $plaintext : $plaintext);
+
+    
             $DR = new DReport(z_root(), $sender, $d, $arr['mid']);
 
             $channel = Channel::from_hash($d);
@@ -1770,7 +1774,7 @@ class Libzot
                     $local_public = false;
                     continue;
                 }
-                if (!MessageFilter::evaluate($arr, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'))) {
+                if (!MessageFilter::evaluate($arr, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'), ['plaintext' => $plaintext])) {
                     $local_public = false;
                     continue;
                 }
