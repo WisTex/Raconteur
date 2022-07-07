@@ -687,6 +687,13 @@ class Activity
                 if (array_key_exists('name', $att) && $att['name']) {
                     $entry['name'] = html2plain(purify_html($att['name']), 256);
                 }
+                // Friendica attachments don't match the URL in the body.
+                // This makes it more difficult to detect image duplication in bb_attach()
+                // which adds images to plaintext microblog software. For these we need to examine both the
+                // url and image properties.
+                if (isset($att['image']) && is_string($att['image']) && isset($att['url']) && $att['image'] !== $att['url']) {
+                    $entry['image'] = $att['image'];
+                }
                 if ($entry) {
                     $ret[] = $entry;
                 }
@@ -4089,6 +4096,20 @@ class Activity
                 if ($a['type'] === 'image/svg+xml' && strpos($item['body'], '[/svg]')) {
                     continue;
                 }
+                // Friendica attachment weirdness
+                // Check both the attachment image and href since they can be different and the one in the href is a different link with different resolution.
+                if (isset($a['image']) && self::media_not_in_body($a['image'], $item['body']) && self::media_not_in_body($a['href'], $item['body'])) {
+                    if (isset($a['name']) && $a['name']) {
+                        $alt = htmlspecialchars($a['name'], ENT_QUOTES);
+                        // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
+                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements. 
+                        $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
+                        $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
+                    } else {
+                        $item['body'] .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+                    }
+                    continue;
+                }    
                 if (self::media_not_in_body($a['href'], $item['body'])) {
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
