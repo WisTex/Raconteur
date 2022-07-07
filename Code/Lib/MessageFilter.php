@@ -94,6 +94,7 @@ class MessageFilter
                     continue;
                 }
                 if (isset($lang) && ((strpos($word, 'lang=') === 0) || (strpos($word, 'lang!=') === 0))) {
+    				// lang= or lang!= match
                     if (! strlen($lang))  {
                         // Result is ambiguous. However we are checking allow rules
                         // and an ambiguous language is always permitted.
@@ -106,28 +107,34 @@ class MessageFilter
                     }
                 }
                 elseif (substr($word, 0, 1) === '#' && $tags) {
+    				// #hashtag match
                     foreach ($tags as $t) {
                         if ((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word, 1)) || (substr($word, 1) === '*'))) {
                             return true;
                         }
                     }
                 } elseif (substr($word, 0, 1) === '$' && $tags) {
+    				// $category match
                     foreach ($tags as $t) {
                         if (($t['ttype'] == TERM_CATEGORY) && (($t['term'] === substr($word, 1)) || (substr($word, 1) === '*'))) {
                             return true;
                         }
                     }
                 } elseif (substr($word, 0, 2) === '?+') {
+    				// ?+field item.obj field match
                     if (self::test_condition(substr($word, 2), $item['obj'])) {
                         return true;
                     }
                 } elseif (substr($word, 0, 1) === '?') {
+    				// ?item match
                     if (self::test_condition(substr($word, 1), $item)) {
                         return true;
                     }
                 } elseif ((strpos($word, '/') === 0) && preg_match($word, $text)) {
+    				// /regular expression match/
                     return true;
                 } elseif (stristr($text, $word) !== false) {
+    				// anything else - text match (case insensitive)
                     return true;
                 }
             }
