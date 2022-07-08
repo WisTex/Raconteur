@@ -106,15 +106,29 @@ class Item extends Controller
             }
 
             // if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
-            // with a bias towards those items owned by channels on this site (item_wall = 1)
-
+            // and which contains our requested uri as a child.
+    
             $sql_extra = item_permissions_sql(0);
 
             if (!$i) {
-                $i = q(
-                    "select id as item_id from item where mid = '%s' $item_normal $sql_extra order by item_wall desc limit 1",
+                // First find every instance of the parent_mid that we can access.
+                $j = q(
+                    "select id as item_id from item where mid = '%s' $item_normal $sql_extra",
                     dbesc($r[0]['parent_mid'])
                 );
+                // If any of these have our request uri as a child, make that the head of the conversation we are going to return.
+                // Otherwise keep looking.
+                foreach ($j as $test) {
+                    $candidate = q("select id as item_id from item where (mid = '%s' or uuid = '%s') and parent = %d ",
+                        dbesc(z_root() . '/item/' . $item_uuid),
+                        dbesc($item_uuid),
+                        intval($test['item_id'])
+                    );
+                    if ($candidate) {
+                        $i = [$test];
+                        break;
+                    }
+                }
             }
 
             $bear = Activity::token_from_request();
