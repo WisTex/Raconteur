@@ -3714,7 +3714,7 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false) {
 
 	// locate item to be deleted
 
-	$r = q("SELECT * FROM item WHERE id = %d LIMIT 1",
+	$r = q("SELECT * FROM item WHERE id = %d",
 		intval($id)
 	);
 
@@ -3725,11 +3725,6 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false) {
 	$item = array_shift($r);
 
 	$ok_to_delete = false;
-
-	// system deletion
-	if (! $interactive) {
-		$ok_to_delete = true;
-	}
 
 	// admin deletion
 	
