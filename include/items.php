@@ -3707,11 +3707,6 @@ function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
 
 function drop_item($id, $stage = DROPITEM_NORMAL, $force = false) {
 
-	// These resource types have linked items that should only be removed at the same time
-	// as the linked resource; if we encounter one set it to item_hidden rather than item_deleted.
-
-	$linked_resource_types = [ 'photo' ];
-
 	// locate item to be deleted
 
 	$r = q("SELECT * FROM item WHERE id = %d",
@@ -3811,7 +3806,7 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false) {
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
 
-	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . $force, LOGGER_DATA);
+	logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . ($force) ? 'true' : 'false', LOGGER_DATA);
 
 	switch($stage) {
 		case DROPITEM_PHASE2:
@@ -3847,20 +3842,9 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 		intval($item['uid'])
 	);
 
-	// remove delivery reports
-
-	$c = q("select channel_hash from channel where channel_id = %d limit 1",
-		intval($item['uid'])
-	);
-	if ($c) {
-		q("delete from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
-			dbesc($c[0]['channel_hash']),
-			dbesc($item['mid'])
-		);
-	}
 
 	// network deletion request. Keep the message structure so that we can deliver delete notifications.
-	// Come back after several days (or perhaps a month) to do the lowlevel delete (DROPITEM_PHASE2).
+	// Come back after several days to do the lowlevel delete (DROPITEM_PHASE2).
 
 	if ($stage == DROPITEM_PHASE1) {
 		return true;
@@ -3880,10 +3864,30 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 		intval(TERM_OBJ_POST)
 	);
 
-	ThreadListener::delete_by_target($item['mid']);
+	// remove delivery reports
 
-	/** @FIXME remove notifications for this item */
+	$c = q("select channel_hash from channel where channel_id = %d limit 1",
+		intval($item['uid'])
+	);
+	if ($c) {
+		q("delete from dreport where dreport_xchan = '%s' and dreport_mid = '%s'",
+			dbesc($c[0]['channel_hash']),
+			dbesc($item['mid'])
+		);
+	}
 
+    // The threadlistener interface does not support uid/channel_id, so
+    // only remove threadlisteners when doing the second stage of a federated delete.
+    
+    if ($stage === DROPITEM_PHASE2) {
+    	ThreadListener::delete_by_target($item['mid']);
+    }
+    
+    q("delete from notify where uid = %d and link = '%s'",
+        intval($item['uid']),
+        dbesc($item['mid'])
+    );
+  
 	return true;
 }
 
