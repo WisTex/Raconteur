@@ -12,6 +12,7 @@ use Code\Lib\Libzot;
 use Code\Lib\Channel;
 use Code\Lib\Oembed;
 use Code\Lib\Url;
+use Code\Lib\System;
 use Code\Lib as Zlib;
 use Code\Extend\Hook;
 
@@ -20,11 +21,19 @@ require_once('include/security.php');
 class Linkinfo extends Controller
 {
 
+    protected $ident;
+
     public function get()
     {
 
         logger('linkinfo: ' . print_r($_REQUEST, true), LOGGER_DEBUG);
 
+        // Google/YouTube does User-agent sniffing and will send you bad data if
+        // you don't supply a compatibility identifier in the UA string.
+        
+        $ident = System::get_project_name();
+        $this->ident = "Mozilla/5.0 (compatible; $ident)";
+    
         $text = null;
         $str_tags = '';
         $process_embed = true;
@@ -122,7 +131,7 @@ class Linkinfo extends Controller
             killme();
         }
 
-        $result = Url::get($url, ['novalidate' => true, 'nobody' => true]);
+        $result = Url::get($url, ['novalidate' => true, 'nobody' => true, 'useragent' => $this->ident]);
         if ($result['success']) {
             $hdrs = [];
             $h = explode("\n", $result['header']);
@@ -170,7 +179,7 @@ class Linkinfo extends Controller
                     killme();
                 }
                 if (strtolower($type) === 'text/calendar') {
-                    $content = Url::get($url, ['novalidate' => true]);
+                    $content = Url::get($url, ['novalidate' => true, 'useragent' => $this->ident]);
                     if ($content['success']) {
                         $ev = ical_to_ev($content['body']);
                         if ($ev) {
@@ -277,7 +286,7 @@ class Linkinfo extends Controller
             killme();
         }
 
-        $siteinfo = self::parseurl_getsiteinfo($url);
+        $siteinfo = self::parseurl_getsiteinfo($url, $this->ident);
 
         // If the site uses this platform, use zrl rather than url so they get zids sent to them by default
 
@@ -419,12 +428,12 @@ class Linkinfo extends Controller
     }
 
 
-    public static function parseurl_getsiteinfo($url)
+    public static function parseurl_getsiteinfo($url, $ident)
     {
         $siteinfo = [];
 
 
-        $result = Url::get($url, ['novalidate' => true]);
+        $result = Url::get($url, ['novalidate' => true, 'useragent' => $ident]);
         if (!$result['success']) {
             return $siteinfo;
         }
