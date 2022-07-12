@@ -6,6 +6,7 @@ use App;
 use DOMDocument;
 use DOMXPath;
 use Code\Lib\Cache;
+use Code\Lib\System;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 use Code\Lib\Url;
@@ -176,6 +177,9 @@ class Oembed
         if (is_null($txt)) {
             $txt = "";
 
+            $ident = System::get_project_name();
+
+    
             if ($action !== 'block') {
                 // try oembed autodiscovery
                 $result = Url::get(
@@ -184,7 +188,8 @@ class Oembed
                         'timeout'        => 30,
                         'accept_content' => "text/*",
                         'novalidate'     => true,
-                        'session'        => ((local_channel() && $zrl) ? true : false)
+                        'session'        => ((local_channel() && $zrl) ? true : false),
+                        'useragent'      => "Mozilla 5/0 (compatible; $ident)"
                     ]
                 );
 
