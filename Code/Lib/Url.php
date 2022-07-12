@@ -1,7 +1,6 @@
 <?php
 namespace Code\Lib;
 
-use Code\Lib\System;
 
 class Url {
 
