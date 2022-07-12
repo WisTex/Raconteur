@@ -251,7 +251,7 @@ class Like extends Controller
             event_addtocal($item['id'], $channel['channel_id']);
         }
 
-        $arr['parent']       = $item['id'];
+        $arr['parent']       = $item['parent'];
         $arr['thr_parent']   = $item['mid'];
         $allow_cid       = $item['allow_cid'];
         $allow_gid       = $item['allow_gid'];
@@ -264,7 +264,7 @@ class Like extends Controller
 
         $arr['item_flags']   = $item['item_flags'];
         $arr['item_wall']    = $item['item_wall'];
-        $arr['parent_mid']   = $item['mid'];
+        $arr['parent_mid']   = $item['parent_mid'];
         $arr['owner_xchan']  = $thread_owner['xchan_hash'];
         $arr['author_xchan'] = $observer['xchan_hash'];
 
