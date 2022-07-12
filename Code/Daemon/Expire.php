@@ -13,27 +13,24 @@ class Expire
 
         cli_startup();
 
-        // perform final cleanup on previously delete items
+        // physically remove anything which has completed PHASE2 federated deletion
+
+        $r = q("delete from item where item_pending_remove = 1");
+
+        // Perform final cleanup on previously deleted items where
+        // DROPITEM_PHASE1 has completed and more than 4 days have elapsed
+        // so notifications should have been delivered.
 
         $r = q(
             "select id from item where item_deleted = 1 and item_pending_remove = 0 and changed < %s - INTERVAL %s",
             db_utcnow(),
-            db_quoteinterval('10 DAY')
+            db_quoteinterval('4 DAY')
         );
         if ($r) {
             foreach ($r as $rr) {
                 drop_item($rr['id'], DROPITEM_PHASE2);
             }
         }
-
-        // physically remove anything that has been deleted for more than two months
-        /** @FIXME - this is a wretchedly inefficient query */
-
-        $r = q(
-            "delete from item where item_pending_remove = 1 and changed < %s - INTERVAL %s",
-            db_utcnow(),
-            db_quoteinterval('36 DAY')
-        );
 
         logger('expire: start', LOGGER_DEBUG);
 
