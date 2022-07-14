@@ -2900,16 +2900,24 @@ class Activity
             }
 
             $obj_actor = ($act->objprop('actor')) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj);
-
+    
             // Actor records themselves do not have an actor or attributedTo
             if ((!$obj_actor) && $act->objprop('type') && Activitystreams::is_an_actor($act->obj['type'])) {
                 $obj_actor = $act->obj;
             }
 
+            // ensure that the object actor record has been fetched and is an array. 
+            if (is_string($obj_actor)) {
+                $obj_actor = Activity::fetch($obj_actor);
+            }
+            if (! is_array($obj_actor)) {
+                return false;
+            }
+    
             // We already check for admin blocks of third-party objects when fetching them explicitly.
             // Repeat here just in case the entire object was supplied inline and did not require fetching
 
-            if ($obj_actor && array_key_exists('id', $obj_actor)) {
+            if (array_key_exists('id', $obj_actor)) {
                 $m = parse_url($obj_actor['id']);
                 if ($m && $m['scheme'] && $m['host']) {
                     if (!check_siteallowed($m['scheme'] . '://' . $m['host'])) {
