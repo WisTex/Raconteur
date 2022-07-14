@@ -3981,11 +3981,12 @@ class Activity
     {
 
         $r = q(
-            "select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
+            "select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
             dbesc($xchan)
         );
         if ($r) {
-            return $r[0]['hubloc_hash'];
+            $r = Libzot::zot_record_preferred($r);
+            return $r['hubloc_hash'];
         }
         return $xchan;
     }
