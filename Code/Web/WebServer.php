@@ -11,12 +11,9 @@ class WebServer
 
     public function run()
     {
-
-
         /*
          * Bootstrap the application, load configuration, load modules, load theme, etc.
          */
-
         require_once('boot.php');
 
         if (file_exists('maintenance_lock') || file_exists('cache/maintenance_lock')) {
@@ -38,7 +35,6 @@ class WebServer
              * During installation, only permit the view module and setup module.
              * The view module is required to expand/replace variables in style.css
              */
-
             if (App::$module !== 'view') {
                 App::$module = 'setup';
             }
@@ -48,7 +44,6 @@ class WebServer
              * update the DB schema whenever we push a new one out. It also checks to see if
              * any plugins have been added or removed and reacts accordingly.
              */
-
             check_config();
         }
 
