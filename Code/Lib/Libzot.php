@@ -1666,8 +1666,8 @@ class Libzot
             // if any further changes are to be made, change a copy and not the original
             $arr = $msg_arr;
 
-            $plaintext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
-            $plaintext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $plaintext : $plaintext);
+            $htmltext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
+            $plaintext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $htmltext : $htmltext);
 
     
             $DR = new DReport(z_root(), $sender, $d, $arr['mid']);
@@ -3229,68 +3229,61 @@ class Libzot
     }
 
 
-    public static function site_info($force = false)
+    public static function site_info()
     {
+        return [
+            'url' => z_root(),
+            'site_sig' => self::sign(z_root(), get_config('system', 'prvkey')),
+            'post' => z_root() . '/zot',
+            'openWebAuth' => z_root() . '/owa',
+            'authRedirect' => z_root() . '/magic',
+            'sitekey' => get_config('system', 'pubkey'),
+            'encryption' => Crypto::methods(),
+            'signature_algorithm' => get_config('system', 'signature_algorithm', 'sha256'),
+            'zot' => System::get_zot_revision(),
+            'protocol_version' => System::get_zot_revision(),
+            'register_policy' => self::map_register_policy(),
+            'access_policy'  => self::map_access_policy(),
+            'admin' => get_config('system', 'admin_email'),
+            'about' => bbcode(get_config('system', 'siteinfo'), ['export' => true]),
+            'sitehash' => get_config('system', 'location_hash'),
+            'sellpage' => get_config('system', 'sellpage'),
+            'location' => get_config('system', 'site_location'),
+            'sitename' => System::get_site_name(),
+            'logo' => System::get_site_icon(),
+            'project' => System::get_project_name(),
+            'version' => System::get_project_version()
+        ];
+    }
 
-        $signing_key = get_config('system', 'prvkey');
-        $sig_method = get_config('system', 'signature_algorithm', 'sha256');
-
-        $ret = [];
-        $ret['site'] = [];
-        $ret['site']['url'] = z_root();
-        $ret['site']['site_sig'] = self::sign(z_root(), $signing_key);
-        $ret['site']['post'] = z_root() . '/zot';
-        $ret['site']['openWebAuth'] = z_root() . '/owa';
-        $ret['site']['authRedirect'] = z_root() . '/magic';
-        $ret['site']['sitekey'] = get_config('system', 'pubkey');
-
-        $ret['site']['encryption'] = Crypto::methods();
-        $ret['signature_algorithm'] = $sig_method;
-        $ret['site']['zot'] = System::get_zot_revision();
-        $ret['site']['protocol_version'] = System::get_zot_revision();
-
-
+    public static function map_register_policy() {
 
         $register_policy = intval(get_config('system', 'register_policy'));
 
-        if ($register_policy == REGISTER_CLOSED) {
-            $ret['site']['register_policy'] = 'closed';
-        }
         if ($register_policy == REGISTER_APPROVE) {
-            $ret['site']['register_policy'] = 'approve';
+            return 'approve';
         }
         if ($register_policy == REGISTER_OPEN) {
-            $ret['site']['register_policy'] = 'open';
+            return 'open';
         }
+        return 'closed';    
+    }
 
+    static function map_access_policy() {
+    
         $access_policy = intval(get_config('system', 'access_policy'));
 
-        if ($access_policy == ACCESS_PRIVATE) {
-            $ret['site']['access_policy'] = 'private';
-        }
         if ($access_policy == ACCESS_PAID) {
-            $ret['site']['access_policy'] = 'paid';
+            return 'paid';
         }
         if ($access_policy == ACCESS_FREE) {
-            $ret['site']['access_policy'] = 'free';
+            return 'free';
         }
         if ($access_policy == ACCESS_TIERED) {
-            $ret['site']['access_policy'] = 'tiered';
+            return 'tiered';
         }
-
-        $ret['site']['admin'] = get_config('system', 'admin_email');
-
-        $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
-        $ret['site']['sitehash'] = get_config('system', 'location_hash');
-        $ret['site']['sellpage'] = get_config('system', 'sellpage');
-        $ret['site']['location'] = get_config('system', 'site_location');
-        $ret['site']['sitename'] = System::get_site_name();
-        $ret['site']['logo'] = System::get_site_icon();
-        $ret['site']['project'] = System::get_project_name();
-        $ret['site']['version'] = System::get_project_version();
-
-        return $ret['site'];
-    }
+        return 'private';
+    }    
 
     /**
      * @brief
