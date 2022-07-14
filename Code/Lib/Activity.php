@@ -4163,16 +4163,16 @@ class Activity
         if (
             (strpos($body, ']' . $s . '[/img]') === false) &&
             (strpos($body, ']' . $s . '[/zmg]') === false) &&
-            (strpos($body, '[img=' . $s ) === false) &&
-            (strpos($body, '[zmg=' . $s ) === false) &&
+            (strpos($body, '[img=' . $s . ']') === false) &&
+            (strpos($body, '[zmg=' . $s . ']') === false) &&
             (strpos($body, ']' . $s . '[/video]') === false) &&
             (strpos($body, ']' . $s . '[/zvideo]') === false) &&
             (strpos($body, ']' . $s . '[/audio]') === false) &&
             (strpos($body, ']' . $s . '[/zaudio]') === false) &&
             (strpos($body, ']' . $s_alt . '[/img]') === false) &&
             (strpos($body, ']' . $s_alt . '[/zmg]') === false) &&
-            (strpos($body, '[img=' . $s_alt ) === false) &&
-            (strpos($body, '[zmg=' . $s_alt ) === false) &&
+            (strpos($body, '[img=' . $s_alt . ']') === false) &&
+            (strpos($body, '[zmg=' . $s_alt . ']') === false) &&
             (strpos($body, ']' . $s_alt . '[/video]') === false) &&
             (strpos($body, ']' . $s_alt . '[/zvideo]') === false) &&
             (strpos($body, ']' . $s_alt . '[/audio]') === false) &&
