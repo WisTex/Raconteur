@@ -1120,7 +1120,7 @@ class Libzot
                             dbesc($xx['recipient']),
                             dbesc($xx['name']),
                             dbesc($xx['status']),
-                            dbesc(datetime_convert('UTC', 'UTC', $xx['date'])),
+                            dbesc(datetime_convert(datetime: $xx['date'])),
                             dbesc($xx['sender']),
                             dbesc(EMPTY_STR)
                         );
@@ -1151,36 +1151,6 @@ class Libzot
         }
 
         logger('zot_process_response: ' . print_r($x, true), LOGGER_DEBUG);
-    }
-
-    /**
-     * @brief
-     *
-     * We received a notification packet (in mod_post) that a message is waiting for us, and we've verified the sender.
-     * Check if the site is using zot6 delivery and includes a verified HTTP Signature, signed content, and a 'msg' field,
-     * and also that the signer and the sender match.
-     * If that happens, we do not need to fetch/pickup the message - we have it already and it is verified.
-     * Translate it into the form we need for zot_import() and import it.
-     *
-     * Otherwise send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
-     * private key.
-     * The entire pickup message is encrypted with the remote site's public key.
-     * If everything checks out on the remote end, we will receive back a packet containing one or more messages,
-     * which will be processed and delivered before this function ultimately returns.
-     *
-     * @param array $arr
-     *     decrypted and json decoded notify packet from remote site
-     * @return array from zot_import()
-     * @see zot_import()
-     *
-     */
-
-    public static function fetch($arr, $hub = null)
-    {
-
-        logger('zot_fetch: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
-
-        return self::import($arr, $hub);
     }
 
     /**
