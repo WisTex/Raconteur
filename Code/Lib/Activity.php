@@ -2900,16 +2900,24 @@ class Activity
             }
 
             $obj_actor = ($act->objprop('actor')) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj);
-
+    
             // Actor records themselves do not have an actor or attributedTo
             if ((!$obj_actor) && $act->objprop('type') && Activitystreams::is_an_actor($act->obj['type'])) {
                 $obj_actor = $act->obj;
             }
 
+            // ensure that the object actor record has been fetched and is an array. 
+            if (is_string($obj_actor)) {
+                $obj_actor = Activity::fetch($obj_actor);
+            }
+            if (! is_array($obj_actor)) {
+                return false;
+            }
+    
             // We already check for admin blocks of third-party objects when fetching them explicitly.
             // Repeat here just in case the entire object was supplied inline and did not require fetching
 
-            if ($obj_actor && array_key_exists('id', $obj_actor)) {
+            if (array_key_exists('id', $obj_actor)) {
                 $m = parse_url($obj_actor['id']);
                 if ($m && $m['scheme'] && $m['host']) {
                     if (!check_siteallowed($m['scheme'] . '://' . $m['host'])) {
@@ -3981,11 +3989,12 @@ class Activity
     {
 
         $r = q(
-            "select hubloc_hash from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
+            "select hubloc_hash, hubloc_network from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
             dbesc($xchan)
         );
         if ($r) {
-            return $r[0]['hubloc_hash'];
+            $r = Libzot::zot_record_preferred($r);
+            return $r['hubloc_hash'];
         }
         return $xchan;
     }

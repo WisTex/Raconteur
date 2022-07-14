@@ -1613,6 +1613,7 @@ class Libzot
         // If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
         // else things could easily get confused
 
+        $sender = Activity::find_best_identity($sender);
         $msg_arr['author_xchan'] = Activity::find_best_identity($msg_arr['author_xchan']);
         $msg_arr['owner_xchan'] = Activity::find_best_identity($msg_arr['owner_xchan']);
 
