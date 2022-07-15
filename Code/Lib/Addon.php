@@ -6,10 +6,10 @@ use App;
 use Exception;
 use Code\Lib\Infocon;
 use Code\Lib\Yaml;
-    
+
 class Addon {
 
-    /**    
+    /**
      * @brief Handle errors in plugin calls
      *
      * @param string $addon name of the addon
@@ -182,15 +182,10 @@ class Addon {
 
     public static function is_installed($name)
     {
-        $r = q(
-            "select aname from addon where aname = '%s' and installed = 1 limit 1",
+        $r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
             dbesc($name)
         );
-        if ($r) {
-            return true;
-        }
-
-        return false;
+        return ($r) ? true : false;
     }
 
 
@@ -270,7 +265,7 @@ class Addon {
      */
     public static function list_visible()
     {
-        
+
         $r = q("select * from addon where hidden = 0 order by aname asc");
         $x = (($r) ? ids_to_array($r, 'aname') : []);
         $y = [];
@@ -304,7 +299,7 @@ class Addon {
 
         $info =  null;
         $has_yaml = true;
-    
+
         if (is_file("addon/$plugin/$plugin.yml")) {
             $info = Infocon::from_file("addon/$plugin/$plugin.yml");
         }
@@ -320,11 +315,11 @@ class Addon {
                 ;
             }
         }
-    
+
         return $info ? $info : [ 'name' => $plugin ] ;
     }
 
-        
+
     public static function check_versions($info)
     {
 
