@@ -3,7 +3,7 @@
 namespace Code\Lib;
 
 use Code\Web\HTTPSig;
-    
+
 /**
  * @brief ActivityStreams class.
  *
@@ -50,7 +50,7 @@ class ActivityStreams
         $this->raw = $string;
         $this->hub = $hub;
         $this->client = $client;
-    
+
         if (is_array($string)) {
             $this->data = $string;
             $this->raw = json_encode($string, JSON_UNESCAPED_SLASHES);
@@ -93,7 +93,7 @@ class ActivityStreams
                 else {
                     logger('JSalmon verification failure.');
                     $this->valid = false;
-                }                
+                }
             }
         }
 
@@ -287,7 +287,7 @@ class ActivityStreams
      * @brief get single property from Activity object
      *
      * @param string $property
-     * @param mixed return value if property or object not set
+     * @param mixed $default return value if property or object not set
      *    or object is a string id which could not be fetched.
      * @return mixed
      */
@@ -295,7 +295,7 @@ class ActivityStreams
         $x = $this->get_property_obj($property,$this->obj);
         return (isset($x)) ? $x : $default;
     }
-    
+
     /**
      * @brief
      *
@@ -507,7 +507,7 @@ class ActivityStreams
             'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
             'application/activity+json',
             'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
-            'application/ld+json', 
+            'application/ld+json',
             'application/x-zot-activity+json'
         ]);
 
