@@ -1,6 +1,7 @@
 <?php
 namespace Code\Lib;
 
+use Code\Lib\Config;
 
 class Url {
 
@@ -143,11 +144,12 @@ class Url {
             curl_setopt($ch, CURLOPT_COOKIE, $opts['cookie']);
         }
 
-        curl_setopt(
-            $ch,
-            CURLOPT_SSL_VERIFYPEER,
-            ((x($opts, 'novalidate') && intval($opts['novalidate'])) ? false : true)
-        );
+        $validate_ssl = ((x($opts, 'novalidate') && intval($opts['novalidate'])) ? false : true);
+        if ($validate_ssl && self::ssl_exception($url)) {
+            $validate_ssl = false;
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $validate_ssl);
 
         $prx = @get_config('system', 'proxy');
         if (strlen($prx)) {
@@ -347,11 +349,12 @@ class Url {
             curl_setopt($ch, CURLOPT_COOKIE, $opts['cookie']);
         }
 
-        curl_setopt(
-            $ch,
-            CURLOPT_SSL_VERIFYPEER,
-            ((x($opts, 'novalidate') && intval($opts['novalidate'])) ? false : true)
-        );
+        $validate_ssl = ((x($opts, 'novalidate') && intval($opts['novalidate'])) ? false : true);
+        if ($validate_ssl && self::ssl_exception($url)) {
+            $validate_ssl = false;
+        }
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $validate_ssl);
 
         $prx = get_config('system', 'proxy');
         if (strlen($prx)) {
@@ -439,6 +442,20 @@ class Url {
 
         curl_close($ch);
         return($ret);
+    }
+
+    static public function ssl_exception($domain) {
+        $excepts = Config::Get('system', 'ssl_exceptions', []);
+        if (!$excepts) {
+            return false;
+        }
+        $p = parse_url($domain);
+        foreach($excepts as $except) {
+            if (stristr($except, $p['host']) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
