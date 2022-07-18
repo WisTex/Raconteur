@@ -190,34 +190,30 @@ class ActivityStreams
         $tmp = [];
     
         $fields = ['to', 'cc', 'bto', 'bcc', 'audience'];
-        foreach ($fields as $f) {
+        foreach ($fields as $field) {
             // don't expand these yet
-            $y = $this->get_property_obj($f, $base, $namespace);
-            if ($y) {
-                if (!is_array($y)) {
-                    $y = [$y];
-                }
-                $tmp[$f] = $y;
-                $result = array_values(array_unique(array_merge($result, $y)));
+            $values = $this->get_property_obj($field, $base, $namespace);
+            if ($values) {
+                $values = Activity::force_array($values);
+                $tmp[$field] = $values;
+                $result = array_values(array_unique(array_merge($result, $values)));
             }
             // Merge the object recipients if they exist.
-            $z = $this->objprop($f);
-            if ($z) {
-                if (!is_array($z)) {
-                    $z = [$z];
-                }
-                $tmp[$f] = (($tmp[$f]) ? array_merge($tmp[$f], $z) : $z);
-                $result = array_values(array_unique(array_merge($result, $z)));
+            $values = $this->objprop($field);
+            if ($values) {
+                $values = Activity::force_array($values);
+                $tmp[$field] = (($tmp[$field]) ? array_merge($tmp[$field], $values) : $values);
+                $result = array_values(array_unique(array_merge($result, $values)));
             }
-            if (is_array($tmp[$f])) {
-                $tmp[$f] = array_values(array_unique($tmp[$f]));
+            // remove duplicates
+            if (is_array($tmp[$field])) {
+                $tmp[$field] = array_values(array_unique($tmp[$field]));
             }
         }
-
-       $this->raw_recips = $tmp;
+        $this->raw_recips = $tmp;
     
-// not yet ready for prime time
-//      $result = $this->expand($result,$base,$namespace);
+        // not yet ready for prime time
+        //      $result = $this->expand($result,$base,$namespace);
         return $result;
     }
 

@@ -32,6 +32,10 @@ class Activity
 
     public static $ACTOR_CACHE_DAYS = 3;
 
+    public static function force_array($element) {
+        return (is_array($element)) ? $element : [$element];
+    }
+    
     // $x (string|array)
     // if json string, decode it
     // returns activitystreams object as an array except if it is a URL
