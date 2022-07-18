@@ -186,42 +186,39 @@ class ActivityStreams
      */
     public function collect_recips($base = '', $namespace = '')
     {
-        $x = [];
-
+        $result = [];
+        $tmp = [];
+    
         $fields = ['to', 'cc', 'bto', 'bcc', 'audience'];
         foreach ($fields as $f) {
             // don't expand these yet
             $y = $this->get_property_obj($f, $base, $namespace);
             if ($y) {
-                if (!is_array($this->raw_recips)) {
-                    $this->raw_recips = [];
-                }
                 if (!is_array($y)) {
                     $y = [$y];
                 }
-                $this->raw_recips[$f] = $y;
-                $x = array_values(array_unique(array_merge($x, $y)));
+                $tmp[$f] = $y;
+                $result = array_values(array_unique(array_merge($result, $y)));
             }
             // Merge the object recipients if they exist.
             $z = $this->objprop($f);
             if ($z) {
-                if (!is_array($this->raw_recips)) {
-                    $this->raw_recips = [];
-                }
                 if (!is_array($z)) {
                     $z = [$z];
                 }
-                $this->raw_recips[$f] = (($this->raw_recips[$f]) ? array_merge($this->raw_recips[$f], $z) : z);
-                $x = array_values(array_unique(array_merge($x, $z)));
+                $tmp[$f] = (($tmp[$f]) ? array_merge($tmp[$f], $z) : $z);
+                $result = array_values(array_unique(array_merge($result, $z)));
             }
-            if (is_array($this->raw_recips[$f])) {
-                $this->raw_recips[$f] = array_values(array_unique($this->raw_recips[$f]));
+            if (is_array($tmp[$f])) {
+                $tmp[$f] = array_values(array_unique($tmp[$f]));
             }
         }
-        
+
+       $this->raw_recips = $tmp;
+    
 // not yet ready for prime time
-//      $x = $this->expand($x,$base,$namespace);
-        return $x;
+//      $result = $this->expand($result,$base,$namespace);
+        return $result;
     }
 
     public function expand($arr, $base = '', $namespace = '')
