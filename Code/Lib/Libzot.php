@@ -715,7 +715,7 @@ class Libzot
         if ($c['success']) {
             $result['success'] = true;
         } else {
-            logger('Failure to verify zot packet');
+            logger('Failure to verify packet');
         }
 
         return $result;

@@ -3924,12 +3924,12 @@ class Activity
         if ($r) {
             if ($item['edited'] > $r[0]['edited']) {
                 $item['id'] = $r[0]['id'];
-                $x = item_store_update($item);
+                $x = item_store_update($item, deliver: false);
             } else {
                 return;
             }
         } else {
-            $x = item_store($item);
+            $x = item_store($item, deliver: false);
         }
 
 
@@ -3971,7 +3971,7 @@ class Activity
                     Run::Summon(['Notifier', 'comment-import', $x['item_id']]);
                 }
             }
-            elseif ($act->client && $channel['channel_hash'] === $observer_hash) {
+            elseif ($act->client && $channel['channel_hash'] === $observer_hash && !$force) {
                 Run::Summon(['Notifier', 'wall-new', $x['item_id']]);
             }
             $r = q(

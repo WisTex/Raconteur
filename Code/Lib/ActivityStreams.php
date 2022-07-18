@@ -200,10 +200,25 @@ class ActivityStreams
                     $y = [$y];
                 }
                 $this->raw_recips[$f] = $y;
-                $x = array_merge($x, $y);
+                $x = array_values(array_unique(array_merge($x, $y)));
+            }
+            // Merge the object recipients if they exist.
+            $z = $this->objprop($f);
+            if ($z) {
+                if (!is_array($this->raw_recips)) {
+                    $this->raw_recips = [];
+                }
+                if (!is_array($z)) {
+                    $z = [$z];
+                }
+                $this->raw_recips[$f] = (($this->raw_recips[$f]) ? array_merge($this->raw_recips[$f], $z) : z);
+                $x = array_values(array_unique(array_merge($x, $z)));
+            }
+            if (is_array($this->raw_recips[$f])) {
+                $this->raw_recips[$f] = array_values(array_unique($this->raw_recips[$f]));
             }
         }
-
+        
 // not yet ready for prime time
 //      $x = $this->expand($x,$base,$namespace);
         return $x;
@@ -223,14 +238,12 @@ class ActivityStreams
                     } else {
                         $x = $this->get_compound_property($a, $base, $namespace);
                         if ($x) {
-                            $ret = array_merge($ret, $x);
+                            $ret = array_values(array_unique(array_merge($ret, $x)));
                         }
                     }
                 }
             }
         }
-
-        /// @fixme de-duplicate
 
         return $ret;
     }
