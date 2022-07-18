@@ -1,0 +1,10 @@
+name: streams
+recipe: lamp
+config:
+  webroot: .
+  php: 8.1
+services:
+  mailservice:
+    type: mailhog
+  sqlservice:
+    type: phpmyadmin
