@@ -32,7 +32,11 @@ class Activity
 
     public static $ACTOR_CACHE_DAYS = 3;
 
+    // Turn $element into an array if it isn't already.
     public static function force_array($element) {
+        if (empty($element)) {
+            return [];
+        }
         return (is_array($element)) ? $element : [$element];
     }
     
@@ -957,12 +961,10 @@ class Activity
             $ret['to'] = [];
             $ret['cc'] = [];
 
-            if (!$top_level) {
-                $recips = get_iconfig($i['parent'], 'activitypub', 'recips');
-                if ($recips) {
-                    $parent_i['to'] = $recips['to'];
-                    $parent_i['cc'] = $recips['cc'];
-                }
+            $recips = get_iconfig($i['parent'], 'activitypub', 'recips');
+            if ($recips) {
+                $parent_i['to'] = $recips['to'];
+                $parent_i['cc'] = $recips['cc'];
             }
 
             if ($public) {
@@ -1025,7 +1027,7 @@ class Activity
                     }
                 }
             }
-
+    
             $mentions = self::map_mentions($i);
             if (count($mentions) > 0) {
                 if (!$ret['to']) {
@@ -1387,7 +1389,7 @@ class Activity
                 if (intval($i['parent'])) {
                     $recips = get_iconfig($i['parent'], 'activitypub', 'recips');
                 } else {
-                    // if we are encoding this item for storage there won't be a parent.
+                    // if we are encoding this item prior to storage there won't be a parent.
                     $p = q(
                         "select parent from item where parent_mid = '%s' and uid = %d",
                         dbesc($i['parent_mid']),

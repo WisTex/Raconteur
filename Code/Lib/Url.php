@@ -2,6 +2,7 @@
 namespace Code\Lib;
 
 use Code\Lib\Config;
+use Code\Lib\Activity;
 
 class Url {
 
@@ -449,9 +450,9 @@ class Url {
         if (!$excepts) {
             return false;
         }
-        $p = parse_url($domain);
+        $excepts = Activity::force_array($excepts);
         foreach($excepts as $except) {
-            if (stristr($except, $p['host']) !== false) {
+            if (stristr($domain, $except) !== false) {
                 return true;
             }
         }
