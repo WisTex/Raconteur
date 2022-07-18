@@ -1653,7 +1653,7 @@ function login($register = false, $form_id = 'main-login', $hiddens = false, $lo
 
     // If the site supports SSL and this isn't a secure connection, reload the page using https
 
-    if (intval($_SERVER['SERVER_PORT']) === 80 && strpos(z_root(), 'https://') !== false) {
+    if ((empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') && strpos(z_root(), 'https://') !== false) {
         goaway(z_root() . '/' . App::$query_string);
     }
 
