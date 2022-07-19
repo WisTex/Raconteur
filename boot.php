@@ -1143,7 +1143,7 @@ class App {
         }
 
         if (! x(self::$page,'title')) {
-            self::$page['title'] = ucfirst(App::$module) . ' | ' . ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : EMPTY_STR);
+            self::$page['title'] = ucfirst(App::$module) . ' | ' . ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : PLATFORM_NAME);
         }
 
         if (! self::$meta->get_field('og:title')) {

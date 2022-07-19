@@ -45,7 +45,7 @@ class Setup extends Controller
         // The worst thing we can do at this point is throw a white screen of death and rely on
         // them knowing about servers and php modules and logfiles enough so that we can guess
         // at the source of the problem. As ugly as it may be, we need to throw a technically worded
-        // PHP error message in their face. Once installation is complete application errors will
+        // PHP error message in their face. Once installation is complete, application errors will
         // throw a white screen because these error messages divulge information which can
         // potentially be useful to hackers.
 
@@ -81,22 +81,15 @@ class Setup extends Controller
             case 1:
             case 2:
                 return;
-            // implied break;
             case 3:
-                $urlpath = App::get_path();
                 $dbhost = trim($_POST['dbhost']);
                 $dbport = intval(trim($_POST['dbport']));
                 $dbuser = trim($_POST['dbuser']);
                 $dbpass = trim($_POST['dbpass']);
                 $dbdata = trim($_POST['dbdata']);
                 $dbtype = intval(trim($_POST['dbtype']));
-                $servertype = intval(trim($_POST['servertype']));
-                $phpath = trim($_POST['phpath']);
-                $adminmail = trim($_POST['adminmail']);
-                $siteurl = trim($_POST['siteurl']);
 
                 // $siteurl should not have a trailing slash
-
                 $siteurl = rtrim($siteurl, '/');
 
                 require_once('include/dba/dba_driver.php');
@@ -108,7 +101,7 @@ class Setup extends Controller
                     killme();
                 }
                 return;
-            // implied break;
+
             case 4:
                 $urlpath = App::get_path();
                 $dbhost = trim($_POST['dbhost']);
@@ -122,7 +115,8 @@ class Setup extends Controller
                 $timezone = trim($_POST['timezone']);
                 $adminmail = trim($_POST['adminmail']);
                 $siteurl = trim($_POST['siteurl']);
-
+                $sitename = trim($_POST['sitename']);
+    
                 if ($siteurl != z_root()) {
                     $test = Url::get($siteurl . '/setup/testrewrite');
                     if ((!$test['success']) || ($test['body'] !== 'ok')) {
@@ -149,10 +143,8 @@ class Setup extends Controller
                     '$dbpass' => $dbpass,
                     '$dbdata' => $dbdata,
                     '$dbtype' => $dbtype,
-                    '$servertype' => '',
-                    '$server_role' => 'pro',
                     '$timezone' => $timezone,
-                    '$platform' => ucfirst(PLATFORM_NAME),
+                    '$sitename' => $sitename,
                     '$siteurl' => $siteurl,
                     '$site_id' => random_string(),
                     '$phpath' => $phpath,
@@ -173,7 +165,6 @@ class Setup extends Controller
                 }
 
                 return;
-            // implied break;
             default:
                 break;
         }
@@ -307,10 +298,6 @@ class Setup extends Controller
                 $dbdata = ((x($_POST, 'dbdata')) ? trim($_POST['dbdata']) : EMPTY_STR);
                 $dbtype = ((x($_POST, 'dbtype')) ? intval(trim($_POST['dbtype'])) : 0);
                 $phpath = ((x($_POST, 'phpath')) ? trim($_POST['phpath']) : EMPTY_STR);
-                $adminmail = ((x($_POST, 'adminmail')) ? trim($_POST['adminmail']) : EMPTY_STR);
-                $siteurl = ((x($_POST, 'siteurl')) ? trim($_POST['siteurl']) : EMPTY_STR);
-
-                $servertype = EMPTY_STR;
 
                 $o .= replace_macros(Theme::get_template('install_db.tpl'), [
                     '$title' => $install_title,
@@ -327,10 +314,6 @@ class Setup extends Controller
                     '$dbpass' => array('dbpass', t('Database Login Password'), $dbpass, ''),
                     '$dbdata' => array('dbdata', t('Database Name'), $dbdata, ''),
                     '$dbtype' => array('dbtype', t('Database Type'), $dbtype, '', array(0 => 'MySQL', 1 => 'PostgreSQL')),
-
-                    '$adminmail' => array('adminmail', t('Site administrator email address'), $adminmail, t('Required. Your account email address must match this in order to use the web admin panel.')),
-                    '$siteurl' => array('siteurl', t('Website URL'), z_root(), t('Required. Please use SSL (https) URL if available.')),
-                    '$lbl_10' => t('Please select a default timezone for your website'),
                     '$baseurl' => z_root(),
                     '$phpath' => $phpath,
                     '$submit' => t('Submit'),
@@ -350,34 +333,25 @@ class Setup extends Controller
                 $dbtype = ((x($_POST, 'dbtype')) ? intval(trim($_POST['dbtype'])) : 0);
                 $phpath = ((x($_POST, 'phpath')) ? trim($_POST['phpath']) : EMPTY_STR);
 
-                $servertype = EMPTY_STR;
-
-                $adminmail = ((x($_POST, 'adminmail')) ? trim($_POST['adminmail']) : EMPTY_STR);
-                $siteurl = ((x($_POST, 'siteurl')) ? trim($_POST['siteurl']) : EMPTY_STR);
-                $timezone = ((x($_POST, 'timezone')) ? ($_POST['timezone']) : 'America/Los_Angeles');
+                $timezone = 'America/Los_Angeles';
 
                 $o .= replace_macros(Theme::get_template('install_settings.tpl'), [
                     '$title' => $install_title,
                     '$pass' => t('Site settings'),
                     '$status' => $wizard_status,
-
                     '$dbhost' => $dbhost,
                     '$dbport' => $dbport,
                     '$dbuser' => $dbuser,
                     '$dbpass' => $dbpass,
                     '$dbdata' => $dbdata,
-                    '$phpath' => $phpath,
                     '$dbtype' => $dbtype,
                     '$servertype' => $servertype,
-
-                    '$adminmail' => ['adminmail', t('Site administrator email address'), $adminmail, t('Required. Your account email address must match this in order to use the web admin panel.')],
-
+                    '$adminmail' => ['adminmail', t('Site administrator email address'), '', t('Required. Your account email address must match this in order to use the web admin panel.')],
                     '$siteurl' => ['siteurl', t('Website URL'), z_root(), t('Required. Please use SSL (https) URL if available.')],
-
+                    '$sitename' => ['sitename', t('Website name'), '', t('The name of your website or community.')],
+                    '$phpath' => ['phpath', t('Path to PHP command-line executable'), $phpath, 'This <em>may</em> require changing if your platform supports multiple php versions.' ],
                     '$timezone' => ['timezone', t('Please select a default timezone for your website'), $timezone, '', get_timezones()],
-
                     '$baseurl' => z_root(),
-
                     '$submit' => t('Submit'),
                 ]);
                 return $o;
@@ -415,8 +389,8 @@ class Setup extends Controller
     {
         $help = '';
 
-        if (version_compare(PHP_VERSION, '7.4') < 0) {
-            $help .= t('PHP version 7.4 or greater is required.');
+        if (version_compare(PHP_VERSION, '8.0') < 0) {
+            $help .= t('PHP version 8.0 or greater is required.');
             $this->check_add($checks, t('PHP version'), false, true, $help);
         }
 
