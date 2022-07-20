@@ -3927,20 +3927,29 @@ function cleanup_bbcode($body)
 
 function gen_link_id($mid)
 {
-    if (strpbrk($mid, ':/&?<>"\'') !== false) {
-        return 'b64.' . base64url_encode($mid);
-    }
+    $mid = safe_param($mid);
+//    if (strpbrk($mid, ':/&?<>"\'') !== false) {
+//        return 'b64.' . base64url_encode($mid);
+//    }
     return $mid;
 }
 
 function unpack_link_id($mid)
 {
+    $mid = decode_safe_param($mid);
     if (strpos($mid, 'b64.') === 0) {
         $mid = base64url_decode(preg_replace('/[^A-Za-z0-9\-_].*/', '', substr($mid, 4)));
     }
     return $mid;
 }
 
+function safe_param($s) {
+    return str_replace( ['?', '&', '<', '>', '=', '"', '\''], [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], $s);  
+}
+
+function decode_safe_param($s) {
+    return str_replace( [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], ['?', '&', '<', '>', '=', '"', '\''], $s);  
+}
 
 // callback for array_walk
 

@@ -136,7 +136,7 @@ logger('item_hash: ' . $item_hash);
 
         // if the item is to be moderated redirect to /moderate
         if ($target_item['item_blocked'] == ITEM_MODERATED) {
-            goaway(z_root() . '/moderate/' . $target_item['id']);
+            goaway(z_root() . '/moderate/?mid=' . gen_link_id($target_item['mid']));
         }
 
         $r = null;
@@ -453,7 +453,7 @@ logger('item_hash: ' . $item_hash);
                     '$feed_updated' => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
                     '$author' => '',
                     '$owner' => '',
-                    '$profile_page' => xmlify(z_root() . '/display/' . $target_item['mid']),
+                    '$profile_page' => xmlify(z_root() . '/display/?mid=' . $target_item['mid']),
                 ));
 
                 $x = ['xml' => $atom, 'channel' => $channel, 'observer_hash' => $observer_hash, 'params' => $params];

@@ -190,7 +190,7 @@ class Search extends Controller
 
                             if ($item) {
                                 Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
-                                goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+                                goaway(z_root() . '/display/?mid=' . gen_link_id($item['mid']));
                             }
                             else {
                                 notice( t('Item not found.') . EOL);

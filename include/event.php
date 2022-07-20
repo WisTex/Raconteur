@@ -1360,7 +1360,7 @@ function event_store_item($arr, $event)
         if ($wall) {
             $item_arr['plink'] = z_root() . '/channel/' . $z['channel_address'] . '/?f=&mid=' . gen_link_id($item_arr['mid']);
         } else {
-            $item_arr['plink'] = z_root() . '/display/' . gen_link_id($item_arr['mid']);
+            $item_arr['plink'] = z_root() . '/display/?mid=' . gen_link_id($item_arr['mid']);
         }
 
         $x = q(

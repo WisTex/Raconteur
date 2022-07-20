@@ -649,7 +649,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
                 $conv_link_mid = (($mode == 'moderate') ? $item['parent_mid'] : $item['mid']);
 
-                $conv_link = ((in_array($item['item_type'], [ ITEM_TYPE_CARD, ITEM_TYPE_ARTICLE])) ? $item['plink'] : z_root() . '/display/' . gen_link_id($conv_link_mid));
+                $conv_link = ((in_array($item['item_type'], [ ITEM_TYPE_CARD, ITEM_TYPE_ARTICLE])) ? $item['plink'] : z_root() . '/display/?mid=' . gen_link_id($conv_link_mid));
 
                 $allowed_type = (in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ])) ? true : false);
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);

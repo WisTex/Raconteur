@@ -41,7 +41,7 @@ class Oep extends Controller
             $arr = $this->oep_photo_reply($_REQUEST);
         } elseif (fnmatch('*/photos*', $url)) {
             $arr = $this->oep_phototop_reply($_REQUEST);
-        } elseif (fnmatch('*/display/*', $url)) {
+        } elseif (fnmatch('*/display/*mid=*', $url)) {
             $arr = $this->oep_display_reply($_REQUEST);
         } elseif (fnmatch('*/channel/*mid=*', $url)) {
             $arr = $this->oep_mid_reply($_REQUEST);
@@ -79,7 +79,7 @@ class Oep extends Controller
         $maxwidth = intval($args['maxwidth']);
         $maxheight = intval($args['maxheight']);
 
-        if (preg_match('#//(.*?)/display/(.*?)(&|\?|$)#', $url, $matches)) {
+        if (preg_match('#//(.*?)/display/?mid=(.*?)(&|\?|$)#', $url, $matches)) {
             $res = $matches[2];
         }
 
