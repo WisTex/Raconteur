@@ -4507,7 +4507,7 @@ class Activity
             'expires' => 'nomad:expires',
             'directMessage' => 'nomad:directMessage',
             'Category' => 'nomad:Category',
-            'replyTo' => 'nomadd:replyTo',
+            'replyTo' => 'nomad:replyTo',
             'PropertyValue' => 'schema:PropertyValue',
             'value' => 'schema:value',
             'discoverable' => 'toot:discoverable',
