@@ -12,7 +12,7 @@ class Site_projects
     {
 
 
-        $r = q("select site_project, site_type, count(site_project) as total from site where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project order by site_project desc");
+        $r = q("select site_project, site_type, count(site_project) as total from site where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project, site_type order by site_project desc");
 
         $results = [];
 
