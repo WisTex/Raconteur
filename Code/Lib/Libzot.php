@@ -2430,7 +2430,6 @@ class Libzot
             dbesc(str_replace('/activity/', '/item/', $mid)),
             intval($uid)
         );
-
         if ($r) {
             $stored = $r[0];
             // we proved ownership in the sql query
@@ -2467,6 +2466,7 @@ class Libzot
                 }
             }
         }
+
         if ($item_found) {
             if (intval($stored['item_deleted'])) {
                 logger('delete_imported_item: item was already deleted');
@@ -2502,7 +2502,7 @@ class Libzot
             // Use phased deletion to set the deleted flag, call both tag_deliver and the notifier to notify downstream channels
             // and then clean up after ourselves with a cron job after several days to do the delete_item_lowlevel() (DROPITEM_PHASE2).
 
-            drop_item($post_id, DROPITEM_PHASE1);
+            drop_item($post_id, DROPITEM_PHASE1, uid: $uid);
             tag_deliver($uid, $post_id);
         }
 
