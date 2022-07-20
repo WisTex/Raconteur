@@ -35,13 +35,11 @@ class Display extends Controller
 
         $noscript_content = (get_config('system', 'noscript_content', '1') && (!$this->updating));
 
-        $module_format = 'html';
+        $module_format = $_REQUEST['module_format'];
 
-        if (argc() > 1) {
-            $module_format = substr(argv(1), strrpos(argv(1), '.') + 1);
-            if (!in_array($module_format, ['atom', 'zot', 'json'])) {
-                $module_format = 'html';
-            }
+
+        if (!in_array($module_format, ['atom', 'nomad', 'json'])) {
+            $module_format = 'html';
         }
 
         if ($this->loading) {
@@ -50,15 +48,11 @@ class Display extends Controller
 
         if (argc() > 1) {
             $item_hash = argv(1);
-            if ($module_format !== 'html') {
-                $item_hash = substr($item_hash, 0, strrpos($item_hash, '.'));
-            }
         }
 
         if ($_REQUEST['mid']) {
             $item_hash = $_REQUEST['mid'];
         }
-logger('item_hash: ' . $item_hash);
         if (!$item_hash) {
             App::$error = 404;
             notice(t('Item not found.') . EOL);
@@ -447,7 +441,7 @@ logger('item_hash: ' . $item_hash);
                 $atom = replace_macros(Theme::get_template('atom_feed.tpl'), array(
                     '$version' => xmlify(System::get_project_version()),
                     '$generator' => xmlify(System::get_platform_name()),
-                    '$generator_uri' => 'https://hubzilla.org',
+                    '$generator_uri' => 'https://purl.org/nomad',
                     '$feed_id' => xmlify(App::$cmd),
                     '$feed_title' => xmlify(t('Article')),
                     '$feed_updated' => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
