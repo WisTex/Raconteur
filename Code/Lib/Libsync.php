@@ -5,9 +5,9 @@ namespace Code\Lib;
 use App;
 use Code\Lib\Libzot;
 use Code\Lib\Queue;
-use Code\Lib\Channel;    
+use Code\Lib\Channel;
 use Code\Lib\Connect;
-use Code\Lib\ServiceClass;    
+use Code\Lib\ServiceClass;
 use Code\Lib\DReport;
 use Code\Daemon\Run;
 use Code\Extend\Hook;
@@ -59,10 +59,10 @@ class Libsync
         unset($channel['channel_password']);
         unset($channel['channel_salt']);
 
-		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
-			where hubloc_hash = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0",
-			dbesc(($keychange) ? $packet['keychange']['old_hash'] : $channel['channel_hash'])
-		);
+        $h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url
+            where hubloc_hash = '%s' and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0",
+            dbesc(($keychange) ? $packet['keychange']['old_hash'] : $channel['channel_hash'])
+        );
 
         if (!$h) {
             return;
@@ -100,7 +100,7 @@ class Libsync
         $info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
         $info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root()];
         $info['schema'] = 'streams';
-    
+
         if (array_key_exists($uid, App::$config) && array_key_exists('transient', App::$config[$uid])) {
             $settings = App::$config[$uid]['transient'];
             if ($settings) {
@@ -145,8 +145,8 @@ class Libsync
             }
 
             $r = q(
-                "select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid 
-				where pgrp_member.uid = %d ",
+                "select pgrp.hash as collection, pgrp_member.xchan as member from pgrp left join pgrp_member on pgrp.id = pgrp_member.gid
+                where pgrp_member.uid = %d ",
                 intval($uid)
             );
             if ($r) {
@@ -220,7 +220,7 @@ class Libsync
 
         $hashes = ids_to_querystr($l, 'link', true);
 
-		$h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf($hashes) . ") and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0");
+        $h = q("select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url where hubloc_hash in (" . protect_sprintf($hashes) . ") and hubloc_network in ('nomad','zot6') and hubloc_deleted = 0");
 
         if (!$h) {
             return;
@@ -508,9 +508,9 @@ class Libsync
                     $abconfig = null;
 
                     if (array_key_exists('abconfig', $abook) && is_array($abook['abconfig']) && count($abook['abconfig'])) {
-                        
+
                         $abconfig = $abook['abconfig'];
-                        
+
                     }
 
                     $clean = [];
@@ -711,7 +711,7 @@ class Libsync
                     if (!$found) {
                         $r = q(
                             "INSERT INTO pgrp ( hash, uid, visible, deleted, gname, rule )
-							VALUES( '%s', %d, %d, %d, '%s', '%s' ) ",
+                            VALUES( '%s', %d, %d, %d, '%s', '%s' ) ",
                             dbesc($cl['collection']),
                             intval($channel['channel_id']),
                             intval($cl['visible']),
@@ -794,7 +794,7 @@ class Libsync
                                     if (!$found) {
                                         q(
                                             "INSERT INTO pgrp_member (uid, gid, xchan)
-											VALUES( %d, %d, '%s' ) ",
+                                            VALUES( %d, %d, '%s' ) ",
                                             intval($channel['channel_id']),
                                             intval($y['id']),
                                             dbesc($member)
@@ -953,7 +953,7 @@ class Libsync
             }
 
             Libzot::check_location_move($sender['hash'], $arr['locations']);
-    
+
             $xisting = q(
                 "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
                 dbesc($sender['hash'])
@@ -984,11 +984,11 @@ class Libsync
                 $network = isset($location['driver']) ? $location['driver'] : 'zot6';
                 // only set nomad if the location info is coming from the same site as the original zotinfo packet
                 if (isset($sender['site']) && isset($sender['site']['url']) && $sender['site']['url'] === $location['url']) {
-                    if (isset($sender['site']['protocol_version']) && intval($sender['site']['protocol_version']) > 10) {                   
+                    if (isset($sender['site']['protocol_version']) && intval($sender['site']['protocol_version']) > 10) {
                         $network = 'nomad';
                     }
                 }
-  
+
                 if (!Libzot::verify($location['url'], $location['url_sig'], $sender['public_key'])) {
                     logger('Unable to verify site signature for ' . $location['url']);
                     $ret['message'] .= sprintf(t('Unable to verify site signature for %s'), $location['url']) . EOL;
@@ -1049,7 +1049,7 @@ class Libsync
                             dbesc($location['driver']),
                             intval($r[0]['hubloc_id'])
                         );
-                    }                                                                                          
+                    }
 
                     if (array_key_exists('site', $arr) && $location['url'] == $arr['site']['url']) {
                         q(
@@ -1223,7 +1223,7 @@ class Libsync
 
         $r = q(
             "update channel set channel_prvkey = '%s', channel_pubkey = '%s', channel_guid_sig = '%s',
-			channel_hash = '%s' where channel_id = %d",
+            channel_hash = '%s' where channel_id = %d",
             dbesc($arr['channel']['channel_prvkey']),
             dbesc($arr['channel']['channel_pubkey']),
             dbesc($sig),
