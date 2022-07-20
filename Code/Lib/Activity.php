@@ -39,7 +39,7 @@ class Activity
         }
         return (is_array($element)) ? $element : [$element];
     }
-    
+
     // $x (string|array)
     // if json string, decode it
     // returns activitystreams object as an array except if it is a URL
@@ -71,7 +71,7 @@ class Activity
             // Use Mastodon-specific note and media hacks if nomadic. Else HTML.
             // Eventually this needs to be passed in much further up the stack
             // and base the decision on whether or not we are encoding for
-			// ActivityPub or Zot6 or Nomad
+            // ActivityPub or Zot6 or Nomad
 
             return self::fetch_item($x, ((get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
         }
@@ -451,7 +451,7 @@ class Activity
                     $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['href'], 'term' => 'quoted_post'];
                     continue;
                 }
-    
+
                 if (!(array_key_exists('name', $t))) {
                     continue;
                 }
@@ -669,7 +669,7 @@ class Activity
     /**
      * Decodes and Activity object attachment structure to store in an item.
      */
-    
+
     public static function decode_attachment($obj)
     {
 
@@ -818,7 +818,7 @@ class Activity
             if (!in_array($ret['type'], ['Create', 'Update', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject'])) {
                 $ret['inReplyTo'] = $i['thr_parent'];
             }
-    
+
             $cnv = get_iconfig($i['parent'], 'activitypub', 'context');
             if (!$cnv) {
                 $cnv = $ret['parent_mid'];
@@ -951,7 +951,7 @@ class Activity
             $ret['attachment'] = $a;
         }
 
-    
+
         // addressing madness
 
         if ($activitypub) {
@@ -1027,7 +1027,7 @@ class Activity
                     }
                 }
             }
-    
+
             $mentions = self::map_mentions($i);
             if (count($mentions) > 0) {
                 if (!$ret['to']) {
@@ -1058,8 +1058,8 @@ class Activity
     {
         $synchubs = [];
         $h = q(
-            "select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url 
-			where hubloc_hash = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0",
+            "select hubloc.*, site.site_crypto from hubloc left join site on site_url = hubloc_url
+            where hubloc_hash = '%s' and hubloc_network in ('zot6','nomad') and hubloc_deleted = 0",
             dbesc($item['author_xchan'])
         );
 
@@ -1586,7 +1586,7 @@ class Activity
 
         $ret = [];
         $currhub = false;
-    
+
         if (!$p['xchan_url']) {
             return $ret;
         }
@@ -2011,8 +2011,8 @@ class Activity
                         $abook_instance .= z_root();
 
                         $r = q(
-                            "update abook set abook_instance = '%s', abook_not_here = 0 
-							where abook_id = %d and abook_channel = %d",
+                            "update abook set abook_instance = '%s', abook_not_here = 0
+                            where abook_id = %d and abook_channel = %d",
                             dbesc($abook_instance),
                             intval($contact['abook_id']),
                             intval($channel['channel_id'])
@@ -2249,7 +2249,7 @@ class Activity
         if ($h && $h['host']) {
             $webfinger = $username . '@' . $h['host'];
         }
-        
+
         if ($person_obj['icon']) {
             if (is_array($person_obj['icon'])) {
                 if (array_key_exists('url', $person_obj['icon'])) {
@@ -2781,7 +2781,7 @@ class Activity
 
         $s = [];
 
-  
+
         if (is_array($act->obj)) {
             $binary = false;
             $markdown = false;
@@ -2890,7 +2890,7 @@ class Activity
 
             // Something went horribly wrong. The activity object isn't a string but doesn't have an id.
             // Seen in the wild with a post from jasonrobinson.me being liked by a Friendica account.
-          
+
             if (! is_string($s['parent_mid'])) {
                 return false;
             }
@@ -2906,20 +2906,20 @@ class Activity
             }
 
             $obj_actor = ($act->objprop('actor')) ? $act->obj['actor'] : $act->get_actor('attributedTo', $act->obj);
-    
+
             // Actor records themselves do not have an actor or attributedTo
             if ((!$obj_actor) && $act->objprop('type') && Activitystreams::is_an_actor($act->obj['type'])) {
                 $obj_actor = $act->obj;
             }
 
-            // ensure that the object actor record has been fetched and is an array. 
+            // ensure that the object actor record has been fetched and is an array.
             if (is_string($obj_actor)) {
                 $obj_actor = Activity::fetch($obj_actor);
             }
             if (! is_array($obj_actor)) {
                 return false;
             }
-    
+
             // We already check for admin blocks of third-party objects when fetching them explicitly.
             // Repeat here just in case the entire object was supplied inline and did not require fetching
 
@@ -2952,7 +2952,7 @@ class Activity
             if (ActivityStreams::is_an_actor($object_type)) {
                 $object_type = t('Profile');
             }
-    
+
             if ($act->type === 'Like') {
                 $content['content'] = sprintf(t('Likes %1$s\'s %2$s'), $mention, $object_type) . EOL . EOL . $quoted_content;
             }
@@ -3063,7 +3063,7 @@ class Activity
                 $s = self::get_quote($quote_url,$s);
             }
             elseif ($act->objprop($quote)) {
-    			$s = self::get_quote($act->obj[$quote],$s);
+                $s = self::get_quote($act->obj[$quote],$s);
             }
         }
 
@@ -3085,16 +3085,16 @@ class Activity
 
         // Mastodon does not provide update timestamps when updating poll tallies which means race conditions may occur here.
         if (in_array($act->type,['Create','Update']) && $act->objprop('type') === 'Question' && $s['edited'] === $s['created']) {
-			if (intval($act->objprop('votersCount'))) {
-	            $s['edited'] = datetime_convert();
-			}
+            if (intval($act->objprop('votersCount'))) {
+                $s['edited'] = datetime_convert();
+            }
         }
 
         if ($act->objprop('type')) {
             $s['obj_type'] = self::activity_obj_mapper($act->obj['type']);
         }
         $s['obj'] = $act->obj;
-    
+
         if (array_path_exists('actor/id', $s['obj'])) {
             $s['obj']['actor'] = $s['obj']['actor']['id'];
         }
@@ -3433,7 +3433,7 @@ class Activity
             }
         }
 
-    
+
         $hookinfo = [
             'act' => $act,
             's' => $s
@@ -3466,7 +3466,7 @@ class Activity
                             "select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
                             dbesc($tag['url']),
                             dbesc($tag['url'])
-                        );    
+                        );
                     }
                     if ($x) {
                         switch ($pref) {
@@ -3797,7 +3797,7 @@ class Activity
 
         $plaintext = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
         $plaintext = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $plaintext : $plaintext);
-        
+
         if ($channel['channel_system']) {
             if (!MessageFilter::evaluate($item, get_config('system', 'pubstream_incl'), get_config('system', 'pubstream_excl'), ['plaintext' => $plaintext])) {
                 logger('post is filtered');
@@ -4117,19 +4117,19 @@ class Activity
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
                         // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
-                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements. 
+                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements.
                         $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
                         $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
                     } else {
                         $item['body'] .= "\n\n" . '[img]' . $a['href'] . '[/img]';
                     }
                     continue;
-                }    
+                }
                 if (self::media_not_in_body($a['href'], $item['body'])) {
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
                         // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
-                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements. 
+                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements.
                         $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
                         $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
                     } else {
@@ -4445,7 +4445,7 @@ class Activity
                 );
                 break;
             case 'zot6':
-			case 'nomad':
+            case 'nomad':
                 $hublocs = q(
                     "select * from hubloc left join xchan on hubloc_hash = xchan_hash where hubloc_id_url = '%s' $sql_options ",
                     dbesc($url)
@@ -4517,16 +4517,16 @@ class Activity
         ];
     }
 
-	public static function get_quote($url, $item) {
+    public static function get_quote($url, $item) {
 
-		$a = self::fetch($url);
-		if ($a) {
-			$act = new ActivityStreams($a);
+        $a = self::fetch($url);
+        if ($a) {
+            $act = new ActivityStreams($a);
 
-			if ($act && $act->is_valid()) {
+            if ($act && $act->is_valid()) {
                 $z = Activity::decode_note($act);
                 $r = hubloc_id_query((is_array($act->actor)) ? $act->actor['id'] : $act->actor);
-    
+
                 if ($r) {
                     $r = Libzot::zot_record_preferred($r);
                     if ($z) {
@@ -4535,7 +4535,7 @@ class Activity
                 }
 
                 if ($z) {
-	            // do not allow somebody to embed a post that was blocked by the site admin
+                // do not allow somebody to embed a post that was blocked by the site admin
                 // We *will* let them over-rule any blocks they created themselves
 
                     if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
@@ -4546,7 +4546,7 @@ class Activity
                 }
             }
 
-		}
-		return $item;
-	}
+        }
+        return $item;
+    }
 }

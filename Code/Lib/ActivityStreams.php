@@ -188,7 +188,7 @@ class ActivityStreams
     {
         $result = [];
         $tmp = [];
-    
+
         $fields = ['to', 'cc', 'bto', 'bcc', 'audience'];
         foreach ($fields as $field) {
             // don't expand these yet
@@ -211,7 +211,7 @@ class ActivityStreams
             }
         }
         $this->raw_recips = $tmp;
-    
+
         // not yet ready for prime time
         //      $result = $this->expand($result,$base,$namespace);
         return $result;
@@ -349,27 +349,27 @@ class ActivityStreams
 
     /**
      * @brief given a type, determine if this object represents an actor
-	 *
-	 * If $type is an array, recurse through each element and return true if any
-	 * of the elements are a known actor type
-	 *
-	 * @param string|array $type
-	 * @return boolean
-	 */
+     *
+     * If $type is an array, recurse through each element and return true if any
+     * of the elements are a known actor type
+     *
+     * @param string|array $type
+     * @return boolean
+     */
 
     public static function is_an_actor($type)
     {
         if (!$type) {
             return false;
         }
-		if (is_array($type)) {
-			foreach ($type as $x) {
-				if (self::is_an_actor($x)) {
-					return true;
-				}
-			}
-			return false;
-		}
+        if (is_array($type)) {
+            foreach ($type as $x) {
+                if (self::is_an_actor($x)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return (in_array($type, ['Application', 'Group', 'Organization', 'Person', 'Service']));
     }
 
