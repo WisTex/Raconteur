@@ -58,7 +58,7 @@ class Display extends Controller
         if ($_REQUEST['mid']) {
             $item_hash = $_REQUEST['mid'];
         }
-
+logger('item_hash: ' . $item_hash);
         if (!$item_hash) {
             App::$error = 404;
             notice(t('Item not found.') . EOL);

@@ -1689,11 +1689,11 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     if($d2 > $d1)
         $arr['item_delayed'] = 1;
 
-    $arr['llink'] = z_root() . '/display/' . gen_link_id($arr['mid']);
+    $arr['llink'] = z_root() . '/display/?mid=' . $arr['mid'];
 
-    if(! $arr['plink'])
+    if (! $arr['plink']) {
         $arr['plink'] = $arr['llink'];
-
+    }
     if($arr['parent_mid'] === $arr['mid']) {
         $parent_id = 0;
         $parent_deleted = 0;
@@ -2456,7 +2456,7 @@ function send_status_notifications($post_id,$item) {
     if($unfollowed)
         return;
 
-    $link =  z_root() . '/display/' . gen_link_id($item['mid']);
+    $link =  z_root() . '/display/?mid=' . $item['mid'];
 
     $y = q("select id from notify where link = '%s' and uid = %d limit 1",
         dbesc($link),
