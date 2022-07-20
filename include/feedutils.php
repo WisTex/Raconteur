@@ -354,7 +354,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
                     $o .= '<link rel="enclosure" '
                     . (isset($enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
                     . (isset($enc['length']) ? 'length="' . $enc['length'] . '" ' : '')  
-                   . (isset($enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
+                    . (isset($enc['type']) ? 'type="' . xmlify($enc['type']) . '" ' : '')
                     . ' />' . "\r\n";
                 }
             }
