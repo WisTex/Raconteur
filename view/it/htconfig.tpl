@@ -10,8 +10,6 @@ $db_pass = '{{$dbpass}}';
 $db_data = '{{$dbdata}}';
 $db_type = '{{$dbtype}}'; // an integer. 0 or unset for mysql, 1 for postgres
 
-{{$servertype}}
-
 /*
  * Notice: Many of the following settings will be available in the admin panel 
  * after a successful site install. Once they are set in the admin panel, they
@@ -33,7 +31,7 @@ App::$config['system']['timezone'] = '{{$timezone}}';
 // What is your site name?
 
 App::$config['system']['baseurl'] = '{{$siteurl}}';
-App::$config['system']['sitename'] = "Hubzilla";
+App::$config['system']['sitename'] = '{{sitename}}';
 App::$config['system']['location_hash'] = '{{$site_id}}';
 
 // These lines set additional security headers to be sent with all responses

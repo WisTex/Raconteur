@@ -10,8 +10,6 @@ $db_pass = '{{$dbpass}}';
 $db_data = '{{$dbdata}}';
 $db_type = '{{$dbtype}}'; // an integer. 0 or unset for mysql, 1 for postgres
 
-{{$servertype}}
-
 /*
  * Uwaga: wiele z poniższych ustawień będzie dostępnych w panelu administracyjnym
  * po udanej instalacji witryny. Gdy zostaną ustawione w panelu administracyjnym,
@@ -33,7 +31,7 @@ App::$config['system']['timezone'] = '{{$timezone}}';
 // Jaki jest URL twojego portalu? NE DODAWAJ KOŃCOWEGO UKOŚNIKA
 
 App::$config['system']['baseurl'] = '{{$siteurl}}';
-App::$config['system']['sitename'] = '{{$platform}}';
+App::$config['system']['sitename'] = '{{$sitename}}';
 App::$config['system']['location_hash'] = '{{$site_id}}';
 
 // Te wiersze ustawiają dodatkowe nagłówki bezpieczeństwa, które mają być wysyłane

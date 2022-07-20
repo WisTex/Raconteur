@@ -7,6 +7,7 @@ use Code\Web\Controller;
 use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Daemon\Run;
+use Code\Access\PermssionRoles;
 
 require_once('include/conversation.php');
 
@@ -25,8 +26,10 @@ class Moderate extends Controller
         App::set_pager_itemspage(60);
         $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
+        $mid = ((!empty($_REQUEST['mid'])) ? $_REQUEST['mid'] : '');
+
         //show all items
-        if (argc() == 1) {
+        if (argc() == 1 && !$mid) {
             $r = q(
                 "select item.id as item_id, item.* from item where item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
                 intval(local_channel()),
@@ -38,8 +41,16 @@ class Moderate extends Controller
         }
 
         // show a single item
-        if (argc() == 2) {
-            $post_id = unpack_link_id(escape_tags(argv(1)));
+        $action = '';
+        if (argc() == 1 && $mid) {
+            $action = 'view';
+        }
+        if (argc() == 2 && !$mid) {
+            $mid = argv(1);
+            $action = 'view';
+        }
+        if ($action) {
+            $post_id = unpack_link_id(escape_tags($mid));
 
             $r = q(
                 "select item.id as item_id, item.* from item where item.mid = '%s' and item.uid = %d and item_blocked = %d and item_deleted = 0 order by created desc $pager_sql",
@@ -49,13 +60,19 @@ class Moderate extends Controller
             );
         }
 
-        if (argc() > 2) {
-            $post_id = intval(argv(1));
+        $action = '';
+        if (argc() > 2 && !$mid) {
+            $mid = intval(argv(1));
+            $action = argv(2);
+        }
+        elseif (argc() == 2 && $mid) {
+            $action = argv(1);
+        }
+        $post_id = $mid;
+        if ($action) {
             if (!$post_id) {
                 goaway(z_root() . '/moderate');
             }
-
-            $action = argv(2);
 
             $r = q(
                 "select * from item where uid = %d and id = %d and item_blocked = %d limit 1",

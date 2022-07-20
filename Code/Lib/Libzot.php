@@ -715,7 +715,7 @@ class Libzot
         if ($c['success']) {
             $result['success'] = true;
         } else {
-            logger('Failure to verify zot packet');
+            logger('Failure to verify packet');
         }
 
         return $result;
@@ -1120,7 +1120,7 @@ class Libzot
                             dbesc($xx['recipient']),
                             dbesc($xx['name']),
                             dbesc($xx['status']),
-                            dbesc(datetime_convert('UTC', 'UTC', $xx['date'])),
+                            dbesc(datetime_convert(datetime: $xx['date'])),
                             dbesc($xx['sender']),
                             dbesc(EMPTY_STR)
                         );
@@ -1151,36 +1151,6 @@ class Libzot
         }
 
         logger('zot_process_response: ' . print_r($x, true), LOGGER_DEBUG);
-    }
-
-    /**
-     * @brief
-     *
-     * We received a notification packet (in mod_post) that a message is waiting for us, and we've verified the sender.
-     * Check if the site is using zot6 delivery and includes a verified HTTP Signature, signed content, and a 'msg' field,
-     * and also that the signer and the sender match.
-     * If that happens, we do not need to fetch/pickup the message - we have it already and it is verified.
-     * Translate it into the form we need for zot_import() and import it.
-     *
-     * Otherwise send back a pickup message, using our message tracking ID ($arr['secret']), which we will sign with our site
-     * private key.
-     * The entire pickup message is encrypted with the remote site's public key.
-     * If everything checks out on the remote end, we will receive back a packet containing one or more messages,
-     * which will be processed and delivered before this function ultimately returns.
-     *
-     * @param array $arr
-     *     decrypted and json decoded notify packet from remote site
-     * @return array from zot_import()
-     * @see zot_import()
-     *
-     */
-
-    public static function fetch($arr, $hub = null)
-    {
-
-        logger('zot_fetch: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
-
-        return self::import($arr, $hub);
     }
 
     /**
@@ -1643,6 +1613,7 @@ class Libzot
         // If an upstream hop used ActivityPub, set the identities to zot6 nomadic identities where applicable
         // else things could easily get confused
 
+        $sender = Activity::find_best_identity($sender);
         $msg_arr['author_xchan'] = Activity::find_best_identity($msg_arr['author_xchan']);
         $msg_arr['owner_xchan'] = Activity::find_best_identity($msg_arr['owner_xchan']);
 
@@ -1666,8 +1637,8 @@ class Libzot
             // if any further changes are to be made, change a copy and not the original
             $arr = $msg_arr;
 
-            $plaintext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
-            $plaintext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $plaintext : $plaintext);
+            $htmltext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
+            $plaintext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $htmltext : $htmltext);
 
     
             $DR = new DReport(z_root(), $sender, $d, $arr['mid']);
@@ -2459,7 +2430,6 @@ class Libzot
             dbesc(str_replace('/activity/', '/item/', $mid)),
             intval($uid)
         );
-
         if ($r) {
             $stored = $r[0];
             // we proved ownership in the sql query
@@ -2496,6 +2466,7 @@ class Libzot
                 }
             }
         }
+
         if ($item_found) {
             if (intval($stored['item_deleted'])) {
                 logger('delete_imported_item: item was already deleted');
@@ -2531,7 +2502,7 @@ class Libzot
             // Use phased deletion to set the deleted flag, call both tag_deliver and the notifier to notify downstream channels
             // and then clean up after ourselves with a cron job after several days to do the delete_item_lowlevel() (DROPITEM_PHASE2).
 
-            drop_item($post_id, DROPITEM_PHASE1);
+            drop_item($post_id, DROPITEM_PHASE1, uid: $uid);
             tag_deliver($uid, $post_id);
         }
 
@@ -3229,68 +3200,61 @@ class Libzot
     }
 
 
-    public static function site_info($force = false)
+    public static function site_info()
     {
+        return [
+            'url' => z_root(),
+            'site_sig' => self::sign(z_root(), get_config('system', 'prvkey')),
+            'post' => z_root() . '/zot',
+            'openWebAuth' => z_root() . '/owa',
+            'authRedirect' => z_root() . '/magic',
+            'sitekey' => get_config('system', 'pubkey'),
+            'encryption' => Crypto::methods(),
+            'signature_algorithm' => get_config('system', 'signature_algorithm', 'sha256'),
+            'zot' => System::get_zot_revision(),
+            'protocol_version' => System::get_zot_revision(),
+            'register_policy' => self::map_register_policy(),
+            'access_policy'  => self::map_access_policy(),
+            'admin' => get_config('system', 'admin_email'),
+            'about' => bbcode(get_config('system', 'siteinfo'), ['export' => true]),
+            'sitehash' => get_config('system', 'location_hash'),
+            'sellpage' => get_config('system', 'sellpage'),
+            'location' => get_config('system', 'site_location'),
+            'sitename' => System::get_site_name(),
+            'logo' => System::get_site_icon(),
+            'project' => System::get_project_name(),
+            'version' => System::get_project_version()
+        ];
+    }
 
-        $signing_key = get_config('system', 'prvkey');
-        $sig_method = get_config('system', 'signature_algorithm', 'sha256');
-
-        $ret = [];
-        $ret['site'] = [];
-        $ret['site']['url'] = z_root();
-        $ret['site']['site_sig'] = self::sign(z_root(), $signing_key);
-        $ret['site']['post'] = z_root() . '/zot';
-        $ret['site']['openWebAuth'] = z_root() . '/owa';
-        $ret['site']['authRedirect'] = z_root() . '/magic';
-        $ret['site']['sitekey'] = get_config('system', 'pubkey');
-
-        $ret['site']['encryption'] = Crypto::methods();
-        $ret['signature_algorithm'] = $sig_method;
-        $ret['site']['zot'] = System::get_zot_revision();
-        $ret['site']['protocol_version'] = System::get_zot_revision();
-
-
+    public static function map_register_policy() {
 
         $register_policy = intval(get_config('system', 'register_policy'));
 
-        if ($register_policy == REGISTER_CLOSED) {
-            $ret['site']['register_policy'] = 'closed';
-        }
         if ($register_policy == REGISTER_APPROVE) {
-            $ret['site']['register_policy'] = 'approve';
+            return 'approve';
         }
         if ($register_policy == REGISTER_OPEN) {
-            $ret['site']['register_policy'] = 'open';
+            return 'open';
         }
+        return 'closed';    
+    }
 
+    static function map_access_policy() {
+    
         $access_policy = intval(get_config('system', 'access_policy'));
 
-        if ($access_policy == ACCESS_PRIVATE) {
-            $ret['site']['access_policy'] = 'private';
-        }
         if ($access_policy == ACCESS_PAID) {
-            $ret['site']['access_policy'] = 'paid';
+            return 'paid';
         }
         if ($access_policy == ACCESS_FREE) {
-            $ret['site']['access_policy'] = 'free';
+            return 'free';
         }
         if ($access_policy == ACCESS_TIERED) {
-            $ret['site']['access_policy'] = 'tiered';
+            return 'tiered';
         }
-
-        $ret['site']['admin'] = get_config('system', 'admin_email');
-
-        $ret['site']['about'] = bbcode(get_config('system', 'siteinfo'), ['export' => true]);
-        $ret['site']['sitehash'] = get_config('system', 'location_hash');
-        $ret['site']['sellpage'] = get_config('system', 'sellpage');
-        $ret['site']['location'] = get_config('system', 'site_location');
-        $ret['site']['sitename'] = System::get_site_name();
-        $ret['site']['logo'] = System::get_site_icon();
-        $ret['site']['project'] = System::get_project_name();
-        $ret['site']['version'] = System::get_project_version();
-
-        return $ret['site'];
-    }
+        return 'private';
+    }    
 
     /**
      * @brief

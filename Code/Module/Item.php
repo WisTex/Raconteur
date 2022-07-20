@@ -1668,7 +1668,7 @@ class Item extends Controller
                         'from_xchan' => $datarray['author_xchan'],
                         'to_xchan' => $datarray['owner_xchan'],
                         'item' => $datarray,
-                        'link' => z_root() . '/display/' . gen_link_id($datarray['mid']),
+                        'link' => z_root() . '/display/?mid=' . gen_link_id($datarray['mid']),
                         'verb' => ACTIVITY_POST,
                         'otype' => 'item',
                         'parent' => $parent,
@@ -1684,7 +1684,7 @@ class Item extends Controller
                         'from_xchan' => $datarray['author_xchan'],
                         'to_xchan' => $datarray['owner_xchan'],
                         'item' => $datarray,
-                        'link' => z_root() . '/display/' . gen_link_id($datarray['mid']),
+                        'link' => z_root() . '/display/?mid=' . gen_link_id($datarray['mid']),
                         'verb' => ACTIVITY_POST,
                         'otype' => 'item'
                     ));
@@ -1739,7 +1739,7 @@ class Item extends Controller
         }
 
         $datarray['id'] = $post_id;
-        $datarray['llink'] = z_root() . '/display/' . gen_link_id($datarray['mid']);
+        $datarray['llink'] = z_root() . '/display/?mid=' . gen_link_id($datarray['mid']);
 
         Hook::call('post_local_end', $datarray);
 

@@ -166,7 +166,7 @@ class Subthread extends Controller
 
         $ulink = '[zrl=' . $item_author['xchan_url'] . ']' . $item_author['xchan_name'] . '[/zrl]';
         $alink = '[zrl=' . $observer['xchan_url'] . ']' . $observer['xchan_name'] . '[/zrl]';
-        $plink = '[zrl=' . z_root() . '/display/' . gen_link_id($item['mid']) . ']' . $post_type . '[/zrl]';
+        $plink = '[zrl=' . z_root() . '/display/?mid=' . gen_link_id($item['mid']) . ']' . $post_type . '[/zrl]';
 
         $arr['body'] = sprintf($bodyverb, $alink, $ulink, $plink);
 

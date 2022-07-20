@@ -108,7 +108,7 @@ class Follow extends Controller
                         );
                         if ($r) {
                             if ($interactive) {
-                                goaway(z_root() . '/display/' . gen_link_id($item['mid']));
+                                goaway(z_root() . '/display/?mid=' . gen_link_id($item['mid']));
                             } else {
                                 $result['success'] = true;
                                 json_return_and_die($result);

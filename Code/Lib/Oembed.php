@@ -189,7 +189,7 @@ class Oembed
                         'accept_content' => "text/*",
                         'novalidate'     => true,
                         'session'        => ((local_channel() && $zrl) ? true : false),
-                        'useragent'      => "Mozilla 5/0 (compatible; $ident)"
+                        'useragent'      => "Mozilla/5.0 (compatible; $ident)"
                     ]
                 );
 

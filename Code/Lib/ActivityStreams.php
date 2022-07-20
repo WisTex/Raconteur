@@ -3,7 +3,7 @@
 namespace Code\Lib;
 
 use Code\Web\HTTPSig;
-    
+
 /**
  * @brief ActivityStreams class.
  *
@@ -50,7 +50,7 @@ class ActivityStreams
         $this->raw = $string;
         $this->hub = $hub;
         $this->client = $client;
-    
+
         if (is_array($string)) {
             $this->data = $string;
             $this->raw = json_encode($string, JSON_UNESCAPED_SLASHES);
@@ -93,7 +93,7 @@ class ActivityStreams
                 else {
                     logger('JSalmon verification failure.');
                     $this->valid = false;
-                }                
+                }
             }
         }
 
@@ -186,27 +186,35 @@ class ActivityStreams
      */
     public function collect_recips($base = '', $namespace = '')
     {
-        $x = [];
+        $result = [];
+        $tmp = [];
 
         $fields = ['to', 'cc', 'bto', 'bcc', 'audience'];
-        foreach ($fields as $f) {
+        foreach ($fields as $field) {
             // don't expand these yet
-            $y = $this->get_property_obj($f, $base, $namespace);
-            if ($y) {
-                if (!is_array($this->raw_recips)) {
-                    $this->raw_recips = [];
-                }
-                if (!is_array($y)) {
-                    $y = [$y];
-                }
-                $this->raw_recips[$f] = $y;
-                $x = array_merge($x, $y);
+            $values = $this->get_property_obj($field, $base, $namespace);
+            if ($values) {
+                $values = Activity::force_array($values);
+                $tmp[$field] = $values;
+                $result = array_values(array_unique(array_merge($result, $values)));
+            }
+            // Merge the object recipients if they exist.
+            $values = $this->objprop($field);
+            if ($values) {
+                $values = Activity::force_array($values);
+                $tmp[$field] = (($tmp[$field]) ? array_merge($tmp[$field], $values) : $values);
+                $result = array_values(array_unique(array_merge($result, $values)));
+            }
+            // remove duplicates
+            if (is_array($tmp[$field])) {
+                $tmp[$field] = array_values(array_unique($tmp[$field]));
             }
         }
+        $this->raw_recips = $tmp;
 
-// not yet ready for prime time
-//      $x = $this->expand($x,$base,$namespace);
-        return $x;
+        // not yet ready for prime time
+        //      $result = $this->expand($result,$base,$namespace);
+        return $result;
     }
 
     public function expand($arr, $base = '', $namespace = '')
@@ -223,14 +231,12 @@ class ActivityStreams
                     } else {
                         $x = $this->get_compound_property($a, $base, $namespace);
                         if ($x) {
-                            $ret = array_merge($ret, $x);
+                            $ret = array_values(array_unique(array_merge($ret, $x)));
                         }
                     }
                 }
             }
         }
-
-        /// @fixme de-duplicate
 
         return $ret;
     }
@@ -287,7 +293,7 @@ class ActivityStreams
      * @brief get single property from Activity object
      *
      * @param string $property
-     * @param mixed return value if property or object not set
+     * @param mixed $default return value if property or object not set
      *    or object is a string id which could not be fetched.
      * @return mixed
      */
@@ -295,7 +301,7 @@ class ActivityStreams
         $x = $this->get_property_obj($property,$this->obj);
         return (isset($x)) ? $x : $default;
     }
-    
+
     /**
      * @brief
      *
@@ -343,27 +349,27 @@ class ActivityStreams
 
     /**
      * @brief given a type, determine if this object represents an actor
-	 *
-	 * If $type is an array, recurse through each element and return true if any
-	 * of the elements are a known actor type
-	 *
-	 * @param string|array $type
-	 * @return boolean
-	 */
+     *
+     * If $type is an array, recurse through each element and return true if any
+     * of the elements are a known actor type
+     *
+     * @param string|array $type
+     * @return boolean
+     */
 
     public static function is_an_actor($type)
     {
         if (!$type) {
             return false;
         }
-		if (is_array($type)) {
-			foreach ($type as $x) {
-				if (self::is_an_actor($x)) {
-					return true;
-				}
-			}
-			return false;
-		}
+        if (is_array($type)) {
+            foreach ($type as $x) {
+                if (self::is_an_actor($x)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         return (in_array($type, ['Application', 'Group', 'Organization', 'Person', 'Service']));
     }
 
@@ -507,7 +513,7 @@ class ActivityStreams
             'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
             'application/activity+json',
             'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
-            'application/ld+json', 
+            'application/ld+json',
             'application/x-zot-activity+json'
         ]);
 

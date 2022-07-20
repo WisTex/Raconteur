@@ -40,7 +40,7 @@ class NomadHandler implements IHandler
 
         logger('notify received from ' . $hub['hubloc_url']);
 
-        $x = Libzot::fetch($data, $hub);
+        $x = Libzot::import($data, $hub);
         $ret['delivery_report'] = $x;
 
 

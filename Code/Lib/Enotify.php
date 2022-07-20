@@ -151,9 +151,9 @@ class Enotify
             }
             $sitelink = t('Please visit %s to view and/or reply to your private messages.');
 
-            $tsitelink = sprintf($sitelink, $siteurl . '/display/' . gen_link_id($params['item']['mid']));
-            $hsitelink = sprintf($sitelink, '<a href="' . $siteurl . '/display/' . gen_link_id($params['item']['mid']) . '">' . $sitename . '</a>');
-            $itemlink = z_root() . '/display/' . gen_link_id($params['item']['mid']);
+            $tsitelink = sprintf($sitelink, $siteurl . '/display/?mid=' . gen_link_id($params['item']['mid']));
+            $hsitelink = sprintf($sitelink, '<a href="' . $siteurl . '/display/?mid=' . gen_link_id($params['item']['mid']) . '">' . $sitename . '</a>');
+            $itemlink = z_root() . '/display/?mid=' . gen_link_id($params['item']['mid']);
         }
 
         if (in_array(intval($params['type']), [ NOTIFY_COMMENT, NOTIFY_RESHARE ])) {
@@ -260,7 +260,7 @@ class Enotify
 
             if ($moderated) {
                 $subject = sprintf(t('[$Projectname:Notify] Moderated Comment to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
-                $itemlink = z_root() . '/moderate/' . gen_link_id($params['item']['mid']);
+                $itemlink = z_root() . '/moderate/?mid=' . gen_link_id($params['item']['mid']);
             } else {
                 $subject = sprintf(t('[$Projectname:Notify] Comment to conversation #%1$d by %2$s'), $parent_id, $sender['xchan_name']);
             }
@@ -367,7 +367,7 @@ class Enotify
 
             $moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
 
-            $itemlink =  (($moderated) ? z_root() . '/moderate/' . gen_link_id($params['item']['mid']) : $params['link']);
+            $itemlink =  (($moderated) ? z_root() . '/moderate/?mid=' . gen_link_id($params['item']['mid']) : $params['link']);
 
             $preamble = sprintf(t('%1$s posted to your profile wall at %2$s'), $sender['xchan_name'], $sitename);
 

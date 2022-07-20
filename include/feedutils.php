@@ -100,8 +100,8 @@ function get_feed_for($channel, $observer_hash, $params)
 
     $atom .= replace_macros($feed_template, array(
         '$version'       => xmlify(Code\Lib\System::get_project_version()),
-        '$generator'     => xmlify(Code\Lib\System::get_platform_name()),
-		'$generator_uri' => 'https://codeberg.org/' . ((PLATFORM_NAME === 'streams') ? 'streams' : 'zot') . '/' . PLATFORM_NAME,
+        '$generator'     => xmlify(Code\Lib\System::get_project_name()),
+        '$generator_uri' => z_root(),
         '$feed_id'       => xmlify($channel['xchan_url']),
         '$feed_title'    => xmlify($channel['channel_name']),
         '$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
@@ -320,7 +320,6 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
 
     $compat_photos = null;
 
-
     $o = "\r\n\r\n<entry>\r\n";
 
     if (is_array($author)) {
@@ -333,14 +332,13 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
         $parent_item = (($item['thr_parent']) ? $item['thr_parent'] : $item['parent_mid']);
 
         $o .= '<thr:in-reply-to ref="' . xmlify($parent_item) . '" type="text/html" href="' .  xmlify($item['plink']) . '" />' . "\r\n";
-    } else {
-        $o .= '<title>' . xmlify($item['title']) . '</title>' . "\r\n";
-        if ($summary) {
-            $o .= '<summary type="' . $type . '" >' . xmlify(prepare_text($summary, $item['mimetype'])) . '</summary>' . "\r\n";
-        }
-        $o .= '<content type="' . $type . '" >' . xmlify(prepare_text($body, $item['mimetype'])) . '</content>' . "\r\n";
     }
 
+    $o .= '<title>' . xmlify($item['title']) . '</title>' . "\r\n";
+    if ($summary) {
+        $o .= '<summary type="' . $type . '" >' . xmlify(prepare_text($summary, $item['mimetype'])) . '</summary>' . "\r\n";
+    }
+    $o .= '<content type="' . $type . '" >' . xmlify(prepare_text($body, $item['mimetype'])) . '</content>' . "\r\n";
     $o .= '<id>' . xmlify($item['mid']) . '</id>' . "\r\n";
     $o .= '<published>' . xmlify(datetime_convert('UTC', 'UTC', $item['created'] . '+00:00', ATOM_TIME)) . '</published>' . "\r\n";
     $o .= '<updated>' . xmlify(datetime_convert('UTC', 'UTC', $item['edited'] . '+00:00', ATOM_TIME)) . '</updated>' . "\r\n";
@@ -356,7 +354,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
                     $o .= '<link rel="enclosure" '
                     . (isset($enc['href']) ? 'href="' . $enc['href'] . '" ' : '')
                     . (isset($enc['length']) ? 'length="' . $enc['length'] . '" ' : '')  
-                   . (isset($enc['type']) ? 'type="' . $enc['type'] . '" ' : '')
+                    . (isset($enc['type']) ? 'type="' . xmlify($enc['type']) . '" ' : '')
                     . ' />' . "\r\n";
                 }
             }
@@ -369,11 +367,11 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
             $label = '';
             switch ($term['ttype']) {
                 case TERM_HASHTAG:
-                    $scheme = NAMESPACE_ZOT . '/term/hashtag';
+                    $scheme = z_root() . '/term/hashtag';
                     $label = '#' . str_replace('"', '', $term['term']);
                     break;
                 case TERM_CATEGORY:
-                    $scheme = NAMESPACE_ZOT . '/term/category';
+                    $scheme = z_root() . '/term/category';
                     $label = str_replace('"', '', $term['term']);
                     break;
                 default:

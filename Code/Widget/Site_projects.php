@@ -4,22 +4,17 @@ namespace Code\Widget;
 
 use Code\Render\Theme;
 
-
 class Site_projects
 {
 
     public function widget($args)
     {
-
-
-        $r = q("select site_project, site_type, count(site_project) as total from site where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project order by site_project desc");
-
         $results = [];
-
-        usort($r, ['self', 'site_sort']);
-
-        if ($r) {
-            foreach ($r as $rv) {
+        $query = q("select site_project, site_type, count(site_project) as total from site
+            where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project, site_type order by site_project desc");
+        if ($query) {
+            usort($query, ['self', 'site_sort']);
+            foreach ($query as $rv) {
                 $result = [];
                 $result['name'] = $rv['site_project'];
                 $result['type'] = $rv['site_type'];
@@ -31,7 +26,7 @@ class Site_projects
                 $results[] = $result;
             }
 
-            $o = replace_macros(Theme::get_template('site_projects.tpl'), [
+            $output = replace_macros(Theme::get_template('site_projects.tpl'), [
                 '$title' => t('Community Types'),
                 '$desc' => '',
                 '$all' => t('All community types'),
@@ -40,7 +35,7 @@ class Site_projects
                 '$terms' => $results
             ]);
 
-            return $o;
+            return $output;
         }
     }
 

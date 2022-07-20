@@ -22,7 +22,7 @@ class Cron_daily
 
 
         // make sure our own site record is up to date
-        Libzot::import_site(Libzot::site_info(true));
+        Libzot::import_site(Libzot::site_info());
 
 
         // Fire off the Cron_weekly process if it's the correct day.
