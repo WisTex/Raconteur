@@ -100,8 +100,8 @@ function get_feed_for($channel, $observer_hash, $params)
 
     $atom .= replace_macros($feed_template, array(
         '$version'       => xmlify(Code\Lib\System::get_project_version()),
-        '$generator'     => xmlify(Code\Lib\System::get_platform_name()),
-		'$generator_uri' => 'https://codeberg.org/' . ((PLATFORM_NAME === 'streams') ? 'streams' : 'zot') . '/' . PLATFORM_NAME,
+        '$generator'     => xmlify(Code\Lib\System::get_project_name()),
+        '$generator_uri' => z_root(),
         '$feed_id'       => xmlify($channel['xchan_url']),
         '$feed_title'    => xmlify($channel['channel_name']),
         '$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),

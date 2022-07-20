@@ -440,8 +440,8 @@ class Display extends Controller
             case 'atom':
                 $atom = replace_macros(Theme::get_template('atom_feed.tpl'), array(
                     '$version' => xmlify(System::get_project_version()),
-                    '$generator' => xmlify(System::get_platform_name()),
-                    '$generator_uri' => 'https://purl.org/nomad',
+                    '$generator' => xmlify(System::get_project_name()),
+                    '$generator_uri' => z_root(),
                     '$feed_id' => xmlify(App::$cmd),
                     '$feed_title' => xmlify(t('Article')),
                     '$feed_updated' => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
