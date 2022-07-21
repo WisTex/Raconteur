@@ -38,7 +38,7 @@ class AccessList
 
             $r = q(
                 "INSERT INTO pgrp ( hash, uid, visible, gname, rule )
-				VALUES( '%s', %d, %d, '%s', '' ) ",
+                VALUES( '%s', %d, %d, '%s', '' ) ",
                 dbesc($hash),
                 intval($uid),
                 intval($public),
@@ -93,8 +93,8 @@ class AccessList
 
                 if ($change) {
                     q(
-                        "UPDATE channel SET channel_default_group = '%s', channel_allow_gid = '%s', channel_deny_gid = '%s' 
-						WHERE channel_id = %d",
+                        "UPDATE channel SET channel_default_group = '%s', channel_allow_gid = '%s', channel_deny_gid = '%s'
+                        WHERE channel_id = %d",
                         dbesc($user_info['channel_default_group']),
                         dbesc($user_info['channel_allow_gid']),
                         dbesc($user_info['channel_deny_gid']),
@@ -223,7 +223,7 @@ class AccessList
         } else {
             $r = q(
                 "INSERT INTO pgrp_member (uid, gid, xchan)
-				VALUES( %d, %d, '%s' ) ",
+                VALUES( %d, %d, '%s' ) ",
                 intval($uid),
                 intval($gid),
                 dbesc($member)
@@ -249,7 +249,7 @@ class AccessList
                     $sql_extra = EMPTY_STR;
                     break;
                 case '2':
-					$sql_extra = " and xchan_network in ('nomad','zot6') ";
+                    $sql_extra = " and xchan_network in ('nomad','zot6') ";
                     break;
                 case '3':
                     $sql_extra = " and xchan_network = 'activitypub' ";
@@ -267,7 +267,7 @@ class AccessList
 
             $r = q(
                 "SELECT * FROM abook left join xchan on xchan_hash = abook_xchan
-				WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
+                WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
                 intval($uid)
             );
             if ($r) {
@@ -281,10 +281,10 @@ class AccessList
         if (intval($gid)) {
             if ($total) {
                 $r = q(
-                    "SELECT count(xchan) as total FROM pgrp_member 
-					LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
-					WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0
-					and abook_blocked = 0 and abook_pending = 0",
+                    "SELECT count(xchan) as total FROM pgrp_member
+                    LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
+                    WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0
+                    and abook_blocked = 0 and abook_pending = 0",
                     intval($gid),
                     intval($uid),
                     intval($uid)
@@ -295,9 +295,9 @@ class AccessList
             }
 
             $r = q(
-                "SELECT * FROM pgrp_member 
-				LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
-				WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC $pager_sql",
+                "SELECT * FROM pgrp_member
+                LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
+                WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC $pager_sql",
                 intval($gid),
                 intval($uid),
                 intval($uid)
@@ -419,7 +419,7 @@ class AccessList
                 $sql_extra = EMPTY_STR;
                 $channel_hash = substr($gv, strpos($gv, ':') + 1);
                 if (strpos($gv, 'zot:') === 0) {
-					$sql_extra = " and xchan_network in ('nomad','zot6') ";
+                    $sql_extra = " and xchan_network in ('nomad','zot6') ";
                 }
                 if (strpos($gv, 'activitypub:') === 0) {
                     $sql_extra = " and xchan_network = 'activitypub' ";
@@ -465,8 +465,8 @@ class AccessList
     public static function member_of($c)
     {
         $r = q(
-            "SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id 
-			WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
+            "SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id
+            WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
             dbesc($c)
         );
 
