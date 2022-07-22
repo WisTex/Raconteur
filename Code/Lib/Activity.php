@@ -1207,7 +1207,9 @@ class Activity
                 );
                 if ($d) {
                     $recips = get_iconfig($i['parent'], 'activitypub', 'recips');
-
+                    if (!isset($recips['to'])) {
+                        $recips['to'] = [];
+                    }
                     if (is_array($recips) && in_array($i['author']['xchan_url'], $recips['to'])) {
                         $reply_url = $d[0]['xchan_url'];
                         $is_directmessage = true;
