@@ -56,12 +56,10 @@ class Addon {
      */
     public static  function uninstall($addon)
     {
-
         self::unload($addon);
 
         if (! file_exists('addon/' . $addon . '/' . $addon . '.php')) {
-            q(
-                "DELETE FROM addon WHERE aname = '%s' ",
+            q("DELETE FROM addon WHERE aname = '%s' ",
                 dbesc($addon)
             );
             return false;
@@ -79,8 +77,7 @@ class Addon {
             }
         }
 
-        q(
-            "DELETE FROM addon WHERE aname = '%s' ",
+        q("DELETE FROM addon WHERE aname = '%s' ",
             dbesc($addon)
         );
     }
@@ -145,7 +142,6 @@ class Addon {
         }
 
         logger("Addons: loading " . $addon, LOGGER_DEBUG);
-        //$t = @filemtime('addon/' . $addon . '/' . $addon . '.php');
         @include_once('addon/' . $addon . '/' . $addon . '.php');
         if (function_exists($addon . '_load')) {
             $func = $addon . '_load';
@@ -176,14 +172,14 @@ class Addon {
     /**
      * @brief Check if addon is installed.
      *
-     * @param string $name
+     * @param string $addon
      * @return bool
      */
 
-    public static function is_installed($name)
+    public static function is_installed($addon)
     {
         $r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
-            dbesc($name)
+            dbesc($addon)
         );
         return ($r) ? true : false;
     }
@@ -194,65 +190,49 @@ class Addon {
      */
     public static  function reload_all()
     {
-        $addons = get_config('system', 'addon');
-        if (strlen($addons)) {
-            $r = q("SELECT * FROM addon WHERE installed = 1");
-            if (count($r)) {
-                $installed = $r;
-            } else {
-                $installed = [];
-            }
+        $installed = q("SELECT * FROM addon WHERE installed = 1");
+        if (!$installed) {
+            return;
+        }
 
-            $parr = explode(',', $addons);
+        foreach ($installed as $i) {
+            $addon = $i['aname'];
+            $fname = 'addon/' . $addon . '/' . $addon . '.php';
+            if (file_exists($fname)) {
+                $t = @filemtime($fname);
+                if ($t && intval($i['tstamp']) !== $t) {
+                    logger('Reloading plugin: ' . $addon, LOGGER_DEBUG);
+                    @include_once($fname);
 
-            if (count($parr)) {
-                foreach ($parr as $pl) {
-                    $pl = trim($pl);
-
-                    $fname = 'addon/' . $pl . '/' . $pl . '.php';
-
-                    if (file_exists($fname)) {
-                        $t = @filemtime($fname);
-                        foreach ($installed as $i) {
-                            if (($i['aname'] == $pl) && ($i['tstamp'] != $t)) {
-                                logger('Reloading plugin: ' . $i['aname']);
-                                @include_once($fname);
-
-                                if (function_exists($pl . '_unload')) {
-                                    $func = $pl . '_unload';
-                                    try {
-                                            $func();
-                                    } catch (Exception $e) {
-                                        self::ErrorHandler($addon, "", "UNLOAD FAILED (uninstalling) : ".$e->getMessage(), true);
-                                                                            continue;
-                                    }
-                                }
-                                if (function_exists($pl . '_load')) {
-                                    $func = $pl . '_load';
-                                    try {
-                                            $func();
-                                    } catch (Exception $e) {
-                                        self::ErrorHandler($addon, "", "LOAD FAILED (uninstalling): ".$e->getMessage(), true);
-                                                                            continue;
-                                    }
-                                }
-                                q(
-                                    "UPDATE addon SET tstamp = %d WHERE id = %d",
-                                    intval($t),
-                                    intval($i['id'])
-                                );
-                            }
+                    if (function_exists($addon . '_unload')) {
+                        $func = $addon . '_unload';
+                        try {
+                            $func();
+                        } catch (Exception $e) {
+                            self::ErrorHandler($addon, "", "UNLOAD FAILED (uninstalling) : ".$e->getMessage(), true);
+                            continue;
                         }
                     }
+                    if (function_exists($addon . '_load')) {
+                        $func = $addon . '_load';
+                        try {
+                            $func();
+                        } catch (Exception $e) {
+                            self::ErrorHandler($addon, "", "LOAD FAILED (uninstalling): ".$e->getMessage(), true);
+                            continue;
+                        }
+                    }
+                    q("UPDATE addon SET tstamp = %d WHERE id = %d",
+                        intval($t),
+                        intval($i['id'])
+                    );
                 }
             }
         }
     }
 
-
     public static function list_installed()
     {
-
         $r = q("select * from addon where installed = 1 order by aname asc");
         return(($r) ? ids_to_array($r, 'aname') : []);
     }
@@ -309,7 +289,7 @@ class Addon {
         }
         if ($info && ! $has_yaml) {
             try {
-                file_put_contents("addon/$plugin/$plugin.yml",Yaml::encode($info));
+                file_put_contents("addon/$plugin/$plugin.yml", Yaml::encode($info));
             }
             catch (Exception $e) {
                 ;
@@ -322,7 +302,6 @@ class Addon {
 
     public static function check_versions($info)
     {
-
         if (! is_array($info)) {
             return true;
         }

@@ -136,7 +136,7 @@ class ActivityPub
 
             $r = q(
                 "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url = '%s'
-				and xchan_hash in (" . implode(',', $hashes) . ") and xchan_network = 'activitypub' ",
+                and xchan_hash in (" . implode(',', $hashes) . ") and xchan_network = 'activitypub' ",
                 dbesc($arr['hub']['hubloc_url'])
             );
 
@@ -575,8 +575,8 @@ class ActivityPub
 
                             $r = q(
                                 "SELECT abook.*, xchan.*
-								FROM abook left join xchan on abook_xchan = xchan_hash
-								WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+                                FROM abook left join xchan on abook_xchan = xchan_hash
+                                WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                                 intval(abook['abook_channel']),
                                 intval($dst_xchan)
                             );
