@@ -354,10 +354,10 @@ function bb_parse_app($match)
 
 function bb_parse_app_ap($match)
 {
-
     $app = Apps::app_decode($match[1]);
     if ($app) {
-        return sprintf(t('(Embedded app \'%s\' could not be displayed).'), $app['name']);
+        return sprintf(t('(Embedded app \'%s\' could not be displayed).'), $app['name']) . EOL
+            . '<a href="' . $app['url'] . '">' . $app['url'] . '</a>' . EOL;
     }
 }
 
