@@ -202,6 +202,9 @@ a:focus,
 ._yellow {
     color: yellow !important;
 }
+._orange {
+    color: #FFA500 !important;
+}
 
 input, optgroup, select, textarea {
 	font-size: 0.9rem !important;
