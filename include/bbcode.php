@@ -665,8 +665,8 @@ function bb_ShareAttributes($match)
     $reldate = '<span class="autotime" title="' . datetime_convert('UTC', date_default_timezone_get(), $posted, 'c') . '" >' . datetime_convert('UTC', date_default_timezone_get(), $posted, 'r') . '</span>';
 
     // I was going to wrap this in <article> to make it semantically correct HTML and permit cross-platform styling, but doing so results in text/plain
-    // projects stripping out the content completely. Hence that effort was reverted. 
-    
+    // projects stripping out the content completely. Hence that effort was reverted.
+
     $headline = '<div class="shared_container"><div class="shared_header">';
 
     if ($avatar != "") {
@@ -1033,12 +1033,11 @@ function bb_imgoptions($match)
     $float       = false;
     $alt         = false;
     $src         = false;
-    
+
     $style = EMPTY_STR;
 
     $attributes = $match[3];
 
-    
     $x = preg_match("/alt='(.*?)'/ism", $attributes, $matches);
     if ($x) {
         $alt = $matches[1];
@@ -1110,12 +1109,12 @@ function bb_imgoptions($match)
     }
 
     // legacy img options
-    
+
     if ($match[2] === '=') {
 
         if (strpos($attributes,'http') === 0) {
             $alt = $match[4];
-            $src = $match[3];        
+            $src = $match[3];
         }
         else {
             // pull out (optional) legacy size declarations first
@@ -1140,7 +1139,7 @@ function bb_imgoptions($match)
     if ((! $alt) && ($n = strpos($match[3], 'alt=') !== false)) {
         $alt = substr($match[3], $n + 4);
     }
-    
+
     // now assemble the resulting img tag from these components
 
     $output = '<img ' . (($match[1] === 'z') ? 'class="zrl" ' : '') . ' loading="eager" ';
@@ -1168,7 +1167,7 @@ function multicode_purify($s)
     }, $s);
 
     // escape_tags anywhere html is disabled.
-    
+
     $s = preg_replace_callback("/\[nohtml\](.*?)\[\/nohtml\]/ism", function ($match) {
         return escape_tags($match[1]);
     }, $s);
