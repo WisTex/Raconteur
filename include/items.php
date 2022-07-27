@@ -36,7 +36,7 @@ require_once('include/photo_factory.php');
  *
  * @param array $item
  * @param[out] boolean $private_envelope
- * @param boolean $include_groups 
+ * @param boolean $include_groups
  * @return array containing the recipients
  */
 function collect_recipients($item, &$private_envelope,$include_groups = true) {
@@ -97,7 +97,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
         // a different clone. We need to get the post to that hub.
 
         // The post may be private by virtue of not being visible to anybody on the internet,
-        // but there are no envelope recipients, so set this to false. 
+        // but there are no envelope recipients, so set this to false.
 
         $private_envelope = false;
 
@@ -133,14 +133,14 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
             }
 
             // We've determined this is public. Send it also to the system channel.
-            
+
             $sys = Channel::get_system();
             if ($sys && intval($item['uid']) !== intval($sys['channel_id'])) {
                 $recipients[] = $sys['channel_hash'];
             }
 
         }
-        
+
         // Add the authors of any posts in this thread, if they are known to us.
         // This is specifically designed to forward wall-to-wall posts to the original author,
         // in case they aren't a connection but have permission to write on our wall.
@@ -466,7 +466,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 
     $post = item_store($arr,$allow_code,$deliver);
     $post_id = 0;
-    
+
     if($post['success']) {
         $post_id = $post['item_id'];
         $ret['success'] = true;
@@ -481,7 +481,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
         Hook::call('post_local_end', $ret['activity']);
         sync_an_item($channel ? $channel['channel_id'] : $arr['uid'], $post_id);
     }
-    
+
     if($post_id && $deliver) {
         Run::Summon([ 'Notifier','activity',$post_id ]);
     }
@@ -681,7 +681,7 @@ function get_item_elements($x,$allow_code = false) {
     }
 
     $arr['attach']       = activity_sanitise($x['attach']);
-    
+
     $arr['replyto']      = activity_sanitise($x['replyto']);
     $arr['term']         = isset($x['tags']) ? decode_tags($x['tags']) : [];
     $arr['iconfig']      = decode_item_meta($x['meta']);
@@ -1121,7 +1121,7 @@ function map_scope($scope, $strip = false) {
             return 'site: ' . App::get_hostname();
         case PERMS_PENDING:
             return 'any connections';
-// uncomment a few releases after the corresponding changes are made in can_comment_on_post. Here it was done on 2021-11-18             
+// uncomment a few releases after the corresponding changes are made in can_comment_on_post. Here it was done on 2021-11-18
 //        case PERMS_SPECIFIC:
 //            return 'specific';
         case PERMS_CONTACTS:
@@ -1323,7 +1323,7 @@ function purify_imported_object($obj) {
  * @param array $arr
  * @return array|string
  */
- 
+
 function activity_sanitise($arr) {
     if($arr) {
         if(is_array($arr)) {
@@ -1466,7 +1466,7 @@ function item_sign(&$item) {
 
 function item_json_encapsulate($arr,$k)  {
     $retval = null;
-    
+
     if (isset($arr[$k])) {
         if (is_string($arr[$k])) {
             // determine if it is json encoded already
@@ -1625,7 +1625,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     if(x($arr,'attach')) {
         $arr['attach'] = item_json_encapsulate($arr,'attach');
     }
-    
+
     $arr['aid']           = ((x($arr,'aid'))           ? intval($arr['aid'])                           : 0);
     $arr['mid']           = ((x($arr,'mid'))           ? notags(trim($arr['mid']))                     : random_string());
     $arr['revision']      = ((x($arr,'revision') && intval($arr['revision']) > 0)   ? intval($arr['revision']) : 0);
@@ -1670,7 +1670,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
     // No longer used but needs to be set to something or the database will complain.
     $arr['route'] = '';
-    
+
     $arr['public_policy'] = '';
 
     $arr['comment_policy'] = ((x($arr,'comment_policy')) ? notags(trim($arr['comment_policy']))  : 'contacts' );
@@ -1741,7 +1741,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
         }
 
         if ($r) {
-    
+
             $parent_item = array_shift($r);
 
             // in case item_store was killed before the parent's parent attribute got set,
@@ -1782,7 +1782,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
             $parent_id       = $parent_item['id'];
             $parent_deleted  = $parent_item['item_deleted'];
 
-            // item_restrict indicates an activitypub reply with a different 
+            // item_restrict indicates an activitypub reply with a different
             // delivery algorithm than the "parent-relay" or inherited privacy mode
 
             if(! (intval($arr['item_restrict']) & 1)) {
@@ -1807,7 +1807,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
             // if the parent is private and the child is not, force privacy for the entire conversation
             // if the child is private, leave it alone regardless of the parent privacy state
-            
+
             if(intval($parent_item['item_private']) && (! intval($arr['item_private']))) {
                 $arr['item_private'] = $parent_item['item_private'];
             }
@@ -1849,7 +1849,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
         $ret['message'] = 'cancelled.';
         return $ret;
     }
-    
+
     /**
      * @hooks item_store
      *   Called when item_store() stores a record of type item.
@@ -2360,16 +2360,16 @@ function item_update_parent_commented($item) {
 
 
     $update_parent = true;
-    
-    // update the commented timestamp on the parent 
+
+    // update the commented timestamp on the parent
     // - unless this is a moderated comment or a potential clone of an older item
-    // which we don't wish to bring to the surface. As the queue only holds deliveries 
-    // for 3 days, it's suspected of being an older cloned item if the creation time 
+    // which we don't wish to bring to the surface. As the queue only holds deliveries
+    // for 3 days, it's suspected of being an older cloned item if the creation time
     // is older than that.
 
     if(intval($item['item_blocked']) === ITEM_MODERATED)
         $update_parent = false;
- 
+
     if($item['created'] < datetime_convert('','','now - 4 days'))
         $update_parent = false;
 
@@ -2400,7 +2400,7 @@ function send_status_notifications($post_id,$item) {
 
     $parent = 0;
     $thr_parent_id = 0;
-    
+
     if(array_key_exists('verb',$item) && (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE))) {
 
         $r = q("select id from item where mid = '%s' and uid = %d limit 1",
@@ -2544,7 +2544,7 @@ function tag_deliver($uid, $item_id) {
         // this is an update (edit) to a post which was already processed by us and has a second delivery chain
         // Just start the second delivery chain to deliver the updated post
         // after resetting ownership and permission bits
-        
+
         logger('updating edited tag_deliver post for ' . $u['channel_address']);
         start_delivery_chain($u, $item, $item_id, 0, false, true);
         return;
@@ -2552,7 +2552,7 @@ function tag_deliver($uid, $item_id) {
 
     // send mail (DM) notifications here, but only for top level posts.
     // followups will be processed by send_status_notifications()
-    
+
     $mail_notify = false;
     if ((! $item['item_wall']) && intval($item['item_thread_top']) && $item['author_xchan'] !== $u['channel_hash'] && intval($item['item_private']) === 2) {
         Enotify::submit(array(
@@ -2594,7 +2594,7 @@ function tag_deliver($uid, $item_id) {
         else {
             $a = json_decode($item['target'],true);
         }
-        
+
         if ($a) {
             $id = ((is_string($a)) ? $a : EMPTY_STR);
             if (is_array($a) && isset($a['id'])) {
@@ -2653,7 +2653,7 @@ function tag_deliver($uid, $item_id) {
             // group comments don't normally require a second delivery chain
             // but we create a linked Announce so they will show up in the home timeline
             // on microblog platforms and this creates a second delivery chain
-        
+
             if ($is_group && intval($x[0]['item_wall'])) {
                 // don't let the forked delivery chain recurse
                 if ($item['verb'] === 'Announce' && $item['author_xchan'] === $u['channel_hash']) {
@@ -2663,10 +2663,10 @@ function tag_deliver($uid, $item_id) {
                 if (intval($item['item_blocked']) === ITEM_MODERATED) {
                     return;
                 }
-                
+
                 // don't boost likes and other response activities as it is likely that
                 // few platforms will handle this in an elegant way
-                
+
                 if (ActivityStreams::is_response_activity($item['verb'])) {
                     return;
                 }
@@ -2692,11 +2692,11 @@ function tag_deliver($uid, $item_id) {
     if ($terms) {
         logger('Post mentions: ' . print_r($terms,true), LOGGER_DATA);
     }
-    
+
     if ($pterms) {
         logger('Post collections: ' . print_r($pterms,true), LOGGER_DATA);
     }
-    
+
     $link = normalise_link($u['xchan_url']);
 
     if ($terms) {
@@ -2757,7 +2757,7 @@ function tag_deliver($uid, $item_id) {
              * but let the owner change this with a hidden pconfig and either allow
              * or deny this option regardless of the type of group
              */
-             
+
             if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
                 if (get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated'])) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
                     logger('group mention delivery for ' . $u['channel_address']);
@@ -2797,7 +2797,7 @@ function tag_deliver($uid, $item_id) {
             elseif ($term['ttype'] === TERM_HASHTAG && strtolower($term['term']) === strtolower($u['channel_address'])) {
                 $ptagged = true;
             }
-            
+
             if (! $ptagged) {
                 continue;
             }
@@ -2866,7 +2866,7 @@ function tgroup_check($uid, $item) {
     // If a comment, check if we have already accepted the top level post as an uplink
     // Applies to collections only at this time
     // @FIXME We need a comment clause for groups
-    
+
     if ($item['mid'] !== $item['parent_mid']) {
         $r = q("select id from item where mid = '%s' and uid = %d and item_uplink = 1 limit 1",
             dbesc($item['parent_mid']),
@@ -2912,14 +2912,14 @@ function tgroup_check($uid, $item) {
     if ($r) {
         return true;
     }
-    
-    
+
+
     if (($is_collection) && (perm_is_allowed($uid,$item['author_xchan'],'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
         return true;
     }
 
     // return true if we are mentioned and we permit delivery of mentions from strangers
-    
+
     if (PConfig::Get($uid, 'system','permit_all_mentions') && i_am_mentioned($u,$item)) {
         return true;
     }
@@ -2997,7 +2997,7 @@ function i_am_mentioned($channel,$item) {
 function start_delivery_chain($channel, $item, $item_id, $parent, $group = false, $edit = false) {
 
     // btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
-    
+
     $sourced = check_item_source($channel['channel_id'],$item);
 
     if ($sourced) {
@@ -3029,7 +3029,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         }
 
         // This will change the author to the post owner. Useful for RSS feeds which are to be syndicated
-        // to federated platforms which can't verify the identity of the author. 
+        // to federated platforms which can't verify the identity of the author.
         // This MAY cause you to run afoul of copyright law.
 
         $rewrite_author = intval(get_abconfig($channel['channel_id'],$item['owner_xchan'],'system','rself'));
@@ -3055,7 +3055,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         q("update item set item_hidden = 1 where id = %d",
             intval($item_id)
         );
-        
+
         if ($edit) {
             // process edit or delete action
             $r = q("select * from item where source_xchan = '%s' and body like '%s' and uid = %d limit 1",
@@ -3086,7 +3086,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
             $arr['parent_mid'] = $arr['mid'];
             IConfig::Set($arr,'activitypub','context', str_replace('/item/','/conversation/',$arr['mid']));
         }
-        
+
         $arr['aid'] = $channel['channel_account_id'];
         $arr['uid'] = $channel['channel_id'];
 
@@ -3097,13 +3097,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         $arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
         $arr['item_origin'] = 1;
-        
+
         $arr['item_wall'] = 1;
         $arr['item_thread_top'] = 1;
-    
+
         $bb = "[share author='" . urlencode($item['author']['xchan_name']) .
             "' profile='"       . $item['author']['xchan_url'] .
-            "' portable_id='"   . $item['author']['xchan_hash'] . 
+            "' portable_id='"   . $item['author']['xchan_hash'] .
             "' avatar='"        . $item['author']['xchan_photo_s'] .
             "' link='"          . $item['plink'] .
             "' auth='"          . (in_array($item['author']['xchan_network'],['nomad', 'zot6']) ? 'true' : 'false') .
@@ -3129,11 +3129,11 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         if ($tagpref === 2 && $item['author']['xchan_addr']) {
             $mention = sprintf(t('%1$s (%2$s)'), $item['author']['xchan_name'], $item['author']['xchan_addr']);
         }
-    
+
         $arr['body'] .= "\n" . '@[zrl=' . $item['author']['xchan_url'] . ']' . $mention . '[/zrl]';
-        
+
         // Conversational objects shouldn't be copied, but other objects should.
-        if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) { 
+        if (in_array($item['obj_type'], [ 'Image', 'Event', 'Question' ])) {
             $arr['obj'] = $item['obj'];
             $t = json_decode($arr['obj'],true);
             if ($t !== NULL) {
@@ -3142,7 +3142,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
             $arr['obj']['content'] = bbcode($bb, [ 'export' => true ]);
             $arr['obj']['source']['content'] = $bb;
             $arr['obj']['id'] = $arr['mid'];
-            
+
             if (! array_path_exists('obj/source/mediaType',$arr)) {
                 $arr['obj']['source']['mediaType'] = 'text/x-multicode';
             }
@@ -3167,14 +3167,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
             'url' => $item['author']['xchan_url']
         ];
 
-    
         $arr['author_xchan'] = $channel['channel_hash'];
         $arr['owner_xchan']  = $channel['channel_hash'];
 
         $arr['obj_type'] = $item['obj_type'];
 
         $arr['verb'] = 'Add';
-    
+
         $arr['item_restrict'] = 1;
 
         $arr['allow_cid'] = $channel['channel_allow_cid'];
@@ -3185,7 +3184,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
         $merge = (($item['attach']) ? $item['attach'] : []);
         $arr['attach'] = array_merge($merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
-    
+
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
 
         if ($arr['id']) {
@@ -3218,13 +3217,13 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
         // don't let this recurse. We checked for this before calling, but this ensures
         // it doesn't sneak through another way because recursion is nasty.
-        
+
         if ($item['verb'] === 'Announce' && $item['author_xchan'] === $channel['channel_hash']) {
             return;
         }
 
         // Don't send Announce activities for poll responses.
-        
+
         if ($item['obj_type'] === 'Answer') {
             return;
         }
@@ -3242,7 +3241,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
             $arr['parent_mid'] = $item['parent_mid'];
             IConfig::Set($arr,'activitypub','context', str_replace('/item/','/conversation/',$item['parent_mid']));
         }
-        
+
         $arr['aid'] = $channel['channel_account_id'];
         $arr['uid'] = $channel['channel_id'];
 
@@ -3254,7 +3253,7 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         elseif (is_string($item['obj']) && strlen($item['obj'])) {
             $arr['obj'] = json_decode($item['obj'],true);
         }
-        
+
         if (! $arr['obj']) {
             $arr['obj'] = $item['mid'];
         }
@@ -3272,9 +3271,9 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
         $arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
         $arr['item_origin'] = 1;
-        
+
         $arr['item_thread_top'] = 0;
-    
+
         $arr['allow_cid'] = $channel['channel_allow_cid'];
         $arr['allow_gid'] = $channel['channel_allow_gid'];
         $arr['deny_cid']  = $channel['channel_deny_cid'];
@@ -3449,7 +3448,7 @@ function post_is_importable($channel_id, $item, $abook) {
 
     $text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
     $text = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $text : $text);
-  
+
     $incl = PConfig::get($channel_id, 'system', 'message_filter_incl', EMPTY_STR);
     $excl = PConfig::get($channel_id, 'system', 'message_filter_excl', EMPTY_STR);
     if ($incl || $excl) {
@@ -3463,7 +3462,7 @@ function post_is_importable($channel_id, $item, $abook) {
     if (! $abook) {
         return true;
     }
-    
+
     foreach ($abook  as  $ab) {
         // check eligibility
         if (intval($ab['abook_self'])) {
@@ -3478,7 +3477,7 @@ function post_is_importable($channel_id, $item, $abook) {
             return false;
         }
     }
-    return true;    
+    return true;
 }
 
 
@@ -3539,7 +3538,7 @@ function item_getfeedtags($item) {
     if (! (isset($item['term']) && is_array($item['term']))) {
         return $ret;
     }
-    
+
     $terms = get_terms_oftype($item['term'],array(TERM_HASHTAG,TERM_MENTION,TERM_COMMUNITYTAG));
 
     if (count($terms)) {
@@ -3597,7 +3596,7 @@ function item_expire($uid,$days,$comment_days = 7) {
     if (! $comment_days) {
         $comment_days = 7;
     }
-    
+
     // $expire_stream_only = save your own wall posts
     // and just expire conversations started by others
     // do not enable this until we can pass bulk delete messages through zot
@@ -3610,7 +3609,7 @@ function item_expire($uid,$days,$comment_days = 7) {
     // We need to set an arbitrary limit on the number of records to be expired to
     // prevent memory exhaustion. The site admin can configure it to something else
     // if they desire/require.
-    
+
     $expire_limit = get_config('system','expire_limit');
     if (! intval($expire_limit)) {
         $expire_limit = 5000;
@@ -3651,7 +3650,7 @@ function item_expire($uid,$days,$comment_days = 7) {
         }
 
         // don't expire pinned items either
-        
+
         $pinned = PConfig::Get($item['uid'], 'pinned', $item['item_type'], []);
         if (in_array($item['mid'], $pinned)) {
             retain_item($item['id']);
@@ -3722,7 +3721,7 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0) {
     $ok_to_delete = false;
 
     // admin deletion
-    
+
     if (is_site_admin()) {
         $ok_to_delete = true;
     }
@@ -3749,7 +3748,7 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0) {
     }
 
     if ($ok_to_delete) {
-        
+
         $r = q("UPDATE item SET item_deleted = 1 WHERE id = %d",
             intval($item['id'])
         );
@@ -3883,16 +3882,16 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
     // The threadlistener interface does not support uid/channel_id, so
     // only remove threadlisteners when doing the second stage of a federated delete.
-    
+
     if ($stage === DROPITEM_PHASE2) {
         ThreadListener::delete_by_target($item['mid']);
     }
-    
+
     q("delete from notify where uid = %d and link = '%s'",
         intval($item['uid']),
         dbesc($item['mid'])
     );
-  
+
     return true;
 }
 
@@ -3996,7 +3995,7 @@ function posted_dates($uid,$wall) {
     $dnow = datetime_convert('UTC',date_default_timezone_get(),'now','Y-m-d');
 
     $dthen = first_post_date($uid,$wall);
-    
+
     if (! $dthen) {
         return [];
     }
@@ -4054,7 +4053,7 @@ function fetch_post_tags($items, $link = false) {
             }
         }
     }
-    
+
     $tag_finder_str = implode(', ', $tag_finder);
 
     if (strlen($tag_finder_str)) {
@@ -4134,7 +4133,7 @@ function zot_feed($uid, $observer_hash, $arr) {
     require_once('include/security.php');
 
     $encoding = ((array_key_exists('encoding',$arr)) ? $arr['encoding'] : 'zot');
-        
+
     if(array_key_exists('mindate',$arr)) {
         $mindate = datetime_convert('UTC','UTC',$arr['mindate']);
     }
@@ -4241,7 +4240,7 @@ function zot_feed($uid, $observer_hash, $arr) {
     foreach($items as $item) {
         if($encoding === 'zot')
             $result[] = encode_item($item);
-        elseif(encoding === 'activitystreams') 
+        elseif(encoding === 'activitystreams')
             $result[] = Activity::encode_activity($item);
     }
 
@@ -4294,17 +4293,17 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
     if (isset($arr['mid']) && $arr['mid']) {
         $sql_options .= " and parent_mid = '" . dbesc($arr['mid']) . "' ";
     }
-    
+
     $sql_extra = " AND item.parent IN ( SELECT parent FROM item WHERE item_thread_top = 1 $sql_options $item_normal ) ";
 
     if(isset($arr['since_id']) && $arr['since_id']) {
         $sql_extra .= " and item.id > " . $since_id . " ";
     }
-    
+
     if (isset($arr['cat']) && $arr['cat']) {
         $sql_extra .= protect_sprintf(term_query('item', $arr['cat'], TERM_CATEGORY));
     }
-    
+
     if (isset($arr['gid']) && $arr['gid'] && $uid) {
         $r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
             intval($arr['group']),
@@ -4457,7 +4456,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
             }
             return 0;
         }
-        
+
         $items = q("SELECT item.*, item.id AS item_id FROM item
                 WHERE $item_uids $item_restrict
                 $simple_update
@@ -4776,7 +4775,7 @@ function list_attached_local_files($body) {
 
     $files = [];
     $match = [];
-    
+
     // match img and zmg image links
     if (preg_match_all("/\[[zi]mg(.*?)\](.*?)\[\/[zi]mg\]/",$body,$match)) {
         $images = $match[2];
@@ -4829,7 +4828,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
         if (! $attach_q) {
             continue;
         }
-        
+
         $attach = array_shift($attach_q);
 
         $match = null;
@@ -4841,7 +4840,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
             // permissions have already been fixed and they are public. There's nothing for us to do.
             continue;
         }
-        
+
         // if flags & 1, the attachment was uploaded directly into a post and needs to have permissions corrected
         // or - if it is a private file and a new token was generated, we'll need to add the token to the ACL.
 
@@ -4852,7 +4851,7 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
         $item_private = 0;
 
         if ($new_public === false) {
-        
+
             $item_private = (($str_group_allow || ($str_contact_allow && substr_count($str_contact_allow,'<') > 2)) ? 1 : 2);
 
             // preserve any existing tokens that may have been set for this file
@@ -5015,8 +5014,6 @@ function copy_of_pubitem($channel,$mid) {
         );
     }
 
-
-        
     if ($r) {
         $items = fetch_post_tags($r,true);
         foreach ($items as $rv) {
