@@ -10,7 +10,7 @@ use Code\Extend\Hook;
 use Code\Lib\Addon;
 use Code\Render\Theme;
 
-    
+
 /**
  * Apps
  *
@@ -455,8 +455,8 @@ class Apps
          *    nav: render apps for app-bin
          */
 
-		$channel_id = local_channel();
-		$sys_channel = Channel::is_system($channel_id);
+        $channel_id = local_channel();
+        $sys_channel = Channel::is_system($channel_id);
 
         $installed = false;
 
@@ -587,7 +587,7 @@ class Apps
             $hosturl = z_root() . '/';
         } elseif (remote_channel()) {
             $observer = App::get_observer();
-			if ($observer && in_array($observer['xchan_network'],['nomad','zot6'])) {
+            if ($observer && in_array($observer['xchan_network'],['nomad','zot6'])) {
                 // some folks might have xchan_url redirected offsite, use the connurl
                 $x = parse_url($observer['xchan_connurl']);
                 if ($x) {
@@ -660,16 +660,16 @@ class Apps
         $app['uid'] = $uid;
 
         if (self::app_installed($uid, $app, true)) {
-			// preserve the existing deleted status across app updates
-			if (isset($app['guid'])) {
-				$check = q("select * from app where app_id = '%s' and app_channel = %d",
-					dbesc($app['guid']),
-					intval($uid)
-				);
-				if ($check) {
-					$app['deleted'] = intval($check[0]['app_deleted']);
-				}
-			}
+            // preserve the existing deleted status across app updates
+            if (isset($app['guid'])) {
+                $check = q("select * from app where app_id = '%s' and app_channel = %d",
+                    dbesc($app['guid']),
+                    intval($uid)
+                );
+                if ($check) {
+                    $app['deleted'] = intval($check[0]['app_deleted']);
+                }
+            }
             $x = self::app_update($app);
         } else {
             $x = self::app_store($app);
@@ -706,7 +706,7 @@ class Apps
 
     public static function can_delete($uid, $app)
     {
-		// $uid 0 cannot delete, only archive
+        // $uid 0 cannot delete, only archive
 
         if (!$uid) {
             return false;
@@ -755,13 +755,13 @@ class Apps
                             intval($target_uid)
                         );
                     }
-					if ($uid) {
-	                    if (intval($x[0]['app_system'])) {
-    	                    Libsync::build_sync_packet($uid, array('sysapp' => $x));
-        	            } else {
-            	            Libsync::build_sync_packet($uid, array('app' => $x));
-                	    }
-					}
+                    if ($uid) {
+                        if (intval($x[0]['app_system'])) {
+                            Libsync::build_sync_packet($uid, array('sysapp' => $x));
+                        } else {
+                            Libsync::build_sync_packet($uid, array('app' => $x));
+                        }
+                    }
                 } else {
                     self::app_undestroy($uid, $app);
                 }

@@ -508,7 +508,7 @@ class ThreadItem
             'previewing' => ($conv->is_preview() ? true : false ),
             'preview_lbl' => t('This is an unsaved preview'),
             'wait' => t('Please wait'),
-            'submid' => str_replace(['+','='], ['',''], base64_encode($item['mid'])),
+            'submid' => str_replace(['+','='], ['',''], base64_encode(urlencode($item['mid']))),
             'thread_level' => $thread_level,
             'indentpx' => intval(get_pconfig(local_channel(), 'system', 'thread_indent_px', get_config('system', 'thread_indent_px', 0))),
             'thread_max' => intval(get_config('system', 'thread_maxlevel', 20)) + 1

@@ -151,6 +151,61 @@ a:focus,
 	cursor: pointer;
 }
 
+._aqua {
+    color: aqua !important;
+}
+._black {
+    color: black !important;
+}
+._blue {
+    color: blue !important;
+}
+._ fuschia{
+    color: fuchsia !important;
+}
+._gray {
+    color: gray !important;
+}
+._grey {
+    color: grey !important;
+}
+._green {
+    color: green !important;
+}
+._lime {
+    color: lime !important;
+}
+._maroon {
+    color: maroon !important;
+}
+._navy {
+    color: navy !important;
+}
+._olive {
+    color: olive !important;
+}
+._purple {
+    color: purple !important;
+}
+._red {
+    color: red !important;
+}
+._silver {
+    color: silver !important;
+}
+._teal {
+    color: teal !important;
+}
+._white {
+    color: white !important;
+}
+._yellow {
+    color: yellow !important;
+}
+._orange {
+    color: #FFA500 !important;
+}
+
 input, optgroup, select, textarea {
 	font-size: 0.9rem !important;
 }

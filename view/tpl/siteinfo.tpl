@@ -15,7 +15,7 @@
 
 <div>{{if $admin_about}}{{$admin_about}}{{else}}--{{/if}}</div><br>
 
-<div><a href="help/TermsOfService">{{$terms}}</a></div>
+<div><i class="fa fa-fw fa-legal"></i>&nbsp;<a href="help/TermsOfService">{{$terms}}</a></div>
 
 
 </div>

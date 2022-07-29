@@ -33,7 +33,7 @@ certificate is available at "http://www.digicert.com/help/". When visiting your
 site for the first time, please use the SSL ("https://") URL. This will avoid
 problems later.
 
-Free "browser-valid" certificates are available from providers such as StartSSL
+Free "browser-valid" certificates are available from providers such as ZeroSSL
 and LetsEncrypt.
 
 If you use LetsEncrypt to provide certificates and create a file under

@@ -791,9 +791,6 @@ function updateConvItems(mode,data) {
 		if($('#collapsed-comments-'+itmId).is(':visible'))
 			isVisible = true;
 
-
-
-
 		// insert the content according to the mode and first_page 
 		// and whether or not the content exists already (overwrite it)
 
@@ -914,7 +911,7 @@ function updateConvItems(mode,data) {
 	let encoded = ((submid.substr(0,4) == 'b64.') ? true : false);
 	let submid_encoded = ((encoded) ? submid.substr(4) : window.btoa(submid));
 
-	submid_encoded = submid_encoded.replace(/[\+\=]/g,'');
+    submid_encoded = submid_encoded.replace(/[\+\=]/g,'');
 	if($('.item_' + submid_encoded).length && !$('.item_' + submid_encoded).hasClass('toplevel_item') && mode == 'replace') {
 		if($('.collapsed-comments').length) {
 			let scrolltoid = $('.collapsed-comments').attr('id').substring(19);
