@@ -4103,7 +4103,7 @@ class Activity
 
         $ret = false;
 
-        if (!(is_array($item['attach']) && $item['attach'])) {
+        if (!is_array($item['attach'])) {
             return $item;
         }
 
@@ -4115,19 +4115,22 @@ class Activity
                 }
                 // Friendica attachment weirdness
                 // Check both the attachment image and href since they can be different and the one in the href is a different link with different resolution.
-                if (isset($a['image']) && self::media_not_in_body($a['image'], $item['body']) && self::media_not_in_body($a['href'], $item['body'])) {
-                    if (isset($a['name']) && $a['name']) {
-                        $alt = htmlspecialchars($a['name'], ENT_QUOTES);
-                        // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
-                        // The full width bracket isn't quite as alien looking as most other unicode bracket replacements.
-                        $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
-                        $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
-                    } else {
-                        $item['body'] .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+                // Otheriwse you'll get duplicated images
+                if (isset($a['image'])) {
+                    if (self::media_not_in_body($a['image'], $item['body']) && self::media_not_in_body($a['href'], $item['body'])) {
+                        if (isset($a['name']) && $a['name']) {
+                            $alt = htmlspecialchars($a['name'], ENT_QUOTES);
+                            // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
+                            // The full width bracket isn't quite as alien looking as most other unicode bracket replacements.
+                            $alt = str_replace(['[', ']'], ['&#xFF3B;', '&#xFF3D;'], $alt);
+                            $item['body'] .= "\n\n" . '[img alt="' . $alt . '"]' . $a['href'] . '[/img]';
+                        } else {
+                            $item['body'] .= "\n\n" . '[img]' . $a['href'] . '[/img]';
+                        }
                     }
                     continue;
                 }
-                if (self::media_not_in_body($a['href'], $item['body'])) {
+                elseif (self::media_not_in_body($a['href'], $item['body'])) {
                     if (isset($a['name']) && $a['name']) {
                         $alt = htmlspecialchars($a['name'], ENT_QUOTES);
                         // Escape brackets by converting to unicode full-width bracket since regular brackets will confuse multicode/bbcode parsing.
