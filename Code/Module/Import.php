@@ -143,7 +143,7 @@ class Import extends Controller
             return;
         }
         $schema = (array_path_exists('compatibility/schema', $data) && $data['compatibility']['schema']) ? $data['compatibility']['schema'] : 'unknown';
-    
+
         if ($moving) {
             $seize = 1;
         }
@@ -263,7 +263,11 @@ class Import extends Controller
                     logger('forged xchan: ' . print_r($xchan, true));
                     continue;
                 }
-
+                // xchan_pubforum was renamed but still may exist in Hubzilla imports
+                if (array_key_exists('xchan_pubforum', $xchan)) {
+                    $xchan['xchan_type'] = $xchan['xchan_pubforum'];
+                    unset($xchan['xchan_pubforum'];
+                }
                 $r = q(
                     "select xchan_hash from xchan where xchan_hash = '%s' limit 1",
                     dbesc($xchan['xchan_hash'])
