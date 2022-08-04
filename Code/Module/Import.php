@@ -266,7 +266,7 @@ class Import extends Controller
                 // xchan_pubforum was renamed but still may exist in Hubzilla imports
                 if (array_key_exists('xchan_pubforum', $xchan)) {
                     $xchan['xchan_type'] = $xchan['xchan_pubforum'];
-                    unset($xchan['xchan_pubforum'];
+                    unset($xchan['xchan_pubforum']);
                 }
                 $r = q(
                     "select xchan_hash from xchan where xchan_hash = '%s' limit 1",
