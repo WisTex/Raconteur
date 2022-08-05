@@ -6,7 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
-use Code\Lib\Channel;    
+use Code\Lib\Channel;
 use Code\Lib\Webfinger;
 use Code\Lib\Zotfinger;
 use Code\Lib\Libzot;
@@ -82,7 +82,7 @@ class HTTPSig
         }
 
         //logger('SERVER: ' . print_r($_SERVER,true), LOGGER_ALL);
-        //logger('headers: ' . print_r($headers,true), LOGGER_ALL);
+        //logger('found_headers: ' . print_r($headers,true), LOGGER_ALL);
 
         return $headers;
     }

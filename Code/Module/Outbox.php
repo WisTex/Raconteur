@@ -28,7 +28,7 @@ class Outbox extends Controller
             api_login();
         }
     }
-    
+
     public function post()
     {
         if (argc() < 2) {
@@ -38,7 +38,7 @@ class Outbox extends Controller
         if (! api_user()) {
             killme();
         }
-    
+
         $channel = Channel::from_username(argv(1));
         if (!$channel) {
             killme();
@@ -52,7 +52,7 @@ class Outbox extends Controller
         if (!$observer) {
             killme();
         }
-        
+
         if ($observer['xchan_hash'] !== $channel['channel_hash']) {
             if (!perm_is_allowed($channel['channel_id'], $observer['xchan_hash'], 'post_wall')) {
                 logger('outbox post permission denied to ' . $observer['xchan_name']);
@@ -61,7 +61,7 @@ class Outbox extends Controller
         }
 
         $observer_hash = get_observer_hash();
-    
+
         $data = file_get_contents('php://input');
         if (!$data) {
             return;
@@ -83,7 +83,7 @@ class Outbox extends Controller
         // ensure the posted activity has required attributes
 
         $uuid = new_uuid();
-        
+
         if (! $AS->id) {
             $AS->id = z_root() . '/activity/' . $uuid;
         }
@@ -95,7 +95,7 @@ class Outbox extends Controller
         if (! isset($AS->actor)) {
             $AS->actor = Channel::url($channel);
         }
-          
+
         logger('outbox_channel: ' . $channel['channel_address'], LOGGER_DEBUG);
 
         switch ($AS->type) {
@@ -210,11 +210,11 @@ class Outbox extends Controller
 
         if ($item) {
             // fixup some of the item fields when using C2S
-    
+
             if (! (isset($item['parent_mid']) && $item['parent_mid'])) {
                 $item['parent_mid'] = $item['mid'];
             }
-            // map ActivityPub recipients to Nomad ACLs to the extent possible. 
+            // map ActivityPub recipients to Nomad ACLs to the extent possible.
             if (isset($AS->recips)) {
                 $item['item_private'] = ((in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips)
                     || in_array('Public', $AS->recips)
@@ -242,7 +242,7 @@ class Outbox extends Controller
                             // map to a virtual list/group even if the app isn't installed. This should do the right
                             // thing and create a followers-only post with the correct ACL as long as the public stream
                             // isn't addressed. And if it is, the post will still go to all your connections - so the ACL isn't
-                            // necessary. 
+                            // necessary.
                             if (! isset($item['allow_gid'])) {
                                 $item['allow_gid'] = EMPTY_STR;
                             }
@@ -266,12 +266,12 @@ class Outbox extends Controller
                     $item['item_private'] = 2;
                 }
             }
-        
+
             $item['item_wall'] = 1;
-    
+
             logger('parsed_item: ' . print_r($item, true), LOGGER_DATA);
             Activity::store($channel, $observer_hash, $AS, $item);
-    
+
         }
 
         http_status_exit(200, 'OK');
@@ -309,7 +309,6 @@ class Outbox extends Controller
             } elseif (Config::get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
-
             $observer_hash = get_observer_hash();
 
             $params = [];
