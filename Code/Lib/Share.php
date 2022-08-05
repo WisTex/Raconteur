@@ -13,6 +13,7 @@ class Share
 
     private $item = null;
     private $attach = null;
+    private $tags = null;
 
     public function __construct($post_id)
     {
@@ -64,6 +65,7 @@ class Share
         }
 
         xchan_query($r);
+        $r = fetch_post_tags($r, true);
 
         $this->item = array_shift($r);
 
@@ -102,14 +104,22 @@ class Share
         else {
             $this->attach = [];
         }
-    
+
         $this->attach[] = [
             'href' => $this->item['mid'],
             'rel' => 'cite-as via',
             'type' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-            'title' => $this->item['mid']            
+            'title' => $this->item['mid'],
         ];
-    
+
+        $this->tags = ($this->item['term']) ? $this->item['term'] : [];
+
+        $this->tags[] = [
+            'type' => 'Link',
+            'url' => $this->item['mid'],
+            'term' => 'RE: ' . $this->item['mid'],
+        ];
+
         if ($item_author['network'] === 'activitypub') {
             // for Mastodon compatibility, send back an ActivityPub Announce activity.
             // We don't need or want these on our own network as there is no mechanism for providing
@@ -188,7 +198,12 @@ class Share
     {
         return $this->attach;
     }
-    
+
+    public function get_tags()
+    {
+        return $this->tags;
+    }
+
     public function bbcode()
     {
         $bb = EMPTY_STR;
@@ -222,7 +237,7 @@ class Share
                 "' portable_id='"   . $this->item['author']['xchan_hash'] .
                 "' avatar='"        . $this->item['author']['xchan_photo_s'] .
                 "' link='"          . $this->item['plink'] .
-				"' auth='"          . (in_array($this->item['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
+                "' auth='"          . (in_array($this->item['author']['network'],['nomad','zot6']) ? 'true' : 'false') .
                 "' posted='"        . $this->item['created'] .
                 "' message_id='"    . $this->item['mid'] .
             "']";

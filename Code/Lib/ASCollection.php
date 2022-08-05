@@ -63,9 +63,9 @@ class ASCollection
             $this->data = (($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']);
         }
 
-        if ($limit) {
-            if (count($this->data) > $limit) {
-                $this->data = array_slice($this->data, 0, $limit);
+        if ($this->limit) {
+            if (count($this->data) > $this->limit) {
+                $this->data = array_slice($this->data, 0, $this->limit);
                 return;
             }
         }
@@ -116,9 +116,9 @@ class ASCollection
             $this->data = array_merge($this->data, (($this->direction) ? array_reverse($data['orderedItems']) : $data['orderedItems']));
         }
 
-        if ($limit) {
-            if (count($this->data) > $limit) {
-                $this->data = array_slice($this->data, 0, $limit);
+        if ($this->limit) {
+            if (count($this->data) > $this->limit) {
+                $this->data = array_slice($this->data, 0, $this->limit);
                 $this->nextpage = false;
                 return true;
             }

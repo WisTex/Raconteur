@@ -275,8 +275,7 @@ class Activity
 
     public static function encode_item_collection($items, $id, $type, $activitypub = false, $total = 0)
     {
-
-        if ($total > 100) {
+        if ($total > App::$pager['itemspage']) {
             $ret = [
                 'id' => z_root() . '/' . $id,
                 'type' => $type . 'Page',
