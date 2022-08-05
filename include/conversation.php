@@ -615,15 +615,15 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'isstarred' => ((intval($item['item_starred'])) ? true : false),
                 );
 
-		        $lock = t('Public visibility');
-				if (intval($item['item_private']) === 2) {
-					$lock = t('Direct message (private mail)');
-				}
-				if (intval($item['item_private']) === 1) {
-					$lock = t('Restricted visibility');
-				}
+                $lock = t('Public visibility');
+                if (intval($item['item_private']) === 2) {
+                    $lock = t('Direct message (private mail)');
+                }
+                if (intval($item['item_private']) === 1) {
+                    $lock = t('Restricted visibility');
+                }
 
-        		$locktype = intval($item['item_private']);
+                $locktype = intval($item['item_private']);
 
                 $likebuttons = false;
                 $shareable = false;
@@ -671,7 +671,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'name' => $profile_name,
                     'sparkle' => $sparkle,
                     'lock' => $lock,
-					'locktype' => $locktype,
+                    'locktype' => $locktype,
                     'thumb' => $profile_avatar,
                     'title' => $item['title'],
                     'body' => $body['html'],
@@ -893,9 +893,9 @@ function author_is_pmable($xchan, $abook)
     if ($x['result'] !== 'unset') {
         return $x['result'];
     }
-	if (in_array($xchan['xchan_network'],['nomad','zot6']) && get_observer_hash()) {
-		return true;
-	}
+    if (in_array($xchan['xchan_network'],['nomad','zot6']) && get_observer_hash()) {
+        return true;
+    }
     return false;
 }
 
@@ -947,9 +947,9 @@ function thread_author_menu($item, $mode = '')
     }
     if ($can_dm) {
         $pm_url = z_root()
-		. '/rpost?to='
-		. urlencode($item['author_xchan']);
-	}
+        . '/rpost?to='
+        . urlencode($item['author_xchan']);
+    }
 
     if ($profile_link) {
         $menu[] = [
@@ -1984,10 +1984,10 @@ function profile_tabs($a, $is_owner = false, $nickname = null)
 
     $r = q(
         "select item.* from item left join iconfig on item.id = iconfig.iid
-		where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' 
-		and item.item_delayed = 0 and item.item_deleted = 0 
-		and ( iconfig.k = 'WEBPAGE' and item_type = %d ) 
-		$sql_options limit 1",
+        where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' 
+        and item.item_delayed = 0 and item.item_deleted = 0 
+        and ( iconfig.k = 'WEBPAGE' and item_type = %d ) 
+        $sql_options limit 1",
         intval($uid),
         dbesc('home'),
         intval(ITEM_TYPE_WEBPAGE)
