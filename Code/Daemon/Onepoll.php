@@ -9,7 +9,7 @@ use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
 use Code\Lib\ASCollection;
 use Code\Lib\Socgraph;
-    
+
 
 class Onepoll
 {
@@ -32,10 +32,10 @@ class Onepoll
 
         $contacts = q(
             "SELECT abook.*, xchan.*, account.*
-			FROM abook LEFT JOIN account on abook_account = account_id left join xchan on xchan_hash = abook_xchan 
-			where abook_id = %d
-			and abook_pending = 0 and abook_archived = 0 and abook_blocked = 0 and abook_ignored = 0
-			AND (( account_flags = %d ) OR ( account_flags = %d )) limit 1",
+            FROM abook LEFT JOIN account on abook_account = account_id left join xchan on xchan_hash = abook_xchan 
+            where abook_id = %d
+            and abook_pending = 0 and abook_archived = 0 and abook_blocked = 0 and abook_ignored = 0
+            AND (( account_flags = %d ) OR ( account_flags = %d )) limit 1",
             intval($contact_id),
             intval(ACCOUNT_OK),
             intval(ACCOUNT_UNVERIFIED)
@@ -70,7 +70,7 @@ class Onepoll
             : datetime_convert('UTC', 'UTC', $contact['abook_updated'] . ' - 2 days')
         );
 
-		if (in_array($contact['xchan_network'],['nomad','zot6'])) {
+        if (in_array($contact['xchan_network'],['nomad','zot6'])) {
             // update permissions
 
             $x = Libzot::refresh($contact, $importer);
@@ -164,8 +164,8 @@ class Onepoll
         // update the poco details for this connection
 
         $r = q(
-            "SELECT xlink_id from xlink 
-			where xlink_xchan = '%s' and xlink_updated > %s - INTERVAL %s and xlink_static = 0 limit 1",
+            "SELECT xlink_id from xlink
+            where xlink_xchan = '%s' and xlink_updated > %s - INTERVAL %s and xlink_static = 0 limit 1",
             intval($contact['xchan_hash']),
             db_utcnow(),
             db_quoteinterval('7 DAY')

@@ -1,7 +1,13 @@
 {{if $photo}}
 <img style="max-width: 100%;" alt="{{$alt}}" src="{{$photo}}" >
 {{/if}}
-<center><a href="{{$url}}" style="color: white;"><button class="btn btn-primary" style="color: white; margin-top: 50px;"><i class="fa fa-fw fa-external-link"></i>&nbsp;{{$visit}}</button></a></center>
+<center>
+<a href="{{$url}}" style="color: white;"><button class="btn btn-primary" style="color: white; margin-top: 50px;"><i class="fa fa-fw fa-external-link"></i>&nbsp;{{$visit}}</button></a>
+{{if $outbox}}
+<br>
+<a href="{{$recentlink}}" style="color: white;"><button class="btn btn-secondary" style="solor: white; margin-top: 10px;"><i class="fa fa-fw fa-eye"></i>&nbsp;{{$view}}</button></a>
+{{/if}}
+</center>
 {{if $about}}
 <br>
 <br>

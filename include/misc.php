@@ -19,7 +19,7 @@ use Code\Lib\Features;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-    
+
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
 /**
@@ -513,7 +513,7 @@ function paginate(&$a)
     $o = '';
     $stripped = preg_replace('/(&page=[0-9]*)/', '', App::$query_string);
 
-//  $stripped = preg_replace('/&zid=(.*?)([\?&]|$)/ism','',$stripped);
+    //  $stripped = preg_replace('/&zid=(.*?)([\?&]|$)/ism','',$stripped);
 
     $stripped = str_replace('q=', '', $stripped);
     $stripped = trim($stripped, '/');
@@ -586,7 +586,7 @@ function alt_pager($i, $more = '', $less = '')
     $url = z_root() . '/' . $stripped;
     // the template adds params with '&' so we need to supply a query param
     // with '?'. Use a dummy argument f= if there are no other query params.
- 
+
     if (! strpos($url,'?')) {
        $url = $url . '?f=';
     }
@@ -1799,17 +1799,17 @@ function item_is_censored($item, $observer) {
         return false;
     }
 
-    $censored = ((($item['author']['abook_censor'] 
-        || $item['owner']['abook_censor'] 
-        || $item['author']['xchan_selfcensored'] 
-        || $item['owner']['xchan_selfcensored'] 
-        || $item['author']['xchan_censored'] 
-        || $item['owner']['xchan_censored'] 
+    $censored = ((($item['author']['abook_censor']
+        || $item['owner']['abook_censor']
+        || $item['author']['xchan_selfcensored']
+        || $item['owner']['xchan_selfcensored']
+        || $item['author']['xchan_censored']
+        || $item['owner']['xchan_censored']
         || intval($item['item_nsfw'])) && (get_safemode()))
         ? true
         : false
     );
-            
+
     return $censored;
 }
 
@@ -3122,7 +3122,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
             if ((! $r) && strpos($newname, '@')) {
                 $r = q(
-                    "SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash 
+                    "SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash
 					WHERE hubloc_addr = '%s' and hubloc_deleted = 0",
                     dbesc($newname)
                 );
@@ -3179,7 +3179,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
                 if ($tagpref === 2 && $xc['xchan_addr']) {
                     $newname = sprintf(t('%1$s (%2$s)'), $xc['xchan_name'], $xc['xchan_addr']);
                 }
-    
+
                 // add the channel's xchan_hash to $access_tag if exclusive
                 if ($exclusive) {
                     $access_tag = 'cid:' . $xc['xchan_hash'];
@@ -3195,7 +3195,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
 					$zrl = (in_array($xc['xchan_network'], [ 'nomad', 'zot6' ]) ? 'zrl' : 'url');
 					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
-					
+
 					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
                     // append tag to str_tags
                     if (! stristr($str_tags, $newtag)) {
@@ -3504,7 +3504,7 @@ function item_url_replace($channel, &$item, $old, $new, $oldnick = '')
             $item['plink'] = str_replace('/' . $oldnick . '/', '/' . $channel['channel_address'] . '/', $item['plink']);
         }
     }
-    
+
     if (isset($item['llink'])) {
         $item['llink'] = str_replace($old, $new, $item['llink']);
         if ($oldnick && ($oldnick !== $channel['channel_address'])) {
@@ -3807,7 +3807,7 @@ function create_table_from_array($table, $arr, $binary_fields = [])
     } else {
         q("ROLLBACK");
     }
-  
+
     return $r;
 }
 
@@ -3844,11 +3844,11 @@ function update_table_from_array($table, $arr, $where, $binary_fields = [])
     }
     $sql = rtrim($sql,',');
     $r = dbq($sql . " WHERE " . $where);
-        
+
     return $r;
 }
 
-    
+
 function share_shield($m)
 {
     return str_replace($m[1], '!=+=+=!' . base64url_encode($m[1]) . '=+!=+!=', $m[0]);
@@ -3865,8 +3865,8 @@ function cleanup_bbcode($body)
 {
 
     /**
-     * fix image alt tags containing braces and angle chars from confusing the parser. 
-     */ 
+     * fix image alt tags containing braces and angle chars from confusing the parser.
+     */
 
     $matches = null;
     $c = preg_match('/alt\=\"(.*?)\"/ism',$body,$matches);
@@ -3944,11 +3944,11 @@ function unpack_link_id($mid)
 }
 
 function safe_param($s) {
-    return str_replace( ['?', '&', '<', '>', '=', '"', '\''], [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], $s);  
+    return str_replace( ['?', '&', '<', '>', '=', '"', '\''], [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], $s);
 }
 
 function decode_safe_param($s) {
-    return str_replace( [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], ['?', '&', '<', '>', '=', '"', '\''], $s);  
+    return str_replace( [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], ['?', '&', '<', '>', '=', '"', '\''], $s);
 }
 
 // callback for array_walk

@@ -4390,10 +4390,13 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
         $pager_sql = '';
     }
     else {
-        if (! (isset($arr['total']) && $arr['total'])) {
-            $itemspage = (($channel) ? get_pconfig($uid,'system','itemspage') : 20);
-            App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
-            $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
+        if (! (isset($arr['total']) && $arr['total']) ) {
+            $itemspage = ((isset($arr['records']))  ? $arr['records'] : 0);
+            if (! $itemspage) {
+                $itemspage = (($channel) ? get_pconfig($uid,'system','itemspage') : 20);
+                App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
+                $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
+            }
         }
     }
 

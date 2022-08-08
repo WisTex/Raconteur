@@ -85,7 +85,6 @@ function get_best_language()
         }
     }
 
-
     if (! isset($preferred)) {
         /*
          * We could find no perfect match for any of the preferred languages.
@@ -134,7 +133,6 @@ function get_best_language()
 
 function push_lang($language)
 {
-
     App::$langsave = App::$language;
 
     if ($language === App::$language) {
@@ -173,7 +171,6 @@ function pop_lang()
  */
 function load_translation_table($lang, $install = false)
 {
-
     App::$strings = [];
 
     if (file_exists("view/$lang/strings.php")) {
@@ -210,7 +207,6 @@ function load_translation_table($lang, $install = false)
  */
 function t($s, $ctx = '')
 {
-
     $cs = $ctx ? '__ctx:' . $ctx . '__ ' . $s : $s;
     if (x(App::$strings, $cs)) {
         $t = App::$strings[$cs];
@@ -246,7 +242,6 @@ function translate_projectname($s)
  */
 function tt($singular, $plural, $count, $ctx = '')
 {
-
     $cs = $ctx ? "__ctx:" . $ctx . "__ " . $singular : $singular;
     if (x(App::$strings, $cs)) {
         $t = App::$strings[$cs];

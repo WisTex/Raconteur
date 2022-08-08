@@ -6,15 +6,19 @@ use App;
 use Code\Web\Controller;
 use Code\Lib\Libzot;
 use Code\Lib\Webfinger;
+use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
 use Code\Render\Theme;
-
+use Code\Lib\ASCollection;
+use Code\Lib\Queue;
+use Code\Daemon\Run;
 
 class Chanview extends Controller
 {
 
     public function get()
     {
+        $load_outbox = false;
 
         $observer = App::get_observer();
         $xchan = null;
@@ -35,8 +39,8 @@ class Chanview extends Controller
         } elseif (local_channel() && intval($_REQUEST['cid'])) {
             $r = q(
                 "SELECT abook.*, xchan.* 
-				FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+                FROM abook left join xchan on abook_xchan = xchan_hash
+                WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                 intval(local_channel()),
                 intval($_REQUEST['cid'])
             );
@@ -109,7 +113,7 @@ class Chanview extends Controller
         $connected = false;
 
         $url = App::$poi['xchan_url'];
-		if (in_array(App::$poi['xchan_network'],['nomad','zot6'])) {
+        if (in_array(App::$poi['xchan_network'],['nomad','zot6'])) {
             $is_zot = true;
         }
         if (local_channel()) {
@@ -128,6 +132,7 @@ class Chanview extends Controller
             if ($c && intval($c[0]['abook_pending']) === 0) {
                 $connected = true;
             }
+            $channel = App::get_channel();
         }
 
         if ($is_zot && $observer) {
@@ -164,6 +169,42 @@ class Chanview extends Controller
                     $following = intval($m['totalItems']);
                 }
             }
+            if ($f && $channel && $load_outbox && !empty($f['outbox'])) {
+                $j = Activity::fetch($f['outbox'], $channel);
+                if ($j) {
+                    $AS = new ActivityStreams($j, null, true);
+                    if ($AS->is_valid() && isset($AS->data['type'])) {
+                        if (is_array($AS->obj)) {
+                            // matches Collection and orderedCollection
+                            if (isset($AS->obj['type']) && strpos($AS->obj['type'], 'Collection') !== false) {
+
+                                $max = 20;
+
+                                if (intval($max)) {
+                                    $obj = new ASCollection($f['outbox'], $channel, 0, $max);
+                                    $messages = $obj->get();
+                                    // logger('received: ' . print_r($messages,true));
+                                    if ($messages) {
+                                        logger('received ' . count($messages) . ' items from collection.', LOGGER_DEBUG);
+                                        foreach ($messages as $message) {
+                                            if (is_string($message)) {
+                                                $message = Activity::fetch($message, $channel);
+                                            }
+                                            $AS = new ActivityStreams($message, null, true);
+                                            if ($AS->is_valid() && is_array($AS->obj)) {
+                                                $item = Activity::decode_note($AS, true);
+                                            }
+                                            if ($item) {
+                                                Activity::store($channel, get_observer_hash(), $AS, $item, true, true);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             $o = replace_macros(Theme::get_template('chanview.tpl'), [
                 '$url' => $url,
@@ -175,6 +216,9 @@ class Chanview extends Controller
                 '$followers' => $followers,
                 '$following' => $following,
                 '$visit' => t('Visit'),
+                '$outbox' => $load_outbox,
+                '$view' => t('View Recent'),
+                '$recentlink' => z_root() . '/stream/?xchan=' . urlencode(App::$poi['xchan_hash']),
                 '$full' => t('toggle full screen mode')
             ]);
 

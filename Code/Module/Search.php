@@ -15,7 +15,6 @@ use Code\Render\Theme;
 use Code\Lib\LDSignatures;
 use Code\Web\HTTPSig;
 
-    
 require_once("include/bbcode.php");
 require_once('include/security.php');
 require_once('include/conversation.php');

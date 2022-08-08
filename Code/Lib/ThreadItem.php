@@ -116,12 +116,12 @@ class ThreadItem
         $observer = $conv->get_observer();
 
         $lock = t('Public visibility');
-		if (intval($item['item_private']) === 2) {
-			$lock = t('Direct message (private mail)');
-		}
-		if (intval($item['item_private']) === 1) {
-			$lock = t('Restricted visibility');
-		}
+        if (intval($item['item_private']) === 2) {
+            $lock = t('Direct message (private mail)');
+        }
+        if (intval($item['item_private']) === 1) {
+            $lock = t('Restricted visibility');
+        }
 
         $locktype = intval($item['item_private']);
 

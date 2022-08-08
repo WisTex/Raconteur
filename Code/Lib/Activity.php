@@ -275,8 +275,7 @@ class Activity
 
     public static function encode_item_collection($items, $id, $type, $activitypub = false, $total = 0)
     {
-
-        if ($total > 100) {
+        if ($total > App::$pager['itemspage']) {
             $ret = [
                 'id' => z_root() . '/' . $id,
                 'type' => $type . 'Page',
@@ -439,16 +438,10 @@ class Activity
                     $t['type'] = 'Hashtag';
                 }
 
-                // Handle quoted posts as taxonomy for the special snowflakes that can't figure out how to use attachments.
-                // For links, look for mediaType containing 'activity' OR link relations containing either 'via' or 'cite-as'
-                if ($t['type'] === 'Note' && isset($t['id'])) {
-                    $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['id'], 'term' => 'quoted_post'];
-                    continue;
-                }
-                elseif ($t['type'] === 'Link' && isset($t['href'])
-                        && ((isset($t['mediaType']) && strpos($t['mediaType'], 'activity') !== false)
-                        || (isset($t['rel']) && (attribute_contains($t['rel'],'via') || attribute_contains($t['rel'],'cite-as'))))) {
-                    $ret[] = ['ttype' => TERM_QUOTED, 'url' => t['href'], 'term' => 'quoted_post'];
+                if ($t['type'] === 'Link' && isset($t['href']) && isset($t['mediaType']) && strpos($t['mediaType'], 'activity') !== false) {
+                    $entry = ['ttype' => TERM_QUOTED, 'url' => $t['href']];
+                    $entry['term'] = ((!empty($t['name'])) ? escape_tags($t['name']) : t('Quoted post'));
+                    $ret[] = $entry;
                     continue;
                 }
 
