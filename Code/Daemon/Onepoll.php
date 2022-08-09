@@ -9,7 +9,7 @@ use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
 use Code\Lib\ASCollection;
 use Code\Lib\Socgraph;
-
+use Code\Lib\PConfig;
 
 class Onepoll
 {
@@ -112,7 +112,8 @@ class Onepoll
 
         // we haven't given them permission to send us their stream
 
-        $can_send_stream = intval(get_abconfig($importer_uid, $contact['abook_xchan'], 'my_perms', 'send_stream'));
+        $can_send_stream = ( intval(get_abconfig($importer_uid, $contact['abook_xchan'], 'my_perms', 'send_stream'))
+            || PConfig::Get($importer_uid,'system','preview_outbox', false));
 
         if (! $can_send_stream) {
             $fetch_feed = false;
@@ -130,7 +131,7 @@ class Onepoll
         // prohibitive as deletion requests would need to be relayed over potentially hostile networks.
 
         if ($fetch_feed) {
-            $max = intval(get_config('system', 'max_imported_posts', 20));
+            $max = intval(get_config('system', 'max_imported_posts', 50));
             if (intval($max)) {
                 $cl = get_xconfig($xchan, 'activitypub', 'collections');
                 if (is_array($cl) && $cl) {
@@ -161,7 +162,7 @@ class Onepoll
             }
         }
 
-        // update the poco details for this connection
+        // update the poco details for this connection once a week
 
         $r = q(
             "SELECT xlink_id from xlink

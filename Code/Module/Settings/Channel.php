@@ -20,7 +20,7 @@ use Code\Lib\Menu;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-    
+
 class Channel
 {
 
@@ -35,7 +35,7 @@ class Channel
         Hook::call('settings_post', $_POST);
 
         $set_perms = '';
-    
+
         $role = ((x($_POST, 'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
         $oldrole = get_pconfig(local_channel(), 'system', 'permissions_role');
 
@@ -64,8 +64,8 @@ class Channel
                 $x = $acl->get();
 
                 $r = q(
-                    "update channel set channel_allow_cid = '%s', channel_allow_gid = '%s', 
-					channel_deny_cid = '%s', channel_deny_gid = '%s' where channel_id = %d",
+                    "update channel set channel_allow_cid = '%s', channel_allow_gid = '%s',
+                    channel_deny_cid = '%s', channel_deny_gid = '%s' where channel_id = %d",
                     dbesc($x['allow_cid']),
                     dbesc($x['allow_gid']),
                     dbesc($x['deny_cid']),
@@ -108,8 +108,8 @@ class Channel
                 } // no default permissions
                 else {
                     q(
-                        "update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '', 
-						channel_deny_cid = '' where channel_id = %d",
+                        "update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '',
+                        channel_deny_cid = '' where channel_id = %d",
                         intval(local_channel())
                     );
                 }
@@ -165,7 +165,7 @@ class Channel
         $expire_starred = ((x($_POST, 'expire_starred')) ? intval($_POST['expire_starred']) : 0);
         $expire_photos = ((x($_POST, 'expire_photos')) ? intval($_POST['expire_photos']) : 0);
         $expire_network_only = ((x($_POST, 'expire_network_only')) ? intval($_POST['expire_network_only']) : 0);
-
+        $preview_outbox = ((x($_POST, 'preview_outbox')) ? intval($_POST['preview_outbox']) : 0);
         $allow_location = (((x($_POST, 'allow_location')) && (intval($_POST['allow_location']) == 1)) ? 1 : 0);
 
         $blocktags = (((x($_POST, 'blocktags')) && (intval($_POST['blocktags']) == 1)) ? 0 : 1); // this setting is inverted!
@@ -194,7 +194,7 @@ class Channel
         } else {
             set_pconfig(local_channel(), 'system', 'close_comments', EMPTY_STR);
         }
-    
+
         // allow a permission change to over-ride the autoperms setting from the form
         if (!isset($autoperms)) {
             $autoperms = ((x($_POST, 'autoperms')) ? intval($_POST['autoperms']) : 0);
@@ -350,6 +350,7 @@ class Channel
         set_pconfig(local_channel(), 'system', 'unless_mention_count', $unless_mention_count);
         set_pconfig(local_channel(), 'system', 'unless_tag_count', $unless_tag_count);
         set_pconfig(local_channel(), 'system', 'noindex', $noindex);
+        set_pconfig(local_channel(), 'system', 'preview_outbox', $preview_outbox);
 
 
         $r = q(
@@ -653,13 +654,14 @@ class Channel
             '$permissions_set' => $permissions_set,
             '$perms_set_msg' => t('Your permissions are already configured. Click to view/adjust'),
 
-            '$hide_presence' => array('hide_presence', t('Hide my online presence'), $hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no),
+            '$hide_presence' => array('hide_presence', t('Hide your online presence'), $hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no),
             '$hidefriends' => array('hide_friends', t('Allow others to view your friends and connections'), 1 - intval($profile['hide_friends']), '', $yes_no),
+            '$preview_outbox' => [ 'preview_outbox', t('Preview some public posts from new connections prior to connection approval'), intval(get_pconfig($channel['channel_id'], 'system','preview_outbox', false)), '', $yes_no ],
             '$permiss_arr' => $permiss,
             '$comment_perms' => $comment_perms,
             '$mail_perms' => $mail_perms,
             '$noindex' => ['noindex', t('Forbid indexing of your public channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
-            '$close_comments' => ['close_comments', t('Disable acceptance of comments on my posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
+            '$close_comments' => ['close_comments', t('Disable acceptance of comments on your posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
             '$blocktags' => array('blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
 
             '$lbl_p2macro' => t('Channel Permission Limits'),
@@ -668,7 +670,7 @@ class Channel
             '$maxreq' => array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']), t('May reduce spam activity')),
             '$permissions' => t('Default Access List'),
             '$permdesc' => t("(click to open/close)"),
-            '$aclselect' => Libacl::populate($perm_defaults, false, PermissionDescription::fromDescription(t('Use my default audience setting for the type of object published'))),
+            '$aclselect' => Libacl::populate($perm_defaults, false, PermissionDescription::fromDescription(t('Use your default audience setting for the type of object published'))),
             '$profseltxt' => t('Profile to assign new connections'),
             '$profselect' => ((Features::enabled(local_channel(), 'multi_profiles')) ? contact_profile_assign(get_pconfig(local_channel(), 'system', 'profile_assign', '')) : ''),
 

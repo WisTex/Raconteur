@@ -603,11 +603,13 @@ class Activity
             if ($atts) {
                 foreach ($atts as $att) {
                     if (isset($att['type']) && strpos($att['type'], 'image') !== false) {
-                        $ret[] = [
-                            'type' => 'Image',
-                            'url' => $arr['href'],
-                            'name' => ($arr['name']) ? $arr['name'] : '',
-                        ];
+                        if (!empty($arr['href'])) {
+                            $ret[] = [
+                                'type' => 'Image',
+                                'url' => $arr['href'],
+                                'name' => ($arr['name']) ? $arr['name'] : '',
+                            ];
+                        }
                     } else {
                         $ret[] = [
                             'type' => 'Link',
@@ -2114,6 +2116,9 @@ class Activity
                     Run::Summon(['Notifier', 'permissions_create', $new_connection[0]['abook_id']]);
                 }
 
+                if ($automatic || PConfig::Get($channel['channel_id'],'system','preview_outbox')) {
+                    Run::Summon(['Onepoll', $new_connection[0]['abook_id']]);
+                }
                 $clone = [];
                 foreach ($new_connection[0] as $k => $v) {
                     if (strpos($k, 'abook_') === 0) {

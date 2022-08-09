@@ -436,12 +436,11 @@ class Libzot
                 );
 
                 if (!$y) {
-                    logger('abook update failed');
-                } else {
-                    // if we were just granted read stream permission and didn't have it before, try to pull in some posts
-                    if ((!$old_read_stream_perm) && (intval($permissions['view_stream']))) {
-                        Run::Summon(['Onepoll', $r[0]['abook_id']]);
-                    }
+                    logger('abook birthday update failed');
+                }
+                // if we were just granted read stream permission and didn't have it before, try to pull in some posts
+                if ((!$old_read_stream_perm) && (intval($permissions['view_stream']))) {
+                    Run::Summon(['Onepoll', $r[0]['abook_id']]);
                 }
             } else {
                 // limit the ability to do connection spamming, this limit is per channel
@@ -549,6 +548,7 @@ class Libzot
                             if (
                                 intval(get_pconfig($channel['channel_id'], 'perm_limits', 'send_stream') & PERMS_PENDING)
                                 || (!intval($new_connection[0]['abook_pending']))
+                                || intval(PConfig::Get($channel['channel_id'],'system','preview_outbox',false))
                             ) {
                                 Run::Summon(['Onepoll', $new_connection[0]['abook_id']]);
                             }
