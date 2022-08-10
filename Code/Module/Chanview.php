@@ -18,6 +18,7 @@ class Chanview extends Controller
 
     public function get()
     {
+
         $load_outbox = false;
 
         $observer = App::get_observer();
@@ -38,7 +39,7 @@ class Chanview extends Controller
             );
         } elseif (local_channel() && intval($_REQUEST['cid'])) {
             $r = q(
-                "SELECT abook.*, xchan.* 
+                "SELECT abook.*, xchan.*
                 FROM abook left join xchan on abook_xchan = xchan_hash
                 WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                 intval(local_channel()),
@@ -167,42 +168,6 @@ class Chanview extends Controller
                 $m = Activity::fetch($f['following']);
                 if (is_array($m) && isset($m['totalItems'])) {
                     $following = intval($m['totalItems']);
-                }
-            }
-            if ($f && $channel && $load_outbox && !empty($f['outbox'])) {
-                $j = Activity::fetch($f['outbox'], $channel);
-                if ($j) {
-                    $AS = new ActivityStreams($j, null, true);
-                    if ($AS->is_valid() && isset($AS->data['type'])) {
-                        if (is_array($AS->obj)) {
-                            // matches Collection and orderedCollection
-                            if (isset($AS->obj['type']) && strpos($AS->obj['type'], 'Collection') !== false) {
-
-                                $max = 20;
-
-                                if (intval($max)) {
-                                    $obj = new ASCollection($f['outbox'], $channel, 0, $max);
-                                    $messages = $obj->get();
-                                    // logger('received: ' . print_r($messages,true));
-                                    if ($messages) {
-                                        logger('received ' . count($messages) . ' items from collection.', LOGGER_DEBUG);
-                                        foreach ($messages as $message) {
-                                            if (is_string($message)) {
-                                                $message = Activity::fetch($message, $channel);
-                                            }
-                                            $AS = new ActivityStreams($message, null, true);
-                                            if ($AS->is_valid() && is_array($AS->obj)) {
-                                                $item = Activity::decode_note($AS, true);
-                                            }
-                                            if ($item) {
-                                                Activity::store($channel, get_observer_hash(), $AS, $item, true, true);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
 

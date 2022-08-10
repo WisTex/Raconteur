@@ -108,7 +108,7 @@ class Socgraph {
                     } else {
                         $x = q(
                             "insert into xchat ( xchat_url, xchat_desc, xchat_xchan, xchat_edited )
-    						values ( '%s', '%s', '%s', '%s' ) ",
+                            values ( '%s', '%s', '%s', '%s' ) ",
                             dbesc(escape_tags($room['url'])),
                             dbesc(escape_tags($room['desc'])),
                             dbesc($xchan),
@@ -359,7 +359,7 @@ class Socgraph {
 
         $r = q(
             "SELECT count(xlink_id) as total from xlink where xlink_xchan = '%s' and xlink_static = 0 and xlink_link in
-    		(select abook_xchan from abook where abook_xchan != '%s' and abook_channel = %d and abook_self = 0 )",
+            (select abook_xchan from abook where abook_xchan != '%s' and abook_channel = %d and abook_self = 0 )",
             dbesc($xchan),
             dbesc($xchan),
             intval($uid)
@@ -384,7 +384,7 @@ class Socgraph {
 
         $r = q(
             "SELECT * from xchan left join xlink on xlink_link = xchan_hash where xlink_xchan = '%s' and xlink_static = 0 and xlink_link in
-    		(select abook_xchan from abook where abook_xchan != '%s' and abook_channel = %d and abook_self = 0 ) $sql_extra limit %d offset %d",
+            (select abook_xchan from abook where abook_xchan != '%s' and abook_channel = %d and abook_self = 0 ) $sql_extra limit %d offset %d",
             dbesc($xchan),
             dbesc($xchan),
             intval($uid),
@@ -405,15 +405,15 @@ class Socgraph {
 
         $r1 = q(
             "SELECT count(xlink_xchan) as total, xchan.* from xchan
-    		left join xlink on xlink_link = xchan_hash
-    		where xlink_xchan in ( select abook_xchan from abook where abook_channel = %d )
-    		and not xlink_link in ( select abook_xchan from abook where abook_channel = %d )
-    		and not xlink_link in ( select xchan from xign where uid = %d )
-    		and xlink_xchan != ''
-    		and xchan_hidden = 0
-    		and xchan_deleted = 0
-    		and xlink_static = 0
-    		group by xchan_hash order by total desc limit %d offset %d ",
+            left join xlink on xlink_link = xchan_hash
+            where xlink_xchan in ( select abook_xchan from abook where abook_channel = %d )
+            and not xlink_link in ( select abook_xchan from abook where abook_channel = %d )
+            and not xlink_link in ( select xchan from xign where uid = %d )
+            and xlink_xchan != ''
+            and xchan_hidden = 0
+            and xchan_deleted = 0
+            and xlink_static = 0
+            group by xchan_hash order by total desc limit %d offset %d ",
             intval($uid),
             intval($uid),
             intval($uid),
@@ -427,14 +427,14 @@ class Socgraph {
 
         $r2 = q(
             "SELECT count(xtag_hash) as total, xchan.* from xchan
-    		left join xtag on xtag_hash = xchan_hash
-    		where xtag_hash != '%s' 
-    		and not xtag_hash in ( select abook_xchan from abook where abook_channel = %d )
-    		and xtag_term in ( select xtag_term from xtag where xtag_hash = '%s' )
-    		and not xtag_hash in ( select xchan from xign where uid = %d )
-    		and xchan_hidden = 0
-    		and xchan_deleted = 0
-    		group by xchan_hash order by total desc limit %d offset %d ",
+            left join xtag on xtag_hash = xchan_hash
+            where xtag_hash != '%s' 
+            and not xtag_hash in ( select abook_xchan from abook where abook_channel = %d )
+            and xtag_term in ( select xtag_term from xtag where xtag_hash = '%s' )
+            and not xtag_hash in ( select xchan from xign where uid = %d )
+            and xchan_hidden = 0
+            and xchan_deleted = 0
+            group by xchan_hash order by total desc limit %d offset %d ",
             dbesc($myxchan),
             intval($uid),
             dbesc($myxchan),
@@ -543,11 +543,11 @@ class Socgraph {
 
         if (isset($system_mode) && $system_mode) {
             $r = q("SELECT count(*) as total from abook where abook_self = 1 
-    			and abook_channel in (select uid from pconfig where cat = 'system' and k = 'suggestme' and v = '1') ");
+                and abook_channel in (select uid from pconfig where cat = 'system' and k = 'suggestme' and v = '1') ");
         } else {
             $r = q(
                 "SELECT count(*) as total from abook where abook_channel = %d 
-    			$sql_extra ",
+                $sql_extra ",
                 intval($channel_id)
             );
             $rooms = q(
@@ -571,15 +571,15 @@ class Socgraph {
         if ($system_mode) {
             $r = q(
                 "SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_self = 1 
-    			and abook_channel in (select uid from pconfig where cat = 'system' and k = 'suggestme' and v = '1') 
-    			limit %d offset %d ",
+                and abook_channel in (select uid from pconfig where cat = 'system' and k = 'suggestme' and v = '1') 
+                limit %d offset %d ",
                 intval($itemsPerPage),
                 intval($startIndex)
             );
         } else {
             $r = q(
                 "SELECT abook.*, xchan.* from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d 
-    			$sql_extra LIMIT %d OFFSET %d",
+                $sql_extra LIMIT %d OFFSET %d",
                 intval($channel_id),
                 intval($itemsPerPage),
                 intval($startIndex)

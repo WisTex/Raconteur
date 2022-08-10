@@ -152,7 +152,7 @@
 									{{/if}}
 									<div class="dropdown-divider"></div>
 									{{if $item.edpost && $item.dreport}}
-									<a class="dropdown-item" href="dreport/{{$item.mid}}">{{$item.dreport}}</a>
+									<a class="dropdown-item" href="dreport/?mid={{$item.mid}}">{{$item.dreport}}</a>
 									{{/if}}
 								</div>
 							</div>

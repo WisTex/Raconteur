@@ -23,14 +23,10 @@ class Dreport extends Controller
 
         $channel = App::get_channel();
 
-        if (argc() > 2) {
+        if (argc() > 1) {
             $cmd = argv(1);
-            $mid = argv(2);
-        } elseif (argc() > 1) {
-            $cmd = EMPTY_STR;
-            $mid = argv(1);
         }
-
+        $mid = escape_tags($_REQUEST['mid']);
         $message_id = unpack_link_id($mid);
 
         if (!$message_id) {
