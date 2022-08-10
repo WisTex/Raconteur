@@ -17,7 +17,7 @@ class Notifications
 
             $notifications[] = [
                 'type' => 'stream',
-                'icon' => 'th',
+                'icon' => 'list-alt',
                 'severity' => 'secondary',
                 'label' => t('New Stream Activity'),
                 'title' => t('New Stream Activity Notifications'),
