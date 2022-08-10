@@ -168,6 +168,9 @@ class Activity
                 $sigblock = HTTPSig::verify($x);
 
                 if (($sigblock['header_signed']) && (!$sigblock['header_valid'])) {
+                    if ($debug) {
+                        return array_merge($x, $sigblock);
+                    }
                     return null;
                 }
             }
