@@ -6,6 +6,9 @@ config:
 services:
   mailservice:
     type: mailhog
+    portforward: false
+    hogfrom:
+      - appserver
   sqlservice:
     type: phpmyadmin
   appserver:

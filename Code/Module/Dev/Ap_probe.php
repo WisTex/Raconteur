@@ -36,14 +36,33 @@ class Ap_probe extends Controller
                 }
             }
 
-            $x = Activity::fetch($resource, $channel, null, true);
+            $j = Activity::fetch($resource, $channel, null, true);
 
-            if ($x) {
-                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($x, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
-                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(Yaml::encode($x))) . '</pre>';
+            if ($j) {
+                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($j, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+            }
+
+            if (isset($j['type'])) {
+                if (!ActivityStreams::is_an_actor($j['type'])) {
+                    $AS = new ActivityStreams($j, null, true);
+                    if ($AS->is_valid() && isset($AS->data['type'])) {
+                        if (is_array($AS->obj)
+                                && isset($AS->obj['type'])
+                                && strpos($AS->obj['type'], 'Collection') === false) {
+                            $item = Activity::decode_note($AS, true);
+                            if ($item) {
+                                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($item, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+                                require_once('include/conversation.php');
+                                $item['attach'] = json_encode($item['attach']);
+                                $items  = [$item];
+                                xchan_query($items, true);
+                                $o .= conversation($items, 'search', false, 'preview');
+                            }
+                        }
+                    }
+                }
             }
         }
-
         return $o;
     }
 }
