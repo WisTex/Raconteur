@@ -11,20 +11,19 @@ services:
       - appserver
   sqlservice:
     type: phpmyadmin
+  cliserver:
+    type: php
+    via: cli
   appserver:
-    xdebug: false
+    xdebug: true
     config:
       php: .vscode/php.ini
-    overrides:
-      environment:
-        XDEBUG_MODE:
 tooling:
   xdebug-on:
     service: appserver
     description: Enable xdebug for Apache.
     cmd: rm -f /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && docker-php-ext-enable xdebug && /etc/init.d/apache2 reload && echo "Xdebug enabled"
     user: root
-
   xdebug-off:
     service: appserver
     description: Disable xdebug for Apache.

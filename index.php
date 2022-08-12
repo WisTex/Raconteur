@@ -12,6 +12,3 @@ require_once 'Code/Web/WebServer.php';
 
 $server = new WebServer();
 $server->run();
-
-    
-
