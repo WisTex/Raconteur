@@ -7,15 +7,12 @@ class AbConfig
 
     public static function Load($chan, $xhash, $family = '')
     {
-        if ($family) {
-            $where = sprintf(" and cat = '%s' ", dbesc($family));
-        }
-        $r = q(
+        $where = ($family) ? sprintf(" and cat = '%s' ", dbesc($family)) : '';
+        return q(
             "select * from abconfig where chan = %d and xchan = '%s' $where",
             intval($chan),
             dbesc($xhash)
         );
-        return $r;
     }
 
 
@@ -70,15 +67,12 @@ class AbConfig
 
     public static function Delete($chan, $xhash, $family, $key)
     {
-
-        $r = q(
+        return q(
             "delete from abconfig where chan = %d and xchan = '%s' and cat = '%s' and k = '%s' ",
             intval($chan),
             dbesc($xhash),
             dbesc($family),
             dbesc($key)
         );
-
-        return $r;
     }
 }
