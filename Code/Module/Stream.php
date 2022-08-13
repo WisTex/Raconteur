@@ -23,9 +23,9 @@ class Stream extends Controller
 
     // State passed in from the Update module.
 
-    public $profile_uid = 0;
-    public $loading = 0;
-    public $updating = 0;
+    public int $profile_uid = 0;
+    public int $loading = 0;
+    public int $updating = 0;
 
 
     public function init()
@@ -47,7 +47,7 @@ class Stream extends Controller
 
         if (!local_channel()) {
             $_SESSION['return_url'] = App::$query_string;
-            return login(false);
+            return login();
         }
 
         $o = '';
@@ -71,14 +71,12 @@ class Stream extends Controller
             $channel = App::get_channel();
         }
 
-
         $item_normal = item_normal();
         $item_normal_update = item_normal_update();
 
-        $datequery = $datequery2 = '';
-
         $group = 0;
 
+        // $nouveau indicates the output is an unthreaded timeline.
         $nouveau = false;
 
         $datequery = ((x($_GET, 'dend') && is_a_date_arg($_GET['dend'])) ? notags($_GET['dend']) : '');
@@ -106,7 +104,7 @@ class Stream extends Controller
                 break;
         }
 
-        $search = (isset($_GET['search']) ? $_GET['search'] : '');
+        $search = ($_GET['search'] ?? '');
         if ($search) {
             $_GET['netsearch'] = escape_tags($search);
             if (strpos($search, '@') === 0) {
@@ -210,6 +208,7 @@ class Stream extends Controller
                 goaway(z_root() . '/stream');
             }
         }
+        $status_editor = '';
 
         if (!$this->updating) {
             // search terms header
@@ -285,7 +284,6 @@ class Stream extends Controller
         }
 
         if ($group) {
-            $contact_str = '';
             $contacts = AccessList::members(local_channel(), $group);
             if ($contacts) {
                 $contact_str = ids_to_querystr($contacts, 'xchan', true);
@@ -364,7 +362,7 @@ class Stream extends Controller
         if (!$this->updating) {
             // The special div is needed for liveUpdate to kick in for this page.
             // We only launch liveUpdate if you aren't filtering in some incompatible
-            // way and also you aren't writing a comment (discovered in javascript).
+            // way, and also you aren't writing a comment (discovered in javascript).
 
             $maxheight = get_pconfig(local_channel(), 'system', 'stream_divmore_height');
             if (!$maxheight) {
@@ -421,7 +419,6 @@ class Stream extends Controller
             $sql_extra3 .= protect_sprintf(sprintf(" AND item.created >= '%s' ", dbesc(datetime_convert(date_default_timezone_get(), '', $datequery2))));
         }
 
-        $sql_extra2 = (($nouveau) ? '' : " AND item.parent = item.id ");
         $sql_extra3 = (($nouveau) ? '' : $sql_extra3);
 
         if (x($_GET, 'search')) {
@@ -491,7 +488,7 @@ class Stream extends Controller
 
         if (($cmin != (-1)) || ($cmax != (-1))) {
             // Not everybody who shows up in the network stream will be in your address book.
-            // By default those that aren't are assumed to have closeness = 99; but this isn't
+            // By default, those that aren't are assumed to have closeness = 99; but this isn't
             // recorded anywhere. So if cmax is 99, we'll open the search up to anybody in
             // the stream with a NULL address book entry.
 
@@ -527,7 +524,7 @@ class Stream extends Controller
         $update_unseen = '';
         $items = [];
 
-        // This fixes a very subtle bug so I'd better explain it. You wake up in the morning or return after a day
+        // This fixes a very subtle bug, so I'd better explain it. You wake up in the morning or return after a day
         // or three and look at your stream page - after opening up your browser. The first page loads just as it
         // should. All of a sudden a few seconds later, page 2 will get inserted at the beginning of the page
         // (before the page 1 content). The update code is actually doing just what it's supposed
@@ -650,8 +647,7 @@ class Stream extends Controller
             $x = ['channel_id' => local_channel(), 'update' => 'unset'];
             Hook::call('update_unseen', $x);
             if ($x['update'] === 'unset' || intval($x['update'])) {
-                $r = q(
-                    "UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d $update_unseen ",
+                q("UPDATE item SET item_unseen = 0 WHERE item_unseen = 1 AND uid = %d $update_unseen ",
                     intval(local_channel())
                 );
             }

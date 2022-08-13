@@ -9,24 +9,17 @@
 
 namespace Code\Module;
 
-use App;
 use Code\Web\Controller;
 use Code\Web\SubModule;
-use Code\Lib\Config;
-use Code\Lib\Channel;
 use Code\Lib\Navbar;
-use Code\Lib\Addon;
-use Code\Render\Theme;
 
-    
 /**
  * @brief dev area.
  *
  */
 class Dev extends Controller
 {
-
-    private $sm = null;
+    private SubModule $sm;
 
     public function __construct()
     {
@@ -35,9 +28,6 @@ class Dev extends Controller
 
     public function init()
     {
-
-        logger('dev_init', LOGGER_DEBUG);
-
         if (argc() > 1) {
             $this->sm->call('init');
         }
@@ -46,9 +36,6 @@ class Dev extends Controller
 
     public function post()
     {
-
-        logger('dev_post', LOGGER_DEBUG);
-
         if (argc() > 1) {
             $this->sm->call('post');
         }
@@ -58,11 +45,8 @@ class Dev extends Controller
      * @return string
      */
 
-    public function get()
+    public function get() : string
     {
-
-        logger('dev_content', LOGGER_DEBUG);
-
         /*
          * Page content
          */
@@ -76,14 +60,12 @@ class Dev extends Controller
             if ($o === false) {
                 notice(t('Item not found.'));
             }
-        } 
-
+        }
         if (is_ajax()) {
             echo $o;
             killme();
-        } else {
-            return $o;
         }
+        return $o;
     }
 
 }

@@ -11,7 +11,6 @@ use Code\Storage\Stdio;
  * Module for accessing the DAV storage area from a DAV client.
  */
 
-use App;
 use Sabre\DAV as SDAV;
 use Sabre\DAV\Auth\Plugin;
 use Code\Lib\System;
