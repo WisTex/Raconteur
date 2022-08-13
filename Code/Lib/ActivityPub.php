@@ -84,7 +84,7 @@ class ActivityPub
             if ($signed_msg) {
                 $jmsg = $signed_msg;
             } else {
-                // Rewrite outbound mentions so they match the ActivityPub convention, which
+                // Rewrite outbound mentions, so they match the ActivityPub convention, which
                 // is to pretend that the preferred display name doesn't exist and instead use
                 // the username or webfinger address when displaying names. This is likely to
                 // only cause confusion on nomadic networks where there could be any number
@@ -438,7 +438,7 @@ class ActivityPub
             );
             del_abconfig($recip[0]['abook_channel'], $recip[0]['xchan_hash'], 'activitypub', 'follow_id');
         } else {
-            // send an unfollow
+            // send an 'unfollow'
 
             $msg = array_merge(
                 ['@context' => [
@@ -577,7 +577,7 @@ class ActivityPub
                                 "SELECT abook.*, xchan.*
                                 FROM abook left join xchan on abook_xchan = xchan_hash
                                 WHERE abook_channel = %d and abook_id = %d LIMIT 1",
-                                intval(abook['abook_channel']),
+                                intval($abook['abook_channel']),
                                 intval($dst_xchan)
                             );
                             if ($r) {

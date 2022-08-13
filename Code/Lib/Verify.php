@@ -5,7 +5,14 @@ namespace Code\Lib;
 class Verify
 {
 
-    public static function create($type, $channel_id, $token, $meta)
+    /**
+     * @param $type
+     * @param $channel_id
+     * @param $token
+     * @param $meta
+     * @return array|bool|null
+     */
+    public static function create($type, $channel_id, $token, $meta): array|bool|null
     {
         return q(
             "insert into verify ( vtype, channel, token, meta, created ) values ( '%s', %d, '%s', '%s', '%s' )",
@@ -17,7 +24,7 @@ class Verify
         );
     }
 
-    public static function match($type, $channel_id, $token, $meta)
+    public static function match($type, $channel_id, $token, $meta): bool
     {
         $r = q(
             "select id from verify where vtype = '%s' and channel = %d and token = '%s' and meta = '%s' limit 1",
@@ -60,7 +67,7 @@ class Verify
      * @param string $type Verify type
      * @param string $interval SQL compatible time interval
      */
-    public static function purge($type, $interval)
+    public static function purge(string $type, string $interval): void
     {
         q(
             "delete from verify where vtype = '%s' and created < ( %s - INTERVAL %s )",

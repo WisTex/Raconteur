@@ -21,13 +21,21 @@ class Yaml
 		return $value;
 	}
 
-	public static function encode($data)
-	{
+    /**
+     * @param $data
+     * @return string
+     */
+    public static function encode($data): string
+    {
 		return Syaml::dump($data);
 	}
 
-	public static function fromJSON($data)
-	{
+    /**
+     * @param $data
+     * @return string
+     */
+    public static function fromJSON($data): string
+    {
 		return Syaml::dump(json_decode($data,true));
 	}
 

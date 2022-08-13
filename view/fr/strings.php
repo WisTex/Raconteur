@@ -2,7 +2,7 @@
 
 if(! function_exists("string_plural_select_fr")) {
 function string_plural_select_fr($n){
-	return ($n > 1);;
+	return ($n > 1);
 }}
 App::$rtl = 0;
 App::$strings["Default"] = "Défaut";

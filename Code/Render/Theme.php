@@ -198,7 +198,6 @@ class Theme
                 file_put_contents("view/theme/$theme.yml",Yaml::encode($info));
             }
             catch (Exception $e) {
-                ;
             }
         }
     

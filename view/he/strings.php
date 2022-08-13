@@ -2,9 +2,8 @@
 
 if(! function_exists("string_plural_select_he")) {
 function string_plural_select_he($n){
-	return ($n != 1);;
+	return ($n != 1);
 }}
-;
 App::$strings["parent"] = "הורה";
 App::$strings["Collection"] = "אוסף";
 App::$strings["Principal"] = "";

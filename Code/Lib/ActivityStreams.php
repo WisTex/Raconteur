@@ -2,8 +2,6 @@
 
 namespace Code\Lib;
 
-use Code\Web\HTTPSig;
-
 /**
  * @brief ActivityStreams class.
  *
@@ -33,7 +31,8 @@ class ActivityStreams
     public $sigok = false;
     public $recips = null;
     public $raw_recips = null;
-    public $implied_create = false;
+    public $saved_recips = null;
+    public bool $implied_create = false;
 
     /**
      * @brief Constructor for ActivityStreams.
@@ -42,9 +41,11 @@ class ActivityStreams
      * decodes it and sets up this object/activity, fetching any required attributes
      * which were only referenced by @id/URI.
      *
-     * @param string $string
+     * @param mixed $string
+     * @param null $hub
+     * @param null $client
      */
-    public function __construct($string, $hub = null, $client = null)
+    public function __construct(mixed $string, $hub = null, $client = null)
     {
 
         $this->raw = $string;
@@ -102,7 +103,7 @@ class ActivityStreams
         if ($this->is_valid()) {
             $this->id = $this->get_property_obj('id');
             $this->type = $this->get_primary_type();
-            $this->actor = $this->get_actor('actor', '', '');
+            $this->actor = $this->get_actor('actor');
             $this->obj = $this->get_compound_property('object');
             $this->tgt = $this->get_compound_property('target');
             $this->origin = $this->get_compound_property('origin');
@@ -167,12 +168,12 @@ class ActivityStreams
      * @return bool Return true if the JSON string could be decoded.
      */
 
-    public function is_valid()
+    public function is_valid(): bool
     {
         return $this->valid;
     }
 
-    public function set_recips($arr)
+    public function set_recips($arr): void
     {
         $this->saved_recips = $arr;
     }
@@ -184,7 +185,7 @@ class ActivityStreams
      * @param string $namespace (optional) default empty
      * @return array
      */
-    public function collect_recips($base = '', $namespace = '')
+    public function collect_recips(string $base = '', string $namespace = ''): array
     {
         $result = [];
         $tmp = [];
@@ -217,7 +218,7 @@ class ActivityStreams
         return $result;
     }
 
-    public function expand($arr, $base = '', $namespace = '')
+    public function expand($arr, $base = '', $namespace = ''): array
     {
         $ret = [];
 
@@ -249,7 +250,7 @@ class ActivityStreams
      * @return string|NULL
      */
 
-    public function get_namespace($base, $namespace)
+    public function get_namespace(array $base, string $namespace): ?string
     {
 
         if (!$namespace) {
@@ -297,7 +298,8 @@ class ActivityStreams
      *    or object is a string id which could not be fetched.
      * @return mixed
      */
-    public function objprop($property, $default = false) {
+    public function objprop (string $property, mixed $default = false): mixed
+    {
         $x = $this->get_property_obj($property,$this->obj);
         return (isset($x)) ? $x : $default;
     }
@@ -306,19 +308,19 @@ class ActivityStreams
      * @brief
      *
      * @param string $property
-     * @param array $base (optional)
+     * @param array|string $base (optional)
      * @param string $namespace (optional) default empty
-     * @return NULL|mixed
+     * @return mixed
      */
 
-    public function get_property_obj($property, $base = '', $namespace = '')
+    public function get_property_obj(string $property, array|string $base = '', string $namespace = ''):  mixed
     {
         $prefix = $this->get_namespace($base, $namespace);
         if ($prefix === null) {
             return null;
         }
 
-        $base = (($base) ? $base : $this->data);
+        $base = (($base) ?: $this->data);
         $propname = (($prefix) ? $prefix . ':' : '') . $property;
 
         return ((is_array($base) && array_key_exists($propname, $base)) ? $base[$propname] : null);
@@ -326,14 +328,15 @@ class ActivityStreams
 
 
     /**
-     * @brief Fetches a property from an URL.
+     * @brief Fetches a property from a URL.
      *
      * @param string $url
-     * @param array $channel (signing channel, default system channel)
+     * @param array|null $channel (signing channel, default system channel)
+     * @param null $hub
      * @return NULL|mixed
      */
 
-    public function fetch_property($url, $channel = null, $hub = null)
+    public function fetch_property(string $url, array $channel = null, $hub = null): mixed
     {
         $x = Activity::fetch($url, $channel, $hub);
         if ($x === null && strpos($url, '/channel/')) {
@@ -353,11 +356,11 @@ class ActivityStreams
      * If $type is an array, recurse through each element and return true if any
      * of the elements are a known actor type
      *
-     * @param string|array $type
+     * @param array|string $type
      * @return boolean
      */
 
-    public static function is_an_actor($type)
+    public static function is_an_actor(array|string $type): bool
     {
         if (!$type) {
             return false;
@@ -373,7 +376,7 @@ class ActivityStreams
         return (in_array($type, ['Application', 'Group', 'Organization', 'Person', 'Service']));
     }
 
-    public static function is_response_activity($s)
+    public static function is_response_activity($s): bool
     {
         if (!$s) {
             return false;
@@ -386,12 +389,12 @@ class ActivityStreams
      * @brief
      *
      * @param string $property
-     * @param array $base
+     * @param array|string $base
      * @param string $namespace (optional) default empty
      * @return NULL|mixed
      */
 
-    public function get_actor($property, $base = '', $namespace = '')
+    public function get_actor(string $property, array|string $base = '', string $namespace = ''): mixed
     {
         $x = $this->get_property_obj($property, $base, $namespace);
         if (self::is_url($x)) {
@@ -416,13 +419,13 @@ class ActivityStreams
      * @brief
      *
      * @param string $property
-     * @param array $base
+     * @param array|string $base
      * @param string $namespace (optional) default empty
      * @param bool $first (optional) default false, if true and result is a sequential array return only the first element
      * @return NULL|mixed
      */
 
-    public function get_compound_property($property, $base = '', $namespace = '', $first = false)
+    public function get_compound_property(string $property, array|string $base = '', string $namespace = '', bool $first = false): mixed
     {
         $x = $this->get_property_obj($property, $base, $namespace);
         if (self::is_url($x)) {
@@ -461,13 +464,13 @@ class ActivityStreams
     /**
      * @brief Check if string starts with http.
      *
-     * @param string $url
+     * @param mixed $url
      * @return bool
      */
 
-    public static function is_url($url)
+    public static function is_url(mixed $url): bool
     {
-        if (($url) && (!is_array($url)) && ((strpos($url, 'http') === 0) || (strpos($url, 'x-zot') === 0) || (strpos($url, 'bear') === 0))) {
+        if (($url) && (is_string($url)) && ((str_starts_with($url, 'http')) || (str_starts_with($url, 'x-zot')) || (str_starts_with($url, 'bear')))) {
             return true;
         }
 
@@ -477,12 +480,12 @@ class ActivityStreams
     /**
      * @brief Gets the type property.
      *
-     * @param array $base
+     * @param array|string $base
      * @param string $namespace (optional) default empty
-     * @return NULL|mixed
+     * @return mixed
      */
 
-    public function get_primary_type($base = '', $namespace = '')
+    public function get_primary_type(array|string $base = '', string $namespace = ''): mixed
     {
         if (!$base) {
             $base = $this->data;
@@ -490,7 +493,7 @@ class ActivityStreams
         $x = $this->get_property_obj('type', $base, $namespace);
         if (is_array($x)) {
             foreach ($x as $y) {
-                if (strpos($y, ':') === false) {
+                if (!str_contains($y, ':')) {
                     return $y;
                 }
             }
@@ -499,14 +502,13 @@ class ActivityStreams
         return $x;
     }
 
-    public function debug()
+    public function debug() : null | string
     {
-        $x = var_export($this, true);
-        return $x;
+        return var_export($this, true);
     }
 
 
-    public static function is_as_request()
+    public static function is_as_request() : bool
     {
 
         $x = getBestSupportedMimeType([
@@ -517,6 +519,6 @@ class ActivityStreams
             'application/x-zot-activity+json'
         ]);
 
-        return (($x) ? true : false);
+        return (bool)$x;
     }
 }

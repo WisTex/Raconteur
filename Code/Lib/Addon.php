@@ -129,7 +129,7 @@ class Addon {
     }
 
     /**
-     * @brief loads an addon by it's name.
+     * @brief loads an addon by name.
      *
      * @param string $addon name of the addon
      * @return bool
@@ -239,7 +239,7 @@ class Addon {
 
 
     /**
-     * @brief Get a list of non hidden addons.
+     * @brief Get a list of non-hidden addons.
      *
      * @return array
      */
@@ -274,7 +274,7 @@ class Addon {
      * @param string $plugin the name of the plugin
      * @return array with the plugin information
      */
-    public static function get_info($plugin)
+    public static function get_info(string $plugin): array
     {
 
         $info =  null;
@@ -292,15 +292,14 @@ class Addon {
                 file_put_contents("addon/$plugin/$plugin.yml", Yaml::encode($info));
             }
             catch (Exception $e) {
-                ;
             }
         }
 
-        return $info ? $info : [ 'name' => $plugin ] ;
+        return $info ?: [ 'name' => $plugin ] ;
     }
 
 
-    public static function check_versions($info)
+    public static function check_versions($info): bool
     {
         if (! is_array($info)) {
             return true;

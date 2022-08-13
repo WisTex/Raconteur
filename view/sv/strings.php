@@ -2,9 +2,8 @@
 
 if(! function_exists("string_plural_select_sv")) {
 function string_plural_select_sv($n){
-	return ($n != 1);;
+	return ($n != 1);
 }}
-;
 App::$strings["Cannot locate DNS info for database server '%s'"] = "Kan inte hitta DNS-information för databasserver '%s'";
 App::$strings["Profile Photos"] = "Profilfoton";
 App::$strings["Categories"] = "Kategorier";

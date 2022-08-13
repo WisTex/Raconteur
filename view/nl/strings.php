@@ -2,9 +2,8 @@
 
 if(! function_exists("string_plural_select_nl")) {
 function string_plural_select_nl($n){
-	return ($n != 1);;
+	return ($n != 1);
 }}
-;
 App::$strings["Cannot locate DNS info for database server '%s'"] = "Kan DNS-informatie voor databaseserver '%s' niet vinden";
 App::$strings["Profile Photos"] = "Profielfoto's";
 App::$strings["Edit"] = "Bewerken";

@@ -3,8 +3,9 @@
 namespace PhpId3\Tests;
 
 use PhpId3\Id3TagsReader;
+use PHPUnit_Framework_TestCase;
 
-class GenerateCvCommandTest extends \PHPUnit_Framework_TestCase
+class GenerateCvCommandTest extends PHPUnit_Framework_TestCase
 {
     private $id3;
 

@@ -128,7 +128,7 @@ function jsonld_link($input, $ctx, $options) {
   }
   $frame->{'@embed'} = '@link';
   return jsonld_frame($input, $frame, $options);
-};
+}
 
 /**
  * Performs RDF dataset normalization on the given input. The input is
@@ -360,7 +360,7 @@ function jsonld_default_document_loader($url) {
       case STREAM_NOTIFY_MIME_TYPE_IS:
         $content_type = $message;
         break;
-      };
+      }
     }));
   $result = @file_get_contents($url, false, $context);
   if($result === false) {
@@ -444,7 +444,7 @@ function jsonld_default_secure_document_loader($url) {
       case STREAM_NOTIFY_MIME_TYPE_IS:
         $content_type = $message;
         break;
-      };
+      }
     }));
   $result = @file_get_contents($url, false, $context);
   if($result === false) {
@@ -5827,7 +5827,7 @@ class JsonLdException extends Exception {
     $rval .= $this->getTraceAsString() . "\n";
     return $rval;
   }
-};
+}
 
 /**
  * A UniqueNamer issues unique names, keeping track of any previously issued

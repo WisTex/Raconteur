@@ -2,6 +2,7 @@
 
 namespace PhpId3;
 
+use Exception;
 use PhpId3\Id3Tags;
 use PhpId3\BinaryFileReader;
 
@@ -31,7 +32,7 @@ class Id3TagsReader
 
         if( $data->id3 !== "ID3")
         {
-            throw new \Exception("The MP3 file contains no valid ID3 Tags.");
+            throw new Exception("The MP3 file contains no valid ID3 Tags.");
             $this->validMp3 = FALSE;
         }
 

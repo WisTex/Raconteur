@@ -3,6 +3,7 @@
 namespace Code\Storage;
 
 use App;
+use Code\;
 use Sabre\DAV;
 use Code\Lib\Libsync;
 use Code\Daemon\Run;
@@ -38,7 +39,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 	/**
 	 * @see \\Sabre\\DAV\\Auth\\Backend\\BackendInterface
-	 * @var \Code\\Storage\\BasicAuth $auth
+	 * @var \Storage\\BasicAuth $auth
 	 */
 
 	private $auth;

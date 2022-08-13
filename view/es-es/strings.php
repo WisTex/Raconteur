@@ -2,7 +2,7 @@
 
 if(! function_exists("string_plural_select_es_es")) {
 function string_plural_select_es_es($n){
-	return ($n != 1);;
+	return ($n != 1);
 }}
 App::$rtl = 0;
 App::$strings["plural_function_code"] = "(n != 1 ? 1 : 0)";

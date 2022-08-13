@@ -11,8 +11,6 @@ class Url {
      *
      * @param string $url
      *    URL to fetch
-     * @param bool $binary default false
-     *    TRUE if asked to return binary results (file download)
      * @param array $opts (optional parameters) associative array with:
      *  * \b timeout => int seconds, default system config value or 60 seconds
      *  * \b headers => array of additional header fields
@@ -33,7 +31,7 @@ class Url {
      *  * \e string \b header => HTTP headers
      *  * \e string \b body => fetched content
      */
-    static public function get($url,$opts = [], $redirects = 0)
+    static public function get(string $url, array $opts = [], int $redirects = 0): array
     {
         $ret = array('return_code' => 0, 'success' => false, 'header' => "", 'body' => "");
         $passthru = false;

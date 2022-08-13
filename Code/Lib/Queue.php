@@ -123,7 +123,7 @@ class Queue
     }
 
 
-    public static function set_delivered($id, $channel = 0)
+    public static function set_delivered($id, $channel_id = 0)
     {
         logger('queue: set delivered ' . $id, LOGGER_DEBUG);
         $sql_extra = (($channel_id) ? " and outq_channel = " . intval($channel_id) . " " : '');

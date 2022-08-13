@@ -22,6 +22,7 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
+use Exception;
 
 class Update extends Controller
 {
@@ -47,7 +48,7 @@ class Update extends Controller
 
         try {
             $mod = new $module();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             logger('Invalid module: ' . $module);
             killme();
         }

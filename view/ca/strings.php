@@ -2,7 +2,7 @@
 
 if(! function_exists("string_plural_select_ca")) {
 function string_plural_select_ca($n){
-	return ($n != 1);;
+	return ($n != 1);
 }}
 App::$rtl = 0;
 App::$strings["Can view my channel stream and posts"] = "Pot veure el flux i entrades del meu canal";

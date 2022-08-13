@@ -3,6 +3,7 @@
 namespace Code\Storage;
 
 use App;
+use Sabre\;
 use Sabre\DAV;
 use Sabre\DAV\Browser\Plugin;
 use Sabre\HTTP\Auth\Basic;
@@ -15,7 +16,7 @@ use Sabre\HTTP\ResponseInterface;
  * This class also contains some data which is not necessary for authentication
  * like timezone settings.
  *
- * @extends \Sabre\\DAV\\Auth\\Backend\\AbstractBasic
+ * @extends \DAV\\Auth\\Backend\\AbstractBasic
  *
  * @link http://github.com/friendica/red
  * @license http://opensource.org/unlicense.org
@@ -52,7 +53,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic
     /**
      *
      * @see Browser::set_writeable()
-     * @var \Sabre\\DAV\\Browser\\Plugin $browser
+     * @var \DAV\\Browser\\Plugin $browser
      */
     public $browser;
     /**

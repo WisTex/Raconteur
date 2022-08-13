@@ -2,7 +2,7 @@
 
 if(! function_exists("string_plural_select_pl")) {
 function string_plural_select_pl($n){
-	return ($n==1 ? 0 : ($n%10>=2 && $n%10<=4 && ($n%100<12 || $n%100>14) ? 1 : 2));;
+	return ($n==1 ? 0 : ($n%10>=2 && $n%10<=4 && ($n%100<12 || $n%100>14) ? 1 : 2));
 }}
 App::$rtl = 0;
 App::$strings["Social Networking"] = "Sieć społecznościowa";

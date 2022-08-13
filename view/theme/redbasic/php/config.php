@@ -2,6 +2,7 @@
 
 namespace Code\Theme;
 
+use App;
 use Code\Lib\Features;
 use Code\Render\Theme;
 
@@ -96,7 +97,7 @@ class RedbasicConfig {
 	  	$o .= replace_macros(Theme::get_template('theme_settings.tpl'), array(
 			'$submit' => t('Submit'),
 			'$baseurl' => z_root(),
-			'$theme' => \App::$channel['channel_theme'],
+			'$theme' => App::$channel['channel_theme'],
 			'$expert' => $expert,
 			'$title' => t("Theme settings"),
 			'$narrow_navbar' => array('redbasic_narrow_navbar',t('Narrow navbar'),$arr['narrow_navbar'], '', array(t('No'),t('Yes'))),

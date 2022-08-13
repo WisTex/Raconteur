@@ -2,9 +2,8 @@
 
 if(! function_exists("string_plural_select_nb_no")) {
 function string_plural_select_nb_no($n){
-	return ($n != 1);;
+	return ($n != 1);
 }}
-;
 App::$strings["parent"] = "opp et nivå";
 App::$strings["Collection"] = "Samling";
 App::$strings["Principal"] = "Viktigste";

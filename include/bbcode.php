@@ -1179,7 +1179,7 @@ function multicode_purify($s)
     try {
         $s = purify_html($s, [ 'escape' ]);
     }
-    catch ( \Exception $e) {
+    catch (Exception $e) {
         $s = escape_tags($s);
     }
 

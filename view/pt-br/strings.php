@@ -2,9 +2,8 @@
 
 if(! function_exists("string_plural_select_pt_br")) {
 function string_plural_select_pt_br($n){
-	return ($n > 1);;
+	return ($n > 1);
 }}
-;
 App::$strings["Cannot locate DNS info for database server '%s'"] = "Não foi possível localizar a informação de DNS para o servidor de banco de dados '%s'";
 App::$strings["Profile Photos"] = "Fotos do perfil";
 App::$strings["prev"] = "anterior";

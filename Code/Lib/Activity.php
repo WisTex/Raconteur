@@ -2634,26 +2634,6 @@ class Activity
         return (($a['width'] > $b['width']) ? -1 : 1);
     }
 
-    public static function share_bb($obj)
-    {
-        // @fixme - error check and set defaults
-
-        $name = urlencode($obj['actor']['name']);
-        $profile = $obj['actor']['id'];
-        $photo = $obj['icon']['url'];
-
-        $s = "\r\n[share author='" . $name .
-            "' profile='" . $profile .
-            "' avatar='" . $photo .
-            "' link='" . $act->obj['id'] .
-            "' auth='" . ((is_matrix_url($act->obj['id'])) ? 'true' : 'false') .
-            "' posted='" . $act->obj['published'] .
-            "' message_id='" . $act->obj['id'] .
-            "']";
-
-        return $s;
-    }
-
     public static function get_actor_bbmention($id)
     {
 
@@ -2804,6 +2784,7 @@ class Activity
                 // Zot6 activities will all be rendered from bbcode source in order to generate dynamic content.
                 // If the activity came from ActivityPub (hence $cacheable is set), use the HTML rendering
                 // and discard the bbcode source since it is unlikely that it is compatible with our implementation.
+                //
                 // Friendica for example.
 
                 unset($content['bbcode']);

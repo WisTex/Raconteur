@@ -18,7 +18,6 @@ class Infocon {
                 $info = Yaml::parseFile($name);
             }
             catch (Exception $e) {
-                ;
             }
         }
         return $info;
@@ -31,7 +30,6 @@ class Infocon {
                 $info = Yaml::parse($str);
             }
             catch (Exception $e) {
-                ;
             }
         }
         return $info;
@@ -44,7 +42,6 @@ class Infocon {
             $code = file_get_contents($file);
         }
         catch (Exception $e) {
-            ;
         }
 
         // Match and fetch the first C-style comment
