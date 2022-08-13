@@ -46,7 +46,7 @@ class Connedit extends Controller
         if ((argc() >= 2) && intval(argv(1))) {
             $r = q(
                 "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+                WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                 intval(local_channel()),
                 intval(argv(1))
             );
