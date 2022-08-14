@@ -42,7 +42,7 @@ require_once('include/photo_factory.php');
 function collect_recipients($item, &$private_envelope,$include_groups = true) {
 
 
-    $private_envelope = ((intval($item['item_private'])) ? true : false);
+    $private_envelope = (bool)intval($item['item_private']);
     $recipients = [];
 
     if ($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) {
@@ -324,7 +324,6 @@ function can_comment_on_post($observer_xchan, $item)
             // Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
             // This means the viewer has an xchan and we can identify them.
             return true;
-            break;
         case 'any connections':
         case 'specific':
         case 'contacts':
@@ -509,92 +508,6 @@ function validate_item_elements($message,$arr) {
     return $result;
 }
 
-
-/**
- * @brief Limit length on imported system messages.
- *
- * The purpose of this function is to apply system message length limits to
- * imported messages without including any embedded photos in the length.
- *
- * @param string $body
- * @return string
- */
-function limit_body_size($body) {
-
-    $maxlen = get_max_import_size();
-
-    // If the length of the body, including the embedded images, is smaller
-    // than the maximum, then don't waste time looking for the images
-    if($maxlen && (strlen($body) > $maxlen)) {
-
-        $orig_body = $body;
-        $new_body = '';
-        $textlen = 0;
-
-        $img_start = strpos($orig_body, '[img');
-        $img_st_close = ($img_start !== false ? strpos(substr($orig_body, $img_start), ']') : false);
-        $img_end = ($img_start !== false ? strpos(substr($orig_body, $img_start), '[/img]') : false);
-        while(($img_st_close !== false) && ($img_end !== false)) {
-
-            $img_st_close++; // make it point to AFTER the closing bracket
-            $img_end += $img_start;
-            $img_end += strlen('[/img]');
-
-            if(! strcmp(substr($orig_body, $img_start + $img_st_close, 5), 'data:')) {
-                // This is an embedded image
-
-                if( ($textlen + $img_start) > $maxlen ) {
-                    if($textlen < $maxlen) {
-                        logger('The limit happens before an embedded image', LOGGER_DEBUG);
-                        $new_body = $new_body . substr($orig_body, 0, $maxlen - $textlen);
-                        $textlen = $maxlen;
-                    }
-                }
-                else {
-                    $new_body = $new_body . substr($orig_body, 0, $img_start);
-                    $textlen += $img_start;
-                }
-
-                $new_body = $new_body . substr($orig_body, $img_start, $img_end - $img_start);
-            }
-            else {
-                if( ($textlen + $img_end) > $maxlen ) {
-                    if($textlen < $maxlen) {
-                        $new_body = $new_body . substr($orig_body, 0, $maxlen - $textlen);
-                        $textlen = $maxlen;
-                    }
-                }
-                else {
-                    $new_body = $new_body . substr($orig_body, 0, $img_end);
-                    $textlen += $img_end;
-                }
-            }
-            $orig_body = substr($orig_body, $img_end);
-
-            if($orig_body === false) // in case the body ends on a closing image tag
-                $orig_body = '';
-
-            $img_start = strpos($orig_body, '[img');
-            $img_st_close = ($img_start !== false ? strpos(substr($orig_body, $img_start), ']') : false);
-            $img_end = ($img_start !== false ? strpos(substr($orig_body, $img_start), '[/img]') : false);
-        }
-
-        if( ($textlen + strlen($orig_body)) > $maxlen) {
-            if($textlen < $maxlen) {
-                $new_body = $new_body . substr($orig_body, 0, $maxlen - $textlen);
-                $textlen = $maxlen;
-            }
-        }
-        else {
-            $new_body = $new_body . $orig_body;
-            $textlen += strlen($orig_body);
-        }
-
-        return $new_body;
-    }
-    else
-        return $body;
-}
 
 function get_item_elements($x,$allow_code = false) {
 
@@ -965,7 +878,7 @@ function import_author_unknown($x) {
             'xchan_guid'         => $x['url'],
             'xchan_url'          => $x['url'],
             'xchan_updated'      => datetime_convert(),
-            'xchan_name'         => (($name) ? $name : t('(Unknown)')),
+            'xchan_name'         => (($name) ?: t('(Unknown)')),
             'xchan_name_date'    => datetime_convert(),
             'xchan_network'      => 'unknown'
         ]
@@ -994,15 +907,13 @@ function import_author_unknown($x) {
 }
 
 function empty_acl($item) {
-    return (($item['allow_cid'] === EMPTY_STR && $item['allow_gid'] === EMPTY_STR && $item['deny_cid'] === EMPTY_STR && $item['deny_gid'] === EMPTY_STR) ? true : false);
+    return $item['allow_cid'] === EMPTY_STR && $item['allow_gid'] === EMPTY_STR && $item['deny_cid'] === EMPTY_STR && $item['deny_gid'] === EMPTY_STR;
 }
 
 function encode_item($item,$mirror = false) {
     $x = [];
     $x['type'] = 'activity';
     $x['encoding'] = 'zot';
-
-    $key = get_config('system','prvkey');
 
     // If we're trying to backup an item so that it's recoverable or for export/imprt,
     // add all the attributes we need to recover it
@@ -1153,6 +1064,7 @@ function translate_scope($scope) {
         return t('Visible to approved connections.');
     if(strpos($scope,'specific') === 0)
         return t('Visible to specific connections.');
+    return ''; // This shouldn't happen.
 }
 
 /**
@@ -1229,7 +1141,7 @@ function decode_item_meta($meta) {
 function termtype($t) {
     $types = array('unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum');
 
-    return(($types[$t]) ? $types[$t] : 'unknown');
+    return(($types[$t]) ?: 'unknown');
 }
 
 /**
@@ -1265,7 +1177,7 @@ function decode_tags($t) {
                     $tag['ttype'] = TERM_FILE;
                     break;
                 case 'search':
-                    $tag['ttype'] = TERM_SEARCH;
+                    $tag['ttype'] = TERM_SAVEDSEARCH;
                     break;
                 case 'thing':
                     $tag['ttype'] = TERM_THING;
@@ -1343,7 +1255,7 @@ function activity_sanitise($arr) {
                     }
                 }
                 if (in_array($k, [ 'content', 'summary', 'contentMap', 'summaryMap' ])) {
-                    $ret[$k] = purify_imported_object($arr[$k]);
+                    $ret[$k] = purify_imported_object($x);
                     continue;
                 }
                 if(is_array($x))
@@ -1938,7 +1850,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     $arr['id'] = $current_post;
 
     if(! intval($r[0]['parent'])) {
-        $x = q("update item set parent = id where id = %d",
+        q("update item set parent = id where id = %d",
             intval($r[0]['id'])
         );
         $arr['parent'] = $r[0]['id'];
@@ -1991,7 +1903,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     // that isn't aware that we were already told to delete it.
 
     if(($deliver) && (! intval($arr['item_deleted']))) {
-        send_status_notifications($current_post,$arr);
+        send_status_notifications($arr);
         tag_deliver($arr['uid'],$current_post);
     }
 
@@ -2388,7 +2300,7 @@ function item_update_parent_commented($item) {
 }
 
 
-function send_status_notifications($post_id,$item) {
+function send_status_notifications($item) {
 
     // only send notifications for comments
 
@@ -2483,7 +2395,7 @@ function send_status_notifications($post_id,$item) {
     }
 
 
-    Enotify::submit(array(
+    Enotify::submit([
         'type'         => $notify_type,
         'from_xchan'   => $item['author_xchan'],
         'to_xchan'     => $r[0]['channel_hash'],
@@ -2491,9 +2403,9 @@ function send_status_notifications($post_id,$item) {
         'link'         => $link,
         'verb'         => $item['verb'],
         'otype'        => 'item',
-        'parent'       => $thr_parent_id ? $thr_parent_id : $parent,
+        'parent'       => $thr_parent_id ?: $parent,
         'parent_mid'   => $thr_parent_id ? $item['thr_parent'] : $item['parent_mid']
-    ));
+    ]);
 }
 
 /**
@@ -2509,12 +2421,10 @@ function tag_deliver($uid, $item_id) {
 
     $role = get_pconfig($uid,'system','permissions_role');
     $rolesettings = PermissionRoles::role_perms($role);
-    $channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+    $channel_type = $rolesettings['channel_type'] ?? 'normal';
 
-    $is_group = (($channel_type === 'group') ? true : false);
-    $is_collection = (($channel_type === 'collection') ? true : false);
-
-    $mention = false;
+    $is_group = $channel_type === 'group';
+    $is_collection = $channel_type === 'collection';
 
     /*
      * Fetch stuff we need - a channel and an item
@@ -2546,7 +2456,7 @@ function tag_deliver($uid, $item_id) {
         // after resetting ownership and permission bits
 
         logger('updating edited tag_deliver post for ' . $u['channel_address']);
-        start_delivery_chain($u, $item, $item_id, 0, false, true);
+        start_delivery_chain($u, $item, $item_id, false, false, true);
         return;
     }
 
@@ -2574,7 +2484,7 @@ function tag_deliver($uid, $item_id) {
         // and this will be turned into an embedded wall-to-wall post
         if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
             logger('group DM delivery for ' . $u['channel_address']);
-            start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+            start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
             q("update item set item_blocked = %d where id = %d",
                 intval(ITEM_HIDDEN),
                 intval($item_id)
@@ -2603,7 +2513,7 @@ function tag_deliver($uid, $item_id) {
             if ($id == z_root() . '/outbox/' . $u['channel_address']) {
                 if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
                     logger('group collection delivery for ' . $u['channel_address']);
-                    start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+                    start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
                         intval(ITEM_HIDDEN),
                         intval($item_id)
@@ -2621,7 +2531,7 @@ function tag_deliver($uid, $item_id) {
         }
         // group delivery via W2W
         logger('rewriting W2W post for ' . $u['channel_address']);
-        start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+        start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
         q("update item set item_wall = 0 where id = %d",
             intval($item_id)
         );
@@ -2705,12 +2615,9 @@ function tag_deliver($uid, $item_id) {
             if (! link_compare($term['url'],$link)) {
                 continue;
             }
-
-            $mention = true;
-
             logger('Mention found for ' . $u['channel_name']);
 
-            $r = q("update item set item_mentionsme = 1 where id = %d",
+            q("update item set item_mentionsme = 1 where id = %d",
                 intval($item_id)
             );
 
@@ -2761,7 +2668,7 @@ function tag_deliver($uid, $item_id) {
             if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
                 if (get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated'])) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
                     logger('group mention delivery for ' . $u['channel_address']);
-                    start_delivery_chain($u, $item, $item_id, 0, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
+                    start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
                         intval(ITEM_HIDDEN),
                         intval($item_id)
@@ -2821,7 +2728,7 @@ function tag_deliver($uid, $item_id) {
             }
 
             logger('Creating second delivery chain.');
-            start_delivery_chain($u,$item,$item_id,null);
+            start_delivery_chain($u,$item,$item_id, false);
 
         }
     }
@@ -2833,7 +2740,7 @@ function tag_deliver($uid, $item_id) {
         }
 
         logger('Creating second delivery chain.');
-        start_delivery_chain($u,$item,$item_id,null);
+        start_delivery_chain($u,$item,$item_id,false);
 
     }
 
@@ -2939,8 +2846,8 @@ function tgroup_check($uid, $item) {
                 }
             }
         }
-        $unless = intval(get_pconfig($channel['channel_id'], 'system', 'unless_tag_count',
-            get_config('system', 'unless_tag_count', 20)));
+        $unless = intval(PConfig::Get($uid, 'system', 'unless_tag_count',
+            Config::Get('system', 'unless_tag_count', 20)));
         if ($unless && count($terms) > $unless) {
             $tag_result= false;
         }
@@ -2992,9 +2899,9 @@ function i_am_mentioned($channel,$item) {
  * @param array $channel
  * @param array $item
  * @param int $item_id
- * @param boolean $parent
+ * @param bool|array $parent
  */
-function start_delivery_chain($channel, $item, $item_id, $parent, $group = false, $edit = false) {
+function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $group = false, $edit = false) {
 
     // btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
 
@@ -3305,15 +3212,10 @@ function start_delivery_chain($channel, $item, $item_id, $parent, $group = false
 
     $private = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
-    // Setting item_origin on a deleted item also seems to cause looping
-    if (! intval($arr['item_deleted'])) {
-        $arr['item_origin'] = 1;
-    }
-
+    $item_origin = ($item['item_deleted']) ? 0 : 1;
     $item_wall = 1;
     $item_uplink = 0;
     $item_nocomment = 0;
-
     $flag_bits = $item['item_flags'];
 
     // maintain the original source, which will be the original item owner and was stored in source_xchan
@@ -3673,10 +3575,6 @@ function retain_item($id) {
 function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
 
     $uid = 0;
-
-    if (($interactive) && (! (local_channel() || remote_channel()))) {
-        return;
-    }
 
     if (count($items)) {
         foreach ($items as $item) {
@@ -4240,7 +4138,7 @@ function zot_feed($uid, $observer_hash, $arr) {
     foreach($items as $item) {
         if($encoding === 'zot')
             $result[] = encode_item($item);
-        elseif(encoding === 'activitystreams')
+        elseif($encoding === 'activitystreams')
             $result[] = Activity::encode_activity($item);
     }
 
@@ -4296,15 +4194,15 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
     $sql_extra = " AND item.parent IN ( SELECT parent FROM item WHERE item_thread_top = 1 $sql_options $item_normal ) ";
 
-    if(isset($arr['since_id']) && $arr['since_id']) {
-        $sql_extra .= " and item.id > " . $since_id . " ";
+    if (!empty($arr['since_id'])) {
+        $sql_extra .= " and item.id > " . $arr['since_id'] . " ";
     }
 
-    if (isset($arr['cat']) && $arr['cat']) {
+    if (!empty($arr['cat'])) {
         $sql_extra .= protect_sprintf(term_query('item', $arr['cat'], TERM_CATEGORY));
     }
 
-    if (isset($arr['gid']) && $arr['gid'] && $uid) {
+    if ($uid && !empty($arr['gid'])) {
         $r = q("SELECT * FROM pgrp WHERE id = %d AND uid = %d LIMIT 1",
             intval($arr['group']),
             intval($uid)
@@ -4587,8 +4485,9 @@ function update_remote_id($channel,$post_id,$webpage,$pagetitle,$namespace,$remo
         // sixteen bytes of the mid - which makes the link portable and not quite as daunting
         // as the entire mid. If it were the post_id the link would be less portable.
 
+        $post_id = intval($post_id);
         IConfig::Set(
-            intval($post_id),
+            $post_id,
             'system',
             $page_type,
             ($pagetitle) ? $pagetitle : substr($mid,0,16),
@@ -4636,13 +4535,13 @@ function item_remove_cid($xchan_hash,$mid,$uid) {
 }
 
 // Set item permissions based on results obtained from linkify_tags()
-function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow, $profile_uid, $parent_item = false, &$private) {
+function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow, $profile_uid, $parent_item, &$private) {
     $first_access_tag = true;
 
     foreach($linkified as $x) {
         $access_tag = $x['success']['access_tag'];
         if(($access_tag) && (! $parent_item)) {
-            logger('access_tag: ' . $tag . ' ' . print_r($access_tag,true), LOGGER_DATA);
+            logger('access_tag: ' . print_r($access_tag,true), LOGGER_DATA);
             if ($first_access_tag && (! get_pconfig($profile_uid,'system','no_private_mention_acl_override'))) {
 
                 // This is a tough call, hence configurable. The issue is that one can type in a @!privacy mention
@@ -4834,10 +4733,8 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
 
         $attach = array_shift($attach_q);
 
-        $match = null;
-        $existing_public = false;
-        $new_public = (($str_contact_allow||$str_group_allow||$str_contact_deny||$str_group_deny) ? false : true);
-        $existing_public = (($attach['allow_cid']||$attach['allow_gid']||$attach['deny_cid']||$attach['deny_gid']) ? false : true);
+        $new_public = !(($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny));
+        $existing_public = !(($attach['allow_cid'] || $attach['allow_gid'] || $attach['deny_cid'] || $attach['deny_gid']));
 
         if ($existing_public) {
             // permissions have already been fixed and they are public. There's nothing for us to do.

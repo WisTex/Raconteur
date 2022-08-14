@@ -3,7 +3,6 @@
 namespace Code\Storage;
 
 use App;
-use Sabre\;
 use Sabre\DAV;
 use Code\Lib\Libsync;
 use Code\Daemon\Run;
@@ -18,9 +17,9 @@ require_once('include/photos.php');
  *
  * A class that represents a directory.
  *
- * @extends \DAV\\Node
- * @implements \DAV\\ICollection
- * @implements \DAV\\IQuota
+ * @extends DAV\\Node
+ * @implements DAV\\ICollection
+ * @implements DAV\\IQuota
  *
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */

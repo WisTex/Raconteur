@@ -201,7 +201,7 @@ function z_dns_check($h, $check_mx = 0)
 
     // BSD variants have dns_get_record() but it only works reliably without any options
     if (stripos(PHP_OS, 'bsd') !== false) {
-        return((@dns_get_record($h) || filter_var($h, FILTER_VALIDATE_IP)) ? true : false);
+        return @dns_get_record($h) || filter_var($h, FILTER_VALIDATE_IP);
     }
 
     // Otherwise we will assume dns_get_record() works as documented
@@ -211,7 +211,7 @@ function z_dns_check($h, $check_mx = 0)
         $opts += DNS_MX;
     }
 
-    return((@dns_get_record($h, $opts) || filter_var($h, FILTER_VALIDATE_IP)) ? true : false);
+    return @dns_get_record($h, $opts) || filter_var($h, FILTER_VALIDATE_IP);
 }
 
 /**
@@ -458,7 +458,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
             if ($priority == 'tag') {
                 $result = $value;
             } else {
-                $result['value'] = $value; // Put the value in a assoc array if we are in the 'Attribute' mode
+                $result['value'] = $value; // Put the value in an assoc array if we are in the 'Attribute' mode
             }
         }
 
@@ -468,7 +468,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
                 if ($priority == 'tag') {
                     $attributes_data[$attr] = $val;
                 } else {
-                    $result['@attributes'][$attr] = $val; // Set all the attributes in a array called 'attr'
+                    $result['@attributes'][$attr] = $val; // Set all the attributes in an array called 'attr'
                 }
             }
         }
@@ -525,7 +525,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
                     }
                     $repeated_tag_index[$tag . '_' . $level]++;
                 } else { // If it is not an array...
-                    $current[$tag] = array($current[$tag],$result); //...Make it an array using using the existing value and the new value
+                    $current[$tag] = array($current[$tag],$result); //...Make it an array using the existing value and the new value
                     $repeated_tag_index[$tag . '_' . $level] = 1;
                     if ($priority == 'tag' and $get_attributes) {
                         if (isset($current[$tag . '_attr'])) { // The attribute of the last(0th) tag must be moved as well
@@ -584,7 +584,7 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject')
             base64-encoding 3 8-bit-chars are represented
             by 4 6-bit-chars. These 4 chars must not be
             split between two encoded words, according
-            to RFC-2047.
+            to RFC-2047.]
         */
         $length = $length - ($length % 4);
 
@@ -653,7 +653,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 					if ($verify) {
 
 						$hsig = $record['signature'];
-						if($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+						if($hsig && $hsig['signer'] === $link['href'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
 							$hsig_valid = true;
 						}
 
@@ -688,7 +688,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 
                     if ($verify) {
                         $hsig = $record['signature'];
-                        if ($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $link['href']) && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+                        if ($hsig && $hsig['signer'] === $link['href'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
                             $hsig_valid = true;
                         }
 
@@ -721,7 +721,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 		if ($record) {
             if ($verify) {
                 $hsig = $record['signature'];
-                if ($hsig && ($hsig['signer'] === $url || $hsig['signer'] === $webbie) && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+                if ($hsig && $hsig['signer'] === $webbie && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
                     $hsig_valid = true;
                 }
 
@@ -1139,7 +1139,7 @@ function check_channelallowed($hash)
             if ($bl === '*') {
                 $retvalue = true;
             }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
+            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
                 return true;
             }
         }
@@ -1149,7 +1149,7 @@ function check_channelallowed($hash)
             if ($bl === '*') {
                 $retvalue = false;
             }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
+            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
                 return false;
             }
         }
@@ -1194,7 +1194,7 @@ function check_pubstream_channelallowed($hash)
             if ($bl === '*') {
                 $retvalue = true;
             }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
+            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
                 return true;
             }
         }
@@ -1204,7 +1204,7 @@ function check_pubstream_channelallowed($hash)
             if ($bl === '*') {
                 $retvalue = false;
             }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
+            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
                 return false;
             }
         }
@@ -1293,7 +1293,7 @@ function network_to_name($s)
  * @param array $params an associative array with:
  *  * \e string \b fromName        name of the sender
  *  * \e string \b fromEmail       email of the sender
- *  * \e string \b replyTo         replyTo address to direct responses
+ *  * \e string \b replyTo         address to direct responses
  *  * \e string \b toEmail         destination email address
  *  * \e string \b messageSubject  subject of the message
  *  * \e string \b htmlVersion     html version of the message
@@ -1429,7 +1429,7 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false)
         $acceptedTypes = ((isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : EMPTY_STR);
     }
 
-    // Accept header is case insensitive, and whitespace isn’t important
+    // Accept header is case-insensitive, and whitespace isn’t important
     $accept = strtolower(str_replace(' ', '', $acceptedTypes));
     // divide it into parts in the place of a ","
     $accept = explode(',', $accept);

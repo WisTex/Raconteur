@@ -53,7 +53,7 @@ class Ca extends Controller
             }
 
             if ($_GET['url']) {
-                goaway($url);
+                goaway($_GET['url']);
             }
         }
         http_status_exit(404, 'Not found');

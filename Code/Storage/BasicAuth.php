@@ -3,7 +3,7 @@
 namespace Code\Storage;
 
 use App;
-use Sabre\;
+use Sabre;
 use Sabre\DAV;
 use Sabre\DAV\Browser\Plugin;
 use Sabre\HTTP\Auth\Basic;
@@ -16,7 +16,7 @@ use Sabre\HTTP\ResponseInterface;
  * This class also contains some data which is not necessary for authentication
  * like timezone settings.
  *
- * @extends \DAV\\Auth\\Backend\\AbstractBasic
+ * @extends Sabre\DAV\Auth\Backend\AbstractBasic
  *
  * @link http://github.com/friendica/red
  * @license http://opensource.org/unlicense.org
@@ -39,6 +39,12 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic
      */
     public $channel_id = 0;
     /**
+     * @brief channel_account_id of the current channel of the logged-in account.
+     *
+     * @var int $channel_account_id
+     */
+    public $channel_account_id = 0;
+    /**
      * @brief channel_hash of the current channel of the logged-in account.
      *
      * @var string $channel_hash
@@ -53,7 +59,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic
     /**
      *
      * @see Browser::set_writeable()
-     * @var \DAV\\Browser\\Plugin $browser
+     * @var Sabre\DAV\Browser\Plugin $browser
      */
     public $browser;
     /**
@@ -94,7 +100,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic
      */
     protected function validateUserPass($username, $password)
     {
-
+        $channel = false;
         require_once('include/auth.php');
         $record = account_verify_password($username, $password);
         if ($record && $record['account']) {
@@ -135,6 +141,7 @@ class BasicAuth extends DAV\Auth\Backend\AbstractBasic
         $this->channel_name = $channel['channel_address'];
         $this->channel_id = $channel['channel_id'];
         $this->channel_hash = $this->observer = $channel['channel_hash'];
+        $this->channel_account_id = $channel['channel_account_id'];
 
         if ($this->observer) {
             $r = q("select * from xchan where xchan_hash = '%s' limit 1",

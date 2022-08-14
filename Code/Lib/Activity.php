@@ -3969,7 +3969,7 @@ class Activity
                 intval($x['item_id'])
             );
             if ($r) {
-                send_status_notifications($x['item_id'], $r[0]);
+                send_status_notifications($r[0]);
             }
             sync_an_item($channel['channel_id'], $x['item_id']);
         }

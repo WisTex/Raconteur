@@ -5,10 +5,6 @@
  *
  * @brief File/attach API with the potential for revision control.
  *
- * @TODO A filesystem storage abstraction which maintains security (and 'data'
- * contains a system filename which is inaccessible from the web). This could
- * get around PHP storage limits and store videos and larger items, using fread
- * or OS methods or native code to read/write or chunk it through.
  * @todo Also an 'append' option to the storage function might be a useful addition.
  */
 
@@ -1337,7 +1333,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
                 $ret['data'] = $z[0];
             }
         } else {
-            logger('attach_mkdir: ' . mkdir . ' ' . $os_basepath . $os_path . ' failed.');
+            logger('attach_mkdir: ' . $os_basepath . $os_path . ' failed.');
             $ret['message'] = t('mkdir failed.');
         }
     } else {

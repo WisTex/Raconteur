@@ -5,6 +5,7 @@ namespace Code\Module;
 use App;
 use Code\Web\Controller;
 use Code\Lib\Libzot;
+use Code\Lib\Zotfinger;
 use Code\Lib\Webfinger;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
@@ -77,7 +78,7 @@ class Chanview extends Controller
             $r = null;
 
             if ($_REQUEST['address']) {
-                $href = Webfinger::zot_url(punify($url));
+                $href = Webfinger::zot_url(punify($_REQUEST['address']));
                 if ($href) {
                     $zf = Zotfinger::exec($href, $channel);
                 }

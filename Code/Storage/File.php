@@ -3,7 +3,6 @@
 namespace Code\Storage;
 
 use App;
-use Code\;
 use Sabre\DAV;
 use Code\Lib\Libsync;
 use Code\Daemon\Run;
@@ -38,8 +37,8 @@ class File extends DAV\Node implements DAV\IFile {
 	public $data;
 
 	/**
-	 * @see \\Sabre\\DAV\\Auth\\Backend\\BackendInterface
-	 * @var \Storage\\BasicAuth $auth
+	 * @see \Sabre\DAV\Auth\Backend\BackendInterface
+	 * @var \Code\Storage\BasicAuth $auth
 	 */
 
 	private $auth;
@@ -106,7 +105,7 @@ class File extends DAV\Node implements DAV\IFile {
 			intval($this->auth->owner_id)
 		);
 
-		if ($this->data->is_photo) {
+		if ($this->data['is_photo']) {
 			$r = q("update photo set filename = '%s', display_path = '%s' where resource_id = '%s' and uid = %d",
 				dbesc($newName),
 				dbesc($x['path']),

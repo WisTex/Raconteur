@@ -231,7 +231,6 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
         // No permissions allowed.
 
         $ret[$perm_name] = false;
-        continue;
     }
 
     $arr = array(
@@ -455,7 +454,7 @@ function get_all_api_perms($uid, $api)
 
     $arr = array(
         'channel_id'    => $uid,
-        'observer_hash' => $observer_xchan,
+        'observer_hash' => get_observer_hash(),
         'permissions'   => $ret);
 
     Hook::call('get_all_api_perms', $arr);
@@ -469,7 +468,7 @@ function api_perm_is_allowed($uid, $api, $permission)
 
     $arr = array(
         'channel_id'    => $uid,
-        'observer_hash' => $observer_xchan,
+        'observer_hash' => get_observer_hash(),
         'permission'    => $permission,
         'result'        => false
     );

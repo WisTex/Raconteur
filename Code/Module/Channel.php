@@ -189,6 +189,7 @@ class Channel extends Controller
     {
 
         $noscript_content = get_config('system', 'noscript_content', '1');
+        $sql_extra2  = '';
 
         $category = $datequery = $datequery2 = '';
 

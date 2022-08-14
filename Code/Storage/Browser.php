@@ -3,7 +3,6 @@ namespace Code\Storage;
 
 
 use App;
-use Sabre\;
 use Sabre\DAV;
 use Sabre\DAV\INode;
 use Code\Lib\PermissionDescription;
@@ -23,7 +22,7 @@ use function Sabre\HTTP\encodePath;
  * Browser is a SabreDAV server-plugin to provide a view to the DAV storage
  * for the webbrowser.
  *
- * @extends \DAV\\Browser\\Plugin
+ * @extends DAV\\Browser\\Plugin
  *
  * @link http://framagit.org/hubzilla/core/
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)

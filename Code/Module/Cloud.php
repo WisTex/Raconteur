@@ -14,8 +14,8 @@ use Sabre\DAV as SDAV;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\Exception\NotImplemented;
-use Code\Storage;
 use Code\Lib\Libprofile;
+use Code\Storage\Stdio;
 use Code\Storage\Browser;
 use Code\Web\Controller;
 use Code\Storage\BasicAuth;
@@ -40,7 +40,7 @@ class Cloud extends Controller
     {
 
         if (!is_dir('store')) {
-            os_mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
+            Stdio::mkdir('store', STORAGE_DEFAULT_PERMISSIONS, false);
         }
 
         $which = null;
