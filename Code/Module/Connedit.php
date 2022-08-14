@@ -46,7 +46,7 @@ class Connedit extends Controller
         if ((argc() >= 2) && intval(argv(1))) {
             $r = q(
                 "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+                WHERE abook_channel = %d and abook_id = %d LIMIT 1",
                 intval(local_channel()),
                 intval(argv(1))
             );
@@ -190,8 +190,8 @@ class Connedit extends Controller
 
         $r = q(
             "UPDATE abook SET abook_profile = '%s', abook_closeness = %d, abook_pending = %d,
-			abook_incl = '%s', abook_excl = '%s', abook_alias = '%s'
-			where abook_id = %d AND abook_channel = %d",
+            abook_incl = '%s', abook_excl = '%s', abook_alias = '%s'
+            where abook_id = %d AND abook_channel = %d",
             dbesc($profile_id),
             intval($closeness),
             intval($abook_pending),
@@ -265,8 +265,8 @@ class Connedit extends Controller
 
         $r = q(
             "SELECT abook.*, xchan.*
-			FROM abook left join xchan on abook_xchan = xchan_hash
-			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+            FROM abook LEFT JOIN xchan ON abook_xchan = xchan_hash
+            WHERE abook_channel = %d AND abook_id = %d LIMIT 1",
             intval(local_channel()),
             intval($contact_id)
         );
@@ -304,8 +304,8 @@ class Connedit extends Controller
 
         $r = q(
             "SELECT abook.*, xchan.*
-			FROM abook left join xchan on abook_xchan = xchan_hash
-			WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+            FROM abook left join xchan on abook_xchan = xchan_hash
+            WHERE abook_channel = %d and abook_id = %d LIMIT 1",
             intval(local_channel()),
             intval(App::$poi['abook_id'])
         );
@@ -350,10 +350,10 @@ class Connedit extends Controller
         $connect_perms = Permissions::connect_perms(local_channel());
 
         $o .= "<script>function connectDefaultShare() {
-		\$('.abook-edit-me').each(function() {
-			if(! $(this).is(':disabled'))
-				$(this).prop('checked', false);
-		});\n\n";
+        \$('.abook-edit-me').each(function() {
+            if(! $(this).is(':disabled'))
+                $(this).prop('checked', false);
+        });\n\n";
         foreach ($connect_perms['perms'] as $p => $v) {
             if ($v) {
                 $o .= "\$('#id_perms_" . $p . "').prop('checked', true); \n";
@@ -371,7 +371,7 @@ class Connedit extends Controller
 
             $orig_record = q(
                 "SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
-				WHERE abook_id = %d AND abook_channel = %d AND abook_self = 0 LIMIT 1",
+                WHERE abook_id = %d AND abook_channel = %d AND abook_self = 0 LIMIT 1",
                 intval($contact_id),
                 intval(local_channel())
             );
@@ -420,7 +420,7 @@ class Connedit extends Controller
             }
 
             if ($cmd === 'refresh') {
-				if (in_array($orig_record['xchan_network'],['nomad','zot6'])) {
+                if (in_array($orig_record['xchan_network'],['nomad','zot6'])) {
                     if (!Libzot::refresh($orig_record, App::get_channel())) {
                         notice(t('Refresh failed - channel is currently unavailable.'));
                     }
