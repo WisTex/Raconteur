@@ -316,7 +316,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 	public function get() {
 		logger('get file ' . basename($this->name), LOGGER_DEBUG);
-		logger('os_path: ' . $this->os_path, LOGGER_DATA);
+		logger('os_path: ' . $this->data['os_path'], LOGGER_DATA);
 
 		$r = q("SELECT content, flags, os_storage, filename, filetype FROM attach WHERE hash = '%s' AND uid = %d LIMIT 1",
 			dbesc($this->data['hash']),
@@ -334,7 +334,7 @@ class File extends DAV\Node implements DAV\IFile {
 			if (intval($r[0]['os_storage'])) {
 				$x = dbunescbin($r[0]['content']);
 				if (strpos($x,'store') === false) {
-					$f = 'store/' . $this->auth->owner_nick . '/' . (($this->os_path) ? $this->os_path . '/' : '') . $x;
+					$f = 'store/' . $this->auth->owner_nick . '/' . (($this->data['os_path']) ? $this->data['os_path'] . '/' : '') . $x;
 				}
 				else {
 					$f = $x;

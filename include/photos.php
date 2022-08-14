@@ -25,7 +25,7 @@ require_once('include/attach.php');
  * @brief Upload a photo.
  *
  * @param array $channel
- * @param array $observer
+ * @param mixed $observer
  * @param array $args
  * @return array
  */
@@ -215,7 +215,7 @@ function photo_upload($channel, $observer, $args)
 
     // obtain exif data from the source file if present
 
-    $exif = $ph->exif(($args['os_syspath']) ? $args['os_syspath'] : $src);
+    $exif = $ph->exif(($args['os_syspath']) ?: $src);
 
     if ($exif) {
         $ph->orient($exif);
@@ -244,7 +244,7 @@ function photo_upload($channel, $observer, $args)
     }
     $smallest = 0;
 
-    $photo_hash = (($args['resource_id']) ? $args['resource_id'] : photo_new_resource());
+    $photo_hash = (($args['resource_id']) ?: photo_new_resource());
 
     $visitor = '';
     if ($channel['channel_hash'] !== $observer['xchan_hash']) {
@@ -428,7 +428,7 @@ function photo_upload($channel, $observer, $args)
         . $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . $ph->getExt() . '[/zmg]'
         . '[/zrl]';
 
-    $attribution = (Activity::encode_person(($visitor) ? $visitor : $channel, false));
+    $attribution = (Activity::encode_person(($visitor) ?: $channel, false));
 
     // Create item object
     $object = [
@@ -445,7 +445,7 @@ function photo_upload($channel, $observer, $args)
         'content'   => bbcode($body)
     ];
 
-    $public = (($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']) ? false : true);
+    $public = !(($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']));
 
     if ($public) {
         $object['to'] = [ ACTIVITY_PUBLIC_INBOX ];
@@ -501,7 +501,7 @@ function photo_upload($channel, $observer, $args)
 
             if ($item['mid'] === $item['parent_mid']) {
                 $object['id'] = $item['mid'];
-                $item['summary'] = $summary;
+                $item['summary'] = (!empty($summary)) ? $summary : '';
                 $item['body'] = $body;
                 $item['mimetype'] = 'text/x-multicode';
                 $item['obj_type'] = ACTIVITY_OBJ_PHOTO;
@@ -524,7 +524,6 @@ function photo_upload($channel, $observer, $args)
                     $item['id'] = $r[0]['id'];
                     $item['uid'] = $channel['channel_id'];
                     item_store_update($item, false, $deliver);
-                    continue;
                 }
             } else {
                 $item['aid'] = $channel['channel_account_id'];
@@ -564,7 +563,7 @@ function photo_upload($channel, $observer, $args)
             'item_origin'     => 1,
             'item_thread_top' => 1,
             'item_private'    => intval($acl->is_private()),
-            'summary'         => $summary,
+            'summary'         => (!empty($summary)) ? $summary : '',
             'body'            => $body
         ];
 

@@ -2625,7 +2625,7 @@ function ids_to_querystr($arr, $idx = 'id', $quote = false)
  * similar to ids_to_querystr, but allows a different delimiter instead of a db-quote option
  * empty elements (evaluated after trim()) are ignored.
  * @param $arr array
- * @param $elm array key to extract from sub-array
+ * @param $elm string key to extract from sub-array
  * @param $delim string default ','
  * @param $each filter function to apply to each element before evaluation, default is 'trim'.
  * @returns string

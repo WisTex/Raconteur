@@ -10,8 +10,8 @@ use Code\Storage\Stdio;
  */
 
 /**
- * @param int $user_record The account_id
- * @param array $channel
+ * @param array $user_record account_id
+ * @param array|bool $channel
  * @param bool $login_initial default false
  * @param bool $interactive default false
  * @param bool $return

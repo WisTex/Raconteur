@@ -592,6 +592,7 @@ define ( 'BLOCKTYPE_SERVER',     1 );
 define ( 'DBTYPE_MYSQL',    0 );
 define ( 'DBTYPE_POSTGRES', 1 );
 
+define ( 'HUBLOC_OFFLINE',  1 );
 
 function sys_boot() {
 
