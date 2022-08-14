@@ -245,12 +245,12 @@ class ActivityStreams
     /**
      * @brief
      *
-     * @param array $base
+     * @param array|string $base
      * @param string $namespace if not set return empty string
      * @return string|NULL
      */
 
-    public function get_namespace(array $base, string $namespace): ?string
+    public function get_namespace(array|string $base, string $namespace): ?string
     {
 
         if (!$namespace) {
