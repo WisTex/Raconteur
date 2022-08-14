@@ -90,7 +90,7 @@ class NomadHandler implements IHandler
     }
 
 
-    public static function rekey_request($sender, $data, $hub)
+    public static function reply_rekey_request($sender, $data, $hub)
     {
 
         $ret = array('success' => false);
@@ -110,7 +110,7 @@ class NomadHandler implements IHandler
         $old = null;
 
         if (Libzot::verify($data['old_guid'], $data['old_guid_sig'], $data['old_key'])) {
-            $oldhash = make_xchan_hash($data['old_guid'], $data['old_key']);
+            $oldhash = Libzot::make_xchan_hash($data['old_guid'], $data['old_key']);
             $old = q(
                 "select * from xchan where xchan_hash = '%s' limit 1",
                 dbesc($oldhash)
