@@ -181,11 +181,11 @@ class ActivityStreams
     /**
      * @brief Collects all recipients.
      *
-     * @param string $base
+     * @param mixed $base
      * @param string $namespace (optional) default empty
      * @return array
      */
-    public function collect_recips(string $base = '', string $namespace = ''): array
+    public function collect_recips(mixed $base = '', string $namespace = ''): array
     {
         $result = [];
         $tmp = [];
@@ -245,12 +245,12 @@ class ActivityStreams
     /**
      * @brief
      *
-     * @param array|string $base
+     * @param mixed $base
      * @param string $namespace if not set return empty string
      * @return string|NULL
      */
 
-    public function get_namespace(array|string $base, string $namespace): ?string
+    public function get_namespace(mixed $base, string $namespace): ?string
     {
 
         if (!$namespace) {
@@ -308,12 +308,12 @@ class ActivityStreams
      * @brief
      *
      * @param string $property
-     * @param array|string $base (optional)
+     * @param mixed $base (optional)
      * @param string $namespace (optional) default empty
      * @return mixed
      */
 
-    public function get_property_obj(string $property, array|string $base = '', string $namespace = ''):  mixed
+    public function get_property_obj(string $property, mixed $base = '', string $namespace = ''):  mixed
     {
         $prefix = $this->get_namespace($base, $namespace);
         if ($prefix === null) {
@@ -389,12 +389,12 @@ class ActivityStreams
      * @brief
      *
      * @param string $property
-     * @param array|string $base
+     * @param mixed $base
      * @param string $namespace (optional) default empty
      * @return NULL|mixed
      */
 
-    public function get_actor(string $property, array|string $base = '', string $namespace = ''): mixed
+    public function get_actor(string $property, mixed $base = '', string $namespace = ''): mixed
     {
         $x = $this->get_property_obj($property, $base, $namespace);
         if (self::is_url($x)) {
@@ -419,13 +419,13 @@ class ActivityStreams
      * @brief
      *
      * @param string $property
-     * @param array|string $base
+     * @param mixed $base
      * @param string $namespace (optional) default empty
      * @param bool $first (optional) default false, if true and result is a sequential array return only the first element
      * @return NULL|mixed
      */
 
-    public function get_compound_property(string $property, array|string $base = '', string $namespace = '', bool $first = false): mixed
+    public function get_compound_property(string $property, mixed $base = '', string $namespace = '', bool $first = false): mixed
     {
         $x = $this->get_property_obj($property, $base, $namespace);
         if (self::is_url($x)) {
@@ -480,12 +480,12 @@ class ActivityStreams
     /**
      * @brief Gets the type property.
      *
-     * @param array|string $base
+     * @param mixed $base
      * @param string $namespace (optional) default empty
      * @return mixed
      */
 
-    public function get_primary_type(array|string $base = '', string $namespace = ''): mixed
+    public function get_primary_type(mixed $base = '', string $namespace = ''): mixed
     {
         if (!$base) {
             $base = $this->data;
