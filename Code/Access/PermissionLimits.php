@@ -77,7 +77,7 @@ class PermissionLimits
      *
      * @param int $channel_id
      * @param string $perm (optional)
-     * @return
+     * @return bool|int|array
      *   * \b false if no perm_limits set for this channel
      *   * \b int if $perm is set, return one of PERMS_* constants for this permission, default 0
      *   * \b array with all permission limits, if $perm is not set

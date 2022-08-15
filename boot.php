@@ -1240,7 +1240,7 @@ class App {
     *
     * @param string $name Template engine name
     *
-    * @return void Template Engine instance
+    * @return mixed
     */
     public static function template_engine($name = '') {
         if ($name !== '') {
@@ -1994,7 +1994,7 @@ function is_site_admin() {
             return true;
         }
         // the system channel is by definition an administrator
-        if (isset(App::$sys_channel) && array_key_exists('channel_id', App::$sys_channel) && intval(App::$sys_channel['channel_id']) === local_channel()) {
+        if (isset(App::$sys_channel) && is_array(App::$sys_channel) && array_key_exists('channel_id', (array) App::$sys_channel) && intval(App::$sys_channel['channel_id']) === local_channel()) {
             return true;
         }
     }

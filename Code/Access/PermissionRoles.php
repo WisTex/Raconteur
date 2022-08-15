@@ -18,7 +18,7 @@ class PermissionRoles
      *
      * This must match the version in Permissions.php before permission updates can run.
      *
-     * @return number
+     * @return int
      */
     public static function version()
     {

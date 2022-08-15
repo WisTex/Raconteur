@@ -125,7 +125,7 @@ function api_item_export_page($type)
     }
     $finish = datetime_convert(date_default_timezone_get(), 'UTC', (($_REQUEST['until']) ? $_REQUEST['until'] : 'now'));
 
-    json_return_and_die($Channel::export_items_page(api_user(), $start, $finish, $page, $records));
+    json_return_and_die(Channel::export_items_page(api_user(), $start, $finish, $page, $records));
 }
 
 

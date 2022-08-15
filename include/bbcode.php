@@ -692,9 +692,7 @@ function bb_ShareAttributes($match)
 
     $headline .= '<span>' . $fmt . '</span></div>';
 
-    $text = $headline . '<div class="reshared-content">' . trim($match[2]) . '</div></div>';
-
-    return $text;
+    return $headline . '<div class="reshared-content">' . trim($match[2]) . '</div></div>';
 }
 
 function bb_location($match)
@@ -1415,7 +1413,7 @@ function bbtopoll($s)
     $pl['poll_id'] = $match[1];
     $pl['poll_question'] = $match[2];
 
-    $match = '';
+    $match = [];
     if (preg_match_all("/\[poll\-answer=(.*?)\](.*?)\[\/poll\-answer\]/is", $s, $match, PREG_SET_ORDER)) {
         $pl['answer'] = [];
         foreach ($match as $m) {

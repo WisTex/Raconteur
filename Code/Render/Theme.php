@@ -5,7 +5,6 @@ namespace Code\Render;
 use App;
 use Code\Lib\Infocon;
 use Code\Lib\Addon;
-use Code\Render\Theme;
 use Code\Lib\Yaml;
 
 
@@ -197,7 +196,7 @@ class Theme
             try {
                 file_put_contents("view/theme/$theme.yml",Yaml::encode($info));
             }
-            catch (Exception $e) {
+            catch (\Exception $e) {
             }
         }
     

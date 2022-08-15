@@ -883,10 +883,7 @@ function vcard_query(&$r)
 
 function contact_profile_assign($current)
 {
-
-    $o = '';
-
-    $o .= "<select id=\"contact-profile-selector\" name=\"profile_assign\" class=\"form-control\"/>\r\n";
+    $o = "<select id=\"contact-profile-selector\" name=\"profile_assign\" class=\"form-control\"/>\r\n";
 
     $r = q(
         "SELECT profile_guid, profile_name FROM profile WHERE uid = %d",

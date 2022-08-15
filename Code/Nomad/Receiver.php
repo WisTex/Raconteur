@@ -23,6 +23,10 @@ class Receiver
     protected $prvkey;
     protected $rawdata;
     protected $sigdata;
+    /**
+     * @var array|mixed
+     */
+    private mixed $hub;
 
     public function __construct($handler, $localdata = null)
     {
@@ -74,7 +78,7 @@ class Receiver
         logger('received: ' . print_r($this->data, true), LOGGER_DATA);
 
         if ($this->data && is_array($this->data)) {
-            $this->encrypted = ((array_key_exists('encrypted', $this->data) && intval($this->data['encrypted'])) ? true : false);
+            $this->encrypted = array_key_exists('encrypted', $this->data) && intval($this->data['encrypted']);
 
             if ($this->encrypted && $this->prvkey) {
                 $uncrypted = Crypto::unencapsulate($this->data, $this->prvkey);

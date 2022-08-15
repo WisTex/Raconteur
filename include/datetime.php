@@ -550,7 +550,7 @@ function z_birthday($dob, $tz, $format = "Y-m-d H:i:s")
         $t_dob = strtotime($bd);
         $now = strtotime(datetime_convert($tz, $tz, 'now'));
         if ($t_dob < $now) {
-            $bd = $y + 1 . '-' . $tmp_dob . ' 00:00';
+            $bd = sprintf("%d-%s 00:00", intval($y) + 1, $tmp_dob);
         }
 
         $birthday = datetime_convert($tz, 'UTC', $bd, $format);

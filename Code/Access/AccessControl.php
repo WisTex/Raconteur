@@ -164,6 +164,6 @@ class AccessControl
      */
     public function is_private()
     {
-        return (($this->allow_cid || $this->allow_gid || $this->deny_cid || $this->deny_gid) ? true : false);
+        return $this->allow_cid || $this->allow_gid || $this->deny_cid || $this->deny_gid;
     }
 }
