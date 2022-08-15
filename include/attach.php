@@ -40,8 +40,8 @@ function z_mime_content_type($filename)
     'css'  => 'text/css',
     'md'   => 'text/markdown',
     'bb'   => 'text/bbcode',
-	'mc'   => 'text/x-multicode',
-	'abc'  => 'text/vnd.abc',
+    'mc'   => 'text/x-multicode',
+    'abc'  => 'text/vnd.abc',
     'csv'  => 'text/csv',
     'js'   => 'application/javascript',
     'json' => 'application/json',
@@ -685,7 +685,6 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
 
     $pathname = '';
 
-    
     // If we were called from the Photos module there is a slightly different mechanism
     // for setting the parent path than if we were called from the Files (cloud) module.
 
@@ -744,22 +743,22 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
     if ((! $options) || ($options === 'import')) {
         // A freshly uploaded file. Check for duplicate and resolve with the channel's overwrite settings.
 
-        $r = q(
+        $existing = q(
             "select filename, id, hash, filesize from attach where uid = %d and filename = '%s' and folder = '%s' ",
             intval($channel_id),
             dbesc($filename),
             dbesc($folder_hash)
         );
-        if ($r) {
+        if ($existing) {
             $overwrite = (($import_replace || get_pconfig($channel_id, 'system', 'overwrite_dup_files')) ? true : false);
             if (($overwrite) || ($options === 'import')) {
                 if (! array_key_exists('edited', $arr)) {
                     $arr['edited'] = datetime_convert();
                 }
                 $options = 'replace';
-                $existing_id = $x[0]['id'];
-                $existing_size = intval($x[0]['filesize']);
-                $hash = $x[0]['hash'];
+                $existing_id = $existing[0]['id'];
+                $existing_size = intval($existing[0]['filesize']);
+                $hash = $existing[0]['hash'];
             } else {
                 if (strpos($filename, '.') !== false) {
                     $basename = substr($filename, 0, strrpos($filename, '.'));
@@ -901,8 +900,9 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
         );
     } elseif ($options === 'revise') {
         $r = q(
-            "insert into attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage, is_photo, content, created, edited, os_path, display_path, allow_cid, allow_gid, deny_cid, deny_gid )
-			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
+            "insert into attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage,
+                is_photo, content, created, edited, os_path, display_path, allow_cid, allow_gid, deny_cid, deny_gid )
+                VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
             intval($x[0]['aid']),
             intval($channel_id),
             dbesc($x[0]['hash']),
@@ -927,7 +927,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
     } elseif ($options === 'update') {
         $r = q(
             "update attach set filename = '%s', filetype = '%s', folder = '%s', edited = '%s', os_storage = %d, is_photo = %d, os_path = '%s',
-			display_path = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid  = '%s' where id = %d and uid = %d",
+            display_path = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid  = '%s' where id = %d and uid = %d",
             dbesc((array_key_exists('filename', $arr))  ? $arr['filename']  : $x[0]['filename']),
             dbesc((array_key_exists('filetype', $arr))  ? $arr['filetype']  : $x[0]['filetype']),
             dbesc(($folder_hash) ? $folder_hash : $x[0]['folder']),
@@ -946,7 +946,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
     } else {
         $r = q(
             "INSERT INTO attach ( aid, uid, hash, creator, filename, filetype, folder, filesize, revision, os_storage, is_photo, flags, content, created, edited, os_path, display_path, allow_cid, allow_gid,deny_cid, deny_gid )
-			VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
+                VALUES ( %d, %d, '%s', '%s', '%s', '%s', '%s', %d, %d, %d, %d, %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
             intval($channel['channel_account_id']),
             intval($channel_id),
             dbesc($hash),
@@ -1257,7 +1257,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
         do {
             $r = q(
                 "select filename, hash, flags, is_dir, folder, display_path from attach where uid = %d and hash = '%s' and is_dir = 1
-				$sql_options limit 1",
+                    $sql_options limit 1",
                 intval($channel['channel_id']),
                 dbesc($lfile)
             );
@@ -1289,7 +1289,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
 
     $r = q(
         "INSERT INTO attach ( aid, uid, hash, creator, filename, filetype, filesize, revision, folder, os_storage, is_dir, content, created, edited, os_path, display_path, allow_cid, allow_gid, deny_cid, deny_gid )
-		VALUES ( %d, %d, '%s', '%s', '%s', '%s', %d, %d, '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
+            VALUES ( %d, %d, '%s', '%s', '%s', '%s', %d, %d, '%s', %d, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' ) ",
         intval($channel['channel_account_id']),
         intval($channel_id),
         dbesc($arr['hash']),
@@ -1706,7 +1706,7 @@ function get_cloudpath($arr)
         do {
             $r = q(
                 "select filename, hash, flags, is_dir, folder from attach where uid = %d and hash = '%s' and is_dir != 0
-				limit 1",
+                    limit 1",
                 intval($arr['uid']),
                 dbesc($lfile)
             );
@@ -2601,7 +2601,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
     if ($r[0]['is_photo']) {
         $t = q(
             "update photo set album = '%s', filename = '%s', os_path = '%s', display_path = '%s'
-			where resource_id = '%s' and uid = %d",
+                where resource_id = '%s' and uid = %d",
             dbesc($newalbumname),
             dbesc($newfilename),
             dbesc($x['os_path']),
