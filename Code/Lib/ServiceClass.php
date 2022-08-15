@@ -17,7 +17,7 @@ class ServiceClass {
      * @param int $account_id
      *     Account_id used for this request
      *
-     * @returns associative array with:
+     * @returns array
      *  * \e boolean \b success boolean true if creating a new channel is allowed for this account
      *  * \e string \b message (optional) if success is false, optional error text
      *  * \e int \b total_identities

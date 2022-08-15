@@ -18,7 +18,8 @@ class Cron_weekly
          *
          */
 
-        Hook::call('cron_weekly', datetime_convert());
+        $data = datetime_convert();
+        Hook::call('cron_weekly', $data);
 
         z_check_cert();
 
@@ -45,7 +46,7 @@ class Cron_weekly
             }
         }
 
-        // get rid of really old poco records
+        // get rid of ancient poco records
 
         q(
             "delete from xlink where xlink_updated < %s - INTERVAL %s and xlink_static = 0 ",

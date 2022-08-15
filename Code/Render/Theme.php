@@ -6,6 +6,7 @@ use App;
 use Code\Lib\Infocon;
 use Code\Lib\Addon;
 use Code\Lib\Yaml;
+use Exception;
 
 
 class Theme
@@ -196,7 +197,7 @@ class Theme
             try {
                 file_put_contents("view/theme/$theme.yml",Yaml::encode($info));
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
             }
         }
     

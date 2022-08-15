@@ -3,6 +3,7 @@
 namespace Code\Storage;
 
 use App;
+use Sabre\;
 use Sabre\DAV;
 use Code\Lib\Libsync;
 use Code\Daemon\Run;
@@ -16,8 +17,8 @@ require_once('include/photos.php');
  *
  * It provides all functions to work with files in the project cloud through DAV protocol.
  *
- * @extends \Sabre\\DAV\\Node
- * @implements \Sabre\\DAV\\IFile
+ * @extends \DAV\\Node
+ * @implements \DAV\\IFile
  *
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
@@ -38,7 +39,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 	/**
 	 * @see \Sabre\DAV\Auth\Backend\BackendInterface
-	 * @var \Code\Storage\BasicAuth $auth
+	 * @var BasicAuth $auth
 	 */
 
 	private $auth;
