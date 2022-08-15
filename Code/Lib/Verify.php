@@ -10,11 +10,11 @@ class Verify
      * @param $channel_id
      * @param $token
      * @param $meta
-     * @return array|bool|null
+     * @return bool
      */
-    public static function create($type, $channel_id, $token, $meta): array|bool|null
+    public static function create($type, $channel_id, $token, $meta): bool
     {
-        return q(
+        return (bool) q(
             "insert into verify ( vtype, channel, token, meta, created ) values ( '%s', %d, '%s', '%s', '%s' )",
             dbesc($type),
             intval($channel_id),
