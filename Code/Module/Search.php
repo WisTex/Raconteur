@@ -96,9 +96,10 @@ class Search extends Controller
                 $search = base64_decode($search);
             }
             logger('Search: ' . $search);
+            $url = htmlspecialchars_decode($search);
             $channel = App::get_channel();
             $hash = EMPTY_STR;
-            $j = Activity::fetch($search, $channel);
+            $j = Activity::fetch($url, $channel);
             if ($j) {
                 if (isset($j['type']) && ActivityStreams::is_an_actor($j['type'])) {
                     Activity::actor_store($j['id'], $j, true);
@@ -120,7 +121,7 @@ class Search extends Controller
                             $max = intval(get_config('system', 'max_imported_search_collection', 100));
 
                             if (intval($max)) {
-                                $obj = new ASCollection($search, $channel, 0, $max);
+                                $obj = new ASCollection($url, $channel, 0, $max);
                                 $messages = $obj->get();
                                 // logger('received: ' . print_r($messages,true));
                                 $author = null;
