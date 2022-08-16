@@ -3,7 +3,6 @@
 namespace Code\Storage;
 
 use App;
-use Sabre\;
 use Sabre\DAV;
 use Code\Lib\Libsync;
 use Code\Daemon\Run;
