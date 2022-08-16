@@ -7,15 +7,16 @@ class ThreadListener
 
     public static function store($target_id, $portable_id, $ltype = 0)
     {
-        $x = self::fetch($target_id, $portable_id, $ltype = 0);
+        $x = self::fetch($target_id, $portable_id, $ltype);
         if (! $x) {
-            $r = q(
+            return q(
                 "insert into listeners ( target_id, portable_id, ltype ) values ( '%s', '%s' , %d ) ",
                 dbesc($target_id),
                 dbesc($portable_id),
                 intval($ltype)
             );
         }
+        return true;
     }
 
     public static function fetch($target_id, $portable_id, $ltype = 0)
@@ -34,13 +35,11 @@ class ThreadListener
 
     public static function fetch_by_target($target_id, $ltype = 0)
     {
-        $x = q(
+        return q(
             "select * from listeners where target_id = '%s' and ltype = %d",
             dbesc($target_id),
             intval($ltype)
         );
-
-        return $x;
     }
 
     public static function delete_by_target($target_id, $ltype = 0)
