@@ -6,7 +6,7 @@ config:
 services:
   mailservice:
     type: mailhog
-    portforward: false
+    portforward: true
     hogfrom:
       - appserver
   sqlservice:
@@ -22,6 +22,9 @@ services:
         XDEBUG_SESSION_START: lando
     config:
       php: .vscode/php.ini
+proxy:
+  mailservice:
+    - mail.lndo.site
 tooling:
   xdebug-on:
     service: appserver
