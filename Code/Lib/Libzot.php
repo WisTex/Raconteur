@@ -2834,7 +2834,7 @@ class Libzot
      */
     public static function get_rpost_path($observer)
     {
-        if (!$observer) {
+        if (empty($observer)) {
             return EMPTY_STR;
         }
 

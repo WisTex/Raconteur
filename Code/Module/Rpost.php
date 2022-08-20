@@ -78,7 +78,7 @@ class Rpost extends Controller
             $def_album = get_pconfig($channel['channel_id'], 'system', 'photo_path');
             $def_attach = get_pconfig($channel['channel_id'], 'system', 'attach_path');
 
-            $r = attach_store($channel, (($observer) ? $observer['xchan_hash'] : ''), '', [
+            $r = attach_store($channel, (!empty(($observer)) ? $observer['xchan_hash'] : ''), '', [
                 'source' => 'editor',
                 'visible' => 0,
                 'album' => $def_album,
@@ -106,7 +106,6 @@ class Rpost extends Controller
                         break;
                     }
                     sleep(1);
-                    continue;
                 }
 
                 if ($thumb) {
@@ -205,7 +204,7 @@ class Rpost extends Controller
 				);
 			
 				if ($xchan) {
-					$_REQUEST['body'] .= '@!{' . (($xchan[0]['xchan_addr']) ? $xchan[0]['xchan_addr'] : $xchan[0]['xchan_url']) . '} ' ;
+					$_REQUEST['body'] .= '@!{' . (($xchan[0]['xchan_addr']) ?: $xchan[0]['xchan_url']) . '} ' ;
 				}
 			}
         }

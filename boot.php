@@ -1072,7 +1072,8 @@ class App {
         self::$channel = $channel;
     }
 
-    public static function get_channel() {
+    public static function get_channel(): mixed
+    {
         return self::$channel;
     }
 
@@ -1081,7 +1082,8 @@ class App {
     }
 
 
-    public static function get_observer() {
+    public static function get_observer(): mixed
+    {
         return self::$observer;
     }
 
