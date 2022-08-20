@@ -60,7 +60,7 @@ class Cards extends Controller
             'title' => 'oembed'
         ]);
 
-
+        $sql_extra2 = '';
         $category = (($_REQUEST['cat']) ? escape_tags(trim($_REQUEST['cat'])) : '');
 
         if ($category) {

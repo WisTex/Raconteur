@@ -162,7 +162,7 @@ class Blocks extends Controller
         //Build the base URL for edit links
         $url = z_root() . '/editblock/' . $which;
 
-        $o .= replace_macros(Theme::get_template('blocklist.tpl'), array(
+        $o = replace_macros(Theme::get_template('blocklist.tpl'), array(
             '$baseurl' => $url,
             '$title' => t('Blocks'),
             '$name' => t('Block Name'),

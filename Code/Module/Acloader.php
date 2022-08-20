@@ -2,7 +2,6 @@
 
 namespace Code\Module;
 
-use Code\Lib\Libzotdir;
 use Code\Lib\AccessList;
 use Code\Web\Controller;
 use Code\Lib\Url;
@@ -13,7 +12,7 @@ use Code\Lib\Url;
  * This module provides JSON lists of connections and local/remote channels
  * (xchans) to populate various tools such as the ACL (AccessControlList) popup
  * and various auto-complete functions (such as email recipients, search, and
- * mention targets.
+ * mention targets).
  *
  * There are two primary output structural formats. One for the ACL widget and
  * the other for auto-completion.
@@ -329,7 +328,6 @@ class Acloader extends Controller
 
             $x = Url::get($query);
             if ($x['success']) {
-                $t = 0;
                 $j = json_decode($x['body'], true);
                 if ($j && $j['results']) {
                     $results = $j['results'];

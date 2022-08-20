@@ -85,7 +85,7 @@ class Affinity extends Controller
             $setting_fields .= $arr['html'];
         }
 
-        $s .= replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
+        $s = replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
             '$addon' => array('affinity', '' . t('Friend Zoom Settings'), '', t('Submit')),
             '$content' => $setting_fields
         ));

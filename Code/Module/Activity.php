@@ -25,9 +25,9 @@ class Activity extends Controller
             if (!$item_id) {
                 return;
             }
-
+            $portable_id = false;
             $ob_authorise = false;
-            $item_uid = 0;
+            $token = false;
 
             $bear = ZlibActivity::token_from_request();
             if ($bear) {
@@ -39,8 +39,7 @@ class Activity extends Controller
                 if ($t) {
                     foreach ($t as $token) {
                         if ($token['v'] === $bear) {
-                            $ob_authorize = true;
-                            $item_uid = $token['uid'];
+                            $ob_authorise = true;
                             break;
                         }
                     }
@@ -65,7 +64,7 @@ class Activity extends Controller
             // if passed an owner_id of 0 to item_permissions_sql(), we force "guest access" or observer checking
             // Give ocap tokens priority
 
-            if ($ob_authorize) {
+            if ($ob_authorise) {
                 $sql_extra = " and item.uid = " . intval($token['uid']) . " ";
             } else {
                 $sql_extra = item_permissions_sql(0);

@@ -34,7 +34,7 @@ class Authorize extends Controller
 
             $link = (($app['url']) ? '<a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> ' : $app['name']);
 
-            $o .= replace_macros(Theme::get_template('oauth_authorize.tpl'), [
+            $o = replace_macros(Theme::get_template('oauth_authorize.tpl'), [
                 '$title' => t('Authorize'),
                 '$authorize' => sprintf(t('Do you authorize the app %s to access your channel data?'), $link),
                 '$app' => $app,
