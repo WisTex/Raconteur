@@ -564,7 +564,7 @@ class Apps
                             if ($config) {
                                 $unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
                             } else {
-                                $unset = (($channel_id && Features::enabled($channnel_id, $require)) ? false : true);
+                                $unset = (($channel_id && Features::enabled($channel_id, $require)) ? false : true);
                             }
                             if ($unset) {
                                 return '';
@@ -731,7 +731,7 @@ class Apps
             $x = q(
                 "select * from app where app_id = '%s' and app_channel = %d limit 1",
                 dbesc($app['guid']),
-                intval($target_uid)
+                intval($uid)
             );
             if ($x) {
                 if (!intval($x[0]['app_deleted'])) {
@@ -752,7 +752,7 @@ class Apps
                         $r = q(
                             "update app set app_deleted = 1 where app_id = '%s' and app_channel = %d",
                             dbesc($app['guid']),
-                            intval($target_uid)
+                            intval($uid)
                         );
                     }
                     if ($uid) {
@@ -934,22 +934,6 @@ class Apps
 
         return ($r);
     }
-
-
-    public static function app_search_available($str)
-    {
-
-        // not yet finished
-        // somehow need to account for translations
-
-        $r = q(
-            "select * from app where app_channel = 0 $sql_extra order by app_name asc",
-            intval($uid)
-        );
-
-        return ($r);
-    }
-
 
     public static function app_order($uid, $apps, $menu)
     {

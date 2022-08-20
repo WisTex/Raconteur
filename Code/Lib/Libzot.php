@@ -395,6 +395,7 @@ class Libzot
         // or a new one)
 
         if ($channel && $record['data']['permissions']) {
+            $permissions = explode(',', $record['data']['permissions']);
             $old_read_stream_perm = their_perms_contains($channel['channel_id'], $x['hash'], 'view_stream');
             set_abconfig($channel['channel_id'], $x['hash'], 'system', 'their_perms', $record['data']['permissions']);
 
@@ -439,7 +440,7 @@ class Libzot
                     logger('abook birthday update failed');
                 }
                 // if we were just granted read stream permission and didn't have it before, try to pull in some posts
-                if ((!$old_read_stream_perm) && (intval($permissions['view_stream']))) {
+                if (array_key_exists('view_stream', $permissions) && (!$old_read_stream_perm)) {
                     Run::Summon(['Onepoll', $r[0]['abook_id']]);
                 }
             } else {
@@ -544,7 +545,7 @@ class Libzot
                             );
                         }
 
-                        if (intval($permissions['view_stream'])) {
+                        if (array_key_exists('view_stream', $permissions)) {
                             if (
                                 intval(get_pconfig($channel['channel_id'], 'perm_limits', 'send_stream') & PERMS_PENDING)
                                 || (!intval($new_connection[0]['abook_pending']))
@@ -895,6 +896,7 @@ class Libzot
                 $changed = true;
             }
         } else {
+            $network = (isset($arr['site']['protocol_version']) && intval($arr['site']['protocol_version']) > 10) ? 'nomad' : 'zot6';
             $import_photos = true;
 
             if ($arr['channel_type'] === 'collection') {
@@ -2748,16 +2750,13 @@ class Libzot
         set_sconfig($url, 'system', 'logo', $site_logo);
         set_sconfig($url, 'system', 'sitename', $sitename);
 
-        $site_flags = $site_directory;
-
         if (array_key_exists('zot', $arr)) {
             set_sconfig($arr['url'], 'system', 'zot_version', $arr['zot']);
         }
 
         if ($exists) {
             if (
-                ($siterecord['site_flags'] != $site_flags)
-                || ($siterecord['site_access'] != $access_policy)
+                ($siterecord['site_access'] != $access_policy)
                 || ($siterecord['site_sellpage'] != $sellpage)
                 || ($siterecord['site_location'] != $site_location)
                 || ($siterecord['site_register'] != $register_policy)
@@ -2771,10 +2770,9 @@ class Libzot
                 //          logger('import_site: stored: ' . print_r($siterecord,true));
 
                 $r = q(
-                    "update site set site_dead = 0, site_location = '%s', site_flags = %d, site_access = %d, site_register = %d, site_update = '%s', site_sellpage = '%s', site_type = %d, site_project = '%s', site_version = '%s', site_crypto = '%s'
+                    "update site set site_dead = 0, site_location = '%s', site_flags = 0, site_access = %d, site_register = %d, site_update = '%s', site_sellpage = '%s', site_type = %d, site_project = '%s', site_version = '%s', site_crypto = '%s'
                     where site_url = '%s'",
                     dbesc($site_location),
-                    intval($site_flags),
                     intval($access_policy),
                     intval($register_policy),
                     dbesc(datetime_convert()),
@@ -2804,7 +2802,7 @@ class Libzot
                     'site_location' => $site_location,
                     'site_url' => $url,
                     'site_access' => intval($access_policy),
-                    'site_flags' => intval($site_flags),
+                    'site_flags' => 0,
                     'site_update' => datetime_convert(),
                     'site_register' => intval($register_policy),
                     'site_sellpage' => $sellpage,

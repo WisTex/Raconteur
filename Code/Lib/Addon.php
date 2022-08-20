@@ -18,9 +18,9 @@ class Addon {
      */
     public static function ErrorHandler($addon, $notice, $log, $uninstall = false)
     {
-        logger("Addons: [" . $addon . "] Error: ".$log, LOGGER_ERROR);
+        logger("Addons: [" . $addon . "] Error: ". $log);
         if ($notice != '') {
-            notice("[" . $addon . "] Error: ".$notice, LOGGER_ERROR);
+            notice("[" . $addon . "] Error: ". $notice);
         }
 
         if ($uninstall) {

@@ -4,6 +4,7 @@ namespace Code\Lib;
 require_once('library/text_languagedetect/Text/LanguageDetect.php');
 
 use Text_LanguageDetect;
+use Text_LanguageDetect_Exception;
 
 /**
  * @see http://pear.php.net/package/Text_LanguageDetect

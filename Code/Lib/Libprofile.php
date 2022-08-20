@@ -8,6 +8,7 @@ use Code\Lib\Features;
 use Code\Lib\Menu;
 use Code\Extend\Hook;
 use Code\Render\Theme;
+use Code\Render\Comanche;
         
 class Libprofile
 {
@@ -249,7 +250,7 @@ class Libprofile
      * @param bool $show_connect (optional) default true
      * @param mixed $zcard (optional) default false
      *
-     * @return HTML string suitable for sidebar inclusion
+     * @return string suitable for sidebar inclusion
      * Exceptions: Returns empty string if passed $profile is wrong type or not populated
      */
 

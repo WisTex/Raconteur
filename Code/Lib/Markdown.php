@@ -245,11 +245,11 @@ class Markdown
          * Transform #tags, strip off the [url] and replace spaces with underscore
          */
 
-        $Text = preg_replace_callback(
-            '/#\[([zu])rl\=(.*?)\](.*?)\[\/[(zu)]rl\]/i',
-            create_function('$match', 'return \'#\'. str_replace(\' \', \'_\', $match[3]);'),
-            $Text
-        );
+ //       $Text = preg_replace_callback(
+ //           '/#\[([zu])rl\=(.*?)\](.*?)\[\/[(zu)]rl\]/i',
+ //           function() { return '#'. str_replace(' ', '_', $match[3]); },
+ //           $Text
+ //       );
 
         $Text = preg_replace('/#\^\[([zu])rl\=(.*?)\](.*?)\[\/([zu])rl\]/i', '[$1rl=$2]$3[/$4rl]', $Text);
 
@@ -377,7 +377,8 @@ class TableConverter implements ConverterInterface
             case 'tbody':
                 return trim($element->getValue());
             case 'thead':
-                $headerLine = reset($element->getChildren())->getValue();
+                $children = $element->getChildren();
+                $headerLine = reset($children)->getValue();
                 $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
                 $hr = [];
                 foreach ($headers as $td) {
