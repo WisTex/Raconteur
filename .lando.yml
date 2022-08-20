@@ -16,6 +16,10 @@ services:
     via: cli
   appserver:
     xdebug: true
+    overrides:
+      environment:
+        PHP_IDE_CONFIG: "serverName=appserver"
+        XDEBUG_SESSION_START: lando
     config:
       php: .vscode/php.ini
 tooling:
