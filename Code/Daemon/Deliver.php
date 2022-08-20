@@ -4,7 +4,6 @@
 
 namespace Code\Daemon;
 
-use Code\Lib\Libzot;
 use Code\Lib\Queue;
 
 class Deliver
@@ -12,7 +11,6 @@ class Deliver
 
     public static function run($argc, $argv)
     {
-
         if ($argc < 2) {
             return;
         }
@@ -29,7 +27,7 @@ class Deliver
                 dbesc($argv[$x])
             );
             if ($r) {
-                Queue::deliver($r[0], true);
+                Queue::deliver(array_shift($r), true);
             }
         }
     }
