@@ -7,9 +7,13 @@ use Code\Lib\Img_cache;
 class Cache_image
 {
 
-    public static function run($argc, $argv)
+    /**
+     * @param $argc
+     * @param $argv
+     * @return void
+     */
+    public static function run($argc, $argv): void
     {
-
         cli_startup();
         logger('caching: ' . $argv[1] . ' to ' . $argv[2]);
         if ($argc === 3) {

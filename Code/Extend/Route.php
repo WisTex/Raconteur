@@ -5,38 +5,38 @@ namespace Code\Extend;
 class Route
 {
 
-    public static function register($file, $modname)
+    public static function register($file, $modulename): void
     {
-        $rt = self::get();
-        $rt[] = [$file, $modname];
-        self::set($rt);
+        $routes = self::get();
+        $routes[] = [$file, $modulename];
+        self::set($routes);
     }
 
-    public static function unregister($file, $modname)
+    public static function unregister($file, $modulename): void
     {
-        $rt = self::get();
-        if ($rt) {
-            $n = [];
-            foreach ($rt as $r) {
-                if ($r[0] !== $file && $r[1] !== $modname) {
-                    $n[] = $r;
+        $routes = self::get();
+        if ($routes) {
+            $new_routes = [];
+            foreach ($routes as $route) {
+                if ($route[0] !== $file && $route[1] !== $modulename) {
+                    $new_routes[] = $route;
                 }
             }
-            self::set($n);
+            self::set($new_routes);
         }
     }
 
-    public static function unregister_by_file($file)
+    public static function unregister_by_file($file): void
     {
-        $rt = self::get();
-        if ($rt) {
-            $n = [];
-            foreach ($rt as $r) {
-                if ($r[0] !== $file) {
-                    $n[] = $r;
+        $routes = self::get();
+        if ($routes) {
+            $new_routes = [];
+            foreach ($routes as $route) {
+                if ($route[0] !== $file) {
+                    $new_routes[] = $route;
                 }
             }
-            self::set($n);
+            self::set($new_routes);
         }
     }
 
@@ -45,8 +45,8 @@ class Route
         return get_config('system', 'routes', []);
     }
 
-    public static function set($r)
+    public static function set($value)
     {
-        return set_config('system', 'routes', $r);
+        return set_config('system', 'routes', $value);
     }
 }

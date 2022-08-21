@@ -5,6 +5,11 @@ namespace Code\Daemon;
 class Cache_embeds
 {
 
+    /**
+     * @param $argc
+     * @param $argv
+     * @return void
+     */
     public static function run($argc, $argv)
     {
 

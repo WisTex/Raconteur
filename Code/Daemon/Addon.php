@@ -7,9 +7,13 @@ use Code\Extend\Hook;
 class Addon
 {
 
-    public static function run($argc, $argv)
+    /**
+     * @param $argc
+     * @param $argv
+     * @return void
+     */
+    public static function run($argc, $argv): void
     {
-
         Hook::call('daemon_addon', $argv);
     }
 }

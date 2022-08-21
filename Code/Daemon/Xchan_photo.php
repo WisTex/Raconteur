@@ -23,7 +23,7 @@ class Xchan_photo
 
         $photos = import_remote_xchan_photo($url, $xchan);
         if ($photos) {
-            $r = q(
+            $result = q(
                 "update xchan set xchan_photo_date = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_mimetype = '%s' where xchan_hash = '%s'",
                 dbescdate(datetime_convert()),
                 dbesc($photos[0]),
@@ -32,8 +32,9 @@ class Xchan_photo
                 dbesc($photos[3]),
                 dbesc($xchan)
             );
+            if (! $result) {
+                logger("xchan update failed for $url");
+            }
         }
-
-        return;
     }
 }

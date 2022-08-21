@@ -5,14 +5,14 @@ namespace Code\Extend;
 class Widget
 {
 
-    public static function register($file, $widget)
+    public static function register($file, $widget): void
     {
         $rt = self::get();
         $rt[] = [$file, $widget];
         self::set($rt);
     }
 
-    public static function unregister($file, $widget)
+    public static function unregister($file, $widget): void
     {
         $rt = self::get();
         if ($rt) {
@@ -26,7 +26,7 @@ class Widget
         }
     }
 
-    public static function unregister_by_file($file)
+    public static function unregister_by_file($file): void
     {
         $rt = self::get();
         if ($rt) {

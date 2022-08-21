@@ -2,7 +2,6 @@
 
 namespace Code\Lib;
 
-use Code\Lib\Libsync;
 use Code\Render\Theme;
 
 
@@ -17,8 +16,8 @@ class AccessList
             $r = self::byname($uid, $name); // check for dups
             if ($r !== false) {
                 // This could be a problem.
-                // Let's assume we've just created a list which we once deleted
-                // all the old members are gone, but the list remains so we don't break any security
+                // Let's assume we've just created a list which we once deleted.
+                // All the old members are gone, but the list remains - so we don't break any security
                 // access lists. What we're doing here is reviving the dead list, but old content which
                 // was restricted to this list may now be seen by the new list members.
 
@@ -185,7 +184,7 @@ class AccessList
         if (!$gid) {
             return false;
         }
-        if (!($uid && $gid && $member)) {
+        if (!($uid && $member)) {
             return false;
         }
         $r = q(
@@ -352,9 +351,6 @@ class AccessList
 
     public static function widget($every = "connections", $each = "lists", $edit = false, $group_id = 0, $cid = '', $mode = 1)
     {
-
-        $o = '';
-
         $groups = [];
 
         $r = q(

@@ -3,9 +3,6 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\LibBlock;
-use Code\Lib\System;
-use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -156,10 +153,10 @@ class Enotify
             $itemlink = z_root() . '/display/?mid=' . gen_link_id($params['item']['mid']);
         }
 
-        if (in_array(intval($params['type']), [ NOTIFY_COMMENT, NOTIFY_RESHARE ])) {
+        if (in_array(intval($params['type']), [NOTIFY_COMMENT, NOTIFY_RESHARE])) {
             // logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
 
-            $moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
+            $moderated = ($params['item']['item_blocked'] == ITEM_MODERATED);
 
             $itemlink = $params['link'];
 
@@ -183,7 +180,7 @@ class Enotify
 
             $parent_mid = $params['parent_mid'];
 
-            // Check to see if there was already a notify for this post.
+            // Check to see if there was already a notification for this post.
             // If so don't create a second notification
 
             $p = null;
@@ -199,7 +196,7 @@ class Enotify
             }
 
 
-            // if it's a post figure out who's post it is.
+            // if it's a post figure out whose post it is.
 
             $p = null;
 
@@ -253,7 +250,7 @@ class Enotify
                 );
             }
 
-            // Some mail softwares relies on subject field for threading.
+            // Some mail software relies on subject field for threading.
             // So, we cannot have different subjects for notifications of the same thread.
             // Before this we have the name of the replier on the subject rendering
             // differents subjects for messages on the same thread.
@@ -281,8 +278,7 @@ class Enotify
         }
 
         if ($params['type'] == NOTIFY_LIKE) {
-    //      logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
-
+            //      logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
             $itemlink =  $params['link'];
 
             if (array_key_exists('item', $params) && (! activity_match($params['item']['verb'], ACTIVITY_LIKE))) {
@@ -295,7 +291,7 @@ class Enotify
 
             $parent_mid = $params['parent_mid'];
 
-            // Check to see if there was already a notify for this post.
+            // Check to see if there was already a notification for this post.
             // If so don't create a second notification
 
             $p = null;
@@ -311,7 +307,7 @@ class Enotify
             }
 
 
-            // if it's a post figure out who's post it is.
+            // if it's a post figure out whose post it is.
 
             $p = null;
 
@@ -346,7 +342,7 @@ class Enotify
                 return;
             }
 
-            // Some mail softwares relies on subject field for threading.
+            // Some mail software relies on subject field for threading.
             // So, we cannot have different subjects for notifications of the same thread.
             // Before this we have the name of the replier on the subject rendering
             // differents subjects for messages on the same thread.
@@ -365,7 +361,7 @@ class Enotify
         if ($params['type'] == NOTIFY_WALL) {
             $subject = sprintf(t('[$Projectname:Notify] %s posted to your profile wall'), $sender['xchan_name']);
 
-            $moderated = (($params['item']['item_blocked'] == ITEM_MODERATED) ? true : false);
+            $moderated = ($params['item']['item_blocked'] == ITEM_MODERATED);
 
             $itemlink =  (($moderated) ? z_root() . '/moderate/?mid=' . gen_link_id($params['item']['mid']) : $params['link']);
 
@@ -455,7 +451,7 @@ class Enotify
         }
 
         if ($params['type'] == NOTIFY_INTRO) {
-            $subject = sprintf(t('[$Projectname:Notify] Introduction received'));
+            $subject = t('[$Projectname:Notify] Introduction received');
             $preamble = sprintf(t('You\'ve received an new connection request from \'%1$s\' at %2$s'), $sender['xchan_name'], $sitename);
             $epreamble = sprintf(
                 t('You\'ve received [zrl=%1$s]a new connection request[/zrl] from %2$s.'),
@@ -471,7 +467,7 @@ class Enotify
         }
 
         if ($params['type'] == NOTIFY_SUGGEST) {
-            $subject = sprintf(t('[$Projectname:Notify] Friend suggestion received'));
+            $subject = t('[$Projectname:Notify] Friend suggestion received');
             $preamble = sprintf(t('You\'ve received a friend suggestion from \'%1$s\' at %2$s'), $sender['xchan_name'], $sitename);
             $epreamble = sprintf(
                 t('You\'ve received [zrl=%1$s]a friend suggestion[/zrl] for %2$s from %3$s.'),
@@ -584,7 +580,7 @@ class Enotify
 
     // Mark some notifications as seen right away
     // Note! The notification have to be created, because they are used to send emails
-    // So easiest solution to hide them from Notices is to mark them as seen right away.
+    // So the easiest solution to hide them from Notices is to mark them as seen right away.
     // Another option would be to not add them to the DB, and change how emails are handled
     // (probably would be better that way)
 
@@ -647,7 +643,8 @@ class Enotify
         $itemlink = z_root() . '/notify/view/' . $notify_id;
         $msg = str_replace('$itemlink', $itemlink, $epreamble);
 
-    // wretched hack, but we don't want to duplicate all the preamble variations and we also don't want to screw up a translation
+        // This is a wretched hack, but we don't want to duplicate all the preamble variations,
+        // and we also don't want to screw up a translation.
 
         if ((App::$language === 'en' || (! App::$language)) && strpos($msg, ', ')) {
             $msg = substr($msg, strpos($msg, ', ') + 1);
@@ -660,9 +657,8 @@ class Enotify
             intval($datarray['uid'])
         );
 
-    // send email notification if notification preferences permit
+        // send email notification if notification preferences permit
 
-        require_once('bbcode.php');
         if ((intval($recip['channel_notifyflags']) & intval($params['type'])) || $params['type'] == NOTIFY_SYSTEM) {
             logger('notification: sending notification email');
 
@@ -724,7 +720,7 @@ class Enotify
             Hook::call('enotify_mail', $datarray);
 
             // Default to private - don't disclose message contents over insecure channels (such as email)
-            // Might be interesting to use GPG,PGP,S/MIME encryption instead
+            // It might be interesting to use GPG,PGP,S/MIME encryption instead,
             // but we'll save that for a clever plugin developer to implement
 
             $private_activity = false;
@@ -802,7 +798,7 @@ class Enotify
                 '$textversion'  => $datarray['textversion'],
             ));
 
-    //      logger('text: ' . $email_text_body);
+            //      logger('text: ' . $email_text_body);
 
             // use the EmailNotification library to send the message
 
@@ -839,7 +835,7 @@ class Enotify
      * @param array $params an assoziative array with:
      *  * \e string \b fromName        name of the sender
      *  * \e string \b fromEmail       email of the sender
-     *  * \e string \b replyTo         replyTo address to direct responses
+     *  * \e string \b replyTo         address to direct responses
      *  * \e string \b toEmail         destination email address
      *  * \e string \b messageSubject  subject of the message
      *  * \e string \b htmlVersion     html version of the message
@@ -874,7 +870,7 @@ class Enotify
             "From: $fromName <{$params['fromEmail']}>" . PHP_EOL .
             "Reply-To: $fromName <{$params['replyTo']}>" . PHP_EOL .
             "MIME-Version: 1.0" . PHP_EOL .
-            "Content-Type: multipart/alternative; boundary=\"{$mimeBoundary}\"";
+            "Content-Type: multipart/alternative; boundary=\"$mimeBoundary\"";
 
         // assemble the final multipart message body with the text and html types included
         $textBody = chunk_split(base64_encode($params['textVersion']));
@@ -937,13 +933,8 @@ class Enotify
         $edit = false;
 
         if ($item['edited'] > $item['created']) {
-            if ($item['item_thread_top']) {
-                $itemem_text = sprintf(t('edited a post dated %s'), relative_date($item['created']));
-                $edit = true;
-            } else {
-                $itemem_text = sprintf(t('edited a comment dated %s'), relative_date($item['created']));
-                $edit = true;
-            }
+            $itemem_text = sprintf(t('edited a post dated %s'), relative_date($item['created']));
+            $edit = true;
         }
 
         if (LibBlock::fetch_by_entity(local_channel(), $item['author']['xchan_hash'])) {
@@ -962,7 +953,7 @@ class Enotify
             'class' => (intval($item['item_unseen']) ? 'notify-unseen' : 'notify-seen'),
             'b64mid' => ((in_array($item['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) ? gen_link_id($item['thr_parent']) : gen_link_id($item['mid'])),
             'notify_id' => 'undefined',
-            'thread_top' => (($item['item_thread_top']) ? true : false),
+            'thread_top' => (bool)$item['item_thread_top'],
             'message' => strip_tags(bbcode($itemem_text)),
             // these are for the superblock addon
             'hash' => $item['author']['xchan_hash'],

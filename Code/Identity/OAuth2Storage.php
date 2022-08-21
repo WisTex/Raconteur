@@ -15,7 +15,8 @@ class OAuth2Storage extends Pdo
      */
     public function checkUserCredentials($username, $password)
     {
-        if ($user = $this->getUser($username)) {
+        $user = $this->getUser($username);
+        if ($user) {
             return $this->checkPassword($user, $password);
         }
 
