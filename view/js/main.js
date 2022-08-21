@@ -1810,6 +1810,6 @@ function push_notification(title, body, b64mid) {
 
 	let n = new Notification(title, options);
 	n.onclick = function (e) {
-		window.location.href = baseurl + '/display/' + e.target.data;
+		window.location.href = baseurl + '/display/?mid=' + e.target.data;
 	}
 }
