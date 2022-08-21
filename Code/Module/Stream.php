@@ -19,8 +19,6 @@ require_once('include/conversation.php');
 
 class Stream extends Controller
 {
-
-
     // State passed in from the Update module.
 
     public int $profile_uid = 0;
@@ -41,10 +39,8 @@ class Stream extends Controller
         head_set_icon($channel['xchan_photo_s']);
     }
 
-
     public function get()
     {
-
         if (!local_channel()) {
             $_SESSION['return_url'] = App::$query_string;
             return login();
@@ -52,7 +48,7 @@ class Stream extends Controller
 
         $o = '';
 
-        if ($this->loading) {
+        if ($this->loading && intval(App::$pager['page']) <= 1) {
             $_SESSION['loadtime_stream'] = datetime_convert();
             PConfig::Set(local_channel(), 'system', 'loadtime_stream', $_SESSION['loadtime_stream']);
             // stream is a superset of channel when it comes to notifications
@@ -262,11 +258,9 @@ class Stream extends Controller
             $static = Channel::manual_conv_update(local_channel());
         }
 
-
         // We don't have to deal with ACL's on this page. You're looking at everything
         // that belongs to you, hence you can see all of it. We will filter by group if
         // desired.
-
 
         $sql_options = (($star)
             ? " and item_starred = 1 "
