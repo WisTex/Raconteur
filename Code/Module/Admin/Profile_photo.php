@@ -46,7 +46,6 @@ class Profile_photo
 
     /* @brief Evaluate posted values
      *
-     * @param $a Current application
      * @return void
      *
      */
@@ -290,7 +289,8 @@ class Profile_photo
             return;
         }
 
-        return $this->profile_photo_crop_ui_head($ph, $hash, $smallest);
+        $this->profile_photo_crop_ui_head($ph, $hash, $smallest);
+        return;
 
         // This will "fall through" to the get() method, and since
         // App::$data['imagecrop'] is set, it will proceed to cropping
@@ -461,7 +461,7 @@ class Profile_photo
         if (!array_key_exists('imagecrop', App::$data)) {
             $tpl = Theme::get_template('admin_profile_photo.tpl');
 
-            $o .= replace_macros($tpl, [
+            $o = replace_macros($tpl, [
                 '$user' => $channel['channel_address'],
                 '$channel_id' => $channel['channel_id'],
                 '$info' => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your site photo is visible to anybody on the internet and may be distributed to other websites.')),
@@ -494,7 +494,7 @@ class Profile_photo
 
             $filename = App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'];
             $resolution = App::$data['imagecrop_resolution'];
-            $o .= replace_macros(Theme::get_template('admin_cropbody.tpl'), [
+            $o = replace_macros(Theme::get_template('admin_cropbody.tpl'), [
                 '$filename' => $filename,
                 '$profile' => intval($_REQUEST['profile']),
                 '$resource' => App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'],

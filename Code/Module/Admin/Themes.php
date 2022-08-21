@@ -21,13 +21,7 @@ class Themes
     {
 
         $theme = argv(2);
-        if (is_file("view/theme/$theme/php/config.php")) {
-            require_once("view/theme/$theme/php/config.php");
-            /// @FIXME add parent theme if derived
-            if (function_exists('theme_admin_post')) {
-                theme_admin_post($a);
-            }
-        }
+
         info(t('Theme settings updated.'));
         if (is_ajax()) {
             return;
@@ -121,14 +115,6 @@ class Themes
                 $readme = '<pre>' . file_get_contents("view/theme/$theme/README") . '</pre>';
             }
 
-            $admin_form = '';
-            if (is_file("view/theme/$theme/php/config.php")) {
-                require_once("view/theme/$theme/php/config.php");
-                if (function_exists("theme_admin")) {
-                    $admin_form = theme_admin($a);
-                }
-            }
-
             $screenshot = array(Theme::get_screenshot($theme), t('Screenshot'));
             if (!stristr($screenshot[0], $theme)) {
                 $screenshot = null;
@@ -147,7 +133,6 @@ class Themes
                 '$action' => $action,
                 '$info' => Theme::get_info($theme),
                 '$function' => 'themes',
-                '$admin_form' => $admin_form,
                 '$str_author' => t('Author: '),
                 '$str_maintainer' => t('Maintainer: '),
                 '$screenshot' => $screenshot,

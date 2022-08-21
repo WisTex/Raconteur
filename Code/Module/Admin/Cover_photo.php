@@ -367,7 +367,7 @@ class Cover_photo
 
 
         if (!array_key_exists('imagecrop', App::$data)) {
-            $o .= replace_macros(Theme::get_template('admin_cover_photo.tpl'), [
+            $o = replace_macros(Theme::get_template('admin_cover_photo.tpl'), [
                 '$user' => $channel['channel_address'],
                 '$channel_id' => $channel['channel_id'],
                 '$info' => t('Your cover photo may be visible to anybody on the internet'),
@@ -376,7 +376,7 @@ class Cover_photo
                 '$lbl_profiles' => t('Select a profile:'),
                 '$title' => t('Change Cover Photo'),
                 '$submit' => t('Upload'),
-                '$profiles' => $profiles,
+                '$profiles' => [],
                 '$embedPhotos' => t('Use a photo from your albums'),
                 '$embedPhotosModalTitle' => t('Use a photo from your albums'),
                 '$embedPhotosModalCancel' => t('Cancel'),
@@ -399,7 +399,7 @@ class Cover_photo
             $filename = App::$data['imagecrop'] . '-3';
             $resolution = 3;
 
-            $o .= replace_macros(Theme::get_template('admin_cropcover.tpl'), [
+            $o = replace_macros(Theme::get_template('admin_cropcover.tpl'), [
                 '$filename' => $filename,
                 '$profile' => intval($_REQUEST['profile']),
                 '$resource' => App::$data['imagecrop'] . '-3',

@@ -172,7 +172,6 @@ class Site
         set_config('system', 'open_pubstream', $open_pubstream);
         set_config('system', 'force_queue_threshold', $force_queue);
         set_config('system', 'no_community_page', $no_community_page);
-        set_config('system', 'no_utf', $no_utf);
         set_config('system', 'verifyssl', $verifyssl);
         set_config('system', 'proxyuser', $proxyuser);
         set_config('system', 'proxy', $proxy);
