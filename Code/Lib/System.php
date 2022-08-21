@@ -135,10 +135,7 @@ class System
 
     public static function ebs()
     {
-        if (defined('EBSSTATE')) {
-            return EBSSTATE;
-        }
-        return 'armed';
+        return Config::Get('system','ebsstate', 'armed');
     }
 
     public static function get_zot_revision()

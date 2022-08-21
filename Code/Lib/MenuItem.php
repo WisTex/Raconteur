@@ -2,6 +2,7 @@
 
 namespace Code\Lib;
 
+use App;
 use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Access\AccessControl;

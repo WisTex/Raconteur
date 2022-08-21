@@ -406,7 +406,7 @@ class ThreadItem
             'conlabels' => '',
             'canvote' => $canvote,
             'linktitle' => sprintf(t('View %s\'s profile - %s'), $profile_name, (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url'])),
-            'olinktitle' => sprintf(t('View %s\'s profile - %s'), $this->get_owner_name(), (($this->get_owner_addr()) ? $this->get_owner_addr() : $this->get_owner_url)),
+            'olinktitle' => sprintf(t('View %s\'s profile - %s'), $this->get_owner_name(), (($this->get_owner_addr()) ? $this->get_owner_addr() : $this->get_owner_url())),
             'llink' => $item['llink'],
             'viewthread' => $viewthread,
             'to' => t('to'),

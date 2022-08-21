@@ -19,7 +19,7 @@ class Zotfinger
         $m = parse_url($resource);
 
         if ($m['host'] !== punify($m['host'])) {
-            $url = str_replace($m['host'], punify($m['host']), $url);
+            $resource = str_replace($m['host'], punify($m['host']), $resource);
             $m['host'] = punify($m['host']);
         }
 

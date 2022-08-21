@@ -41,7 +41,7 @@ class PermissionDescription
      * Remember to localize the description first.
      *
      * @param  string $description - the localized caption for the no-ACL option in the ACL dialog.
-     * @return a new instance of PermissionDescription
+     * @return PermissionDescription
      */
     public static function fromDescription($description)
     {
@@ -54,7 +54,7 @@ class PermissionDescription
      * PERMS_NETWORK etc.
      *
      * @param int $perm - a single enumerated constant permission - PERMS_PUBLIC, PERMS_NETWORK etc.
-     * @return a new instance of PermissionDescription
+     * @return PermissionDescription
      */
     public static function fromStandalonePermission($perm)
     {
@@ -77,7 +77,7 @@ class PermissionDescription
      *
      * @param  string $permname - a key for the global perms array from get_perms() in permissions.php,
      *         e.g. 'view_stream', 'view_profile', etc.
-     * @return a new instance of PermissionDescription
+     * @return PermissionDescription
      */
     public static function fromGlobalPermission($permname)
     {
