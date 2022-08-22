@@ -507,10 +507,8 @@ class ActivityStreams
         return var_export($this, true);
     }
 
-
     public static function is_as_request() : bool
     {
-
         $x = getBestSupportedMimeType([
             'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
             'application/activity+json',

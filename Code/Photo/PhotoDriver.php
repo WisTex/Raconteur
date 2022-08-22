@@ -545,7 +545,8 @@ abstract class PhotoDriver
      * @brief Stores thumbnail to database or filesystem.
      *
      * @param array $arr
-     * @param scale int
+     * @param int $scale
+     * @param bool $animated
      * @return bool|array
      */
 

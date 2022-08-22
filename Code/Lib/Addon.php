@@ -66,7 +66,7 @@ class Addon {
         }
 
         logger("Addons: uninstalling " . $addon);
-        //$t = @filemtime('addon/' . $addon . '/' . $addon . '.php');
+
         @include_once('addon/' . $addon . '/' . $addon . '.php');
         if (function_exists($addon . '_uninstall')) {
             $func = $addon . '_uninstall';
