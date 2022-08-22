@@ -24,7 +24,8 @@ class Addons
             @include_once("addon/" . argv(2) . "/" . argv(2) . ".php");
             if (function_exists(argv(2) . '_plugin_admin_post')) {
                 $func = argv(2) . '_plugin_admin_post';
-                $func();
+                $a = [];
+                $func($a);
             }
 
             goaway(z_root() . '/admin/addons/' . argv(2));
