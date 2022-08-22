@@ -277,6 +277,8 @@ class Stream extends Controller
             $sql_extra = " AND item.parent IN ( SELECT DISTINCT parent FROM item WHERE item_unpublished = 1 and item_deleted = 0 ) ";
         }
 
+        $title = '';
+
         if ($group) {
             $contacts = AccessList::members(local_channel(), $group);
             if ($contacts) {
@@ -298,7 +300,7 @@ class Stream extends Controller
 
             if ($x || $vg) {
                 $title = replace_macros(Theme::get_template("section_title.tpl"), array(
-                    '$title' => sprintf(t('Access list: %s'), (($vg) ? $vg : $x['gname']))
+                    '$title' => sprintf(t('Access list: %s'), (($vg) ?: $x['gname']))
                 ));
             }
 
@@ -373,19 +375,19 @@ class Stream extends Controller
                 '$baseurl' => z_root(),
                 '$pgtype' => 'stream',
                 '$uid' => ((local_channel()) ? local_channel() : '0'),
-                '$gid' => (($gid) ? $gid : '0'),
-                '$cid' => (($cid) ? $cid : '0'),
-                '$cmin' => (($cmin) ? $cmin : '(-1)'),
-                '$cmax' => (($cmax) ? $cmax : '(-1)'),
-                '$star' => (($star) ? $star : '0'),
-                '$liked' => (($liked) ? $liked : '0'),
-                '$conv' => (($conv) ? $conv : '0'),
-                '$spam' => (($spam) ? $spam : '0'),
+                '$gid' => (($gid) ?: '0'),
+                '$cid' => (($cid) ?: '0'),
+                '$cmin' => (($cmin) ?: '(-1)'),
+                '$cmax' => (($cmax) ?: '(-1)'),
+                '$star' => (($star) ?: '0'),
+                '$liked' => (($liked) ?: '0'),
+                '$conv' => (($conv) ?: '0'),
+                '$spam' => (($spam) ?: '0'),
                 '$fh' => '0',
-                '$dm' => (($dm) ? $dm : '0'),
-                '$nouveau' => (($nouveau) ? $nouveau : '0'),
+                '$dm' => (($dm) ?: '0'),
+                '$nouveau' => (($nouveau) ?: '0'),
                 '$wall' => '0',
-                '$draft' => (($draft) ? $draft : '0'),
+                '$draft' => (($draft) ?: '0'),
                 '$static' => $static,
                 '$list' => ((x($_REQUEST, 'list')) ? intval($_REQUEST['list']) : 0),
                 '$page' => ((App::$pager['page'] != 1) ? App::$pager['page'] : 1),
