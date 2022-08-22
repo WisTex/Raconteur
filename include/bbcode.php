@@ -334,7 +334,7 @@ function bb_parse_b64_crypt($match)
         return;
     }
 
-    $r .= '----- ENCRYPTED CONTENT -----' . "\n";
+    $r = '----- ENCRYPTED CONTENT -----' . "\n";
     $r .= base64_encode($match[1]) . "." . $match[2] . "\n";
     $r .= '----- END ENCRYPTED CONTENT -----' . "\n";
 
@@ -1379,7 +1379,7 @@ function bb_nakedlinks($Text) {
     $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
 
     if (strpos($Text, 'http') !== false) {
-        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" ' . $target . ' rel="nofollow noopener">$2</a>', $Text);
+        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
     }
 
     $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism', '\red_unescape_codeblock', $Text);
@@ -1705,9 +1705,13 @@ function bbcode($Text, $options = [])
         $Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#', '<a href="$2">$1</a>', $Text);
 
         // unordered lists
-        $Text = preg_replace('#^(?<!\\\)[*\-+] +(.*?)$#m', '<ul><li>$1</li></ul>', $Text);
-        // strip the backslash escape if present
-        $Text = preg_replace('#^(\\\)([*\-+]) #m', '$2', $Text);
+        $matches = [];
+        // Ignore if there is only one list element as it could be a false positive.
+        if (preg_match_all('#^(?<!\\\)[*\-+] +(.*?)$#m', $Text, $matches, PREG_SET_ORDER) && count($matches) > 1) {
+            $Text = preg_replace('#^(?<!\\\)[*\-+] +(.*?)$#m', '<ul><li>$1</li></ul>', $Text);
+            // strip the backslash escape if present
+            $Text = preg_replace('#^(\\\)([*\-+]) #m', '$2', $Text);
+        }
         // order lists
         $Text = preg_replace('#^\d+[\.\)] +(.*?)$#m', '<ol><li>$1</li></ol>', $Text);
 

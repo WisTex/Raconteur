@@ -91,6 +91,8 @@ This is an example of `inline code`.
 
 [h3]Lists[/h3]
 
+In order to reduce "false positives", markdown lists are only rendered if they contain more than one list element within the entire content body.
+
 As with bold and italic, the first character of an unordered list may be preceded by a backslash or wrapped in [nobb][nomd][/nomd][/nobb] tags to prevent normal text lines beginning with these characters from being interpreted as a list. 
 
 
