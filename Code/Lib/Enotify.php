@@ -6,7 +6,7 @@ use App;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-    
+
 /**
  * @brief File with functions and a class for generating system and email notifications.
  */
@@ -933,7 +933,12 @@ class Enotify
         $edit = false;
 
         if ($item['edited'] > $item['created']) {
-            $itemem_text = sprintf(t('edited a post dated %s'), relative_date($item['created']));
+            if ($item['obj_type'] === 'Question') {
+                $itemem_text = sprintf(t('updated a poll dated %s'), relative_date($item['created']));
+            }
+            else {
+                $itemem_text = sprintf(t('edited a post dated %s'), relative_date($item['created']));
+            }
             $edit = true;
         }
 
