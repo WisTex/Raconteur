@@ -2,10 +2,7 @@
 
 namespace Code\Lib;
 
-use App;
 use Exception;
-use Code\Lib\Infocon;
-use Code\Lib\Yaml;
 
 class Addon {
 
@@ -16,7 +13,7 @@ class Addon {
      * @param string $error_text text of error
      * @param bool $uninstall uninstall plugin
      */
-    public static function ErrorHandler($addon, $notice, $log, $uninstall = false)
+    public static function ErrorHandler($addon, $notice, $log, $uninstall = false): void
     {
         logger("Addons: [" . $addon . "] Error: ". $log);
         if ($notice != '') {
@@ -80,6 +77,7 @@ class Addon {
         q("DELETE FROM addon WHERE aname = '%s' ",
             dbesc($addon)
         );
+        return true;
     }
 
     /**
@@ -106,7 +104,7 @@ class Addon {
                 $func();
             } catch (Exception $e) {
                 self::ErrorHandler($addon, "Install failed.", "Install failed : ".$e->getMessage());
-                return;
+                return false;
             }
         }
 
@@ -126,6 +124,7 @@ class Addon {
         }
 
         self::load($addon);
+        return true;
     }
 
     /**
@@ -149,7 +148,7 @@ class Addon {
                 $func();
             } catch (Exception $e) {
                 self::ErrorHandler($addon, "Unable to load.", "FAILED loading : ".$e->getMessage(), true);
-                return;
+                return false;
             }
 
             // we can add the following with the previous SQL

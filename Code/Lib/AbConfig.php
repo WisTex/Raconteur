@@ -5,7 +5,7 @@ namespace Code\Lib;
 class AbConfig
 {
 
-    public static function Load($chan, $xhash, $family = '')
+    public static function Load($chan, $xhash, $family = ''): array|bool|null
     {
         $where = ($family) ? sprintf(" and cat = '%s' ", dbesc($family)) : '';
         return q(
@@ -65,7 +65,7 @@ class AbConfig
     }
 
 
-    public static function Delete($chan, $xhash, $family, $key)
+    public static function Delete($chan, $xhash, $family, $key): bool
     {
         return q(
             "delete from abconfig where chan = %d and xchan = '%s' and cat = '%s' and k = '%s' ",

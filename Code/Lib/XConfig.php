@@ -35,9 +35,9 @@ class XConfig
      *
      * @param string $xchan
      *  The observer's hash
-     * @return void|false Returns false if xchan is not set
+     * @return bool Returns false if xchan is not set
      */
-    public static function Load($xchan)
+    public static function Load($xchan): bool
     {
 
         if (! $xchan) {
@@ -63,7 +63,9 @@ class XConfig
                 }
                 App::$config[$xchan][$c][$k] = $rr['v'];
             }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -114,7 +116,7 @@ class XConfig
      *  The category of the configuration value
      * @param string $key
      *  The configuration key to set
-     * @param string $value
+     * @param mixed $value
      *  The value to store
      * @return mixed Stored $value or false
      */

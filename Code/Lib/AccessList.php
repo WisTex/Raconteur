@@ -10,8 +10,9 @@ class AccessList
 
     public static function add($uid, $name, $public = 0)
     {
-
         $ret = false;
+        $hash = new_uuid();
+
         if ($uid && $name) {
             $r = self::byname($uid, $name); // check for dups
             if ($r !== false) {
@@ -29,11 +30,8 @@ class AccessList
                     q('UPDATE pgrp SET deleted = 0 WHERE id = %d', intval($z[0]['id']));
                     notice(t('A deleted list with this name was revived. Existing item permissions <strong>may</strong> apply to this list and any future members. If this is not what you intended, please create another list with a different name.') . EOL);
                 }
-                $hash = self::by_id($uid, $r);
-                return $hash;
+                return self::by_id($uid, $r);
             }
-
-            $hash = new_uuid();
 
             $r = q(
                 "INSERT INTO pgrp ( hash, uid, visible, gname, rule )
@@ -45,14 +43,12 @@ class AccessList
             );
             $ret = $r;
         }
-
         Libsync::build_sync_packet($uid, null, true);
-
         return (($ret) ? $hash : $ret);
     }
 
 
-    public static function remove($uid, $name)
+    public static function remove($uid, $name): array|bool|null
     {
         $ret = false;
         if ($uid && $name) {
@@ -127,7 +123,7 @@ class AccessList
     // returns the integer id of an access group owned by $uid and named $name
     // or false.
 
-    public static function byname($uid, $name)
+    public static function byname($uid, $name): mixed
     {
         if (!($uid && $name)) {
             return false;
@@ -143,7 +139,7 @@ class AccessList
         return false;
     }
 
-    public static function by_id($uid, $id)
+    public static function by_id($uid, $id): mixed
     {
         if (!($uid && $id)) {
             return false;
@@ -161,7 +157,7 @@ class AccessList
     }
 
 
-    public static function rec_byhash($uid, $hash)
+    public static function rec_byhash($uid, $hash): mixed
     {
         if (!($uid && $hash)) {
             return false;
@@ -178,7 +174,7 @@ class AccessList
     }
 
 
-    public static function member_remove($uid, $name, $member)
+    public static function member_remove($uid, $name, $member): array|bool|null
     {
         $gid = self::byname($uid, $name);
         if (!$gid) {
@@ -200,7 +196,7 @@ class AccessList
     }
 
 
-    public static function member_add($uid, $name, $member, $gid = 0)
+    public static function member_add($uid, $name, $member, $gid = 0): array|bool|null
     {
         if (!$gid) {
             $gid = self::byname($uid, $name);
@@ -233,9 +229,12 @@ class AccessList
     }
 
 
-    public static function members($uid, $gid, $total = false, $start = 0, $records = 0)
+    public static function members($uid, $gid, $total = false, $start = 0, $records = 0): mixed
     {
         $ret = [];
+        $pager_sql = '';
+        $sql_extra = '';
+
         if ($records) {
             $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval($records), intval($start));
         }
@@ -244,15 +243,13 @@ class AccessList
         if (strpos($gid, ':') === 0) {
             $vg = substr($gid, 1);
             switch ($vg) {
-                case '1':
-                    $sql_extra = EMPTY_STR;
-                    break;
                 case '2':
                     $sql_extra = " and xchan_network in ('nomad','zot6') ";
                     break;
                 case '3':
                     $sql_extra = " and xchan_network = 'activitypub' ";
                     break;
+                case '1':
                 default:
                     break;
             }
@@ -308,7 +305,7 @@ class AccessList
         return $ret;
     }
 
-    public static function members_xchan($uid, $gid)
+    public static function members_xchan($uid, $gid): array
     {
         $ret = [];
         if (intval($gid)) {
@@ -326,7 +323,7 @@ class AccessList
         return $ret;
     }
 
-    public static function select($uid, $group = '')
+    public static function select($uid, $group = ''): string
     {
 
         $grps = [];
@@ -349,7 +346,7 @@ class AccessList
     }
 
 
-    public static function widget($every = "connections", $each = "lists", $edit = false, $group_id = 0, $cid = '', $mode = 1)
+    public static function widget($every = "connections", $each = "lists", $edit = false, $group_id = 0, $cid = '', $mode = 1): string
     {
         $groups = [];
 
@@ -396,7 +393,7 @@ class AccessList
     }
 
 
-    public static function expand($g)
+    public static function expand($g): array
     {
         if (!(is_array($g) && count($g))) {
             return [];
@@ -437,7 +434,8 @@ class AccessList
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 $x[] = $gv;
             }
         }
@@ -458,18 +456,16 @@ class AccessList
     }
 
 
-    public static function member_of($c)
+    public static function member_of($c): array|bool|null
     {
-        $r = q(
+        return q(
             "SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id
             WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
             dbesc($c)
         );
-
-        return $r;
     }
 
-    public static function containing($uid, $c)
+    public static function containing($uid, $c): array
     {
 
         $r = q(
@@ -484,7 +480,6 @@ class AccessList
                 $ret[] = $rv['gid'];
             }
         }
-
         return $ret;
     }
 }

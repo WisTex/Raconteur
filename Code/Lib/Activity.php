@@ -6,20 +6,8 @@ use App;
 use Code\Web\HTTPSig;
 use Code\Access\Permissions;
 use Code\Access\PermissionRoles;
-use Code\Access\PermissionLimits;
 use Code\Daemon\Run;
 use Code\Lib as Zlib;
-use Code\Lib\PConfig;
-use Code\Lib\XConfig;
-use Code\Lib\Config;
-use Code\Lib\LibBlock;
-use Code\Lib\Markdown;
-use Code\Lib\Libzotdir;
-use Code\Lib\Libzot;
-use Code\Lib\Nodeinfo;
-use Code\Lib\System;
-use Code\Lib\Channel;
-use Code\Lib\Url;
 use Code\Extend\Hook;
 use Emoji;
 
@@ -73,7 +61,7 @@ class Activity
             // and base the decision on whether or not we are encoding for
             // ActivityPub or Zot6 or Nomad
 
-            return self::fetch_item($x, ((get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) ? true : false));
+            return self::fetch_item($x, (bool)get_config('system', 'activitypub', ACTIVITYPUB_ENABLED));
         }
         if ($x['type'] === ACTIVITY_OBJ_THING) {
             return self::fetch_thing($x);
@@ -210,7 +198,7 @@ class Activity
         return self::encode_person($r[0], false);
     }
 
-    public static function fetch_thing($x)
+    public static function fetch_thing($x): array
     {
 
         $r = q(
@@ -248,16 +236,17 @@ class Activity
             dbesc($x['id'])
         );
         if ($r) {
-            xchan_query($r, true);
+            xchan_query($r);
             $r = fetch_post_tags($r, true);
             if ($r[0]['verb'] === 'Invite') {
                 return self::encode_activity($r[0], $activitypub);
             }
             return self::encode_item($r[0], $activitypub);
         }
+        return false;
     }
 
-    public static function paged_collection_init($total, $id, $type = 'OrderedCollection')
+    public static function paged_collection_init($total, $id, $type = 'OrderedCollection'): array
     {
 
         $ret = [
@@ -276,7 +265,7 @@ class Activity
     }
 
 
-    public static function encode_item_collection($items, $id, $type, $activitypub = false, $total = 0)
+    public static function encode_item_collection($items, $id, $type, $activitypub = false, $total = 0): array
     {
         if ($total > App::$pager['itemspage']) {
             $ret = [
@@ -292,7 +281,7 @@ class Activity
             $ret['partOf'] = z_root() . '/' . $url_parts['path'];
 
             $extra_query_args = '';
-            $query_args = null;
+            $query_args = [];
             if (isset($url_parts['query'])) {
                 parse_str($url_parts['query'], $query_args);
             }
@@ -342,7 +331,7 @@ class Activity
         return $ret;
     }
 
-    public static function encode_follow_collection($items, $id, $type, $total = 0, $extra = null)
+    public static function encode_follow_collection($items, $id, $type, $total = 0, $extra = null): array
     {
 
         if ($total > 100) {
@@ -398,7 +387,7 @@ class Activity
     }
 
 
-    public static function encode_simple_collection($items, $id, $type, $total = 0, $extra = null)
+    public static function encode_simple_collection($items, $id, $type, $total = 0, $extra = null): array
     {
 
         $ret = [
@@ -1214,7 +1203,7 @@ class Activity
                     } else {
                         $reply_url = z_root() . '/followers/' . substr($i['author']['xchan_addr'], 0, strpos($i['author']['xchan_addr'], '@'));
                     }
-                    $reply_addr = (($d[0]['xchan_addr']) ? $d[0]['xchan_addr'] : $d[0]['xchan_name']);
+                    $reply_addr = (($d[0]['xchan_addr']) ?: $d[0]['xchan_name']);
                 }
             }
         }
@@ -1345,7 +1334,7 @@ class Activity
                 } // preferred mechanism for adding alt text
                 elseif (strpos($match[1], 'alt=') !== false) {
                     $txt = str_replace('&quot;', '"', $match[1]);
-                    $txt = substr($match[1], strpos($match[1], 'alt="') + 5, -1);
+                    $txt = substr($txt, strpos($txt, 'alt="') + 5, -1);
                     $img[] = ['type' => 'Image', 'url' => $match[2], 'name' => $txt];
                 } else {
                     $img[] = ['type' => 'Image', 'url' => $match[2]];
@@ -1383,7 +1372,7 @@ class Activity
             $ret['cc'] = [];
 
             $public = (($i['item_private']) ? false : true);
-            $top_level = (($i['mid'] === $i['parent_mid']) ? true : false);
+            $top_level = $i['mid'] === $i['parent_mid'];
 
             if (!$top_level) {
                 if (intval($i['parent'])) {
@@ -1511,7 +1500,7 @@ class Activity
             }
             if (array_key_exists('ttype', $t) && $t['ttype'] == TERM_MENTION) {
                 $url = self::lookup_term_url($t['url']);
-                $list[] = (($url) ? $url : $t['url']);
+                $list[] = (($url) ?: $t['url']);
             }
         }
 
@@ -1634,7 +1623,7 @@ class Activity
         $ret['updated'] = datetime_convert('UTC', 'UTC', $p['xchan_name_date'], ATOM_TIME);
         $ret['icon'] = [
             'type' => 'Image',
-            'mediaType' => (($p['xchan_photo_mimetype']) ? $p['xchan_photo_mimetype'] : 'image/png'),
+            'mediaType' => (($p['xchan_photo_mimetype']) ?: 'image/png'),
             'updated' => datetime_convert('UTC', 'UTC', $p['xchan_photo_date'], ATOM_TIME),
             'url' => $p['xchan_photo_l'],
             'height' => 300,
@@ -1668,7 +1657,7 @@ class Activity
                     'oauthTokenEndpoint' => z_root() . '/token'
                 ];
 
-                $ret['discoverable'] = ((1 - intval($p['xchan_hidden'])) ? true : false);
+                $ret['discoverable'] = (bool)((1 - intval($p['xchan_hidden'])));
                 $ret['publicKey'] = [
                     'id' => $current_url . '?operation=getkey',
                     'owner' => $current_url,
@@ -2461,7 +2450,9 @@ class Activity
 
         if ($cover_photo) {
             set_xconfig($url, 'system', 'cover_photo', $cover_photo);
-            import_remote_cover_photo($url, $xchan_hash);
+            if (is_string($cover_photo)) {
+                import_remote_cover_photo($cover_photo, $url);
+            }
         }
 
 

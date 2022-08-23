@@ -12,12 +12,12 @@ class Head {
      * @param string $src
      * @param string $media change media attribute (default to 'screen')
      */
-    public static function add_css($src, $media = 'screen')
+    public static function add_css(string $src, string $media = 'screen'): void
     {
         App::$css_sources[] = [ $src, $media ];
     }
 
-    public static function remove_css($src, $media = 'screen')
+    public static function remove_css($src, $media = 'screen'): void
     {
 
         $index = array_search([$src, $media], App::$css_sources);
@@ -28,7 +28,7 @@ class Head {
         App::$css_sources = array_values(App::$css_sources);
     }
 
-    public static function get_css()
+    public static function get_css(): string
     {
         $str = EMPTY_STR;
         $sources = App::$css_sources;
@@ -41,14 +41,14 @@ class Head {
         return $str;
     }
 
-    public static function add_link($arr)
+    public static function add_link($arr): void
     {
         if ($arr) {
             App::$linkrel[] = $arr;
         }
     }
 
-    public static function get_links()
+    public static function get_links(): string
     {
         $str = '';
         $sources = App::$linkrel;
@@ -67,7 +67,7 @@ class Head {
         return $str;
     }
 
-    public static function format_css_if_exists($source)
+    public static function format_css_if_exists($source): string
     {
 
         // script_path() returns https://yoursite.tld
@@ -76,11 +76,11 @@ class Head {
 
         $script = $source[0];
 
-        if (strpos($script, '/') !== false) {
+        if (str_contains($script, '/')) {
             // The script is a path relative to the server root
             $path = $script;
             // If the url starts with // then it's an absolute URL
-            if (substr($script, 0, 2) === '//') {
+            if (str_starts_with($script, '//')) {
                 $path_prefix = '';
             }
         } else {
@@ -92,6 +92,7 @@ class Head {
             $qstring = ((parse_url($path, PHP_URL_QUERY)) ? '&' : '?') . 'v=' . STD_VERSION;
             return '<link rel="stylesheet" href="' . $path_prefix . $path . $qstring . '" type="text/css" media="' . $source[1] . '">' . "\r\n";
         }
+        return '';
     }
 
     /**
@@ -104,7 +105,7 @@ class Head {
      *
      * @return string
      */
-    public static function script_path()
+    public static function script_path(): string
     {
         if (x($_SERVER, 'HTTPS') && $_SERVER['HTTPS']) {
             $scheme = 'https';
@@ -134,7 +135,7 @@ class Head {
         return $scheme . '://' . $hostname;
     }
 
-    public static function add_js($src, $priority = 0)
+    public static function add_js($src, $priority = 0): void
     {
         if (! (isset(App::$js_sources[$priority]) && is_array(App::$js_sources[$priority]))) {
             App::$js_sources[$priority] = [];
@@ -142,9 +143,8 @@ class Head {
         App::$js_sources[$priority][] = $src;
     }
 
-    public static function remove_js($src, $priority = 0)
+    public static function remove_js($src, $priority = 0): void
     {
-
         $index = array_search($src, App::$js_sources[$priority]);
         if ($index !== false) {
             unset(App::$js_sources[$priority][$index]);
@@ -158,7 +158,7 @@ class Head {
      *
      * @return string
      */
-    public static function get_js()
+    public static function get_js(): string
     {
 
         $str = '';
@@ -179,20 +179,20 @@ class Head {
         return $str;
     }
 
-    public static function get_main_js()
+    public static function get_main_js(): string
     {
-        return self::format_js_if_exists('main.js', true);
+        return self::format_js_if_exists('main.js');
     }
 
-    public static function format_js_if_exists($source)
+    public static function format_js_if_exists($source): string
     {
         $path_prefix = self::script_path();
 
-        if (strpos($source, '/') !== false) {
+        if (str_contains($source, '/')) {
             // The source is a known path on the system
             $path = $source;
             // If the url starts with // then it's an absolute URL
-            if (substr($source, 0, 2) === '//') {
+            if (str_starts_with($source, '//')) {
                 $path_prefix = '';
             }
         } else {
@@ -203,6 +203,7 @@ class Head {
             $qstring = ((parse_url($path, PHP_URL_QUERY)) ? '&' : '?') . 'v=' . STD_VERSION;
             return '<script src="' . $path_prefix . $path . $qstring . '" ></script>' . "\r\n" ;
         }
+        return '';
     }    
 
 }

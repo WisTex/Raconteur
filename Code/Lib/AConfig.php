@@ -2,12 +2,11 @@
 
 namespace Code\Lib;
 
-// account configuration storage is built on top of the under-utilised xconfig
+// account configuration storage is built on top of xconfig
 
 class AConfig
 {
-
-    public static function Load($account_id)
+    public static function Load($account_id): bool
     {
         return XConfig::Load('a_' . $account_id);
     }
