@@ -3,8 +3,6 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Apps;
-use Code\Lib\PermissionDescription;
 use Code\Render\Theme;
 
 

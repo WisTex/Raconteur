@@ -7,7 +7,7 @@ use Code\Web\HTTPSig;
 class JSalmon
 {
 
-    public static function sign($data, $key_id, $key, $data_type = 'application/x-nomad+json')
+    public static function sign($data, $key_id, $key, $data_type = 'application/x-nomad+json'): array
     {
 
         $data = base64url_encode(json_encode($data, true), true); // strip padding
@@ -35,7 +35,7 @@ class JSalmon
         ]);
     }
 
-    public static function verify($x)
+    public static function verify($x): array|bool
     {
 
         logger('verify');

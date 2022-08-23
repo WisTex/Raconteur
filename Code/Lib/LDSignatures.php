@@ -3,8 +3,6 @@
 namespace Code\Lib;
 
 use Exception;
-use Code\Lib\Activity;
-use Code\Lib\Channel;
 
 require_once('library/jsonld/jsonld.php');
 
@@ -12,7 +10,7 @@ class LDSignatures
 {
 
 
-    public static function verify($data, $pubkey)
+    public static function verify($data, $pubkey): bool
     {
 
         $ohash = self::hash(self::signable_options($data['signature']));
@@ -24,12 +22,12 @@ class LDSignatures
         return $x;
     }
 
-    public static function sign($data, $channel)
+    public static function sign($data, $channel): array
     {
 
         $options = [
             'type' => 'RsaSignature2017',
-            'nonce' => random_string(64),
+            'nonce' => random_string(),
             'creator' => Channel::url($channel),
             'created' => datetime_convert('UTC', 'UTC', 'now', 'Y-m-d\TH:i:s\Z')
         ];
@@ -42,13 +40,13 @@ class LDSignatures
     }
 
 
-    public static function signable_data($data)
+    public static function signable_data($data): bool|string
     {
 
         $newdata = [];
         if ($data) {
             foreach ($data as $k => $v) {
-                if (!in_array($k, ['signature'])) {
+                if ($k != 'signature') {
                     $newdata[$k] = $v;
                 }
             }
@@ -57,7 +55,7 @@ class LDSignatures
     }
 
 
-    public static function signable_options($options)
+    public static function signable_options($options): bool|string
     {
 
         $newopts = ['@context' => 'https://w3id.org/identity/v1'];
@@ -71,7 +69,7 @@ class LDSignatures
         return json_encode($newopts, JSON_UNESCAPED_SLASHES);
     }
 
-    public static function hash($obj)
+    public static function hash($obj): string
     {
 
         return hash('sha256', self::normalise($obj));
@@ -86,7 +84,7 @@ class LDSignatures
         if (!is_object($data)) {
             return '';
         }
-
+        $d = '';
         jsonld_set_document_loader('jsonld_document_loader');
         try {
             $d = jsonld_normalize($data, ['algorithm' => 'URDNA2015', 'format' => 'application/nquads']);

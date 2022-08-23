@@ -12,12 +12,6 @@ use Code\Web\HTTPSig;
 use Code\Access\Permissions;
 use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
-use Code\Lib\LibBlock;
-use Code\Lib\Activity;
-use Code\Lib\Channel;
-use Code\Lib\ASCollection;
-use Code\Lib\LDSignatures;
-use Code\Lib\Url;
 use Code\Daemon\Run;
 use Code\Extend\Hook;
 
@@ -220,7 +214,7 @@ class Libzot
      * @brief send a zot message
      *
      * @param string $url
-     * @param array $data
+     * @param string $data
      * @param array $channel (required if using zot6 delivery)
      * @param array $crypto (required if encrypted httpsig, requires hubloc_sitekey and site_crypto elements)
      * @return array see Url::post() for returned data format
@@ -465,13 +459,13 @@ class Libzot
                     foreach ($blocked as $b) {
                         if (strpos($url, $b['block_entity']) !== false) {
                             logger('siteblock - follower denied');
-                            return;
+                            return false;
                         }
                     }
                 }
                 if (LibBlock::fetch_by_entity($channel['channel_id'], $x['hash'])) {
                     logger('actorblock - follower denied');
-                    return;
+                    return false;
                 }
 
                 $p = Permissions::connect_perms($channel['channel_id']);
@@ -584,7 +578,6 @@ class Libzot
         } else {
             return true;
         }
-        return false;
     }
 
     /**
@@ -638,7 +631,7 @@ class Libzot
         }
         logger('Not found: ' . print_r($arr, true), LOGGER_DEBUG);
 
-        return false;
+        return null;
     }
 
 
@@ -1170,7 +1163,7 @@ class Libzot
      *  also verify that all the messages returned match the site url that we are
      *  currently processing.
      *
-     * @returns array
+     * @returns array|false|void
      *   Suitable for logging remotely, enumerating the processing results of each message/recipient combination
      *   * [0] => \e string $channel_hash
      *   * [1] => \e string $delivery_status
@@ -1190,7 +1183,7 @@ class Libzot
 
         if (!is_array($env)) {
             logger('decode error');
-            return;
+            return false;
         }
 
         $message_request = false;
@@ -1214,7 +1207,7 @@ class Libzot
 
             if (!$AS->is_valid()) {
                 logger('Activity rejected: ' . print_r($data, true));
-                return;
+                return false;
             }
 
             // compatibility issue with like of Hubzilla "new friend" activities which is very difficult to fix
@@ -1231,6 +1224,7 @@ class Libzot
             }
 
             logger($AS->debug(), LOGGER_DATA);
+            return false;
         }
 
         // There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but
@@ -1243,13 +1237,13 @@ class Libzot
             if (strpos($arr['mid'], 'http') === false && strpos($arr['mid'], 'x-zot') === false) {
                 if (strpos($arr['mid'], 'bear:') === false) {
                     logger('activity rejected: legacy message-id');
-                    return;
+                    return false;
                 }
             }
 
             if ($arr['verb'] === 'Create' && ActivityStreams::is_an_actor($arr['obj_type'])) {
                 logger('activity rejected: create actor');
-                return;
+                return false;
             }
         }
 
@@ -1273,7 +1267,7 @@ class Libzot
 
             if (!$r) {
                 logger('recips: no recipients on this site');
-                return;
+                return false;
             }
 
             // Response messages will inherit the privacy of the parent
@@ -1300,15 +1294,15 @@ class Libzot
 
         if (!$deliveries) {
             logger('No deliveries on this site');
-            return;
+            return false;
         }
 
-        if ($has_data) {
+        if ($AS && $has_data) {
             if (in_array($env['type'], ['activity', 'response'])) {
 
                 if (!(is_array($AS->actor) && isset($AS->actor['id']))) {
                     logger('No author!');
-                    return;
+                    return false;
                 }
 
                 $r = q(
@@ -1333,7 +1327,7 @@ class Libzot
 
                 if (!$arr['author_xchan']) {
                     logger('No author!');
-                    return;
+                    return false;
                 }
 
                 $s = q(
@@ -1602,7 +1596,7 @@ class Libzot
      * @param bool $relay
      * @param bool $public (optional) default false
      * @param bool $request (optional) default false - message was fetched, not posted
-     * @return array
+     * @return array|false|void
      */
 
     public static function process_delivery($sender, $act, $msg_arr, $deliveries, $relay, $public = false, $request = false)
@@ -2367,7 +2361,7 @@ class Libzot
 
         if (($sender != $orig['owner_xchan'] && $sender != $orig['author_xchan']) && (!$tag_delivery)) {
             logger('sender is not owner or author');
-            return;
+            return false;
         }
 
 
@@ -2395,7 +2389,7 @@ class Libzot
     /**
      * @brief Deletes an imported item.
      *
-     * @param array $sender
+     * @param string $sender
      *   * \e string \b hash a xchan_hash
      * @param array $item
      * @param int $uid
@@ -2464,7 +2458,7 @@ class Libzot
                     );
                 } else {
                     logger('delete linked event: not owner');
-                    return;
+                    return false;
                 }
             }
         }
@@ -2515,7 +2509,7 @@ class Libzot
     /**
      * @brief Processes delivery of profile.
      *
-     * @param array $sender an associative array
+     * @param string $sender an associative array
      *   * \e string \b hash a xchan_hash
      * @param array $arr
      * @param array $deliveries (unused)
@@ -2529,7 +2523,7 @@ class Libzot
 
         $r = q(
             "select xchan_addr from xchan where xchan_hash = '%s' limit 1",
-            dbesc($sender['hash'])
+            dbesc($sender)
         );
         if ($r) {
             Libzotdir::import_directory_profile($sender, $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);

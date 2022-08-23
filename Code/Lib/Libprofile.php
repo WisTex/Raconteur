@@ -3,9 +3,6 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Channel;
-use Code\Lib\Features;
-use Code\Lib\Menu;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 use Code\Render\Comanche;
@@ -194,7 +191,7 @@ class Libprofile
 
         $ret = [];
 
-        $is_owner = (($uid == local_channel()) ? true : false);
+        $is_owner = $uid == local_channel();
 
         // show edit profile to profile owner
         if ($is_owner) {

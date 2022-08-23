@@ -3,12 +3,7 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Libzot;
-use Code\Lib\Queue;
-use Code\Lib\Channel;
-use Code\Lib\Connect;
-use Code\Lib\ServiceClass;
-use Code\Lib\DReport;
+
 use Code\Daemon\Run;
 use Code\Extend\Hook;
 
@@ -240,7 +235,7 @@ class Libsync
             );
 
             if (($y) && (intval($y[0]['site_dead']) == 1)) {
-                $continue;
+                continue;
             }
 
             $env_recips = [$x['hubloc_hash']];
@@ -286,7 +281,7 @@ class Libsync
     /**
      * @brief
      *
-     * @param array $sender
+     * @param string $sender
      * @param array $arr
      * @param array $deliveries
      * @return array

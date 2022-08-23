@@ -17,7 +17,7 @@ class Keyutils
      * @param string $e exponent
      * @return string
      */
-    public static function meToPem($m, $e)
+    public static function meToPem(string $m, string $e): string
     {
 
         $rsa = new RSA();
@@ -29,10 +29,10 @@ class Keyutils
     }
 
     /**
-     * @param string key
+     * @param string $key
      * @return string
      */
-    public static function rsaToPem($key)
+    public static function rsaToPem(string $key): string
     {
 
         $rsa = new RSA();
@@ -42,10 +42,10 @@ class Keyutils
     }
 
     /**
-     * @param string key
+     * @param string $key
      * @return string
      */
-    public static function pemToRsa($key)
+    public static function pemToRsa(string $key): string
     {
 
         $rsa = new RSA();
@@ -59,7 +59,7 @@ class Keyutils
      * @param string $m reference modulo
      * @param string $e reference exponent
      */
-    public static function pemToMe($key, &$m, &$e)
+    public static function pemToMe(string $key, string &$m, string &$e): void
     {
 
         $rsa = new RSA();
@@ -74,7 +74,7 @@ class Keyutils
      * @param string $pubkey
      * @return string
      */
-    public static function salmonKey($pubkey)
+    public static function salmonKey(string $pubkey): string
     {
         self::pemToMe($pubkey, $m, $e);
         return 'RSA' . '.' . base64url_encode($m, true) . '.' . base64url_encode($e, true);
@@ -84,9 +84,9 @@ class Keyutils
      * @param string $key
      * @return string
      */
-    public static function convertSalmonKey($key)
+    public static function convertSalmonKey(string $key): string
     {
-        if (strstr($key, ',')) {
+        if (str_contains($key, ',')) {
             $rawkey = substr($key, strpos($key, ',') + 1);
         } else {
             $rawkey = substr($key, 5);
