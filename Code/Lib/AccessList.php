@@ -48,7 +48,7 @@ class AccessList
     }
 
 
-    public static function remove($uid, $name): array|bool|null
+    public static function remove($uid, $name): bool
     {
         $ret = false;
         if ($uid && $name) {
@@ -112,7 +112,7 @@ class AccessList
                 dbesc($name)
             );
 
-            $ret = $r;
+            $ret = (bool)$r;
         }
 
         Libsync::build_sync_packet($uid, null, true);
@@ -174,7 +174,7 @@ class AccessList
     }
 
 
-    public static function member_remove($uid, $name, $member): array|bool|null
+    public static function member_remove($uid, $name, $member): bool
     {
         $gid = self::byname($uid, $name);
         if (!$gid) {
@@ -192,11 +192,11 @@ class AccessList
 
         Libsync::build_sync_packet($uid, null, true);
 
-        return $r;
+        return (bool)$r;
     }
 
 
-    public static function member_add($uid, $name, $member, $gid = 0): array|bool|null
+    public static function member_add($uid, $name, $member, $gid = 0): bool
     {
         if (!$gid) {
             $gid = self::byname($uid, $name);
@@ -225,7 +225,7 @@ class AccessList
             );
         }
         Libsync::build_sync_packet($uid, null, true);
-        return $r;
+        return (bool)$r;
     }
 
 
@@ -456,9 +456,9 @@ class AccessList
     }
 
 
-    public static function member_of($c): array|bool|null
+    public static function member_of($c): bool
     {
-        return q(
+        return (bool)q(
             "SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id
             WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
             dbesc($c)
