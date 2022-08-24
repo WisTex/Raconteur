@@ -33,7 +33,7 @@ class dba_pdo extends dba_driver
         // allow folks to over-ride the client encoding by setting it explicitly
         // in the dsn. By default everything we do is in utf8 and for mysql this
         // requires specifying utf8mb4.
-         
+
         if ($this->driver_dbtype === 'mysql' && !strpos($dsn,'charset=')) {
             $dsn .= ';charset=utf8mb4';
         }
@@ -41,7 +41,7 @@ class dba_pdo extends dba_driver
         if ($this->driver_type === 'pgsql' && !strpos($dsn,'client_encoding')) {
             $dsn .= ";options='--client_encoding=UTF8'";
         }
-    
+
         try {
             $this->db = new PDO($dsn, $user, $pass);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -107,7 +107,7 @@ class dba_pdo extends dba_driver
             if ($this->debug) {
                 db_logger('dba_pdo: DEBUG: ' . printable($sql) . ' returns ' . (($result) ? 'true' : 'false'), LOGGER_NORMAL, (($result) ? LOG_INFO : LOG_ERR));
             }
-            return $result;
+            return (bool)$result;
         }
 
         $r = [];
