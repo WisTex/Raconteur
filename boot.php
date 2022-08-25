@@ -2399,15 +2399,6 @@ function construct_page() {
 }
 
 /**
- * @brief Returns appplication root directory.
- *
- * @return string
- */
-function appdirpath() {
-    return dirname(__FILE__);
-}
-
-/**
  * @brief Set a pageicon.
  *
  * @param string $icon
@@ -2421,7 +2412,7 @@ function head_set_icon($icon) {
 /**
  * @brief Get the pageicon.
  *
- * @return string absolut path to pageicon
+ * @return string absolute path to pageicon
  */
 function head_get_icon() {
 

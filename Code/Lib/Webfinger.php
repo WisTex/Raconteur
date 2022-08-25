@@ -2,8 +2,6 @@
 
 namespace Code\Lib;
 
-use Code\Lib\Url;
-
 /**
  * @brief Fetch and return a webfinger for a resource
  *
@@ -12,7 +10,6 @@ use Code\Lib\Url;
  */
 class Webfinger
 {
-
     private static $server = EMPTY_STR;
     private static $resource = EMPTY_STR;
 
@@ -99,7 +96,7 @@ class Webfinger
         if (is_array($arr) && array_key_exists('links', $arr)) {
             foreach ($arr['links'] as $link) {
 				if (array_key_exists('rel',$link) && in_array($link['rel'], [ PROTOCOL_NOMAD, PROTOCOL_ZOT6 ])) {
-                    if (array_key_exists('href', $link) && $link['href'] !== EMPTY_STR) {
+                    if (!empty($link['href'])) {
                         return $link['href'];
                     }
                 }

@@ -15,4 +15,4 @@ Feature: Local login
     When I fill in "id_username" with "behat"
     And I fill in "id_password" with "behat"
     And I press "submit"
-    Then I should be on "/apps"
+    Then I should be on "/stream"

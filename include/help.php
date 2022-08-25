@@ -13,8 +13,7 @@ use Code\Lib\Channel;
 
 function get_help_fullpath($path, $suffix = null)
 {
-
-        return find_docfile($path, App::$language);
+    return find_docfile($path, App::$language);
 }
 
 function find_docfile($name, $language)
@@ -47,12 +46,6 @@ function find_docfile($name, $language)
  */
 function get_help_content($tocpath = false)
 {
-
-
-    $doctype = 'multicode';
-
-    $text = '';
-
     $path = '';
     if (argc() > 1) {
         for ($x = 1; $x < argc(); $x++) {
@@ -74,22 +67,6 @@ function get_help_content($tocpath = false)
     return translate_projectname($content);
 }
 
-function preg_callback_help_include($matches)
-{
-
-    if ($matches[1]) {
-        $include = str_replace($matches[0], load_doc_file($matches[1]), $matches[0]);
-        if (preg_match('/\.bb$/', $matches[1]) || preg_match('/\.txt$/', $matches[1])) {
-            require_once('include/bbcode.php');
-            $include = zidify_links(bbcode($include));
-            $include = str_replace(' target="_blank"', '', $include);
-        } elseif (preg_match('/\.md$/', $matches[1])) {
-            $include = MarkdownExtra::defaultTransform($include);
-        }
-        return $include;
-    }
-}
-
 /**
  * @brief
  *
@@ -97,7 +74,6 @@ function preg_callback_help_include($matches)
  */
 function determine_help_language()
 {
-
     require_once('library/text_languagedetect/Text/LanguageDetect.php');
 
     $lang_detect = new Text_LanguageDetect();

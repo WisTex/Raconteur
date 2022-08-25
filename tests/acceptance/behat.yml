@@ -2,7 +2,7 @@ default:
   suites:
     default:
       paths:
-        - %paths.base%/features
+        - '%paths.base%/features'
       contexts:
         - Behat\MinkExtension\Context\MinkContext
     admin_features:
@@ -11,7 +11,7 @@ default:
         - AdminContext
     api_features:
       paths:
-        - %paths.base%/features/api
+        - '%paths.base%/features/api'
       filters:
         tags: "@api"
       contexts:

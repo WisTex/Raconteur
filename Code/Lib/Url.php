@@ -48,7 +48,7 @@ class Url {
 
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-        curl_setopt($ch, CURLOPT_CAINFO, get_capath());
+        curl_setopt($ch, CURLOPT_CAINFO, self::get_capath());
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_ENCODING, '');
@@ -275,7 +275,7 @@ class Url {
 
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-        curl_setopt($ch, CURLOPT_CAINFO, get_capath());
+        curl_setopt($ch, CURLOPT_CAINFO, self::get_capath());
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
@@ -457,7 +457,15 @@ class Url {
         return false;
     }
 
-
+    /**
+     * @brief Returns path to CA file.
+     *
+     * @return string
+     */
+    static public function get_capath()
+    {
+        return 'include/library/cacert.pem';
+    }
 
     static public function format_error($ret, $verbose = false)
     {

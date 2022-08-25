@@ -49,7 +49,6 @@ function hubloc_store_lowlevel($arr)
 
 function site_store_lowlevel($arr)
 {
-
     $store = [
         'site_url'        => ((array_key_exists('site_url', $arr))        ? $arr['site_url']         : ''),
         'site_access'     => ((array_key_exists('site_access', $arr))     ? $arr['site_access']      : 0),
@@ -72,10 +71,6 @@ function site_store_lowlevel($arr)
 
     return create_table_from_array('site', $store);
 }
-
-
-
-
 
 function prune_hub_reinstalls()
 {
@@ -303,12 +298,10 @@ function hubloc_delete($hubloc) {
 
 function locations_by_netid($netid)
 {
-
     $locs = q(
         "select hubloc_addr as location from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_deleted = 0 and site_dead = 0",
         dbesc($netid)
     );
-
 
     return array_elm_to_str($locs, 'location', ', ', 'trim_and_unpunify');
 }
@@ -333,7 +326,6 @@ function ping_site($url)
 
 function get_hubloc_addrs_by_hash($hash)
 {
-
     return q(
         "select hubloc_addr from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
         dbesc($hash)

@@ -23,15 +23,6 @@ use Code\Storage\Stdio;
  * @brief Network related functions.
  */
 
-/**
- * @brief Returns path to CA file.
- *
- * @return string
- */
-function get_capath()
-{
-    return appdirpath() . '/library/cacert.pem';
-}
 
 
 function json_return_and_die($x, $content_type = 'application/json', $debug = false)

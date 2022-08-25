@@ -1,7 +1,7 @@
 The folder tests/ contains resources for automated testing tools.
 
 Here you will find PHPUnit, Behat, etc. files to test the functionaly
-of Hubzilla. Right now it only contains some basic tests to see if feasable
+of this software. Right now it only contains some basic tests to see if feasable
 this can help improve the project.
 
 # Contents

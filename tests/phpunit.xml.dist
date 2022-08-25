@@ -7,7 +7,7 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
          verbose="true">
-    <testsuite name="Hubzilla default Test Suite">
+    <testsuite name="Default Test Suite">
         <directory suffix="Test.php">./unit/</directory>
     </testsuite>
     <testsuite name="API Test Suite">

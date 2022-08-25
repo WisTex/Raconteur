@@ -43,7 +43,7 @@
         },
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
-		"behat/behat" : "@stable",
+		"behat/behat" : "~3.11",
 		"behat/mink-extension": "@stable",
 		"behat/mink-goutte-driver": "@stable",
 		"php-mock/php-mock-phpunit": "@stable"
