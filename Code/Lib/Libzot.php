@@ -1224,7 +1224,6 @@ class Libzot
             }
 
             logger($AS->debug(), LOGGER_DATA);
-            return false;
         }
 
         // There is nothing inherently wrong with getting a message-id which isn't a canonical URI/URL, but
