@@ -46,7 +46,7 @@ class Dreport extends Controller
                 Run::Summon(['Notifier', 'edit_post', $i[0]['id']]);
             }
             sleep(3);
-            goaway(z_root() . '/dreport/' . urlencode($mid));
+            goaway(z_root() . '/dreport/?mid=' . urlencode($mid));
         }
 
         if ($cmd === 'log') {
@@ -108,7 +108,7 @@ class Dreport extends Controller
                     break;
                 case 'queued':
                     $r[$x]['gravity'] = 2;
-                    $r[$x]['dreport_result'] = '<a href="' . z_root() . '/dreport/log/' . $mid . '?host=' . urlencode($r[$x]['dreport_recip']) . '" >' . t('queued') . '</a>';
+                    $r[$x]['dreport_result'] = '<a href="' . z_root() . '/dreport/log/?mid=' . $mid . '&host=' . urlencode($r[$x]['dreport_recip']) . '" >' . t('queued') . '</a>';
                     break;
                 case 'site dead':
                     $r[$x]['gravity'] = 3;
