@@ -1,7 +1,7 @@
 <?php
 
 namespace Code\Lib;
-    
+
 /**
  * @file Code\Lib\Channel.php
  * @brief Channel related functions.
@@ -13,7 +13,7 @@ use Code\Lib\Libsync;
 use Code\Lib\AccessList;
 use Code\Lib\Crypto;
 use Code\Lib\Connect;
-use Code\Lib\ABConfig;
+use Code\Lib\AbConfig;
 use Code\Access\PermissionRoles;
 use Code\Access\PermissionLimits;
 use Code\Access\Permissions;
@@ -25,7 +25,7 @@ use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-  
+
 require_once('include/photo_factory.php');
 
 require_once('include/security.php');
@@ -109,9 +109,9 @@ class Channel
                     intval(XCHAN_TYPE_ORGANIZATION),
                     dbesc($sys['xchan_hash'])
                 );
-    
+
                 // Add the new "deliver_stream" permission
-    
+
                 $c = q("select * from channel where true");
                 if ($c) {
                     foreach ($c as $cv) {
@@ -121,17 +121,17 @@ class Channel
                 $ab = q("SELECT * from abook where abook_self = 0");
                 if ($ab) {
                     foreach ($ab as $abv) {
-                        $p = explode(',', ABConfig::Get($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', EMPTY_STR));
+                        $p = explode(',', AbConfig::Get($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', EMPTY_STR));
                         if (! in_array('deliver_stream', $p)) {
                             $p[] = 'deliver_stream';
                         }
-                        ABConfig::Set($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', implode(',', $p));
+                        AbConfig::Set($abv['abook_channel'], $abv['abook_xchan'], 'system', 'my_perms', implode(',', $p));
                     }
                 }
             }
-    
+
             // fix lost system keys, since we cannot communicate without them
-    
+
             if (!(isset($sys['channel_pubkey']) && $sys['channel_pubkey'] === get_config('system', 'pubkey'))) {
                 // upgrade the sys channel and return
                 $pubkey = get_config('system', 'pubkey');
