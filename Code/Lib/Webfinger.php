@@ -15,7 +15,6 @@ class Webfinger
 
     public static function exec($resource)
     {
-
         if (!$resource) {
             return false;
         }
@@ -51,7 +50,7 @@ class Webfinger
 
         self::$resource = urlencode($resource);
 
-        if (strpos($resource, 'http') === 0) {
+        if (str_starts_with($resource, 'http')) {
             $m = parse_url($resource);
             if ($m) {
                 if ($m['scheme'] !== 'https') {
@@ -61,7 +60,7 @@ class Webfinger
             } else {
                 return false;
             }
-        } elseif (strpos($resource, 'tag:') === 0) {
+        } elseif (str_starts_with($resource, 'tag:')) {
             $arr = explode(':', $resource); // split the tag
             $h = explode(',', $arr[1]); // split the host,date
             self::$server = $h[0];
@@ -71,13 +70,12 @@ class Webfinger
                 // e.g. @dan@pixelfed.org
                 array_shift($x);
             }
-            $username = $x[0];
             if (count($x) > 1) {
                 self::$server = $x[1];
             } else {
                 return false;
             }
-            if (strpos($resource, 'acct:') !== 0) {
+            if (!str_starts_with($resource, 'acct:')) {
                 self::$resource = urlencode('acct:' . $resource);
             }
         }
@@ -90,7 +88,6 @@ class Webfinger
 
     public static function zot_url($resource)
     {
-
         $arr = self::exec($resource);
 
         if (is_array($arr) && array_key_exists('links', $arr)) {
