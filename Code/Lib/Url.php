@@ -464,7 +464,7 @@ class Url {
      */
     static public function get_capath()
     {
-        return 'include/library/cacert.pem';
+        return PROJECT_BASE . '/library/cacert.pem';
     }
 
     static public function format_error($ret, $verbose = false)
