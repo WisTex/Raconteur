@@ -256,7 +256,7 @@ class Socgraph {
 
         $max = intval(get_config('system', 'max_imported_follow', MAX_IMPORTED_FOLLOW));
         if (! intval($max)) {
-            return;
+            return false;
         }
 
 
@@ -271,7 +271,7 @@ class Socgraph {
 
         if (! $url) {
             logger('ap_poco_load: no url');
-            return;
+            return false;
         }
 
         $obj = new ASCollection($url, '', 0, $max);
@@ -279,7 +279,7 @@ class Socgraph {
         $friends = $obj->get();
 
         if (! $friends) {
-            return;
+            return false;
         }
 
         foreach ($friends as $entry) {
@@ -404,7 +404,7 @@ class Socgraph {
         }
 
         $r1 = q(
-            "SELECT count(xlink_xchan) as total, xchan.* from xchan
+            "SELECT count(xlink_xchan) as total, xchan_hash from xchan
             left join xlink on xlink_link = xchan_hash
             where xlink_xchan in ( select abook_xchan from abook where abook_channel = %d )
             and not xlink_link in ( select abook_xchan from abook where abook_channel = %d )
@@ -426,7 +426,7 @@ class Socgraph {
         }
 
         $r2 = q(
-            "SELECT count(xtag_hash) as total, xchan.* from xchan
+            "SELECT count(xtag_hash) as total, xchan_hash from xchan
             left join xtag on xtag_hash = xchan_hash
             where xtag_hash != '%s' 
             and not xtag_hash in ( select abook_xchan from abook where abook_channel = %d )
@@ -461,8 +461,29 @@ class Socgraph {
             }
         }
 
-        usort($r1, 'self::socgraph_total_sort');
-        return ($r1);
+        $xchan_arr = [];
+
+        foreach ($r1 as $xchans) {
+            $xchan_arr[] = "'" . dbesc($xchans['xchan_hash']) . "'";
+        }
+        if ($xchan_arr) {
+            $xchan_complete = q("select * from xchan where xchan_hash in (" . protect_sprintf(implode(',',$xchan_arr)) . ")");
+        }
+        $results = [];
+        if ($xchan_complete) {
+            for ($x = 0; $x < count($xchan_complete); $x ++) {
+                for ($y = 0; $y < count($r1); $y ++) {
+                    if ($r1[$y]['xchan_hash'] === $xchan_complete[$x]['xchan_hash']) {
+                        $tmp = $xchan_complete[$x];
+                        $tmp['total'] = $r1[$y]['total'];
+                        $results[] = $tmp;
+                        break;
+                    }
+                }
+            }
+        }
+        usort($results, 'self::socgraph_total_sort');
+        return ($results);
     }
 
     public static function socgraph_total_sort($a, $b)
