@@ -116,7 +116,7 @@ class PConfig
      *  The category of the configuration value
      * @param string $key
      *  The configuration key to set
-     * @param string $value
+     * @param mixed $value
      *  The value to store
      * @return mixed Stored $value or false
      */
@@ -131,7 +131,7 @@ class PConfig
 
         if (is_null($uid) || $uid === false) {
             btlogger('UID is FALSE!', LOGGER_NORMAL, LOG_ERR);
-            return;
+            return false;
         }
 
         // manage array value

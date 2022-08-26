@@ -203,15 +203,14 @@ class Permcat
 
     public static function find_permcat($arr, $name)
     {
-        if ((! $arr) || (! $name)) {
-            return false;
-        }
-
-        foreach ($arr as $p) {
-            if ($p['name'] == $name) {
-                return $p['value'];
+        if ($arr && $name) {
+            foreach ($arr as $p) {
+                if ($p['name'] == $name) {
+                    return $p['value'];
+                }
             }
         }
+        return false;
     }
 
     public static function update($channel_id, $name, $permarr)

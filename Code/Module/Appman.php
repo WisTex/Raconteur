@@ -98,7 +98,7 @@ class Appman extends Controller
 		
         if (!$channel_id) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
 		if (Channel::is_system($channel_id)) {

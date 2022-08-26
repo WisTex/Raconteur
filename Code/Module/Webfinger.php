@@ -50,7 +50,7 @@ class Webfinger extends Controller
             $resource = z_root() . '/channel/sys';
         }
 
-        if (strpos($resource, 'tag:' === 0)) {
+        if (str_starts_with($resource, 'tag:')) {
             $arr = explode(':', $resource);
             if (count($arr) > 3 && $arr[2] === 'zotid') {
                 $hash = $arr[3];
@@ -58,7 +58,7 @@ class Webfinger extends Controller
             }
         }
 
-        if (strpos($resource, 'acct:') === 0) {
+        if (str_starts_with($resource, 'acct:')) {
             $channel_nickname = punify(str_replace('acct:', '', $resource));
             if (strrpos($channel_nickname, '@') !== false) {
                 $host = punify(substr($channel_nickname, strrpos($channel_nickname, '@') + 1));
@@ -71,7 +71,7 @@ class Webfinger extends Controller
                 $channel_nickname = substr($channel_nickname, 0, strrpos($channel_nickname, '@'));
             }
         }
-        if (strpos($resource, 'http') === 0) {
+        if (str_starts_with($resource, 'http')) {
             $channel_nickname = str_replace(['~', '@'], ['', ''], basename($resource));
         }
 

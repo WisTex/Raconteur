@@ -16,7 +16,7 @@ class Xp extends Controller
             if (!file_exists($path)) {
                 // no longer cached for some reason, perhaps expired
                 $resolution = substr(argv(1), (-2), 2);
-                if ($resolution && substr($resolution, 0, 1) === '-') {
+                if ($resolution && str_starts_with($resolution, '-')) {
                     switch (substr($resolution, 1, 1)) {
                         case '4':
                             $path = Channel::get_default_profile_photo();

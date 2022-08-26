@@ -14,7 +14,7 @@ class Apporder extends Controller
     {
 
         if (!local_channel()) {
-            return;
+            return '';
         }
     
         Navbar::set_selected('Order Apps');

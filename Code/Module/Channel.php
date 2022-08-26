@@ -238,7 +238,7 @@ class Channel extends Controller
                 goaway(z_root() . "/profile/" . App::$profile['channel_address']);
             }
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
 

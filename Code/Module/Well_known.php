@@ -4,8 +4,6 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
-use Code\Module\Webfinger;
-use Code\Module\Oauthinfo;
 use Code\Extend\Hook;
 
 class Well_known extends Controller

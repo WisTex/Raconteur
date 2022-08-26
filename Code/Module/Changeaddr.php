@@ -75,7 +75,7 @@ class Changeaddr extends Controller
 
         if (check_webbie(array($new_address)) !== $new_address) {
             notice(t('Nickname has unsupported characters or is already being used on this site.') . EOL);
-            return $ret;
+            return;
         }
 
         Channel::change_address($channel, $new_address);
@@ -89,7 +89,7 @@ class Changeaddr extends Controller
 
         if (!get_config('system', 'allow_nick_change')) {
             notice(t('Feature has been disabled') . EOL);
-            return;
+            return '';
         }
 
 
@@ -104,7 +104,7 @@ class Changeaddr extends Controller
         $_SESSION['remove_account_verify'] = $hash;
 
         $tpl = Theme::get_template('channel_rename.tpl');
-        $o .= replace_macros($tpl, [
+        $o = replace_macros($tpl, [
             '$basedir' => z_root(),
             '$hash' => $hash,
             '$title' => t('Change channel nickname/address'),

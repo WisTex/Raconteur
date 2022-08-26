@@ -22,12 +22,12 @@ class Viewconnections extends Controller
     {
         if (((!(is_array(App::$profile) && count(App::$profile))) || (App::$profile['hide_friends']))) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         if (!perm_is_allowed(App::$profile['uid'], get_observer_hash(), 'view_contacts')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         if (!$_REQUEST['aj']) {
@@ -53,7 +53,7 @@ class Viewconnections extends Controller
 
         if ((!$r) && (!$_REQUEST['aj'])) {
             info(t('No connections.') . EOL);
-            return $o;
+            return '';
         }
 
         $contacts = [];
@@ -94,7 +94,7 @@ class Viewconnections extends Controller
             echo $o;
             killme();
         } else {
-            $o .= "<script> var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
+            $o = "<script> var page_query = '" . escape_tags($_GET['req']) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
             $o .= replace_macros(Theme::get_template('viewcontact_template.tpl'), [
                 '$title' => t('View Connections'),
                 '$contacts' => $contacts,

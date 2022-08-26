@@ -5,7 +5,7 @@ namespace Code\Module;
 use Code\Web\Controller;
 
 /**
- * load view/theme/$current_theme/style.php with Hubzilla context
+ * load view/theme/$current_theme/style.php with content
  */
 class View extends Controller
 {

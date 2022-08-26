@@ -1045,7 +1045,7 @@ class Cdav extends Controller
 
             $permissions = $perm_defaults;
 
-            $o .= replace_macros(Theme::get_template('cdav_calendar.tpl'), [
+            $o = replace_macros(Theme::get_template('cdav_calendar.tpl'), [
                 '$sources' => $sources,
                 '$color' => $color,
                 '$lang' => App::$language,

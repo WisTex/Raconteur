@@ -40,7 +40,7 @@ class Blocks extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         $which = argv(1);
@@ -80,17 +80,17 @@ class Blocks extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         // Block design features from visitors
 
         if ((!$uid) || ($uid != $owner)) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
-        $mimetype = (($_REQUEST['mimetype']) ? $_REQUEST['mimetype'] : get_pconfig($owner, 'system', 'page_mimetype'));
+        $mimetype = (($_REQUEST['mimetype']) ?: get_pconfig($owner, 'system', 'page_mimetype'));
 
         $x = array(
             'webpage' => ITEM_TYPE_BLOCK,

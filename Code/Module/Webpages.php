@@ -47,7 +47,7 @@ class Webpages extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         if (!Apps::system_app_installed(App::$profile_uid, 'Webpages')) {
@@ -74,7 +74,7 @@ class Webpages extends Controller
         switch ($_SESSION['action']) {
             case 'import':
                 $_SESSION['action'] = null;
-                $o .= replace_macros(Theme::get_template('webpage_import.tpl'), array(
+                $o = replace_macros(Theme::get_template('webpage_import.tpl'), array(
                     '$title' => t('Import Webpage Elements'),
                     '$importbtn' => t('Import selected'),
                     '$action' => 'import',
@@ -98,7 +98,7 @@ class Webpages extends Controller
                 $pages = get_webpage_elements($channel, 'pages');
                 $layouts = get_webpage_elements($channel, 'layouts');
                 $blocks = get_webpage_elements($channel, 'blocks');
-                $o .= replace_macros(Theme::get_template('webpage_export_list.tpl'), array(
+                $o = replace_macros(Theme::get_template('webpage_export_list.tpl'), array(
                     '$title' => t('Export Webpage Elements'),
                     '$exportbtn' => t('Export selected'),
                     '$action' => $_SESSION['export'],    // value should be 'zipfile' or 'cloud'
@@ -141,7 +141,7 @@ class Webpages extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $mimetype = (($_REQUEST['mimetype']) ? $_REQUEST['mimetype'] : get_pconfig($owner, 'system', 'page_mimetype'));

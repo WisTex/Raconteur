@@ -25,7 +25,7 @@ class Card_edit extends Controller
 
         if (!$post_id) {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         $itm = q(
@@ -43,7 +43,7 @@ class Card_edit extends Controller
             }
         } else {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         $owner = $itm[0]['uid'];
@@ -54,14 +54,14 @@ class Card_edit extends Controller
         $channel = Channel::from_id($owner);
         if (!$channel) {
             notice(t('Channel not found.') . EOL);
-            return;
+            return '';
         }
 
         $ob_hash = (($observer) ? $observer['xchan_hash'] : '');
 
         if (!perm_is_allowed($owner, $ob_hash, 'write_pages')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $is_owner = (($uid && $uid == $owner) ? true : false);

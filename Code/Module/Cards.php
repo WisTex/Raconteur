@@ -10,6 +10,7 @@ use Code\Lib\PermissionDescription;
 use Code\Lib\Channel;
 use Code\Lib\Navbar;
 use Code\Lib\Libacl;
+use Code\Lib\Head;
 use Code\Render\Theme;
 
     
@@ -39,7 +40,7 @@ class Cards extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         if (!Apps::system_app_installed(App::$profile_uid, 'Cards')) {
@@ -53,7 +54,7 @@ class Cards extends Controller
 
         Navbar::set_selected('Cards');
 
-        head_add_link([
+        Head::add_link([
             'rel' => 'alternate',
             'type' => 'application/json+oembed',
             'href' => z_root() . '/oep?f=&url=' . urlencode(z_root() . '/' . App::$query_string),
@@ -82,7 +83,7 @@ class Cards extends Controller
 
         if (!perm_is_allowed($owner, $ob_hash, 'view_pages')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $is_owner = ($uid && $uid == $owner);

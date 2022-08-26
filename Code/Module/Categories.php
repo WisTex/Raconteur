@@ -4,7 +4,6 @@ namespace Code\Module;
 
 use App;
 use Code\Lib\Apps;
-use Code\Lib\Libsync;
 use Code\Lib\Libprofile;
 use Code\Web\Controller;
 use Code\Render\Comanche;
@@ -17,6 +16,7 @@ class Categories extends Controller
 
         if (local_channel()) {
             $channel = App::get_channel();
+            $which = '';
             if ($channel && $channel['channel_address']) {
                 $which = $channel['channel_address'];
             }

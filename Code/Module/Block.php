@@ -29,12 +29,12 @@ class Block extends Controller
 
         if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_pages')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         if (argc() < 3) {
             notice(t('Invalid item.') . EOL);
-            return;
+            return '';
         }
 
         $channel_address = argv(1);
@@ -47,7 +47,7 @@ class Block extends Controller
 
         if (!$u) {
             notice(t('Channel not found.') . EOL);
-            return;
+            return '';
         }
 
         if ($_REQUEST['rev']) {
@@ -85,13 +85,12 @@ class Block extends Controller
             } else {
                 notice(t('Page not found.') . EOL);
             }
-            return;
+            return '';
         }
 
         xchan_query($r);
         $r = fetch_post_tags($r, true);
 
-        $o = prepare_page($r[0]);
-        return $o;
+        return prepare_page($r[0]);
     }
 }
