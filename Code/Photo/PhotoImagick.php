@@ -176,6 +176,7 @@ class PhotoImagick extends PhotoDriver
         } while ($this->image->nextImage());
 
         $this->setDimensions();
+        return true;
     }
 
     public function flip($horiz = true, $vert = false)
@@ -195,6 +196,7 @@ class PhotoImagick extends PhotoDriver
         } while ($this->image->nextImage());
 
         $this->setDimensions(); // Shouldn't really be necessary
+        return true;
     }
 
     public function cropImageRect($maxx, $maxy, $x, $y, $w, $h)
@@ -215,6 +217,7 @@ class PhotoImagick extends PhotoDriver
         } while ($this->image->nextImage());
 
         $this->doScaleImage($maxx, $maxy);
+        return true;
     }
 
     public function imageString($animated = true)

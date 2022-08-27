@@ -27,12 +27,12 @@ class SmartyTemplate implements TemplateEngine
         if (! is_dir($basecompiledir)) {
             Stdio::mkdir(TEMPLATE_BUILD_PATH, STORAGE_DEFAULT_PERMISSIONS, true);
             if (! is_dir($basecompiledir)) {
-                echo "<b>ERROR:</b> folder <tt>$basecompiledir</tt> does not exist.";
+                echo "<b>ERROR:</b> folder $basecompiledir does not exist.";
                 killme();
             }
         }
         if (! is_writable($basecompiledir)) {
-            echo "<b>ERROR:</b> folder <tt>$basecompiledir</tt> must be writable by webserver.";
+            echo "<b>ERROR:</b> folder $basecompiledir must be writable by webserver.";
             killme();
         }
         App::$config['system']['smarty3_folder'] = $basecompiledir;

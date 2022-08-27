@@ -16,8 +16,8 @@ require_once('include/photos.php');
  *
  * It provides all functions to work with files in the project cloud through DAV protocol.
  *
- * @extends \DAV\\Node
- * @implements \DAV\\IFile
+ * @extends DAV\\Node
+ * @implements DAV\\IFile
  *
  * @license http://opensource.org/licenses/mit-license.php The MIT License (MIT)
  */
@@ -343,6 +343,7 @@ class File extends DAV\Node implements DAV\IFile {
 			}
 			return dbunescbin($r[0]['content']);
 		}
+        return '';
 	}
 
 	/**

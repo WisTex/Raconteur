@@ -3,7 +3,6 @@
 namespace Code\Nomad;
 
 use Code\Lib\Libzot;
-use Code\Lib\Queue;
 
 class NomadHandler implements IHandler
 {
@@ -60,7 +59,7 @@ class NomadHandler implements IHandler
      * @param array $sender
      * @param array $recipients
      *
-     * @return json_return_and_die()
+     * @return array
      */
 
     public static function reply_refresh($sender, $recipients, $hub, $force)
@@ -151,7 +150,7 @@ class NomadHandler implements IHandler
     /**
      * @brief
      *
-     * @param array $sender
+     * @param string $sender
      * @param array $recipients
      *
      * return json_return_and_die()

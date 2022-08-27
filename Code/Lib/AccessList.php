@@ -77,11 +77,11 @@ class AccessList
                     $user_info['channel_default_group'] = '';
                     $change = true;
                 }
-                if (strpos($user_info['channel_allow_gid'], '<' . $group_hash . '>') !== false) {
+                if (str_contains($user_info['channel_allow_gid'], '<' . $group_hash . '>')) {
                     $user_info['channel_allow_gid'] = str_replace('<' . $group_hash . '>', '', $user_info['channel_allow_gid']);
                     $change = true;
                 }
-                if (strpos($user_info['channel_deny_gid'], '<' . $group_hash . '>') !== false) {
+                if (str_contains($user_info['channel_deny_gid'], '<' . $group_hash . '>')) {
                     $user_info['channel_deny_gid'] = str_replace('<' . $group_hash . '>', '', $user_info['channel_deny_gid']);
                     $change = true;
                 }
@@ -240,7 +240,7 @@ class AccessList
         }
 
         // process virtual groups
-        if (strpos($gid, ':') === 0) {
+        if (str_starts_with($gid, ':')) {
             $vg = substr($gid, 1);
             switch ($vg) {
                 case '2':
@@ -408,13 +408,13 @@ class AccessList
             // zot:abc is all of abc's zot6 connections
             // activitypub:abc is all of abc's activitypub connections
 
-            if (strpos($gv, 'connections:') === 0 || strpos($gv, 'zot:') === 0 || strpos($gv, 'activitypub:') === 0) {
+            if (str_starts_with($gv, 'connections:') || str_starts_with($gv, 'zot:') || str_starts_with($gv, 'activitypub:')) {
                 $sql_extra = EMPTY_STR;
                 $channel_hash = substr($gv, strpos($gv, ':') + 1);
-                if (strpos($gv, 'zot:') === 0) {
+                if (str_starts_with($gv, 'zot:')) {
                     $sql_extra = " and xchan_network in ('nomad','zot6') ";
                 }
-                if (strpos($gv, 'activitypub:') === 0) {
+                if (str_starts_with($gv, 'activitypub:')) {
                     $sql_extra = " and xchan_network = 'activitypub' ";
                 }
                 $r = q(
@@ -456,9 +456,9 @@ class AccessList
     }
 
 
-    public static function member_of($c): bool
+    public static function member_of($c): array|bool
     {
-        return (bool)q(
+        return q(
             "SELECT pgrp.gname, pgrp.id FROM pgrp LEFT JOIN pgrp_member ON pgrp_member.gid = pgrp.id
             WHERE pgrp_member.xchan = '%s' AND pgrp.deleted = 0 ORDER BY pgrp.gname  ASC ",
             dbesc($c)

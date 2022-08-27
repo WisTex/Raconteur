@@ -240,7 +240,7 @@ class Comanche
     public function test_condition($s)
     {
 
-        if (preg_match('/[\$](.*?)\s\~\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\~\=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (stripos($x, trim($matches[2])) !== false) {
                 return true;
@@ -248,7 +248,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\=\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\=\=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x == trim($matches[2])) {
                 return true;
@@ -256,7 +256,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\!\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\!\=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x != trim($matches[2])) {
                 return true;
@@ -264,7 +264,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\>\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\>\=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x >= trim($matches[2])) {
                 return true;
@@ -272,7 +272,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\<\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\<\=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x <= trim($matches[2])) {
                 return true;
@@ -280,7 +280,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\>\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\>\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x > trim($matches[2])) {
                 return true;
@@ -288,7 +288,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\>\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\>\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x < trim($matches[2])) {
                 return true;
@@ -296,7 +296,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\{\}\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\{\}\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (is_array($x) && in_array(trim($matches[2]), $x)) {
                 return true;
@@ -304,7 +304,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\{\*\}\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\{\*\}\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (is_array($x) && array_key_exists(trim($matches[2]), $x)) {
                 return true;
@@ -312,7 +312,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/[\!\$](.*?)$/', $s, $matches)) {
+        if (preg_match('/\!\$(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (!$x) {
                 return true;
@@ -321,7 +321,7 @@ class Comanche
         }
 
     
-        if (preg_match('/[\$](.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x) {
                 return true;

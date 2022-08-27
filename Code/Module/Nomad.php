@@ -5,9 +5,13 @@ namespace Code\Module;
  *
  * @brief Nomad endpoint
  */
-use Code\Web\Controller;
-use Code\Nomad\Receiver;
-use Code\Nomad\NomadHandler;
+
+use Code\{
+    Nomad\NomadHandler,
+    Nomad\Receiver,
+    Web\Controller,
+};
+
 /**
  * @brief Nomad module.
  *

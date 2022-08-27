@@ -298,7 +298,7 @@ class SimpleTemplate implements TemplateEngine
 
     private function replace($s, $r)
     {
-        $this->replace_macros($s, $r);
+        return $this->replace_macros($s, $r);
     }
 
     // TemplateEngine interface

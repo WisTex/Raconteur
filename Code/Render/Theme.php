@@ -98,6 +98,7 @@ class Theme
         if (count($fallback)) {
             return (array(str_replace('view/theme/', '', substr($fallback[0], 0, -14))));
         }
+        return [];
     }
 
 

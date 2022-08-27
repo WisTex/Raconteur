@@ -5,9 +5,9 @@ namespace Code\Lib;
 class Api_router
 {
 
-    private static $routes = [];
+    private static array $routes = [];
 
-    public static function register($path, $fn, $auth_required)
+    public static function register($path, $fn, $auth_required): void
     {
         self::$routes[$path] = ['func' => $fn, 'auth' => $auth_required];
     }
@@ -27,7 +27,7 @@ class Api_router
         return null;
     }
 
-    public static function dbg()
+    public static function dbg(): array
     {
         return self::$routes;
     }

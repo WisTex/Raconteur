@@ -122,6 +122,7 @@ class PhotoGd extends PhotoDriver
 
         $this->image = imagerotate($this->image, $degrees, 0);
         $this->setDimensions();
+        return true;
     }
 
     public function flip($horiz = true, $vert = false)
@@ -145,6 +146,7 @@ class PhotoGd extends PhotoDriver
         }
         $this->image = $flipped;
         $this->setDimensions(); // Shouldn't really be necessary
+        return true;
     }
 
     public function cropImageRect($maxx, $maxy, $x, $y, $w, $h)
@@ -165,6 +167,7 @@ class PhotoGd extends PhotoDriver
         }
         $this->image = $dest;
         $this->setDimensions();
+        return true;
     }
 
     /**

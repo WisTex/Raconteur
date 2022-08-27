@@ -232,6 +232,7 @@ class Router
                 require_once($theme_info_file);
             }
 
+            $a = [];
             if (function_exists(str_replace('-', '_', $current_theme[0]) . '_init')) {
                 $func = str_replace('-', '_', $current_theme[0]) . '_init';
                 $func($a);

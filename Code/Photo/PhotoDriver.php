@@ -313,6 +313,7 @@ abstract class PhotoDriver
             }
         }
         $this->doScaleImage($dest_width, $dest_height);
+        return true;
     }
 
     /**
