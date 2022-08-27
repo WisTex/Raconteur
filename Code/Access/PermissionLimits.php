@@ -40,13 +40,13 @@ class PermissionLimits
      *
      * @return array
      */
-    public static function Std_Limits()
+    public static function Std_Limits(): array
     {
         $limits = [];
         $perms = Permissions::Perms();
 
         foreach ($perms as $k => $v) {
-            if (strstr($k, 'view')) {
+            if (str_starts_with($k, 'view')) {
                 $limits[$k] = PERMS_PUBLIC;
             } else {
                 $limits[$k] = PERMS_SPECIFIC;
@@ -59,13 +59,14 @@ class PermissionLimits
     /**
      * @brief Sets a permission limit for a channel.
      *
-     * @param int $channel_id
+     * @param int|string $channel_id
      * @param string $perm
      * @param int $perm_limit one of PERMS_* constants
+     * @return mixed
      */
-    public static function Set($channel_id, $perm, $perm_limit)
+    public static function Set(int|string $channel_id, string $perm, int $perm_limit): mixed
     {
-        PConfig::Set($channel_id, 'perm_limits', $perm, $perm_limit);
+        return PConfig::Set($channel_id, 'perm_limits', $perm, $perm_limit);
     }
 
     /**
@@ -75,14 +76,14 @@ class PermissionLimits
      * return this permission limit, if not set, return an array with all
      * permission limits.
      *
-     * @param int $channel_id
+     * @param int|string $channel_id
      * @param string $perm (optional)
-     * @return bool|int|array
+     * @return mixed
      *   * \b false if no perm_limits set for this channel
      *   * \b int if $perm is set, return one of PERMS_* constants for this permission, default 0
      *   * \b array with all permission limits, if $perm is not set
      */
-    public static function Get($channel_id, $perm = '')
+    public static function Get(int|string $channel_id, string $perm = ''): mixed
     {
 
         if (! intval($channel_id)) {

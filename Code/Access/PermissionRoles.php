@@ -20,7 +20,7 @@ class PermissionRoles
      *
      * @return int
      */
-    public static function version()
+    public static function version(): int
     {
         return 3;
     }
@@ -132,7 +132,7 @@ class PermissionRoles
      *
      * @return array
      */
-    public static function roles()
+    public static function roles(): array
     {
         $roles = [
             t('Social Networking') => [

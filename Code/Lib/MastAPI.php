@@ -2,9 +2,6 @@
 
 namespace Code\Lib;
 
-use App;
-use Code\Lib\PConfig;
-use Code\Lib\Channel;
 
 class MastAPI
 {
@@ -53,8 +50,8 @@ class MastAPI
         $ret['username'] = $channel['channel_address'];
         $ret['acct'] = $channel['channel_address'];
         $ret['display_name'] = $channel['channel_name'];
-        $ret['locked'] = ((intval(PConfig::Get($channel['channel_id'], 'system', 'autoperms'))) ? false : true);
-        $ret['discoverable'] = ((1 - intval($channel['xchan_hidden'])) ? true : false);
+        $ret['locked'] = !intval(PConfig::Get($channel['channel_id'], 'system', 'autoperms'));
+        $ret['discoverable'] = (bool)((1 - intval($channel['xchan_hidden'])));
         $ret['created_at'] = datetime_convert('UTC', 'UTC', $a[0]['account_created'], ATOM_TIME);
         $ret['note'] = bbcode($p[0]['about'], ['export' => true]);
         $ret['url'] = Channel::url($channel);
@@ -92,8 +89,8 @@ class MastAPI
         $ret['description'] = bbcode(get_config('system', 'siteinfo', ''), ['export' => true]);
         $ret['email'] = get_config('system', 'admin_email');
         $ret['version'] = System::get_project_version();
-        $ret['registrations'] = (($register) ? true : false);
-        $ret['approval_required'] = (($register === REGISTER_APPROVE) ? true : false);
+        $ret['registrations'] = (bool)$register;
+        $ret['approval_required'] = ($register === REGISTER_APPROVE);
         $ret['invites_enabled'] = false;
         $ret['urls'] = [];
         $ret['stats'] = [

@@ -6,11 +6,10 @@ namespace Code\Lib;
  * @brief Some functions for BB and markdown conversions
  */
 
+use InvalidArgumentException;
 use Michelf\MarkdownExtra;
 use League\HTMLToMarkdown\HtmlConverter;
 use League\HTMLToMarkdown\Environment;
-use League\HTMLToMarkdown\Converter\ConverterInterface;
-use League\HTMLToMarkdown\ElementInterface;
 use Code\Extend\Hook;
 
 require_once("include/event.php");
@@ -49,7 +48,7 @@ class Markdown
         $s = html_entity_decode($s, ENT_COMPAT, 'UTF-8');
 
         // if empty link text replace with the url
-        $s = preg_replace("/\[\]\((.*?)\)/ism", '[$1]($1)', $s);
+        $s = preg_replace("/\[]\((.*?)\)/ism", '[$1]($1)', $s);
 
         $x = [
             'text' => $s,
@@ -68,7 +67,7 @@ class Markdown
         $s = $x['text'];
 
         // Escaping the hash tags
-        $s = preg_replace('/\#([^\s\#])/', '&#35;$1', $s);
+        $s = preg_replace('/#([^\s#])/', '&#35;$1', $s);
 
         $s = MarkdownExtra::defaultTransform($s);
 
@@ -84,17 +83,17 @@ class Markdown
 
         // Convert everything that looks like a link to a link
         if ($use_zrl) {
-            if (strpos($s, '[/img]') !== false) {
-                $s = preg_replace_callback("/\[img\](.*?)\[\/img\]/ism", ['\\Code\\Lib\\Markdown', 'use_zrl_cb_img'], $s);
-                $s = preg_replace_callback("/\[img\=([0-9]*)x([0-9]*)\](.*?)\[\/img\]/ism", ['\\Code\\Lib\\Markdown', 'use_zrl_cb_img_x'], $s);
+            if (str_contains($s, '[/img]')) {
+                $s = preg_replace_callback("/\[img](.*?)\[\/img]/ism", ['\\Code\\Lib\\Markdown', 'use_zrl_cb_img'], $s);
+                $s = preg_replace_callback("/\[img=([0-9]*)x([0-9]*)](.*?)\[\/img]/ism", ['\\Code\\Lib\\Markdown', 'use_zrl_cb_img_x'], $s);
             }
-            $s = preg_replace_callback("/([^\]\=\{\/]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", ['\\Code\\Lib\\Markdown', 'use_zrl_cb_link'], $s);
+            $s = preg_replace_callback("/([^]={\/]|^)(https?:\/\/)([a-zA-Z0-9\pL:\/\-?&;.=_~#%\$!+,@()]+)/imu", ['\\Code\\Lib\\Markdown', 'use_zrl_cb_link'], $s);
         } else {
-            $s = preg_replace("/([^\]\=\{\/]|^)(https?\:\/\/)([a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]+)/ismu", '$1[url=$2$3]$2$3[/url]', $s);
+            $s = preg_replace("/([^]={\/]|^)(https?:\/\/)([a-zA-Z0-9\pL:\/\-?&;.=_~#%\$!+,@()]+)/imu", '$1[url=$2$3]$2$3[/url]', $s);
         }
 
         // remove duplicate adjacent code tags
-        $s = preg_replace("/(\[code\])+(.*?)(\[\/code\])+/ism", "[code]$2[/code]", $s);
+        $s = preg_replace("/(\[code])+(.*?)(\[\/code])+/ism", "[code]$2[/code]", $s);
 
         /**
          * @hooks markdown_to_bb
@@ -251,12 +250,12 @@ class Markdown
  //           $Text
  //       );
 
-        $Text = preg_replace('/#\^\[([zu])rl\=(.*?)\](.*?)\[\/([zu])rl\]/i', '[$1rl=$2]$3[/$4rl]', $Text);
+        $Text = preg_replace('/#\^\[([zu])rl=(.*?)](.*?)\[\/([zu])rl]/i', '[$1rl=$2]$3[/$4rl]', $Text);
 
         // Converting images with size parameters to simple images. Markdown doesn't know it.
-        $Text = preg_replace("/\[img\=([0-9]*)x([0-9]*)\](.*?)\[\/img\]/ism", '[img]$3[/img]', $Text);
+        $Text = preg_replace("/\[img=([0-9]*)x([0-9]*)](.*?)\[\/img]/ism", '[img]$3[/img]', $Text);
 
-        $Text = preg_replace_callback("/\[share(.*?)\](.*?)\[\/share\]/ism", ['\\Code\\Lib\\Markdown', 'from_bbcode_share'], $Text);
+        $Text = preg_replace_callback("/\[share(.*?)](.*?)\[\/share]/ism", ['\\Code\\Lib\\Markdown', 'from_bbcode_share'], $Text);
 
         $x = ['bbcode' => $Text, 'options' => $options];
 
@@ -287,7 +286,7 @@ class Markdown
         $Text = preg_replace("/<http(.*?)>/is", "http$1", $Text);
 
         // Remove empty zrl links
-        $Text = preg_replace("/\[zrl\=\].*?\[\/zrl\]/is", "", $Text);
+        $Text = preg_replace("/\[zrl=].*?\[\/zrl]/is", "", $Text);
 
         $Text = trim($Text);
 
@@ -302,7 +301,7 @@ class Markdown
 
 
     /**
-     * @brief Convert a HTML text into Markdown.
+     * @brief Convert HTML text into Markdown.
      *
      * This function uses the library league/html-to-markdown for this task.
      *
@@ -347,69 +346,3 @@ class Markdown
 // This interface was suggested as a workaround.
 // author: Mark Hamstra
 // https://github.com/Mark-H/Docs
-
-
-class TableConverter implements ConverterInterface
-{
-    /**
-     * @param ElementInterface $element
-     *
-     * @return string
-     */
-    public function convert(ElementInterface $element)
-    {
-        switch ($element->getTagName()) {
-            case 'tr':
-                $line = [];
-                $i = 1;
-                foreach ($element->getChildren() as $td) {
-                    $i++;
-                    $v = $td->getValue();
-                    $v = trim($v);
-                    if ($i % 2 === 0 || $v !== '') {
-                        $line[] = $v;
-                    }
-                }
-                return '| ' . implode(' | ', $line) . " |\n";
-            case 'td':
-            case 'th':
-                return trim($element->getValue());
-            case 'tbody':
-                return trim($element->getValue());
-            case 'thead':
-                $children = $element->getChildren();
-                $headerLine = reset($children)->getValue();
-                $headers = explode(' | ', trim(trim($headerLine, "\n"), '|'));
-                $hr = [];
-                foreach ($headers as $td) {
-                    $length = strlen(trim($td)) + 2;
-                    $hr[] = str_repeat('-', $length > 3 ? $length : 3);
-                }
-                $hr = '|' . implode('|', $hr) . '|';
-                return $headerLine . $hr . "\n";
-            case 'table':
-                $inner = $element->getValue();
-                if (strpos($inner, '-----') === false) {
-                    $inner = explode("\n", $inner);
-                    $single = explode(' | ', trim($inner[0], '|'));
-                    $hr = [];
-                    foreach ($single as $td) {
-                        $length = strlen(trim($td)) + 2;
-                        $hr[] = str_repeat('-', $length > 3 ? $length : 3);
-                    }
-                    $hr = '|' . implode('|', $hr) . '|';
-                    array_splice($inner, 1, 0, $hr);
-                    $inner = implode("\n", $inner);
-                }
-                return trim($inner) . "\n\n";
-        }
-        return $element->getValue();
-    }
-    /**
-     * @return string[]
-     */
-    public function getSupportedTags()
-    {
-        return array('table', 'tr', 'thead', 'td', 'tbody');
-    }
-}

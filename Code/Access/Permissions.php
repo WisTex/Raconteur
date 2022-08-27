@@ -2,8 +2,9 @@
 
 namespace Code\Access;
 
-use Code\Lib as Zlib;
+use Code\Lib\Apps;
 use Code\Lib\Channel;
+use Code\Lib\Permcat;
 use Code\Extend\Hook;
 
 /**
@@ -41,9 +42,9 @@ class Permissions
      *
      * This must match the version in PermissionRoles.php before permission updates can run.
      *
-     * @return number
+     * @return int
      */
-    public static function version()
+    public static function version(): int
     {
         return 3;
     }
@@ -54,7 +55,7 @@ class Permissions
      * @param string $filter (optional) only passed to hook permissions_list
      * @return array Associative array with permissions and short description.
      */
-    public static function Perms($filter = '')
+    public static function Perms($filter = ''): array
     {
 
         $perms = [
@@ -127,11 +128,6 @@ class Permissions
      */
     public static function FilledPerms($arr)
     {
-        if (is_null($arr) || (! is_array($arr))) {
-            btlogger('FilledPerms: ' . print_r($arr, true));
-            $arr = [];
-        }
-
         $everything = self::Perms();
         $ret = [];
         foreach ($everything as $k => $v) {
@@ -141,7 +137,6 @@ class Permissions
                 $ret[$k] = 0;
             }
         }
-
         return $ret;
     }
 
@@ -231,9 +226,9 @@ class Permissions
 
         // If a default permcat exists, use that
 
-        $pc = ((Zlib\Apps::system_app_installed($channel_id, 'Roles')) ? get_pconfig($channel_id, 'system', 'default_permcat') : 'default');
+        $pc = ((Apps::system_app_installed($channel_id, 'Roles')) ? get_pconfig($channel_id, 'system', 'default_permcat') : 'default');
         if (! in_array($pc, [ '','default' ])) {
-            $pcp = new Zlib\Permcat($channel_id);
+            $pcp = new Permcat($channel_id);
             $permcat = $pcp->fetch($pc);
             if ($permcat && $permcat['perms']) {
                 foreach ($permcat['perms'] as $p) {

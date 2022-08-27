@@ -18,28 +18,28 @@ class AccessControl
      * @brief Allow contacts
      * @var string
      */
-    private $allow_cid;
+    protected string $allow_cid;
     /**
      * @brief Allow groups
      * @var string
      */
-    private $allow_gid;
+    protected string $allow_gid;
     /**
      * @brief Deny contacts
      * @var string
      */
-    private $deny_cid;
+    protected string $deny_cid;
     /**
      * @brief Deny groups
      * @var string
      */
-    private $deny_gid;
+    protected string $deny_gid;
     /**
      * @brief Indicates if we are using the default constructor values or
      * values that have been set explicitly.
      * @var bool
      */
-    private $explicit;
+    protected bool $explicit;
 
 
     /**
@@ -49,12 +49,12 @@ class AccessControl
      * that you provide to the set() or set_from_array() functions.
      *
      * @param array $channel A channel array, where these entries are evaluated:
-     *   * \e string \b channel_allow_cid => string of allowed cids
-     *   * \e string \b channel_allow_gid => string of allowed gids
-     *   * \e string \b channel_deny_cid => string of denied cids
-     *   * \e string \b channel_deny_gid => string of denied gids
+     *   * \e string \b channel_allow_cid => string of allowed xchan_hash
+     *   * \e string \b channel_allow_gid => string of allowed group_id
+     *   * \e string \b channel_deny_cid => string of denied xchan_hash
+     *   * \e string \b channel_deny_gid => string of denied group_id
      */
-    public function __construct($channel)
+    public function __construct(array $channel)
     {
         if ($channel) {
             $this->allow_cid = $channel['channel_allow_cid'];
@@ -77,7 +77,7 @@ class AccessControl
      *
      * @return bool
      */
-    public function get_explicit()
+    public function get_explicit(): bool
     {
         return $this->explicit;
     }
@@ -90,13 +90,13 @@ class AccessControl
      * that you provide to the constructor or set_from_array().
      *
      * @param array $arr
-     *   * \e string \b allow_cid => string of allowed cids
-     *   * \e string \b allow_gid => string of allowed gids
-     *   * \e string \b deny_cid  => string of denied cids
-     *   * \e string \b deny_gid  => string of denied gids
+     *   * \e string \b allow_cid => string of allowed xchan_hash
+     *   * \e string \b allow_gid => string of allowed group_id
+     *   * \e string \b deny_cid  => string of denied xchan_hash
+     *   * \e string \b deny_gid  => string of denied group_id
      * @param bool $explicit (optional) default true
      */
-    public function set($arr, $explicit = true)
+    public function set(array $arr, bool $explicit = true): void
     {
         $this->allow_cid = $arr['allow_cid'];
         $this->allow_gid = $arr['allow_gid'];
@@ -111,12 +111,12 @@ class AccessControl
      * where the elements are directly storable.
      *
      * @return array An associative array with:
-     *   * \e string \b allow_cid => string of allowed cids
-     *   * \e string \b allow_gid => string of allowed gids
-     *   * \e string \b deny_cid  => string of denied cids
-     *   * \e string \b deny_gid  => string of denied gids
+     *   * \e string \b allow_cid => string of allowed xchan_hash
+     *   * \e string \b allow_gid => string of allowed group_id
+     *   * \e string \b deny_cid  => string of denied xchan_hash
+     *   * \e string \b deny_gid  => string of denied group_id
      */
-    public function get()
+    public function get(): array
     {
         return [
             'allow_cid' => $this->allow_cid,
@@ -137,13 +137,13 @@ class AccessControl
      * that you provide to the constructor or set().
      *
      * @param array $arr An associative array with:
-     *   * \e array|string \b contact_allow => array with cids or comma-seperated string
-     *   * \e array|string \b group_allow   => array with gids or comma-seperated string
-     *   * \e array|string \b contact_deny  => array with cids or comma-seperated string
-     *   * \e array|string \b group_deny    => array with gids or comma-seperated string
+     *   * \e array|string \b contact_allow => array of xchan_hash or comma-seperated string
+     *   * \e array|string \b group_allow   => array of group_id or comma-seperated string
+     *   * \e array|string \b contact_deny  => array of xchan_hash or comma-seperated string
+     *   * \e array|string \b group_deny    => array of group_id or comma-seperated string
      * @param bool $explicit (optional) default true
      */
-    public function set_from_array($arr, $explicit = true)
+    public function set_from_array(array $arr, bool $explicit = true): void
     {
         $this->allow_cid = perms2str((is_array($arr['contact_allow']))
             ? $arr['contact_allow'] : explode(',', $arr['contact_allow']));
@@ -162,7 +162,7 @@ class AccessControl
      *
      * @return bool Return true if any of allow_* deny_* values is set.
      */
-    public function is_private()
+    public function is_private(): bool
     {
         return $this->allow_cid || $this->allow_gid || $this->deny_cid || $this->deny_gid;
     }
