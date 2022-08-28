@@ -149,7 +149,7 @@ class Friendica
 
 
         if ($self_contact['avatar']) {
-            $p = Url::get($self_contact['avatar'], true);
+            $p = Url::get($self_contact['avatar']);
             if ($p['success']) {
                 $h = explode("\n", $p['header']);
                 foreach ($h as $l) {
@@ -174,7 +174,7 @@ class Friendica
                 'xchan_guid' => $channel['channel_guid'],
                 'xchan_guid_sig' => $channel['channel_guid_sig'],
                 'xchan_pubkey' => $channel['channel_pubkey'],
-                'xchan_photo_mimetype' => (($photo_type) ? $photo_type : 'image/png'),
+                'xchan_photo_mimetype' => (($phototype) ? $phototype : 'image/png'),
                 'xchan_photo_l' => z_root() . "/photo/profile/l/{$newuid}",
                 'xchan_photo_m' => z_root() . "/photo/profile/m/{$newuid}",
                 'xchan_photo_s' => z_root() . "/photo/profile/s/{$newuid}",

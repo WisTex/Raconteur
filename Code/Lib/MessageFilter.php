@@ -25,10 +25,10 @@ class MessageFilter
         // Language matching is a bit tricky, because the language can be ambiguous (detect_language() returns '').
         // If the language is ambiguous, the message will pass (be accepted) regardless of language rules.
 
-        if (strpos($incl, 'lang=') !== false
-                || strpos($excl, 'lang=') !== false
-                || strpos($incl, 'lang!=') !== false
-                || strpos($excl, 'lang!=') !== false) {
+        if (str_contains($incl, 'lang=')
+                || str_contains($excl, 'lang=')
+                || str_contains($incl, 'lang!=')
+                || str_contains($excl, 'lang!=')) {
             $detector = new LanguageDetect();
             $lang = $detector->detect($text);
         }
@@ -45,39 +45,39 @@ class MessageFilter
                 if (! $word) {
                     continue;
                 }
-                if (isset($lang) && ((strpos($word, 'lang=') === 0) || (strpos($word, 'lang!=') === 0))) {
+                if (isset($lang) && ((str_starts_with($word, 'lang=')) || (str_starts_with($word, 'lang!=')))) {
                     if (! strlen($lang)) {
                         // Result is ambiguous. As we are matching deny rules only at this time, continue tests.
                         // Any matching deny rule concludes testing.
                         continue;
                     }
-                    if (strpos($word, 'lang=') === 0 && strcasecmp($lang, trim(substr($word, 5))) == 0) {
+                    if (str_starts_with($word, 'lang=') && strcasecmp($lang, trim(substr($word, 5))) == 0) {
                         return false;
-                    } elseif (strpos($word, 'lang!=') === 0 && strcasecmp($lang, trim(substr($word, 6))) != 0) {
+                    } elseif (str_starts_with($word, 'lang!=') && strcasecmp($lang, trim(substr($word, 6))) != 0) {
                         return false;
                     }
                 }
-                elseif (substr($word, 0, 1) === '#' && $tags) {
+                elseif (str_starts_with($word, '#') && $tags) {
                     foreach ($tags as $t) {
                         if ((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word, 1)) || (substr($word, 1) === '*'))) {
                             return false;
                         }
                     }
-                } elseif (substr($word, 0, 1) === '$' && $tags) {
+                } elseif (str_starts_with($word, '$') && $tags) {
                     foreach ($tags as $t) {
                         if (($t['ttype'] == TERM_CATEGORY) && (($t['term'] === substr($word, 1)) || (substr($word, 1) === '*'))) {
                             return false;
                         }
                     }
-                } elseif (substr($word, 0, 2) === '?+') {
+                } elseif (str_starts_with($word, '?+')) {
                     if (self::test_condition(substr($word, 2), $item['obj'])) {
                         return false;
                     }
-                } elseif (substr($word, 0, 1) === '?') {
+                } elseif (str_starts_with($word, '?')) {
                     if (self::test_condition(substr($word, 1), $item)) {
                         return false;
                     }
-                } elseif ((strpos($word, '/') === 0) && preg_match($word, $item['body'])) {
+                } elseif ((str_starts_with($word, '/')) && preg_match($word, $item['body'])) {
                     return false;
                 } elseif (stristr($item['body'], $word) !== false) {
                     return false;
@@ -93,44 +93,44 @@ class MessageFilter
                 if (! $word) {
                     continue;
                 }
-                if (isset($lang) && ((strpos($word, 'lang=') === 0) || (strpos($word, 'lang!=') === 0))) {
+                if (isset($lang) && ((str_starts_with($word, 'lang=')) || (str_starts_with($word, 'lang!=')))) {
                     // lang= or lang!= match
                     if (! strlen($lang))  {
                         // Result is ambiguous. However we are checking allow rules
                         // and an ambiguous language is always permitted.
                         return true;
                     }
-                    if (strpos($word, 'lang=') === 0 && strcasecmp($lang, trim(substr($word, 5))) == 0) {
+                    if (str_starts_with($word, 'lang=') && strcasecmp($lang, trim(substr($word, 5))) == 0) {
                         return true;
-                    } elseif (strpos($word, 'lang!=') === 0 && strcasecmp($lang, trim(substr($word, 6))) != 0) {
+                    } elseif (str_starts_with($word, 'lang!=') && strcasecmp($lang, trim(substr($word, 6))) != 0) {
                         return true;
                     }
                 }
-                elseif (substr($word, 0, 1) === '#' && $tags) {
+                elseif (str_starts_with($word, '#') && $tags) {
                     // #hashtag match
                     foreach ($tags as $t) {
                         if ((($t['ttype'] == TERM_HASHTAG) || ($t['ttype'] == TERM_COMMUNITYTAG)) && (($t['term'] === substr($word, 1)) || (substr($word, 1) === '*'))) {
                             return true;
                         }
                     }
-                } elseif (substr($word, 0, 1) === '$' && $tags) {
+                } elseif (str_starts_with($word, '$') && $tags) {
                     // $category match
                     foreach ($tags as $t) {
                         if (($t['ttype'] == TERM_CATEGORY) && (($t['term'] === substr($word, 1)) || (substr($word, 1) === '*'))) {
                             return true;
                         }
                     }
-                } elseif (substr($word, 0, 2) === '?+') {
+                } elseif (str_starts_with($word, '?+')) {
                     // ?+field item.obj field match
                     if (self::test_condition(substr($word, 2), $item['obj'])) {
                         return true;
                     }
-                } elseif (substr($word, 0, 1) === '?') {
+                } elseif (str_starts_with($word, '?')) {
                     // ?item match
                     if (self::test_condition(substr($word, 1), $item)) {
                         return true;
                     }
-                } elseif ((strpos($word, '/') === 0) && preg_match($word, $text)) {
+                } elseif ((str_starts_with($word, '/')) && preg_match($word, $text)) {
                     // /regular expression match/
                     return true;
                 } elseif (stristr($text, $word) !== false) {
@@ -173,7 +173,7 @@ class MessageFilter
     public static function test_condition($s,$item)
     {
 
-        if (preg_match('/(.*?)\s\~\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s~=\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if (stripos($x, trim($matches[2])) !== false) {
                 return true;
@@ -181,7 +181,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\=\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s==\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if ($x == trim($matches[2])) {
                 return true;
@@ -189,7 +189,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\!\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s!=\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if ($x != trim($matches[2])) {
                 return true;
@@ -197,7 +197,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\>\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s>=\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if ($x >= trim($matches[2])) {
                 return true;
@@ -205,7 +205,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\<\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s<=\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if ($x <= trim($matches[2])) {
                 return true;
@@ -213,7 +213,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\>\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s>\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if ($x > trim($matches[2])) {
                 return true;
@@ -221,7 +221,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\>\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s>\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if ($x < trim($matches[2])) {
                 return true;
@@ -229,7 +229,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/[\$](.*?)\s\{\}\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\{}\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if (is_array($x) && in_array(trim($matches[2]), $x)) {
                 return true;
@@ -237,7 +237,7 @@ class MessageFilter
             return false;
         }
 
-        if (preg_match('/(.*?)\s\{\*\}\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/(.*?)\s\{\*}\s(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if (is_array($x) && array_key_exists(trim($matches[2]), $x)) {
                 return true;
@@ -246,7 +246,7 @@ class MessageFilter
         }
 
         // Ordering of this check (for falsiness) with relation to the following one (check for truthiness) is important.
-        if (preg_match('/\!(.*?)$/', $s, $matches)) {
+        if (preg_match('/!(.*?)$/', $s, $matches)) {
             $x = ((array_key_exists(trim($matches[1]),$item)) ? $item[trim($matches[1])] : EMPTY_STR);
             if (!$x) {
                 return true;

@@ -35,7 +35,7 @@ class OAuth2Storage extends Pdo
 
     /**
      *
-     * @param array $user
+     * @param string $user
      * @param string $password
      * @return bool
      */
@@ -43,7 +43,7 @@ class OAuth2Storage extends Pdo
     {
 
         $x = account_verify_password($user, $password);
-        return((array_key_exists('channel', $x) && ! empty($x['channel'])) ? true : false);
+        return (array_key_exists('channel', $x) && ! empty($x['channel']));
     }
 
     /**
@@ -147,7 +147,7 @@ class OAuth2Storage extends Pdo
     {
         // if it exists, update it.
         if ($this->getClientDetails($client_id)) {
-            $stmt = $this->db->prepare($sql = sprintf('UPDATE %s SET client_secret=:client_secret, redirect_uri=:redirect_uri, grant_types=:grant_types, scope=:scope, user_id=:user_id, client_name=:client_name where client_id=:client_id', $this->config['client_table']));
+            $stmt = $this->db->prepare(sprintf('UPDATE %s SET client_secret=:client_secret, redirect_uri=:redirect_uri, grant_types=:grant_types, scope=:scope, user_id=:user_id, client_name=:client_name where client_id=:client_id', $this->config['client_table']));
         } else {
             $stmt = $this->db->prepare(sprintf('INSERT INTO %s (client_id, client_secret, redirect_uri, grant_types, scope, user_id, client_name) VALUES (:client_id, :client_secret, :redirect_uri, :grant_types, :scope, :user_id, :client_name)', $this->config['client_table']));
         }
