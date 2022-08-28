@@ -19,8 +19,6 @@ class Libzotdir
 
     public static function get_directory_setting($observer, $setting)
     {
-
-
         if ($observer) {
             $ret = get_xconfig($observer, 'directory', $setting);
         } else {

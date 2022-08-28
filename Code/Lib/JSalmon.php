@@ -10,7 +10,7 @@ class JSalmon
     public static function sign($data, $key_id, $key, $data_type = 'application/x-nomad+json'): array
     {
 
-        $data = base64url_encode(json_encode($data, true), true); // strip padding
+        $data = base64url_encode(json_encode($data, true)); // strip padding
         $encoding = 'base64url';
         $algorithm = 'RSA-SHA256';
 
@@ -18,9 +18,9 @@ class JSalmon
 
         // precomputed base64url encoding of data_type, encoding, algorithm concatenated with periods
 
-        $precomputed = '.' . base64url_encode($data_type, true) . '.YmFzZTY0dXJs.UlNBLVNIQTI1Ng';
+        $precomputed = '.' . base64url_encode($data_type) . '.YmFzZTY0dXJs.UlNBLVNIQTI1Ng';
 
-        $signature = base64url_encode(Crypto::sign($data . $precomputed, $key), true);
+        $signature = base64url_encode(Crypto::sign($data . $precomputed, $key));
 
         return ([
             'signed' => true,
@@ -30,14 +30,13 @@ class JSalmon
             'alg' => $algorithm,
             'sigs' => [
                 'value' => $signature,
-                'key_id' => base64url_encode($key_id, true)
+                'key_id' => base64url_encode($key_id)
             ]
         ]);
     }
 
     public static function verify($x): array|bool
     {
-
         logger('verify');
         $ret = ['results' => []];
 
@@ -49,9 +48,9 @@ class JSalmon
         }
 
         $signed_data = preg_replace('/\s+/', '', $x['data']) . '.'
-            . base64url_encode($x['data_type'], true) . '.'
-            . base64url_encode($x['encoding'], true) . '.'
-            . base64url_encode($x['alg'], true);
+            . base64url_encode($x['data_type']) . '.'
+            . base64url_encode($x['encoding']) . '.'
+            . base64url_encode($x['alg']);
 
         $key = HTTPSig::get_key(EMPTY_STR, 'zot6', base64url_decode($x['sigs']['key_id']));
         logger('key: ' . print_r($key, true));

@@ -3,7 +3,6 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Channel;
 use Code\Extend\Hook;
 use URLify;
 
@@ -18,7 +17,7 @@ class System
         return PLATFORM_NAME;
     }
 
-    public static function get_site_name()
+    public static function get_site_name(): string
     {
         if (is_array(App::$sys_channel) && isset(App::$sys_channel['channel_name'])) {
             return App::$sys_channel['channel_name'];
@@ -83,7 +82,7 @@ class System
         return self::get_std_version();
     }
 
-    public static function get_update_version()
+    public static function get_update_version(): int|string
     {
         if (is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['hide_version']) {
             return EMPTY_STR;
@@ -145,7 +144,7 @@ class System
         return $x['revision'];
     }
 
-    public static function get_std_version()
+    public static function get_std_version(): string
     {
         if (defined('STD_VERSION')) {
             return STD_VERSION;
@@ -153,12 +152,4 @@ class System
         return '0.0.0';
     }
 
-    public static function compatible_project($p)
-    {
-
-        if (in_array(strtolower($p), ['hubzilla', 'zap', 'red', 'misty', 'mistpark', 'redmatrix', 'osada', 'roadhouse','streams'])) {
-            return true;
-        }
-        return false;
-    }
 }

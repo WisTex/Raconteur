@@ -106,7 +106,7 @@ class MarkdownSoap
      */
     public function putback_code($s)
     {
-        $text = preg_replace_callback('{' . $this->token . '\;(.*?)\;}xm', [$this, 'decode_code'], $s);
+        $text = preg_replace_callback('{' . $this->token . ';(.*?)\;}xm', [$this, 'decode_code'], $s);
         return $text;
     }
 
@@ -120,7 +120,7 @@ class MarkdownSoap
 
     public function protect_autolinks($s)
     {
-        $s = preg_replace('/\<(https?\:\/\/)(.*?)\>/', '[$1$2]($1$2)', $s);
+        $s = preg_replace('/<(https?:\/\/)(.*?)>/', '[$1$2]($1$2)', $s);
         return $s;
     }
 

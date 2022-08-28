@@ -33,7 +33,7 @@ class Img_filesize
         $fname = basename($url);
         $resolution = 0;
 
-        if (strpos($fname, '.') !== false) {
+        if (str_contains($fname, '.')) {
             $fname = substr($fname, 0, strpos($fname, '.'));
         }
 

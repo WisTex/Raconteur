@@ -2,8 +2,7 @@
 
 namespace Code\Lib;
 
-use Code\Lib\Libsync;
-use Code\Lib\Channel;
+use App;
 use Code\Render\Theme;
 
 
@@ -205,8 +204,8 @@ class Menu
             dbesc($menu_desc),
             intval($menu_flags),
             intval($menu_channel_id),
-            dbesc(datetime_convert('UTC', 'UTC', (($arr['menu_created']) ? $arr['menu_created'] : $t))),
-            dbesc(datetime_convert('UTC', 'UTC', (($arr['menu_edited']) ? $arr['menu_edited'] : $t)))
+            dbesc(datetime_convert('UTC', 'UTC', (($arr['menu_created']) ?: $t))),
+            dbesc(datetime_convert('UTC', 'UTC', (($arr['menu_edited']) ?: $t)))
         );
         if (! $r) {
             return false;
@@ -359,7 +358,7 @@ class Menu
                 if ($delete) {
                     $m['menu_delete'] = 1;
                 }
-                Libsync::build_sync_packet($uid, array('menu' => array(menu_element($c, $m))));
+                Libsync::build_sync_packet($uid, array('menu' => array(self::element($c, $m))));
             }
         }
     }

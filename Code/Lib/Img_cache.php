@@ -2,16 +2,14 @@
 
 namespace Code\Lib;
 
-use Code\Lib\Hashpath;
 use Code\Daemon\Run;
-use Code\Lib\Url;
 
 class Img_cache
 {
 
-    public static $cache_life = 18600 * 7;
+    public static int $cache_life = 18600 * 7;
 
-    public static function get_filename($url, $prefix = '.')
+    public static function get_filename($url, $prefix = '.'): string
     {
         return Hashpath::path($url, $prefix);
     }
@@ -21,10 +19,10 @@ class Img_cache
     // If we do not, or the cache file is empty or expired, return false
     // but attempt to fetch the entry in the background
 
-    public static function check($url, $prefix = '.')
+    public static function check($url, $prefix = '.'): bool
     {
 
-        if (strpos($url, z_root()) !== false) {
+        if (str_contains($url, z_root())) {
             return false;
         }
 
@@ -35,7 +33,7 @@ class Img_cache
                 Run::Summon(['Cache_image', $url, $path]);
                 return false;
             } else {
-                return ((filesize($path)) ? true : false);
+                return (bool)filesize($path);
             }
         }
 
@@ -45,7 +43,7 @@ class Img_cache
         return false;
     }
 
-    public static function url_to_cache($url, $file)
+    public static function url_to_cache($url, $file): bool
     {
 
         $fp = fopen($file, 'wb');

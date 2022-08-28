@@ -9,7 +9,7 @@ use Code\Storage\Stdio;
  *
  * Creates hashed directory structures for fast access and resistance to overloading any single directory with files.
  *
- * Takes a $url which could be any string
+ * Takes $url which could be any string
  * a $prefix which is where to place the hash directory in the filesystem, default is current directory
  * use an empty string for $prefix to place hash directories directly off the root directory
  * an optional $depth to indicate the hash level
@@ -32,7 +32,14 @@ use Code\Storage\Stdio;
 class Hashpath
 {
 
-    public static function path($url, $prefix = '.', $depth = 1, $mkdir = true)
+    /**
+     * @param string $url
+     * @param string $prefix
+     * @param int $depth
+     * @param bool $mkdir
+     * @return string
+     */
+    public static function path(string $url, string $prefix = '.', int $depth = 1, bool $mkdir = true): string
     {
         $hash = hash('sha256', $url);
         $start = 0;
