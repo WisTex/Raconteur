@@ -5,8 +5,8 @@ namespace Code\Lib;
 /**
  * @brief Fetch and return a webfinger for a resource
  *
- * @param string $resource - The resource
- * @return bool|string false or associative array from result JSON
+ * @param string $resource - The resource (required)
+ * @return mixed
  */
 class Webfinger
 {
@@ -34,7 +34,6 @@ class Webfinger
 
         $url = 'https://' . self::$server . '/.well-known/webfinger?f=&resource=' . self::$resource;
 
-
         $s = Url::get($url, ['headers' => ['Accept: application/jrd+json, */*']]);
 
         if ($s['success']) {
@@ -47,7 +46,6 @@ class Webfinger
 
     public static function parse_resource($resource)
     {
-
         self::$resource = urlencode($resource);
 
         if (str_starts_with($resource, 'http')) {
@@ -86,7 +84,7 @@ class Webfinger
      *
      */
 
-    public static function zot_url($resource)
+    public static function nomad_url($resource)
     {
         $arr = self::exec($resource);
 

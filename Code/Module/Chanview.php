@@ -78,7 +78,7 @@ class Chanview extends Controller
             $r = null;
 
             if ($_REQUEST['address']) {
-                $href = Webfinger::zot_url(punify($_REQUEST['address']));
+                $href = Webfinger::nomad_url(punify($_REQUEST['address']));
                 if ($href) {
                     $zf = Zotfinger::exec($href, $channel);
                 }

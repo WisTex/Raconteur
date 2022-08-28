@@ -51,7 +51,7 @@ class Gprobe
         }
 
         if ((!in_array('zot6', $protocols)) && (!in_array('nomad', $protocols))) {
-            $href = Webfinger::zot_url(punify($address));
+            $href = Webfinger::nomad_url(punify($address));
             if ($href) {
                 $zf = Zotfinger::exec($href, $channel);
             }
