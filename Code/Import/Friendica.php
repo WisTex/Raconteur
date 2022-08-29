@@ -73,7 +73,7 @@ class Friendica
         // save channel or die
 
 
-        $channel = import_channel($channel, $this->settings['account_id'], $this->settings['sieze'], $this->settings['newname']);
+        $channel = import_channel($channel, $this->settings['account_id'], $this->settings['seize'], $this->settings['newname']);
         if (!$channel) {
             logger('no channel');
             return;
@@ -174,10 +174,10 @@ class Friendica
                 'xchan_guid' => $channel['channel_guid'],
                 'xchan_guid_sig' => $channel['channel_guid_sig'],
                 'xchan_pubkey' => $channel['channel_pubkey'],
-                'xchan_photo_mimetype' => (($phototype) ? $phototype : 'image/png'),
-                'xchan_photo_l' => z_root() . "/photo/profile/l/{$newuid}",
-                'xchan_photo_m' => z_root() . "/photo/profile/m/{$newuid}",
-                'xchan_photo_s' => z_root() . "/photo/profile/s/{$newuid}",
+                'xchan_photo_mimetype' => (($phototype) ?: 'image/png'),
+                'xchan_photo_l' => z_root() . "/photo/profile/l/$newuid",
+                'xchan_photo_m' => z_root() . "/photo/profile/m/$newuid",
+                'xchan_photo_s' => z_root() . "/photo/profile/s/$newuid",
                 'xchan_addr' => Channel::get_webfinger($channel),
                 'xchan_url' => Channel::url($channel),
                 'xchan_follow' => z_root() . '/follow?f=&url=%s',
@@ -200,8 +200,8 @@ class Friendica
                 'is_default' => 1,
                 'publish' => ((isset($this->data['profile']['publish'])) ? $this->data['profile']['publish'] : 1),
                 'fullname' => $channel['channel_name'],
-                'photo' => z_root() . "/photo/profile/l/{$newuid}",
-                'thumb' => z_root() . "/photo/profile/m/{$newuid}",
+                'photo' => z_root() . "/photo/profile/l/$newuid",
+                'thumb' => z_root() . "/photo/profile/m/$newuid",
                 'homepage' => ((isset($this->data['profile']['homepage'])) ? $this->data['profile']['homepage'] : EMPTY_STR),
             ]
         );

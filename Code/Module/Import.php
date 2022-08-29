@@ -123,7 +123,7 @@ class Import extends Controller
         // handle Friendica export
 
         if (array_path_exists('user/parent-uid', $data)) {
-            $settings = ['account_id' => $account_id, 'sieze' => 1, 'newname' => $newname];
+            $settings = ['account_id' => $account_id, 'seize' => 1, 'newname' => $newname];
             $f = new Friendica($data, $settings);
 
             return;
