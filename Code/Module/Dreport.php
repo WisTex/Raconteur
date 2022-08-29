@@ -28,7 +28,7 @@ class Dreport extends Controller
         }
         $mid = escape_tags($_REQUEST['mid']);
         $message_id = unpack_link_id($mid);
-
+        $message_id = str_replace(['/activity/','/conversation/'], ['/item/','/item/'], $message_id);
         if (!$message_id) {
             notice(t('Invalid message') . EOL);
             return;
