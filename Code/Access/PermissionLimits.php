@@ -59,14 +59,14 @@ class PermissionLimits
     /**
      * @brief Sets a permission limit for a channel.
      *
-     * @param int|string $channel_id
+     * @param mixed $channel_id // will be cast to int
      * @param string $perm
      * @param int $perm_limit one of PERMS_* constants
      * @return mixed
      */
-    public static function Set(int|string $channel_id, string $perm, int $perm_limit): mixed
+    public static function Set(mixed $channel_id, string $perm, int $perm_limit): mixed
     {
-        return PConfig::Set($channel_id, 'perm_limits', $perm, $perm_limit);
+        return PConfig::Set((int)$channel_id, 'perm_limits', $perm, $perm_limit);
     }
 
     /**
@@ -76,22 +76,22 @@ class PermissionLimits
      * return this permission limit, if not set, return an array with all
      * permission limits.
      *
-     * @param int|string $channel_id
+     * @param mixed $channel_id // will be cast to int
      * @param string $perm (optional)
      * @return mixed
      *   * \b false if no perm_limits set for this channel
      *   * \b int if $perm is set, return one of PERMS_* constants for this permission, default 0
      *   * \b array with all permission limits, if $perm is not set
      */
-    public static function Get(int|string $channel_id, string $perm = ''): mixed
+    public static function Get(mixed $channel_id, string $perm = ''): mixed
     {
 
         if (! intval($channel_id)) {
             return false;
         }
-        
+
         if ($perm) {
-            $x = PConfig::Get($channel_id, 'perm_limits', $perm);
+            $x = PConfig::Get((int)$channel_id, 'perm_limits', $perm);
             if ($x === false) {
                 $a = [ 'channel_id' => $channel_id, 'permission' => $perm, 'value' => $x ];
                 Hook::call('permission_limits_get', $a);
@@ -100,7 +100,7 @@ class PermissionLimits
             return intval($x);
         }
 
-        PConfig::Load($channel_id);
+        PConfig::Load((int)$channel_id);
         if (array_key_exists($channel_id, App::$config) && array_key_exists('perm_limits', App::$config[$channel_id])) {
             return App::$config[$channel_id]['perm_limits'];
         }

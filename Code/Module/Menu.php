@@ -10,7 +10,6 @@ use Code\Lib as Zlib;
 use Code\Lib\MenuItem;
 use Code\Render\Theme;
 
-    
 
 class Menu extends Controller
 {
