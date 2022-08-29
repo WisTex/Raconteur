@@ -57,7 +57,7 @@ class Item extends Controller
 
     public function init()
     {
-    
+
         if (ActivityStreams::is_as_request()) {
             $item_uuid = argv(1);
             if (!$item_uuid) {
