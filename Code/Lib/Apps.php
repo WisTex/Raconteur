@@ -378,6 +378,7 @@ class Apps
             'Help' => t('Help'),
             'Invite' => t('Invite'),
             'Language' => t('Language'),
+            'Legal' => t('Legal'),
             'Login' => t('Login'),
             'Mail' => t('Mail'),
             'Markup' => t('Markup'),

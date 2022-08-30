@@ -57,6 +57,7 @@
 					{{include file="field_input.tpl" field=$sitename}}
 					{{include file="field_textarea.tpl" field=$siteinfo}}
 					{{include file="field_textarea.tpl" field=$admininfo}}
+					{{include file="field_textarea.tpl" field=$legal}}
 					{{include file="field_input.tpl" field=$reply_address}}
 					{{include file="field_input.tpl" field=$from_email}}
 					{{include file="field_input.tpl" field=$from_email_name}}

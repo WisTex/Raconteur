@@ -4,6 +4,7 @@ namespace Code\Module\Admin;
 
 use App;
 use Code\Lib\System;
+use Code\Lib\PConfig;
 use Code\Access\PermissionRoles;
 use Code\Lib\Channel;
 use Code\Render\Theme;
@@ -35,6 +36,7 @@ class Site
 
         $admininfo = ((x($_POST, 'admininfo')) ? trim($_POST['admininfo']) : false);
         $siteinfo = ((x($_POST, 'siteinfo')) ? trim($_POST['siteinfo']) : '');
+        $legal = ((x($_POST, 'legal')) ? trim($_POST['legal']) : '');
         $language = ((x($_POST, 'language')) ? notags(trim($_POST['language'])) : 'en');
         $theme = ((x($_POST, 'theme')) ? notags(trim($_POST['theme'])) : '');
 //      $theme_mobile           =   ((x($_POST,'theme_mobile'))     ? notags(trim($_POST['theme_mobile']))          : '');
@@ -124,6 +126,7 @@ class Site
         set_config('system', 'max_imported_follow', $max_imported_follow);
         set_config('system', 'animated_avatars', $animations);
         set_config('system', 'tos_required', $tos_required);
+        PConfig::Set(App::$sys_channel['channel_id'], 'system', 'legal', $legal);
 
         if ($admininfo == '') {
             del_config('system', 'admininfo');
@@ -268,6 +271,10 @@ class Site
 
         $role = ['permissions_role', t('Default permission role for new accounts'), $default_role, t('This role will be used for the first channel created after registration.'), $perm_roles];
 
+        $legal = PConfig::Get(App::$sys_channel['channel_id'], 'system', 'legal');
+        if (!$legal) {
+            $legal = file_get_contents('doc/en/TermsOfService.mc');
+        }
 
         $homelogin = get_config('system', 'login_on_homepage');
         $enable_context_help = get_config('system', 'enable_context_help');
@@ -285,6 +292,7 @@ class Site
             '$sitename' => ['sitename', t("Site name"), htmlspecialchars(get_config('system', 'sitename', App::get_hostname()), ENT_QUOTES, 'UTF-8'), ''],
             '$admininfo' => ['admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  Multicode may be used here.")],
             '$siteinfo' => ['siteinfo', t('Site Information'), get_config('system', 'siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  Multicode may be used here.")],
+            '$legal' => ['legal',t('Legal Information'), htmlspecialchars($legal), ''],
             '$language' => ['language', t("System language"), get_config('system', 'language', 'en'), "", $lang_choices],
             '$theme' => ['theme', t("System theme"), get_config('system', 'theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices],
 //          '$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],

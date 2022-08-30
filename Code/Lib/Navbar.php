@@ -12,7 +12,7 @@ use Code\Lib\Menu;
 use Code\Lib\Head;
 use Code\Render\Theme;
 use Code\Extend\Hook;
-    
+
 require_once('include/security.php');
 require_once('include/conversation.php');
 
@@ -199,10 +199,6 @@ class Navbar {
 
         Hook::call('nav', $x);
 
-        // Not sure the best place to put this on the page. So I'm implementing it but leaving it
-        // turned off until somebody discovers this and figures out a good location for it.
-        $powered_by = '';
-
         if (App::$profile_uid && App::$nav_sel['raw_name']) {
             $active_app = q(
                 "SELECT app_url FROM app WHERE app_channel = %d AND app_name = '%s' LIMIT 1",
@@ -299,7 +295,6 @@ class Navbar {
             '$baseurl' => z_root(),
             '$site_home' => Channel::url($site_channel),
             '$project_icon' => $site_icon,
-            '$project_title' => t('Powered by $Projectname'),
             '$fulldocs' => t('Help'),
             '$sitelocation' => $sitelocation,
             '$nav' => $x['nav'],
@@ -309,7 +304,6 @@ class Navbar {
             '$localuser' => local_channel(),
             '$is_owner' => $is_owner,
             '$sel' => App::$nav_sel,
-            '$powered_by' => $powered_by,
             '$asidetitle' => t('Side Panel'),
             '$help' => t('@name, #tag, ?doc, content'),
             '$pleasewait' => t('Please wait...'),
