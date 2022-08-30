@@ -247,7 +247,7 @@ class Register extends Controller
 
         $tosurl = get_config('system', 'tos_url');
         if (!$tosurl) {
-            $tosurl = z_root() . '/help/TermsOfService';
+            $tosurl = z_root() . '/legal';
         }
 
         $toslink = '<a href="' . $tosurl . '" target="_blank">' . t('Terms of Service') . '</a>';

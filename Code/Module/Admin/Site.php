@@ -9,6 +9,7 @@ use Code\Access\PermissionRoles;
 use Code\Lib\Channel;
 use Code\Render\Theme;
 use Code\Lib\Addon;
+use Code\Module\Legal;
 
 class Site
 {
@@ -262,7 +263,7 @@ class Site
 
         $legal = PConfig::Get(App::$sys_channel['channel_id'], 'system', 'legal');
         if (!$legal) {
-            $legal = file_get_contents('doc/en/TermsOfService.mc');
+            $legal = file_get_contents(Legal::LEGAL_SOURCE);
         }
 
         $homelogin = get_config('system', 'login_on_homepage');

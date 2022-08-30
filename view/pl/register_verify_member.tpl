@@ -29,5 +29,5 @@ Dziękjemy.
 
 --
 Warunki świadczenia usług:
-{{$siteurl}}/help/TermsOfService
+{{$siteurl}}/legal
 

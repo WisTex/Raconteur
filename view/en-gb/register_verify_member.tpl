@@ -31,5 +31,5 @@ Thank you.
 
 --
 Terms Of Service:
-{{$siteurl}}/help/TermsOfService
+{{$siteurl}}/legal
 

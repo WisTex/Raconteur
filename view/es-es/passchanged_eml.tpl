@@ -21,4 +21,4 @@ Atentamente,
 
 --
 Términos del servicio
-{{$siteurl}}/help/TermsOfService
+{{$siteurl}}/legal

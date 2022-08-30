@@ -31,5 +31,5 @@
 
 --
 Условия использования сервиса:
-{{$siteurl}}/help/TermsOfService
+{{$siteurl}}/legal
  

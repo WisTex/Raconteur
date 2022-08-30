@@ -21,4 +21,4 @@
 
 --
 Условия предоставления услуг:
-{{$siteurl}}/help/TermsOfService
+{{$siteurl}}/legal

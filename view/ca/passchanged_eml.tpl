@@ -21,4 +21,4 @@ Atentament,
 
 --
 Condicions del servei:
-{{$siteurl}}/help/TermsOfService
+{{$siteurl}}/legal
