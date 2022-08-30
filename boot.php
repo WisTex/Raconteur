@@ -2460,10 +2460,9 @@ function z_get_temp_dir() {
  */
 function z_check_cert() {
     if(strpos(z_root(), 'https://') !== false) {
-        $x = Url::get(z_root() . '/siteinfo');
+        $x = Url::get(z_root() . '/fastping/pong');
         if(! $x['success']) {
-            $recurse = 0;
-            $y = Url::get(z_root() . '/siteinfo', ['novalidate' => true]);
+            $y = Url::get(z_root() . '/fastping/pong', ['novalidate' => true]);
             if($y['success'])
                 cert_bad_email();
         }

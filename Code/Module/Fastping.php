@@ -29,7 +29,10 @@ class Fastping extends Controller
 
     public function init()
     {
-
+        // Provide a general purpose ping endpoint to check server health.
+        if (argc() > 1 && argv(1) === 'pong') {
+            json_return_and_die(['success' => true ]);
+        }
         $result['notice'] = [];
         $result['info'] = [];
 

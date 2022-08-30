@@ -2710,13 +2710,6 @@ class Libzot
             $access_policy = ACCESS_PRIVATE;
         }
 
-        if ($access_policy != ACCESS_PRIVATE) {
-            $x = Url::get($arr['url'] . '/siteinfo.json');
-            if (!$x['success']) {
-                $access_policy = ACCESS_PRIVATE;
-            }
-        }
-
         $site_about = EMPTY_STR;
         $site_logo = EMPTY_STR;
         $sitename = EMPTY_STR;

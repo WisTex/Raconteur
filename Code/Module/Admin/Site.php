@@ -34,13 +34,10 @@ class Site
 
         $sitename = ((x($_POST, 'sitename')) ? notags(trim($_POST['sitename'])) : App::get_hostname());
 
-        $admininfo = ((x($_POST, 'admininfo')) ? trim($_POST['admininfo']) : false);
         $siteinfo = ((x($_POST, 'siteinfo')) ? trim($_POST['siteinfo']) : '');
         $legal = ((x($_POST, 'legal')) ? trim($_POST['legal']) : '');
         $language = ((x($_POST, 'language')) ? notags(trim($_POST['language'])) : 'en');
         $theme = ((x($_POST, 'theme')) ? notags(trim($_POST['theme'])) : '');
-//      $theme_mobile           =   ((x($_POST,'theme_mobile'))     ? notags(trim($_POST['theme_mobile']))          : '');
-//      $site_channel           =   ((x($_POST,'site_channel')) ? notags(trim($_POST['site_channel']))              : '');
         $maximagesize = ((x($_POST, 'maximagesize')) ? intval(trim($_POST['maximagesize'])) : 0);
 
         $register_policy = ((x($_POST, 'register_policy')) ? intval(trim($_POST['register_policy'])) : 0);
@@ -128,12 +125,6 @@ class Site
         set_config('system', 'tos_required', $tos_required);
         PConfig::Set(App::$sys_channel['channel_id'], 'system', 'legal', $legal);
 
-        if ($admininfo == '') {
-            del_config('system', 'admininfo');
-        } else {
-            linkify_tags($admininfo, local_channel());
-            set_config('system', 'admininfo', $admininfo);
-        }
         set_config('system', 'siteinfo', $siteinfo);
 
         // sync sitename and siteinfo updates to the system channel
@@ -249,8 +240,6 @@ class Site
 
         /* Admin Info */
 
-        $admininfo = get_config('system', 'admininfo');
-
         /* Register policy */
         $register_choices = [
             REGISTER_CLOSED => t("No"),
@@ -290,9 +279,8 @@ class Site
             '$advanced' => t('Advanced'),
             '$baseurl' => z_root(),
             '$sitename' => ['sitename', t("Site name"), htmlspecialchars(get_config('system', 'sitename', App::get_hostname()), ENT_QUOTES, 'UTF-8'), ''],
-            '$admininfo' => ['admininfo', t("Administrator Information"), $admininfo, t("Contact information for site administrators.  Displayed on siteinfo page.  Multicode may be used here.")],
-            '$siteinfo' => ['siteinfo', t('Site Information'), get_config('system', 'siteinfo'), t("Publicly visible description of this site.  Displayed on siteinfo page.  Multicode may be used here.")],
-            '$legal' => ['legal',t('Legal Information'), htmlspecialchars($legal), ''],
+            '$siteinfo' => ['siteinfo', t('Site Information'), get_config('system', 'siteinfo'), t("Description of this site.  Multicode may be used here.")],
+            '$legal' => ['legal',t('Legal Information'), htmlspecialchars($legal), t('Multicode may be used here.')],
             '$language' => ['language', t("System language"), get_config('system', 'language', 'en'), "", $lang_choices],
             '$theme' => ['theme', t("System theme"), get_config('system', 'theme'), t("Default system theme - may be over-ridden by user profiles - <a href='#' id='cnftheme'>change theme settings</a>"), $theme_choices],
 //          '$theme_mobile'         => [ 'theme_mobile', t("Mobile system theme"), get_config('system','mobile_theme'), t("Theme for mobile devices"), $theme_choices_mobile ],
