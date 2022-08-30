@@ -131,8 +131,8 @@ function search_doc_files($s)
 
     $r = q(
         "select iconfig.v, item.* from item left join iconfig on item.id = iconfig.iid
-		where iconfig.cat = 'system' and iconfig.k = 'docfile' and
-		body $regexop '%s' and item_type = %d $pager_sql",
+        where iconfig.cat = 'system' and iconfig.k = 'docfile' and
+        body $regexop '%s' and item_type = %d $pager_sql",
         dbesc($s),
         intval(ITEM_TYPE_DOC)
     );
@@ -245,8 +245,8 @@ function store_doc_file($s)
 
     $r = q(
         "select item.* from item left join iconfig on item.id = iconfig.iid
-		where iconfig.cat = 'system' and iconfig.k = 'docfile' and
-		iconfig.v = '%s' and item_type = %d limit 1",
+        where iconfig.cat = 'system' and iconfig.k = 'docfile' and
+        iconfig.v = '%s' and item_type = %d limit 1",
         dbesc($s),
         intval(ITEM_TYPE_DOC)
     );
