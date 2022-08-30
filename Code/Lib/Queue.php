@@ -155,8 +155,8 @@ class Queue
 
         $x = q(
             "insert into outq ( outq_hash, outq_account, outq_channel, outq_driver, outq_posturl, outq_async, outq_priority,
-			outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg ) 
-			values ( '%s', %d, %d, '%s', '%s', %d, %d, '%s', '%s', '%s', '%s', '%s' )",
+			outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg, outq_log ) 
+			values ( '%s', %d, %d, '%s', '%s', %d, %d, '%s', '%s', '%s', '%s', '%s', '' )",
             dbesc($arr['hash']),
             intval($arr['account_id']),
             intval($arr['channel_id']),
