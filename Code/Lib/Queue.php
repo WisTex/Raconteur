@@ -94,10 +94,10 @@ class Queue
         }
 
         q(
-            "UPDATE outq SET outq_updated = '%s', 
-			outq_priority = outq_priority + %d, 
-			outq_scheduled = '%s' 
-			WHERE outq_hash = '%s'",
+            "UPDATE outq SET outq_updated = '%s',
+            outq_priority = outq_priority + %d,
+            outq_scheduled = '%s'
+            WHERE outq_hash = '%s'",
             dbesc(datetime_convert()),
             intval($add_priority),
             dbesc($next),
@@ -161,12 +161,12 @@ class Queue
 
         $x = q(
             "insert into outq ( outq_hash, outq_account, outq_channel, outq_driver, outq_posturl, outq_async, outq_priority,
-			outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg, outq_log ) 
-			values ( '%s', %d, %d, '%s', '%s', %d, %d, '%s', '%s', '%s', '%s', '%s', '' )",
+            outq_created, outq_updated, outq_scheduled, outq_notify, outq_msg, outq_log )
+            values ( '%s', %d, %d, '%s', '%s', %d, %d, '%s', '%s', '%s', '%s', '%s', '' )",
             dbesc($arr['hash']),
             intval($arr['account_id']),
             intval($arr['channel_id']),
-			dbesc((isset($arr['driver']) && $arr['driver']) ? $arr['driver'] : 'nomad'),
+            dbesc((isset($arr['driver']) && $arr['driver']) ? $arr['driver'] : 'nomad'),
             dbesc($arr['posturl']),
             intval(1),
             intval((isset($arr['priority'])) ? $arr['priority'] : 0),
@@ -496,12 +496,12 @@ class Queue
 
             $msg = $outq['outq_notify'];
 
-			if ($outq['outq_driver'] === 'nomad') {
-				$result = Libzot::nomad($outq['outq_posturl'],$msg,$channel,$host_crypto);
-			}
-			else {
-				$result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
-			}
+            if ($outq['outq_driver'] === 'nomad') {
+                $result = Libzot::nomad($outq['outq_posturl'],$msg,$channel,$host_crypto);
+            }
+            else {
+                $result = Libzot::zot($outq['outq_posturl'],$msg,$channel,$host_crypto);
+            }
 
             if ($result['success']) {
                 logger('deliver: remote nomad/zot delivery succeeded to ' . $outq['outq_posturl']);
