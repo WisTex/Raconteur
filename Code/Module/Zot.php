@@ -14,9 +14,9 @@ use Code\Nomad\NomadHandler;
  */
 class Zot extends Controller
 {
-	public function init()
-	{
-		$zot = new Receiver(new NomadHandler());
-		json_return_and_die($zot->run(),'application/x-nomad+json');
-	}
+    public function init()
+    {
+        $zot = new Receiver(new NomadHandler());
+        json_return_and_die($zot->run(),'application/x-nomad+json');
+    }
 }

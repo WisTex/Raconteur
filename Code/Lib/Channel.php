@@ -91,7 +91,7 @@ class Channel
         $sys = self::get_system();
 
         if ($sys) {
-            // upgrade the default network drivers and permissions if this looks like an upgraded zot6-based platform. 
+            // upgrade the default network drivers and permissions if this looks like an upgraded zot6-based platform.
 
             if ($sys['xchan_network'] !== 'nomad') {
                 $chans = q("select * from channel where true");
@@ -163,7 +163,7 @@ class Channel
                     dbesc(z_root()),
                     dbesc(Libzot::sign(z_root(), $prvkey)),
                     dbesc(z_root()),
-                    dbesc(z_root() . '/zot'),
+                    dbesc(z_root() . '/nomad'),
                     dbesc(Libzot::make_xchan_hash(z_root(), $pubkey)),
                     dbesc($sys['channel_hash'])
                 );
@@ -184,10 +184,10 @@ class Channel
             App::$sys_channel = $sys;
             return;
         }
-    
+
         $basename = ucfirst(basename(z_root()));
         $sitename = substr($basename,0,strrpos($basename,'.'));
-    
+
         self::create([
                 'account_id'       => 'xxx',  // Typecast trickery: account_id is required. This will create an identity with an (integer) account_id of 0
                 'nickname'         => 'sys',
@@ -358,7 +358,7 @@ class Channel
         if ($system) {
             $xchannel_type = XCHAN_TYPE_ORGANIZATION ;
         }
-    
+
         $primary = true;
 
         if (array_key_exists('primary', $arr)) {
@@ -387,8 +387,7 @@ class Channel
         );
 
         $r = q(
-            "select * from channel where channel_account_id = %d
-    		and channel_guid = '%s' limit 1",
+            "select * from channel where channel_account_id = %d and channel_guid = '%s' limit 1",
             intval($arr['account_id']),
             dbesc($guid)
         );
@@ -417,13 +416,13 @@ class Channel
          *   * \e string \b photo_url - Return value
          */
         Hook::call('create_channel_photo', $z);
-    
+
         // The site channel gets the project logo as a profile photo.
         if ($arr['account_id'] === 'xxx') {
             $photo_type = import_channel_photo_from_url(z_root() . '/images/' . PLATFORM_NAME . '.png', 0, $r[0]['channel_id']);
         }
         elseif ($z['photo_url']) {
-            $photo_type = import_channel_photo_from_url($z['photo_url'], $arr['account_id'], $r[0]['channel_id']);    
+            $photo_type = import_channel_photo_from_url($z['photo_url'], $arr['account_id'], $r[0]['channel_id']);
         }
 
         if ($role_permissions && array_key_exists('limits', $role_permissions)) {
@@ -460,7 +459,7 @@ class Channel
                 'hubloc_url_sig'  => Libzot::sign(z_root(), $ret['channel']['channel_prvkey']),
                 'hubloc_site_id'  => Libzot::make_xchan_hash(z_root(), get_config('system', 'pubkey')),
                 'hubloc_host'     => App::get_hostname(),
-                'hubloc_callback' => z_root() . '/zot',
+                'hubloc_callback' => z_root() . '/nomad',
                 'hubloc_sitekey'  => get_config('system', 'pubkey'),
                 'hubloc_network'  => 'nomad',
                 'hubloc_updated'  => datetime_convert()

@@ -1635,7 +1635,7 @@ class Libzot
             $htmltext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
             $plaintext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $htmltext : $htmltext);
 
-    
+
             $DR = new DReport(z_root(), $sender, $d, $arr['mid']);
 
             $channel = Channel::from_hash($d);
@@ -2619,7 +2619,7 @@ class Libzot
                 if (intval($channel['channel_removed']) && $hub['hubloc_url'] === z_root()) {
                     $hub['hubloc_deleted'] = 1;
                 }
-                
+
                 $tmp = [
                     'host' => $hub['hubloc_host'],
                     'address' => $hub['hubloc_addr'],
@@ -2635,9 +2635,9 @@ class Libzot
                 if ($hub['hubloc_url'] === z_root() && version_compare(ZOT_REVISION, '11.0') >= 0) {
                     $tmp['driver'] = 'nomad';
                 }
-    
-                $ret[] = $tmp;    
-    
+
+                $ret[] = $tmp;
+
             }
         }
 
