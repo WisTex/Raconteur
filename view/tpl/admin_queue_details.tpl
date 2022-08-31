@@ -3,6 +3,8 @@
 <div class="section-content-wrapper">
 {{if $logs}}
     {{foreach $logs as $log}}
+        <pre>{{$created_text}} {{$log.outq_created}}</pre>
+        {{$log_text}}
         <pre>{{$log.outq_log}}</pre>
     {{/foreach}}
 {{else}}
