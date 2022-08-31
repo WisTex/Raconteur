@@ -34,8 +34,10 @@ class Queue
         // getting stuck on a particular message when another one with different content
         // might actually succeed.
 
+        // Ensure we fetch a record with the same driver type as the original.
+
         $x = q(
-            "select outq_created, outq_hash, outq_posturl from outq where outq_hash = '%s' limit 1",
+            "select outq_created, outq_hash, outq_posturl, outq_driver from outq where outq_hash = '%s' limit 1",
             dbesc($id)
         );
         if (!$x) {
@@ -43,8 +45,9 @@ class Queue
         }
 
         $g = q(
-            "select outq_created, outq_hash, outq_posturl from outq where outq_posturl = '%s' and outq_hash != '%s' limit 1",
+            "select outq_created, outq_hash, outq_posturl, outq_driver from outq where outq_posturl = '%s' and outq_driver = '%s' and outq_hash != '%s' limit 1",
             dbesc($x[0]['outq_posturl']),
+            dbesc($x[0]['outq_driver']),
             dbesc($id)
         );
 
@@ -56,8 +59,9 @@ class Queue
 
 
         $y = q(
-            "select min(outq_created) as earliest from outq where outq_posturl = '%s'",
-            dbesc($x[0]['outq_posturl'])
+            "select min(outq_created) as earliest from outq where outq_posturl = '%s' and outq_driver = '%s'",
+            dbesc($x[0]['outq_posturl']),
+            dbesc($x[0]['outq_driver'])
         );
 
         // look for the oldest queue entry with this destination URL. If it's older than a couple of days,
@@ -80,9 +84,10 @@ class Queue
         // minutes.
 
         $r = q(
-            "UPDATE outq SET outq_scheduled = '%s' WHERE outq_posturl = '%s'",
+            "UPDATE outq SET outq_scheduled = '%s' WHERE outq_posturl = '%s' and outq_driver = '%s'",
             dbesc(datetime_convert('UTC', 'UTC', 'now + 5 days')),
-            dbesc($x[0]['outq_posturl'])
+            dbesc($x[0]['outq_posturl']),
+            dbesc($x[0]['outq_driver'])
         );
 
         $since = datetime_convert('UTC', 'UTC', $y[0]['earliest']);
@@ -90,7 +95,7 @@ class Queue
         if (($might_be_down) || ($since < datetime_convert('UTC', 'UTC', 'now - 12 hour'))) {
             $next = datetime_convert('UTC', 'UTC', 'now + 1 hour');
         } else {
-            $next = datetime_convert('UTC', 'UTC', 'now + ' . intval($add_priority) . ' minutes');
+            $next = datetime_convert('UTC', 'UTC', 'now + ' . (($add_priority) ? intval($add_priority) : 5) . ' minutes');
         }
 
         q(
