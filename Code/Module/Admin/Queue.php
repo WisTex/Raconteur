@@ -27,12 +27,14 @@ class Queue
         }
 
         if ($_REQUEST['details']) {
-            $logs = q("select outq_log from outq where outq_posturl = '%s' and outq_log != '' order by outq_created",
+            $logs = q("select outq_created, outq_log from outq where outq_posturl = '%s' and outq_log != '' order by outq_created",
                 dbesc(escape_tags($_REQUEST['details']))
             );
             $output = replace_macros(Theme::get_template('admin_queue_details.tpl'), [
                 '$banner' => escape_tags($_REQUEST['details']),
                 '$logs' => $logs,
+                '$created_text' => t('Queue entry created:'),
+                '$log_text' => t('Delivery/tracking log:'),
                 '$nothing' => t('No entries'),
             ]);
             return $output;
