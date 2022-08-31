@@ -17,10 +17,16 @@ use Code\Extend\Hook;
 class Queue
 {
 
-    public static function update($id, $add_priority = 0)
+    public static function update($id, $msg, $add_priority = 0)
     {
 
         logger('queue: requeue item ' . $id, LOGGER_DEBUG);
+
+        // Log the current error message to the current delivery.
+        q("update outq set outq_log = CONCAT(outq_log, '%s') where outq_hash = '%s'",
+            dbesc(datetime_convert() . EOL . $msg . EOL),
+            dbesc($id)
+        );
 
         // This queue item failed. Perhaps it was rejected. Perhaps the site is dead.
         // Since we don't really know, check and see if we've got something else destined
@@ -206,7 +212,7 @@ class Queue
                         dbesc('site deferred'),
                         dbesc($outq['outq_hash'])
                     );
-                    self::update($outq['outq_hash'], 10);
+                    self::update($outq['outq_hash'], 'Delivery deferred', 10);
                     logger('immediate delivery deferred for site ' . $base);
                     return;
                 }
@@ -278,7 +284,8 @@ class Queue
             } else {
                 logger('deliver: queue post returned ' . $result['return_code']
                     . ' from ' . $outq['outq_posturl'], LOGGER_DEBUG);
-                self::update($outq['outq_hash'], 10);
+                unset($result['body']); // Just record the header and errors, ignore the body.
+                self::update($outq['outq_hash'], print_r($result, true), 10);
             }
             return;
         }
@@ -338,7 +345,7 @@ class Queue
                 }
             } else {
                 logger('deliver: queue fetch failed' . ' from ' . $outq['outq_posturl'], LOGGER_DEBUG);
-                self::update($outq['outq_hash'], 10);
+                self::update($outq['outq_hash'], 'fetch failed', 10);
             }
             return;
         }
@@ -430,9 +437,10 @@ class Queue
                         dbesc($dr[0]['dreport_site'])
                     );
                 }
-                self::update($outq['outq_hash'], 10);
+                unset($result['body']);
+                self::update($outq['outq_hash'], print_r($result, true), 10);
             }
-    
+
             logger('deliver: queue post returned ' . $result['return_code'] . ' from ' . $outq['outq_posturl'], LOGGER_DEBUG);
             return;
         }
@@ -513,7 +521,8 @@ class Queue
 
                 logger('deliver: remote nomad/zot delivery failed to ' . $outq['outq_posturl']);
                 logger('deliver: remote nomad/zot delivery fail data: ' . print_r($result, true), LOGGER_DATA);
-                self::update($outq['outq_hash'], 10);
+                unset($result['body']);
+                self::update($outq['outq_hash'], print_r($result, true), 10);
             }
         }
         return;

@@ -171,7 +171,7 @@ class Libsync
             $x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
             if (intval($x[0]['total']) > intval(get_config('system', 'force_queue_threshold', 3000))) {
                 logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
-                Queue::update($hash);
+                Queue::update($hash, 'Delivery deferred');
                 continue;
             }
 
@@ -265,7 +265,7 @@ class Libsync
             $y = q("select count(outq_hash) as total from outq where outq_delivered = 0");
             if (intval($y[0]['total']) > intval(get_config('system', 'force_queue_threshold', 3000))) {
                 logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
-                Queue::update($hash);
+                Queue::update($hash, 'Delivery deferred');
                 continue;
             }
 

@@ -3,7 +3,7 @@
 use Code\Lib\Libzot;
 use Code\Lib\Zotfinger;
 use Code\Lib\Webfinger;
-use Code\Lib\Channel;    
+use Code\Lib\Channel;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
 use Code\Lib\ActivityPub;
@@ -818,7 +818,7 @@ function do_delivery($deliveries, $force = false)
     if (intval($x[0]['total']) > intval(get_config('system', 'force_queue_threshold', 3000)) && (! $force)) {
         logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
         foreach ($deliveries as $d) {
-            Queue::update($d);
+            Queue::update($d, 'Delivery deferred');
         }
         return;
     }

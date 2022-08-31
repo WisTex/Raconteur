@@ -28,6 +28,7 @@ class Url {
      * @return array an associative array with:
      *  * \e int \b return_code => HTTP return code or 0 if timeout or failure
      *  * \e boolean \b success => boolean true (if HTTP 2xx result) or false
+     *  * \e string \b debug => diagnostics if failure
      *  * \e string \b header => HTTP headers
      *  * \e string \b body => fetched content
      */
@@ -254,6 +255,7 @@ class Url {
      *  * \e int \b return_code => HTTP return code or 0 if timeout or failure
      *  * \e boolean \b success => boolean true (if HTTP 2xx result) or false
      *  * \e string \b header => HTTP headers
+     *  * \e string \b debug => diagnostics if failure
      *  * \e string \b body => content
      *  * \e string \b debug => from curl_info()
      */
