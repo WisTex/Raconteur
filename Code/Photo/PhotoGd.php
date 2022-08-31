@@ -42,6 +42,10 @@ class PhotoGd extends PhotoDriver
             return;
         }
 
+        if (str_contains($data,'WEBVP8X') || str_contains($data, 'ANIM')) {
+            return;
+        }
+
         $this->image = @imagecreatefromstring($data);
 
         if ($this->image !== false) {
