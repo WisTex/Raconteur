@@ -64,11 +64,9 @@ class Content_filter extends Controller
             ]
         ));
 
-        $s .= replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
+        return replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
             '$addon' => array('content_filter', '' . t('Content Filter Settings'), '', t('Submit')),
             '$content' => $setting_fields
         ));
-
-        return $s;
     }
 }

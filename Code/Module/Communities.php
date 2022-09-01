@@ -25,7 +25,8 @@ class Communities extends Controller
         }
         $desc = t('This page provides information about affiliated website communities which are currently known to this website. These are a small fraction of the thousands of websites and dozens of projects and providers which participate in this communications network.');
 
-        $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
+
+        $blocked = (local_channel()) ? LibBlock::fetch(App::$channel['channel_id'], BLOCKTYPE_SERVER) : [];
 
         $j = [];
         $total = 0;
@@ -140,29 +141,29 @@ class Communities extends Controller
 
         if ($_REQUEST['aj']) {
             if ($j) {
-                $o = replace_macros(Theme::get_template('sitesajax.tpl'), [ '$entries' => $j ]);
+                $output = replace_macros(Theme::get_template('sitesajax.tpl'), [ '$entries' => $j ]);
             }
             else {
-                $o = '<div id="content-complete"></div>';
+                $output = '<div id="content-complete"></div>';
             }
-            echo $o;
+            echo $output;
             killme();
         }
         else {
-            $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
+            $output = "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
 
-            $o .= replace_macros(Theme::get_template('sitentry_header.tpl'), [
+            $output .= replace_macros(Theme::get_template('sitentry_header.tpl'), [
                 '$dirlbl' => t('Communities'),
                 '$desc' => $desc,
                 '$entries' => $j,
             ]);
 
             if (!$j) {
-                $o .= '<div id="content-complete"></div>';
+                $output .= '<div id="content-complete"></div>';
             }
         }
 
-        return $o;
+        return $output;
     }
 
     public function sort_sites($a)

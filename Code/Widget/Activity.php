@@ -18,7 +18,7 @@ class Activity
         $o = EMPTY_STR;
 
         if (is_array($arr) && array_key_exists('limit', $arr)) {
-            $limit = " limit " . intval($limit) . " ";
+            $limit = " limit " . intval($arr['limit']) . " ";
         } else {
             $limit = EMPTY_STR;
         }

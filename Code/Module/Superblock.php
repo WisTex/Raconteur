@@ -229,7 +229,7 @@ class Superblock extends Controller
             }
         }
 
-        $sc .= replace_macros(Theme::get_template('superblock_list.tpl'), [
+        $sc = replace_macros(Theme::get_template('superblock_list.tpl'), [
             '$blocked' => t('Blocked channels'),
             '$entries' => $r,
             '$nothing' => (($r) ? '' : t('No channels currently blocked')),
@@ -254,11 +254,9 @@ class Superblock extends Controller
             '$remove' => t('Remove')
         ]);
 
-        $s .= replace_macros(Theme::get_template('generic_app_settings.tpl'), [
+        return replace_macros(Theme::get_template('generic_app_settings.tpl'), [
             '$addon' => array('superblock', t('Manage Blocks'), '', t('Submit')),
             '$content' => $sc
         ]);
-
-        return $s;
     }
 }

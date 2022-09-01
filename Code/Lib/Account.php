@@ -311,7 +311,6 @@ class Account {
                 '$email'    => $arr['email'],
                 '$uid'      => $account['account_id'],
                 '$hash'     => $hash,
-                '$details'  => $details
             ]
         );
 
@@ -325,9 +324,7 @@ class Account {
 
         pop_lang();
 
-        if ($res) {
-            $delivered ++;
-        } else {
+        if (!$res) {
             logger('send_reg_approval_email: failed to account_id: ' . $arr['account']['account_id']);
         }
         return $res;

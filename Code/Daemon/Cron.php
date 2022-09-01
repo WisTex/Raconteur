@@ -4,6 +4,7 @@
 
 namespace Code\Daemon;
 
+use Code\Lib\Config;
 use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Lib\Addon;
@@ -37,6 +38,7 @@ class Cron
         }
 
         // Create a lockfile.  Needs two vars, but $x doesn't need to contain anything.
+        $x = '';
         file_put_contents($lockfile, $x);
 
         logger('cron: start');
@@ -86,7 +88,7 @@ class Cron
         }
 
         // Ensure that every channel pings their directory occasionally.
-
+        $interval = floatval(Config::Get('system','delivery_interval', 2));
         $r = q(
             "select channel_id from channel where channel_dirdate < %s - INTERVAL %s and channel_removed = 0",
             db_utcnow(),
@@ -119,7 +121,7 @@ class Cron
                 if ($x) {
                     $z = q(
                         "select * from item where id = %d",
-                        intval($message_id)
+                        intval($rr['id'])
                     );
                     if ($z) {
                         xchan_query($z);

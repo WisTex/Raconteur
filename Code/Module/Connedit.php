@@ -335,7 +335,8 @@ class Connedit extends Controller
     {
 
         $sort_type = 0;
-        $o = EMPTY_STR;
+        $slide = '';
+        $o = '';
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
@@ -364,7 +365,7 @@ class Connedit extends Controller
         if (argc() == 3) {
             $contact_id = intval(argv(1));
             if (!$contact_id) {
-                return;
+                return '';
             }
 
             $cmd = argv(2);

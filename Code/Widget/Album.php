@@ -35,7 +35,7 @@ class Album
          * It is a limitation of the photo table using a name for a photo album instead of a folder hash
          */
 
-        if ($album) {
+        if (!empty($album)) {
             $x = q(
                 "select hash from attach where filename = '%s' and uid = %d limit 1",
                 dbesc($album),

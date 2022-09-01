@@ -418,7 +418,7 @@ class Cover_photo extends Controller
 
 
         if (!array_key_exists('imagecrop', App::$data)) {
-            $o .= replace_macros(Theme::get_template('cover_photo.tpl'), [
+            $o = replace_macros(Theme::get_template('cover_photo.tpl'), [
                 '$user' => App::$channel['channel_address'],
                 '$info' => t('Your cover photo may be visible to anybody on the internet'),
                 '$existing' => Channel::get_cover_photo(local_channel(), 'array', PHOTO_RES_COVER_850),
@@ -449,7 +449,7 @@ class Cover_photo extends Controller
             $filename = App::$data['imagecrop'] . '-3';
             $resolution = 3;
 
-            $o .= replace_macros(Theme::get_template('cropcover.tpl'), [
+            $o = replace_macros(Theme::get_template('cropcover.tpl'), [
                 '$filename' => $filename,
                 '$profile' => intval($_REQUEST['profile']),
                 '$resource' => App::$data['imagecrop'] . '-3',

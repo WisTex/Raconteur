@@ -106,7 +106,6 @@ function get_feed_for($channel, $observer_hash, $params)
         '$feed_title'    => xmlify($channel['channel_name']),
         '$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
         '$author'        => $feed_author,
-        '$owner'         => $owner,
         '$profile_page'  => xmlify($channel['xchan_url']),
     ));
 
