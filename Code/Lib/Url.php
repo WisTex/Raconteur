@@ -96,7 +96,7 @@ class Url {
         $instance_headers = ((array_key_exists('headers', $opts) && is_array($opts['headers'])) ? $opts['headers'] : []);
 
         if (x($opts, 'session')) {
-            if (strpos($url, z_root()) === 0) {
+            if (str_starts_with($url, z_root())) {
                 $instance_headers[] = 'Cookie: PHPSESSID=' . session_id();
             }
         }
@@ -161,7 +161,7 @@ class Url {
             }
         }
 
-        // don't let curl abort the entire application'
+        // don't let curl abort the entire application
         // if it throws any errors.
 
         $s = curl_exec($ch);
@@ -198,7 +198,7 @@ class Url {
             $matches = [];
             preg_match('/(Location:|URI:)(.*?)\n/i', $header, $matches);
             $newurl = trim(array_pop($matches));
-            if (strpos($newurl, '/') === 0) {
+            if (str_starts_with($newurl, '/')) {
                 // We received a redirect to a relative path.
                 // Find the base component of the original url and re-assemble it with the new location
                 $base = @parse_url($url);
@@ -303,7 +303,7 @@ class Url {
         $instance_headers = ((array_key_exists('headers', $opts) && is_array($opts['headers'])) ? $opts['headers'] : []);
 
         if (x($opts, 'session')) {
-            if (strpos($url, z_root()) === 0) {
+            if (str_starts_with($url, z_root())) {
                 $instance_headers[] = 'Cookie: PHPSESSID=' . session_id();
             }
         }
@@ -407,7 +407,7 @@ class Url {
             $matches = [];
             preg_match('/(Location:|URI:)(.*?)\n/', $header, $matches);
             $newurl = trim(array_pop($matches));
-            if (strpos($newurl, '/') === 0) {
+            if (str_starts_with($newurl, '/')) {
                 // We received a redirect to a relative path.
                 // Find the base component of the original url and re-assemble it with the new location
                 $base = @parse_url($url);

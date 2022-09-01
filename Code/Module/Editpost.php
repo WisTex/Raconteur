@@ -70,8 +70,8 @@ class Editpost extends Controller
         $catsenabled = ((Apps::system_app_installed($owner_uid, 'Categories')) ? 'categories' : '');
 
         // we have a single item, but fetch_post_tags expects an array. Convert it before and after.
-
-        $item = array_shift(fetch_post_tags([$item]));
+        $arr = fetch_post_tags([$item]);
+        $item = array_shift($arr);
 
         if ($catsenabled) {
             $cats = get_terms_oftype($item['term'], TERM_CATEGORY);

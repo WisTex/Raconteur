@@ -116,7 +116,6 @@ function z_mime_content_type($filename)
     'odf' => 'application/vnd.oasis.opendocument.formula',
     'odi' => 'application/vnd.oasis.opendocument.image',
     'odm' => 'application/vnd.oasis.opendocument.text-master',
-    'odb' => 'application/vnd.oasis.opendocument.base',
     'odb' => 'application/vnd.oasis.opendocument.database',
     'ott' => 'application/vnd.oasis.opendocument.text-template',
     'ots' => 'application/vnd.oasis.opendocument.spreadsheet-template',
@@ -2349,19 +2348,11 @@ function get_dirpath_by_cloudpath($channel, $path)
         $h['path'] = substr($h['path'], 1);
     }
     $folders = explode('/', $h['path']);
-    $f = array_shift($folders);
-
     $nick = $channel['channel_address'];
-    //check to see if the absolute path was provided (/cloud/channelname/path/to/folder)
-    if ($f === 'cloud') {
-        $g = array_shift($folders);
-        if ($g !== $nick) {
-            // if nick does not follow "cloud", then the top level folder must be called  "cloud"
-            // and the given path must be relative to "/cloud/channelname/".
-            $folders = array_unshift(array_unshift($folders, $g), $f);
-        }
-    } else {
-        array_unshift($folders, $f);
+
+    if (count($folders) > 1 && $folders[0] === 'cloud' && $folders[1] === $nick) {
+        array_shift($folders);
+        array_shift($folders);
     }
     $clouddir = 'store/' . $nick . '/' ;
     $subdir = '/';

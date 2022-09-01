@@ -86,7 +86,8 @@
         if($cover) @unlink($cover);
 
         // rename
-        $author = array_shift(array_keys($epub->Authors()));
+        $array = array_keys($epub->Authors());
+        $author = array_shift($array);
         $title  = $epub->Title();
         $new    = to_file($author.'-'.$title);
         $new    = $bookdir.$new.'.epub';

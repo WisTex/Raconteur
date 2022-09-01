@@ -52,7 +52,8 @@ class Embedphotos extends Controller
             if (!$href) {
                 json_return_and_die(array('errormsg' => 'Error retrieving link ' . $href, 'status' => false));
             }
-            $resource_id = array_pop(explode("/", $href));
+            $tmp = explode('/', $href);
+            $resource_id = array_pop($tmp);
 
             $x = self::photolink($resource_id, $channel_id);
             if ($x) {

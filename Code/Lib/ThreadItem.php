@@ -5,9 +5,9 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Features;
 use Code\Extend\Hook;
 use Code\Render\Theme;
+
 
 /**
  * A thread item
@@ -99,14 +99,10 @@ class ThreadItem
 
         $item     = $this->get_data();
 
-        $commentww = '';
         $sparkle = '';
-        $buttons = '';
         $dropping = false;
         $star = false;
-        $isstarred = "unstarred fa-star-o";
         $is_comment = false;
-        $is_item = false;
         $osparkle = '';
         $total_children = $this->count_descendants();
         $unseen_comments = ((isset($item['real_uid']) && $item['real_uid']) ? 0 : $this->count_unseen_descendants());
@@ -525,9 +521,7 @@ class ThreadItem
             // place to store all the author addresses (links if not available) in the thread so we can auto-mention them in JS.
             $result['authors'] = [];
             // fix to add in sub-replies if replying to a comment on your own post from the top level.
-            if ($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr'])) {
-                // ignore it
-            } else {
+            if (!($observer && ($profile_addr === $observer['xchan_hash'] || $profile_addr === $observer['xchan_addr']))) {
                 $result['authors'][] = $profile_addr;
             }
 
@@ -787,7 +781,6 @@ class ThreadItem
     public function get_data_value($name)
     {
         if (!isset($this->data[$name])) {
-//          logger('[ERROR] Item::get_data_value : Item has no value name "'. $name .'".', LOGGER_DEBUG);
             return false;
         }
 
@@ -921,7 +914,7 @@ class ThreadItem
 //      logger('Commentable conv: ' . $conv->is_commentable());
 
         if (! $this->is_commentable()) {
-            return;
+            return false;
         }
 
         $template = Theme::get_template($this->get_comment_box_template());
@@ -1037,17 +1030,17 @@ class ThreadItem
             foreach ($items as $child) {
                 if ($child['author']['abook_id'] && (! intval($child['author']['abook_self']))) {
                     return [
-                        'url'   => chanlink_hash($child['author']['xchan_hash']),
+                        'url' => chanlink_hash($child['author']['xchan_hash']),
                         'photo' => $child['author']['xchan_photo_m'],
-                        'name'  => $child['author']['xchan_name'],
-                        'addr'  => $child['author']['xchan_addr'],
+                        'name' => $child['author']['xchan_name'],
+                        'addr' => $child['author']['xchan_addr'],
                         'censored' => (($child['author']['xchan_censored'] || $child['author']['abook_censor']) ? true : false)
                     ];
-                    if ($child['children']) {
-                        $ret = $this->find_a_friend($child['children']);
-                        if ($ret) {
-                            break;
-                        }
+                }
+                if ($child['children']) {
+                    $ret = $this->find_a_friend($child['children']);
+                    if ($ret) {
+                        break;
                     }
                 }
             }

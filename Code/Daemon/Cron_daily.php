@@ -95,8 +95,8 @@ class Cron_daily
         Run::Summon([ 'Expire' ]);
 
         remove_obsolete_hublocs();
-
-        Hook::call('cron_daily', datetime_convert());
+        $data = datetime_convert();
+        Hook::call('cron_daily', $data);
 
         set_config('system', 'last_expire_day', intval(datetime_convert('UTC', 'UTC', 'now', 'd')));
 
