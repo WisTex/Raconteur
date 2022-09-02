@@ -422,7 +422,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
         }
         libxml_clear_errors();
 
-        return;
+        return [];
     }
 
     //Initializations
@@ -1236,8 +1236,7 @@ function deliverable_singleton($channel_id, $xchan)
 
 function get_repository_version($branch = 'release')
 {
-
-    $path = "https://raw.codeberg.page/streams/" . PLATFORM_NAME . "/@$branch/version.php";
+    $path = 'https://raw.codeberg.page/streams/' . PLATFORM_NAME . "/@$branch/version.php";
 
     $x = Url::get($path);
     if ($x['success']) {

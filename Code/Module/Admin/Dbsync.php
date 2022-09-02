@@ -48,15 +48,6 @@ class Dbsync
 
             return $o;
 
-
-            // remove the old style config if it exists
-            del_config('database', 'update_r' . intval(argv(3)));
-            set_config('database', '_' . intval(argv(3)), 'success');
-            if (intval(get_config('system', 'db_version')) < intval(argv(3))) {
-                set_config('system', 'db_version', intval(argv(3)));
-            }
-            info(t('Update has been marked successful') . EOL);
-            goaway(z_root() . '/admin/dbsync');
         }
 
         if (argc() > 2 && intval(argv(2))) {
@@ -93,7 +84,7 @@ class Dbsync
             }
         }
         if (count($failed)) {
-            $o = replace_macros(Theme::get_template('failed_updates.tpl'), array(
+            $o = replace_macros(Theme::get_template('failed_updates.tpl'), [
                 '$base' => z_root(),
                 '$banner' => t('Failed Updates'),
                 '$desc' => '',
@@ -101,7 +92,7 @@ class Dbsync
                 '$verify' => t('Attempt to verify this update if a verification procedure exists'),
                 '$apply' => t('Attempt to execute this update step automatically'),
                 '$failed' => $failed
-            ));
+            ]);
         } else {
             return '<div class="generic-content-wrapper-styled"><h3>' . t('No failed updates.') . '</h3></div>';
         }

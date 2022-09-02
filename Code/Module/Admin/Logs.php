@@ -41,13 +41,13 @@ class Logs
     public function get()
     {
 
-        $log_choices = array(
+        $log_choices = [
             LOGGER_NORMAL => 'Normal',
             LOGGER_TRACE => 'Trace',
             LOGGER_DEBUG => 'Debug',
             LOGGER_DATA => 'Data',
             LOGGER_ALL => 'All'
-        );
+        ];
 
         $t = Theme::get_template('admin_logs.tpl');
 
@@ -81,7 +81,7 @@ class Logs
             }
         }
 
-        return replace_macros($t, array(
+        return replace_macros($t, [
             '$title' => t('Administration'),
             '$page' => t('Logs'),
             '$submit' => t('Submit'),
@@ -91,11 +91,11 @@ class Logs
             '$logname' => get_config('system', 'logfile'),
 
             // name, label, value, help string, extra data...
-            '$debugging' => array('debugging', t("Debugging"), get_config('system', 'debugging'), ""),
-            '$logfile' => array('logfile', t("Log file"), get_config('system', 'logfile'), t("Must be writable by web server. Relative to your top-level webserver directory.")),
-            '$loglevel' => array('loglevel', t("Log level"), get_config('system', 'loglevel'), "", $log_choices),
+            '$debugging' => ['debugging', t('Debugging'), get_config('system', 'debugging'), ""],
+            '$logfile' => ['logfile', t('Log file'), get_config('system', 'logfile'), t("Must be writable by web server. Relative to your top-level webserver directory.")],
+            '$loglevel' => ['loglevel', t('Log level'), get_config('system', 'loglevel'), "", $log_choices],
 
             '$form_security_token' => get_form_security_token('admin_logs'),
-        ));
+        ]);
     }
 }

@@ -18,7 +18,7 @@ use Code\Lib\Navbar;
 use Code\Lib\Addon;
 use Code\Render\Theme;
 
-    
+
 /**
  * @brief Admin area.
  *
@@ -162,11 +162,10 @@ class Admin extends Controller
 
         $upgrade = EMPTY_STR;
 
-        if ((!defined('PLATFORM_ARCHITECTURE')) || (PLATFORM_ARCHITECTURE === 'zap')) {
-            $vrelease = get_repository_version('release');
-            $vdev = get_repository_version('dev');
-            $upgrade = ((version_compare(STD_VERSION, $vrelease) < 0) ? t('Your software should be updated') : '');
-        }
+
+        $vrelease = get_repository_version('release');
+        $vdev = get_repository_version('dev');
+        $upgrade = ((version_compare(STD_VERSION, $vrelease) < 0) ? t('Your software should be updated') : '');
 
         $t = Theme::get_template('admin_summary.tpl');
         return replace_macros($t, [
