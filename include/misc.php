@@ -867,7 +867,7 @@ function dlogger($msg, $level = 0)
 
 function profiler($t1, $t2, $label)
 {
-    if (file_exists('profiler.out') && $t1 && t2) {
+    if (file_exists('profiler.out') && $t1 && $t2) {
         @file_put_contents('profiler.out', sprintf('%01.4f %s', $t2 - $t1, $label) . PHP_EOL, FILE_APPEND);
     }
 }

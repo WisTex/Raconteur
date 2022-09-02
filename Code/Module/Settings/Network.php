@@ -3,6 +3,8 @@
 namespace Code\Module\Settings;
 
 use Code\Lib\Features;
+use Code\Lib\Libacl;
+use Code\Lib\Libsync;
 use Code\Render\Theme;
 
 
@@ -13,7 +15,7 @@ class Network
     {
         check_form_security_token_redirectOnErr('/settings/network', 'settings_network');
 
-        $features = self::Features::get();
+        $features = $this->get_features();
 
         foreach ($features as $f) {
             $k = $f[0];
@@ -24,14 +26,14 @@ class Network
             }
         }
 
-        build_sync_packet();
+        Libsync::build_sync_packet();
         return;
     }
 
     public function get()
     {
 
-        $features = self::Features::get();
+        $features = $this->get_features();
 
         foreach ($features as $f) {
             $arr[] = array('feature_' . $f[0], $f[1], ((intval(Features::enabled(local_channel(), $f[0]))) ? "1" : ''), $f[2], array(t('Off'), t('On')));
@@ -39,7 +41,7 @@ class Network
 
         $tpl = Theme::get_template("settings_module.tpl");
 
-        $o .= replace_macros($tpl, array(
+        $o = replace_macros($tpl, array(
             '$action_url' => 'settings/network',
             '$form_security_token' => get_form_security_token("settings_network"),
             '$title' => t('Activity Settings'),
