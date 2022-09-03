@@ -784,7 +784,7 @@ class Connedit extends Controller
             }
 
 
-            if (intval($contact['abook_not_here']) && $unclonable) {
+            if (intval($contact['abook_not_here']) && !$clonable) {
                 $not_here = t('This connection is unreachable from this location. Location independence is not supported by their network.');
             }
 
@@ -839,7 +839,6 @@ class Connedit extends Controller
                 '$abook_prev' => $abook_prev,
                 '$abook_next' => $abook_next,
                 '$vcard_label' => t('Details'),
-                '$displayname' => $displayname,
                 '$name_label' => t('Name'),
                 '$org_label' => t('Organisation'),
                 '$title_label' => t('Title'),

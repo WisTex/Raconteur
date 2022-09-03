@@ -1918,6 +1918,8 @@ class Channel
 
         //  $scale = (float) $maxwidth / $width;
         //  $translate = intval(($scale / 1.0) * 100);
+        $scale = 0;
+        $translate = 0;
 
         $channel['channel_addr'] = self::get_webfinger($channel);
         $zcard = array('chan' => $channel);
@@ -2008,7 +2010,10 @@ class Channel
             $cover = [ 'href' => z_root() . '/' . self::get_default_cover_photo($cover_width) ];
         }
 
-        $o .= replace_macros(Theme::get_template('zcard_embed.tpl'), array(
+        $scale = 0;
+        $translate = 0;
+
+        return replace_macros(Theme::get_template('zcard_embed.tpl'), [
             '$maxwidth' => $maxwidth,
             '$scale' => $scale,
             '$translate' => $translate,
@@ -2016,9 +2021,7 @@ class Channel
             '$cover' => $cover,
             '$pphoto' => $pphoto,
             '$zcard' => $zcard
-        ));
-
-        return $o;
+        ]);
     }
 
     /**

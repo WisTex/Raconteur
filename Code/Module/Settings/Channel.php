@@ -678,7 +678,6 @@ class Channel
             '$defpermcat' => ['defpermcat', t('Default Permissions Role'), $default_permcat, '', $permcats],
             '$permcat_enable' => Apps::system_app_installed(local_channel(), 'Roles'),
             '$profile_in_dir' => $profile_in_dir,
-            '$hide_friends' => $hide_friends,
             '$hide_wall' => $hide_wall,
             '$unkmail' => $unkmail,
             '$cntunkmail' => array('cntunkmail', t('Maximum direct messages per day from unknown people:'), intval($channel['channel_max_anon_mail']), t("Useful to reduce spamming if you allow direct messages from unknown people")),

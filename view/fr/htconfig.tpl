@@ -1,9 +1,7 @@
 <?php
 
-// Set the following for your MySQL installation
-// Utilisez ces informations pour configurer votre instance de BD (MySQL)
+// Set the following for your database installation
 // Copy or rename this file to .htconfig.php
-// Copier ou renomer ce fichier .htconfig.php et placer le à la racine de l'installation de la Matrice Rouge.
 
 $db_host = '{{$dbhost}}';
 $db_port = '{{$dbport}}';
@@ -13,26 +11,27 @@ $db_data = '{{$dbdata}}';
 $db_type = '{{$dbtype}}'; // an integer. 0 or unset for mysql, 1 for postgres
 
 /*
- * Note: Plusieurs de ces réglages seront disponibles via le panneau d'administration
- * après l'installation. Lorsque des modifications sont apportés à travers le panneau d'administration
- * elle sont automatiquement enregistrées dans la base de données.
- * Les configurations inscrites dans la BD prévalent sur celles de ce fichier de configuration.
+ * Notice: Many of the following settings will be available in the admin panel 
+ * after a successful site install. Once they are set in the admin panel, they
+ * are stored in the DB - and the DB setting will over-ride any corresponding
+ * setting in this file
  *
- * En cas de difficultés d'accès au panneau d'administration, nous mettons à votre disposition,
- * un outil en ligne de commande est disponible [util/config] pour rechercher et apporter des modifications
- * sur les entrées dans la BD.
+ * The command-line tool util/config is able to query and set the DB items 
+ * directly if for some reason the admin panel is not available and a system
+ * setting requires modification. 
  *
  */ 
 
-// Choisissez votre emplacement géographique. Si vous n'êtes pas certain, utilisez "America/Los_Angeles".
-// Vous pourrez le changer plus tard et ce réglage n'affecte que les visiteurs anonymes.
+
+// Choose a legal default timezone. If you are unsure, use "America/Los_Angeles".
+// It can be changed later and only applies to timestamps for anonymous viewers.
 
 App::$config['system']['timezone'] = '{{$timezone}}';
 
-// Quel sera le nom de votre site?
+// What is your site url? DO NOT ADD A TRAILING SLASH!
 
 App::$config['system']['baseurl'] = '{{$siteurl}}';
-App::$config['system']['sitename'] = '{{sitename}}';
+App::$config['system']['sitename'] = '{{$sitename}}';
 App::$config['system']['location_hash'] = '{{$site_id}}';
 
 // These lines set additional security headers to be sent with all responses
@@ -42,39 +41,71 @@ App::$config['system']['location_hash'] = '{{$site_id}}';
 
 App::$config['system']['transport_security_header'] = 1;
 App::$config['system']['content_security_policy'] = 1;
+App::$config['system']['ssl_cookie_protection'] = 1;
 
-// Vos choix sont REGISTER_OPEN, REGISTER_APPROVE, ou REGISTER_CLOSED.
-// Soyez certains de créer votre compte personnel avant de déclarer
-// votre site REGISTER_CLOSED. 'register_text' (si vous décider de l'utiliser) 
-// renvois son contenu systématiquement sur la page d'enregistrement des nouveaux membres.
-// REGISTER_APPROVE requiert la configuration de 'admin_email' avec l'adresse de courriel
-// d'un membre déjà inscrit qui pourra autoriser et/ou approuver/supprimer la demande.
+// Your choices are REGISTER_OPEN, REGISTER_APPROVE, or REGISTER_CLOSED.
+// Be certain to create your own personal account before setting 
+// REGISTER_CLOSED. 'register_text' (if set) will be displayed prominently on 
+// the registration page. REGISTER_APPROVE requires you set 'admin_email'
+// to the email address of an already registered person who can authorise
+// and/or approve/deny the request.
 
 App::$config['system']['register_policy'] = REGISTER_OPEN;
 App::$config['system']['register_text'] = '';
 App::$config['system']['admin_email'] = '{{$adminmail}}';
 
-// taille maximale pour l'importation d'un message, 0 est illimité
+// Recommend you leave this set to 1. Set to 0 to let people register without 
+// proving they own the email address they register with.
+
+App::$config['system']['verify_email'] = 1;
+
+// Site access restrictions. By default we will create private sites.
+// Your choices are ACCESS_PRIVATE, ACCESS_PAID, ACCESS_TIERED, and ACCESS_FREE.
+// If you leave REGISTER_OPEN above, anybody may register on your
+// site, however your site will not be listed anywhere as an open
+// registration  hub. We will use the system access policy (below) 
+// to determine whether or not to list your site in the directory 
+// as an open hub where anybody may create accounts. Your choice of 
+// paid, tiered, or free determines how these listings will be presented.  
+
+
+App::$config['system']['access_policy'] = ACCESS_PRIVATE;
+
+// If you operate a public site, you might wish that people are directed
+// to a "sellpage" where you can describe for features or policies or service plans in depth.
+// This must be an absolute URL beginning with http:// or https:// .
+
+App::$config['system']['sellpage'] = '';
+
+// Maximum size of an imported message, 0 is unlimited
 
 App::$config['system']['max_import_size'] = 200000;
 
-// taille maximale pour le téléversement de photos
-
-App::$config['system']['maximagesize'] = 8000000;
-
-// Lien absolu vers le compilateur PHP
+// Location of PHP command line processor
 
 App::$config['system']['php_path'] = '{{$phpath}}';
 
-// configurez la façon dont votre site communique avec les autres serveurs. [Répertoire des membres inscrits à la Matrice]
-// DIRECTORY_MODE_NORMAL     = client du répertoire de membres, nous vous trouverons un répertoire accessible autre serveur.
-// DIRECTORY_MODE_SECONDARY  = copie mirroir du répertoire des membres.
-// DIRECTORY_MODE_PRIMARY    = répertoire des membres principal.
-// DIRECTORY_MODE_STANDALONE = "autonome/déconnecté" ou répertoire de membres privés
+// Configure how we communicate with directory servers.
+// DIRECTORY_MODE_NORMAL     = directory client, we will find a directory
+// DIRECTORY_MODE_SECONDARY  = caching directory or mirror
+// DIRECTORY_MODE_PRIMARY    = main directory server - one per realm
+// DIRECTORY_MODE_STANDALONE = "off the grid" or private directory services
 
 App::$config['system']['directory_mode']  = DIRECTORY_MODE_NORMAL;
 
-// Thème par défaut
+// default system theme
 
 App::$config['system']['theme'] = 'redbasic';
 
+
+// PHP error logging setup
+// Before doing this ensure that the webserver has permission
+// to create and write to php.out in the top level web directory,
+// or change the name (below) to a file/path where this is allowed.
+
+ini_set('display_errors', '0');
+
+// Uncomment the following lines to turn on PHP error logging.
+//error_reporting(E_ERROR | E_PARSE ); 
+//ini_set('error_log','php.out'); 
+//ini_set('log_errors','1'); 
