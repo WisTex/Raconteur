@@ -6,6 +6,7 @@ use Code\Extend\Hook;
 
 if (array_search(__file__, get_included_files()) === 0) {
     require_once('include/cli_startup.php');
+    /** @noinspection PhpNullIsNotCompatibleWithParameterInspection */
     array_shift($argv);
     $argc = count($argv);
 
@@ -23,11 +24,11 @@ class Run
     // Ideally the queueworker should probably be provided an allow list rather than a deny list as it will be easier
     // to maintain. This was a quick hack to fix truncation of very large synced files when the queueworker addon is installed.
 
-    public static $long_running = [ 'Addon', 'Channel_purge', 'Checksites', 'Content_importer', 'Convo',
+    public static array $long_running = [ 'Addon', 'Channel_purge', 'Checksites', 'Content_importer', 'Convo',
         'Cron', 'Cron_daily', 'Cron_weekly', 'Delxitems', 'Expire', 'File_importer', 'Importfile'
     ];
 
-    public static function Summon($arr)
+    public static function Summon($arr): void
     {
         if (file_exists('maintenance_lock') || file_exists('cache/maintenance_lock')) {
             return;
@@ -51,7 +52,7 @@ class Run
         proc_run('php', 'Code/Daemon/Run.php', $arr);
     }
 
-    public static function Release($argc, $argv)
+    public static function Release($argc, $argv): void
     {
         cli_startup();
 
@@ -72,6 +73,7 @@ class Run
 
         logger('Run: release: ' . print_r($argv, true), LOGGER_ALL, LOG_DEBUG);
         $cls = '\\Code\\Daemon\\' . $argv[0];
+        /** @noinspection PhpUndefinedMethodInspection */
         $cls::run($argc, $argv);
     }
 }

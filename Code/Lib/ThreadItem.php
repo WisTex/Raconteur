@@ -15,7 +15,6 @@ use Code\Render\Theme;
 
 class ThreadItem
 {
-
     public $data = [];
     private $template = 'conv_item.tpl';
     private $comment_box_template = 'comment_item.tpl';

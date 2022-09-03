@@ -40,7 +40,7 @@ class RedbasicConfig
     function get()
     {
         if (!local_channel()) {
-            return;
+            return '';
         }
 
         $arr = [];
@@ -94,37 +94,32 @@ class RedbasicConfig
     function form($arr)
     {
 
-        if (Features::enabled(local_channel(), 'advanced_theming'))
-            $expert = 1;
+        $expert = Features::enabled(local_channel(), 'advanced_theming');
 
-
-        $o .= replace_macros(Theme::get_template('theme_settings.tpl'), array(
+        return replace_macros(Theme::get_template('theme_settings.tpl'), array(
             '$submit' => t('Submit'),
             '$baseurl' => z_root(),
             '$theme' => App::$channel['channel_theme'],
             '$expert' => $expert,
             '$title' => t("Theme settings"),
-            '$narrow_navbar' => array('redbasic_narrow_navbar', t('Narrow navbar'), $arr['narrow_navbar'], '', array(t('No'), t('Yes'))),
-            '$nav_bg' => array('redbasic_nav_bg', t('Navigation bar background color'), $arr['nav_bg']),
-            '$nav_icon_colour' => array('redbasic_nav_icon_colour', t('Navigation bar icon color '), $arr['nav_icon_colour']),
-            '$nav_active_icon_colour' => array('redbasic_nav_active_icon_colour', t('Navigation bar active icon color '), $arr['nav_active_icon_colour']),
-            '$link_colour' => array('redbasic_link_colour', t('Link color'), $arr['link_colour'], '', $link_colour),
-            '$banner_colour' => array('redbasic_banner_colour', t('Set font-color for banner'), $arr['banner_colour']),
-            '$bgcolour' => array('redbasic_background_colour', t('Set the background color'), $arr['bgcolour']),
-            '$background_image' => array('redbasic_background_image', t('Set the background image'), $arr['background_image']),
-            '$item_colour' => array('redbasic_item_colour', t('Set the background color of items'), $arr['item_colour']),
-            '$comment_item_colour' => array('redbasic_comment_item_colour', t('Set the background color of comments'), $arr['comment_item_colour']),
-            '$font_size' => array('redbasic_font_size', t('Set font-size for the entire application'), $arr['font_size'], t('Examples: 1rem, 100%, 16px')),
-            '$font_colour' => array('redbasic_font_colour', t('Set font-color for posts and comments'), $arr['font_colour']),
-            '$radius' => array('redbasic_radius', t('Set radius of corners'), $arr['radius'], t('Example: 4px')),
-            '$shadow' => array('redbasic_shadow', t('Set shadow depth of photos'), $arr['shadow']),
-            '$converse_width' => array('redbasic_converse_width', t('Set maximum width of content region in pixel'), $arr['converse_width'], t('Leave empty for default width')),
-            '$top_photo' => array('redbasic_top_photo', t('Set size of conversation author photo'), $arr['top_photo']),
-            '$reply_photo' => array('redbasic_reply_photo', t('Set size of followup author photos'), $arr['reply_photo']),
+            '$narrow_navbar' => ['redbasic_narrow_navbar', t('Narrow navbar'), $arr['narrow_navbar'], '', [t('No'), t('Yes')]],
+            '$nav_bg' => ['redbasic_nav_bg', t('Navigation bar background color'), $arr['nav_bg']],
+            '$nav_icon_colour' => ['redbasic_nav_icon_colour', t('Navigation bar icon color '), $arr['nav_icon_colour']],
+            '$nav_active_icon_colour' => ['redbasic_nav_active_icon_colour', t('Navigation bar active icon color '), $arr['nav_active_icon_colour']],
+            '$link_colour' => ['redbasic_link_colour', t('Link color'), $arr['link_colour']],
+            '$banner_colour' => ['redbasic_banner_colour', t('Set font-color for banner'), $arr['banner_colour']],
+            '$bgcolour' => ['redbasic_background_colour', t('Set the background color'), $arr['bgcolour']],
+            '$background_image' => ['redbasic_background_image', t('Set the background image'), $arr['background_image']],
+            '$item_colour' => ['redbasic_item_colour', t('Set the background color of items'), $arr['item_colour']],
+            '$comment_item_colour' => ['redbasic_comment_item_colour', t('Set the background color of comments'), $arr['comment_item_colour']],
+            '$font_size' => ['redbasic_font_size', t('Set font-size for the entire application'), $arr['font_size'], t('Examples: 1rem, 100%, 16px')],
+            '$font_colour' => ['redbasic_font_colour', t('Set font-color for posts and comments'), $arr['font_colour']],
+            '$radius' => ['redbasic_radius', t('Set radius of corners'), $arr['radius'], t('Example: 4px')],
+            '$shadow' => ['redbasic_shadow', t('Set shadow depth of photos'), $arr['shadow']],
+            '$converse_width' => ['redbasic_converse_width', t('Set maximum width of content region in pixel'), $arr['converse_width'], t('Leave empty for default width')],
+            '$top_photo' => ['redbasic_top_photo', t('Set size of conversation author photo'), $arr['top_photo']],
+            '$reply_photo' => ['redbasic_reply_photo', t('Set size of followup author photos'), $arr['reply_photo']],
         ));
-
-        return $o;
     }
-
 }
 
