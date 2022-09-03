@@ -187,7 +187,7 @@ class Socgraph {
             if (($x !== false) && (! count($x))) {
                 if ($address) {
                     if (in_array($network, ['nomad', 'zot6', 'activitypub'])) {
-                        $wf = discover_by_webbie($profile_url);
+                        $wf = discover_resource($profile_url);
                         if ($wf) {
                             $x = q(
                                 "select xchan_hash from xchan where ( xchan_hash = '%s' or xchan_url = '%s') order by xchan_network desc limit 1",
@@ -297,7 +297,7 @@ class Socgraph {
             } else {
                 // We've never seen this person before. Import them.
 
-                $wf = discover_by_webbie($entry);
+                $wf = discover_resource($entry);
                 if ($wf) {
                     $x = q(
                         "select xchan_hash from xchan where (xchan_hash = '%s' or xchan_url = '%s') order by xchan_network desc limit 1",

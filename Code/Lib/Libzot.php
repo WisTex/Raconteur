@@ -1310,7 +1310,7 @@ class Libzot
                 );
                 if (! $r) {
                     // Author is unknown to this site. Perform channel discovery and try again.
-                    $z = discover_by_webbie($AS->actor['id']);
+                    $z = discover_resource($AS->actor['id']);
                     if ($z) {
                         $r = q(
                             "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",

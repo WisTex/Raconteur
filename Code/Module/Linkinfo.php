@@ -84,7 +84,7 @@ class Linkinfo extends Controller
 
         if (!$m['scheme']) {
             if (strpos($url, '@')) {
-                $xc = discover_by_webbie($url);
+                $xc = discover_resource($url);
                 if ($xc) {
                     $x = q(
                         "select * from xchan where xchan_hash = '%s'",

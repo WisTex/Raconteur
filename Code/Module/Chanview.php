@@ -93,7 +93,7 @@ class Chanview extends Controller
                     }
                 }
                 if (!$r) {
-                    if (discover_by_webbie($_REQUEST['address'])) {
+                    if (discover_resource($_REQUEST['address'])) {
                         $r = q(
                             "select * from xchan where xchan_addr = '%s' limit 1",
                             dbesc($_REQUEST['address'])

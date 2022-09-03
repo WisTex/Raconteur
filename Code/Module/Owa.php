@@ -40,7 +40,7 @@ class Owa extends Controller
                         dbesc($keyId)
                     );
                     if (!$r) {
-                        $found = discover_by_webbie(str_replace('acct:', '', $keyId));
+                        $found = discover_resource(str_replace('acct:', '', $keyId));
                         if ($found) {
                             $r = q(
                                 "select * from hubloc left join xchan on hubloc_hash = xchan_hash 

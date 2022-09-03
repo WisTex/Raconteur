@@ -329,7 +329,7 @@ function owt_init($token)
 
     if (! $r) {
         // finger them if they can't be found.
-        $wf = discover_by_webbie($ob_hash);
+        $wf = discover_resource($ob_hash);
         if ($wf) {
             $r = q(
                 "select * from hubloc left join xchan on xchan_hash = hubloc_hash
@@ -430,7 +430,7 @@ function observer_auth($ob_hash)
 
     if (! $r) {
         // finger them if they can't be found.
-        $wf = discover_by_webbie($ob_hash);
+        $wf = discover_resource($ob_hash);
         if ($wf) {
             $r = q(
                 "select * from hubloc left join xchan on xchan_hash = hubloc_hash

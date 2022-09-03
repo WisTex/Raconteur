@@ -17,7 +17,7 @@ class Fedi_id extends Controller
             return;
         }
         if ($_REQUEST['address']) {
-            $x = discover_by_webbie(trim($_REQUEST['address']));
+            $x = discover_resource(trim($_REQUEST['address']));
             if ($x) {
                 $ab = q(
                     "select * from abook where abook_xchan = '%s' and abook_channel = %d",

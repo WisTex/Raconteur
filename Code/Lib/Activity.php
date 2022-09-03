@@ -3436,7 +3436,7 @@ class Activity
                     );
                     if (! $x) {
                         // This tagged identity has never before been seen on this site. Perform discovery and retry.
-                        $hash = discover_by_webbie($tag['url']);
+                        $hash = discover_resource($tag['url']);
                         $x = q(
                             "select * from xchan where xchan_url = '%s' or xchan_hash = '%s' limit 1",
                             dbesc($tag['url']),

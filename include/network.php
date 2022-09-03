@@ -594,19 +594,16 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject')
 /**
  * @brief
  *
- * @param string $webbie
+ * @param string $resource
  * @param string $protocol (optional) default empty
  * @param bool $verify (optional) default true, verify HTTP signatures on Zot discovery packets.
- * @return bool
+ * @return bool|string
  */
-function discover_by_webbie($webbie, $protocol = '', $verify = true)
+function discover_resource(string $resource, $protocol = '', $verify = true)
 {
-
-    $result   = [];
-
     $network  = null;
 
-    $x = Webfinger::exec($webbie);
+    $x = Webfinger::exec($resource);
 
     $address = EMPTY_STR;
 
@@ -634,13 +631,13 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 				// here.
 
 				if ($link['rel'] == PROTOCOL_NOMAD && ((! $protocol) || (strtolower($protocol) == 'nomad'))) {
-					logger('nomad found for ' . $webbie, LOGGER_DEBUG);
+					logger('nomad found for ' . $resource, LOGGER_DEBUG);
 					$record = Zotfinger::exec($link['href'], null, $verify);
 
 					// Check the HTTP signature
 
 					if ($verify) {
-
+                        $hsig_valid = false;
 						$hsig = $record['signature'];
 						if($hsig && $hsig['signer'] === $link['href'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
 							$hsig_valid = true;
@@ -670,7 +667,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
                 // here.
 
                 if ($link['rel'] === PROTOCOL_ZOT6 && ((! $protocol) || (strtolower($protocol) === 'zot6'))) {
-                    logger('zot6 found for ' . $webbie, LOGGER_DEBUG);
+                    logger('zot6 found for ' . $resource, LOGGER_DEBUG);
                     $record = Zotfinger::exec($link['href'], null, $verify);
 
                     // Check the HTTP signature
@@ -702,15 +699,15 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
         }
     }
 
-	if (str_starts_with($webbie, 'http') && !$x) {
-        $record = Zotfinger::exec($webbie, null, $verify);
+	if (str_starts_with($resource, 'http') && !$x) {
+        $record = Zotfinger::exec($resource, null, $verify);
 
         // Check the HTTP signature
 
 		if ($record) {
             if ($verify) {
                 $hsig = $record['signature'];
-                if ($hsig && $hsig['signer'] === $webbie && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+                if ($hsig && $hsig['signer'] === $resource && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
                     $hsig_valid = true;
                 }
 
@@ -727,8 +724,8 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 		}
 	}
 
-    if (str_starts_with($webbie, 'http')) {
-        $ap = ActivityPub::discover($webbie);
+    if (str_starts_with($resource, 'http')) {
+        $ap = ActivityPub::discover($resource);
         if ($ap) {
             return $ap;
         }
@@ -737,7 +734,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
     logger('webfinger: ' . print_r($x, true), LOGGER_DATA, LOG_INFO);
 
     $arr = [
-            'address'   => $webbie,
+            'address'   => $resource,
             'protocol'  => $protocol,
             'success'   => false,
             'xchan'     => '',
@@ -911,7 +908,7 @@ function get_site_info()
         'info'                         => (($site_info) ? $site_info : '')
 
     ];
-    
+
     return $data;
 }
 

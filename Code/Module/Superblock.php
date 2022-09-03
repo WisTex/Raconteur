@@ -60,7 +60,7 @@ class Superblock extends Controller
 
                 if (!$r) {
                     // not in cache - try discovery
-                    $wf = discover_by_webbie($blocked, '', false);
+                    $wf = discover_resource($blocked, '', false);
 
                     if (!$wf) {
                         notice(t('Channel not found.') . EOL);

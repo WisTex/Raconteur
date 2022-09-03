@@ -819,7 +819,7 @@ function import_author_activitypub($x) {
         return $ptr['xchan_hash'];
     }
 
-    $z = discover_by_webbie($x['url']);
+    $z = discover_resource($x['url']);
 
     if($z) {
         $r = q("select xchan_hash, xchan_url, xchan_network, xchan_name, xchan_photo_s from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_id_url = '%s' and hubloc_deleted = 0",
