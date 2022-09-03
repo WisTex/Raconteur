@@ -28,8 +28,6 @@ class Onepoll
             return;
         }
 
-        $d = datetime_convert();
-
         $contacts = q(
             "SELECT abook.*, xchan.*, account.*
             FROM abook LEFT JOIN account on abook_account = account_id left join xchan on xchan_hash = abook_xchan 
@@ -47,8 +45,6 @@ class Onepoll
         }
 
         $contact = array_shift($contacts);
-
-        $t = $contact['abook_updated'];
 
         $importer_uid = $contact['abook_channel'];
 
@@ -133,7 +129,7 @@ class Onepoll
         if ($fetch_feed) {
             $max = intval(get_config('system', 'max_imported_posts', 50));
             if (intval($max)) {
-                $cl = get_xconfig($xchan, 'activitypub', 'collections');
+                $cl = get_xconfig($contact['abook_xchan'], 'activitypub', 'collections');
                 if (is_array($cl) && $cl) {
                     $url = ((array_key_exists('outbox', $cl)) ? $cl['outbox'] : '');
                     if ($url) {

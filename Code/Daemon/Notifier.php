@@ -540,7 +540,6 @@ class Notifier
             'upstream'       => $upstream,
             'env_recips'     => self::$env_recips,
             'recipients'     => self::$recipients,
-            'item'           => $item,
             'target_item'    => $target_item,
             'parent_item'    => $parent_item,
             'top_level_post' => $top_level_post,
@@ -549,7 +548,6 @@ class Notifier
             'uplink'         => $uplink,
             'cmd'            => $cmd,
             'single'         => (($cmd === 'single_activity') ? true : false),
-            'request'        => $request,
             'normal_mode'    => $normal_mode,
             'packet_type'    => self::$packet_type,
             'queued'         => []
@@ -675,7 +673,6 @@ class Notifier
                     'upstream'       => $upstream,
                     'env_recips'     => self::$env_recips,
                     'recipients'     => self::$recipients,
-                    'item'           => $item,
                     'target_item'    => $target_item,
                     'parent_item'    => $parent_item,
                     'hub'            => $hub,
@@ -685,7 +682,6 @@ class Notifier
                     'uplink'         => $uplink,
                     'cmd'            => $cmd,
                     'single'         => (($cmd === 'single_activity') ? true : false),
-                    'request'        => $request,
                     'normal_mode'    => $normal_mode,
                     'packet_type'    => self::$packet_type,
                     'queued'         => []

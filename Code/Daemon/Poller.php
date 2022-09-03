@@ -56,7 +56,6 @@ class Poller
         }
 
         if (($argc > 1) && ($argv[1] == 'restart')) {
-            $restart = true;
             $generation = intval($argv[2]);
             if (! $generation) {
                 return;

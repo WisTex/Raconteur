@@ -768,7 +768,6 @@ function do_delivery($deliveries, $force = false)
         return;
     }
 
-
     $x = q("select count(outq_hash) as total from outq where outq_delivered = 0");
     if (intval($x[0]['total']) > intval(get_config('system', 'force_queue_threshold', 3000)) && (! $force)) {
         logger('immediate delivery deferred.', LOGGER_DEBUG, LOG_INFO);
@@ -777,7 +776,6 @@ function do_delivery($deliveries, $force = false)
         }
         return;
     }
-
 
     $interval = ((get_config('system', 'delivery_interval') !== false)
             ? intval(get_config('system', 'delivery_interval')) : 2 );
@@ -1374,7 +1372,6 @@ function jsonld_document_loader($url)
 
 function is_https_request()
 {
-
     $https = false;
 
     if (array_key_exists('HTTPS', $_SERVER) && $_SERVER['HTTPS']) {
@@ -1402,8 +1399,8 @@ function get_request_string($url)
 
     $m = parse_url($url);
     if ($m) {
-        return ( (isset($m['path']) ? $m['path'] : '/' ) . (isset($m['query']) ? '?' . $m['query'] : EMPTY_STR) );
+        return ( (isset($m['path']) ? $m['path'] : '/' ) . (isset($m['query']) ? '?' . $m['query'] : '') );
     }
 
-    return EMPTY_STR;
+    return '';
 }
