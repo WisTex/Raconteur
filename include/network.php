@@ -4,12 +4,10 @@ use Code\Lib\Libzot;
 use Code\Lib\Zotfinger;
 use Code\Lib\Webfinger;
 use Code\Lib\Channel;
-use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
 use Code\Lib\ActivityPub;
 use Code\Lib\Queue;
 use Code\Lib\System;
-use Code\Lib\Keyutils;
 use Code\Lib\LDSignatures;
 use Code\Lib\Addon;
 use Code\Lib\Url;
@@ -72,10 +70,10 @@ function as_return_and_die($obj, $channel)
 function http_status($val, $msg = '')
 {
     if ($val >= 400) {
-        $msg = (($msg) ? $msg : 'Error');
+        $msg = (($msg) ?: 'Error');
     }
     if ($val >= 200 && $val < 300) {
-        $msg = (($msg) ? $msg : 'OK');
+        $msg = (($msg) ?: 'OK');
     }
 
     logger(App::$query_string . ':' . $val . ' ' . $msg);
@@ -134,7 +132,7 @@ function convert_xml_element_to_array($xml_element, &$recursion_depth = 0)
 
     // If we're getting too deep, bail out
     if ($recursion_depth > 512) {
-        return(null);
+        return null;
     }
 
     if (
@@ -160,9 +158,9 @@ function convert_xml_element_to_array($xml_element, &$recursion_depth = 0)
         }
         if ($recursion_depth == 0) {
             $temp_array = $result_array;
-            $result_array = array(
+            $result_array = [
                 strtolower($xml_element_copy->getName()) => $temp_array,
-            );
+            ];
         }
 
         return ($result_array);
@@ -220,11 +218,11 @@ function validate_url(&$url)
 {
 
     // no naked subdomains (allow localhost for tests)
-    if (strpos($url, '.') === false && strpos($url, '/localhost/') === false) {
+    if (!str_contains($url, '.') && !str_contains($url, '/localhost/')) {
         return false;
     }
 
-    if (substr($url, 0, 4) != 'http') {
+    if (!str_starts_with($url, 'http')) {
         $url = 'http://' . $url;
     }
 
@@ -575,7 +573,7 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject')
             base64-encoding 3 8-bit-chars are represented
             by 4 6-bit-chars. These 4 chars must not be
             split between two encoded words, according
-            to RFC-2047.]
+            to RFC-2047."]
         */
         $length = $length - ($length % 4);
 
@@ -612,12 +610,12 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 
     $address = EMPTY_STR;
 
-    if ($x && array_key_exists('subject', $x) && strpos($x['subject'], 'acct:') === 0) {
+    if ($x && array_key_exists('subject', $x) && str_starts_with($x['subject'], 'acct:')) {
         $address = str_replace('acct:', '', $x['subject']);
     }
     if ($x && array_key_exists('aliases', $x) && count($x['aliases'])) {
         foreach ($x['aliases'] as $a) {
-            if (strpos($a, 'acct:') === 0) {
+            if (str_starts_with($a, 'acct:')) {
                 $address = str_replace('acct:', '', $a);
                 break;
             }
@@ -635,7 +633,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 				// If we discover zot - don't search further; grab the info and get out of
 				// here.
 
-				if (in_array($link['rel'], [ PROTOCOL_NOMAD ]) && ((! $protocol) || (in_array(strtolower($protocol), [ 'nomad' ])))) {
+				if ($link['rel'] == PROTOCOL_NOMAD && ((! $protocol) || (strtolower($protocol) == 'nomad'))) {
 					logger('nomad found for ' . $webbie, LOGGER_DEBUG);
 					$record = Zotfinger::exec($link['href'], null, $verify);
 
@@ -694,7 +692,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
                         return $x['hash'];
                     }
                 }
-                if ($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || strpos($link['type'], 'ld+json') !== false) && ((! $protocol) || (strtolower($protocol) === 'activitypub'))) {
+                if ($link['rel'] === 'self' && ($link['type'] === 'application/activity+json' || str_contains($link['type'], 'ld+json')) && ((! $protocol) || (strtolower($protocol) === 'activitypub'))) {
                     $ap = ActivityPub::discover($link['href']);
                     if ($ap) {
                         return $ap;
@@ -704,7 +702,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
         }
     }
 
-	if (strpos($webbie, 'http') === 0 && !$x) {
+	if (str_starts_with($webbie, 'http') && !$x) {
         $record = Zotfinger::exec($webbie, null, $verify);
 
         // Check the HTTP signature
@@ -729,7 +727,7 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
 		}
 	}
 
-    if (strpos($webbie, 'http') === 0) {
+    if (str_starts_with($webbie, 'http')) {
         $ap = ActivityPub::discover($webbie);
         if ($ap) {
             return $ap;
@@ -761,47 +759,6 @@ function discover_by_webbie($webbie, $protocol = '', $verify = true)
     return false;
 }
 
-/**
- * @brief Fetch and return a webfinger for a webbie.
- * No longer used - see Code/Lib/Webfinger.php
- *
- * @param string $webbie - The resource
- * @return bool|string false or associative array from result JSON
- */
-function webfinger_rfc7033($webbie)
-{
-
-    if (strpos($webbie, '@')) {
-        $lhs = substr($webbie, 0, strpos($webbie, '@'));
-        $rhs = substr($webbie, strpos($webbie, '@') + 1);
-        $resource = urlencode('acct:' . $webbie);
-    } else {
-        $m = parse_url($webbie);
-        if ($m) {
-            if ($m['scheme'] !== 'https') {
-                return false;
-            }
-
-            $rhs = $m['host'] . ((isset($m['port']) && intval($m['port'])) ? ':' . intval($m['port']) : '');
-            $resource = urlencode($webbie);
-        } else {
-            return false;
-        }
-    }
-    logger('fetching url from resource: ' . $rhs . ':' . $webbie);
-
-    $s = Url::get(
-        'https://' . $rhs . '/.well-known/webfinger?f=&resource=' . $resource,
-        [ 'headers' => [ 'Accept: application/jrd+json, application/json, */*' ] ]
-    );
-
-    if ($s['success']) {
-        $j = json_decode($s['body'], true);
-        return($j);
-    }
-
-    return false;
-}
 
 function do_delivery($deliveries, $force = false)
 {
@@ -864,10 +821,7 @@ function get_site_info()
 
     $register_policy = array('REGISTER_CLOSED', 'REGISTER_APPROVE', 'REGISTER_OPEN');
 
-    $sql_extra = '';
-
     $r = q("select * from channel left join account on account_id = channel_account_id where ( account_roles & 4096 ) > 0 and account_default_channel = channel_id");
-
 
     if ($r) {
         $admin = [];
@@ -917,14 +871,6 @@ function get_site_info()
         $version = $commit = '';
     }
 
-    //Statistics
-//  $channels_total_stat = intval(get_config('system','channels_total_stat'));
-//  $channels_active_halfyear_stat = intval(get_config('system','channels_active_halfyear_stat'));
-//  $channels_active_monthly_stat = intval(get_config('system','channels_active_monthly_stat'));
-//  $local_posts_stat = intval(get_config('system','local_posts_stat'));
-//  $local_comments_stat = intval(get_config('system','local_comments_stat'));
-//  $hide_in_statistics = intval(get_config('system','hide_in_statistics'));
-
     $site_expire = intval(get_config('system', 'default_expire_days'));
 
     load_config('feature_lock');
@@ -934,7 +880,6 @@ function get_site_info()
             if ($k === 'config_loaded') {
                 continue;
             }
-
             $locked_features[$k] = intval($v);
         }
     }
@@ -966,8 +911,7 @@ function get_site_info()
         'info'                         => (($site_info) ? $site_info : '')
 
     ];
-
-
+    
     return $data;
 }
 
@@ -1447,7 +1391,7 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false)
     // let’s check our supported types:
     foreach ($AcceptTypes as $mime => $q) {
         if ($q && in_array($mime, $mimeTypes)) {
-            return $mime;
+            return [$mime];
         }
     }
 
