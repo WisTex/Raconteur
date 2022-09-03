@@ -329,7 +329,7 @@ function allowed_email($email)
 function parse_xml_string($s, $strict = true)
 {
     if ($strict) {
-        if (! strstr($s, '<?xml')) {
+        if (!str_contains($s, '<?xml')) {
             return false;
         }
 
@@ -355,12 +355,11 @@ function parse_xml_string($s, $strict = true)
 }
 
 
-function sxml2array($xmlObject, $out = array ())
+function sxml2array($xmlObject, $out = [])
 {
     foreach ((array) $xmlObject as $index => $node) {
         $out[$index] = ( is_object($node) ) ? sxml2array($node) : $node;
     }
-
     return $out;
 }
 
@@ -377,7 +376,7 @@ function sxml2array($xmlObject, $out = array ())
  * @param string $contents The XML text
  * @param bool $namespaces true or false include namespace information in the returned array as array elements
  * @param int $get_attributes 1 or 0. If this is 1 the function will get the attributes as well as the tag values - this results in a different array structure in the return value.
- * @param string $priority Can be 'tag' or 'attribute'. This will change the way the resulting array sturcture. For 'tag', the tags are given more importance.
+ * @param string $priority Can be 'tag' or 'attribute'. This will change the way the resulting array structure. For 'tag', the tags are given more importance.
  *
  * @return array The parsed XML in an array form. Use print_r() to see the resulting array structure.
  */
@@ -555,7 +554,7 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject')
     }
 
     if ($out_str && $charset) {
-        // define start delimimter, end delimiter and spacer
+        // define start delimiter, end delimiter and spacer
         $end = "?=";
         $start = "=?" . $charset . "?B?";
         $spacer = $end . PHP_EOL . " " . $start;
@@ -673,6 +672,7 @@ function discover_resource(string $resource, $protocol = '', $verify = true)
                     // Check the HTTP signature
 
                     if ($verify) {
+                        $hsig_valid = false;
                         $hsig = $record['signature'];
                         if ($hsig && $hsig['signer'] === $link['href'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
                             $hsig_valid = true;
@@ -706,6 +706,7 @@ function discover_resource(string $resource, $protocol = '', $verify = true)
 
 		if ($record) {
             if ($verify) {
+                $hsig_valid = false;
                 $hsig = $record['signature'];
                 if ($hsig && $hsig['signer'] === $resource && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
                     $hsig_valid = true;
@@ -743,7 +744,7 @@ function discover_resource(string $resource, $protocol = '', $verify = true)
     /**
      * @hooks discover_channel_webfinger
      *   Called when performing a webfinger lookup.
-     *   * \e string \b address - The webbie
+     *   * \e string \b address - The resource
      *   * \e string \b protocol
      *   * \e array \b webfinger - The result from webfinger_rfc7033()
      *   * \e boolean \b success - The return value, default false
@@ -787,7 +788,6 @@ function do_delivery($deliveries, $force = false)
         $deliveries_per_process = 1;
     }
 
-
     $deliver = [];
     foreach ($deliveries as $d) {
         if (! $d) {
@@ -815,8 +815,7 @@ function do_delivery($deliveries, $force = false)
 
 function get_site_info()
 {
-
-    $register_policy = array('REGISTER_CLOSED', 'REGISTER_APPROVE', 'REGISTER_OPEN');
+    $register_policy = ['REGISTER_CLOSED', 'REGISTER_APPROVE', 'REGISTER_OPEN'];
 
     $r = q("select * from channel left join account on account_id = channel_account_id where ( account_roles & 4096 ) > 0 and account_default_channel = channel_id");
 
@@ -824,12 +823,12 @@ function get_site_info()
         $admin = [];
         foreach ($r as $rr) {
             if ($rr['channel_pageflags'] & PAGE_HUBADMIN) {
-                $admin[] = array( 'name' => $rr['channel_name'], 'address' => Channel::get_webfinger($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
+                $admin[] = ['name' => $rr['channel_name'], 'address' => Channel::get_webfinger($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']];
             }
         }
         if (! $admin) {
             foreach ($r as $rr) {
-                $admin[] = array( 'name' => $rr['channel_name'], 'address' => Channel::get_webfinger($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']);
+                $admin[] = ['name' => $rr['channel_name'], 'address' => Channel::get_webfinger($rr), 'channel' => z_root() . '/channel/' . $rr['channel_address']];
             }
         }
     } else {
@@ -886,7 +885,7 @@ function get_site_info()
         $protocols[] = 'activitypub';
     }
 
-    $data = [
+    return [
         'url'                          => z_root(),
         'platform'                     => System::get_project_name(),
         'site_name'                    => (($site_name) ? $site_name : ''),
@@ -896,7 +895,7 @@ function get_site_info()
         'protocols'                    => $protocols,
         'plugins'                      => $visible_plugins,
         'register_policy'              => $register_policy[get_config('system', 'register_policy')],
-        'invitation_only'              => (bool) (defined('INVITE_WORKING') && intval(get_config('system', 'invitation_only'))),
+        'invitation_only'              => (defined('INVITE_WORKING') && intval(get_config('system', 'invitation_only'))),
         'language'                     => get_config('system', 'language'),
         'expiration'                   => $site_expire,
         'default_service_restrictions' => $service_class,
@@ -908,65 +907,30 @@ function get_site_info()
         'info'                         => (($site_info) ? $site_info : '')
 
     ];
-
-    return $data;
 }
 
-/**
- * @brief
- *
- * @param string $url
- * @return bool
- */
-function check_siteallowed($url)
-{
 
-    $retvalue = true;
 
-    if (! (isset($url) && $url)) {
-        return false;
-    }
-
-    $arr = [ 'url' => $url ];
-    /**
-     * @hooks check_siteallowed
-     *   Used to over-ride or bypass the site black/white block lists.
-     *   * \e string \b url
-     *   * \e boolean \b allowed - optional return value set in hook
-     */
-    Hook::call('check_siteallowed', $arr);
-
-    if (array_key_exists('allowed', $arr)) {
-        return $arr['allowed'];
-    }
-
-    // your own site is always allowed
-    if (strpos($url, z_root()) !== false) {
-        return $retvalue;
-    }
-
-    $bl1 = get_config('system', 'allowed_sites');
-    $bl2 = get_config('system', 'denied_sites');
-
-    if (is_array($bl1) && $bl1) {
-        if (! (is_array($bl2) && $bl2)) {
+function match_access_rule($resource, $allowed, $denied, $retvalue) {
+    if (is_array($allowed) && $allowed) {
+        if (! (is_array($denied) && $denied)) {
             $retvalue = false;
         }
-        foreach ($bl1 as $bl) {
-            if ($bl === '*') {
+        foreach ($allowed as $entry) {
+            if ($entry === '*') {
                 $retvalue = true;
             }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
+            if ($entry && (str_contains($resource, $entry) || wildmat($entry, $resource))) {
                 return true;
             }
         }
     }
-    if (is_array($bl2) && $bl2) {
-        foreach ($bl2 as $bl) {
-            if ($bl === '*') {
+    if (is_array($denied) && $denied) {
+        foreach ($denied as $entry) {
+            if ($entry === '*') {
                 $retvalue = false;
             }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
+            if ($entry && (str_contains($resource, $entry) || wildmat($entry, $resource))) {
                 return false;
             }
         }
@@ -981,12 +945,50 @@ function check_siteallowed($url)
  * @param string $url
  * @return bool
  */
+function check_siteallowed($url)
+{
+
+    $retvalue = true;
+
+    if (!(isset($url) && $url)) {
+        return false;
+    }
+
+    $arr = ['url' => $url];
+    /**
+     * @hooks check_siteallowed
+     *   Used to over-ride or bypass the site black/white block lists.
+     *   * \e string \b url
+     *   * \e boolean \b allowed - optional return value set in hook
+     */
+    Hook::call('check_siteallowed', $arr);
+
+    if (array_key_exists('allowed', $arr)) {
+        return $arr['allowed'];
+    }
+
+    // your own site is always allowed
+    if (str_contains($url, z_root())) {
+        return $retvalue;
+    }
+
+    $allowed = get_config('system', 'allowed_sites');
+    $denied = get_config('system', 'denied_sites');
+    return match_access_rule($url, $allowed, $denied, $retvalue);
+}
+
+/**
+ * @brief
+ *
+ * @param string $url
+ * @return bool
+ */
 function check_pubstream_siteallowed($url)
 {
 
     $retvalue = true;
 
-    $arr = array('url' => $url);
+    $arr = ['url' => $url];
     /**
      * @hooks check_siteallowed
      *   Used to over-ride or bypass the site black/white block lists.
@@ -1004,37 +1006,10 @@ function check_pubstream_siteallowed($url)
         return $retvalue;
     }
 
-    $bl1 = get_config('system', 'pubstream_allowed_sites');
-    $bl2 = get_config('system', 'pubstream_denied_sites');
-
-    if (is_array($bl1) && $bl1) {
-        if (! (is_array($bl2) && $bl2)) {
-            $retvalue = false;
-        }
-        foreach ($bl1 as $bl) {
-            if ($bl === '*') {
-                $retvalue = true;
-            }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
-                return true;
-            }
-        }
-    }
-    if (is_array($bl2) && $bl2) {
-        foreach ($bl2 as $bl) {
-            if ($bl === '*') {
-                $retvalue = false;
-            }
-            if ($bl && (strpos($url, $bl) !== false || wildmat($bl, $url))) {
-                return false;
-            }
-        }
-    }
-
-    return $retvalue;
+    $allowed = get_config('system', 'pubstream_allowed_sites');
+    $denied = get_config('system', 'pubstream_denied_sites');
+    return match_access_rule($url, $allowed, $denied, $retvalue);
 }
-
-
 
 /**
  * @brief
@@ -1047,7 +1022,7 @@ function check_channelallowed($hash)
 
     $retvalue = true;
 
-    $arr = [ 'hash' => $hash ];
+    $arr = ['hash' => $hash];
     /**
      * @hooks check_channelallowed
      *   Used to over-ride or bypass the channel black/white block lists.
@@ -1060,36 +1035,10 @@ function check_channelallowed($hash)
         return $arr['allowed'];
     }
 
-    $bl1 = get_config('system', 'allowed_channels');
-    $bl2 = get_config('system', 'denied_channels');
-
-    if (is_array($bl1) && $bl1) {
-        if (! (is_array($bl2) && $bl2)) {
-            $retvalue = false;
-        }
-        foreach ($bl1 as $bl) {
-            if ($bl === '*') {
-                $retvalue = true;
-            }
-            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
-                return true;
-            }
-        }
-    }
-    if (is_array($bl2) && $bl2) {
-        foreach ($bl2 as $bl) {
-            if ($bl === '*') {
-                $retvalue = false;
-            }
-            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
-                return false;
-            }
-        }
-    }
-
-    return $retvalue;
+    $allowed = get_config('system', 'allowed_channels');
+    $denied = get_config('system', 'denied_channels');
+    return match_access_rule($hash, $allowed, $denied, $retvalue);
 }
-
 
 /**
  * @brief
@@ -1115,34 +1064,9 @@ function check_pubstream_channelallowed($hash)
         return $arr['allowed'];
     }
 
-    $bl1 = get_config('system', 'pubstream_allowed_channels');
-    $bl2 = get_config('system', 'pubstream_denied_channels');
-
-    if (is_array($bl1) && $bl1) {
-        if (! (is_array($bl2) && $bl2)) {
-            $retvalue = false;
-        }
-        foreach ($bl1 as $bl) {
-            if ($bl === '*') {
-                $retvalue = true;
-            }
-            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
-                return true;
-            }
-        }
-    }
-    if (is_array($bl2) && $bl2) {
-        foreach ($bl2 as $bl) {
-            if ($bl === '*') {
-                $retvalue = false;
-            }
-            if ($bl && (strpos($hash, $bl) !== false || wildmat($bl, $hash))) {
-                return false;
-            }
-        }
-    }
-
-    return $retvalue;
+    $allowed = get_config('system', 'pubstream_allowed_channels');
+    $denied = get_config('system', 'pubstream_denied_channels');
+    return match_access_rule($hash, $allowed, $denied, $retvalue);
 }
 
 
