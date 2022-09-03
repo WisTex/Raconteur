@@ -13,19 +13,24 @@ class Album
 
     public function widget($args)
     {
-
-
         $owner_uid = App::$profile_uid;
         $sql_extra = permissions_sql($owner_uid);
-
 
         if (!perm_is_allowed($owner_uid, get_observer_hash(), 'view_storage')) {
             return '';
         }
 
+        // We will need this to map mimetypes to appropriate file extensions
+        $ph = photo_factory('');
+        $phototypes = $ph->supportedTypes();
+
+        $album = '';
+        $title = '';
+
         if ($args['album']) {
             $album = $args['album'];
         }
+
         if ($args['title']) {
             $title = $args['title'];
         }
@@ -98,20 +103,16 @@ class Album
             }
         }
 
-
-        $tpl = Theme::get_template('photo_album.tpl');
-        $o .= replace_macros($tpl, array(
+        return replace_macros(Theme::get_template('photo_album.tpl'), [
             '$photos' => $photos,
-            '$album' => (($title) ? $title : $album),
+            '$album' => ($title) ?: $album,
             '$album_id' => rand(),
-            '$album_edit' => array(t('Edit Album'), $album_edit),
+            '$album_edit' => [t('Edit Album'), $album_edit],
             '$can_post' => false,
-            '$upload' => array(t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
+            '$upload' => [t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)],
             '$order' => false,
-            '$upload_form' => $upload_form,
-            '$usage' => $usage_message
-        ));
-
-        return $o;
+            '$upload_form' => '',
+            '$usage' => ''
+        ]);
     }
 }

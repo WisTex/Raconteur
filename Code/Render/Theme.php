@@ -19,7 +19,7 @@ class Theme
     /**
      * @brief Array with base or fallback themes.
      */
-    public static $base_themes = array('redbasic');
+    public static $base_themes = ['redbasic'];
 
 
     /**

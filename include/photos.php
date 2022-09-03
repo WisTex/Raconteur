@@ -825,8 +825,8 @@ function photos_list_photos($channel, $observer, $album = '')
  *
  * @param int $channel_id id of the channel
  * @param string $observer_hash
- * @param string $album name of the album
- * @return bool
+ * @param string $album name ofb the album
+ * @return bool|array
  */
 function photos_album_exists($channel_id, $observer_hash, $album)
 {

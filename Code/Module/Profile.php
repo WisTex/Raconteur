@@ -7,9 +7,7 @@ use Code\Web\Controller;
 use Code\Lib\Libprofile;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
-use Code\Lib\LDSignatures;
 use Code\Lib\Channel;
-use Code\Web\HTTPSig;
 use Code\Lib\Navbar;
 use Code\Lib\Head;
 use Code\Extend\Hook;
@@ -102,13 +100,13 @@ class Profile extends Controller
 
         if (!(perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_profile'))) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
 
         if (argc() > 2 && argv(2) === 'vcard') {
             header('Content-type: text/vcard');
-            header('Content-Disposition: attachment; filename="' . t('vcard') . '-' . $profile['channel_address'] . '.vcf"');
+            header('Content-Disposition: attachment; filename="' . t('vcard') . '-' . App::$profile['channel_address'] . '.vcf"');
             echo App::$profile['profile_vcard'];
             killme();
         }
@@ -117,7 +115,7 @@ class Profile extends Controller
 
         if (App::$profile['hidewall'] && (!$is_owner) && (!remote_channel())) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         Head::add_link([

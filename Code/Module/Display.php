@@ -77,7 +77,7 @@ class Display extends Controller
                 'allow_location' => ((intval(get_pconfig($channel['channel_id'], 'system', 'use_browser_location'))) ? '1' : ''),
                 'default_location' => $channel['channel_location'],
                 'nickname' => $channel['channel_address'],
-                'lockstate' => (($group || $cid || $channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
+                'lockstate' => (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 'lock' : 'unlock'),
                 'acl' => Libacl::populate($channel_acl, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
                 'permissions' => $channel_acl,
                 'bang' => '',
@@ -438,7 +438,7 @@ class Display extends Controller
                 break;
 
             case 'atom':
-                $atom = replace_macros(Theme::get_template('atom_feed.tpl'), array(
+                $atom = replace_macros(Theme::get_template('atom_feed.tpl'), [
                     '$version' => xmlify(System::get_project_version()),
                     '$generator' => xmlify(System::get_project_name()),
                     '$generator_uri' => z_root(),
@@ -448,9 +448,9 @@ class Display extends Controller
                     '$author' => '',
                     '$owner' => '',
                     '$profile_page' => xmlify(z_root() . '/display/?mid=' . $target_item['mid']),
-                ));
+                ]);
 
-                $x = ['xml' => $atom, 'channel' => $channel, 'observer_hash' => $observer_hash, 'params' => $params];
+                $x = ['xml' => $atom, 'channel' => $channel, 'observer_hash' => $observer_hash, 'params' => []];
                 Hook::call('atom_feed_top', $x);
 
                 $atom = $x['xml'];

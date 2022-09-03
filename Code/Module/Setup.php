@@ -13,7 +13,6 @@ namespace Code\Module;
 use App;
 use DBA;
 use PDO;
-use Code\Lib\System;
 use Code\Web\Controller;
 use Code\Lib\Channel;
 use Code\Lib\Url;
@@ -27,7 +26,7 @@ use Code\Storage\Stdio;
 class Setup extends Controller
 {
 
-    private static $install_wizard_pass = 1;
+    private $install_wizard_pass = 1;
 
     /**
      * {@inheritDoc}
@@ -89,9 +88,6 @@ class Setup extends Controller
                 $dbdata = trim($_POST['dbdata']);
                 $dbtype = intval(trim($_POST['dbtype']));
 
-                // $siteurl should not have a trailing slash
-                $siteurl = rtrim($siteurl, '/');
-
                 require_once('include/dba/dba_driver.php');
 
                 $db = DBA::dba_factory($dbhost, $dbport, $dbuser, $dbpass, $dbdata, $dbtype, true);
@@ -110,7 +106,6 @@ class Setup extends Controller
                 $dbpass = trim($_POST['dbpass']);
                 $dbdata = trim($_POST['dbdata']);
                 $dbtype = intval(trim($_POST['dbtype']));
-                $servertype = intval(trim($_POST['servertype']));
                 $phpath = trim($_POST['phpath']);
                 $timezone = trim($_POST['timezone']);
                 $adminmail = trim($_POST['adminmail']);
@@ -284,7 +279,6 @@ class Setup extends Controller
                     '$baseurl' => z_root(),
                 ]);
                 return $o;
-                break;
             }
 
             case 2:
@@ -345,7 +339,6 @@ class Setup extends Controller
                     '$dbpass' => $dbpass,
                     '$dbdata' => $dbdata,
                     '$dbtype' => $dbtype,
-                    '$servertype' => $servertype,
                     '$adminmail' => ['adminmail', t('Site administrator email address'), '', t('Required. Your account email address must match this in order to use the web admin panel.')],
                     '$siteurl' => ['siteurl', t('Website URL'), z_root(), t('Required. Please use SSL (https) URL if available.')],
                     '$sitename' => ['sitename', t('Website name'), '', t('The name of your website or community.')],

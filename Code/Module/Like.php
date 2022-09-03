@@ -23,12 +23,14 @@ class Like extends Controller
 
         $undo = false;
         $object = $target = null;
+        $tgttype = '';
         $owner_uid = 0;
         $post_type = EMPTY_STR;
         $objtype = EMPTY_STR;
         $allow_cid = $allow_gid = $deny_cid = $deny_gid = '';
         $output = EMPTY_STR;
 
+        $channel = App::get_channel();
         $observer = App::get_observer();
 
         // Figure out what action we're performing

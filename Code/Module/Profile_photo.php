@@ -501,7 +501,7 @@ class Profile_photo extends Controller
         if (!array_key_exists('imagecrop', App::$data)) {
             $tpl = Theme::get_template('profile_photo.tpl');
 
-            $o .= replace_macros($tpl, [
+            $o = replace_macros($tpl, [
                 '$user' => App::$channel['channel_address'],
                 '$info' => ((count($profiles) > 1) ? t('Your default profile photo is visible to anybody on the internet. Profile photos for alternate profiles will inherit the permissions of the profile') : t('Your profile photo is visible to anybody on the internet and may be distributed to other websites.')),
                 '$importfile' => (($importing) ? App::$data['importfile'] : ''),
@@ -533,7 +533,7 @@ class Profile_photo extends Controller
 
             $filename = App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'];
             $resolution = App::$data['imagecrop_resolution'];
-            $o .= replace_macros(Theme::get_template('cropbody.tpl'), [
+            $o = replace_macros(Theme::get_template('cropbody.tpl'), [
                 '$filename' => $filename,
                 '$profile' => intval($_REQUEST['profile']),
                 '$resource' => App::$data['imagecrop'] . '-' . App::$data['imagecrop_resolution'],

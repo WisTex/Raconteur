@@ -161,7 +161,7 @@ function xchan_store($arr)
         );
     }
 
-    return $true;
+    return true;
 }
 
 

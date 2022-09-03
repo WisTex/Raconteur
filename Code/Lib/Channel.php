@@ -1936,7 +1936,7 @@ class Channel
             $cover = [ 'href' => z_root() . '/' . self::get_default_cover_photo($cover_width) ];
         }
 
-        $o .= replace_macros(Theme::get_template('zcard.tpl'), array(
+        $o = replace_macros(Theme::get_template('zcard.tpl'), array(
             '$maxwidth' => $maxwidth,
             '$scale' => $scale,
             '$translate' => $translate,

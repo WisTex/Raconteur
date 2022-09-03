@@ -44,8 +44,8 @@ class Tokens
                     "select count(atoken_id) as total where atoken_uid = %d",
                     intval(local_channel())
                 );
-                if ($r && intval($r[0]['total']) >= $max_tokens) {
-                    notice(sprintf(t('This channel is limited to %d tokens'), $max_tokens) . EOL);
+                if ($r && intval($r[0]['total']) >= $max_atokens) {
+                    notice(sprintf(t('This channel is limited to %d tokens'), $max_atokens) . EOL);
                     return;
                 }
             }
@@ -126,8 +126,8 @@ class Tokens
         if (!$atoken_id) {
             // If this is a new token, create a new abook record
 
-            $closeness = get_pconfig($uid, 'system', 'new_abook_closeness', 80);
-            $profile_assign = get_pconfig($uid, 'system', 'profile_assign', '');
+            $closeness = get_pconfig($channel['channel_id'], 'system', 'new_abook_closeness', 80);
+            $profile_assign = get_pconfig($channel['channel_id'], 'system', 'profile_assign', '');
 
             $r = abook_store_lowlevel(
                 [
@@ -150,9 +150,9 @@ class Tokens
             /** If there is a default group for this channel, add this connection to it */
 
             if ($channel['channel_default_group']) {
-                $g = AccessList::rec_byhash($uid, $channel['channel_default_group']);
+                $g = AccessList::rec_byhash($channel['channel_id'], $channel['channel_default_group']);
                 if ($g) {
-                    AccessList::member_add($uid, '', $atoken_xchan, $g['id']);
+                    AccessList::member_add($channel['channel_id'], '', $atoken_xchan, $g['id']);
                 }
             }
 
@@ -282,9 +282,7 @@ class Tokens
 
             $checkinherited = PermissionLimits::Get(local_channel(), $k);
 
-            // For auto permissions (when $self is true) we don't want to look at existing
-            // permissions because they are enabled for the channel owner
-            if ((!$self) && ($existing[$k])) {
+            if ($existing[$k]) {
                 $thisperm = "1";
             }
 
@@ -293,14 +291,14 @@ class Tokens
 
 
         $tpl = Theme::get_template("settings_tokens.tpl");
-        $o .= replace_macros($tpl, array(
+        $o = replace_macros($tpl, array(
             '$form_security_token' => get_form_security_token("settings_tokens"),
             '$title' => t('Guest Access Tokens'),
             '$desc' => $desc,
             '$desc2' => $desc2,
             '$tokens' => $t,
             '$atoken' => $atoken,
-            '$atoken_xchan' => $atoken_chan,
+            '$atoken_xchan' => $atoken_xchan,
             '$url1' => z_root() . '/channel/' . $channel['channel_address'],
             '$url2' => z_root() . '/photos/' . $channel['channel_address'],
             '$name' => array('name', t('Login Name') . ' <span class="required">*</span>', (($atoken) ? $atoken['atoken_name'] : ''), ''),

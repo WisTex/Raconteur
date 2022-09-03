@@ -129,7 +129,7 @@ $res = $filelist;
 $i = 0;
 do {
     $i = count($res);
-    echo $i . '/' . count($fileset) . " elements remaining. \n";
+    echo $i . '/' . count($filelist) . " elements remaining. \n";
     $res = reduce($res, count($res) / 2);
     shuffle($res);
 } while (count($res) < $i);

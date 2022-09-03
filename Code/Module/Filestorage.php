@@ -105,6 +105,7 @@ class Filestorage extends Controller
         }
 
         $owner = intval($channel['channel_id']);
+        $which = $channel['channel_address'];
         $observer = App::get_observer();
 
         $ob_hash = (($observer) ? $observer['xchan_hash'] : '');

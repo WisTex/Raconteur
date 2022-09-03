@@ -347,7 +347,7 @@ class Profiles extends Controller
 
             $channel = App::get_channel();
 
-            $default_vcard_cat = ((defined('DEFAULT_VCARD_CAT')) ? DEFAULT_VCARD_CAT : 'HOME');
+            $default_vcard_cat = 'HOME';
 
             $defcard = [
                 'fn' => $name,

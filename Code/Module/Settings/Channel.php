@@ -627,7 +627,7 @@ class Channel
         $tag_count = get_pconfig(local_channel(), 'system', 'unless_tag_count',
             get_config('system', 'unless_tag_count', 20));
   
-        $o .= replace_macros(Theme::get_template('settings.tpl'), [
+        $o = replace_macros(Theme::get_template('settings.tpl'), [
             '$ptitle' => t('Channel Settings'),
             '$submit' => t('Submit'),
             '$baseurl' => z_root(),
@@ -636,7 +636,6 @@ class Channel
             '$nickname_block' => $prof_addr,
             '$h_basic' => t('Basic Settings'),
             '$username' => array('username', t('Full name'), $username, ''),
-            '$email' => array('email', t('Email Address'), $email, ''),
             '$timezone' => array('timezone_select', t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()),
             '$defloc' => array('defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')),
             '$allowloc' => array('allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(), 'system', 'use_browser_location')) ? 1 : ''), '', $yes_no),

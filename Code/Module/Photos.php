@@ -249,6 +249,8 @@ class Photos extends Controller
                     if ($ph && $ph->is_valid()) {
                         $rotate_deg = ((intval($_POST['rotate']) == 1) ? 270 : 90);
                         $ph->rotate($rotate_deg);
+                        $width = $ph->getWidth();
+                        $height = $ph->getHeight();
 
                         $edited = datetime_convert();
 
@@ -338,8 +340,6 @@ class Photos extends Controller
                 );
             }
 
-            $item_private = (($str_contact_allow || $str_group_allow || $str_contact_deny || $str_group_deny) ? true : false);
-
             $old_is_nsfw = $p[0]['is_nsfw'];
             if ($old_is_nsfw != $is_nsfw) {
                 $r = q(
@@ -375,7 +375,7 @@ class Photos extends Controller
             $orig_text = $linked_item['body'];
             $matches = [];
 
-            if (preg_match('/\[footer\](.*?)\[\/footer\]/ism', $orig_text, $matches)) {
+            if (preg_match('/\[footer](.*?)\[\/footer]/ism', $orig_text, $matches)) {
                 $footer_text = $matches[0];
             }
 
@@ -512,7 +512,7 @@ class Photos extends Controller
         $partial = false;
 
         if (array_key_exists('HTTP_CONTENT_RANGE', $_SERVER)) {
-            $pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
+            $pm = preg_match('/bytes (\d*)-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
             if ($pm) {
                 logger('Content-Range: ' . print_r($matches, true));
                 $partial = true;
@@ -656,9 +656,10 @@ class Photos extends Controller
         if ($can_post) {
             $uploader = '';
 
-            $ret = array('post_url' => z_root() . '/photos/' . App::$data['channel']['channel_address'],
+            $ret = ['post_url' => z_root() . '/photos/' . App::$data['channel']['channel_address'],
                 'addon_text' => $uploader,
-                'default_upload' => true);
+                'default_upload' => true
+            ];
 
             Hook::call('photo_upload_form', $ret);
 
@@ -710,12 +711,12 @@ class Photos extends Controller
                 $def_album = get_pconfig(App::$data['channel']['channel_id'], 'system', 'photo_path');
                 if ($def_album) {
                     $selname = filepath_macro($def_album);
-                    $albums['album'][] = array('text' => $selname);
+                    $albums['album'][] = ['text' => $selname];
                 }
             }
 
             $tpl = Theme::get_template('photos_upload.tpl');
-            $upload_form = replace_macros($tpl, array(
+            $upload_form = replace_macros($tpl, [
                 '$pagename' => t('Upload Photos'),
                 '$sessid' => session_id(),
                 '$usage' => $usage_message,
@@ -740,7 +741,7 @@ class Photos extends Controller
                 '$uploadurl' => $ret['post_url'],
                 '$submit' => t('Upload')
 
-            ));
+            ]);
         }
 
         //
@@ -1097,7 +1098,7 @@ class Photos extends Controller
                 $folder_list = attach_folder_select_list($ph[0]['uid']);
                 $edit_body = htmlspecialchars_decode(undo_post_tagging($link_item['body']), ENT_COMPAT);
                 // We will regenerate the body footer
-                $edit_body = preg_replace('/\[footer\](.*?)\[\/footer\]/ism', '', $edit_body);
+                $edit_body = preg_replace('/\[footer](.*?)\[\/footer]/ism', '', $edit_body);
 
                 $edit = [
                     'edit' => t('Edit photo'),

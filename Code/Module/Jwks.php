@@ -10,8 +10,9 @@ class Jwks extends Controller
 
     public function init()
     {
-
-        Keyutils::pemtome(get_config('system', 'pubkey'), $m, $e);
+        $m = '';
+        $e = '';
+        Keyutils::pemToMe(get_config('system', 'pubkey'), $m, $e);
 
         /**
          * RFC7518

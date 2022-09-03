@@ -63,25 +63,26 @@ class Notify extends Controller
             intval(local_channel())
         );
 
+        $notif_content = '';
+
         if ($r) {
             foreach ($r as $it) {
-                $notif_content .= replace_macros($not_tpl, array(
+                $notif_content .= replace_macros($not_tpl, [
                     '$item_link' => z_root() . '/notify/view/' . $it['id'],
                     '$item_image' => $it['photo'],
                     '$item_text' => strip_tags(bbcode($it['msg'])),
                     '$item_when' => relative_date($it['created'])
-                ));
+                ]);
             }
         } else {
             $notif_content .= t('No more system notifications.');
         }
 
-        $o .= replace_macros($notif_tpl, array(
+        return replace_macros($notif_tpl, [
             '$notif_header' => t('System Notifications'),
             '$tabs' => '', // $tabs,
             '$notif_content' => $notif_content,
-        ));
+        ]);
 
-        return $o;
     }
 }
