@@ -72,7 +72,7 @@ class AccessControl
     }
 
     /**
-     * @brief Get if we are using the default constructor values
+     * @brief Determine if we are using the default constructor values
      * or values that have been set explicitly.
      *
      * @return bool

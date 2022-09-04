@@ -201,7 +201,7 @@ class Permissions
                 return false;
             }
 
-            if ($p1[$k] != $p2[$k]) {
+            if ($p2[$k] != $v) {
                 return false;
             }
         }

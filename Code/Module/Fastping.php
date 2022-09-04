@@ -2,13 +2,7 @@
 
 namespace Code\Module;
 
-use App;
 use Code\Web\Controller;
-use Code\Lib\Enotify;
-use Code\Lib\Apps;
-use Code\Lib\PConfig;
-
-require_once('include/bbcode.php');
 
 /**
  * @brief Fastping Controller.
@@ -29,10 +23,6 @@ class Fastping extends Controller
 
     public function init()
     {
-        // Provide a general purpose ping endpoint to check server health.
-        if (argc() > 1 && argv(1) === 'pong') {
-            json_return_and_die(['success' => true ]);
-        }
         $result['notice'] = [];
         $result['info'] = [];
 
@@ -48,7 +38,8 @@ class Fastping extends Controller
          * Send all system messages (alerts) to the browser.
          * Some are marked as informational and some represent
          * errors or serious notifications. These typically
-         * will popup on the current page (no matter what page it is)
+         * will provide a popup on the current page (no matter
+         * what page it is).
          */
 
         if (x($_SESSION, 'sysmsg')) {

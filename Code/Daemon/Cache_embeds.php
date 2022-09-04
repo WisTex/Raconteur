@@ -32,7 +32,7 @@ class Cache_embeds
         if ($cache_expire <= 0) {
             $cache_expire = 60;
         }
-        $cache_enable = ((($cache_expire) && ($item['created'] < datetime_convert('UTC', 'UTC', 'now - ' . $cache_expire . ' days'))) ? false : true);
+        $cache_enable = !(($cache_expire) && ($item['created'] < datetime_convert('UTC', 'UTC', 'now - ' . $cache_expire . ' days')));
 
         $s = bbcode($item['body']);
         $s = sslify($s, $cache_enable);

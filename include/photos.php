@@ -133,7 +133,7 @@ function photo_upload($channel, $observer, $args)
         $src = '/tmp/deletemenow';
         $type = (($args['mimetype']) ? $args['mimetype'] : $args['type']);
     } else {
-        $f = array('src' => '', 'filename' => '', 'filesize' => 0, 'type' => '');
+        $f = ['src' => '', 'filename' => '', 'filesize' => 0, 'type' => ''];
 
         if (x($f, 'src') && x($f, 'filesize')) {
             $src      = $f['src'];
@@ -253,14 +253,14 @@ function photo_upload($channel, $observer, $args)
 
     $errors = false;
 
-    $p = array('aid' => $account_id, 'uid' => $channel_id, 'xchan' => $visitor, 'resource_id' => $photo_hash,
+    $p = ['aid' => $account_id, 'uid' => $channel_id, 'xchan' => $visitor, 'resource_id' => $photo_hash,
         'filename' => $filename, 'album' => $album, 'imgscale' => 0, 'photo_usage' => PHOTO_NORMAL,
         'width' => $width, 'height' => $height,
         'allow_cid' => $ac['allow_cid'], 'allow_gid' => $ac['allow_gid'],
         'deny_cid' => $ac['deny_cid'], 'deny_gid' => $ac['deny_gid'],
         'os_storage' => $os_storage, 'os_syspath' => $args['os_syspath'],
         'os_path' => $args['os_path'], 'display_path' => $args['display_path']
-    );
+    ];
     if ($args['created']) {
         $p['created'] = $args['created'];
     }
@@ -466,13 +466,13 @@ function photo_upload($channel, $observer, $args)
         foreach ($found_tags as $result) {
             $success = $result['success'];
             if ($success['replaced']) {
-                $post_tags[] = array(
+                $post_tags[] = [
                     'uid'   => $channel['channel_id'],
                     'ttype' => $success['termtype'],
                     'otype' => TERM_OBJ_POST,
                     'term'  => $success['term'],
                     'url'   => $success['url']
-                );
+                ];
             }
         }
     }
@@ -1006,9 +1006,6 @@ function photo_profile_setperms($channel_id, $resource_id, $profile_id)
  */
 function profile_photo_set_profile_perms($uid, $profileid = 0)
 {
-
-    $allowcid = '';
-
     if ($profileid) {
         $r = q(
             "SELECT photo, profile_guid, id, is_default, uid

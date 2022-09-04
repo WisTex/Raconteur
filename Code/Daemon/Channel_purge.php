@@ -12,21 +12,19 @@ class Channel_purge
 
         cli_startup();
 
-        $channel_id = intval($argv[1]);
+        $channel = Channel::from_id($argv[1], true);
 
-        $channel = q(
-            "select * from channel where channel_id = %d and channel_removed = 1",
-            intval($channel_id)
-        );
-
-        if (! $channel) {
+        if (!$channel) {
+            return;
+        }
+        if (!$channel['channel_removed']) {
             return;
         }
 
         do {
             $r = q(
                 "select id from item where uid = %d and item_deleted = 0 limit 1000",
-                intval($channel_id)
+                intval($channel['channel_id'])
             );
             if ($r) {
                 foreach ($r as $rv) {

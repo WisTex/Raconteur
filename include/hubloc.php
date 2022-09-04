@@ -312,9 +312,8 @@ function ping_site($url)
 {
     $ret = [ 'success' => false ];
 
-    $r = Code\Lib\Zotfinger::exec($url);
-
-    if (! $r['data']) {
+    $result = Url::get($url . '/api/z/1.0/version');
+    if (! $result['success']) {
         $ret['message'] = 'no answer from ' . $url;
         return $ret;
     }
