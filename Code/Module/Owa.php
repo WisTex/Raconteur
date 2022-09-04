@@ -28,7 +28,7 @@ class Owa extends Controller
         }
 
 
-        if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) && substr(trim($_SERVER['HTTP_AUTHORIZATION']), 0, 9) === 'Signature') {
+        if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) && str_starts_with(trim($_SERVER['HTTP_AUTHORIZATION']), 'Signature')) {
             $sigblock = HTTPSig::parse_sigheader($_SERVER['HTTP_AUTHORIZATION']);
             if ($sigblock) {
                 $keyId = $sigblock['keyId'];

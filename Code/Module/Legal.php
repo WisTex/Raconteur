@@ -8,7 +8,7 @@ use Code\Render\Theme;
 
 class Legal extends Controller
 {
-    const LEGAL_SOURCE = 'doc/src/TermsOfService.mc';
+    public const LEGAL_SOURCE = 'doc/src/TermsOfService.mc';
 
     public function get() {
         $sys_channel = App::$sys_channel;
@@ -17,7 +17,6 @@ class Legal extends Controller
             $site_document = file_get_contents(self::LEGAL_SOURCE);
         }
         return replace_macros(Theme::get_template('legal.tpl'), ['$content' => bbcode($site_document)]);
-
     }
 
 }

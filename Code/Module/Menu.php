@@ -7,7 +7,6 @@ use Code\Web\Controller;
 use Code\Lib\Libprofile;
 use Code\Lib\Channel;
 use Code\Lib as Zlib;
-use Code\Lib\MenuItem;
 use Code\Render\Theme;
 
 
@@ -98,7 +97,7 @@ class Menu extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         $which = argv(1);
@@ -135,7 +134,7 @@ class Menu extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         // Get the observer, check their permissions
@@ -146,7 +145,7 @@ class Menu extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         if (argc() == 2) {
@@ -156,9 +155,9 @@ class Menu extends Controller
             $x = Zlib\Menu::list($owner);
             if ($x) {
                 for ($y = 0; $y < count($x); $y++) {
-                    $m = menu_fetch($x[$y]['menu_name'], $owner, get_observer_hash());
+                    $m = Zlib\Menu::fetch($x[$y]['menu_name'], $owner, get_observer_hash());
                     if ($m) {
-                        $x[$y]['element'] = '[element]' . base64url_encode(json_encode(menu_element($channel, $m))) . '[/element]';
+                        $x[$y]['element'] = '[element]' . base64url_encode(json_encode(Zlib\Menu::element($channel, $m))) . '[/element]';
                     }
                     $x[$y]['bookmark'] = (($x[$y]['menu_flags'] & MENU_BOOKMARK) ? true : false);
                 }
@@ -234,8 +233,9 @@ class Menu extends Controller
                 return $o;
             } else {
                 notice(t('Not found.') . EOL);
-                return;
+                return '';
             }
         }
+        return '';
     }
 }

@@ -35,7 +35,7 @@ class Pdledit extends Controller
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         if (argc() > 2 && argv(2) === 'reset') {
@@ -46,7 +46,7 @@ class Pdledit extends Controller
         if (argc() > 1) {
             $module = 'mod_' . argv(1) . '.pdl';
         } else {
-            $o .= '<div class="generic-content-wrapper-styled">';
+            $o = '<div class="generic-content-wrapper-styled">';
             $o .= '<h1>' . t('Edit System Page Description') . '</h1>';
 
             $edited = [];

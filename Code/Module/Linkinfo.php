@@ -457,7 +457,7 @@ class Linkinfo extends Controller
 		try {
 		    $doc = new DOMDocument();
 			$doc->loadHTML($body);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return $siteinfo;
 		}
 		

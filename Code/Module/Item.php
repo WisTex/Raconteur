@@ -101,7 +101,7 @@ class Item extends Controller
                     dbesc($r[0]['parent_mid']),
                     dbesc($portable_id)
                 );
-            } elseif (Config::get('system', 'require_authenticated_fetch', false)) {
+            } elseif (Config::Get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
 
@@ -233,7 +233,7 @@ class Item extends Controller
                     dbesc($portable_id)
                 );
             }
-            elseif (Config::get('system', 'require_authenticated_fetch', false)) {
+            elseif (Config::Get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
 
@@ -364,7 +364,7 @@ class Item extends Controller
         if (isset($_REQUEST['dropitems'])) {
             $arr_drop = explode(',', $_REQUEST['dropitems']);
             drop_items($arr_drop);
-            $json = array('success' => 1);
+            $json = ['success' => 1];
             echo json_encode($json);
             killme();
         }
@@ -870,7 +870,7 @@ class Item extends Controller
                     // If $api_source is set and there are no ACL parameters, we default
                     // to the channel permissions which were set in the ACL contructor.
 
-                    $acl->set(array('allow_cid' => '', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => ''));
+                    $acl->set(['allow_cid' => '', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '']);
                 }
             }
 
@@ -982,11 +982,11 @@ class Item extends Controller
 
             if (strpos($body, '[/summary]') !== false) {
                 $match = '';
-                $cnt = preg_match("/\[summary\](.*?)\[\/summary\]/ism", $body, $match);
+                $cnt = preg_match("/\[summary](.*?)\[\/summary]/ism", $body, $match);
                 if ($cnt) {
                     $summary .= $match[1];
                 }
-                $body_content = preg_replace("/^(.*?)\[summary\](.*?)\[\/summary\]/ism", '', $body);
+                $body_content = preg_replace("/^(.*?)\[summary](.*?)\[\/summary]/ism", '', $body);
                 $body = trim($body_content);
             }
 
@@ -1021,13 +1021,13 @@ class Item extends Controller
                                 continue;
                             }
 
-                            $post_tags[] = array(
+                            $post_tags[] = [
                                 'uid' => $profile_uid,
                                 'ttype' => $success['termtype'],
                                 'otype' => TERM_OBJ_POST,
                                 'term' => $success['term'],
                                 'url' => $success['url']
-                            );
+                            ];
 
                             // support #collection syntax to post to a collection
                             // this is accomplished by adding a pcategory tag for each collection target
@@ -1129,26 +1129,26 @@ class Item extends Controller
             $attachments = '';
             $match = false;
 
-            if (preg_match_all('/(\[attachment\](.*?)\[\/attachment\])/', $body, $match)) {
+            if (preg_match_all('/(\[attachment](.*?)\[\/attachment])/', $body, $match)) {
                 $attachments = [];
                 $i = 0;
                 foreach ($match[2] as $mtch) {
                     $attach_link = '';
                     $hash = substr($mtch, 0, strpos($mtch, ','));
                     $rev = intval(substr($mtch, strpos($mtch, ',')));
-                    if (strpos($mtch,'https://') === 0) {
+                    if (str_starts_with($mtch, 'https://')) {
                         $attachments[] = [ 'href' => $mtch, 'type' => 'application/activity+json', 'title' => $mtch ];
                     }
                     else {
                         $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
                         if ($r['success']) {
-                            $attachments[] = array(
+                            $attachments[] = [
                                 'href' => z_root() . '/attach/' . $r['data']['hash'],
                                 'length' => $r['data']['filesize'],
                                 'type' => $r['data']['filetype'],
                                 'title' => urlencode($r['data']['filename']),
                                 'revision' => $r['data']['revision']
-                            );
+                            ];
                         }
                     }
                     $body = str_replace($match[1][$i], $attach_link, $body);
@@ -1157,7 +1157,7 @@ class Item extends Controller
             }
 
 
-            if (preg_match_all('/(\[share=(.*?)\](.*?)\[\/share\])/', $body, $match)) {
+            if (preg_match_all('/(\[share=(.*?)](.*?)\[\/share])/', $body, $match)) {
                 // process share by id
 
                 $i = 0;
@@ -1205,13 +1205,13 @@ class Item extends Controller
                             if (!is_array($post_tags)) {
                                 $post_tags = [];
                             }
-                            $post_tags[] = array(
+                            $post_tags[] = [
                                 'uid' => $profile_uid,
                                 'ttype' => TERM_MENTION,
                                 'otype' => TERM_OBJ_POST,
                                 'term' => $ng['xchan_name'],
                                 'url' => $ng['xchan_url']
-                            );
+                            ];
 
                             $colls = get_xconfig($ng['xchan_hash'], 'activitypub', 'collections');
                             if ($colls && is_array($colls) && isset($colls['wall'])) {
@@ -1244,13 +1244,13 @@ class Item extends Controller
                     $catlink = $owner_xchan['xchan_url'] . '?f=&cat=' . urlencode(trim($cat));
                 }
 
-                $post_tags[] = array(
+                $post_tags[] = [
                     'uid' => $profile_uid,
                     'ttype' => TERM_CATEGORY,
                     'otype' => TERM_OBJ_POST,
                     'term' => trim($cat),
                     'url' => $catlink
-                );
+                ];
             }
         }
 
@@ -1271,13 +1271,13 @@ class Item extends Controller
                 }
 
                 foreach ($t as $t1) {
-                    $post_tags[] = array(
+                    $post_tags[] = [
                         'uid' => $profile_uid,
                         'ttype' => $t1['ttype'],
                         'otype' => TERM_OBJ_POST,
                         'term' => $t1['term'],
                         'url' => $t1['url'],
-                    );
+                    ];
                 }
             }
         }
@@ -1514,9 +1514,9 @@ class Item extends Controller
             $datarray['owner'] = $owner_xchan;
             $datarray['author'] = $observer;
             $datarray['attach'] = json_encode($datarray['attach']);
-            $o = conversation(array($datarray), 'search', false, 'preview');
+            $o = conversation([$datarray], 'search', false, 'preview');
             //      logger('preview: ' . $o, LOGGER_DEBUG);
-            echo json_encode(array('preview' => $o));
+            echo json_encode(['preview' => $o]);
             killme();
         }
 
@@ -1560,7 +1560,7 @@ class Item extends Controller
             if ($api_source) {
                 return (['success' => false, 'message' => 'operation cancelled']);
             }
-            $json = array('cancel' => 1);
+            $json = ['cancel' => 1];
             $json['reload'] = z_root() . '/' . $_REQUEST['jsreload'];
             json_return_and_die($json);
         }
@@ -1611,7 +1611,7 @@ class Item extends Controller
                 if ($r) {
                     xchan_query($r);
                     $sync_item = fetch_post_tags($r);
-                    Libsync::build_sync_packet($profile_uid, array('item' => array(encode_item($sync_item[0], true))));
+                    Libsync::build_sync_packet($profile_uid, ['item' => [encode_item($sync_item[0], true)]]);
                 }
             }
             if (!$nopush) {
@@ -1663,7 +1663,7 @@ class Item extends Controller
                 // otherwise it will happen during delivery
 
                 if (($datarray['owner_xchan'] != $datarray['author_xchan']) && (intval($parent_item['item_wall'])) && intval($datarray['item_private']) != 2) {
-                    Enotify::submit(array(
+                    Enotify::submit([
                         'type' => NOTIFY_COMMENT,
                         'from_xchan' => $datarray['author_xchan'],
                         'to_xchan' => $datarray['owner_xchan'],
@@ -1673,13 +1673,13 @@ class Item extends Controller
                         'otype' => 'item',
                         'parent' => $parent,
                         'parent_mid' => $parent_item['mid']
-                    ));
+                    ]);
                 }
             } else {
                 $parent = $post_id;
 
                 if (($datarray['owner_xchan'] != $datarray['author_xchan']) && ($datarray['item_type'] == ITEM_TYPE_POST)) {
-                    Enotify::submit(array(
+                    Enotify::submit([
                         'type' => NOTIFY_WALL,
                         'from_xchan' => $datarray['author_xchan'],
                         'to_xchan' => $datarray['owner_xchan'],
@@ -1687,7 +1687,7 @@ class Item extends Controller
                         'link' => z_root() . '/display/?mid=' . gen_link_id($datarray['mid']),
                         'verb' => ACTIVITY_POST,
                         'otype' => 'item'
-                    ));
+                    ]);
                 }
 
                 if ($uid && $uid == $profile_uid && (is_item_normal($datarray))) {
@@ -1734,7 +1734,7 @@ class Item extends Controller
             if ($r) {
                 xchan_query($r);
                 $sync_item = fetch_post_tags($r);
-                Libsync::build_sync_packet($profile_uid, array('item' => array(encode_item($sync_item[0], true))));
+                Libsync::build_sync_packet($profile_uid, ['item' => [encode_item($sync_item[0], true)]]);
             }
         }
 
@@ -1770,7 +1770,7 @@ class Item extends Controller
             goaway(z_root() . "/" . $return_path);
         }
 
-        $json = array('success' => 1);
+        $json = ['success' => 1];
         if (x($_REQUEST, 'jsreload') && strlen($_REQUEST['jsreload'])) {
             $json['reload'] = z_root() . '/' . $_REQUEST['jsreload'];
         }
@@ -1855,7 +1855,7 @@ class Item extends Controller
                             intval($i[0]['uid'])
                         );
                         $sync_event['event_deleted'] = 1;
-                        Libsync::build_sync_packet($i[0]['uid'], array('event' => array($sync_event)));
+                        Libsync::build_sync_packet($i[0]['uid'], ['event' => [$sync_event]]);
                     }
                 }
 
@@ -1865,7 +1865,7 @@ class Item extends Controller
                     if ($ch && $regular_delete) {
                         $sync = attach_export_data($ch, $i[0]['resource_id'], true);
                         if ($sync) {
-                            Libsync::build_sync_packet($i[0]['uid'], array('file' => array($sync)));
+                            Libsync::build_sync_packet($i[0]['uid'], ['file' => [$sync]]);
                         }
                     }
                 }
@@ -1907,7 +1907,7 @@ class Item extends Controller
 
     public function item_check_service_class($channel_id, $iswebpage)
     {
-        $ret = array('success' => false, 'message' => '');
+        $ret = ['success' => false, 'message' => ''];
 
         if ($iswebpage) {
             $r = q(
@@ -1933,14 +1933,14 @@ class Item extends Controller
         if (!$iswebpage) {
             $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'total_items'));
             if (!ServiceClass::allows($channel_id, 'total_items', $r[0]['total'])) {
-                $result['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f top level posts.'), $max);
-                return $result;
+                $ret['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f top level posts.'), $max);
+                return $ret;
             }
         } else {
             $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'total_pages'));
             if (!ServiceClass::allows($channel_id, 'total_pages', $r[0]['total'])) {
-                $result['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f webpages.'), $max);
-                return $result;
+                $ret['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f webpages.'), $max);
+                return $ret;
             }
         }
 
@@ -1965,7 +1965,7 @@ class Item extends Controller
         $matches = null;
         $obj['type'] = 'Question';
 
-        if (preg_match_all('/\[answer\](.*?)\[\/answer\]/ism', $body, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/\[answer](.*?)\[\/answer]/ism', $body, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $ptr[] = ['name' => $match[1], 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
                 $body = str_replace('[answer]' . $match[1] . '[/answer]', EMPTY_STR, $body);
@@ -1974,7 +1974,7 @@ class Item extends Controller
 
         $matches = null;
 
-        if (preg_match('/\[question\](.*?)\[\/question\]/ism', $body, $matches)) {
+        if (preg_match('/\[question](.*?)\[\/question]/ism', $body, $matches)) {
             $obj['content'] = bbcode($matches[1]);
             $body = str_replace('[question]' . $matches[1] . '[/question]', $matches[1], $body);
             $obj['oneOf'] = $ptr;
@@ -1982,7 +1982,7 @@ class Item extends Controller
 
         $matches = null;
 
-        if (preg_match('/\[question=multiple\](.*?)\[\/question\]/ism', $body, $matches)) {
+        if (preg_match('/\[question=multiple](.*?)\[\/question]/ism', $body, $matches)) {
             $obj['content'] = bbcode($matches[1]);
             $body = str_replace('[question=multiple]' . $matches[1] . '[/question]', $matches[1], $body);
             $obj['anyOf'] = $ptr;
@@ -1990,7 +1990,7 @@ class Item extends Controller
 
         $matches = null;
 
-        if (preg_match('/\[ends\](.*?)\[\/ends\]/ism', $body, $matches)) {
+        if (preg_match('/\[ends](.*?)\[\/ends]/ism', $body, $matches)) {
             $obj['endTime'] = datetime_convert(date_default_timezone_get(), 'UTC', $matches[1], ATOM_TIME);
             $body = str_replace('[ends]' . $matches[1] . '[/ends]', EMPTY_STR, $body);
         }

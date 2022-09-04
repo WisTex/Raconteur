@@ -196,7 +196,7 @@ class Layouts extends Controller
         //Build the base URL for edit links
         $url = z_root() . '/editlayout/' . $which;
 
-        $o .= replace_macros(Theme::get_template('layoutlist.tpl'), array(
+        $o = replace_macros(Theme::get_template('layoutlist.tpl'), array(
             '$title' => t('Layouts'),
             '$create' => t('Create'),
             '$help' => '', // array('text' => t('Help'), 'url' => 'help/comanche', 'title' => t('Comanche page description language help')),

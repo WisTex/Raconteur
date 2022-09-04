@@ -7,7 +7,7 @@ use Code\Web\Controller;
 use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Daemon\Run;
-use Code\Access\PermssionRoles;
+use Code\Access\PermissionRoles;
 
 require_once('include/conversation.php');
 
@@ -20,7 +20,7 @@ class Moderate extends Controller
     {
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         App::set_pager_itemspage(60);
@@ -110,7 +110,7 @@ class Moderate extends Controller
                 if ($r) {
                     xchan_query($r);
                     $sync_item = fetch_post_tags($r);
-                    Libsync::build_sync_packet(local_channel(), array('item' => array(encode_item($sync_item[0], true))));
+                    Libsync::build_sync_packet(local_channel(), ['item' => [encode_item($sync_item[0], true)]]);
                 }
                 if ($action === 'approve') {
                     if ($item['id'] !== $item['parent']) {

@@ -7,7 +7,6 @@ use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Config;
 use Code\Lib\Channel;
-use Code\Lib\LDSignatures;
 use Code\Web\HTTPSig;
 use Code\Extend\Hook;
 use Code\Storage\Stdio;
@@ -34,7 +33,7 @@ class Photo extends Controller
                     http_status_exit(403, 'Permission denied');
                 }
                 observer_auth($portable_id);
-            } elseif (Config::get('system', 'require_authenticated_fetch', false)) {
+            } elseif (Config::Get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
 
@@ -215,7 +214,7 @@ class Photo extends Controller
 
                 // Now we'll see if we can access the photo
                 $e = q(
-                    "SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d $sql_extra LIMIT 1",
+                    "SELECT * FROM photo WHERE resource_id = '%s' AND imgscale = %d LIMIT 1",
                     dbesc($photo),
                     intval($resolution)
                 );

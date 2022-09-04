@@ -181,7 +181,7 @@ class Page extends Controller
 
         $r = App::$data['webpage'];
         if (!$r) {
-            return;
+            return '';
         }
 
         if ($r[0]['item_type'] == ITEM_TYPE_PDL) {
@@ -197,7 +197,6 @@ class Page extends Controller
             App::$page['pdl_content'] = true;
         }
 
-        $o .= prepare_page($r[0]);
-        return $o;
+        return prepare_page($r[0]);
     }
 }

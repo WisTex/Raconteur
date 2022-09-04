@@ -17,7 +17,7 @@ class Notifications extends Controller
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
 

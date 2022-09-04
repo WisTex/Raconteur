@@ -11,7 +11,6 @@ use Code\Lib\Activity;
 use Code\Web\HTTPSig;
 use Code\Lib\Config;
 use Code\Lib\Channel;
-use Code\Lib\LDSignatures;
 use Code\Lib\Navbar;
 use Code\Render\Theme;
 
@@ -48,7 +47,7 @@ class Lists extends Controller
                     http_status_exit(403, 'Permission denied');
                 }
                 observer_auth($portable_id);
-            } elseif (Config::get('system', 'require_authenticated_fetch', false)) {
+            } elseif (Config::Get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
 
@@ -178,7 +177,7 @@ class Lists extends Controller
         	    return;
         	}
 
-            $new = (((argc() == 2) && (argv(1) === 'new')) ? true : false);
+            $new = (argc() == 2) && (argv(1) === 'new');
 
             $groups = q(
                 "SELECT id, gname FROM pgrp WHERE deleted = 0 AND uid = %d ORDER BY gname ASC",
@@ -200,13 +199,12 @@ class Lists extends Controller
                 '$new' => $new,
 
                 // new group form
-                '$gname' => array('groupname', t('Access list name')),
-                '$public' => array('public', t('Members are visible to other channels'), false),
+                '$gname' => ['groupname', t('Access list name')],
+                '$public' => ['public', t('Members are visible to other channels'), false],
                 '$form_security_token' => get_form_security_token("group_edit"),
                 '$submit' => t('Submit'),
 
                 // groups list
-                '$title' => t('Access Lists'),
                 '$name_label' => t('Name'),
                 '$count_label' => t('Members'),
                 '$entries' => $entries
@@ -215,7 +213,7 @@ class Lists extends Controller
             return $o;
         }
 
-        $context = array('$submit' => t('Submit'));
+        $context = ['$submit' => t('Submit')];
         $tpl = Theme::get_template('group_edit.tpl');
 
         if ((argc() == 3) && (argv(1) === 'drop')) {
@@ -337,35 +335,34 @@ class Lists extends Controller
                 }
             }
 
-            $context = $context + array(
+            $context = $context + [
                     '$title' => sprintf(t('Access List: %s'), $group['gname']),
                     '$details_label' => t('Edit'),
-                    '$gname' => array('groupname', t('Access list name: '), $group['gname'], ''),
+                    '$gname' => ['groupname', t('Access list name: '), $group['gname'], ''],
                     '$gid' => $group['id'],
-                    '$drop' => $drop_txt,
-                    '$public' => array('public', t('Members are visible to other channels'), $group['visible'], ''),
+                    '$public' => ['public', t('Members are visible to other channels'), $group['visible'], ''],
                     '$form_security_token_edit' => get_form_security_token('group_edit'),
                     '$delete' => t('Delete access list'),
                     '$form_security_token_drop' => get_form_security_token("group_drop"),
-                );
+                ];
         }
 
         if (!isset($group)) {
-            return;
+            return '';
         }
 
-        $groupeditor = array(
+        $groupeditor = [
             'label_members' => t('List members'),
             'members' => [],
             'label_contacts' => t('Not in this list'),
             'contacts' => [],
-        );
+        ];
 
         $sec_token = addslashes(get_form_security_token('group_member_change'));
         $textmode = (($switchtotext && (count($members) > $switchtotext)) ? true : 'card');
         foreach ($members as $member) {
             if ($member['xchan_url']) {
-                $member['archived'] = (intval($member['abook_archived']) ? true : false);
+                $member['archived'] = (bool)$member['abook_archived'];
                 $member['click'] = 'groupChangeMember(' . $group['id'] . ',\'' . base64url_encode($member['xchan_hash']) . '\',\'' . $sec_token . '\'); return false;';
                 $groupeditor['members'][] = micropro($member, true, 'mpgroup', $textmode);
             } else {
@@ -382,7 +379,7 @@ class Lists extends Controller
             $textmode = (($switchtotext && (count($r) > $switchtotext)) ? true : 'card');
             foreach ($r as $member) {
                 if (!in_array($member['xchan_hash'], $preselected)) {
-                    $member['archived'] = (intval($member['abook_archived']) ? true : false);
+                    $member['archived'] = (bool)$member['abook_archived'];
                     $member['click'] = 'groupChangeMember(' . $group['id'] . ',\'' . base64url_encode($member['xchan_hash']) . '\',\'' . $sec_token . '\'); return false;';
                     $groupeditor['contacts'][] = micropro($member, true, 'mpall', $textmode);
                 }

@@ -21,7 +21,7 @@ class Manage extends Controller
 
         if ((!get_account_id()) || ($_SESSION['delegate'])) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         Navbar::set_selected('Manage');

@@ -160,7 +160,6 @@ class Outbox extends Controller
             case 'Ignore':
             case 'Invite':
             case 'Listen':
-            case 'Move':
             case 'Offer':
             case 'Question':
             case 'Read':
@@ -196,8 +195,8 @@ class Outbox extends Controller
             case 'Move':
                 if (
                     $observer_hash && $observer_hash === $AS->actor
-                    && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
-                    && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])
+                    && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])
+                    && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStreams::is_an_actor($AS->tgt['type'])
                 ) {
                     ActivityPub::move($AS->obj, $AS->tgt);
                 }

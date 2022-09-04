@@ -134,7 +134,7 @@ class Mood extends Controller
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         if (!Apps::system_app_installed(local_channel(), 'Mood')) {

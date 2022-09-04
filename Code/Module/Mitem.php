@@ -9,7 +9,7 @@ use Code\Lib\Libprofile;
 use Code\Lib\Channel;
 use Code\Lib\Libacl;
 use Code\Lib\Menu;
-use Code\Lib\MenuList;    
+use Code\Lib\MenuItem;
 use Code\Render\Theme;
 
 
@@ -177,7 +177,7 @@ class Mitem extends Controller
                 $display = (($r) ? 'none' : 'block');
             }
 
-            $create = replace_macros(Theme::get_template('mitemedit.tpl'), array(
+            $create = replace_macros(Theme::get_template('mitemedit.tpl'), [
                 '$menu_id' => App::$data['menu']['menu_id'],
                 '$permissions' => t('Menu Item Permissions'),
                 '$permdesc' => t("\x28click to open/close\x29"),
@@ -186,11 +186,11 @@ class Mitem extends Controller
                 '$allow_gid' => acl2json($acl->get()['allow_gid']),
                 '$deny_cid' => acl2json($acl->get()['deny_cid']),
                 '$deny_gid' => acl2json($acl->get()['deny_gid']),
-                '$mitem_desc' => array('mitem_desc', t('Link Name'), '', 'Visible name of the link', '*'),
-                '$mitem_link' => array('mitem_link', t('Link or Submenu Target'), '', t('Enter URL of the link or select a menu name to create a submenu'), '*', 'list="menu-names"'),
-                '$usezid' => array('usezid', t('Use magic-auth if available'), true, '', array(t('No'), t('Yes'))),
-                '$newwin' => array('newwin', t('Open link in new window'), false, '', array(t('No'), t('Yes'))),
-                '$mitem_order' => array('mitem_order', t('Order in list'), '0', t('Higher numbers will sink to bottom of listing')),
+                '$mitem_desc' => ['mitem_desc', t('Link Name'), '', 'Visible name of the link', '*'],
+                '$mitem_link' => ['mitem_link', t('Link or Submenu Target'), '', t('Enter URL of the link or select a menu name to create a submenu'), '*', 'list="menu-names"'],
+                '$usezid' => ['usezid', t('Use magic-auth if available'), true, '', [t('No'), t('Yes')]],
+                '$newwin' => ['newwin', t('Open link in new window'), false, '', [t('No'), t('Yes')]],
+                '$mitem_order' => ['mitem_order', t('Order in list'), '0', t('Higher numbers will sink to bottom of listing')],
                 '$submit' => t('Submit and finish'),
                 '$submit_more' => t('Submit and continue'),
                 '$display' => $display,
@@ -198,9 +198,9 @@ class Mitem extends Controller
                 '$menu_names' => $menu_names,
                 '$nick' => $which,
                 '$sys' => App::$is_sys
-            ));
+            ]);
 
-            $o .= replace_macros(Theme::get_template('mitemlist.tpl'), array(
+            $o = replace_macros(Theme::get_template('mitemlist.tpl'), [
                 '$title' => t('Menu:'),
                 '$create' => $create,
                 '$nametitle' => t('Link Name'),
@@ -218,7 +218,7 @@ class Mitem extends Controller
                 '$hintdrop' => t('Delete this menu item'),
                 '$hintedit' => t('Edit this menu item'),
                 '$nick' => $which,
-            ));
+            ]);
 
             return $o;
         }
@@ -255,7 +255,7 @@ class Mitem extends Controller
                 }
 
                 // edit menu item
-                $o = replace_macros(Theme::get_template('mitemedit.tpl'), array(
+                $o = replace_macros(Theme::get_template('mitemedit.tpl'), [
                     '$header' => t('Edit Menu Element'),
                     '$menu_id' => App::$data['menu']['menu_id'],
                     '$permissions' => t('Menu Item Permissions'),
@@ -266,16 +266,16 @@ class Mitem extends Controller
                     '$deny_cid' => acl2json($mitem['deny_cid']),
                     '$deny_gid' => acl2json($mitem['deny_gid']),
                     '$mitem_id' => intval(argv(3)),
-                    '$mitem_desc' => array('mitem_desc', t('Link text'), $mitem['mitem_desc'], '', '*'),
-                    '$mitem_link' => array('mitem_link', t('Link or Submenu Target'), $mitem['mitem_link'], 'Enter URL of the link or select a menu name to create a submenu', '*', 'list="menu-names"'),
-                    '$usezid' => array('usezid', t('Use magic-auth if available'), (($mitem['mitem_flags'] & MENU_ITEM_ZID) ? 1 : 0), '', array(t('No'), t('Yes'))),
-                    '$newwin' => array('newwin', t('Open link in new window'), (($mitem['mitem_flags'] & MENU_ITEM_NEWWIN) ? 1 : 0), '', array(t('No'), t('Yes'))),
-                    '$mitem_order' => array('mitem_order', t('Order in list'), $mitem['mitem_order'], t('Higher numbers will sink to bottom of listing')),
+                    '$mitem_desc' => ['mitem_desc', t('Link text'), $mitem['mitem_desc'], '', '*'],
+                    '$mitem_link' => ['mitem_link', t('Link or Submenu Target'), $mitem['mitem_link'], 'Enter URL of the link or select a menu name to create a submenu', '*', 'list="menu-names"'],
+                    '$usezid' => ['usezid', t('Use magic-auth if available'), (($mitem['mitem_flags'] & MENU_ITEM_ZID) ? 1 : 0), '', [t('No'), t('Yes')]],
+                    '$newwin' => ['newwin', t('Open link in new window'), (($mitem['mitem_flags'] & MENU_ITEM_NEWWIN) ? 1 : 0), '', [t('No'), t('Yes')]],
+                    '$mitem_order' => ['mitem_order', t('Order in list'), $mitem['mitem_order'], t('Higher numbers will sink to bottom of listing')],
                     '$submit' => t('Submit'),
                     '$lockstate' => $lockstate,
                     '$menu_names' => $menu_names,
                     '$nick' => $which
-                ));
+                ]);
 
                 return $o;
             }

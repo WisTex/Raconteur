@@ -5,7 +5,6 @@ namespace Code\Module;
 use App;
 use Code\Web\Controller;
 use Code\Web\HTTPSig;
-use Code\Lib\Libzot;
 use Code\Lib\SConfig;
 use Code\Lib\Channel;
 use Code\Lib\Url;
@@ -105,7 +104,6 @@ class Magic extends Controller
 				$headers['Accept'] = 'application/x-nomad+json, application/x-zot+json';
 				$headers['Content-Type'] = 'application/x-nomad+json';
                 $headers['X-Open-Web-Auth'] = random_string();
-                $headers['Digest'] = HTTPSig::generate_digest_header($data);
                 $headers['Host'] = $parsed['host'];
                 $headers['(request-target)'] = 'get ' . '/owa';
 

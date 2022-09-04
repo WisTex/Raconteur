@@ -18,7 +18,7 @@ class Notes extends Controller
             return;
         }
 
-        $ret = array('success' => true);
+        $ret = ['success' => true];
         if (array_key_exists('note_text', $_REQUEST)) {
             $body = escape_tags($_REQUEST['note_text']);
 

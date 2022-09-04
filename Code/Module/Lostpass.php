@@ -43,13 +43,13 @@ class Lostpass extends Controller
         }
 
         $email_tpl = Theme::get_email_template("lostpass_eml.tpl");
-        $message = replace_macros($email_tpl, array(
+        $message = replace_macros($email_tpl, [
             '$sitename' => get_config('system', 'sitename'),
             '$siteurl' => z_root(),
             '$username' => sprintf(t('Site Member (%s)'), $email),
             '$email' => $email,
             '$reset_link' => z_root() . '/lostpass?verify=' . $hash
-        ));
+        ]);
 
         $subject = email_header_encode(sprintf(t('Password reset requested at %s'), get_config('system', 'sitename')), 'UTF-8');
 
@@ -100,7 +100,7 @@ class Lostpass extends Controller
 
             if ($r) {
                 $tpl = Theme::get_template('pwdreset.tpl');
-                $o .= replace_macros($tpl, array(
+                $o = replace_macros($tpl, [
                     '$lbl1' => t('Password Reset'),
                     '$lbl2' => t('Your password has been reset as requested.'),
                     '$lbl3' => t('Your new password is'),
@@ -110,18 +110,18 @@ class Lostpass extends Controller
                     '$newpass' => $new_password,
                     '$baseurl' => z_root()
 
-                ));
+                ]);
 
                 info("Your password has been reset." . EOL);
 
                 $email_tpl = Theme::get_email_template("passchanged_eml.tpl");
-                $message = replace_macros($email_tpl, array(
+                $message = replace_macros($email_tpl, [
                         '$sitename' => App::$config['sitename'],
                         '$siteurl' => z_root(),
                         '$username' => sprintf(t('Site Member (%s)'), $email),
                         '$email' => $email,
-                        '$new_password' => $new_password,
-                        '$uid' => $newuid));
+                        '$new_password' => $new_password
+                ]);
 
                 $res = z_mail(
                     [
@@ -136,12 +136,12 @@ class Lostpass extends Controller
         } else {
             $tpl = Theme::get_template('lostpass.tpl');
 
-            $o .= replace_macros($tpl, array(
+            $o = replace_macros($tpl, [
                 '$title' => t('Forgot your Password?'),
                 '$desc' => t('Enter your email address and submit to have your password reset. Then check your email for further instructions.'),
                 '$name' => t('Email Address'),
                 '$submit' => t('Reset')
-            ));
+            ]);
 
             return $o;
         }

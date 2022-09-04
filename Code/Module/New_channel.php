@@ -148,7 +148,7 @@ class New_channel extends Controller
 
         if ((!$acc) || $acc['account_id'] != get_account_id()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $default_role = '';
