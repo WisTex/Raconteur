@@ -22,20 +22,20 @@ class Libzot
 {
 
     /**
-     * @brief Generates a unique string for use as a zot guid.
+     * @brief Generates a unique string for use as a Nomad guid.
      *
-     * Generates a unique string for use as a zot guid using our DNS-based url, the
+     * Generates a unique string for use as a Nomad guid using our DNS-based url, the
      * channel nickname and some entropy.
      * The entropy ensures uniqueness against re-installs where the same URL and
      * nickname are chosen.
      *
-     * @note zot doesn't require this to be unique. Internally we use a whirlpool
+     * @note Nomad doesn't require this to be unique. Internally we use a whirlpool
      * hash of this guid and the signature of this guid signed with the channel
      * private key. This can be verified and should make the probability of
-     * collision of the verified result negligible within the constraints of our
-     * immediate universe.
+     * unintentional collision of the verified result negligible within the constraints
+     * of our immediate universe.
      *
-     * @param string $channel_nick a unique nickname of controlling entity
+     * @param string $channel_nick a unique nickname (on this site) of controlling entity
      * @returns string
      */
 
@@ -47,7 +47,7 @@ class Libzot
 
 
     /**
-     * @brief Generates a portable hash identifier for a channel.
+     * @brief Generates a portable-id hash identifier for a channel.
      *
      * Generates a portable hash identifier for the channel identified by $guid and
      * $pubkey.
@@ -65,7 +65,7 @@ class Libzot
     }
 
     /**
-     * @brief Given a zot hash, return all distinct hubs.
+     * @brief Given a Nomad hash, return all distinct hubs.
      *
      * This function is used in building the zot discovery packet and therefore
      * should only be used by channels which are defined on this hub.
@@ -92,7 +92,7 @@ class Libzot
      * @brief Builds a notification packet.
      *
      * Builds a notification packet that you can either store in the queue with
-     * a message array or call zot_zot to immediately zot it to the other side.
+     * a message array or immediately send to the other side.
      *
      * @param array $channel
      *   sender channel structure
@@ -100,7 +100,7 @@ class Libzot
      *   packet type: one of 'activity', 'response', 'sync', 'purge', 'refresh', 'force_refresh', 'rekey'
      * @param array $recipients
      *   envelope recipients, array of portable_id's; empty for public posts
-     * @param string msg
+     * @param mixed $msg
      *   optional message
      * @param string $remote_key
      *   optional public site key of target hub used to encrypt entire packet
@@ -177,13 +177,13 @@ class Libzot
         ];
 
         /**
-         * @hooks zot_best_algorithm
+         * @hooks best_algorithm
          *   Called when negotiating crypto algorithms with remote sites.
          *   * \e string \b methods - comma separated list of encryption methods
          *   * \e string \b result - the algorithm to return
          */
 
-        Hook::call('zot_best_algorithm', $x);
+        Hook::call('best_algorithm', $x);
 
         if ($x['result']) {
             return $x['result'];
@@ -211,11 +211,11 @@ class Libzot
 
 
     /**
-     * @brief send a zot message
+     * @brief send a message
      *
      * @param string $url
      * @param string $data
-     * @param array $channel (required if using zot6 delivery)
+     * @param array $channel
      * @param array $crypto (required if encrypted httpsig, requires hubloc_sitekey and site_crypto elements)
      * @return array see Url::post() for returned data format
      *
@@ -226,7 +226,7 @@ class Libzot
 
         if ($channel) {
             $headers = [
-                'X-Zot-Token' => random_string(),
+                'X-ACME-Token' => random_string(),
                 'Digest' => HTTPSig::generate_digest_header($data),
                 'Content-type' => 'application/x-zot+json',
                 '(request-target)' => 'post ' . get_request_string($url)
@@ -251,7 +251,7 @@ class Libzot
 
         if ($channel) {
             $headers = [
-                'X-Nomad-Token'    => random_string(),
+                'X-ACME-Token'     => random_string(),
                 'Digest'           => HTTPSig::generate_digest_header($data),
                 'Content-type'     => 'application/x-nomad+json',
                 '(request-target)' => 'post ' . get_request_string($url)
@@ -278,7 +278,7 @@ class Libzot
      * to fetch new permissions via a finger/discovery operation. This may result in a new connection
      * (abook entry) being added to a local channel and it may result in auto-permissions being granted.
      *
-     * Friending in zot is accomplished by sending a refresh packet to a specific channel which indicates a
+     * Friending in Nomad is accomplished by sending a refresh packet to a specific channel which indicates a
      * permission change has been made by the sender which affects the target channel. The hub controlling
      * the target channel does targeted discovery (in which a zot discovery request contains permissions for
      * the sender which were set by the local channel). These are decoded here, and if necessary an abook
@@ -457,7 +457,7 @@ class Libzot
                 $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
                 if ($blocked) {
                     foreach ($blocked as $b) {
-                        if (strpos($url, $b['block_entity']) !== false) {
+                        if (str_contains($url, $b['block_entity'])) {
                             logger('siteblock - follower denied');
                             return false;
                         }
@@ -638,26 +638,27 @@ class Libzot
     public static function valid_hub($sender, $site_id)
     {
 
-        $r = q(
+        $hub = q(
             "select hubloc.*, site.site_crypto from hubloc left join site on hubloc_url = site_url where hubloc_hash = '%s' and hubloc_site_id = '%s' and hubloc_deleted = 0 limit 1",
             dbesc($sender),
             dbesc($site_id)
         );
-        if (!$r) {
+        if (!$hub) {
+            return null;
+        }
+        $hub = array_shift($hub);
+
+        if (!check_siteallowed($hub['hubloc_url'])) {
+            logger('denied site: ' . $hub['hubloc_url']);
             return null;
         }
 
-        if (!check_siteallowed($r[0]['hubloc_url'])) {
-            logger('denied site: ' . $r[0]['hubloc_url']);
+        if (!check_channelallowed($hub['hubloc_hash'])) {
+            logger('denied channel: ' . $hub['hubloc_hash']);
             return null;
         }
 
-        if (!check_channelallowed($r[0]['hubloc_hash'])) {
-            logger('denied channel: ' . $r[0]['hubloc_hash']);
-            return null;
-        }
-
-        return $r[0];
+        return $hub;
     }
 
     /**
@@ -681,9 +682,6 @@ class Libzot
 
     public static function register_hub($id)
     {
-
-        $id_hash = false;
-        $valid = false;
         $hsig_valid = false;
 
         $result = ['success' => false];
@@ -744,7 +742,7 @@ class Libzot
          */
         Hook::call('import_xchan', $arr);
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         $changed = false;
         $what = '';
@@ -1233,8 +1231,8 @@ class Libzot
         // Don't check sync packets since they have a different encoding
 
         if ($arr && $env['type'] !== 'sync') {
-            if (strpos($arr['mid'], 'http') === false && strpos($arr['mid'], 'x-zot') === false) {
-                if (strpos($arr['mid'], 'bear:') === false) {
+            if (!str_contains($arr['mid'], 'http') && !str_contains($arr['mid'], 'x-zot')) {
+                if (!str_contains($arr['mid'], 'bear:')) {
                     logger('activity rejected: legacy message-id');
                     return false;
                 }
@@ -1522,7 +1520,7 @@ class Libzot
             if ($act && $act->obj) {
                 if (is_array($act->obj['tag']) && $act->obj['tag']) {
                     foreach ($act->obj['tag'] as $tag) {
-                        if ($tag['type'] === 'Mention' && (strpos($tag['href'], z_root()) !== false)) {
+                        if ($tag['type'] === 'Mention' && (str_contains($tag['href'], z_root()))) {
                             $address = basename($tag['href']);
                             if ($address) {
                                 $z = q(
@@ -1777,7 +1775,7 @@ class Libzot
                     if ($h) {
                         foreach ($h as $hub) {
                             foreach ($blocked as $b) {
-                                if (strpos($hub['hubloc_url'], $b['block_entity']) !== false) {
+                                if (str_contains($hub['hubloc_url'], $b['block_entity'])) {
                                     $allowed = false;
                                 }
                             }
@@ -1868,7 +1866,7 @@ class Libzot
 
                 // The original author won't have a token in their copy of the message
 
-                $prnt = ((strpos($arr['parent_mid'], 'token=') !== false) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
+                $prnt = ((str_contains($arr['parent_mid'], 'token=')) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
 
                 $r = q(
                     "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
@@ -2056,7 +2054,7 @@ class Libzot
 
                 if (post_is_importable($arr['uid'], $arr, $abook)) {
                     // Strip old-style hubzilla bookmarks
-                    if (strpos($arr['body'], "#^[") !== false) {
+                    if (str_contains($arr['body'], "#^[")) {
                         $arr['body'] = str_replace("#^[", "[", $arr['body']);
                     }
 
@@ -2106,7 +2104,7 @@ class Libzot
         }
 
         if (!$deliveries) {
-            $result[] = array('', 'no recipients', '', $arr['mid']);
+            $result[] = ['', 'no recipients', '', $arr['mid']];
         }
 
         logger('Local results: ' . print_r($result, true), LOGGER_DEBUG);
@@ -2706,7 +2704,7 @@ class Libzot
 
         // don't let insecure sites register as public hubs
 
-        if (strpos($arr['url'], 'https://') === false) {
+        if (!str_contains($arr['url'], 'https://')) {
             $access_policy = ACCESS_PRIVATE;
         }
 
@@ -2961,7 +2959,7 @@ class Libzot
                 dbesc($zguid_sig)
             );
         } elseif (strlen($zaddr)) {
-            if (strpos($zaddr, '[system]') === false) {       /* normal address lookup */
+            if (!str_contains($zaddr, '[system]')) {       /* normal address lookup */
                 $r = q(
                     "select channel.*, xchan.* from channel left join xchan on channel_hash = xchan_hash
                     where ( channel_address = '%s' or xchan_addr = '%s' ) limit 1",

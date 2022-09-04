@@ -3,7 +3,7 @@ Put your webserver to sleep.
 ----
 
 cd [zapdir]
-mysqldump -u [user name] –p [password]  --no-create-info [zap-dbname] > /backupdir/dump.sql
+mysqldump -u [username] –p [password]  --no-create-info [zap-dbname] > /backupdir/dump.sql
 cp -rp cache store .htconfig.php /backupdir
 cd ..
 git clone git@codeberg.org:streams/streams
@@ -11,7 +11,7 @@ cd streams
 util/add_addon_repo git@codeberg.org:streams/streams-addons addon
 composer install --no-dev
 
-mysql -u [user name] -p
+mysql -u [username] -p
     create database streams;
     use streams;
     source install/schema_mysql.sql;
