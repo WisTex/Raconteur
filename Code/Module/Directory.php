@@ -115,6 +115,7 @@ class Directory extends Controller
     public function get()
     {
         $observer = get_observer_hash();
+        $token = '';
 
         if (get_config('system', 'block_public_directory', true) && (!$observer)) {
             notice(t('Public access denied.') . EOL);
@@ -182,7 +183,7 @@ class Directory extends Controller
                 }
 
                 notice(t('No default suggestions were found.') . EOL);
-                return;
+                return '';
             }
 
             // Remember in which order the suggestions were
@@ -290,7 +291,7 @@ class Directory extends Controller
             // logger('directory: return from upstream: ' . print_r($x,true), LOGGER_DATA);
 
             if ($x['success']) {
-
+                /** Experimental
                 if ($format === 'json') {
 
                     $chan = Channel::get_system();
@@ -314,6 +315,7 @@ class Directory extends Controller
                     echo $ret;
                     killme();
                 }
+                 **/
 
                 $t = 0;
                 $j = json_decode($x['body'], true);
@@ -432,11 +434,6 @@ class Directory extends Controller
                                 'location' => $location,
                                 'location_label' => t('Location:'),
                                 'gender' => $gender,
-                                'total_ratings' => $total_ratings,
-                                'viewrate' => true,
-                                'canrate' => (($rating_enabled && local_channel()) ? true : false),
-                                // 'network'           => network_to_name($rr['network']),
-                                // 'network_label'     => t('Network:'),
                                 'pdesc' => $pdesc,
                                 'pdesc_label' => t('Description:'),
                                 'censor' => (($directory_admin) ? 'dircensor/' . $rr['hash'] : ''),

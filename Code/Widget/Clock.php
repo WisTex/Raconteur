@@ -5,18 +5,15 @@ namespace Code\Widget;
 class Clock
 {
 
-    public function widget($arr)
+    public function widget($arr): string
     {
-
         $miltime = ((isset($arr['military']) && $arr['military']) ? intval($arr['military']) : false);
-
-        $o = <<< EOT
+        return <<< EOT
 <div class="widget">
 <h3 class="clockface"></h3>
 <script>
-
-var timerID = null
-var timerRunning = false
+let timerID = null
+let timerRunning = false
 
 function stopclock(){
     if(timerRunning)
@@ -30,12 +27,12 @@ function startclock(){
 }
 
 function showtime() {
-    var now = new Date()
-    var hours = now.getHours()
-    var minutes = now.getMinutes()
-    var seconds = now.getSeconds()
-	var military = $miltime
-    var timeValue = ""
+    let now = new Date()
+    let hours = now.getHours()
+    let minutes = now.getMinutes()
+    let seconds = now.getSeconds()
+	let military = $miltime
+    let timeValue = ""
 	if(military)
 		timeValue = hours
 	else
@@ -57,6 +54,5 @@ $(document).ready(function() {
 </div>
 EOT;
 
-        return $o;
     }
 }

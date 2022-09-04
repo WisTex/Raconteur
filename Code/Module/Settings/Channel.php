@@ -161,18 +161,10 @@ class Channel
 
         $unless_mention_count = ((x($_POST, 'unless_mention_count')) ? intval($_POST['unless_mention_count']) : 0);
         $unless_tag_count = ((x($_POST, 'unless_tag_count')) ? intval($_POST['unless_tag_count']) : 0);
-        $expire_items = ((x($_POST, 'expire_items')) ? intval($_POST['expire_items']) : 0);
-        $expire_starred = ((x($_POST, 'expire_starred')) ? intval($_POST['expire_starred']) : 0);
-        $expire_photos = ((x($_POST, 'expire_photos')) ? intval($_POST['expire_photos']) : 0);
-        $expire_network_only = ((x($_POST, 'expire_network_only')) ? intval($_POST['expire_network_only']) : 0);
         $preview_outbox = ((x($_POST, 'preview_outbox')) ? intval($_POST['preview_outbox']) : 0);
         $allow_location = (((x($_POST, 'allow_location')) && (intval($_POST['allow_location']) == 1)) ? 1 : 0);
-
         $blocktags = (((x($_POST, 'blocktags')) && (intval($_POST['blocktags']) == 1)) ? 0 : 1); // this setting is inverted!
-        $unkmail = (((x($_POST, 'unkmail')) && (intval($_POST['unkmail']) == 1)) ? 1 : 0);
-        $cntunkmail = ((x($_POST, 'cntunkmail')) ? intval($_POST['cntunkmail']) : 0);
         $suggestme = ((x($_POST, 'suggestme')) ? intval($_POST['suggestme']) : 0);
-//      $anymention       = ((x($_POST,'anymention')) ? intval($_POST['anymention'])  : 0);
         $hyperdrive = ((x($_POST, 'hyperdrive')) ? intval($_POST['hyperdrive']) : 0);
         $activitypub = ((x($_POST, 'activitypub')) ? intval($_POST['activitypub']) : 0);
         $tag_username = ((x($_POST, 'tag_username')) ? intval($_POST['tag_username']) : 0);
@@ -354,13 +346,12 @@ class Channel
 
 
         $r = q(
-            "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_anon_mail = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
+            "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
             dbesc($username),
             intval($pageflags),
             dbesc($timezone),
             dbesc($defloc),
             intval($notify),
-            intval($unkmail),
             intval($maxreq),
             intval($expire),
             intval(local_channel())
@@ -678,12 +669,7 @@ class Channel
             '$defpermcat' => ['defpermcat', t('Default Permissions Role'), $default_permcat, '', $permcats],
             '$permcat_enable' => Apps::system_app_installed(local_channel(), 'Roles'),
             '$profile_in_dir' => $profile_in_dir,
-            '$hide_wall' => $hide_wall,
-            '$unkmail' => $unkmail,
-            '$cntunkmail' => array('cntunkmail', t('Maximum direct messages per day from unknown people:'), intval($channel['channel_max_anon_mail']), t("Useful to reduce spamming if you allow direct messages from unknown people")),
-
             '$autoperms' => $autoperms,
-//          '$anymention' => $anymention,
             '$hyperdrive' => $hyperdrive,
             '$activitypub' => $activitypub,
             '$apconfig' => $apconfig,
@@ -742,7 +728,6 @@ class Channel
             '$miscdoc' => t('This section is reserved for use by optional addons and apps to provide additional settings.'),
             '$h_advn' => t('Advanced Account/Page Type Settings'),
             '$h_descadvn' => t('Change the behaviour of this account for special situations'),
-            '$pagetype' => $pagetype,
             '$lbl_misc' => t('Miscellaneous'),
             '$photo_path' => array('photo_path', t('Default photo upload folder name'), get_pconfig(local_channel(), 'system', 'photo_path'), t('%Y - current year, %m -  current month')),
             '$attach_path' => array('attach_path', t('Default file upload folder name'), get_pconfig(local_channel(), 'system', 'attach_path'), t('%Y - current year, %m -  current month')),
