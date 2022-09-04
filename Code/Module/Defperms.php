@@ -75,13 +75,10 @@ class Defperms extends Controller
             goaway(z_root() . '/connections');
         }
 
-
         if (intval($orig_record[0]['abook_self'])) {
             $autoperms = intval($_POST['autoperms']);
-            $is_self = true;
         } else {
             $autoperms = null;
-            $is_self = false;
         }
 
         $all_perms = Permissions::Perms();
