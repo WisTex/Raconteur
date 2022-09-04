@@ -1046,6 +1046,13 @@ class Libsync
                         );
                     }
 
+                    if (isset($location['callback']) && $location['callback'] !== $r[0]['hubloc_callback']) {
+                        q("update hubloc set hubloc_callback = '%s' where hubloc_id = %d",
+                            dbesc($location['callback']),
+                            intval($r[0]['hubloc_id'])
+                        );
+                    }
+
                     if (array_key_exists('site', $arr) && $location['url'] == $arr['site']['url']) {
                         q(
                             "update hubloc set hubloc_connected = '%s', hubloc_updated = '%s' where hubloc_id = %d and hubloc_updated < '%s'",
