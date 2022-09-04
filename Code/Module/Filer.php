@@ -57,12 +57,12 @@ class Filer extends Controller
                 }
             }
             $tpl = Theme::get_template("filer_dialog.tpl");
-            $o = replace_macros($tpl, array(
-                '$field' => array('term', t('Enter a folder name'), '', '', $filetags, 'placeholder="' . t('or select an existing folder (doubleclick)') . '"'),
+            $o = replace_macros($tpl, [
+                '$field' => ['term', t('Enter a folder name'), '', '', $filetags, 'placeholder="' . t('or select an existing folder (doubleclick)') . '"'],
                 '$submit' => t('Save'),
                 '$title' => t('Save to Folder'),
                 '$cancel' => t('Cancel')
-            ));
+            ]);
 
             echo $o;
         }

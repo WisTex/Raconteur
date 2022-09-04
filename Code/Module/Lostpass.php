@@ -79,7 +79,7 @@ class Lostpass extends Controller
             if (!$r) {
                 notice(t("Request could not be verified. (You may have previously submitted it.) Password reset failed.") . EOL);
                 goaway(z_root());
-                return;
+                return '';
             }
 
             $aid = $r[0]['account_id'];

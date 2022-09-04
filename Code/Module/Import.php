@@ -384,7 +384,7 @@ class Import extends Controller
 
                 $reconnect = false;
 
-                if (array_key_exists('abook_instance', $abook) && $abook['abook_instance'] && strpos($abook['abook_instance'], z_root()) === false) {
+                if (array_key_exists('abook_instance', $abook) && $abook['abook_instance'] && !str_contains($abook['abook_instance'], z_root())) {
                     $abook['abook_not_here'] = 1;
                     if (!($abook['abook_pending'] || $abook['abook_blocked'])) {
                         $reconnect = true;
@@ -396,7 +396,7 @@ class Import extends Controller
                     $role = get_pconfig($channel['channel_id'], 'system', 'permissions_role');
                     if (strpos($role, 'collection' !== false)) {
                         $ctype = 2;
-                    } elseif (strpos($role, 'group') !== false) {
+                    } elseif (str_contains($role, 'group')) {
                         $ctype = 1;
                     }
                     if ($ctype) {

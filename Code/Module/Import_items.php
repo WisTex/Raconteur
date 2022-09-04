@@ -67,7 +67,7 @@ class Import_items extends Controller
 
             $scheme = 'https://';
             $api_path = '/api/red/channel/export/items?f=&zap_compat=1&channel=' . $channelname . '&year=' . intval($year);
-            $opts = array('http_auth' => $email . ':' . $password);
+            $opts = ['http_auth' => $email . ':' . $password];
             $url = $scheme . $servername . $api_path;
             $ret = Url::get($url, $opts);
             if (!$ret['success']) {
@@ -134,13 +134,13 @@ class Import_items extends Controller
             return login();
         }
 
-        $o = replace_macros(Theme::get_template('item_import.tpl'), array(
+        $o = replace_macros(Theme::get_template('item_import.tpl'), [
             '$title' => t('Import Items'),
             '$desc' => t('Use this form to import existing posts and content from an export file.'),
             '$label_filename' => t('File to Upload'),
             '$form_security_token' => get_form_security_token('import_items'),
             '$submit' => t('Submit')
-        ));
+        ]);
 
         return $o;
     }

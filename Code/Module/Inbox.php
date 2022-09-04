@@ -25,7 +25,7 @@ class Inbox extends Controller
 
         if (
             (array_key_exists('HTTP_ACCEPT', $_SERVER)) && ($_SERVER['HTTP_ACCEPT'])
-            && (strpos($_SERVER['HTTP_ACCEPT'], '*') === false) && (!ActivityStreams::is_as_request())
+            && (!str_contains($_SERVER['HTTP_ACCEPT'], '*')) && (!ActivityStreams::is_as_request())
         ) {
             logger('unhandled accept header: ' . $_SERVER['HTTP_ACCEPT'], LOGGER_DEBUG);
             http_status_exit(406, 'not acceptable');
@@ -214,7 +214,7 @@ class Inbox extends Controller
                     // deliver to anybody at this site directly addressed
                     $channel_addr = '';
                     foreach($AS->recips as $recip) {
-                        if (strpos($recip, z_root()) === 0) {
+                        if (str_starts_with($recip, z_root())) {
                             $channel_addr .= '\'' . dbesc(basename($recip)) . '\',';
                         }
                     }

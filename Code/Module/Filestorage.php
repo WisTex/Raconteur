@@ -84,7 +84,7 @@ class Filestorage extends Controller
 
         $sync = attach_export_data($channel, $resource, false);
         if ($sync) {
-            Libsync::build_sync_packet($channel_id, array('file' => array($sync)));
+            Libsync::build_sync_packet($channel_id, ['file' => [$sync]]);
         }
 
 //      file_activity($channel_id, $object, $x['allow_cid'], $x['allow_gid'], $x['deny_cid'], $x['deny_gid'], 'post', $notify);

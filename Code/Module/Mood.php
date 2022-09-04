@@ -155,20 +155,20 @@ class Mood extends Controller
         $shortlist = [];
         foreach ($verbs as $k => $v) {
             if ($v !== 'NOTRANSLATION') {
-                $shortlist[] = array($k, $v);
+                $shortlist[] = [$k, $v];
             }
         }
 
 
         $tpl = Theme::get_template('mood_content.tpl');
 
-        $o = replace_macros($tpl, array(
+        $o = replace_macros($tpl, [
             '$title' => t('Mood'),
             '$desc' => t('Set your current mood and tell your friends'),
             '$verbs' => $shortlist,
             '$parent' => $parent,
             '$submit' => t('Submit'),
-        ));
+        ]);
 
         return $o;
     }

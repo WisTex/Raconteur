@@ -1438,7 +1438,7 @@ function attach_mkdirp($channel, $observer_hash, $arr = null)
  * @brief Changes permissions of a file.
  *
  * @param int $channel_id The id of the channel
- * @param array $resource
+ * @param string $resource
  * @param string $allow_cid
  * @param string $allow_gid
  * @param string $deny_cid

@@ -23,7 +23,7 @@ class New_channel extends Controller
         $cmd = ((argc() > 1) ? argv(1) : '');
 
         if ($cmd === 'autofill.json') {
-            $result = array('error' => false, 'message' => '');
+            $result = ['error' => false, 'message' => ''];
             $n = trim($_REQUEST['name']);
 
             $x = false;
@@ -57,7 +57,7 @@ class New_channel extends Controller
         }
 
         if ($cmd === 'checkaddr.json') {
-            $result = array('error' => false, 'message' => '');
+            $result = ['error' => false, 'message' => ''];
             $n = trim($_REQUEST['nick']);
             if (!$n) {
                 $n = trim($_REQUEST['name']);
@@ -189,12 +189,12 @@ class New_channel extends Controller
 
         $perm_roles = PermissionRoles::roles();
 
-        $name = array('name', t('Channel name'), ((x($_REQUEST, 'name')) ? $_REQUEST['name'] : ''), $name_help, "*");
+        $name = ['name', t('Channel name'), ((x($_REQUEST, 'name')) ? $_REQUEST['name'] : ''), $name_help, "*"];
         $nickhub = '@' . App::get_hostname();
-        $nickname = array('nickname', t('Choose a short nickname'), ((x($_REQUEST, 'nickname')) ? $_REQUEST['nickname'] : ''), $nick_help, "*");
-        $role = array('permissions_role', t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role compatible with your usage needs and privacy requirements.'), $perm_roles);
+        $nickname = ['nickname', t('Choose a short nickname'), ((x($_REQUEST, 'nickname')) ? $_REQUEST['nickname'] : ''), $nick_help, "*"];
+        $role = ['permissions_role', t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role compatible with your usage needs and privacy requirements.'), $perm_roles];
 
-        $o = replace_macros(Theme::get_template('new_channel.tpl'), array(
+        $o = replace_macros(Theme::get_template('new_channel.tpl'), [
             '$title' => t('Create a Channel'),
             '$desc' => t('A channel is a unique network identity. It can represent a person (social network profile), a forum (group), a business or celebrity page, a newsfeed, and many other things.'),
             '$label_import' => t('or <a href="import">import an existing channel</a> from another location.'),
@@ -205,7 +205,7 @@ class New_channel extends Controller
             '$validate' => t('Validate'),
             '$submit' => t('Create'),
             '$channel_usage_message' => $channel_usage_message
-        ));
+        ]);
 
         return $o;
     }

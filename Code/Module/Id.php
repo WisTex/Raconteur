@@ -10,17 +10,14 @@ namespace Code\Module;
  *
  */
 
-use Code\Lib\Libsync;
+
 use Code\Lib\Activity;
-use Code\Lib\ActivityStreams;
-use Code\Lib\LDSignatures;
+
 use Code\Web\HTTPSig;
 use Code\Web\Controller;
 use Code\Lib\Libzot;
-use Code\Lib\ThreadListener;
-use Code\Lib\IConfig;
-use Code\Lib\Enotify;
 use Code\Lib\Channel;
+use Code\Module\Channel as ModChannel;
 use App;
 
 require_once('include/attach.php');
@@ -54,7 +51,7 @@ class Id extends Controller
             if ($chan) {
                 $channel_id = $chan['channel_id'];
                 if (!$item_id) {
-                    $handler = new Channel();
+                    $handler = new ModChannel();
                     App::$argc = 2;
                     App::$argv[0] = 'channel';
                     App::$argv[1] = $chan['channel_address'];

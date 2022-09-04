@@ -44,7 +44,7 @@ class Editwebpage extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         $which = argv(1);
@@ -80,10 +80,10 @@ class Editwebpage extends Controller
 
         if (!perm_is_allowed($owner, $ob_hash, 'write_pages')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
-        $is_owner = (($uid && $uid == $owner) ? true : false);
+        $is_owner = $uid && $uid == $owner;
 
         $o = '';
 
@@ -92,7 +92,7 @@ class Editwebpage extends Controller
 
         if (!$post_id) {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         $ob_hash = (($observer) ? $observer['xchan_hash'] : '');
@@ -101,7 +101,7 @@ class Editwebpage extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         // We've already figured out which item we want and whose copy we need,
@@ -120,7 +120,7 @@ class Editwebpage extends Controller
 
         if ((!$itm) || intval($itm[0]['item_obscured'])) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $item_id = q(
@@ -136,7 +136,7 @@ class Editwebpage extends Controller
         if ($mimetype === 'application/x-php') {
             if ((!$uid) || ($uid != $itm[0]['uid'])) {
                 notice(t('Permission denied.') . EOL);
-                return;
+                return '';
             }
         }
 
@@ -149,7 +149,7 @@ class Editwebpage extends Controller
 
         $rp = 'webpages/' . $which;
 
-        $x = array(
+        $x = [
             'nickname' => $channel['channel_address'],
             'bbco_autocomplete' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode'])) ? 'bbcode' : ''),
             'return_path' => $rp,
@@ -164,10 +164,10 @@ class Editwebpage extends Controller
             'ptyp' => $itm[0]['type'],
             'body' => undo_post_tagging($content),
             'post_id' => $post_id,
-            'visitor' => ($is_owner) ? true : false,
+            'visitor' => (bool)$is_owner,
             'acl' => Libacl::populate($itm[0], false, PermissionDescription::fromGlobalPermission('view_pages')),
             'permissions' => $itm[0],
-            'showacl' => ($is_owner) ? true : false,
+            'showacl' => (bool)$is_owner,
             'mimetype' => $mimetype,
             'mimeselect' => true,
             'layout' => $layout,
@@ -175,18 +175,18 @@ class Editwebpage extends Controller
             'title' => htmlspecialchars($itm[0]['title'], ENT_COMPAT, 'UTF-8'),
             'lockstate' => (((strlen($itm[0]['allow_cid'])) || (strlen($itm[0]['allow_gid'])) || (strlen($itm[0]['deny_cid'])) || (strlen($itm[0]['deny_gid']))) ? 'lock' : 'unlock'),
             'profile_uid' => (intval($owner)),
-            'bbcode' => ((in_array($mimetype, ['text/bbcode', 'text/x-multicode'])) ? true : false)
-        );
+            'bbcode' => in_array($mimetype, ['text/bbcode', 'text/x-multicode'])
+        ];
 
         $editor = status_editor($x);
 
-        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), array(
+        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), [
             '$title' => t('Edit Webpage'),
             '$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
             '$editor' => $editor,
             '$cancel' => t('Cancel'),
             '$id' => $itm[0]['id']
-        ));
+        ]);
 
         return $o;
     }

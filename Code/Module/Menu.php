@@ -163,17 +163,17 @@ class Menu extends Controller
                 }
             }
 
-            $create = replace_macros(Theme::get_template('menuedit.tpl'), array(
-                '$menu_name' => array('menu_name', t('Menu Name'), '', t('Unique name (not visible on webpage) - required'), '*'),
-                '$menu_desc' => array('menu_desc', t('Menu Title'), '', t('Visible on webpage - leave empty for no title'), ''),
-                '$menu_bookmark' => array('menu_bookmark', t('Allow Bookmarks'), 0, t('Menu may be used to store saved bookmarks'), array(t('No'), t('Yes'))),
+            $create = replace_macros(Theme::get_template('menuedit.tpl'), [
+                '$menu_name' => ['menu_name', t('Menu Name'), '', t('Unique name (not visible on webpage) - required'), '*'],
+                '$menu_desc' => ['menu_desc', t('Menu Title'), '', t('Visible on webpage - leave empty for no title'), ''],
+                '$menu_bookmark' => ['menu_bookmark', t('Allow Bookmarks'), 0, t('Menu may be used to store saved bookmarks'), [t('No'), t('Yes')]],
                 '$submit' => t('Submit and proceed'),
                 '$sys' => App::$is_sys,
                 '$nick' => $which,
                 '$display' => 'none'
-            ));
+            ]);
 
-            $o = replace_macros(Theme::get_template('menulist.tpl'), array(
+            $o = replace_macros(Theme::get_template('menulist.tpl'), [
                 '$title' => t('Menus'),
                 '$create' => $create,
                 '$menus' => $x,
@@ -191,7 +191,7 @@ class Menu extends Controller
                 '$hintedit' => t('Edit this menu'),
                 '$nick' => $which,
                 '$sys' => App::$is_sys
-            ));
+            ]);
 
             return $o;
         }
@@ -215,20 +215,20 @@ class Menu extends Controller
                     return '';
                 }
 
-                $o = replace_macros(Theme::get_template('menuedit.tpl'), array(
+                $o = replace_macros(Theme::get_template('menuedit.tpl'), [
                     '$header' => t('Edit Menu'),
                     '$sys' => App::$is_sys,
                     '$menu_id' => intval(argv(2)),
                     '$menu_edit_link' => 'mitem/' . $which . '/' . intval(argv(1)) . ((App::$is_sys) ? '?f=&sys=1' : ''),
                     '$hintedit' => t('Add or remove entries to this menu'),
                     '$editcontents' => t('Edit menu contents'),
-                    '$menu_name' => array('menu_name', t('Menu name'), $m['menu_name'], t('Must be unique, only seen by you'), '*'),
-                    '$menu_desc' => array('menu_desc', t('Menu title'), $m['menu_desc'], t('Menu title as seen by others'), ''),
-                    '$menu_bookmark' => array('menu_bookmark', t('Allow bookmarks'), (($m['menu_flags'] & MENU_BOOKMARK) ? 1 : 0), t('Menu may be used to store saved bookmarks'), array(t('No'), t('Yes'))),
+                    '$menu_name' => ['menu_name', t('Menu name'), $m['menu_name'], t('Must be unique, only seen by you'), '*'],
+                    '$menu_desc' => ['menu_desc', t('Menu title'), $m['menu_desc'], t('Menu title as seen by others'), ''],
+                    '$menu_bookmark' => ['menu_bookmark', t('Allow bookmarks'), (($m['menu_flags'] & MENU_BOOKMARK) ? 1 : 0), t('Menu may be used to store saved bookmarks'), [t('No'), t('Yes')]],
                     '$menu_system' => (($m['menu_flags'] & MENU_SYSTEM) ? 1 : 0),
                     '$nick' => $which,
                     '$submit' => t('Submit and proceed')
-                ));
+                ]);
 
                 return $o;
             } else {

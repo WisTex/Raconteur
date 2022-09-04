@@ -980,7 +980,7 @@ class Item extends Controller
             // and will require alternatives for alternative content-types (text/html, text/markdown, text/plain, etc.)
             // we may need virtual or template classes to implement the possible alternatives
 
-            if (strpos($body, '[/summary]') !== false) {
+            if (str_contains($body, '[/summary]')) {
                 $match = '';
                 $cnt = preg_match("/\[summary](.*?)\[\/summary]/ism", $body, $match);
                 if ($cnt) {
@@ -1953,10 +1953,10 @@ class Item extends Controller
 
         $multiple = false;
 
-        if (strpos($body, '[/question]') === false && strpos($body, '[/answer]') === false) {
+        if (!str_contains($body, '[/question]') && !str_contains($body, '[/answer]')) {
             return false;
         }
-        if (strpos($body, '[nobb]') !== false) {
+        if (str_contains($body, '[nobb]')) {
             return false;
         }
 

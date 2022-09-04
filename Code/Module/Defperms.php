@@ -161,7 +161,7 @@ class Defperms extends Controller
         if ($abconfig) {
             $clone['abconfig'] = $abconfig;
         }
-        Libsync::build_sync_packet(0 /* use the current local_channel */, array('abook' => array($clone)));
+        Libsync::build_sync_packet(0 /* use the current local_channel */, ['abook' => [$clone]]);
     }
 
     /* @brief Generate content of connection default permissions page
@@ -183,7 +183,7 @@ class Defperms extends Controller
         $role = get_pconfig(local_channel(), 'system', 'permissions_role');
         if ($role) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $section = ((array_key_exists('section', $_REQUEST)) ? $_REQUEST['section'] : '');
@@ -245,15 +245,14 @@ class Defperms extends Controller
 
             $o .= replace_macros($tpl, [
                 '$header' => t('Connection Default Permissions'),
-                '$autoperms' => array('autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no),
+                '$autoperms' => ['autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('If enabled, connection requests will be approved without your interaction'), $yes_no],
                 '$permcat' => ['permcat', t('Permission role'), '', '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
                 '$permcat_new' => t('Add permission role'),
-                '$permcat_enable' => Apps::system_app_installed($channel_id, 'Roles'),
+                '$permcat_enable' => Apps::system_app_installed($channel['channel_id'], 'Roles'),
                 '$section' => $section,
                 '$sections' => $sections,
                 '$autolbl' => t('The permissions indicated on this page will be applied to all new connections.'),
                 '$autoapprove' => t('Automatic approval settings'),
-                '$unapproved' => $unapproved,
                 '$inherited' => t('inherited'),
                 '$submit' => t('Submit'),
                 '$me' => t('My Settings'),
@@ -265,7 +264,7 @@ class Defperms extends Controller
                 '$name' => $contact['xchan_name'],
             ]);
 
-            $arr = array('contact' => $contact, 'output' => $o);
+            $arr = ['contact' => $contact, 'output' => $o];
 
             Hook::call('contact_edit', $arr);
 

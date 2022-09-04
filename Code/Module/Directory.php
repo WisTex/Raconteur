@@ -4,6 +4,7 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
+use Code\Lib\Activity;
 use Code\Lib\Config;
 use Code\Lib\Libzotdir;
 use Code\Lib\Libsync;
@@ -12,6 +13,8 @@ use Code\Lib\Channel;
 use Code\Lib\Navbar;
 use Code\Lib\Socgraph;
 use Code\Lib\XConfig;
+use Code\Lib\LDSignatures;
+use Code\Web\HTTPSig;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 use Code\Lib\Url;
@@ -249,7 +252,7 @@ class Directory extends Controller
             if (strpos($search, '@')) {
                 $query .= '&address=' . urlencode($search);
             }
-            if (strpos($search, 'http') === 0) {
+            if (str_starts_with($search, 'http')) {
                 $query .= '&url=' . urlencode($search);
             }
             if ($keywords) {
@@ -466,7 +469,7 @@ class Directory extends Controller
                             $found_block = false;
                             if ($blocked) {
                                 foreach ($blocked as $b) {
-                                    if (strpos($rr['site_url'], $b['block_entity']) !== false) {
+                                    if (str_contains($rr['site_url'], $b['block_entity'])) {
                                         $found_block = true;
                                         break;
                                     }
@@ -480,7 +483,7 @@ class Directory extends Controller
                                 continue;
                             }
 
-                            $arr = array('contact' => $rr, 'entry' => $entry);
+                            $arr = ['contact' => $rr, 'entry' => $entry];
 
                             Hook::call('directory_item', $arr);
 
@@ -547,7 +550,7 @@ class Directory extends Controller
                         if ($search && App::$pager['page'] == 1 && $j['records'] == 0) {
                             if (strpos($search, '@')) {
                                 goaway(z_root() . '/chanview/?f=&address=' . $search);
-                            } elseif (strpos($search, 'http') === 0) {
+                            } elseif (str_starts_with($search, 'http')) {
                                 goaway(z_root() . '/chanview/?f=&url=' . $search);
                             } else {
                                 $r = q(

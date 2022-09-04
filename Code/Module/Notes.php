@@ -59,8 +59,6 @@ class Notes extends Controller
 
         $desc = t('This app is installed. The Notes tool can be found on your stream page.');
 
-        $text = '<div class="section-content-info-wrapper">' . $desc . '</div>';
-
-        return $text;
+        return '<div class="section-content-info-wrapper">' . $desc . '</div>';
     }
 }

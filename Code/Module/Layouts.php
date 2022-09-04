@@ -40,7 +40,7 @@ class Layouts extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         $which = argv(1);
@@ -80,14 +80,14 @@ class Layouts extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         // Block design features from visitors
 
         if ((!$uid) || ($uid != $owner)) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         // Get the observer, check their permissions
@@ -98,7 +98,7 @@ class Layouts extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         // This feature is not exposed in redbasic ui since it is not clear why one would want to
@@ -125,7 +125,7 @@ class Layouts extends Controller
         // Nickname is set to the observers xchan, and profile_uid to the owners.
         // This lets you post pages at other people's channels.
 
-        $x = array(
+        $x = [
             'webpage' => ITEM_TYPE_PDL,
             'is_owner' => true,
             'nickname' => App::$profile['channel_address'],
@@ -144,7 +144,7 @@ class Layouts extends Controller
             'placeholdertitle' => t('Layout Description (Optional)'),
             'novoting' => true,
             'bbco_autocomplete' => 'comanche'
-        );
+        ];
 
         if ($_REQUEST['title']) {
             $x['title'] = $_REQUEST['title'];
@@ -171,7 +171,7 @@ class Layouts extends Controller
         if ($r) {
             $pages = [];
             foreach ($r as $rr) {
-                $element_arr = array(
+                $element_arr = [
                     'type' => 'layout',
                     'title' => $rr['title'],
                     'body' => $rr['body'],
@@ -180,8 +180,8 @@ class Layouts extends Controller
                     'mimetype' => $rr['mimetype'],
                     'pagetitle' => urldecode($rr['v']),
                     'mid' => $rr['mid']
-                );
-                $pages[$rr['iid']][] = array(
+                ];
+                $pages[$rr['iid']][] = [
                     'url' => $rr['iid'],
                     'title' => urldecode($rr['v']),
                     'descr' => $rr['title'],
@@ -189,14 +189,14 @@ class Layouts extends Controller
                     'created' => $rr['created'],
                     'edited' => $rr['edited'],
                     'bb_element' => '[element]' . base64url_encode(json_encode($element_arr)) . '[/element]'
-                );
+                ];
             }
         }
 
         //Build the base URL for edit links
         $url = z_root() . '/editlayout/' . $which;
 
-        $o = replace_macros(Theme::get_template('layoutlist.tpl'), array(
+        $o = replace_macros(Theme::get_template('layoutlist.tpl'), [
             '$title' => t('Layouts'),
             '$create' => t('Create'),
             '$help' => '', // array('text' => t('Help'), 'url' => 'help/comanche', 'title' => t('Comanche page description language help')),
@@ -212,7 +212,7 @@ class Layouts extends Controller
             '$pages' => $pages,
             '$channel' => $which,
             '$view' => t('View'),
-        ));
+        ]);
 
         return $o;
     }

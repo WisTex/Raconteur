@@ -18,7 +18,7 @@ class Impel extends Controller
     public function init()
     {
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         if (!local_channel()) {
             json_return_and_die($ret);

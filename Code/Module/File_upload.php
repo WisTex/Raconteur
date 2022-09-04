@@ -47,7 +47,7 @@ class File_upload extends Controller
 
                 $sync = attach_export_data($channel, $hash);
                 if ($sync) {
-                    Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+                    Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
                 }
                 goaway(z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path']);
             }
@@ -57,7 +57,7 @@ class File_upload extends Controller
 
 
             if (array_key_exists('HTTP_CONTENT_RANGE', $_SERVER)) {
-                $pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
+                $pm = preg_match('/bytes (\d*)-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
                 if ($pm) {
                     logger('Content-Range: ' . print_r($matches, true));
                     $partial = true;
@@ -97,7 +97,7 @@ class File_upload extends Controller
             if ($r['success']) {
                 $sync = attach_export_data($channel, $r['data']['hash']);
                 if ($sync) {
-                    Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+                    Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
                 }
             }
         }

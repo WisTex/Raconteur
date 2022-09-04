@@ -16,7 +16,7 @@ class Dreport extends Controller
 
         if (!local_channel()) {
             notice(t('Permission denied') . EOL);
-            return;
+            return '';
         }
 
         $table = 'item';
@@ -31,7 +31,7 @@ class Dreport extends Controller
         $message_id = str_replace(['/activity/','/conversation/'], ['/item/','/item/'], $message_id);
         if (!$message_id) {
             notice(t('Invalid message') . EOL);
-            return;
+            return '';
         }
 
         if ($cmd === 'push') {
@@ -63,7 +63,7 @@ class Dreport extends Controller
                 return $output;
             } else {
                 notice(t('Item not found') . EOL);
-                return;
+                return '';
             }
         }
 
@@ -82,7 +82,7 @@ class Dreport extends Controller
 
         if (!$i) {
             notice(t('Permission denied') . EOL);
-            return;
+            return '';
         }
 
         $r = q(
@@ -150,7 +150,7 @@ class Dreport extends Controller
                     $r[$x]['dreport_result'] = t('mail delivered');
                     break;
                 default:
-                    if (strpos($r[$x]['dreport_result'], 'delivery rejected') === 0) {
+                    if (str_starts_with($r[$x]['dreport_result'], 'delivery rejected')) {
                         $r[$x]['dreport_result'] = t('delivery rejected') . ' ' . substr($r[$x]['dreport_result'], 17);
                     }
                     $r[$x]['gravity'] = 1;
@@ -169,14 +169,14 @@ class Dreport extends Controller
             ];
         }
 
-        $output = replace_macros(Theme::get_template('dreport.tpl'), array(
+        $output = replace_macros(Theme::get_template('dreport.tpl'), [
             '$title' => sprintf(t('Delivery report for %1$s'), basename($message_id)) . '...',
             '$table' => $table,
             '$mid' => urlencode($mid),
             '$options' => t('Options'),
             '$push' => t('Redeliver'),
             '$entries' => $entries
-        ));
+        ]);
 
 
         return $output;

@@ -53,13 +53,13 @@ class Fastping extends Controller
 
         if (x($_SESSION, 'sysmsg')) {
             foreach ($_SESSION['sysmsg'] as $m) {
-                $result['notice'][] = array('message' => $m);
+                $result['notice'][] = ['message' => $m];
             }
             unset($_SESSION['sysmsg']);
         }
         if (x($_SESSION, 'sysmsg_info')) {
             foreach ($_SESSION['sysmsg_info'] as $m) {
-                $result['info'][] = array('message' => $m);
+                $result['info'][] = ['message' => $m];
             }
             unset($_SESSION['sysmsg_info']);
         }

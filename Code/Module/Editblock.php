@@ -41,7 +41,7 @@ class Editblock extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         $which = argv(1);
@@ -77,7 +77,7 @@ class Editblock extends Controller
 
         if (!perm_is_allowed($owner, $ob_hash, 'write_pages')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $is_owner = (($uid && $uid == $owner) ? true : false);
@@ -89,7 +89,7 @@ class Editblock extends Controller
 
         if (!($post_id && $owner)) {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         $itm = q(
@@ -107,7 +107,7 @@ class Editblock extends Controller
             }
         } else {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         $mimetype = $itm[0]['mimetype'];
@@ -120,7 +120,7 @@ class Editblock extends Controller
 
         $rp = 'blocks/' . $channel['channel_address'];
 
-        $x = array(
+        $x = [
 			'nickname' => $channel['channel_address'],
 			'bbco_autocomplete'=> ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? 'bbcode' : 'comanche-block'),
 			'return_path' => $rp,
@@ -145,17 +145,17 @@ class Editblock extends Controller
 			'pagetitle' => $block_title,
 			'profile_uid' => (intval($channel['channel_id'])),
 			'bbcode' => ((in_array($mimetype, [ 'text/bbcode' , 'text/x-multicode' ])) ? true : false)
-        );
+        ];
 
         $editor = status_editor($x);
 
-        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), array(
+        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), [
             '$title' => t('Edit Block'),
             '$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
             '$id' => $itm[0]['id'],
             '$cancel' => t('Cancel'),
             '$editor' => $editor
-        ));
+        ]);
 
         return $o;
     }

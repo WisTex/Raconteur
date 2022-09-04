@@ -55,14 +55,14 @@ class Linkinfo extends Controller
             $url = trim($_GET['url']);
         }
 
-        if (substr($url, 0, 1) === '!') {
+        if (str_starts_with($url, '!')) {
             $process_embed = false;
             $url = substr($url, 1);
         }
 
         $url = strip_zids($url);
 
-        if (strpos($url, 'geo:') === 0) {
+        if (str_starts_with($url, 'geo:')) {
             if ($process_embed) {
                 echo $br . '[map=' . substr($url, 4) . ']' . $br;
             } else {
@@ -71,9 +71,9 @@ class Linkinfo extends Controller
             killme();
         }
 
-        if (strpos($url, 'tel:') === 0 || (is_phone_number($url) !== false)) {
+        if (str_starts_with($url, 'tel:') || (is_phone_number($url) !== false)) {
             $phone = $url;
-            if (strpos($url, 'tel:') !== 0) {
+            if (!str_starts_with($url, 'tel:')) {
                 $url = 'tel:' . is_phone_number($url);
             }
             echo $br . '[url=' . $url . ']' . $phone . '[/url]' . $br;
@@ -197,7 +197,7 @@ class Linkinfo extends Controller
 
         $template = $br . '[url=%s]%s[/url]%s' . $br;
 
-        $arr = array('url' => $url, 'text' => '');
+        $arr = ['url' => $url, 'text' => ''];
 
         Hook::call('parse_link', $arr);
 
@@ -276,7 +276,7 @@ class Linkinfo extends Controller
         if ($url && $title && $text) {
             $text = $br . '[quote]' . trim($text) . '[/quote]' . $br;
 
-            $title = str_replace(array("\r", "\n"), array('', ''), $title);
+            $title = str_replace(["\r", "\n"], ['', ''], $title);
 
             $result = sprintf($template, $url, ($title) ? $title : $url, $text) . $str_tags;
 
@@ -338,7 +338,7 @@ class Linkinfo extends Controller
         if ($image) {
             $text = $br . $br . $image . $text;
         }
-        $title = str_replace(array("\r", "\n"), array('', ''), $title);
+        $title = str_replace(["\r", "\n"], ['', ''], $title);
 
         $result = sprintf($template, $url, ($title) ? $title : $url, $text) . $str_tags;
 
@@ -349,7 +349,7 @@ class Linkinfo extends Controller
     }
 
 
-    public static function deletexnode(&$doc, $node)
+    public static function deletexnode($doc, $node)
     {
         $xpath = new DomXPath($doc);
         $list = $xpath->query("//" . $node);
@@ -374,7 +374,7 @@ class Linkinfo extends Controller
             $complete .= ":" . $schemearr["port"];
         }
 
-        if (strpos($urlarr['path'], '/') !== 0) {
+        if (!str_starts_with($urlarr['path'], '/')) {
             $complete .= '/';
         }
 
@@ -394,7 +394,7 @@ class Linkinfo extends Controller
     public static function get_video_poster($url)
     {
 
-        if (strpos($url, z_root() . '/cloud/') === false) {
+        if (!str_contains($url, z_root() . '/cloud/')) {
             return EMPTY_STR;
         }
         $m = parse_url($url, PHP_URL_PATH);
@@ -579,9 +579,9 @@ class Linkinfo extends Controller
                         $photodata[0] = round($photodata[0] * (300 / $photodata[1]));
                         $photodata[1] = 300;
                     }
-                    $siteinfo["images"][] = array("src" => $src,
+                    $siteinfo["images"][] = ["src" => $src,
                         "width" => $photodata[0],
-                        "height" => $photodata[1]);
+                        "height" => $photodata[1]];
                 }
             }
         } else {
@@ -592,9 +592,9 @@ class Linkinfo extends Controller
             $photodata = @getimagesize($src);
 
             if (($photodata) && ($photodata[0] > 10) and ($photodata[1] > 10)) {
-                $siteinfo["images"][] = array("src" => $src,
+                $siteinfo["images"][] = ["src" => $src,
                     "width" => $photodata[0],
-                    "height" => $photodata[1]);
+                    "height" => $photodata[1]];
             }
         }
 
@@ -628,7 +628,7 @@ class Linkinfo extends Controller
             }
 
             if ($text != "") {
-                $text = trim(str_replace(array("\n", "\r"), array(" ", " "), $text));
+                $text = trim(str_replace(["\n", "\r"], [" ", " "], $text));
 
                 while (strpos($text, "  ")) {
                     $text = trim(str_replace("  ", " ", $text));
@@ -644,7 +644,7 @@ class Linkinfo extends Controller
 
     private static function arr_add_hashes(&$item, $k)
     {
-        if (substr($item, 0, 1) !== '#') {
+        if (!str_starts_with($item, '#')) {
             $item = '#' . $item;
         }
     }

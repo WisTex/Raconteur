@@ -57,25 +57,25 @@ class Notifications extends Controller
             $notifications_available = true;
             foreach ($r as $rr) {
                 $x = strip_tags(bbcode($rr['msg']));
-                $notif_content .= replace_macros(Theme::get_template('notify.tpl'), array(
+                $notif_content .= replace_macros(Theme::get_template('notify.tpl'), [
                     '$item_link' => z_root() . '/notify/view/' . $rr['id'],
                     '$item_image' => $rr['photo'],
                     '$item_text' => $x,
                     '$item_when' => relative_date($rr['created']),
-                    '$item_seen' => (($rr['seen']) ? true : false),
+                    '$item_seen' => (bool)$rr['seen'],
                     '$new' => t('New')
-                ));
+                ]);
             }
         } else {
             $notif_content = t('No more system notifications.');
         }
 
-        $o .= replace_macros(Theme::get_template('notifications.tpl'), array(
+        $o .= replace_macros(Theme::get_template('notifications.tpl'), [
             '$notif_header' => t('System Notifications'),
             '$notif_link_mark_seen' => t('Mark all seen'),
             '$notif_content' => $notif_content,
             '$notifications_available' => $notifications_available,
-        ));
+        ]);
 
         return $o;
     }

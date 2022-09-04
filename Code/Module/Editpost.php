@@ -24,14 +24,14 @@ class Editpost extends Controller
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $post_id = ((argc() > 1) ? intval(argv(1)) : 0);
 
         if (!$post_id) {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         $item = q(
@@ -45,7 +45,7 @@ class Editpost extends Controller
 
         if ((!$item) || intval($item[0]['item_obscured'])) {
             notice(t('Item is not editable') . EOL);
-            return;
+            return '';
         }
 
         $item = array_shift($item);

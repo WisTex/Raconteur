@@ -174,7 +174,7 @@ class Lists extends Controller
         if ((argc() == 1) || ((argc() == 2) && (argv(1) === 'new'))) {
 	        if (!local_channel()) {
     	        notice(t('Permission denied') . EOL);
-        	    return;
+        	    return '';
         	}
 
             $new = (argc() == 2) && (argv(1) === 'new');
@@ -219,7 +219,7 @@ class Lists extends Controller
         if ((argc() == 3) && (argv(1) === 'drop')) {
 	        if (!local_channel()) {
     	        notice(t('Permission denied') . EOL);
-        	    return;
+        	    return '';
         	}
 
 
@@ -248,7 +248,7 @@ class Lists extends Controller
         if ((argc() > 2) && intval(argv(1)) && argv(2)) {
 		    if (!local_channel()) {
             	notice(t('Permission denied') . EOL);
-            	return;
+            	return '';
         	}
 
             check_form_security_token_ForbiddenOnErr('group_member_change', 't');
@@ -279,7 +279,7 @@ class Lists extends Controller
 
 			if (! $r) {
                 notice(t('Access list not found.') . EOL);
-				return;
+				return '';
 			}
 
 			$group = array_shift($r);
@@ -290,7 +290,7 @@ class Lists extends Controller
 				// public view of group members if permitted
 				if (!($group['visible'] && perm_is_allowed($uid, get_observer_hash(), 'view_contacts'))) {
                     notice(t('Permission denied') . EOL);
-                    return;
+                    return '';
                 }
                 $members = [];
                 $memberlist = AccessList::members($uid, $group['id']);

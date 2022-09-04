@@ -103,7 +103,7 @@ class Locs extends Controller
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $channel = App::get_channel();
@@ -122,7 +122,7 @@ class Locs extends Controller
 
         if (!$r) {
             notice(t('No locations found.') . EOL);
-            return;
+            return '';
         }
 
         $o = replace_macros(Theme::get_template('locmanage.tpl'), [

@@ -43,11 +43,11 @@ class Expire extends Controller
         }
 
         $setting_fields = replace_macros(Theme::get_template('field_input.tpl'), [
-            '$field' => array('selfexpiredays', t('Expire and delete all my posts after this many days'), intval(get_pconfig(local_channel(), 'system', 'selfexpiredays', 0)), t('Leave at 0 if you wish to manually control expiration of specific posts.'))
+            '$field' => ['selfexpiredays', t('Expire and delete all my posts after this many days'), intval(get_pconfig(local_channel(), 'system', 'selfexpiredays', 0)), t('Leave at 0 if you wish to manually control expiration of specific posts.')]
         ]);
 
         return replace_macros(Theme::get_template('generic_app_settings.tpl'), [
-            '$addon' => array('expire', t('Automatic Expiration Settings'), '', t('Submit')),
+            '$addon' => ['expire', t('Automatic Expiration Settings'), '', t('Submit')],
             '$content' => $setting_fields
         ]);
     }

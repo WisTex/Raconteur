@@ -16,12 +16,6 @@ class Magic extends Controller
     public function init()
     {
 
-        $ret = [
-            'success' => false,
-            'url' => '',
-            'message' => ''
-        ];
-
         logger('mod_magic: invoked', LOGGER_DEBUG);
 
         logger('args: ' . print_r($_REQUEST, true), LOGGER_DATA);

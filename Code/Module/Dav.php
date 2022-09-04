@@ -2,7 +2,7 @@
 
 namespace Code\Module;
 
-use Code\Storage\Stdio;
+
 
 /**
  * @file Code/Module/Dav.php
@@ -14,7 +14,7 @@ use Code\Storage\Stdio;
 use Sabre\DAV as SDAV;
 use Sabre\DAV\Auth\Plugin;
 use Code\Lib\System;
-use Code\Storage;
+use Code\Storage\Stdio;
 use Code\Lib\Libprofile;
 use Code\Lib\Channel;
 use Code\Storage\BasicAuth;
@@ -40,7 +40,7 @@ class Dav extends Controller
         foreach (['REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION'] as $head) {
             /* Basic authentication */
 
-            if (array_key_exists($head, $_SERVER) && substr(trim($_SERVER[$head]), 0, 5) === 'Basic') {
+            if (array_key_exists($head, $_SERVER) && str_starts_with(trim($_SERVER[$head]), 'Basic')) {
                 $userpass = @base64_decode(substr(trim($_SERVER[$head]), 6));
                 if (strlen($userpass)) {
                     list($name, $password) = explode(':', $userpass);
@@ -52,7 +52,7 @@ class Dav extends Controller
 
             /* Signature authentication */
 
-            if (array_key_exists($head, $_SERVER) && substr(trim($_SERVER[$head]), 0, 9) === 'Signature') {
+            if (array_key_exists($head, $_SERVER) && str_starts_with(trim($_SERVER[$head]), 'Signature')) {
                 if ($head !== 'HTTP_AUTHORIZATION') {
                     $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER[$head];
                     continue;

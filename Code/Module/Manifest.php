@@ -2,7 +2,6 @@
 
 namespace Code\Module;
 
-use App;
 use Code\Web\Controller;
 use Code\Lib\System;
 

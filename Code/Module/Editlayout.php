@@ -39,7 +39,7 @@ class Editlayout extends Controller
         if (!App::$profile) {
             notice(t('Requested profile is not available.') . EOL);
             App::$error = 404;
-            return;
+            return '';
         }
 
         $which = argv(1);
@@ -75,7 +75,7 @@ class Editlayout extends Controller
 
         if (!perm_is_allowed($owner, $ob_hash, 'write_pages')) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $is_owner = (($uid && $uid == $owner) ? true : false);
@@ -87,7 +87,7 @@ class Editlayout extends Controller
 
         if (!$post_id) {
             notice(t('Item not found') . EOL);
-            return;
+            return '';
         }
 
         // Now we've got a post and an owner, let's find out if we're allowed to edit it
@@ -98,7 +98,7 @@ class Editlayout extends Controller
 
         if (!$perms['write_pages']) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $itm = q(
@@ -118,7 +118,7 @@ class Editlayout extends Controller
 
         $rp = 'layouts/' . $which;
 
-        $x = array(
+        $x = [
             'webpage' => ITEM_TYPE_PDL,
             'nickname' => $channel['channel_address'],
             'editor_autocomplete' => true,
@@ -142,17 +142,17 @@ class Editlayout extends Controller
             'placeholdertitle' => t('Layout Description (Optional)'),
             'showacl' => false,
             'profile_uid' => intval($owner),
-        );
+        ];
 
         $editor = status_editor($x);
 
-        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), array(
+        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), [
             '$title' => t('Edit Layout'),
             '$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
             '$id' => $itm[0]['id'],
             '$cancel' => t('Cancel'),
             '$editor' => $editor
-        ));
+        ]);
 
         return $o;
     }

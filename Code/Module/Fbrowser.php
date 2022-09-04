@@ -34,7 +34,7 @@ class Fbrowser extends Controller
 
         switch (App::$argv[1]) {
             case "image":
-                $path = array(array(z_root() . "/fbrowser/image/", t("Photos")));
+                $path = [[z_root() . "/fbrowser/image/", t("Photos")]];
                 $albums = false;
                 $sql_extra = "";
                 $sql_extra2 = " ORDER BY created DESC LIMIT 0, 10";
@@ -53,7 +53,7 @@ class Fbrowser extends Controller
                     $album = hex2bin(App::$argv[2]);
                     $sql_extra = sprintf("AND album = '%s' ", dbesc($album));
                     $sql_extra2 = "";
-                    $path[] = array(z_root() . "/fbrowser/image/" . App::$argv[2] . "/", $album);
+                    $path[] = [z_root() . "/fbrowser/image/" . App::$argv[2] . "/", $album];
                 }
 
                 $r = q(
@@ -66,14 +66,14 @@ class Fbrowser extends Controller
                 $files = array_map("self::files1", $r);
 
                 $tpl = Theme::get_template("filebrowser.tpl");
-                echo replace_macros($tpl, array(
+                echo replace_macros($tpl, [
                     '$type' => 'image',
                     '$baseurl' => z_root(),
                     '$path' => $path,
                     '$folders' => $albums,
                     '$files' => $files,
                     '$cancel' => t('Cancel'),
-                ));
+                ]);
 
 
                 break;
@@ -89,14 +89,14 @@ class Fbrowser extends Controller
 
 
                     $tpl = Theme::get_template("filebrowser.tpl");
-                    echo replace_macros($tpl, array(
+                    echo replace_macros($tpl, [
                         '$type' => 'file',
                         '$baseurl' => z_root(),
-                        '$path' => array(array(z_root() . "/fbrowser/image/", t("Files"))),
+                        '$path' => [[z_root() . "/fbrowser/image/", t("Files")]],
                         '$folders' => false,
                         '$files' => $files,
                         '$cancel' => t('Cancel'),
-                    ));
+                    ]);
                 }
 
                 break;
@@ -108,7 +108,7 @@ class Fbrowser extends Controller
 
     private static function folder1($el)
     {
-        return array(bin2hex($el['album']), $el['album']);
+        return [bin2hex($el['album']), $el['album']];
     }
 
 
@@ -121,11 +121,11 @@ class Fbrowser extends Controller
 
         $filename_e = $rr['filename'];
 
-        return array(
+        return [
             z_root() . '/photo/' . $rr['resource_id'] . '-' . $rr['hiq'] . '.' . $ext,
             $filename_e,
             z_root() . '/photo/' . $rr['resource_id'] . '-' . $rr['loq'] . '.' . $ext
-        );
+        ];
     }
 
     private static function files2($rr)
@@ -139,6 +139,6 @@ class Fbrowser extends Controller
             $filename_e = $rr['filename'];
         }
 
-        return array(z_root() . '/attach/' . $rr['id'], $filename_e, z_root() . '/images/icons/16/' . $filetype . '.png');
+        return [z_root() . '/attach/' . $rr['id'], $filename_e, z_root() . '/images/icons/16/' . $filetype . '.png'];
     }
 }

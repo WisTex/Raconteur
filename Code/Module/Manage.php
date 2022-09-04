@@ -45,8 +45,8 @@ class Manage extends Controller
                 }
                 goaway(z_root() . '/manage');
             } elseif (argv(2) === 'menu') {
-                $state = intval(PConfig::get($change_channel, 'system', 'include_in_menu', 0));
-                PConfig::set($change_channel, 'system', 'include_in_menu', 1 - $state);
+                $state = intval(PConfig::Get($change_channel, 'system', 'include_in_menu', 0));
+                PConfig::Set($change_channel, 'system', 'include_in_menu', 1 - $state);
                 goaway(z_root() . '/manage');
             }
         }
@@ -76,7 +76,7 @@ class Manage extends Controller
             $channels = ((is_site_admin()) ? array_merge([Channel::get_system()], $r) : $r);
             for ($x = 0; $x < count($channels); $x++) {
                 $channels[$x]['link'] = 'manage/' . intval($channels[$x]['channel_id']);
-                $channels[$x]['include_in_menu'] = intval(PConfig::get($channels[$x]['channel_id'], 'system', 'include_in_menu', 0));
+                $channels[$x]['include_in_menu'] = intval(PConfig::Get($channels[$x]['channel_id'], 'system', 'include_in_menu', 0));
                 $channels[$x]['default'] = (($channels[$x]['channel_id'] == $account['account_default_channel']) ? "1" : '');
                 $channels[$x]['default_links'] = '1';
                 $channels[$x]['collections_label'] = t('Collection');

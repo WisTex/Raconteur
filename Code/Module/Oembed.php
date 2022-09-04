@@ -15,7 +15,7 @@ class Oembed extends Controller
 
         if (argc() > 1) {
             if (argv(1) == 'b2h') {
-                $url = array("", trim(hex2bin($_REQUEST['url'])));
+                $url = ["", trim(hex2bin($_REQUEST['url']))];
                 echo Zlib\Oembed::replacecb($url);
                 killme();
             } elseif (argv(1) == 'h2b') {

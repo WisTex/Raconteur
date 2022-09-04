@@ -420,7 +420,7 @@ class Dirsearch extends Controller
             intval(SITE_TYPE_ZOT)
         );
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         if ($r) {
             $ret['success'] = true;
@@ -445,7 +445,7 @@ class Dirsearch extends Controller
                     $register = 'closed';
                 }
 
-                $ret['sites'][] = array('url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']);
+                $ret['sites'][] = ['url' => $rr['site_url'], 'access' => $access, 'register' => $register, 'sellpage' => $rr['site_sellpage'], 'location' => $rr['site_location'], 'project' => $rr['site_project'], 'version' => $rr['site_version']];
             }
         }
         return $ret;

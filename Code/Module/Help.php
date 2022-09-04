@@ -22,7 +22,7 @@ class Help extends Controller
         Navbar::set_selected('Help');
 
         if ($_REQUEST['search']) {
-            $o .= '<div id="help-content" class="generic-content-wrapper">';
+            $o = '<div id="help-content" class="generic-content-wrapper">';
             $o .= '<div class="section-title-wrapper">';
             $o .= '<h2>' . t('Documentation Search') . ' - ' . htmlspecialchars($_REQUEST['search']) . '</h2>';
             $o .= '</div>';
@@ -102,7 +102,7 @@ class Help extends Controller
                     }
 
                     $link = str_replace(['doc/', '.mc'], ['help/', ''], $file);
-                    if (strpos($link, '/global/') !== false || strpos($link, '/media/') !== false) {
+                    if (str_contains($link, '/global/') || str_contains($link, '/media/')) {
                         continue;
                     }
                     $content .= '<div class="nav-pills"><a href="' . $link . '">' . ucfirst(basename($link)) . '</a></div>' . (($language) ? " [$language]" : '') . EOL;
@@ -113,13 +113,13 @@ class Help extends Controller
         }
 
 
-        return replace_macros(Theme::get_template('help.tpl'), array(
+        return replace_macros(Theme::get_template('help.tpl'), [
             '$title' => t('$Projectname Documentation'),
             '$tocHeading' => t('Contents'),
             '$content' => $content,
             '$heading' => $heading,
             '$language' => $language
-        ));
+        ]);
     }
 
     public static function listdir($path)

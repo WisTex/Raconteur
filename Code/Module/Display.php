@@ -65,14 +65,14 @@ class Display extends Controller
         if (local_channel() && (!$this->updating)) {
             $channel = App::get_channel();
 
-            $channel_acl = array(
+            $channel_acl = [
                 'allow_cid' => $channel['channel_allow_cid'],
                 'allow_gid' => $channel['channel_allow_gid'],
                 'deny_cid' => $channel['channel_deny_cid'],
                 'deny_gid' => $channel['channel_deny_gid']
-            );
+            ];
 
-            $x = array(
+            $x = [
                 'is_owner' => true,
                 'allow_location' => ((intval(get_pconfig($channel['channel_id'], 'system', 'use_browser_location'))) ? '1' : ''),
                 'default_location' => $channel['channel_location'],
@@ -90,7 +90,7 @@ class Display extends Controller
                 'bbcode' => true,
                 'jotnets' => true,
                 'reset' => t('Reset form')
-            );
+            ];
 
             $o = '<div id="jot-popup">';
             $o .= status_editor($x);
@@ -227,7 +227,7 @@ class Display extends Controller
             $o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), array(
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'display',
                 '$uid' => '0',
@@ -258,7 +258,7 @@ class Display extends Controller
                 '$verb' => '',
                 '$net' => '',
                 '$mid' => (($mid) ? urlencode($mid) : '')
-            ));
+            ]);
 
             Head::add_link([
                 'rel' => 'alternate',
@@ -349,7 +349,7 @@ class Display extends Controller
 
         foreach ($items as $item) {
             if ($item['mid'] === $item_hash) {
-                if (preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
+                if (preg_match("/\[[zi]mg(.*?)]([^\[]+)/is", $items[0]['body'], $matches)) {
                     $ogimage = $matches[2];
                     //  Will we use og:image:type someday? We keep this just in case
                     //  $ogimagetype = guess_image_type($ogimage);
@@ -364,12 +364,12 @@ class Display extends Controller
                 $ogdesc = html_entity_decode($ogdesc, ENT_QUOTES, 'UTF-8');
 
                 // remove all URLs
-                $ogdesc = preg_replace("/https?\:\/\/[a-zA-Z0-9\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@]+/", "", $ogdesc);
+                $ogdesc = preg_replace("/https?:\/\/[a-zA-Z0-9:\/\-?&;.=_~#%\$!+,@]+/", "", $ogdesc);
 
                 // shorten description
                 $ogdesc = substr($ogdesc, 0, 300);
                 $ogdesc = str_replace("\n", " ", $ogdesc);
-                while (strpos($ogdesc, "  ") !== false) {
+                while (str_contains($ogdesc, "  ")) {
                     $ogdesc = str_replace("  ", " ", $ogdesc);
                 }
                 $ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");
@@ -465,7 +465,7 @@ class Display extends Controller
                         if ($item['item_private']) {
                             continue;
                         }
-                        $atom .= atom_entry($item, $type, null, '', true, '', false);
+                        $atom .= atom_entry($item, $type, [], [], true, '', false);
                     }
                 }
 

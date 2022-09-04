@@ -137,7 +137,7 @@ class Home extends Controller
 
         $frontpage = get_config('system', 'frontpage');
         if ($frontpage) {
-            if (strpos($frontpage, 'include:') !== false) {
+            if (str_contains($frontpage, 'include:')) {
                 $file = trim(str_replace('include:', '', $frontpage));
                 if (file_exists($file)) {
                     App::$page['template'] = 'full';
@@ -146,7 +146,7 @@ class Home extends Controller
                     return $o;
                 }
             }
-            if (strpos($frontpage, 'http') !== 0) {
+            if (!str_starts_with($frontpage, 'http')) {
                 $frontpage = z_root() . '/' . $frontpage;
             }
             if (intval(get_config('system', 'mirror_frontpage'))) {

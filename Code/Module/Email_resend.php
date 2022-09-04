@@ -40,6 +40,6 @@ class Email_resend extends Controller
         }
 
         // @todo - one can provide a form here to resend the mail
-        // after directing to here if a succesful login was attempted from an unverified address.
+        // after directing to here if a successful login was attempted from an unverified address.
     }
 }

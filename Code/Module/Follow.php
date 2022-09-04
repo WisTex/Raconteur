@@ -75,7 +75,7 @@ class Follow extends Controller
         $interactive = (($_REQUEST['interactive']) ? intval($_REQUEST['interactive']) : 1);
         $channel = App::get_channel();
 
-        if ((strpos($url, 'http') === 0) || strpos($url, 'bear:') === 0 || strpos($url, 'x-zot:') === 0) {
+        if ((str_starts_with($url, 'http')) || str_starts_with($url, 'bear:') || str_starts_with($url, 'x-zot:')) {
             $n = Activity::fetch($url);
             if ($n && isset($n['type']) && !ActivityStreams::is_an_actor($n['type'])) {
                 // set client flag to convert objects to implied activities
@@ -122,7 +122,7 @@ class Follow extends Controller
 
         $result = Connect::connect($channel, $url);
 
-        if ($result['success'] == false) {
+        if (!$result['success']) {
             if ($result['message']) {
                 notice($result['message']);
             }
@@ -137,7 +137,7 @@ class Follow extends Controller
 
         $clone = [];
         foreach ($result['abook'] as $k => $v) {
-            if (strpos($k, 'abook_') === 0) {
+            if (str_starts_with($k, 'abook_')) {
                 $clone[$k] = $v;
             }
         }

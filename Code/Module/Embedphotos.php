@@ -36,30 +36,30 @@ class Embedphotos extends Controller
             // API: /embedphotos/album
             $name = (x($_POST, 'name') ? $_POST['name'] : null);
             if (!$name) {
-                json_return_and_die(array('errormsg' => 'Error retrieving album', 'status' => false));
+                json_return_and_die(['errormsg' => 'Error retrieving album', 'status' => false]);
             }
-            $album = $this->embedphotos_widget_album(array('channel_id' => $channel_id, 'album' => $name));
-            json_return_and_die(array('status' => true, 'content' => $album));
+            $album = $this->embedphotos_widget_album(['channel_id' => $channel_id, 'album' => $name]);
+            json_return_and_die(['status' => true, 'content' => $album]);
         }
         if (argc() > 1 && argv(1) === 'albumlist') {
             // API: /embedphotos/albumlist
             $album_list = $this->embedphotos_album_list($channel_id);
-            json_return_and_die(array('status' => true, 'albumlist' => $album_list));
+            json_return_and_die(['status' => true, 'albumlist' => $album_list]);
         }
         if (argc() > 1 && argv(1) === 'photolink') {
             // API: /embedphotos/photolink
             $href = (x($_POST, 'href') ? $_POST['href'] : null);
             if (!$href) {
-                json_return_and_die(array('errormsg' => 'Error retrieving link ' . $href, 'status' => false));
+                json_return_and_die(['errormsg' => 'Error retrieving link ' . $href, 'status' => false]);
             }
             $tmp = explode('/', $href);
             $resource_id = array_pop($tmp);
 
             $x = self::photolink($resource_id, $channel_id);
             if ($x) {
-                json_return_and_die(array('status' => true, 'photolink' => $x, 'resource_id' => $resource_id));
+                json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
             }
-            json_return_and_die(array('errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false));
+            json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
         }
     }
 
@@ -188,6 +188,10 @@ class Embedphotos extends Controller
             intval(PHOTO_PROFILE)
         );
 
+        // We will need this to map mimetypes to appropriate file extensions
+        $ph = photo_factory('');
+        $phototypes = $ph->supportedTypes();
+
         $photos = [];
         if ($r) {
             $twist = 'rotright';
@@ -221,11 +225,11 @@ class Embedphotos extends Controller
             }
         }
 
-        $o .= replace_macros(Theme::get_template('photo_album.tpl'), [
+        $o = replace_macros(Theme::get_template('photo_album.tpl'), [
             '$photos' => $photos,
             '$album' => (($title) ? $title : $album),
             '$album_id' => rand(),
-            '$album_edit' => array(t('Edit Album'), $album_edit),
+            '$album_edit' => [t('Edit Album'), $album_edit],
             '$can_post' => false,
             '$upload' => [t('Upload'), z_root() . '/photos/' . $channel['channel_address'] . '/upload/' . bin2hex($album)],
             '$order' => false,
