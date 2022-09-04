@@ -44,7 +44,7 @@ class Channel extends Controller
     public function init()
     {
 
-        if (isset($_GET['search']) && (in_array(substr($_GET['search'], 0, 1), ['@', '!', '?']) || strpos($_GET['search'], 'https://') === 0)) {
+        if (isset($_GET['search']) && (in_array(substr($_GET['search'], 0, 1), ['@', '!', '?']) || str_starts_with($_GET['search'], 'https://'))) {
             goaway(z_root() . '/search' . '?f=&search=' . urlencode($_GET['search']));
         }
 
@@ -115,19 +115,17 @@ class Channel extends Controller
 
             if ($mid) {
                 $obj = null;
-                if (strpos($mid, z_root() . '/item/') === 0) {
+                if (str_starts_with($mid, z_root() . '/item/')) {
                     App::$argc = 2;
                     App::$argv = ['item', basename($mid)];
                     $obj = new Item();
                 }
-                if (strpos($mid, z_root() . '/activity/') === 0) {
+                if (str_starts_with($mid, z_root() . '/activity/')) {
                     App::$argc = 2;
                     App::$argv = ['activity', basename($mid)];
                     $obj = new Activity();
                 }
-                if ($obj) {
-                    $obj->init();
-                }
+                $obj?->init();
             }
             if (intval($channel['channel_system'])) {
                 goaway(z_root());
@@ -249,9 +247,9 @@ class Channel extends Controller
 
             // search terms header
             if ($search) {
-                $o .= replace_macros(Theme::get_template("section_title.tpl"), array(
+                $o .= replace_macros(Theme::get_template("section_title.tpl"), [
                     '$title' => t('Search Results For:') . ' ' . htmlspecialchars($search, ENT_COMPAT, 'UTF-8')
-                ));
+                ]);
             }
 
             $role = get_pconfig(App::$profile['profile_uid'], 'system', 'permissions_role');
@@ -260,19 +258,19 @@ class Channel extends Controller
             }
 
             if ($channel && $is_owner) {
-                $channel_acl = array(
+                $channel_acl = [
                     'allow_cid' => $channel['channel_allow_cid'],
                     'allow_gid' => $channel['channel_allow_gid'],
                     'deny_cid' => $channel['channel_deny_cid'],
                     'deny_gid' => $channel['channel_deny_gid']
-                );
+                ];
             } else {
                 $channel_acl = ['allow_cid' => '', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => ''];
             }
 
 
             if ($perms['post_wall']) {
-                $x = array(
+                $x = [
                     'is_owner' => $is_owner,
                     'allow_location' => ((($is_owner || $observer) && (intval(get_pconfig(App::$profile['profile_uid'], 'system', 'use_browser_location')))) ? true : false),
                     'default_location' => (($is_owner) ? App::$profile['channel_location'] : ''),
@@ -289,7 +287,7 @@ class Channel extends Controller
                     'bbcode' => true,
                     'jotnets' => true,
                     'reset' => t('Reset form')
-                );
+                ];
 
                 $o .= status_editor($x);
             }
@@ -326,7 +324,7 @@ class Channel extends Controller
 
         if ($search) {
             $search = escape_tags($search);
-            if (strpos($search, '#') === 0) {
+            if (str_starts_with($search, '#')) {
                 $sql_extra .= term_query('item', substr($search, 1), TERM_HASHTAG, TERM_COMMUNITYTAG);
             } else {
                 $sql_extra .= sprintf(
@@ -473,7 +471,7 @@ class Channel extends Controller
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page']
                 . "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 
-            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), array(
+            App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'channel',
                 '$uid' => ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),
@@ -504,7 +502,7 @@ class Channel extends Controller
                 '$net' => '',
                 '$dend' => $datequery,
                 '$dbegin' => $datequery2
-            ));
+            ]);
         }
 
         $update_unseen = '';
@@ -572,7 +570,7 @@ class Channel extends Controller
         $channel = Zlib\Channel::from_id(App::$profile['profile_uid']);
 
         if (isset($_REQUEST['mid']) && $_REQUEST['mid']) {
-            if (preg_match("/\[[zi]mg(.*?)\]([^\[]+)/is", $items[0]['body'], $matches)) {
+            if (preg_match("/\[[zi]mg(.*?)]([^\[]+)/is", $items[0]['body'], $matches)) {
                 $ogimage = $matches[2];
                 //  Will we use og:image:type someday? We keep this just in case
                 //  $ogimagetype = guess_image_type($ogimage);
@@ -589,12 +587,12 @@ class Channel extends Controller
             $ogdesc = html_entity_decode($ogdesc, ENT_QUOTES, 'UTF-8');
 
             // remove all URLs
-            $ogdesc = preg_replace("/https?\:\/\/[a-zA-Z0-9\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@]+/", "", $ogdesc);
+            $ogdesc = preg_replace("/https?:\/\/[a-zA-Z0-9:\/\-?&;.=_~#%\$!+,@]+/", "", $ogdesc);
 
             // shorten description
             $ogdesc = substr($ogdesc, 0, 300);
             $ogdesc = str_replace("\n", " ", $ogdesc);
-            while (strpos($ogdesc, "  ") !== false) {
+            while (str_contains($ogdesc, "  ")) {
                 $ogdesc = str_replace("  ", " ", $ogdesc);
             }
             $ogdesc = (strlen($ogdesc) < 298 ? $ogdesc : rtrim(substr($ogdesc, 0, strrpos($ogdesc, " ")), "?.,:;!-") . "...");

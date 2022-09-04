@@ -87,10 +87,10 @@ class Connect extends Controller
         $text = get_pconfig(App::$data['channel']['channel_id'], 'system', 'selltext');
 
         if ($edit) {
-            $o = replace_macros(Theme::get_template('sellpage_edit.tpl'), array(
+            $o = replace_macros(Theme::get_template('sellpage_edit.tpl'), [
                 '$header' => t('Premium Channel Setup'),
                 '$address' => App::$data['channel']['channel_address'],
-                '$premium' => array('premium', t('Enable premium channel connection restrictions'), ((App::$data['channel']['channel_pageflags'] & PAGE_PREMIUM) ? '1' : ''), ''),
+                '$premium' => ['premium', t('Enable premium channel connection restrictions'), ((App::$data['channel']['channel_pageflags'] & PAGE_PREMIUM) ? '1' : ''), ''],
                 '$lbl_about' => t('Please enter your restrictions or conditions, such as paypal receipt, usage guidelines, etc.'),
                 '$text' => $text,
                 '$desc' => t('This channel may require additional steps or acknowledgement of the following conditions prior to connecting:'),
@@ -99,19 +99,19 @@ class Connect extends Controller
                 '$submit' => t('Submit'),
 
 
-            ));
+            ]);
             return $o;
         } else {
             if (!$text) {
                 $text = t('(No specific instructions have been provided by the channel owner.)');
             }
 
-            $submit = replace_macros(Theme::get_template('sellpage_submit.tpl'), array(
+            $submit = replace_macros(Theme::get_template('sellpage_submit.tpl'), [
                 '$continue' => t('Continue'),
                 '$address' => App::$data['channel']['channel_address']
-            ));
+            ]);
 
-            $o = replace_macros(Theme::get_template('sellpage_view.tpl'), array(
+            $o = replace_macros(Theme::get_template('sellpage_view.tpl'), [
                 '$header' => t('Restricted or Premium Channel'),
                 '$desc' => t('This channel may require additional steps or acknowledgement of the following conditions prior to connecting:'),
                 '$text' => prepare_text($text),
@@ -119,9 +119,9 @@ class Connect extends Controller
                 '$desc2' => t('By continuing, I certify that I have complied with any instructions provided on this page.'),
                 '$submit' => $submit,
 
-            ));
+            ]);
 
-            $arr = array('channel' => App::$data['channel'], 'observer' => App::get_observer(), 'sellpage' => $o, 'submit' => $submit);
+            $arr = ['channel' => App::$data['channel'], 'observer' => App::get_observer(), 'sellpage' => $o, 'submit' => $submit];
             Hook::call('connect_premium', $arr);
             $o = $arr['sellpage'];
         }

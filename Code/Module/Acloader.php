@@ -84,7 +84,7 @@ class Acloader extends Controller
         if ($search) {
             $sql_extra = " AND pgrp.gname LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . " ";
             // sql_extra2 is typically used when we don't have a local_channel - so we are not search abook_alias
-            $sql_extra2 = " AND ( xchan_name LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR xchan_addr LIKE " . protect_sprintf("'%" . dbesc(punify($search)) . ((strpos($search, '@') === false) ? "%@%'" : "%'")) . ") ";
+            $sql_extra2 = " AND ( xchan_name LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR xchan_addr LIKE " . protect_sprintf("'%" . dbesc(punify($search)) . ((!str_contains($search, '@')) ? "%@%'" : "%'")) . ") ";
 
 
             // This horrible mess is needed because position also returns 0 if nothing is found.
@@ -99,7 +99,7 @@ class Acloader extends Controller
 
             $sql_extra3 = "AND ( xchan_addr like " . protect_sprintf("'%" . dbesc(punify($search)) . "%'") . " OR xchan_name like " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR abook_alias like " . protect_sprintf("'%" . dbesc($search) . "%'") . " ) ";
 
-            $sql_extra4 = "AND ( xchan_name LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR xchan_addr LIKE " . protect_sprintf("'%" . dbesc(punify($search)) . ((strpos($search, '@') === false) ? "%@%'" : "%'")) . " OR abook_alias LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . ") ";
+            $sql_extra4 = "AND ( xchan_name LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . " OR xchan_addr LIKE " . protect_sprintf("'%" . dbesc(punify($search)) . ((!str_contains($search, '@')) ? "%@%'" : "%'")) . " OR abook_alias LIKE " . protect_sprintf("'%" . dbesc($search) . "%'") . ") ";
         } else {
             $sql_extra = $sql_extra2 = $sql_extra3 = $sql_extra4 = "";
         }
@@ -301,16 +301,16 @@ class Acloader extends Controller
         $star = false;
         $address = false;
 
-        if (substr($search, 0, 1) === '@') {
+        if (str_starts_with($search, '@')) {
             $search = substr($search, 1);
         }
 
-        if (substr($search, 0, 1) === '*') {
+        if (str_starts_with($search, '*')) {
             $star = true;
             $search = substr($search, 1);
         }
 
-        if (strpos($search, '@') !== false) {
+        if (str_contains($search, '@')) {
             $address = true;
         }
 

@@ -189,14 +189,14 @@ class Chat extends Controller
             );
 
             if ($x) {
-                $acl = new AccessControl(false);
+                $acl = new AccessControl([]);
                 $acl->set($x[0]);
 
                 $private = $acl->is_private();
                 $room_name = $x[0]['cr_name'];
             } else {
                 notice(t('Room not found') . EOL);
-                return;
+                return '';
             }
 
             $cipher = get_pconfig(local_channel(), 'system', 'default_cipher');
@@ -236,10 +236,10 @@ class Chat extends Controller
 
         $chatroom_new = '';
         if (local_channel()) {
-            $chatroom_new = replace_macros(Theme::get_template('chatroom_new.tpl'), array(
+            $chatroom_new = replace_macros(Theme::get_template('chatroom_new.tpl'), [
                 '$header' => t('New Chatroom'),
-                '$name' => array('room_name', t('Chatroom name'), '', ''),
-                '$chat_expire' => array('chat_expire', t('Expiration of chats (minutes)'), 120, ''),
+                '$name' => ['room_name', t('Chatroom name'), '', ''],
+                '$chat_expire' => ['chat_expire', t('Expiration of chats (minutes)'), 120, ''],
                 '$permissions' => t('Permissions'),
                 '$acl' => Libacl::populate($channel_acl, false),
                 '$allow_cid' => acl2json($channel_acl['allow_cid']),
@@ -249,7 +249,7 @@ class Chat extends Controller
                 '$lockstate' => $lockstate,
                 '$submit' => t('Submit')
 
-            ));
+            ]);
         }
 
         $rooms = Chatroom::roomlist(App::$profile['profile_uid']);

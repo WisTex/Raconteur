@@ -53,7 +53,7 @@ class Apps extends Controller
             $apps[] = Zlib\Apps::app_render($app, (($available) ? 'install' : $mode));
         }
 		
-        return replace_macros(Theme::get_template('myapps.tpl'), array(
+        return replace_macros(Theme::get_template('myapps.tpl'), [
             '$sitename' => get_config('system', 'sitename'),
             '$cat' => $cat,
             '$title' => (($available) ? t('Available Apps') : t('Installed Apps')),
@@ -61,6 +61,6 @@ class Apps extends Controller
             '$authed' => ((local_channel()) ? true : false),
             '$manage' => (($available) ? EMPTY_STR : t('Manage apps')),
             '$create' => (($mode == 'edit') ? t('Create Custom App') : '')
-        ));
+        ]);
     }
 }

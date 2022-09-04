@@ -21,7 +21,7 @@ class Chatsvc extends Controller
 
         //logger('chatsvc');
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         App::$data['chat']['room_id'] = intval($_REQUEST['room_id']);
         $x = q(
@@ -42,7 +42,7 @@ class Chatsvc extends Controller
     public function post()
     {
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         $room_id = App::$data['chat']['room_id'];
         $text = escape_tags($_REQUEST['chat_text']);
@@ -61,11 +61,11 @@ class Chatsvc extends Controller
             json_return_and_die($ret);
         }
 
-        $arr = array(
+        $arr = [
             'chat_room' => App::$data['chat']['room_id'],
             'chat_xchan' => get_observer_hash(),
             'chat_text' => $text
-        );
+        ];
 
         Hook::call('chat_post', $arr);
 
@@ -110,7 +110,7 @@ class Chatsvc extends Controller
         if (!$stopped) {
             $lastseen = intval($_REQUEST['last']);
 
-            $ret = array('success' => false);
+            $ret = ['success' => false];
 
             $sql_extra = permissions_sql(App::$data['chat']['uid']);
 
@@ -156,7 +156,7 @@ class Chatsvc extends Controller
                             break;
                     }
 
-                    $inroom[] = array('img' => zid($rv['xchan_photo_m']), 'img_type' => $rv['xchan_photo_mimetype'], 'name' => $rv['xchan_name'], 'status' => $status, 'status_class' => $status_class);
+                    $inroom[] = ['img' => zid($rv['xchan_photo_m']), 'img_type' => $rv['xchan_photo_mimetype'], 'name' => $rv['xchan_name'], 'status' => $status, 'status_class' => $status_class];
                 }
             }
 
@@ -169,7 +169,7 @@ class Chatsvc extends Controller
             );
             if ($r) {
                 foreach ($r as $rr) {
-                    $chats[] = array(
+                    $chats[] = [
                         'id' => $rr['chat_id'],
                         'img' => zid($rr['xchan_photo_m']),
                         'img_type' => $rr['xchan_photo_mimetype'],
@@ -178,7 +178,7 @@ class Chatsvc extends Controller
                         'localtime' => datetime_convert('UTC', date_default_timezone_get(), $rr['created'], 'r'),
                         'text' => zidify_links(smilies(bbcode(base64url_decode(str_rot47($rr['chat_text']))))),
                         'self' => ((get_observer_hash() == $rr['chat_xchan']) ? 'self' : '')
-                    );
+                    ];
                 }
             }
         }

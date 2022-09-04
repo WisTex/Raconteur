@@ -231,7 +231,7 @@ class Cover_photo extends Controller
         $partial = false;
 
         if (array_key_exists('HTTP_CONTENT_RANGE', $_SERVER)) {
-            $pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
+            $pm = preg_match('/bytes (\d*)-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
             if ($pm) {
                 logger('Content-Range: ' . print_r($matches, true));
                 $partial = true;
@@ -267,7 +267,7 @@ class Cover_photo extends Controller
             }
         }
 
-        $res = attach_store(App::get_channel(), get_observer_hash(), '', array('album' => t('Cover Photos'), 'hash' => $hash));
+        $res = attach_store(App::get_channel(), get_observer_hash(), '', ['album' => t('Cover Photos'), 'hash' => $hash]);
 
         logger('attach_store: ' . print_r($res, true), LOGGER_DEBUG);
 
@@ -426,7 +426,7 @@ class Cover_photo extends Controller
                 '$lbl_profiles' => t('Select a profile:'),
                 '$title' => t('Change Cover Photo'),
                 '$submit' => t('Upload'),
-                '$profiles' => $profiles,
+                '$profiles' => false,
                 '$embedPhotos' => t('Use a photo from your albums'),
                 '$embedPhotosModalTitle' => t('Use a photo from your albums'),
                 '$embedPhotosModalCancel' => t('Cancel'),
@@ -466,7 +466,7 @@ class Cover_photo extends Controller
     /* @brief Generate the UI for photo-cropping
      *
      * @param $a Current application
-     * @param $ph Photo-Factory
+     * @param $ph
      * @return void
      *
      */

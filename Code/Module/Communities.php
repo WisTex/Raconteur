@@ -116,7 +116,6 @@ class Communities extends Controller
                 $j[] = [
                     'profile_link' => $rr['site_url'],
                     'name' => $sitename,
-                    'access' => $access,
                     'register' => $register_link,
                     'sellpage' => $rr['site_sellpage'],
                     'location_label' => t('Location:'),
@@ -129,7 +128,6 @@ class Communities extends Controller
                     'network_label' => t('Type:'),
                     'network' => $rr['site_project'],
                     'version_label' => t('Version:'),
-                    'version' => $rr['site_version'],
                     'private' => $disabled,
                     'connect' => (($disabled) ? '' : $register_link),
                     'connect_label' => $register,

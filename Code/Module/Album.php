@@ -7,7 +7,6 @@ use Code\Web\Controller;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Config;
-use Code\Lib\LDSignatures;
 use Code\Web\HTTPSig;
 use Code\Lib\Channel;
 

@@ -9,11 +9,9 @@
 
 namespace Code\Module;
 
-use App;
 use Code\Web\Controller;
 use Code\Web\SubModule;
 use Code\Lib\Config;
-use Code\Lib\Channel;
 use Code\Lib\Navbar;
 use Code\Lib\Addon;
 use Code\Render\Theme;
@@ -103,6 +101,7 @@ class Admin extends Controller
         } else {
             return $o;
         }
+        return '';
     }
 
 

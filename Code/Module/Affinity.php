@@ -60,14 +60,14 @@ class Affinity extends Controller
 //      ));
 
         if (Apps::system_app_installed(local_channel(), 'Friend Zoom')) {
-            $labels = array(
+            $labels = [
                 0 => t('Me'),
                 20 => t('Family'),
                 40 => t('Friends'),
                 60 => t('Peers'),
                 80 => t('Connections'),
                 99 => t('All')
-            );
+            ];
             Hook::call('affinity_labels', $labels);
 
             $tpl = Theme::get_template('affinity.tpl');
@@ -80,15 +80,15 @@ class Affinity extends Controller
             ]);
 
 
-            $arr = array('html' => $x);
+            $arr = ['html' => $x];
             Hook::call('affinity_slider', $arr);
             $setting_fields .= $arr['html'];
         }
 
-        $s = replace_macros(Theme::get_template('generic_app_settings.tpl'), array(
-            '$addon' => array('affinity', '' . t('Friend Zoom Settings'), '', t('Submit')),
+        $s = replace_macros(Theme::get_template('generic_app_settings.tpl'), [
+            '$addon' => ['affinity', '' . t('Friend Zoom Settings'), '', t('Submit')],
             '$content' => $setting_fields
-        ));
+        ]);
 
         return $s;
     }

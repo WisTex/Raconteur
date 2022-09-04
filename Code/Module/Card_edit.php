@@ -102,7 +102,7 @@ class Card_edit extends Controller
 
         $rp = 'cards/' . $channel['channel_address'];
 
-        $x = array(
+        $x = [
             'nickname' => $channel['channel_address'],
             'bbco_autocomplete' => 'bbcode',
             'return_path' => $rp,
@@ -131,17 +131,17 @@ class Card_edit extends Controller
             'catsenabled' => $catsenabled,
             'category' => $category,
 			'bbcode' => ((in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) ? true : false)
-        );
+        ];
 
         $editor = status_editor($x);
 
-        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), array(
+        $o .= replace_macros(Theme::get_template('edpost_head.tpl'), [
             '$title' => t('Edit Card'),
             '$delete' => ((($itm[0]['author_xchan'] === $ob_hash) || ($itm[0]['owner_xchan'] === $ob_hash)) ? t('Delete') : false),
             '$id' => $itm[0]['id'],
             '$cancel' => t('Cancel'),
             '$editor' => $editor
-        ));
+        ]);
 
         return $o;
     }

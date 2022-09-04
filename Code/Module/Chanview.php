@@ -7,12 +7,8 @@ use Code\Web\Controller;
 use Code\Lib\Libzot;
 use Code\Lib\Zotfinger;
 use Code\Lib\Webfinger;
-use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
 use Code\Render\Theme;
-use Code\Lib\ASCollection;
-use Code\Lib\Queue;
-use Code\Daemon\Run;
 
 class Chanview extends Controller
 {
@@ -69,7 +65,7 @@ class Chanview extends Controller
             logger('mod_chanview: fallback');
             // This is hackish - construct a zot address from the url
             if ($_REQUEST['url']) {
-                if (preg_match('/https?\:\/\/(.*?)(\/channel\/|\/profile\/)(.*?)$/ism', $_REQUEST['url'], $matches)) {
+                if (preg_match('/https?:\/\/(.*?)(\/channel\/|\/profile\/)(.*?)$/ism', $_REQUEST['url'], $matches)) {
                     $_REQUEST['address'] = $matches[3] . '@' . $matches[1];
                 }
                 logger('mod_chanview: constructed address ' . print_r($matches, true));
@@ -108,7 +104,7 @@ class Chanview extends Controller
 
         if (!App::$poi) {
             notice(t('Channel not found.') . EOL);
-            return;
+            return '';
         }
 
         $is_zot = false;

@@ -134,58 +134,58 @@ class Connections extends Controller
 
         $search = ((x($_REQUEST, 'search')) ? notags(trim($_REQUEST['search'])) : '');
 
-        $tabs = array(
+        $tabs = [
 
-            'active' => array(
+            'active' => [
                 'label' => t('Active Connections'),
                 'url' => z_root() . '/connections/active',
                 'sel' => ($active) ? 'active' : '',
                 'title' => t('Show active connections'),
-            ),
+            ],
 
-            'pending' => array(
+            'pending' => [
                 'label' => t('New Connections'),
                 'url' => z_root() . '/connections/pending',
                 'sel' => ($pending) ? 'active' : '',
                 'title' => t('Show pending (new) connections'),
-            ),
+            ],
 
-            'blocked' => array(
+            'blocked' => [
                 'label' => t('Blocked'),
                 'url' => z_root() . '/connections/blocked',
                 'sel' => ($blocked) ? 'active' : '',
                 'title' => t('Only show blocked connections'),
-            ),
+            ],
 
-            'ignored' => array(
+            'ignored' => [
                 'label' => t('Ignored'),
                 'url' => z_root() . '/connections/ignored',
                 'sel' => ($ignored) ? 'active' : '',
                 'title' => t('Only show ignored connections'),
-            ),
+            ],
 
-            'archived' => array(
+            'archived' => [
                 'label' => t('Archived/Unreachable'),
                 'url' => z_root() . '/connections/archived',
                 'sel' => ($archived) ? 'active' : '',
                 'title' => t('Only show archived/unreachable connections'),
-            ),
+            ],
 
-            'hidden' => array(
+            'hidden' => [
                 'label' => t('Hidden'),
                 'url' => z_root() . '/connections/hidden',
                 'sel' => ($hidden) ? 'active' : '',
                 'title' => t('Only show hidden connections'),
-            ),
+            ],
 
-            'all' => array(
+            'all' => [
                 'label' => t('All Connections'),
                 'url' => z_root() . '/connections/all',
                 'sel' => ($all) ? 'active' : '',
                 'title' => t('Show all connections'),
-            ),
+            ],
 
-        );
+        ];
 
         $searching = false;
         if ($search) {
@@ -229,28 +229,28 @@ class Connections extends Controller
         }
 
 
-        $order = array(
+        $order = [
 
-            'name' => array(
+            'name' => [
                 'label' => t('Name'),
                 'url' => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=name',
                 'sel' => ((isset($_REQUEST['order']) && $_REQUEST['order'] !== 'name') ? 'active' : ''),
                 'title' => t('Order by name'),
-            ),
+            ],
 
-            'date' => array(
+            'date' => [
                 'label' => t('Recent'),
                 'url' => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=date',
                 'sel' => ((isset($_REQUEST['order']) && $_REQUEST['order'] === 'date') ? 'active' : ''),
                 'title' => t('Order by recent'),
-            ),
+            ],
 
-            'created' => array(
+            'created' => [
                 'label' => t('Created'),
                 'url' => z_root() . '/connections' . ((argv(1)) ? '/' . argv(1) : '') . '?order=created',
                 'sel' => ((isset($_REQUEST['order']) && $_REQUEST['order'] === 'created') ? 'active' : ''),
                 'title' => t('Order by date'),
-            ),
+            ],
 // reserved for cmax
 //          'date' => array(
 //              'label' => t(''),
@@ -259,7 +259,7 @@ class Connections extends Controller
 //              'title' => t('Order by recent'),
 //          ),
 
-        );
+        ];
 
 
         $r = q(
@@ -288,7 +288,7 @@ class Connections extends Controller
                     }
 
                     $status_str = '';
-                    $status = array(
+                    $status = [
                         ((isset($rr['abook_active']) && intval($rr['abook_active'])) ? t('Active') : ''),
                         ((intval($rr['abook_pending'])) ? t('Pending approval') : ''),
                         ((intval($rr['abook_archived'])) ? t('Archived') : ''),
@@ -296,7 +296,7 @@ class Connections extends Controller
                         ((intval($rr['abook_ignored'])) ? t('Ignored') : ''),
                         ((intval($rr['abook_blocked'])) ? t('Blocked') : ''),
                         ((intval($rr['abook_not_here'])) ? t('Not connected at this location') : '')
-                    );
+                    ];
 
                     $oneway = false;
                     if (!their_perms_contains(local_channel(), $rr['xchan_hash'], 'post_comments')) {
@@ -312,7 +312,7 @@ class Connections extends Controller
                     }
                     $status_str = rtrim($status_str, ', ');
 
-                    $contacts[] = array(
+                    $contacts[] = [
                         'img_hover' => sprintf(t('%1$s [%2$s]'), $rr['xchan_name'], $rr['xchan_url']),
                         'edit_hover' => t('Edit connection'),
                         'edit' => t('Edit'),
@@ -344,7 +344,7 @@ class Connections extends Controller
                         'recentlink' => z_root() . '/stream/?f=&cid=' . intval($rr['abook_id']),
                         'oneway' => $oneway,
                         'allow_delete' => ($rr['abook_pending'] || get_pconfig(local_channel(), 'system', 'connections_quick_delete')),
-                    );
+                    ];
                 }
             }
         }
@@ -352,10 +352,10 @@ class Connections extends Controller
 
         if ($_REQUEST['aj']) {
             if ($contacts) {
-                $o = replace_macros(Theme::get_template('contactsajax.tpl'), array(
+                $o = replace_macros(Theme::get_template('contactsajax.tpl'), [
                     '$contacts' => $contacts,
                     '$edit' => t('Edit'),
-                ));
+                ]);
             } else {
                 $o = '<div id="content-complete"></div>';
             }
@@ -363,7 +363,7 @@ class Connections extends Controller
             killme();
         } else {
             $o .= "<script> var page_query = '" . escape_tags(urlencode($_GET['req'])) . "'; var extra_args = '" . extra_query_args() . "' ; </script>";
-            $o .= replace_macros(Theme::get_template('connections.tpl'), array(
+            $o .= replace_macros(Theme::get_template('connections.tpl'), [
                 '$header' => t('Connections') . (($head) ? ': ' . $head : ''),
                 '$tabs' => $tabs,
                 '$order' => $order,
@@ -380,7 +380,7 @@ class Connections extends Controller
                 '$contacts' => $contacts,
                 '$paginate' => paginate($a),
 
-            ));
+            ]);
         }
 
         if (!$contacts) {

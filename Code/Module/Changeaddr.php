@@ -73,7 +73,7 @@ class Changeaddr extends Controller
             return;
         }
 
-        if (check_webbie(array($new_address)) !== $new_address) {
+        if (check_webbie([$new_address]) !== $new_address) {
             notice(t('Nickname has unsupported characters or is already being used on this site.') . EOL);
             return;
         }
@@ -104,16 +104,14 @@ class Changeaddr extends Controller
         $_SESSION['remove_account_verify'] = $hash;
 
         $tpl = Theme::get_template('channel_rename.tpl');
-        $o = replace_macros($tpl, [
+        return replace_macros($tpl, [
             '$basedir' => z_root(),
             '$hash' => $hash,
             '$title' => t('Change channel nickname/address'),
-            '$desc' => array(t('WARNING: '), t('Any/all connections on other networks will be lost!')),
+            '$desc' => [t('WARNING: '), t('Any/all connections on other networks will be lost!')],
             '$passwd' => t('Please enter your password for verification:'),
             '$newname' => ['newname', t('New channel address'), $channel['channel_address'], ''],
             '$submit' => t('Rename Channel')
         ]);
-
-        return $o;
     }
 }

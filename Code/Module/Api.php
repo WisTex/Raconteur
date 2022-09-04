@@ -2,15 +2,8 @@
 
 namespace Code\Module;
 
-use App;
-use Exception;
-use OAuth1Request;
-use OAuth1Consumer;
-use OAuth1Util;
 use Code\Web\Controller;
 use Code\Extend\Hook;
-use Code\Render\Theme;
-
 
 require_once('include/api.php');
 
