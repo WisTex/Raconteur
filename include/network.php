@@ -620,43 +620,43 @@ function discover_resource(string $resource, $protocol = '', $verify = true)
 
     if ($x && array_key_exists('links', $x) && is_array($x['links'])) {
 
-		// look for Nomad first
+        // look for Nomad first
 
-		foreach ($x['links'] as $link) {
-			if (array_key_exists('rel',$link)) {
-				$apurl = null;
+        foreach ($x['links'] as $link) {
+            if (array_key_exists('rel',$link)) {
+                $apurl = null;
 
-				// If we discover zot - don't search further; grab the info and get out of
-				// here.
+                // If we discover zot - don't search further; grab the info and get out of
+                // here.
 
-				if ($link['rel'] == PROTOCOL_NOMAD && ((! $protocol) || (strtolower($protocol) == 'nomad'))) {
-					logger('nomad found for ' . $resource, LOGGER_DEBUG);
-					$record = Zotfinger::exec($link['href'], null, $verify);
+                if ($link['rel'] == PROTOCOL_NOMAD && ((! $protocol) || (strtolower($protocol) == 'nomad'))) {
+                    logger('nomad found for ' . $resource, LOGGER_DEBUG);
+                    $record = Zotfinger::exec($link['href'], null, $verify);
 
-					// Check the HTTP signature
+                    // Check the HTTP signature
 
-					if ($verify) {
+                    if ($verify) {
                         $hsig_valid = false;
-						$hsig = $record['signature'];
-						if($hsig && $hsig['signer'] === $link['href'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
-							$hsig_valid = true;
-						}
+                        $hsig = $record['signature'];
+                        if($hsig && $hsig['signer'] === $link['href'] && $hsig['header_valid'] === true && $hsig['content_valid'] === true) {
+                            $hsig_valid = true;
+                        }
 
-						if(! $hsig_valid) {
-							logger('http signature not valid: ' . print_r($hsig,true));
-							continue;
-						}
-					}
+                        if(! $hsig_valid) {
+                            logger('http signature not valid: ' . print_r($hsig,true));
+                            continue;
+                        }
+                    }
 
-					$x = Libzot::import_xchan($record['data']);
-					if($x['success']) {
-						return $x['hash'];
-					}
-				}
-			}
-		}
+                    $x = Libzot::import_xchan($record['data']);
+                    if($x['success']) {
+                        return $x['hash'];
+                    }
+                }
+            }
+        }
 
-		// if we reached this point, nomad wasn't found.
+        // if we reached this point, nomad wasn't found.
 
         foreach ($x['links'] as $link) {
             if (array_key_exists('rel', $link)) {
@@ -699,12 +699,12 @@ function discover_resource(string $resource, $protocol = '', $verify = true)
         }
     }
 
-	if (str_starts_with($resource, 'http') && !$x) {
+    if (str_starts_with($resource, 'http') && !$x) {
         $record = Zotfinger::exec($resource, null, $verify);
 
         // Check the HTTP signature
 
-		if ($record) {
+        if ($record) {
             if ($verify) {
                 $hsig_valid = false;
                 $hsig = $record['signature'];
@@ -722,8 +722,8 @@ function discover_resource(string $resource, $protocol = '', $verify = true)
             if ($x['success']) {
                 return $x['hash'];
             }
-		}
-	}
+        }
+    }
 
     if (str_starts_with($resource, 'http')) {
         $ap = ActivityPub::discover($resource);
