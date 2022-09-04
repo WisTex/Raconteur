@@ -98,10 +98,10 @@ class AccessControl
      */
     public function set(array $arr, bool $explicit = true): void
     {
-        $this->allow_cid = $arr['allow_cid'];
-        $this->allow_gid = $arr['allow_gid'];
-        $this->deny_cid = $arr['deny_cid'];
-        $this->deny_gid = $arr['deny_gid'];
+        $this->allow_cid = (array_key_exists('allow_cid', $arr)) ? $arr['allow_cid'] : '';
+        $this->allow_gid = (array_key_exists('allow_gid', $arr)) ? $arr['allow_gid'] : '';
+        $this->deny_cid = (array_key_exists('deny_cid', $arr)) ? $arr['deny_cid'] : '';
+        $this->deny_gid = (array_key_exists('deny_gid', $arr)) ? $arr['deny_gid'] : '';
 
         $this->explicit = $explicit;
     }
