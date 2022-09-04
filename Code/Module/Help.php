@@ -80,8 +80,9 @@ class Help extends Controller
             readfile($realpath);
             killme();
         }
-
+        $heading = '';
         if (argc() === 1) {
+
             $files = self::listdir('doc');
 
             if ($files) {
@@ -92,7 +93,7 @@ class Help extends Controller
                     if (strpos($file, 'README')) {
                         continue;
                     }
-                    if (preg_match('/\/(..|..\-..)\//', $file, $matches)) {
+                    if (preg_match('/\/(..|..-..)\//', $file, $matches)) {
                         $language = $matches[1];
                     } else {
                         $language = t('Unknown language');

@@ -246,7 +246,7 @@ class Friendica
             // right away as a default group for new contacts.
 
             AccessList::add($newuid, t('Friends'));
-            AccessList::member_add($newuid, t('Friends'), $ret['channel']['channel_hash']);
+            AccessList::member_add($newuid, t('Friends'), $channel['channel_hash']);
 
             // if our role_permissions indicate that we're using a default collection ACL, add it.
 

@@ -59,7 +59,7 @@ class Permcats
     {
 
         if (!local_channel()) {
-            return;
+            return '';
         }
 
         $channel = App::get_channel();
@@ -124,17 +124,17 @@ class Permcats
 
     
         $tpl = Theme::get_template("settings_permcats.tpl");
-        $o .= replace_macros($tpl, array(
+        return replace_macros($tpl, [
             '$form_security_token' => get_form_security_token("settings_permcats"),
             '$title' => t('Permission Roles'),
             '$desc' => $desc,
-            '$desc2' => $desc2,
-            '$tokens' => $t,
+            '$desc2' => '',
+            '$tokens' => '',
             '$permcats' => $permcats,
-            '$atoken' => $atoken,
+            '$atoken' => '',
             '$url1' => z_root() . '/channel/' . $channel['channel_address'],
             '$url2' => z_root() . '/photos/' . $channel['channel_address'],
-            '$name' => array('name', t('Role name') . ' <span class="required">*</span>', (($name) ? $name : ''), ''),
+            '$name' => ['name', t('Role name') . ' <span class="required">*</span>', (($name) ? $name : ''), ''],
             '$me' => t('My Settings'),
             '$perms' => $perms,
             '$hidden_perms' => $hidden_perms,
@@ -144,7 +144,6 @@ class Permcats
             '$permlbl' => t('Individual Permissions'),
             '$permnote' => t('Some individual permissions may have been preset or locked based on your channel type and privacy settings.'),
             '$submit' => t('Submit')
-        ));
-        return $o;
+        ]);
     }
 }

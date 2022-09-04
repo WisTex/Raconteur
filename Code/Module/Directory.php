@@ -461,7 +461,7 @@ class Directory extends Controller
                             ];
 
 
-                            $blocked = LibBlock::fetch($channel['channel_id'], BLOCKTYPE_SERVER);
+                            $blocked = LibBlock::fetch(local_channel(), BLOCKTYPE_SERVER);
 
                             $found_block = false;
                             if ($blocked) {
