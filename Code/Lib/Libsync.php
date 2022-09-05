@@ -826,6 +826,10 @@ class Libsync
                 $disallowed = array('id', 'aid', 'uid', 'guid');
 
                 foreach ($arr['profile'] as $profile) {
+                    // Multiple profiles are not supported here.
+                    if (!$profile['is_default']) {
+                        continue;
+                    }
                     $x = q(
                         "select * from profile where profile_guid = '%s' and uid = %d limit 1",
                         dbesc($profile['profile_guid']),
@@ -855,7 +859,7 @@ class Libsync
                             continue;
                         }
 
-                        if ($profile['is_default'] && in_array($k, ['photo', 'thumb'])) {
+                        if (in_array($k, ['photo', 'thumb'])) {
                             continue;
                         }
 
@@ -874,13 +878,8 @@ class Libsync
                          * We also need to import local photos if a custom photo is selected
                          */
 
-                        if ((strpos($profile['thumb'], '/photo/profile/l/') !== false) || intval($profile['is_default'])) {
-                            $profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
-                            $profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
-                        } else {
-                            $profile['photo'] = z_root() . '/photo/' . basename($profile['photo']);
-                            $profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
-                        }
+                        $profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
+                        $profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
                     }
 
                     if (count($clean)) {

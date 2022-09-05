@@ -354,6 +354,9 @@ function import_profiles($channel, $profiles)
 
     if ($channel && $profiles) {
         foreach ($profiles as $profile) {
+            if (!$profile['is_default']) {
+                continue;
+            }
             unset($profile['id']);
             $profile['aid'] = get_account_id();
             $profile['uid'] = $channel['channel_id'];
@@ -366,14 +369,8 @@ function import_profiles($channel, $profiles)
              * @TODO put all the applicable photos into the export.
              */
 
-            if ((strpos($profile['thumb'], '/photo/profile/l/') !== false) || intval($profile['is_default'])) {
-                $profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
-                $profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
-            } else {
-                $profile['photo'] = z_root() . '/photo/' . basename($profile['photo']);
-                $profile['thumb'] = z_root() . '/photo/' . basename($profile['thumb']);
-            }
-
+            $profile['photo'] = z_root() . '/photo/profile/l/' . $channel['channel_id'];
+            $profile['thumb'] = z_root() . '/photo/profile/m/' . $channel['channel_id'];
             Channel::profile_store_lowlevel($profile);
         }
     }
@@ -382,7 +379,7 @@ function import_profiles($channel, $profiles)
 function import_xchans($xchans) {
 
     // WARNING: this does not import xchan photos
-    
+
     if ($xchans) {
         foreach ($xchans as $xchan) {
             // Provide backward compatibility for zot11 based projects
@@ -408,9 +405,9 @@ function import_xchans($xchans) {
             xchan_store_lowlevel($xchan);
         }
     }
-}    
+}
 
-    
+
 /**
  * @brief Import hublocs.
  *
@@ -799,7 +796,7 @@ function import_sysapps($channel, $apps)
         $sysapps = Apps::get_system_apps(false);
 
         foreach ($apps as $app) {
-    
+
             if (array_key_exists('app_system', $app) && (! intval($app['app_system']))) {
                 continue;
             }
@@ -847,7 +844,7 @@ function sync_sysapps($channel, $apps)
 {
 
     $sysapps = Apps::get_system_apps(false);
-    
+
     if ($channel && $apps) {
         $columns = db_columns('app');
 
@@ -1016,7 +1013,7 @@ function import_items($channel, $items, $sync = false, $relocate = null)
             if (! $item) {
                 continue;
             }
-    
+
             if ($relocate && $item['mid'] === $item['parent_mid']) {
                 item_url_replace($channel, $item, $relocate['url'], z_root(), $relocate['channel_address']);
             }
@@ -1122,7 +1119,7 @@ function sync_events($channel, $events)
         if (isset($events['event_hash'])) {
             $events = [ $events ];
         }
-    
+
         foreach ($events as $event) {
             if ((! $event['event_hash']) || (! $event['dtstart'])) {
                 continue;
@@ -1435,7 +1432,7 @@ function import_mail($channel, $mails, $sync = false)
 {
     // No longer used.
     return;
-    
+
     if ($channel && $mails) {
         foreach ($mails as $mail) {
             if (array_key_exists('flags', $mail) && in_array('deleted', $mail['flags'])) {
@@ -1512,10 +1509,10 @@ function sync_files($channel, $files)
 
             $has_undeleted_attachments = false;
 
-    
+
             if ($f['attach']) {
                 foreach ($f['attach'] as $att) {
-    
+
                     $attachment_stored = false;
                     convert_oldfields($att, 'data', 'content');
 
@@ -1723,8 +1720,7 @@ function sync_files($channel, $files)
                     if ($p['photo_usage'] == PHOTO_PROFILE) {
                         $is_profile_photo = true;
                         $e = q(
-                            "update photo set photo_usage = %d where photo_usage = %d
-							and resource_id != '%s' and uid = %d ",
+                            "update photo set photo_usage = %d where photo_usage = %d and resource_id != '%s' and uid = %d ",
                             intval(PHOTO_NORMAL),
                             intval(PHOTO_PROFILE),
                             dbesc($p['resource_id']),
@@ -1736,8 +1732,7 @@ function sync_files($channel, $files)
 
                     if ($p['photo_usage'] == PHOTO_COVER) {
                         $e = q(
-                            "update photo set photo_usage = %d where photo_usage = %d
-							and resource_id != '%s' and uid = %d ",
+                            "update photo set photo_usage = %d where photo_usage = %d and resource_id != '%s' and uid = %d ",
                             intval(PHOTO_NORMAL),
                             intval(PHOTO_COVER),
                             dbesc($p['resource_id']),
@@ -1777,7 +1772,7 @@ function sync_files($channel, $files)
                         $m = parse_url($fetch_url);
 
                         $headers = [
-							'Accept'           => 'application/x-nomad+json, application/x-zot+json', 
+                            'Accept'           => 'application/x-nomad+json, application/x-zot+json',
                             'Sigtoken'         => random_string(),
                             'Host'             => $m['host'],
                             '(request-target)' => 'post ' . $m['path'] . '/' . $att['hash']
@@ -1795,7 +1790,6 @@ function sync_files($channel, $files)
                         }
                     }
 
-                    
                     if (!isset($p['display_path'])) {
                         $p['display_path'] = '';
                     }
@@ -1826,7 +1820,7 @@ function sync_files($channel, $files)
                     }
                 }
             }
-            
+
             if ($is_profile_photo) {
                 // set this or the next channel refresh will wipe out the profile photo with one that's fetched remotely
                 // and lacks the file context; as we probably didn't receive an xchan record in the sync packet
@@ -1835,7 +1829,7 @@ function sync_files($channel, $files)
                     dbesc($channel['channel_hash'])
                 );
             }
-    
+
             Run::Summon([ 'Thumbnail' , $att['hash'] ]);
 
             if ($f['item']) {
@@ -2027,7 +2021,7 @@ function import_webpage_element($element, $channel, $type)
     // Import mimetype if it is a valid mimetype for the element
     $mimetypes = [
         'text/bbcode',
-		'text/x-multicode',
+        'text/x-multicode',
         'text/html',
         'text/markdown',
         'text/plain',
@@ -2098,8 +2092,8 @@ function get_webpage_elements($channel, $type = 'all')
 
             $r = q(
                 "select * from iconfig left join item on iconfig.iid = item.id
-				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item_type = %d
-				$sql_extra order by item.created desc",
+                where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'WEBPAGE' and item_type = %d
+                $sql_extra order by item.created desc",
                 intval($owner),
                 intval(ITEM_TYPE_WEBPAGE)
             );
@@ -2149,8 +2143,8 @@ function get_webpage_elements($channel, $type = 'all')
 
             $r = q(
                 "select * from iconfig left join item on iconfig.iid = item.id
-				where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'PDL' and item_type = %d
-				$sql_extra order by item.created desc",
+                where item.uid = %d and iconfig.cat = 'system' and iconfig.k = 'PDL' and item_type = %d
+                $sql_extra order by item.created desc",
                 intval($owner),
                 intval(ITEM_TYPE_PDL)
             );
@@ -2186,9 +2180,9 @@ function get_webpage_elements($channel, $type = 'all')
 
             $r = q(
                 "select iconfig.iid, iconfig.k, iconfig.v, mid, title, body, mimetype, created, edited from iconfig
-				left join item on iconfig.iid = item.id
-				where uid = %d and iconfig.cat = 'system' and iconfig.k = 'BUILDBLOCK'
-				and item_type = %d order by item.created desc",
+                left join item on iconfig.iid = item.id
+                where uid = %d and iconfig.cat = 'system' and iconfig.k = 'BUILDBLOCK'
+                and item_type = %d order by item.created desc",
                 intval($owner),
                 intval(ITEM_TYPE_BLOCK)
             );
