@@ -16,8 +16,8 @@ use Code\Render\Theme;
 class Followers extends Controller
 {
 
-	private $results = [];
-	
+    private $results = [];
+
     public function init()
     {
         if (argc() < 2) {
@@ -32,10 +32,6 @@ class Followers extends Controller
         Libprofile::load(argv(1));
 
         $observer_hash = get_observer_hash();
-
-        if (((!(is_array(App::$profile) && count(App::$profile))) || (App::$profile['hide_friends']))) {
-            http_status_exit(403, 'Forbidden');
-        }
 
         if (!perm_is_allowed($channel['channel_id'], $observer_hash, 'view_contacts')) {
             http_status_exit(403, 'Forbidden');

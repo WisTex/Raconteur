@@ -337,7 +337,7 @@ class Profiles extends Controller
             $work = escape_tags(trim($_POST['work']));
             $education = escape_tags(trim($_POST['education']));
 
-            $hide_friends = ((intval($_POST['hide_friends'])) ? 1 : 0);
+            $hide_friends = 0;
 
             // start fresh and create a new vcard.
             // @TODO: preserve the original guid or whatever else needs saving
@@ -719,14 +719,6 @@ class Profiles extends Controller
                 $fields = $profile_fields_basic;
             }
 
-            $hide_friends = array(
-                'hide_friends',
-                t('Hide your connections list from viewers of this profile'),
-                $r[0]['hide_friends'],
-                '',
-                array(t('No'), t('Yes'))
-            );
-
             $q = q("select * from profdef where true");
             if ($q) {
                 $extra_fields = [];
@@ -798,7 +790,6 @@ class Profiles extends Controller
                 '$name' => array('name', t('Your full name'), $r[0]['fullname'], t('Required'), '*'),
                 '$pdesc' => array('pdesc', t('Title/Description'), $r[0]['pdesc']),
                 '$dob' => dob($r[0]['dob']),
-                '$hide_friends' => $hide_friends,
                 '$address' => array('address', t('Street address'), $r[0]['address']),
                 '$locality' => array('locality', t('Locality/City'), $r[0]['locality']),
                 '$region' => array('region', t('Region/State'), $r[0]['region']),

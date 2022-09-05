@@ -173,9 +173,6 @@ class Channel
         $post_profilechange = (($_POST['post_profilechange'] == 1) ? 1 : 0);
         $adult = (($_POST['adult'] == 1) ? 1 : 0);
         $defpermcat = ((x($_POST, 'defpermcat')) ? notags(trim($_POST['defpermcat'])) : 'default');
-
-        $hide_friends = 1 - intval($_POST['hide_friends']);
-
         $cal_first_day = (((x($_POST, 'first_day')) && intval($_POST['first_day']) >= 0 && intval($_POST['first_day']) < 7) ? intval($_POST['first_day']) : 0);
         $mailhost = ((array_key_exists('mailhost', $_POST)) ? notags(trim($_POST['mailhost'])) : '');
         $profile_assign = ((x($_POST, 'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
@@ -362,9 +359,8 @@ class Channel
 
 
         $r = q(
-            "UPDATE profile SET publish = %d, hide_friends = %d WHERE is_default = 1 AND uid = %d",
+            "UPDATE profile SET publish = %d WHERE is_default = 1 AND uid = %d",
             intval($publish),
-            intval($hide_friends),
             intval(local_channel())
         );
         $r = q(
@@ -638,7 +634,6 @@ class Channel
             '$perms_set_msg' => t('Your permissions are already configured. Click to view/adjust'),
 
             '$hide_presence' => array('hide_presence', t('Hide your online presence'), $hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no),
-            '$hidefriends' => array('hide_friends', t('Allow others to view your friends and connections'), 1 - intval($profile['hide_friends']), '', $yes_no),
             '$preview_outbox' => [ 'preview_outbox', t('Preview some public posts from new connections prior to connection approval'), intval(get_pconfig($channel['channel_id'], 'system','preview_outbox', false)), '', $yes_no ],
             '$permiss_arr' => $permiss,
             '$comment_perms' => $comment_perms,

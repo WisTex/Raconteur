@@ -931,13 +931,9 @@ function contact_block()
         $sql_extra = " and xchan_hidden = 0 ";
     }
 
-    if ((! is_array(App::$profile)) || (App::$profile['hide_friends'])) {
-        return $o;
-    }
-
     $r = q(
         "SELECT COUNT(abook_id) AS total FROM abook left join xchan on abook_xchan = xchan_hash WHERE abook_channel = %d
-		$abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra",
+        $abook_flags and xchan_orphan = 0 and xchan_deleted = 0 $sql_extra",
         intval(App::$profile['uid'])
     );
     if (count($r)) {

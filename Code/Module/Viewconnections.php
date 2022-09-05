@@ -20,10 +20,6 @@ class Viewconnections extends Controller
 
     public function get()
     {
-        if (((!(is_array(App::$profile) && count(App::$profile))) || (App::$profile['hide_friends']))) {
-            notice(t('Permission denied.') . EOL);
-            return '';
-        }
 
         if (!perm_is_allowed(App::$profile['uid'], get_observer_hash(), 'view_contacts')) {
             notice(t('Permission denied.') . EOL);
