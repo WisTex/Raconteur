@@ -1412,7 +1412,7 @@ class Libzot
             if (in_array($act->type, ['Like', 'Dislike'])) {
                 return false;
             }
-            $x = self::find_parent($env, $act);
+            $x = self::find_parent($act);
             if ($x === $act->id || (is_array($act->obj) && array_key_exists('id', $act->obj) && $x === $act->obj['id'])) {
                 return true;
             }
@@ -1420,8 +1420,7 @@ class Libzot
         return false;
     }
 
-
-    public static function find_parent($env, $act)
+    public static function find_parent($act)
     {
         if ($act) {
             if (in_array($act->type, ['Like', 'Dislike']) && is_array($act->obj)) {
@@ -1433,7 +1432,6 @@ class Libzot
         }
         return false;
     }
-
 
     /**
      * @brief
@@ -1556,7 +1554,7 @@ class Libzot
             // everybody that stored a copy of the parent. This way we know we're covered. We'll check the
             // comment permissions when we deliver them.
 
-            $thread_parent = self::find_parent($msg, $act);
+            $thread_parent = self::find_parent($act);
 
             if ($thread_parent) {
                 $z = q(
@@ -2112,15 +2110,6 @@ class Libzot
         return $result;
     }
 
-    public static function hyperdrive_enabled($channel, $item)
-    {
-
-        if (get_pconfig($channel['channel_id'], 'system', 'hyperdrive', true)) {
-            return true;
-        }
-        return false;
-    }
-
     public static function fetch_conversation($channel, $mid)
     {
 
@@ -2250,87 +2239,9 @@ class Libzot
 
 
     /**
-     * @brief Remove community tag.
-     *
-     * @param array $sender an associative array with
-     *   * \e string \b hash a xchan_hash
-     * @param array $arr an associative array
-     *   * \e int \b verb
-     *   * \e int \b obj_type
-     *   * \e int \b mid
-     * @param int $uid
-     */
-
-    public static function remove_community_tag($sender, $arr, $uid)
-    {
-
-        if (!(activity_match($arr['verb'], ACTIVITY_TAG) && ($arr['obj_type'] == ACTIVITY_OBJ_TAGTERM))) {
-            return;
-        }
-
-        logger('remove_community_tag: invoked');
-
-        if (!get_pconfig($uid, 'system', 'blocktags')) {
-            logger('Permission denied.');
-            return;
-        }
-
-        $r = q(
-            "select * from item where mid = '%s' and uid = %d limit 1",
-            dbesc($arr['mid']),
-            intval($uid)
-        );
-        if (!$r) {
-            logger('No item');
-            return;
-        }
-
-        if (($sender != $r[0]['owner_xchan']) && ($sender != $r[0]['author_xchan'])) {
-            logger('Sender not authorised.');
-            return;
-        }
-
-        $i = $r[0];
-
-        if ($i['target']) {
-            $i['target'] = json_decode($i['target'], true);
-        }
-        if ($i['object']) {
-            $i['object'] = json_decode($i['object'], true);
-        }
-        if (!($i['target'] && $i['object'])) {
-            logger('No target/object');
-            return;
-        }
-
-        $message_id = $i['target']['id'];
-
-        $r = q(
-            "select id from item where mid = '%s' and uid = %d limit 1",
-            dbesc($message_id),
-            intval($uid)
-        );
-        if (!$r) {
-            logger('No parent message');
-            return;
-        }
-
-        q(
-            "delete from term where uid = %d and oid = %d and otype = %d and ttype in  ( %d, %d ) and term = '%s' and url = '%s'",
-            intval($uid),
-            intval($r[0]['id']),
-            intval(TERM_OBJ_POST),
-            intval(TERM_HASHTAG),
-            intval(TERM_COMMUNITYTAG),
-            dbesc($i['object']['title']),
-            dbesc(get_rel_link($i['object']['link'], 'alternate'))
-        );
-    }
-
-    /**
      * @brief Updates an imported item.
      *
-     * @param array $sender
+     * @param string $sender
      * @param array $item
      * @param array $orig
      * @param int $uid
@@ -2502,30 +2413,6 @@ class Libzot
         return $post_id;
     }
 
-
-    /**
-     * @brief Processes delivery of profile.
-     *
-     * @param string $sender an associative array
-     *   * \e string \b hash a xchan_hash
-     * @param array $arr
-     * @param array $deliveries (unused)
-     * @see import_directory_profile()
-     */
-
-    public static function process_profile_delivery($sender, $arr, $deliveries)
-    {
-
-        logger('process_profile_delivery', LOGGER_DEBUG);
-
-        $r = q(
-            "select xchan_addr from xchan where xchan_hash = '%s' limit 1",
-            dbesc($sender)
-        );
-        if ($r) {
-            Libzotdir::import_directory_profile($sender, $arr, $r[0]['xchan_addr'], UPDATE_FLAGS_UPDATED, 0);
-        }
-    }
 
     /**
      * @brief Checks for a moved channel and sets the channel_moved flag.
@@ -3010,10 +2897,7 @@ class Libzot
         if ($deleted || $censored || $sys_channel) {
             $searchable = false;
         }
-
-        // now all forums (public, restricted, and private) set the public_forum flag. So it really means "is a group"
-        // and has nothing to do with accessibility.
-
+        
         $role = get_pconfig($e['channel_id'], 'system', 'permissions_role');
         $rolesettings = PermissionRoles::role_perms($role);
 
@@ -3180,7 +3064,6 @@ class Libzot
 
         return ($ret);
     }
-
 
     public static function site_info()
     {
