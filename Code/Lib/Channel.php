@@ -2218,7 +2218,7 @@ class Channel
             'uid'           => ((array_key_exists('uid', $arr))           ? $arr['uid']           : 0),
             'profile_name'  => ((array_key_exists('profile_name', $arr))  ? $arr['profile_name']  : ''),
             'is_default'    => ((array_key_exists('is_default', $arr))    ? $arr['is_default']    : 0),
-            'hide_friends'  => 0),
+            'hide_friends'  => 0,
             'fullname'      => ((array_key_exists('fullname', $arr))      ? $arr['fullname']      : ''),
             'pdesc'         => ((array_key_exists('pdesc', $arr))         ? $arr['pdesc']         : ''),
             'chandesc'      => ((array_key_exists('chandesc', $arr))      ? $arr['chandesc']      : ''),
