@@ -109,7 +109,7 @@ class Channel
                 else {
                     q(
                         "update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '',
-                        channel_deny_cid = '' where channel_id = %d",
+                         channel_deny_cid = '' where channel_id = %d",
                         intval(local_channel())
                     );
                 }
@@ -145,6 +145,9 @@ class Channel
         $post_mail = array_key_exists('post_mail', $_POST) ? intval($_POST['post_mail']) : PERMS_SPECIFIC;
         PermissionLimits::Set(local_channel(), 'post_mail', $post_mail);
 
+        $default_view_contacts = ($role === 'social_restricted') ? PERMS_SPECIFIC : PERMS_PUBLIC;  
+        $view_contacts = array_key_exists('view_contacts', $_POST) ? intval($_POST['view_contacts']) : $default_view_contacts;
+        PermissionLimits::Set(local_channel(), 'view_contacts', $view_contacts);
 
         $publish = (((x($_POST, 'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1 : 0);
         $username = ((x($_POST, 'username')) ? escape_tags(trim($_POST['username'])) : '');
@@ -442,6 +445,8 @@ class Channel
                 $comment_perms = [$k, $perm, $limits[$k], '', $options];
             } elseif ($k === 'post_mail') {
                 $mail_perms = [$k, $perm, $limits[$k], '', $options];
+            } elseif ($k === 'view_contacts') {
+                $view_contact_perms = [$k, $perm, $limits[$k], '', $options];
             } else {
                 $permiss[] = array($k, $perm, $limits[$k], '', $options);
             }
@@ -638,6 +643,7 @@ class Channel
             '$permiss_arr' => $permiss,
             '$comment_perms' => $comment_perms,
             '$mail_perms' => $mail_perms,
+            '$view_contact_perms' => $view_contact_perms,
             '$noindex' => ['noindex', t('Forbid indexing of your public channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
             '$close_comments' => ['close_comments', t('Disable acceptance of comments on your posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
             '$blocktags' => array('blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
