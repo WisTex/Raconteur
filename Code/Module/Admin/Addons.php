@@ -9,7 +9,7 @@ use Michelf\MarkdownExtra;
 use Code\Lib\Addon;
 use Code\Render\Theme;
 
-    
+
 class Addons
 {
 
