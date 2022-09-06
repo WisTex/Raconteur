@@ -117,6 +117,7 @@ class Share
         $this->tags[] = [
             'type' => 'Link',
             'url' => $this->item['mid'],
+            'ttype' => TERM_QUOTED,
             'term' => 'RE: ' . $this->item['mid'],
         ];
 

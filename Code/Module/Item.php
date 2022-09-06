@@ -1168,6 +1168,10 @@ class Item extends Controller
                         $attachments = [];
                     }
                     $attachments = array_merge($attachments,$reshare->get_attach());
+                    if (! is_array($post_tags)) {
+                        $post_tags = [];
+                    }
+                    $post_tags = array_merge($post_tags,$reshare->get_tags());
                     $i++;
                 }
             }
