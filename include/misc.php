@@ -1831,7 +1831,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
     $is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
 
     if ($is_photo) {
-        $object = json_decode($item['obj'], true);
+        $object = is_array($item['obj']) ? $item['obj'] : json_decode($item['obj'], true);
         $ptr = null;
 
         if (is_array($object) && array_key_exists('url', $object) && is_array($object['url'])) {

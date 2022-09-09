@@ -213,7 +213,7 @@ function photo_upload($channel, $observer, $args)
         return $ret;
     }
 
-    // obtain exif data from the source file if present
+    // Obtain exif data from the original source file.
 
     $exif = $ph->exif(($args['os_syspath']) ?: $src);
 
@@ -445,13 +445,13 @@ function photo_upload($channel, $observer, $args)
         'content'   => bbcode($body)
     ];
 
-    $public = !(($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']));
+    $public = !($ac['allow_cid'] || $ac['allow_gid'] || $ac['deny_cid'] || $ac['deny_gid']);
 
     if ($public) {
         $object['to'] = [ ACTIVITY_PUBLIC_INBOX ];
         $object['cc'] = [ z_root() . '/followers/' . $channel['channel_address'] ];
     } else {
-        $object['to'] = Activity::map_acl(array_merge($ac, ['item_private' => 1 - intval($public) ]));
+        $object['to'] = Activity::map_acl(array_merge($ac, ['item_private' => 1]));
     }
 
     $target = [
@@ -628,37 +628,36 @@ function photo_calculate_scale($arr)
             $dest_width = $max;
             $dest_height = intval(( $height * $max ) / $width);
         }
-
         // else constrain both dimensions
-
         elseif ($width > $height) {
             $dest_width = $max;
             $dest_height = intval(( $height * $max ) / $width);
-        } else {
+        }
+        else {
             $dest_width = intval(( $width * $max ) / $height);
             $dest_height = $max;
         }
-    } else {
-        if ($width > $max) {
-            $dest_width = $max;
-            $dest_height = intval(( $height * $max ) / $width);
-        } else {
-            if ($height > $max) {
-                // very tall image (greater than 16:9)
-                // but width is OK - don't do anything
+    }
+    elseif ($width > $max) {
+        $dest_width = $max;
+        $dest_height = intval(($height * $max) / $width);
+    }
+    elseif ($height > $max) {
+        // very tall image (greater than 16:9)
+        // but width is OK - don't do anything
 
-                if ((($height * 9) / 16) > $width) {
-                    $dest_width = $width;
-                    $dest_height = $height;
-                } else {
-                    $dest_width = intval(( $width * $max ) / $height);
-                    $dest_height = $max;
-                }
-            } else {
-                $dest_width = $width;
-                $dest_height = $height;
-            }
+        if ((($height * 9) / 16) > $width) {
+            $dest_width = $width;
+            $dest_height = $height;
         }
+        else {
+            $dest_width = intval(($width * $max) / $height);
+            $dest_height = $max;
+        }
+    }
+    else {
+        $dest_width = $width;
+        $dest_height = $height;
     }
 
     return $dest_width . 'x' . $dest_height;
@@ -724,14 +723,14 @@ function photos_albums_list($channel, $observer, $sort_key = 'display_path', $di
         }
     }
 
-    // add various encodings to the array so we can just loop through and pick them out in a template
+    // add various encodings to the array, so we can just loop through and pick them out in a template
 
     $ret = [ 'success' => false ];
 
     if ($albums) {
         $ret['success'] = true;
         $ret['albums'] = [];
-        foreach ($albums as $k => $album) {
+        foreach ($albums as $album) {
             $entry = [
                 'text'      => (($album['album']) ? $album['album'] : '/'),
                 'shorttext' => (($album['album']) ? ellipsify($album['album'], 28) : '/'),

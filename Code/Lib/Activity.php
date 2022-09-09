@@ -488,6 +488,12 @@ class Activity
         if (isset($item['term']) && is_array($item['term']) && $item['term']) {
             foreach ($item['term'] as $t) {
                 switch ($t['ttype']) {
+                    case TERM_QUOTED:
+                        if ($t['url'] && $t['term']) {
+                            $ret[] = ['type' => 'Link', 'href' => $t['url'], 'name' => $t['term'],
+                                'mediaType' => 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ];
+                        }
+                        break;
                     case TERM_HASHTAG:
                         // An id is required so if we don't have a url in the taxonomy, ignore it and keep going.
                         if ($t['url']) {
