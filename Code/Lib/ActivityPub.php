@@ -489,7 +489,8 @@ class ActivityPub
             if ($AS->is_valid()) {
                 if (ActivityStreams::is_an_actor($AS->type)) {
                     $person_obj = $AS->data;
-                } elseif ($AS->obj && ActivityStreams::is_an_actor($AS->obj['type'])) {
+                }
+                elseif (is_array($AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
                     $person_obj = $AS->obj;
                 }
             }
