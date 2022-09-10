@@ -1695,6 +1695,12 @@ class Activity
                     $ret['alsoKnownAs'] = $locations;
                 }
 
+                $elephant_move = PConfig::Get($c['channel_id'],'system','extinct_elephant_id');
+                if ($elephant_move) {
+                    $ret['movedTo'] = z_root() . '/channel/' . $c['channel_address'];
+                    $ret['alsoKnownAs'] = $elephant_move;
+                }
+
                 $cp = Channel::get_cover_photo($c['channel_id'], 'array');
                 if ($cp) {
                     $ret['image'] = [
