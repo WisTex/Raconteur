@@ -100,7 +100,6 @@ function guess_image_type($filename, $headers = '')
 
     if (is_null($type)) {
         $ignore_imagick = get_config('system', 'ignore_imagick');
-        // Guessing from extension? Isn't that... dangerous?
         if (class_exists('Imagick') && file_exists($filename) && is_readable($filename) && !$ignore_imagick) {
                 /**
                  * Well, this not much better,
@@ -198,7 +197,7 @@ function delete_thing_photo($url, $ob_hash)
  * @param bool $thing
  *    TRUE if this is a thing URL
  *
- * @return array of results
+ * @return array|false
  * * \e string \b 0 => local URL to full image
  * * \e string \b 1 => local URL to standard thumbnail
  * * \e string \b 2 => local URL to micro thumbnail
@@ -212,7 +211,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     $type = EMPTY_STR;
 
     logger(sprintf('importing %s for %s', $src, $xchan), LOGGER_DEBUG);
-    
+
     $animated = get_config('system', 'animated_avatars', true);
 
     $path = Hashpath::path((($thing) ? $src . $xchan : $xchan), 'cache/xp', 2);
@@ -226,34 +225,20 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
         return false;
     }
 
-    if (file_exists($cached_file)) {
-        $info = getimagesize($cached_file);
-        if (isset($info) && is_array($info) && array_key_exists('mime', $info)) {
-            $type = $info['mime'];
-        }
-    }
-    else {
-        $type = 'image/png';
-    }
-
     // Always return these paths. The Xp module will return the default profile photo if unset.
-    
+
     $photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
     $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
     $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 
     $result = Url::get($src);
-    
+
     if ($result['success']) {
-        $type = guess_image_type($src, $result['header']);
-        if ((! $type) || strpos($type, 'image') === false) {
-            logger('fetching type from file', LOGGER_DEBUG);
-            @file_put_contents('cache/' . $hash, $result['body']);
-            $info = getimagesize('cache/' . $hash);
-            @unlink('cache/' . $hash);
-            if (isset($info) && is_array($info) && array_key_exists('mime', $info)) {
-                $type = $info['mime'];
-            }
+        @file_put_contents('cache/' . $hash, $result['body']);
+        $info = getimagesize('cache/' . $hash);
+        @unlink('cache/' . $hash);
+        if (isset($info) && is_array($info) && array_key_exists('mime', $info)) {
+            $type = $info['mime'];
         }
         if ($type) {
             $img = photo_factory($result['body'], $type);
@@ -306,7 +291,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
         $failure[] = $result['error'];
         $failure[] = print_array($result['debug']);
     }
-    
+
     if ($failure) {
         logger('failed: ' . $photo);
         logger('failure: ' . print_r($failure,true), LOGGER_DEBUG);
@@ -315,7 +300,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
         unlink($path . '.log');
     }
 
-    logger('cached photo: ' . $photo, LOGGER_DEBUG);    
+    logger('cached photo: ' . $photo, LOGGER_DEBUG);
     return([$photo, $thumb, $micro, $type, ($failure ? true : false)]);
 }
 

@@ -13,6 +13,7 @@ use Code\Web\HTTPHeaders;
 use Code\Daemon\Run;
 use Code\Lib\ServiceClass;
 use Code\Lib\Url;
+use Code\Lib\Resizer;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -85,35 +86,14 @@ function photo_upload($channel, $observer, $args)
     $os_storage = 1;
 
     $max_thumb = get_config('system', 'max_thumbnail', 1600);
-
     if ($args['os_syspath'] && $args['getimagesize']) {
-        if ($args['getimagesize'][0] > $max_thumb || $args['getimagesize'][1] > $max_thumb) {
-            $imagick_path = get_config('system', 'imagick_convert_path');
-            if ($imagick_path && @file_exists($imagick_path)) {
-                $tmp_name = $args['os_syspath'] . '-001';
-                $newsize = photo_calculate_scale(array_merge($args['getimagesize'], ['max' => $max_thumb]));
-                $cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $args['os_syspath']) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
-                logger('imagick thumbnail command: ' . $cmd);
-                for ($x = 0; $x < 4; $x++) {
-                    exec($cmd);
-                    if (file_exists($tmp_name)) {
-                        break;
-                    }
-                    logger('imagick scale failed. Retrying.');
-                    continue;
-                }
-                if (! file_exists($tmp_name)) {
-                    logger('imagick scale failed. Abort.');
-                    return $ret;
-                }
-
-                $imagedata = @file_get_contents($tmp_name);
-                $filesize = @filesize($args['os_syspath']);
-            } else {
-                $imagedata = @file_get_contents($args['os_syspath']);
-                $filesize = strlen($imagedata);
-            }
-        } else {
+        $resizer = new Resizer(get_config('system','imagick_convert_path'), $args['getimagesize']);
+        $resized = $resizer->resize(PROJECT_BASE . '/' . $args['os_syspath'], PROJECT_BASE . '/' . $args['os_syspath'] . '-001', $max_thumb);
+        if ($resized) {
+            $imagedata = @file_get_contents($args['os_syspath'] . '-001');
+            $filesize = @filesize($args['os_syspath']);
+        }
+        else {
             $imagedata = @file_get_contents($args['os_syspath']);
             $filesize = strlen($imagedata);
         }
@@ -122,7 +102,8 @@ function photo_upload($channel, $observer, $args)
         $src = '/tmp/deletemenow';
         $type = $args['getimagesize']['mime'];
         $os_storage = 1;
-    } elseif ($args['data'] || $args['content']) {
+    }
+    elseif ($args['data'] || $args['content']) {
         // allow an import from a binary string representing the image.
         // This bypasses the upload step and max size limit checking
 

@@ -3,6 +3,7 @@
 /** @file */
 
 namespace Code\Daemon;
+use Code\Lib\Resizer;
 
 require_once('include/photos.php');
 
@@ -21,30 +22,11 @@ class CacheThumb
             return;
         }
 
-        $width  = $imagesize[0];
-        $height = $imagesize[1];
-
         $max_thumb = get_config('system', 'max_cache_thumbnail', 1024);
-
-        if ($width > $max_thumb || $height > $max_thumb) {
-            $imagick_path = get_config('system', 'imagick_convert_path');
-            if ($imagick_path && @file_exists($imagick_path)) {
-                $tmp_name = $path . '-001';
-                $newsize = photo_calculate_scale(array_merge($imagesize, ['max' => $max_thumb]));
-                $cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $path) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
-
-                for ($x = 0; $x < 4; $x++) {
-                    exec($cmd);
-                    if (file_exists($tmp_name)) {
-                        break;
-                    }
-                }
-
-                if (! file_exists($tmp_name)) {
-                    return;
-                }
-                @rename($tmp_name, $path);
-            }
+        $resizer = new Resizer(get_config('system','imagick_convert_path'), $imageisze);
+        $resized = $resizer->resize(PROJECT_BASE . '/' . $path, PROJECT_BASE . '/' . $path . '-001', $max_thumb);
+        if ($resized) {
+            @rename($path . '-001', $path);
         }
     }
 }

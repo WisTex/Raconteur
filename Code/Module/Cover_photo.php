@@ -12,6 +12,7 @@ use Code\Extend\Hook;
 use Code\Render\Theme;
 use Code\Lib\XConfig;
 use Code\Lib\Hashpath;
+use Code\Lib\Resizer;
 use Code\Storage\Stdio;
 
 /*
@@ -100,30 +101,21 @@ class Cover_photo extends Controller
             if ($r) {
                 $max_thumb = intval(get_config('system', 'max_thumbnail', 1600));
                 $iscaled = false;
-                if (intval($r[0]['height']) > $max_thumb || intval($r[0]['width']) > $max_thumb) {
-                    $imagick_path = get_config('system', 'imagick_convert_path');
-                    if ($imagick_path && @file_exists($imagick_path) && intval($r[0]['os_storage'])) {
-                        $fname = dbunescbin($r[0]['content']);
-                        $tmp_name = $fname . '-001';
-                        $newsize = photo_calculate_scale(array_merge(getimagesize($fname), ['max' => $max_thumb]));
-                        $cmd = $imagick_path . ' ' . escapeshellarg(PROJECT_BASE . '/' . $fname) . ' -resize ' . $newsize . ' ' . escapeshellarg(PROJECT_BASE . '/' . $tmp_name);
-                        //  logger('imagick thumbnail command: ' . $cmd);
-                        for ($x = 0; $x < 4; $x++) {
-                            exec($cmd);
-                            if (file_exists($tmp_name)) {
-                                break;
-                            }
-                        }
-                        if (file_exists($tmp_name)) {
-                            $base_image = $r[0];
-                            $gis = getimagesize($tmp_name);
-                            logger('gis: ' . print_r($gis, true));
-                            $base_image['width'] = $gis[0];
-                            $base_image['height'] = $gis[1];
-                            $base_image['content'] = @file_get_contents($tmp_name);
-                            $iscaled = true;
-                            @unlink($tmp_name);
-                        }
+                $fname = dbunescbin($r[0]['content']);
+                $tmp_name = $fname . '-001';
+                $imagesize = getimagesize($fname);
+                if ($imagesize) {
+                    $resizer = new Resizer(get_config('system','imagick_convert_path'), $imageisze);
+                    $resized = $resizer->resize(PROJECT_BASE . '/' . $fname, PROJECT_BASE . '/' . $tmp_name, $max_thumb);
+                    if ($resized) {
+                        $base_image = $r[0];
+                        $gis = getimagesize($tmp_name);
+                        logger('gis: ' . print_r($gis, true));
+                        $base_image['width'] = $gis[0];
+                        $base_image['height'] = $gis[1];
+                        $base_image['content'] = @file_get_contents($tmp_name);
+                        $iscaled = true;
+                        @unlink($tmp_name);
                     }
                 }
                 if (!$iscaled) {
