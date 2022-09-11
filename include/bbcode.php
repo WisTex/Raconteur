@@ -135,7 +135,7 @@ function tryzrlvideo($match)
         $poster = 'poster="' . escape_tags($static_link) . '" ' ;
     }
 
-    return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ', '%20', $link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></video>';
+    return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ', '%20', $link) . '" style="width:100%; max-width:100%;"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></video>';
 }
 
 function videowithopts($match)
@@ -165,7 +165,7 @@ function videowithopts($match)
         $poster = 'poster="' . (($zrl) ? zid($matches[1]) : $matches[1]) . '"';
     }
 
-    return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ', '%20', $link) . '" style="width:100%; max-width:' . App::$videowidth . 'px"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></video>';
+    return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ', '%20', $link) . '" style="width:100%; max-width:100%;"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></video>';
 }
 
 
@@ -711,7 +711,7 @@ function bb_iframe($match)
 
     $sandbox = ((strpos($match[1], App::get_hostname())) ? ' sandbox="allow-scripts" ' : '');
 
-    return '<iframe ' . $sandbox . ' src="' . $match[1] . '" width="' . App::$videowidth . '" height="' . App::$videoheight . '"><a href="' . $match[1] . '">' . $match[1] . '</a></iframe>';
+    return '<iframe ' . $sandbox . ' src="' . $match[1] . '" width="100%" height="' . App::$videoheight . '"><a href="' . $match[1] . '">' . $match[1] . '</a></iframe>';
 }
 
 function bb_ShareAttributesSimple($match)
