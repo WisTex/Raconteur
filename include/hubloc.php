@@ -6,6 +6,7 @@
  */
 
 use Code\Lib\Channel;
+use Code\Lib\Url;
 use Code\Daemon\Run;
 
 /**
@@ -19,7 +20,7 @@ use Code\Daemon\Run;
 function hubloc_store_lowlevel($arr)
 {
     $update = array_key_exists('hubloc_id',$arr) && $arr['hubloc_id'] ? 'hubloc_id = ' . intval($arr['hubloc_id']) : false;
-     
+
     $store = [
         'hubloc_guid'        => ((array_key_exists('hubloc_guid', $arr))        ? $arr['hubloc_guid']        : ''),
         'hubloc_guid_sig'    => ((array_key_exists('hubloc_guid_sig', $arr))    ? $arr['hubloc_guid_sig']    : ''),
@@ -43,7 +44,7 @@ function hubloc_store_lowlevel($arr)
         'hubloc_error'       => ((array_key_exists('hubloc_error', $arr))       ? $arr['hubloc_error']       : 0),
         'hubloc_deleted'     => ((array_key_exists('hubloc_deleted', $arr))     ? $arr['hubloc_deleted']     : 0)
     ];
-    
+
     return $update ? update_table_from_array('hubloc', $store, $update) : create_table_from_array('hubloc', $store);
 }
 
@@ -288,7 +289,7 @@ function hubloc_delete($hubloc) {
         );
     }
 }
-    
+
 /**
  * @brief return comma separated string of non-dead clone locations (net addresses) for a given netid
  *
