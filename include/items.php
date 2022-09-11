@@ -2049,7 +2049,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
         $arr['attach'] = item_json_encapsulate($arr,'attach');
     }
 
-
     unset($arr['id']);
     unset($arr['uid']);
     unset($arr['aid']);

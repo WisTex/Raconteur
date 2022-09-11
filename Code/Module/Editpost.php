@@ -107,7 +107,22 @@ class Editpost extends Controller
             $j = json_decode($item['attach'], true);
             if ($j) {
                 foreach ($j as $jj) {
-                    $item['body'] .= "\n" . '[attachment]' . basename($jj['href']) . ',' . $jj['revision'] . '[/attachment]' . "\n";
+                    if (!str_starts_with($jj['type'],'application/ld+json')) {
+                        $item['body'] .= "\n" . '[attachment]' . basename($jj['href']) . ',' . $jj['revision'] . '[/attachment]' . "\n";
+                    }
+                }
+            }
+        }
+        $matches = [];
+
+        if (preg_match_all("/\[share(.*?)message_id='(.*?)'(.*?)\[\/share]/ism",$item['body'], $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $r = q("select * from item where mid = '%s' and uid = %d",
+                    dbesc($match[2]),
+                    intval($item['uid'])
+                );
+                if ($r) {
+                    $item['body'] = str_replace($match[0], '[share=' . $r[0]['id'] . '][/share]', $item['body']);
                 }
             }
         }
