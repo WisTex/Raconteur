@@ -1695,10 +1695,15 @@ class Activity
                     $ret['alsoKnownAs'] = $locations;
                 }
 
-                $elephant_move = PConfig::Get($c['channel_id'],'system','extinct_elephant_id');
-                if ($elephant_move) {
+                // To move your followers from a Mastodon account,
+                // visit https://$yoursite/pconfig/system/movefrom
+                // And set the value to the URL of your Mastodon profile.
+                // Then go back to Mastodon and move your account.
+
+                $move_id = PConfig::Get($c['channel_id'],'system','movefrom');
+                if ($move_id) {
                     $ret['movedTo'] = z_root() . '/channel/' . $c['channel_address'];
-                    $ret['alsoKnownAs'] = $elephant_move;
+                    $ret['alsoKnownAs'] = $move_id;
                 }
 
                 $cp = Channel::get_cover_photo($c['channel_id'], 'array');
