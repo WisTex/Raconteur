@@ -27,7 +27,10 @@ class Resizer
 
     private function constructDimension($max)
     {
-        if ($this->getimagesize[0] > $max || $this->getimagesize[1] > $max) {
+        if (!isset($this->getimagesize)) {
+            return false;
+        }
+        if (is_array($this->getimagesize) && ($this->getimagesize[0] > $max || $this->getimagesize[1] > $max)) {
             return photo_calculate_scale(array_merge($this->getimagesize, ['max' => $max]));
         }
         return false;
