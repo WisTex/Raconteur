@@ -54,7 +54,7 @@ class AccessControl
      *   * \e string \b channel_deny_cid => string of denied xchan_hash
      *   * \e string \b channel_deny_gid => string of denied group_id
      */
-    public function __construct(array $channel)
+    public function __construct(mixed $channel)
     {
         if ($channel) {
             $this->allow_cid = $channel['channel_allow_cid'];
