@@ -74,9 +74,9 @@ class Navbar {
 
         $banner = EMPTY_STR;
   
-        App::$page['header'] .= replace_macros(Theme::get_template('hdr.tpl'), array(
+        App::$page['header'] .= replace_macros(Theme::get_template('hdr.tpl'), [
             //we could additionally use this to display important system notifications e.g. for updates
-        ));
+        ]);
 
 
         // nav links: array of array('href', 'text', 'extra css classes', 'title')
@@ -101,15 +101,15 @@ class Navbar {
             ];
         } elseif (! $_SESSION['authenticated']) {
             $nav['remote_login'] = Channel::remote_login();
-            $nav['loginmenu'][] = array('rmagic',t('Remote authentication'),'',t('Click to authenticate to your home hub'),'rmagic_nav_btn');
+            $nav['loginmenu'][] = ['rmagic',t('Remote authentication'),'',t('Click to authenticate to your home hub'),'rmagic_nav_btn'];
         }
 
         if (local_channel()) {
             if (! (isset($_SESSION['delegate']) && $_SESSION['delegate'])) {
-                $nav['manage'] = array('manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn');
+                $nav['manage'] = ['manage', t('Channels'), "", t('Manage your channels'),'manage_nav_btn'];
             }
 
-            $nav['safe'] = array('safe', t('Safe Mode'), ((get_safemode()) ? t('(is on)') : t('(is off)')) , t('Content filtering'),'safe_nav_btn');
+            $nav['safe'] = ['safe', t('Safe Mode'), ((get_safemode()) ? t('(is on)') : t('(is off)')) , t('Content filtering'),'safe_nav_btn'];
 
 
             if ($chans && count($chans) > 0) {
@@ -157,12 +157,12 @@ class Navbar {
         $homelink = $homelink_arr['scheme'] . '://' . $homelink_arr['host'];
 
         if (! $is_owner) {
-            $nav['rusermenu'] = array(
+            $nav['rusermenu'] = [
                 $homelink,
                 t('Take me home'),
                 'logout',
                 ((local_channel()) ? t('Logout') : t('Log me out of this site'))
-            );
+            ];
         }
 
         if (((get_config('system', 'register_policy') == REGISTER_OPEN) || (get_config('system', 'register_policy') == REGISTER_APPROVE)) && (! $_SESSION['authenticated'])) {
@@ -192,10 +192,10 @@ class Navbar {
          * Admin page
          */
         if (is_site_admin()) {
-            $nav['admin'] = array('admin/', t('Admin'), "", t('Site Setup and Configuration'),'admin_nav_btn');
+            $nav['admin'] = ['admin/', t('Admin'), "", t('Site Setup and Configuration'),'admin_nav_btn'];
         }
 
-        $x = array('nav' => $nav, 'usermenu' => $userinfo );
+        $x = ['nav' => $nav, 'usermenu' => $userinfo];
 
         Hook::call('nav', $x);
 
@@ -291,7 +291,7 @@ class Navbar {
             $tpl = Theme::get_template('navbar_default.tpl');
         }
 
-        App::$page['nav'] .= replace_macros($tpl, array(
+        App::$page['nav'] .= replace_macros($tpl, [
             '$baseurl' => z_root(),
             '$site_home' => Channel::url($site_channel),
             '$project_icon' => $site_icon,
@@ -319,16 +319,16 @@ class Navbar {
             '$sysapps_toggle' => t('Toggle System Apps'),
             '$notificationstitle' => t('Notifications'),
             '$url' => ((isset($url) && $url) ? $url : App::$cmd)
-        ));
+        ]);
 
         if (x($_SESSION, 'reload_avatar') && $observer) {
             // The avatar has been changed on the server but the browser doesn't know that,
             // force the browser to reload the image from the server instead of its cache.
             $tpl = Theme::get_template('force_image_reload.tpl');
 
-            App::$page['nav'] .= replace_macros($tpl, array(
+            App::$page['nav'] .= replace_macros($tpl, [
                 '$imgUrl' => $observer['xchan_photo_m']
-            ));
+            ]);
             unset($_SESSION['reload_avatar']);
         }
 
@@ -371,25 +371,10 @@ class Navbar {
         }
 
         if ($uid == local_channel()) {
-            return;
+            return '';
         } else {
             $cal_link = '/cal/' . $nickname;
         }
-
-        $sql_options = item_permissions_sql($uid);
-
-        $r = q(
-            "select item.* from item left join iconfig on item.id = iconfig.iid
-    		where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' 
-    		and item.item_delayed = 0 and item.item_deleted = 0 
-    		and ( iconfig.k = 'WEBPAGE' and item_type = %d ) 
-    		$sql_options limit 1",
-            intval($uid),
-            dbesc('home'),
-            intval(ITEM_TYPE_WEBPAGE)
-        );
-
-        $has_webpages = (($r) ? true : false);
 
         if (x($_GET, 'tab')) {
             $tab = notags(trim($_GET['tab']));
@@ -466,65 +451,7 @@ class Navbar {
             }
         }
 
-        $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + Menu::list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
-        if ($is_owner && $has_bookmarks) {
-            $tabs[] = [
-                'label' => t('Bookmarks'),
-                'url'   => z_root() . '/bookmarks',
-                'sel'   => ((argv(0) == 'bookmarks') ? 'active' : ''),
-                'title' => t('Saved Bookmarks'),
-                'id'    => 'bookmarks-tab',
-                'icon'  => 'bookmark'
-            ];
-        }
-
-        if ($p['view_pages'] && Apps::system_app_installed($uid, 'Cards')) {
-            $tabs[] = [
-                'label' => t('Cards'),
-                'url'   => z_root() . '/cards/' . $nickname ,
-                'sel'   => ((argv(0) == 'cards') ? 'active' : ''),
-                'title' => t('View Cards'),
-                'id'    => 'cards-tab',
-                'icon'  => 'list'
-            ];
-        }
-
-        if ($p['view_pages'] && Apps::system_app_installed($uid, 'Articles')) {
-            $tabs[] = [
-                'label' => t('Articles'),
-                'url'   => z_root() . '/articles/' . $nickname ,
-                'sel'   => ((argv(0) == 'articles') ? 'active' : ''),
-                'title' => t('View Articles'),
-                'id'    => 'articles-tab',
-                'icon'  => 'file-text-o'
-            ];
-        }
-
-
-        if ($has_webpages && Apps::system_app_installed($uid, 'Webpages')) {
-            $tabs[] = [
-                'label' => t('Webpages'),
-                'url'   => z_root() . '/page/' . $nickname . '/home',
-                'sel'   => ((argv(0) == 'webpages') ? 'active' : ''),
-                'title' => t('View Webpages'),
-                'id'    => 'webpages-tab',
-                'icon'  => 'newspaper-o'
-            ];
-        }
-
-
-        if ($p['view_wiki'] && Apps::system_app_installed($uid, 'Wiki')) {
-            $tabs[] = [
-                'label' => t('Wikis'),
-                'url'   => z_root() . '/wiki/' . $nickname,
-                'sel'   => ((argv(0) == 'wiki') ? 'active' : ''),
-                'title' => t('Wiki'),
-                'id'    => 'wiki-tab',
-                'icon'  => 'pencil-square-o'
-            ];
-        }
-
-        $arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
+        $arr = ['is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs];
 
         Hook::call('channel_apps', $arr);
 
