@@ -1075,8 +1075,8 @@ class Photos extends Controller
                     );
                 }
 
-                if ($link_item['coord'] && Apps::system_app_installed($owner_uid, 'Photomap')) {
-                    $map = generate_map($link_item['coord']);
+                if (($link_item['lat'] || $link_item['lon']) && Apps::system_app_installed($owner_uid, 'Photomap')) {
+                    $map = generate_map($link_item['lat'], $link_item['lon']);
                 }
             }
 

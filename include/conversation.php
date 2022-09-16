@@ -1216,12 +1216,21 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
-
+    $lat = '';
+    $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
     $setloc = t('Set your location');
-    $clearloc = ((get_pconfig($x['profile_uid'], 'system', 'use_browser_location')) ? t('Clear browser location') : '');
+    $clearloc = t('Clear your location');
+    $set_location = get_pconfig($x['profile_uid'], 'system', 'set_location');
+    if ($set_location) {
+        $tmp = explode(',', $set_location);
+        if (count($tmp) > 1) {
+            $lat = floatval(trim($tmp[0]));
+            $lon = floatval(trim($tmp[1]));
+        }
+    }
     if (x($x, 'hide_location')) {
-        $geotag = $setloc = $clearloc = '';
+        $geotag = $setloc = $clearloc = $lat = $lon = '';
     }
 
     $summaryenabled = ((array_key_exists('allow_summary', $x)) ? intval($x['allow_summary']) : false);
@@ -1287,7 +1296,7 @@ function z_status_editor($x, $popup = false)
         '$nickname' => $x['nickname'],
         '$linkurl' => t('Please enter a link URL:'),
         '$term' => t('Tag term:'),
-        '$whereareu' => t('Where are you right now?'),
+        '$whereareu' => t('Where are you right now?') . ' ' . t('(Enter a dot . to use your current device coordinates.)'),
         '$editor_autocomplete' => ((x($x, 'editor_autocomplete')) ? $x['editor_autocomplete'] : ''),
         '$bbco_autocomplete' => ((x($x, 'bbco_autocomplete')) ? $x['bbco_autocomplete'] : ''),
         '$modalchooseimages' => t('Choose images to embed'),
@@ -1448,6 +1457,8 @@ function z_status_editor($x, $popup = false)
         '$defcommpolicy' => $defcommpolicy,
         '$defcommuntil' => $defcommuntil,
         '$clearloc' => $clearloc,
+        '$lat' => $lat,
+        '$lon' => $lon,
         '$title' => ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT, 'UTF-8') : ''),
         '$placeholdertitle' => ((x($x, 'placeholdertitle')) ? $x['placeholdertitle'] : t('Title (optional)')),
         '$catsenabled' => $catsenabled,
@@ -1868,7 +1879,7 @@ function format_location($item)
         $location = substr($item['location'], 1);
         $location = ((strpos($location, '[') !== false) ? zidify_links(bbcode($location)) : $location);
     } else {
-        $locate = array('location' => $item['location'], 'coord' => $item['coord'], 'html' => '');
+        $locate = array('location' => $item['location'], 'lat' => $item['lat'], 'lon' => $item['lon'], 'coord' => $item['coord'], 'html' => '');
         Hook::call('render_location', $locate);
         $location = ((strlen($locate['html'])) ? $locate['html'] : render_location_default($locate));
     }
@@ -1879,16 +1890,16 @@ function render_location_default($item)
 {
 
     $location = $item['location'];
-    $coord = $item['coord'];
+    $latitude = $item['lat'];
+    $longitude = $item['lon'];
 
-    if ($coord) {
+    if ($latitude || $longitude) {
         if ($location) {
-            $location .= '&nbsp;<span class="smalltext">(' . $coord . ')</span>';
+            $location .= '&nbsp;<span class="smalltext">(' . $latitude . ',' . $longitude . ')</span>';
         } else {
-            $location = '<span class="smalltext">' . $coord . '</span>';
+            $location = '<span class="smalltext">' . $latitude . ',' . $longitude . '</span>';
         }
     }
-
     return $location;
 }
 

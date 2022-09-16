@@ -614,6 +614,8 @@ CREATE TABLE IF NOT EXISTS `item` (
   `item_delayed` tinyint(1) NOT NULL DEFAULT 0 ,
   `item_pending_remove` tinyint(1) NOT NULL DEFAULT 0 ,
   `item_blocked` tinyint(1) NOT NULL DEFAULT 0 ,
+  `lat` float NOT NULL DEFAULT '0',
+  `lon` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `parent` (`parent`),
   KEY `created` (`created`),
@@ -668,7 +670,9 @@ CREATE TABLE IF NOT EXISTS `item` (
   KEY `item_rss` (`item_rss`),
   KEY `item_consensus` (`item_consensus`),
   KEY `item_deleted_pending_remove_changed` (`item_deleted`, `item_pending_remove`, `changed`),
-  KEY `item_pending_remove_changed` (`item_pending_remove`, `changed`)
+  KEY `item_pending_remove_changed` (`item_pending_remove`, `changed`),
+  KEY `lat` (`lat`),
+  KEY `lon` (`lon`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `likes` (

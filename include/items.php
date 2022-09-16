@@ -556,13 +556,18 @@ function get_item_elements($x,$allow_code = false) {
 
     $arr['plink']        = (($x['permalink'])      ? htmlspecialchars($x['permalink'],      ENT_COMPAT,'UTF-8',false) : '');
     $arr['location']     = (($x['location'])       ? htmlspecialchars($x['location'],       ENT_COMPAT,'UTF-8',false) : '');
-    $arr['coord']        = (($x['longlat'])        ? htmlspecialchars($x['longlat'],        ENT_COMPAT,'UTF-8',false) : '');
     $arr['verb']         = (($x['verb'])           ? htmlspecialchars($x['verb'],           ENT_COMPAT,'UTF-8',false) : '');
     $arr['mimetype']     = (($x['mimetype'])       ? htmlspecialchars($x['mimetype'],       ENT_COMPAT,'UTF-8',false) : '');
     $arr['obj_type']     = (($x['object_type'])    ? htmlspecialchars($x['object_type'],    ENT_COMPAT,'UTF-8',false) : '');
     $arr['tgt_type']     = (($x['target_type'])    ? htmlspecialchars($x['target_type'],    ENT_COMPAT,'UTF-8',false) : '');
 
-
+    if ($x['longlat']) {
+        $coordinates = explode(' ', $x['longlat']);
+        if (count($coordinates) > 1) {
+            $arr['lat'] = floatval($coordinates[0]);
+            $arr['lon'] = floatval($coordinates[1]);
+        }
+    }
     // convert AS1 namespaced elements to AS-JSONLD
 
     $arr['verb'] = Activity::activity_mapper($arr['verb']);
@@ -976,7 +981,7 @@ function encode_item($item,$mirror = false) {
     $x['target_type']     = $item['tgt_type'];
     $x['permalink']       = $item['plink'];
     $x['location']        = $item['location'];
-    $x['longlat']         = $item['coord'];
+    $x['longlat']         = ($item['lat'] || $item['lon']) ? $item['lat'] . ' ' . $item['lon'] : 0.0;
     $x['signature']       = $item['sig'];
     $x['replyto']         = $item['replyto'];
     $x['owner']           = encode_item_xchan($item['owner']);
@@ -1567,7 +1572,8 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     }
 
     $arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : '');
-    $arr['coord']         = ((x($arr,'coord'))         ? notags(trim($arr['coord']))         : '');
+    $arr['lat']           = ((x($arr, 'lat'))          ? floatval($arr['lat'])               : 0.0);
+    $arr['lon']           = ((x($arr, 'lon'))          ? floatval($arr['lon'])               : 0.0);
     $arr['parent_mid']    = ((x($arr,'parent_mid'))    ? notags(trim($arr['parent_mid']))    : '');
     $arr['thr_parent']    = ((x($arr,'thr_parent'))    ? notags(trim($arr['thr_parent']))    : $arr['parent_mid']);
     $arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : ACTIVITY_POST);
@@ -2100,7 +2106,8 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
     $arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
     $arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
-    $arr['coord']         = ((x($arr,'coord'))         ? notags(trim($arr['coord']))         : $orig[0]['coord']);
+    $arr['lat']           = ((x($arr,'lat'))           ? floatval($arr['lat'])               : $orig[0]['lat']);
+    $arr['lon']           = ((x($arr,'lon'))           ? floatval($arr['lon'])               : $orig[0]['lon']);
     $arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : $orig[0]['verb']);
     $arr['obj_type']      = ((x($arr,'obj_type'))      ? notags(trim($arr['obj_type']))      : $orig[0]['obj_type']);
     $arr['obj']           = ((x($arr,'obj'))           ? trim($arr['obj'])                   : $orig[0]['obj']);

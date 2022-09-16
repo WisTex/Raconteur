@@ -25,7 +25,7 @@ class Resizer
         }
     }
 
-    private function constructDimension($max)
+    private function constructDimension($max): bool|string
     {
         if (!isset($this->getimagesize)) {
             return false;
@@ -36,7 +36,7 @@ class Resizer
         return false;
     }
 
-    public function resize($infile,$outfile,$max_size = self::DEFAULT_MAX_SIZE)
+    public function resize($infile,$outfile,$max_size = self::DEFAULT_MAX_SIZE): bool
     {
         $dim = $this->constructDimension($max_size);
         if ($dim && $this->converter_path) {

@@ -758,8 +758,14 @@ function rpost_callback($match)
 
 function bb_map_coords($match)
 {
+    $x = str_replace(['/', ','], [' ', ' '], $match[1]);
+    $tmp = explode(' ', $x);
+    if (count($tmp) > 1) {
+        $lat = $tmp[0];
+        $lon = $tmp[1];
+    }
     // the extra space in the following line is intentional
-    return str_replace($match[0], '<div class="map"  >' . generate_map(str_replace('/', ' ', $match[1])) . '</div>', $match[0]);
+    return str_replace($match[0], '<div class="map"  >' . generate_map($lat,$lon) . '</div>', $match[0]);
 }
 
 function bb_map_location($match)

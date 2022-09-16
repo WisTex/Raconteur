@@ -343,7 +343,7 @@ class Activity
             $numpages = $total / App::$pager['itemspage'];
             $lastpage = (($numpages > intval($numpages)) ? intval($numpages) + 1 : $numpages);
 
-            $stripped = preg_replace('/([&|\?]page=[0-9]*)/', '', $id);
+            $stripped = preg_replace('/([&|?]page=[0-9]*)/', '', $id);
             $stripped = rtrim($stripped, '/');
 
             $ret['partOf'] = z_root() . '/' . $stripped;
@@ -790,15 +790,14 @@ class Activity
         if ($i['app']) {
             $ret['generator'] = ['type' => 'Application', 'name' => $i['app']];
         }
-        if ($i['location'] || $i['coord']) {
+        if ($i['location'] || $i['lat'] || $i['lon']) {
             $ret['location'] = ['type' => 'Place'];
             if ($i['location']) {
                 $ret['location']['name'] = $i['location'];
             }
-            if ($i['coord']) {
-                $l = explode(' ', $i['coord']);
-                $ret['location']['latitude'] = $l[0];
-                $ret['location']['longitude'] = $l[1];
+            if ($i['lat'] || $i['lon']) {
+                $ret['location']['latitude'] = $i['lat'] ?? 0;
+                $ret['location']['longitude'] = $i['lon'] ?? 0;
             }
         }
 
@@ -1126,7 +1125,7 @@ class Activity
 
 
         $images = false;
-        $has_images = preg_match_all('/\[[zi]mg(.*?)\](.*?)\[/ism', $i['body'], $images, PREG_SET_ORDER);
+        $has_images = preg_match_all('/\[[zi]mg(.*?)](.*?)\[/ism', $i['body'], $images, PREG_SET_ORDER);
 
         $ret['id'] = $i['mid'];
 
@@ -1150,18 +1149,16 @@ class Activity
         if ($i['app']) {
             $ret['generator'] = ['type' => 'Application', 'name' => $i['app']];
         }
-        if ($i['location'] || $i['coord']) {
+        if ($i['location'] || $i['lat'] || $i['lon']) {
             $ret['location'] = ['type' => 'Place'];
             if ($i['location']) {
                 $ret['location']['name'] = $i['location'];
             }
-            if ($i['coord']) {
-                $l = explode(' ', $i['coord']);
-                $ret['location']['latitude'] = $l[0];
-                $ret['location']['longitude'] = $l[1];
+            if ($i['lat'] || $i['lon']) {
+                $ret['location']['latitude'] = $i['lat'] ?? 0;
+                $ret['location']['longitude'] = $i['lon'] ?? 0;
             }
         }
-
         if (intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
             $ret['commentPolicy'] = $i['comment_policy'];
         }
@@ -3121,9 +3118,9 @@ class Activity
             if (array_key_exists('content', $location)) {
                 $s['location'] = html2plain(purify_html($location['content']), 256);
             }
-
             if (array_key_exists('latitude', $location) && array_key_exists('longitude', $location)) {
-                $s['coord'] = escape_tags($location['latitude']) . ' ' . escape_tags($location['longitude']);
+                $s['lat'] = floatval($location['latitude']);
+                $s['lon'] = floatval($location['longitude']);
             }
         }
 
