@@ -4,7 +4,6 @@ namespace Code\Update;
 
 class _1261
 {
-
     public function run()
     {
 
@@ -20,7 +19,7 @@ class _1261
         } else {
             $r1 = q("ALTER TABLE item ADD lat float NOT NULL DEFAULT '0' , 
 				ADD INDEX `lat` (`lat`)");
-            $r1 = q("ALTER TABLE item ADD lon float NOT NULL DEFAULT '0' , 
+            $r2 = q("ALTER TABLE item ADD lon float NOT NULL DEFAULT '0' , 
 				ADD INDEX `lon` (`lon`)");
             $r = ($r1 && $r2);
         }
