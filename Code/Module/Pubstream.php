@@ -36,6 +36,8 @@ class Pubstream extends Controller
                 return login();
             }
         }
+        $distance = 0;
+        $distance_from = '';
 
         $public_stream_mode = intval(get_config('system', 'public_stream_mode', PUBLIC_STREAM_NONE));
 
@@ -146,7 +148,10 @@ class Pubstream extends Controller
                 '$mid' => (($mid) ? urlencode($mid) : ''),
                 '$verb' => '',
                 '$net' => (($net) ? urlencode($net) : ''),
-                '$dbegin' => ''
+                '$dbegin' => '',
+                '$pf' => '0',
+                '$distance' => (($distance) ? intval($distance) : '0'),
+                '$distance_from' => (($distance_from) ? urlencode($distance_from) : ''),
             ));
         }
 

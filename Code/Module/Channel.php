@@ -202,6 +202,8 @@ class Channel extends Controller
         $order = ((x($_GET, 'order')) ? notags($_GET['order']) : 'post');
         $static = ((array_key_exists('static', $_REQUEST)) ? intval($_REQUEST['static']) : 0);
         $search = ((x($_GET, 'search')) ? $_GET['search'] : EMPTY_STR);
+        $distance = 0;
+        $distance_from = '';
 
         $groups = [];
 
@@ -501,7 +503,9 @@ class Channel extends Controller
                 '$verb' => '',
                 '$net' => '',
                 '$dend' => $datequery,
-                '$dbegin' => $datequery2
+                '$dbegin' => $datequery2,
+                '$distance' => (($distance) ? intval($distance) : '0'),
+                '$distance_from' => (($distance_from) ? urlencode($distance_from) : ''),
             ]);
         }
 
