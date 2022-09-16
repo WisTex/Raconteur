@@ -360,7 +360,7 @@ class ActivityStreams
      * @return boolean
      */
 
-    public static function is_an_actor(array|string $type): bool
+    public static function is_an_actor(mixed $type): bool
     {
         if (!$type) {
             return false;
