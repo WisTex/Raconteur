@@ -2,9 +2,7 @@
 
 	let bParam_cmd = "{{$baseurl}}/update/{{$pgtype}}";
 
-
 	let bParam_uid = {{$uid}};
-	// lists can be either type string (virtual lists) or integer (normal accesslists)
 	let bParam_gid = "{{$gid}}";
 	let bParam_cid = {{$cid}};
 	let bParam_cmin = {{$cmin}};
@@ -34,6 +32,8 @@
 	let bParam_verb = "{{$verb}}";
 	let bParam_net = "{{$net}}";
 	let bParam_pf = "{{$pf}}";
+    let bParam_dist = {{$distance}};
+    let bParam_distfrom = "{{$distance_from}}";
 
 	function buildCmd() {
 		let udargs = ((page_load) ? "/load" : "");
@@ -67,6 +67,8 @@
 		if(bParam_net != "") bCmd = bCmd + "&net=" + bParam_net;
 		if(bParam_page != 1) bCmd = bCmd + "&page=" + bParam_page;
 		if(bParam_pf != 0) bCmd = bCmd + "&pf=" + bParam_pf;
+        if(bParam_dist != 0) bCmd = bCmd + "&distance=" + bParam_dist;
+        if(bParam_distfrom != "") bCmd = bCmd + "&distance_from=" + bParam_distfrom;
 		return(bCmd);
 	}
 

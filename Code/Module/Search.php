@@ -289,7 +289,9 @@ class Search extends Controller
                 '$verb' => '',
                 '$net' => '',
                 '$dend' => '',
-                '$dbegin' => ''
+                '$dbegin' => '',
+                '$distance' => '0',
+                '$distance_from' => '',
             ]);
         }
 

@@ -54,7 +54,7 @@ class Tagger extends Controller
                 );
             }
             if ($r && local_channel() && (!Channel::is_system(local_channel()))) {
-                $r = [copy_of_pubitem($channel, $i[0]['mid'])];
+                $r = [copy_of_pubitem(App::get_channel(), $r[0]['mid'])];
                 $item_id = (($r) ? $r[0]['id'] : 0);
             }
         }
