@@ -55,7 +55,7 @@ function item_extract_images($body)
 
     $new_body = $new_body . $orig_body;
 
-    return array('body' => $new_body, 'images' => $saved_image);
+    return ['body' => $new_body, 'images' => $saved_image];
 }
 
 
@@ -70,7 +70,7 @@ function item_redir_and_replace_images($body, $images, $cid)
     $obaddr = (($observer) ? $observer['xchan_addr'] : '');
 
     for ($i = 0; $i < count($images); $i++) {
-        $search = '/\[url\=(.*?)\]\[!#saved_image' . $i . '#!\]\[\/url\]' . '/is';
+        $search = '/\[url=(.*?)]\[!#saved_image' . $i . '#!]\[\/url]' . '/is';
         $replace = '[url=' . magiclink_url($obhash, $obaddr, '$1') . '][!#saved_image' . $i . '#!][/url]' ;
 
         $img_end = strpos($origbody, '[!#saved_image' . $i . '#!][/url]') + strlen('[!#saved_image' . $i . '#!][/url]');
@@ -155,7 +155,7 @@ function localize_item(&$item)
                 $post_type = $obj['title'];
                 if ($obj['owner']) {
                     if (array_key_exists('name', $obj['owner'])) {
-                        $obj['owner']['name'];
+                        $author_name = $obj['owner']['name'];
                     }
                     if (array_key_exists('link', $obj['owner'])) {
                         $author_link = get_rel_link($obj['owner']['link'], 'alternate');
@@ -406,7 +406,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     require_once('bbcode.php');
 
-    $ssl_state = ((local_channel()) ? true : false);
+    $ssl_state = (bool)local_channel();
 
     if (local_channel()) {
         load_pconfig(local_channel(), '');
@@ -423,7 +423,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     if (in_array($mode, [ 'stream', 'pubstream'])) {
         $profile_owner = local_channel();
-        $page_writeable = ((local_channel()) ? true : false);
+        $page_writeable = (bool)local_channel();
 
         if (!$update) {
             // The special div is needed for liveUpdate to kick in for this page.
@@ -431,8 +431,8 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
             // way and also you aren't writing a comment (discovered in javascript).
 
             $live_update_div = '<div id="live-stream"></div>' . "\r\n"
-                . "<script> var profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
-                . "; var netargs = '" . substr(App::$cmd, 8)
+                . "<script> let profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
+                . "; let netargs = '" . substr(App::$cmd, 8)
                 . '?f='
                 . ((x($_GET, 'cid'))    ? '&cid='    . $_GET['cid']    : '')
                 . ((x($_GET, 'search')) ? '&search=' . $_GET['search'] : '')
@@ -448,7 +448,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 . ((x($_GET, 'file'))   ? '&file='   . $_GET['file']   : '')
                 . ((x($_GET, 'uri'))    ? '&uri='    . $_GET['uri']   : '')
                 . ((x($_GET, 'pf'))     ? '&pf='     . $_GET['pf']   : '')
-                . "'; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
+                . "'; let profile_page = " . App::$pager['page'] . "; </script>\r\n";
         }
     } elseif ($mode === 'hq') {
         $profile_owner = local_channel();
@@ -522,7 +522,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     load_contact_links(local_channel());
 
-    $cb = array('items' => $items, 'mode' => $mode, 'update' => $update, 'preview' => $preview);
+    $cb = ['items' => $items, 'mode' => $mode, 'update' => $update, 'preview' => $preview];
     Hook::call('conversation_start', $cb);
 
     $items = $cb['items'];
@@ -603,17 +603,17 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     $dropping = false;
                 }
 
-                $drop = array(
+                $drop = [
                     'pagedropping' => $page_dropping,
                     'dropping' => $dropping,
                     'select' => t('Select'),
                     'delete' => t('Delete'),
-                );
+                ];
 
-                $star = array(
+                $star = [
                     'toggle' => t("Toggle Star Status"),
                     'isstarred' => ((intval($item['item_starred'])) ? true : false),
-                );
+                ];
 
                 $lock = t('Public visibility');
                 if (intval($item['item_private']) === 2) {
@@ -655,7 +655,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
                 $pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
 
-                $tmp_item = array(
+                $tmp_item = [
                     'template' => $tpl,
                     'toplevel' => 'toplevel_item',
                     'item_type' => intval($item['item_type']),
@@ -716,15 +716,15 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'pinned'    => ($pinned ? t('Pinned post') : ''),
                     'pinnable'  => (($item['mid'] === $item['parent_mid'] && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0) ? '1' : ''),
                     'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),
-                    'conv' => (($preview) ? '' : array('href' => $conv_link, 'title' => t('View Conversation'))),
+                    'conv' => (($preview) ? '' : ['href' => $conv_link, 'title' => t('View Conversation')]),
                     'previewing' => $previewing,
                     'wait' => t('Please wait'),
                     'thread_level' => 1,
                     'has_tags' => $has_tags,
                     'is_new' => $is_new
-                );
+                ];
 
-                $arr = array('item' => $item, 'output' => $tmp_item);
+                $arr = ['item' => $item, 'output' => $tmp_item];
                 Hook::call('display_item', $arr);
 
 //              $threads[$threadsid]['id'] = $item['item_id'];
@@ -802,7 +802,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 //  logger('nouveau: ' . print_r($threads,true));
 
 // logger('page_template: ' . print_r($page_template,true));
-    $o .= replace_macros($page_template, array(
+    $o .= replace_macros($page_template, [
         '$baseurl' => z_root(),
         '$photo_item' => $content_html,
         '$live_update' => $live_update_div,
@@ -812,7 +812,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         '$threads' => $threads,
         '$wait' => t('Loading...'),
         '$dropping' => ($page_dropping ? t('Delete Selected Items') : false),
-    ));
+    ]);
 
     return $o;
 }
@@ -1121,45 +1121,6 @@ function builtin_activity_puller($item, &$conv_responses)
 }
 
 
-/**
- * @brief Format the like/dislike text for a profile item.
- *
- * @param int $cnt number of people who like/dislike the item
- * @param array $arr array of pre-linked names of likers/dislikers
- * @param string $type one of 'like, 'dislike'
- * @param int $id item id
- * @return string formatted text
- */
-function format_like($cnt, $arr, $type, $id)
-{
-    $o = '';
-    if ($cnt == 1) {
-        $o .= (($type === 'like') ? sprintf(t('%s likes this.'), $arr[0]) : sprintf(t('%s doesn\'t like this.'), $arr[0])) . EOL ;
-    } else {
-        $spanatts = 'class="fakelink" onclick="openClose(\'' . $type . 'list-' . $id . '\');"';
-        $o .= (($type === 'like') ?
-                    sprintf(tt('<span  %1$s>%2$d people</span> like this.', '<span  %1$s>%2$d people</span> like this.', $cnt), $spanatts, $cnt)
-                     :
-                    sprintf(tt('<span  %1$s>%2$d people</span> don\'t like this.', '<span  %1$s>%2$d people</span> don\'t like this.', $cnt), $spanatts, $cnt) );
-        $o .= EOL;
-        $total = count($arr);
-        if ($total >= MAX_LIKERS) {
-            $arr = array_slice($arr, 0, MAX_LIKERS - 1);
-        }
-        if ($total < MAX_LIKERS) {
-            $arr[count($arr) - 1] = t('and') . ' ' . $arr[count($arr) - 1];
-        }
-        $str = implode(', ', $arr);
-        if ($total >= MAX_LIKERS) {
-            $str .= sprintf(tt(', and %d other people', ', and %d other people', $total - MAX_LIKERS), $total - MAX_LIKERS);
-        }
-        $str = (($type === 'like') ? sprintf(t('%s like this.'), $str) : sprintf(t('%s don\'t like this.'), $str));
-        $o .= "\t" . '<div id="' . $type . 'list-' . $id . '" style="display: none;" >' . $str . '</div>';
-    }
-
-    return $o;
-}
-
 
 /**
  * Wrapper to allow addons to replace the status editor if desired.
@@ -1287,7 +1248,7 @@ function z_status_editor($x, $popup = false)
         App::$page['htmlhead'] = EMPTY_STR;
     }
 
-    App::$page['htmlhead'] .= replace_macros($tpl, array(
+    App::$page['htmlhead'] .= replace_macros($tpl, [
         '$baseurl' => z_root(),
         '$webpage' => $webpage,
         '$editselect' => (($plaintext) ? 'none' : '/(profile-jot-text|prvmail-text)/'),
@@ -1308,7 +1269,7 @@ function z_status_editor($x, $popup = false)
         '$auto_save_draft' => $feature_auto_save_draft,
         '$confirmdelete' => t('Delete this item?'),
         '$reset' => $reset
-    ));
+    ]);
 
     $tpl = Theme::get_template('jot.tpl');
 
@@ -1382,7 +1343,7 @@ function z_status_editor($x, $popup = false)
         if ($k === 'post_comments') {
             $comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
         } else {
-            $permiss[] = array($k,$perm,$limits[$k],'',$options);
+            $permiss[] = [$k,$perm,$limits[$k],'',$options];
         }
     }
 
@@ -1411,7 +1372,7 @@ function z_status_editor($x, $popup = false)
     $sharebutton = (x($x, 'button') ? $x['button'] : t('Share'));
     $placeholdtext = (x($x, 'content_label') ? $x['content_label'] : $sharebutton);
     
-    $o .= replace_macros($tpl, array(
+    $o .= replace_macros($tpl, [
         '$return_path' => ((x($x, 'return_path')) ? $x['return_path'] : App::$query_string),
         '$action' =>  z_root() . '/item',
         '$share' => $sharebutton,
@@ -1519,7 +1480,7 @@ function z_status_editor($x, $popup = false)
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
         '$disczot' => t('Find shareable objects (Zot)'),
         '$reset' => $reset
-    ));
+    ]);
 
     if ($popup === true) {
         $o = '<div id="jot-popup" style="display:none">' . $o . '</div>';
@@ -1692,7 +1653,7 @@ function conv_sort($arr, $order)
             $matches = null;
             $found = false;
 
-            $cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+            $cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)]/ism", $item['body'], $matches, PREG_SET_ORDER);
             if ($cnt) {
                 foreach ($matches as $match) {
                     if (LibBlock::fetch_by_entity(local_channel(), $match[2])) {
@@ -1708,7 +1669,7 @@ function conv_sort($arr, $order)
 
             $matches = null;
             $found = false;
-            $cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+            $cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)]/ism", $item['body'], $matches, PREG_SET_ORDER);
             if ($cnt) {
                 foreach ($matches as $match) {
                     $r = q(
@@ -1761,15 +1722,16 @@ function conv_sort($arr, $order)
         usort($parents, 'sort_thr_received');
     } elseif (stristr($order, 'ascending')) {
         usort($parents, 'sort_thr_created_rev');
+    } elseif (stristr($order, 'distance')) {
+        usort($parents, 'sort_thr_distance');
     }
-
     if ($parents) {
         foreach ($parents as $i => $_x) {
             $parents[$i]['children'] = get_item_children($arr, $_x);
         }
 
         foreach ($parents as $k => $v) {
-            if ($parents[$k]['children']) {
+            if ($v['children']) {
                 $parents[$k]['children'] = sort_item_children($parents[$k]['children']);
             }
         }
@@ -1854,6 +1816,11 @@ function sort_thr_received($a, $b)
     return strcmp($b['changed'], $a['changed']);
 }
 
+function sort_thr_distance($a, $b)
+{
+    return strcmp($b['distance'], $a['distance']);
+}
+
 function sort_thr_updated($a, $b)
 {
     $indexa = (($a['changed'] > $a['edited']) ? $a['changed'] : $a['edited']);
@@ -1875,11 +1842,11 @@ function find_thread_parent_index($arr, $x)
 function format_location($item)
 {
 
-    if (strpos($item['location'], '#') === 0) {
+    if (str_starts_with($item['location'], '#')) {
         $location = substr($item['location'], 1);
-        $location = ((strpos($location, '[') !== false) ? zidify_links(bbcode($location)) : $location);
+        $location = ((str_contains($location, '[')) ? zidify_links(bbcode($location)) : $location);
     } else {
-        $locate = array('location' => $item['location'], 'lat' => $item['lat'], 'lon' => $item['lon'], 'coord' => $item['coord'], 'html' => '');
+        $locate = ['location' => $item['location'], 'lat' => $item['lat'], 'lon' => $item['lon'], 'coord' => $item['coord'], 'html' => ''];
         Hook::call('render_location', $locate);
         $location = ((strlen($locate['html'])) ? $locate['html'] : render_location_default($locate));
     }
@@ -1927,9 +1894,9 @@ function prepare_page($item)
     if (App::$page['template'] == 'none') {
         $tpl = 'page_display_empty.tpl';
 
-        return replace_macros(Theme::get_template($tpl), array(
+        return replace_macros(Theme::get_template($tpl), [
             '$body' => $body['html']
-        ));
+        ]);
     }
 
     $tpl = get_pconfig($item['uid'], 'system', 'pagetemplate');
@@ -1937,7 +1904,7 @@ function prepare_page($item)
         $tpl = 'page_display.tpl';
     }
 
-    return replace_macros(Theme::get_template($tpl), array(
+    return replace_macros(Theme::get_template($tpl), [
         '$author' => (($naked) ? '' : $item['author']['xchan_name']),
         '$auth_url' => (($naked) ? '' : zid($item['author']['xchan_url'])),
         '$date' => (($naked) ? '' : datetime_convert('UTC', date_default_timezone_get(), $item['created'], 'Y-m-d H:i')),
@@ -1945,7 +1912,7 @@ function prepare_page($item)
         '$body' => $body['html'],
         '$preview' => $preview,
         '$link' => $link,
-    ));
+    ]);
 }
 
 
