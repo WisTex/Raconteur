@@ -35,8 +35,8 @@ require_once('include/photo_factory.php');
  * @brief Collects recipients.
  *
  * @param array $item
- * @param[out] boolean $private_envelope
- * @param boolean $include_groups
+ * @param bool $private_envelope
+ * @param bool $include_groups
  * @return array containing the recipients
  */
 function collect_recipients($item, &$private_envelope,$include_groups = true) {
@@ -491,7 +491,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 
 function validate_item_elements($message,$arr) {
 
-    $result = array('success' => false);
+    $result = ['success' => false];
 
     if(! array_key_exists('created',$arr))
         $result['message'] = 'missing created, possible author/owner lookup failure';
@@ -692,7 +692,7 @@ function get_item_elements($x,$allow_code = false) {
     // Strip old-style hubzilla bookmarks
     // Do this after signature verification
 
-    if (strpos($x['body'],"#^[") !== false) {
+    if (str_contains($x['body'], "#^[")) {
         $x['body'] = str_replace("#^[","[",$x['body']);
     }
 
@@ -812,7 +812,7 @@ function import_author_activitypub($x) {
     if($r) {
         $ptr = null;
         foreach($r as $rv) {
-            if (strpos($rv['xchan_network'], 'zot') !== false || strpos($rv['xchan_network'], 'nomad') !== false) {
+            if (str_contains($rv['xchan_network'], 'zot') || str_contains($rv['xchan_network'], 'nomad')) {
                 $ptr = $rv;
             }
         }
@@ -837,7 +837,7 @@ function import_author_activitypub($x) {
         }
         if($r) {
             foreach($r as $rv) {
-                if (strpos($rv['xchan_network'],'zot') !== false) {
+                if (str_contains($rv['xchan_network'], 'zot')) {
                     return $rv['xchan_hash'];
                 }
             }
@@ -1055,19 +1055,19 @@ function map_scope($scope, $strip = false) {
 function translate_scope($scope) {
     if(! $scope || $scope === 'public')
         return t('Visible to anybody on the internet.');
-    if(strpos($scope,'self') === 0)
+    if(str_starts_with($scope, 'self'))
         return t('Visible to you only.');
-    if(strpos($scope,'network:') === 0)
+    if(str_starts_with($scope, 'network:'))
         return t('Visible to anybody in this network.');
-    if(strpos($scope,'authenticated') === 0)
+    if(str_starts_with($scope, 'authenticated'))
         return t('Visible to anybody authenticated.');
-    if(strpos($scope,'site:') === 0)
+    if(str_starts_with($scope, 'site:'))
         return sprintf( t('Visible to anybody on %s.'), strip_tags(substr($scope,6)));
-    if(strpos($scope,'any connections') === 0)
+    if(str_starts_with($scope, 'any connections'))
         return t('Visible to all connections.');
-    if(strpos($scope,'contacts') === 0)
+    if(str_starts_with($scope, 'contacts'))
         return t('Visible to approved connections.');
-    if(strpos($scope,'specific') === 0)
+    if(str_starts_with($scope, 'specific'))
         return t('Visible to specific connections.');
     return ''; // This shouldn't happen.
 }
@@ -1096,7 +1096,7 @@ function encode_item_xchan($xchan) {
 function encode_item_terms($terms,$mirror = false) {
     $ret = [];
 
-    $allowed_export_terms = array( TERM_UNKNOWN, TERM_HASHTAG, TERM_MENTION, TERM_CATEGORY, TERM_BOOKMARK, TERM_COMMUNITYTAG, TERM_FORUM );
+    $allowed_export_terms = [TERM_UNKNOWN, TERM_HASHTAG, TERM_MENTION, TERM_CATEGORY, TERM_BOOKMARK, TERM_COMMUNITYTAG, TERM_FORUM];
 
     if($mirror) {
         $allowed_export_terms[] = TERM_PCATEGORY;
@@ -1106,7 +1106,7 @@ function encode_item_terms($terms,$mirror = false) {
     if($terms) {
         foreach($terms as $term) {
             if(in_array($term['ttype'],$allowed_export_terms))
-                $ret[] = array('tag' => $term['term'], 'url' => $term['url'], 'type' => termtype($term['ttype']));
+                $ret[] = ['tag' => $term['term'], 'url' => $term['url'], 'type' => termtype($term['ttype'])];
         }
     }
 
@@ -1119,7 +1119,7 @@ function encode_item_meta($meta,$mirror = false) {
     if($meta) {
         foreach($meta as $m) {
             if($m['sharing'] || $mirror)
-                $ret[] = array('family' => $m['cat'], 'key' => $m['k'], 'value' => $m['v'], 'sharing' => intval($m['sharing']));
+                $ret[] = ['family' => $m['cat'], 'key' => $m['k'], 'value' => $m['v'], 'sharing' => intval($m['sharing'])];
         }
     }
 
@@ -1131,7 +1131,7 @@ function decode_item_meta($meta) {
 
     if(is_array($meta) && $meta) {
         foreach($meta as $m) {
-            $ret[] = array('cat' => escape_tags($m['family']),'k' => escape_tags($m['key']),'v' => $m['value'],'sharing' => $m['sharing']);
+            $ret[] = ['cat' => escape_tags($m['family']),'k' => escape_tags($m['key']),'v' => $m['value'],'sharing' => $m['sharing']];
         }
     }
     return $ret;
@@ -1144,7 +1144,7 @@ function decode_item_meta($meta) {
  * @return string
  */
 function termtype($t) {
-    $types = array('unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum');
+    $types = ['unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum'];
 
     return(($types[$t]) ?: 'unknown');
 }
@@ -1430,7 +1430,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     $arr = $d['item'];
     $allow_exec = $d['allow_exec'];
 
-    $ret = array('success' => false, 'item_id' => 0);
+    $ret = ['success' => false, 'item_id' => 0];
 
     if(array_key_exists('cancel',$arr) && $arr['cancel']) {
         logger('cancelled by plugin');
@@ -1899,7 +1899,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
     item_update_parent_commented($arr);
 
-    if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false) || (strpos($arr['body'],'[/zmg]') !== false)) {
+    if((str_contains($arr['body'], '[embed]')) || (str_contains($arr['body'], '[/img]')) || (str_contains($arr['body'], '[/zmg]'))) {
         Run::Summon([ 'Cache_embeds', $current_post ]);
     }
 
@@ -1952,7 +1952,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
     $arr = $d['item'];
     $allow_exec = $d['allow_exec'];
 
-    $ret = array('success' => false, 'item_id' => 0);
+    $ret = ['success' => false, 'item_id' => 0];
 
     if(array_key_exists('cancel',$arr) && $arr['cancel']) {
         logger('cancelled by plugin');
@@ -2251,7 +2251,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
     Hook::call('post_remote_update_end', $arr);
 
 
-    if((strpos($arr['body'],'[embed]') !== false) || (strpos($arr['body'],'[/img]') !== false)) {
+    if((str_contains($arr['body'], '[embed]')) || (str_contains($arr['body'], '[/img]'))) {
         Run::Summon([ 'Cache_embeds', $orig_post_id ]);
     }
 
@@ -2471,7 +2471,7 @@ function tag_deliver($uid, $item_id) {
 
     $mail_notify = false;
     if ((! $item['item_wall']) && intval($item['item_thread_top']) && $item['author_xchan'] !== $u['channel_hash'] && intval($item['item_private']) === 2) {
-        Enotify::submit(array(
+        Enotify::submit([
             'to_xchan'     => $u['channel_hash'],
             'from_xchan'   => $item['author_xchan'],
             'type'         => NOTIFY_MAIL,
@@ -2479,7 +2479,7 @@ function tag_deliver($uid, $item_id) {
             'link'         => $item['llink'],
             'verb'         => 'DM',
             'otype'        => 'item'
-        ));
+        ]);
         $mail_notify = true;
     }
 
@@ -2501,7 +2501,7 @@ function tag_deliver($uid, $item_id) {
 
     // Deliver to group via target collection
 
-    if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall'])) && (strpos($item['tgt_type'],'Collection') !== false) && $item['target']) {
+    if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall'])) && (str_contains($item['tgt_type'], 'Collection')) && $item['target']) {
         // group delivery via target - use post_wall permission since send_stream is probably turned off
         // and this will be turned into an embedded wall-to-wall post
         if (is_array($item['target'])) {
@@ -2630,16 +2630,16 @@ function tag_deliver($uid, $item_id) {
             // At this point we've determined that the person receiving this post was mentioned in it or it is a union.
             // Now let's check if this mention was inside a reshare so we don't spam a forum
 
-            $body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
+            $body = preg_replace('/\[share(.*?)\[\/share]/','',$item['body']);
 
             $tagged = false;
             $matches = [];
 
-            $pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\](.*?)\[\/[uz]rl\]/';
+            $pattern = '/[!@]!?\[[uz]rl=' . preg_quote($term['url'],'/') . '](.*?)\[\/[uz]rl]/';
             if (preg_match($pattern,$body,$matches))
                 $tagged = true;
 
-            $pattern = '/\[[uz]rl\=' . preg_quote($term['url'],'/') . '\][\!@](.*?)\[\/[uz]rl\]/';
+            $pattern = '/\[[uz]rl=' . preg_quote($term['url'],'/') . '][!@](.*?)\[\/[uz]rl]/';
             if (preg_match($pattern,$body,$matches))
                 $tagged = true;
 
@@ -2687,7 +2687,7 @@ function tag_deliver($uid, $item_id) {
              */
 
             if (! $mail_notify) {
-                Enotify::submit(array(
+                Enotify::submit([
                     'to_xchan'     => $u['channel_hash'],
                     'from_xchan'   => $item['author_xchan'],
                     'type'         => NOTIFY_TAGSELF,
@@ -2695,7 +2695,7 @@ function tag_deliver($uid, $item_id) {
                     'link'         => $item['llink'],
                     'verb'         => ACTIVITY_TAG,
                     'otype'        => 'item'
-                ));
+                ]);
             }
         }
     }
@@ -2802,10 +2802,10 @@ function tgroup_check($uid, $item) {
             return true;
         }
 
-        if ($item['mid'] === $item['parent_mid'] && (! intval($item['item_wall'])) && (strpos($item['tgt_type'],'Collection') !== false) && $item['target']) {
+        if ($item['mid'] === $item['parent_mid'] && (! intval($item['item_wall'])) && (str_contains($item['tgt_type'], 'Collection')) && $item['target']) {
             // accept posts to collections only if the collection belongs to us
-            if ((is_string($item['target']) && strpos($item['target'],z_root()) !== false)
-                || (isset($item['target']['id']) && strpos($item['target']['id'],z_root()) !== false)) {
+            if ((is_string($item['target']) && str_contains($item['target'], z_root()))
+                || (isset($item['target']['id']) && str_contains($item['target']['id'], z_root()))) {
                 return true;
             }
         }
@@ -2866,7 +2866,7 @@ function i_am_mentioned($channel,$item) {
 
     $link = $channel['xchan_url'];
 
-    $body = preg_replace('/\[share(.*?)\[\/share\]/','',$item['body']);
+    $body = preg_replace('/\[share(.*?)\[\/share]/','',$item['body']);
 
     $tagged = false;
     $matches = [];
@@ -2876,11 +2876,11 @@ function i_am_mentioned($channel,$item) {
     if ($terms) {
         foreach ($terms as $term) {
             if ($link === $term['url']) {
-                $pattern = '/[\!@]\!?\[[uz]rl\=' . preg_quote($term['url'],'/') . '\](.*?)\[\/[uz]rl\]/';
+                $pattern = '/[!@]!?\[[uz]rl=' . preg_quote($term['url'],'/') . '](.*?)\[\/[uz]rl]/';
                 if (preg_match($pattern,$body,$matches)) {
                     $tagged = true;
                 }
-                $pattern = '/\[[uz]rl\=' . preg_quote($term['url'],'/') . '\][\!@](.*?)\[\/[uz]rl\]/';
+                $pattern = '/\[[uz]rl=' . preg_quote($term['url'],'/') . '][!@](.*?)\[\/[uz]rl]/';
                 if (preg_match($pattern,$body,$matches)) {
                     $tagged = true;
                 }
@@ -3447,15 +3447,15 @@ function item_getfeedtags($item) {
         return $ret;
     }
 
-    $terms = get_terms_oftype($item['term'],array(TERM_HASHTAG,TERM_MENTION,TERM_COMMUNITYTAG));
+    $terms = get_terms_oftype($item['term'], [TERM_HASHTAG,TERM_MENTION,TERM_COMMUNITYTAG]);
 
     if (count($terms)) {
         foreach ($terms as $term) {
             if (($term['ttype'] == TERM_HASHTAG) || ($term['ttype'] == TERM_COMMUNITYTAG)) {
-                $ret[] = array('#',$term['url'],$term['term']);
+                $ret[] = ['#',$term['url'],$term['term']];
             }
             else {
-                $ret[] = array('@',$term['url'],$term['term']);
+                $ret[] = ['@',$term['url'],$term['term']];
             }
         }
     }
@@ -3477,7 +3477,7 @@ function item_getfeedattach($item) {
     if ($arr && count($arr)) {
         foreach ($arr as $r) {
             $matches = false;
-            $cnt = preg_match('|\[attach\]href=\"(.*?)\" length=\"(.*?)\" type=\"(.*?)\" title=\"(.*?)\"\[\/attach\]|',$r,$matches);
+            $cnt = preg_match('|\[attach]href=\"(.*?)\" length=\"(.*?)\" type=\"(.*?)\" title=\"(.*?)\"\[/attach]|',$r,$matches);
             if ($cnt) {
                 $ret .= '<link rel="enclosure" href="' . xmlify($matches[1]) . '" type="' . xmlify($matches[3]) . '" ';
                 if (intval($matches[2])) {
@@ -3925,7 +3925,7 @@ function posted_dates($uid,$wall) {
         $start_month = datetime_convert('','',$dstart,'Y-m-d');
         $end_month = datetime_convert('','',$dend,'Y-m-d');
         $str = day_translate(datetime_convert('','',$dnow,'F Y'));
-         $ret[] = array($str,$end_month,$start_month);
+         $ret[] = [$str,$end_month,$start_month];
         $dnow = datetime_convert('','',$dnow . ' -1 month', 'Y-m-d');
     }
     return $ret;
@@ -4268,7 +4268,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
     }
 
     if ($arr['search']) {
-        if (strpos($arr['search'],'#') === 0) {
+        if (str_starts_with($arr['search'], '#')) {
             $sql_extra .= term_query('item',substr($arr['search'],1),TERM_HASHTAG,TERM_COMMUNITYTAG);
 
         }
@@ -4560,12 +4560,12 @@ function set_linkified_perms($linkified, &$str_contact_allow, &$str_group_allow,
                 $str_group_allow = '';
                 $first_access_tag = false;
             }
-            if(strpos($access_tag,'cid:') === 0) {
+            if(str_starts_with($access_tag, 'cid:')) {
                 $str_contact_allow .= '<' . substr($access_tag,4) . '>';
                 $access_tag = '';
                 $private = 2;
             }
-            elseif(strpos($access_tag,'gid:') === 0) {
+            elseif(str_starts_with($access_tag, 'gid:')) {
                 $str_group_allow .= '<' . substr($access_tag,4) . '>';
                 $access_tag = '';
                 $private = 2;
@@ -4675,7 +4675,7 @@ function sync_an_item($channel_id,$item_id) {
                 $encoded[] = encode_item($i,true);
             }
         }
-        Libsync::build_sync_packet($channel_id,array('item' => $encoded));
+        Libsync::build_sync_packet($channel_id, ['item' => $encoded]);
     }
 }
 
@@ -4685,7 +4685,7 @@ function list_attached_local_files($body) {
     $match = [];
 
     // match img and zmg image links
-    if (preg_match_all("/\[[zi]mg(.*?)\](.*?)\[\/[zi]mg\]/",$body,$match)) {
+    if (preg_match_all("/\[[zi]mg(.*?)](.*?)\[\/[zi]mg]/",$body,$match)) {
         $images = $match[2];
         if ($images) {
             foreach ($images as $image) {
@@ -4693,10 +4693,10 @@ function list_attached_local_files($body) {
                     continue;
                 }
                 $image_uri = substr($image,strrpos($image,'/') + 1);
-                if (strpos($image_uri,'-') !== false) {
+                if (str_contains($image_uri, '-')) {
                     $image_uri = substr($image_uri,0, strrpos($image_uri,'-'));
                 }
-                if (strpos($image_uri,'.') !== false) {
+                if (str_contains($image_uri, '.')) {
                     $image_uri = substr($image_uri,0, strpos($image_uri,'.'));
                 }
                 if ($image_uri) {
@@ -4705,7 +4705,7 @@ function list_attached_local_files($body) {
             }
         }
     }
-    if (preg_match_all("/\[attachment\](.*?)\[\/attachment\]/",$body,$match)) {
+    if (preg_match_all("/\[attachment](.*?)\[\/attachment]/",$body,$match)) {
         $attaches = $match[1];
         if ($attaches) {
             foreach ($attaches as $attach) {
@@ -4762,10 +4762,10 @@ function fix_attached_permissions($uid,$body,$str_contact_allow,$str_group_allow
 
             // preserve any existing tokens that may have been set for this file
             $token_matches = null;
-            if (preg_match_all('/\<token:(.*?)\>/',$attach['allow_cid'],$token_matches, PREG_SET_ORDER)) {
+            if (preg_match_all('/<token:(.*?)>/',$attach['allow_cid'],$token_matches, PREG_SET_ORDER)) {
                 foreach ($token_matches as $m) {
                     $tok = '<token:' . $m[1] . '>';
-                    if (strpos($str_contact_allow,$tok) === false) {
+                    if (!str_contains($str_contact_allow, $tok)) {
                         $str_contact_allow .= $tok;
                     }
                 }
@@ -4843,25 +4843,25 @@ function item_create_edit_activity($post) {
     $new_item['item_thread_top'] = 0;
     $new_item['created'] = $new_item['edited'] = datetime_convert();
     $new_item['obj_type'] = (($update_item['item_thread_top']) ? ACTIVITY_OBJ_NOTE : ACTIVITY_OBJ_COMMENT);
-    $new_item['obj'] = json_encode(array(
+    $new_item['obj'] = json_encode([
         'type'    => $new_item['obj_type'],
         'id'      => $update_item['mid'],
         'parent'  => $update_item['parent_mid'],
-        'link'    => array(array('rel' => 'alternate','type' => 'text/html', 'href' => $update_item['plink'])),
+        'link'    => [['rel' => 'alternate','type' => 'text/html', 'href' => $update_item['plink']]],
         'title'   => $update_item['title'],
         'content' => $update_item['body'],
         'created' => $update_item['created'],
         'edited'  => $update_item['edited'],
-        'author'  => array(
+        'author'  => [
             'name'     => $item_author['xchan_name'],
             'address'  => $item_author['xchan_addr'],
             'guid'     => $item_author['xchan_guid'],
             'guid_sig' => $item_author['xchan_guid_sig'],
-            'link'     => array(
-                array('rel' => 'alternate', 'type' => 'text/html', 'href' => $item_author['xchan_url']),
-                array('rel' => 'photo', 'type' => $item_author['xchan_photo_mimetype'], 'href' => $item_author['xchan_photo_m'])),
-            ),
-    ),JSON_UNESCAPED_SLASHES);
+            'link'     => [
+                ['rel' => 'alternate', 'type' => 'text/html', 'href' => $item_author['xchan_url']],
+                ['rel' => 'photo', 'type' => $item_author['xchan_photo_mimetype'], 'href' => $item_author['xchan_photo_m']]],
+        ],
+    ],JSON_UNESCAPED_SLASHES);
 
 
     $x = post_activity_item($new_item);
@@ -4874,7 +4874,7 @@ function item_create_edit_activity($post) {
         if($r) {
             xchan_query($r);
             $sync_item = fetch_post_tags($r);
-            Libsync::build_sync_packet($new_item['uid'],array('item' => array(encode_item($sync_item[0],true))));
+            Libsync::build_sync_packet($new_item['uid'], ['item' => [encode_item($sync_item[0],true)]]);
         }
     }
 
@@ -4903,7 +4903,7 @@ function copy_of_pubitem($channel,$mid) {
     if ($r) {
         logger('exists');
         $item = fetch_post_tags($r,true);
-        return $item[0];
+        return array_shift($item);
     }
 
     // this query is used for the global public stream
