@@ -260,11 +260,6 @@ class ThreadItem
             $dislike_list_part = '';
         }
 
-
-        $showlike    = ((x($conv_responses['like'], $item['mid'])) ? format_like($conv_responses['like'][$item['mid']], $conv_responses['like'][$item['mid'] . '-l'], 'like', $item['mid']) : '');
-        $showdislike = ((x($conv_responses['dislike'], $item['mid']))
-                ? format_like($conv_responses['dislike'][$item['mid']], $conv_responses['dislike'][$item['mid'] . '-l'], 'dislike', $item['mid']) : '');
-
         /*
          * We should avoid doing this all the time, but it depends on the conversation mode
          * And the conv mode may change when we change the conv, or it changes its mode
@@ -497,8 +492,6 @@ class ThreadItem
             'dislike_list_part' => $dislike_list_part,
             'dislike_button_label' => $dislike_button_label,
             'modal_dismiss' => t('Close'),
-            'showlike' => $showlike,
-            'showdislike' => $showdislike,
             'comment' => ($item['item_delayed'] ? '' : $this->get_comment_box()),
             'previewing' => ($conv->is_preview() ? true : false ),
             'preview_lbl' => t('This is an unsaved preview'),

@@ -83,6 +83,8 @@ class Stream extends Controller
         $hashtags = ((x($_REQUEST, 'tag')) ? $_REQUEST['tag'] : '');
         $verb = ((x($_REQUEST, 'verb')) ? $_REQUEST['verb'] : '');
         $dm = ((x($_REQUEST, 'dm')) ? $_REQUEST['dm'] : 0);
+        $distance = ((x($_REQUEST, 'distance')) ? $_REQUEST['distance'] : 0);
+        $distance_from = ((x($_REQUEST,'distance_from')) ? notags(trim($_REQUEST['distance_from'])) : '');
 
         $c_order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
         switch ($c_order) {
@@ -98,12 +100,15 @@ class Stream extends Controller
             case 3:
                 $order = 'received';
                 break;
+            case 4:
+                $order = 'distance';
+                break;
         }
 
         $search = ($_GET['search'] ?? '');
         if ($search) {
             $_GET['netsearch'] = escape_tags($search);
-            if (strpos($search, '@') === 0) {
+            if (str_starts_with($search, '@')) {
                 $r = q(
                     "select abook_id from abook left join xchan on abook_xchan = xchan_hash where xchan_name = '%s' and abook_channel = %d limit 1",
                     dbesc(substr($search, 1)),
@@ -113,7 +118,7 @@ class Stream extends Controller
                     $_GET['cid'] = $r[0]['abook_id'];
                     $search = $_GET['search'] = '';
                 }
-            } elseif (strpos($search, '#') === 0) {
+            } elseif (str_starts_with($search, '#')) {
                 $hashtags = substr($search, 1);
                 $search = $_GET['search'] = '';
             }
@@ -128,7 +133,7 @@ class Stream extends Controller
         $vg = false;
 
         if ($gid) {
-            if (strpos($gid, ':') === 0) {
+            if (str_starts_with($gid, ':')) {
                 $g = substr($gid, 1);
                 switch ($g) {
                     case '1':
@@ -367,8 +372,8 @@ class Stream extends Controller
 
 
             $o .= '<div id="live-stream"></div>' . "\r\n";
-            $o .= "<script> var profile_uid = " . local_channel()
-                . "; var profile_page = " . App::$pager['page']
+            $o .= "<script> let profile_uid = " . local_channel()
+                . "; let profile_page = " . App::$pager['page']
                 . "; divmore_height = " . intval($maxheight) . "; </script>\r\n";
 
             App::$page['htmlhead'] .= replace_macros(Theme::get_template('build_query.tpl'), [
@@ -403,6 +408,8 @@ class Stream extends Controller
                 '$net' => (($net) ? urlencode($net) : ''),
                 '$dbegin' => $datequery2,
                 '$pf' => (($pf) ? intval($pf) : '0'),
+                '$distance' => (($distance) ? intval($distance) : '0'),
+                '$distance_from' => (($distance_from) ? urlencode($distance_from) : ''),
             ]);
         }
 
@@ -419,7 +426,7 @@ class Stream extends Controller
 
         if (x($_GET, 'search')) {
             $search = escape_tags($_GET['search']);
-            if (strpos($search, '#') === 0) {
+            if (str_starts_with($search, '#')) {
                 $sql_extra .= term_query('item', substr($search, 1), TERM_HASHTAG, TERM_COMMUNITYTAG);
             } else {
                 $sql_extra .= sprintf(
@@ -436,7 +443,7 @@ class Stream extends Controller
             // The name 'verb' is a holdover from the earlier XML
             // ActivityStreams specification.
 
-            if (substr($verb, 0, 1) === '.') {
+            if (str_starts_with($verb, '.')) {
                 $verb = substr($verb, 1);
                 $sql_extra .= sprintf(
                     " AND item.obj_type like '%s' ",

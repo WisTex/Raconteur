@@ -23,7 +23,8 @@
 		<input type="hidden" name="created" id="jot-created" value="{{$defpublish}}" />
 		<input type="hidden" name="media_str" id="jot-media" value="" />
 		<input type="hidden" name="source" id="jot-source" value="{{$source}}" />
-		<input type="hidden" name="coord" id="jot-coord" value="" />
+		<input type="hidden" name="lat" id="jot-lat" value="{{$lat}}" />
+		<input type="hidden" name="lon" id="jot-lon" value="{{$lon}}" />
 		<input type="hidden" id="jot-postid" name="post_id" value="{{$post_id}}" />
 		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />

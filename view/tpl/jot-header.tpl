@@ -1,5 +1,5 @@
 
-<script language="javascript" type="text/javascript">
+<script type="text/javascript">
 
 let editor = false;
 let plaintext = '{{$editselect}}';
@@ -80,6 +80,8 @@ let activeCommentText = '';
 				$("#linkmodaldiscover").show();
 			}
 		});
+
+        jotLocateStatus();
 
 		$('#jot-add-option').on('click', jotAddOption);
 		$(document).on('click', '.poll-option-close', jotRemoveOption);
@@ -193,6 +195,17 @@ let activeCommentText = '';
 		$('#link-modal-CancelButton').on('click',jotclearmodal);
 	}
 
+	function jotLocateStatus() {
+		if($('#jot-lat').val() || $('#jot-lon').val() || $('#jot-location').val()) {
+            $('#profile-nolocation-wrapper').attr('disabled', false);
+            $('#profile-nolocation-wrapper').show();
+        }
+        else {
+            $('#profile-nolocation-wrapper').attr('disabled', true);
+            $('#profile-nolocation-wrapper').hide();
+        }
+    }
+
 	function jotclearmodal() {
 		$('#link-modal-OKButton').off('click',jotgetlinkmodal);
 		$('#link-modal-CancelButton').off('click',jotclearmodal);
@@ -231,19 +244,23 @@ let activeCommentText = '';
 	}
 
 	function jotGetLocation() {
-		reply = prompt("{{$whereareu}}", $('#jot-location').val());
+		let reply = prompt("{{$whereareu}}", $('#jot-location').val());
 		if(reply && reply.length) {
 			// A single period indicates "use my browser location"
-			if(reply == '.') {
-				if(navigator.geolocation) {
-					reply = '';
+		    if(reply == '.') {
+			    if(navigator.geolocation) {
+				    reply = '';
 					navigator.geolocation.getCurrentPosition(function(position) {
-						$('#jot-coord').val(position.coords.latitude + ' ' + position.coords.longitude);
-						$('#profile-nolocation-wrapper').attr('disabled', false);
-					});
-				}
+					    $('#jot-lat').val(position.coords.latitude);
+                        $('#jot-lon').val(position.coords.longitude);
+                        jotLocateStatus();
+				    });
+			    }
 			}
-			$('#jot-location').val(reply);			
+			else {
+		        $('#jot-location').val(reply);
+		        jotLocateStatus();
+			}
 		}
 	}
 
@@ -488,8 +505,10 @@ let activeCommentText = '';
 	}
 
 	function jotClearLocation() {
-		$('#jot-coord').val('');
-		$('#profile-nolocation-wrapper').attr('disabled', true);
+		$('#jot-lat').val('');
+		$('#jot-lon').val('');
+		$('#jot-location').val('');
+		jotLocateStatus();
 	}
 
 

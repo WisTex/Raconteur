@@ -36,7 +36,8 @@ class Display extends Controller
         $noscript_content = (get_config('system', 'noscript_content', '1') && (!$this->updating));
 
         $module_format = $_REQUEST['module_format'];
-
+        $distance = 0;
+        $distance_from = '';
 
         if (!in_array($module_format, ['atom', 'nomad', 'json'])) {
             $module_format = 'html';
@@ -224,8 +225,8 @@ class Display extends Controller
             $mid = gen_link_id($mid);
 
             $o .= '<div id="live-display"></div>' . "\r\n";
-            $o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
-                . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
+            $o .= "<script> let profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
+                . "; let netargs = '?f='; let profile_page = " . App::$pager['page'] . "; </script>\r\n";
 
             App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
@@ -257,7 +258,10 @@ class Display extends Controller
                 '$dbegin' => '',
                 '$verb' => '',
                 '$net' => '',
-                '$mid' => (($mid) ? urlencode($mid) : '')
+                '$mid' => (($mid) ? urlencode($mid) : ''),
+                '$pf' => '0',
+                '$distance' => '0',
+                '$distance_from' => '',
             ]);
 
             Head::add_link([

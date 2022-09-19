@@ -560,8 +560,9 @@ function photo_upload($channel, $observer, $args)
 
         $arr['plink']           = z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']);
 
-        if ($lat && $lon) {
-            $arr['coord'] = $lat . ' ' . $lon;
+        if ($lat || $lon) {
+            $arr['lat'] = floatval($lat);
+            $arr['lon'] = floatval($lon);
         }
 
         $result = item_store($arr, false, $deliver);

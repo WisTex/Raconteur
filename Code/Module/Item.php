@@ -393,7 +393,7 @@ class Item extends Controller
         $post_tags = false;
         $pub_copy = false;
 
-
+        logger('args: ' . print_r($_REQUEST,true));
         /**
          * Is this a reply to something?
          */
@@ -816,7 +816,8 @@ class Item extends Controller
             }
 
             $location = $orig_post['location'];
-            $coord = $orig_post['coord'];
+            $lat = $orig_post['lat'];
+            $lon = $orig_post['lon'];
             $verb = $orig_post['verb'];
             $app = $orig_post['app'];
             $title = escape_tags(trim($_REQUEST['title']));
@@ -876,7 +877,8 @@ class Item extends Controller
 
 
             $location = ((isset($_REQUEST['location'])) ? notags(trim($_REQUEST['location'])) : EMPTY_STR);
-            $coord = ((isset($_REQUEST['coord'])) ? notags(trim($_REQUEST['coord'])) : EMPTY_STR);
+            $lat = ((isset($_REQUEST['lat'])) ? floatval($_REQUEST['lat']) : 0.0);
+            $lon = ((isset($_REQUEST['lon'])) ? floatval($_REQUEST['lon']) : 0.0);
             $verb = ((isset($_REQUEST['verb'])) ? notags(trim($_REQUEST['verb'])) : EMPTY_STR);
             $title = ((isset($_REQUEST['title'])) ? escape_tags(trim($_REQUEST['title'])) : EMPTY_STR);
             $summary = ((isset($_REQUEST['summary'])) ? trim($_REQUEST['summary']) : EMPTY_STR);
@@ -1438,7 +1440,8 @@ class Item extends Controller
         $datarray['body'] = $body;
         $datarray['app'] = $app;
         $datarray['location'] = $location;
-        $datarray['coord'] = $coord;
+        $datarray['lat'] = $lat;
+        $datarray['lon'] = $lon;
         $datarray['verb'] = $verb;
         $datarray['obj_type'] = $obj_type;
         $datarray['allow_cid'] = $str_contact_allow;
@@ -1518,12 +1521,14 @@ class Item extends Controller
             $datarray['owner'] = $owner_xchan;
             $datarray['author'] = $observer;
             $datarray['attach'] = json_encode($datarray['attach']);
+            Hook::call('post_prestore', $datarray);
             $o = conversation([$datarray], 'search', false, 'preview');
             //      logger('preview: ' . $o, LOGGER_DEBUG);
             echo json_encode(['preview' => $o]);
             killme();
         }
 
+        Hook::call('post_prestore', $datarray);
         // Let 'post_local' event listeners know if this is an edit.
         // We will unset it immediately afterward.
 

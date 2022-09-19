@@ -628,6 +628,8 @@ CREATE TABLE "item" (
   "item_delayed" smallint NOT NULL DEFAULT '0',
   "item_pending_remove" smallint NOT NULL DEFAULT '0',
   "item_blocked" smallint NOT NULL DEFAULT '0',
+  "lat" float NOT NULL DEFAULT '0',
+  "lon" float NOT NULL DEFAULT '0',
   "item_search_vector" tsvector,
   PRIMARY KEY ("id")
 );
@@ -688,6 +690,8 @@ create index "item_unpublished" on item ("item_unpublished");
 create index "item_delayed" on item ("item_delayed");
 create index "item_pending_remove" on item ("item_pending_remove");
 create index "item_blocked" on item ("item_blocked");
+create index "lat" on item ("lat");
+create index "lon" on item ("lon");
 -- fulltext indexes
 create index "item_search_idx" on  item USING gist("item_search_vector");
 create index "item_allow_cid" on item ("allow_cid");

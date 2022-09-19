@@ -1743,23 +1743,12 @@ function format_filer(&$item)
 }
 
 
-function generate_map($coord)
+function generate_map($lat, $lon, $zoom = 16)
 {
 
-    $coord = str_replace(array(',','/','  '), array(' ',' ',' '), trim($coord));
-
-
-    $zoom = ((strpos($coord, '?z=') !== false) ? substr($coord, strpos($coord, '?z=') + 3) : 0);
-
-    if ($zoom) {
-        $coord = substr($coord, 0, strpos($coord, '?'));
-    } else {
-        $zoom = 16;
-    }
-
     $arr = [
-        'lat' => trim(substr($coord, 0, strpos($coord, ' '))),
-        'lon' => trim(substr($coord, strpos($coord, ' ') + 1)),
+        'lat' => $lat,
+        'lon' => $lon,
         'zoom' => $zoom,
         'html' => ''
     ];
@@ -1772,7 +1761,7 @@ function generate_map($coord)
      */
     Hook::call('generate_map', $arr);
 
-    return (($arr['html']) ? $arr['html'] : $coord);
+    return (($arr['html']) ?? 'geo:' . $lat . ',' . $lon . '&z=' . $zoom);
 }
 
 function generate_named_map($location)
@@ -1908,8 +1897,19 @@ function prepare_body(&$item, $attach = false, $opts = false)
         return $s;
     }
 
-    if (strpos($s, '<div class="map">') !== false && $item['coord']) {
-        $x = generate_map(trim($item['coord']));
+    if (strpos($s, '<div class="map">') !== false) {
+        if ($item['lat'] || $item['lon']) {
+            $lat = $item['lat'];
+            $lon = $item['lon'];
+        }
+        elseif ($item['coord']) {
+            $tmp = explode(' ', $item['coord']);
+            if (count($tmp) > 1) {
+                $lat = $tmp[0];
+                $lon = $tmp[1];
+            }
+        }
+        $x = generate_map($lat, $lon);
         if ($x) {
             $s = preg_replace('/\<div class\=\"map\"\>/', '$0' . $x, $s);
         }

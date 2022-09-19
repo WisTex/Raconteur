@@ -146,6 +146,31 @@ class Outbox extends Controller
                 if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
                     break;
                 }
+            case 'Undo':
+                if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
+                    // do unfollow activity
+                    Activity::unfollow($channel, $AS);
+                    break;
+                }
+            case 'Leave':
+                if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+                    // do unfollow activity
+                    Activity::unfollow($channel, $AS);
+                    break;
+                }
+            case 'Tombstone':
+            case 'Delete':
+                Activity::drop($channel, $observer_hash, $AS);
+                break;
+            case 'Move':
+                if (
+                    $observer_hash && $observer_hash === $AS->actor
+                    && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])
+                    && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStreams::is_an_actor($AS->tgt['type'])
+                ) {
+                    ActivityPub::move($AS->obj, $AS->tgt);
+                    break;
+                }
             case 'Create':
             case 'Like':
             case 'Dislike':
@@ -174,31 +199,6 @@ class Outbox extends Controller
                     $item = Activity::decode_note($AS, true);
                 } else {
                     logger('unresolved object: ' . print_r($AS->obj, true));
-                }
-                break;
-            case 'Undo':
-                if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
-                    // do unfollow activity
-                    Activity::unfollow($channel, $AS);
-                    break;
-                }
-            case 'Leave':
-                if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-                    // do unfollow activity
-                    Activity::unfollow($channel, $AS);
-                    break;
-                }
-            case 'Tombstone':
-            case 'Delete':
-                Activity::drop($channel, $observer_hash, $AS);
-                break;
-            case 'Move':
-                if (
-                    $observer_hash && $observer_hash === $AS->actor
-                    && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])
-                    && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStreams::is_an_actor($AS->tgt['type'])
-                ) {
-                    ActivityPub::move($AS->obj, $AS->tgt);
                 }
                 break;
             case 'Add':

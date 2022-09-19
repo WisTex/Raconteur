@@ -1075,8 +1075,8 @@ class Photos extends Controller
                     );
                 }
 
-                if ($link_item['coord'] && Apps::system_app_installed($owner_uid, 'Photomap')) {
-                    $map = generate_map($link_item['coord']);
+                if (($link_item['lat'] || $link_item['lon']) && Apps::system_app_installed($owner_uid, 'Photomap')) {
+                    $map = generate_map($link_item['lat'], $link_item['lon']);
                 }
             }
 
@@ -1232,10 +1232,6 @@ class Photos extends Controller
                         $dislike_list_part = '';
                     }
 
-
-                    $like = ((isset($alike[$link_item['mid']])) ? format_like($alike[$link_item['mid']], $alike[$link_item['mid'] . '-l'], 'like', $link_item['mid']) : '');
-                    $dislike = ((isset($dlike[$link_item['mid']])) ? format_like($dlike[$link_item['mid']], $dlike[$link_item['mid'] . '-l'], 'dislike', $link_item['mid']) : '');
-
                     // display comments
 
                     foreach ($comment_items as $item) {
@@ -1302,9 +1298,6 @@ class Photos extends Controller
             }
 
             $album_e = [$album_link, $ph[0]['album']];
-            $like_e = $like;
-            $dislike_e = $dislike;
-
 
             $response_verbs = array('like', 'dislike');
 
@@ -1330,8 +1323,6 @@ class Photos extends Controller
                 '$map' => $map,
                 '$map_text' => t('Map'),
                 '$likebuttons' => $likebuttons,
-                '$like' => $like_e,
-                '$dislike' => $dislike_e,
                 '$like_count' => $like_count,
                 '$like_list' => $like_list,
                 '$like_list_part' => $like_list_part,

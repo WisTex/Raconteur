@@ -14,6 +14,7 @@ use Code\Lib\PermissionDescription;
 use Code\Access\AccessControl;
 use Code\Daemon\Run;
 use Code\Lib\Permcat;
+use Code\Lib\PConfig;
 use Code\Lib\Libacl;
 use Code\Lib\Features;
 use Code\Lib\Menu;
@@ -191,7 +192,20 @@ class Channel
         if (!isset($autoperms)) {
             $autoperms = ((x($_POST, 'autoperms')) ? intval($_POST['autoperms']) : 0);
         }
-
+        $set_location = (isset($_POST['set_location']) ? trim($_POST['set_location']) : '');
+        if ($set_location) {
+            $lat = false;
+            $lon = false;
+            $tmp = explode(',', $set_location);
+            if (count($tmp) > 1) {
+                $lat = floatval(trim($tmp[0]));
+                $lon = floatval(trim($tmp[1]));
+            }
+            $valid = $lat || $lon;
+            if ($valid) {
+                PConfig::Set(local_channel(),'system', 'set_location', (string) $lat . ',' . (string) $lon);
+            }
+        }
 
         $pageflags = $channel['channel_pageflags'];
         $existing_adult = (($pageflags & PAGE_ADULT) ? 1 : 0);
@@ -631,7 +645,7 @@ class Channel
             '$timezone' => array('timezone_select', t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()),
             '$defloc' => array('defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')),
             '$allowloc' => array('allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(), 'system', 'use_browser_location')) ? 1 : ''), '', $yes_no),
-
+            '$set_location' => [ 'set_location', t('Over-ride your web browser or device and use these coordinates (latitude,longitude)'), get_pconfig(local_channel(),'system','set_location')],
             '$adult' => array('adult', t('Adult content'), $adult_flag, t('Enable to indicate if this channel frequently or regularly publishes adult content. (Please also tag any adult material and/or nudity with #NSFW)'), $yes_no),
 
             '$h_prv' => t('Security and Privacy'),

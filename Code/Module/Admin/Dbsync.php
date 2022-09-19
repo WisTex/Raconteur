@@ -31,9 +31,9 @@ class Dbsync
                 $c = new $cls();
                 if (method_exists($c, 'verify')) {
                     $retval = $c->verify();
-                    if ($retval === UPDATE_FAILED) {
+                    if ($retval === true) {
                         $o .= sprintf(t('Verification of update %s failed. Check system logs.'), $s);
-                    } elseif ($retval === UPDATE_SUCCESS) {
+                    } elseif ($retval === false) {
                         $o .= sprintf(t('Update %s was successfully applied.'), $s);
                         set_config('database', $s, 'success');
                     } else {

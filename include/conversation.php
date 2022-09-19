@@ -6,95 +6,12 @@ use Code\Lib\Apps;
 use Code\Lib\LibBlock;
 use Code\Lib\ThreadStream;
 use Code\Lib\ThreadItem;
-use Code\Lib\Chatroom;
 use Code\Lib\Channel;
 use Code\Lib\Features;
-use Code\Lib\Menu;
 use Code\Extend\Hook;
 use Code\Access\Permissions;
 use Code\Access\PermissionLimits;
 use Code\Render\Theme;
-
-
-function item_extract_images($body)
-{
-
-    $saved_image = [];
-    $orig_body = $body;
-    $new_body = '';
-
-    $cnt = 0;
-    $img_start = strpos($orig_body, '[img');
-    $img_st_close = ($img_start !== false ? strpos(substr($orig_body, $img_start), ']') : false);
-    $img_end = ($img_start !== false ? strpos(substr($orig_body, $img_start), '[/img]') : false);
-    while (($img_st_close !== false) && ($img_end !== false)) {
-        $img_st_close++; // make it point to AFTER the closing bracket
-        $img_end += $img_start;
-
-        if (! strcmp(substr($orig_body, $img_start + $img_st_close, 5), 'data:')) {
-            // This is an embedded image
-
-            $saved_image[$cnt] = substr($orig_body, $img_start + $img_st_close, $img_end - ($img_start + $img_st_close));
-            $new_body = $new_body . substr($orig_body, 0, $img_start) . '[!#saved_image' . $cnt . '#!]';
-
-            $cnt++;
-        } else {
-            $new_body = $new_body . substr($orig_body, 0, $img_end + strlen('[/img]'));
-        }
-
-        $orig_body = substr($orig_body, $img_end + strlen('[/img]'));
-
-        if ($orig_body === false) { // in case the body ends on a closing image tag
-            $orig_body = '';
-        }
-
-        $img_start = strpos($orig_body, '[img');
-        $img_st_close = ($img_start !== false ? strpos(substr($orig_body, $img_start), ']') : false);
-        $img_end = ($img_start !== false ? strpos(substr($orig_body, $img_start), '[/img]') : false);
-    }
-
-    $new_body = $new_body . $orig_body;
-
-    return array('body' => $new_body, 'images' => $saved_image);
-}
-
-
-function item_redir_and_replace_images($body, $images, $cid)
-{
-
-    $origbody = $body;
-    $newbody = '';
-
-    $observer = App::get_observer();
-    $obhash = (($observer) ? $observer['xchan_hash'] : '');
-    $obaddr = (($observer) ? $observer['xchan_addr'] : '');
-
-    for ($i = 0; $i < count($images); $i++) {
-        $search = '/\[url\=(.*?)\]\[!#saved_image' . $i . '#!\]\[\/url\]' . '/is';
-        $replace = '[url=' . magiclink_url($obhash, $obaddr, '$1') . '][!#saved_image' . $i . '#!][/url]' ;
-
-        $img_end = strpos($origbody, '[!#saved_image' . $i . '#!][/url]') + strlen('[!#saved_image' . $i . '#!][/url]');
-        $process_part = substr($origbody, 0, $img_end);
-        $origbody = substr($origbody, $img_end);
-
-        $process_part = preg_replace($search, $replace, $process_part);
-        $newbody = $newbody . $process_part;
-    }
-    $newbody = $newbody . $origbody;
-
-    $cnt = 0;
-    foreach ($images as $image) {
-        // We're depending on the property of 'foreach' (specified on the PHP website) that
-        // it loops over the array starting from the first element and going sequentially
-        // to the last element
-        $newbody = str_replace('[!#saved_image' . $cnt . '#!]', '[img]' . $image . '[/img]', $newbody);
-        $cnt++;
-    }
-
-    return $newbody;
-}
-
-
 
 /**
  * Render actions localized
@@ -148,14 +65,12 @@ function localize_item(&$item)
                     $author_link  = get_rel_link($obj['link'], 'alternate');
                     $Bphoto = get_rel_link($obj['link'], 'photo');
                 }
-                if ($obj['url']) {
-                }
                 break;
             case ACTIVITY_OBJ_THING:
                 $post_type = $obj['title'];
                 if ($obj['owner']) {
                     if (array_key_exists('name', $obj['owner'])) {
-                        $obj['owner']['name'];
+                        $author_name = $obj['owner']['name'];
                     }
                     if (array_key_exists('link', $obj['owner'])) {
                         $author_link = get_rel_link($obj['owner']['link'], 'alternate');
@@ -210,8 +125,6 @@ function localize_item(&$item)
             if ($Bphoto != "") {
                 $item['body'] .= "\n\n\n" . '[zrl=' . chanlink_url($author_link) . '][zmg width=&quot;80&quot; height=&quot;80&quot;]' . $Bphoto . '[/zmg][/zrl]';
             }
-        } else {
-//          logger('localize_item like failed: link ' . $author_link . ' name ' . $author_name . ' url ' . $item_url);
         }
     }
 
@@ -246,9 +159,6 @@ function localize_item(&$item)
     }
 
     if (stristr($item['verb'], ACTIVITY_POKE)) {
-
-        /** @FIXME for obscured private posts, until then leave untranslated */
-        return;
 
         $verb = urldecode(substr($item['verb'], strpos($item['verb'], '#') + 1));
         if (! $verb) {
@@ -406,10 +316,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     require_once('bbcode.php');
 
-    $ssl_state = ((local_channel()) ? true : false);
+    $ssl_state = (bool)local_channel();
 
     if (local_channel()) {
-        load_pconfig(local_channel(), '');
+        load_pconfig(local_channel());
     }
 
     $profile_owner   = 0;
@@ -417,13 +327,13 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
     $live_update_div = '';
     $jsreload        = '';
 
-    $preview = (($page_mode === 'preview') ? true : false);
+    $preview = $page_mode === 'preview';
     $previewing = (($preview) ? ' preview ' : '');
     $preview_lbl = t('This is an unsaved preview');
 
     if (in_array($mode, [ 'stream', 'pubstream'])) {
         $profile_owner = local_channel();
-        $page_writeable = ((local_channel()) ? true : false);
+        $page_writeable = (bool)local_channel();
 
         if (!$update) {
             // The special div is needed for liveUpdate to kick in for this page.
@@ -431,8 +341,8 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
             // way and also you aren't writing a comment (discovered in javascript).
 
             $live_update_div = '<div id="live-stream"></div>' . "\r\n"
-                . "<script> var profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
-                . "; var netargs = '" . substr(App::$cmd, 8)
+                . "<script> let profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
+                . "; let netargs = '" . substr(App::$cmd, 8)
                 . '?f='
                 . ((x($_GET, 'cid'))    ? '&cid='    . $_GET['cid']    : '')
                 . ((x($_GET, 'search')) ? '&search=' . $_GET['search'] : '')
@@ -448,12 +358,8 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 . ((x($_GET, 'file'))   ? '&file='   . $_GET['file']   : '')
                 . ((x($_GET, 'uri'))    ? '&uri='    . $_GET['uri']   : '')
                 . ((x($_GET, 'pf'))     ? '&pf='     . $_GET['pf']   : '')
-                . "'; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
+                . "'; let profile_page = " . App::$pager['page'] . "; </script>\r\n";
         }
-    } elseif ($mode === 'hq') {
-        $profile_owner = local_channel();
-        $page_writeable = true;
-        $live_update_div = '<div id="live-hq"></div>' . "\r\n";
     } elseif ($mode === 'channel') {
         $profile_owner = App::$profile['profile_uid'];
         $page_writeable = ($profile_owner == local_channel());
@@ -465,24 +371,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 // because browser prefetching might change it on us. We have to deliver it with the page.
 
                 $live_update_div = '<div id="live-channel"></div>' . "\r\n"
-                    . "<script> var profile_uid = " . App::$profile['profile_uid']
-                    . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
+                    . "<script> let profile_uid = " . App::$profile['profile_uid']
+                    . "; let netargs = '?f='; let profile_page = " . App::$pager['page'] . "; </script>\r\n";
             }
         }
-    } elseif ($mode === 'cards') {
-        $profile_owner = App::$profile['profile_uid'];
-        $page_writeable = ($profile_owner == local_channel());
-        $live_update_div = '<div id="live-cards"></div>' . "\r\n"
-            . "<script> var profile_uid = " . App::$profile['profile_uid']
-            . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
-        $jsreload = $_SESSION['return_url'];
-    } elseif ($mode === 'articles') {
-        $profile_owner = App::$profile['profile_uid'];
-        $page_writeable = ($profile_owner == local_channel());
-        $live_update_div = '<div id="live-articles"></div>' . "\r\n"
-            . "<script> var profile_uid = " . App::$profile['profile_uid']
-            . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
-        $jsreload = $_SESSION['return_url'];
     } elseif ($mode === 'display') {
         $profile_owner = local_channel();
         $page_writeable = false;
@@ -522,7 +414,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     load_contact_links(local_channel());
 
-    $cb = array('items' => $items, 'mode' => $mode, 'update' => $update, 'preview' => $preview);
+    $cb = ['items' => $items, 'mode' => $mode, 'update' => $update, 'preview' => $preview];
     Hook::call('conversation_start', $cb);
 
     $items = $cb['items'];
@@ -603,17 +495,17 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     $dropping = false;
                 }
 
-                $drop = array(
+                $drop = [
                     'pagedropping' => $page_dropping,
                     'dropping' => $dropping,
                     'select' => t('Select'),
                     'delete' => t('Delete'),
-                );
+                ];
 
-                $star = array(
+                $star = [
                     'toggle' => t("Toggle Star Status"),
                     'isstarred' => ((intval($item['item_starred'])) ? true : false),
-                );
+                ];
 
                 $lock = t('Public visibility');
                 if (intval($item['item_private']) === 2) {
@@ -655,7 +547,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
                 $pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
 
-                $tmp_item = array(
+                $tmp_item = [
                     'template' => $tpl,
                     'toplevel' => 'toplevel_item',
                     'item_type' => intval($item['item_type']),
@@ -716,15 +608,15 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'pinned'    => ($pinned ? t('Pinned post') : ''),
                     'pinnable'  => (($item['mid'] === $item['parent_mid'] && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0) ? '1' : ''),
                     'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),
-                    'conv' => (($preview) ? '' : array('href' => $conv_link, 'title' => t('View Conversation'))),
+                    'conv' => (($preview) ? '' : ['href' => $conv_link, 'title' => t('View Conversation')]),
                     'previewing' => $previewing,
                     'wait' => t('Please wait'),
                     'thread_level' => 1,
                     'has_tags' => $has_tags,
                     'is_new' => $is_new
-                );
+                ];
 
-                $arr = array('item' => $item, 'output' => $tmp_item);
+                $arr = ['item' => $item, 'output' => $tmp_item];
                 Hook::call('display_item', $arr);
 
 //              $threads[$threadsid]['id'] = $item['item_id'];
@@ -802,7 +694,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 //  logger('nouveau: ' . print_r($threads,true));
 
 // logger('page_template: ' . print_r($page_template,true));
-    $o .= replace_macros($page_template, array(
+    $o .= replace_macros($page_template, [
         '$baseurl' => z_root(),
         '$photo_item' => $content_html,
         '$live_update' => $live_update_div,
@@ -812,7 +704,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         '$threads' => $threads,
         '$wait' => t('Loading...'),
         '$dropping' => ($page_dropping ? t('Delete Selected Items') : false),
-    ));
+    ]);
 
     return $o;
 }
@@ -912,7 +804,6 @@ function thread_author_menu($item, $mode = '')
             load_contact_links($local_channel);
         }
         $channel = App::get_channel();
-        $channel_hash = (($channel) ? $channel['channel_hash'] : '');
     }
 
     $profile_link = chanlink_hash($item['author_xchan']);
@@ -1077,7 +968,6 @@ function builtin_activity_puller($item, &$conv_responses)
                 break;
             default:
                 return;
-                break;
         }
 
         if ((activity_match($item['verb'], $verb)) && ($item['id'] != $item['parent'])) {
@@ -1120,45 +1010,6 @@ function builtin_activity_puller($item, &$conv_responses)
     }
 }
 
-
-/**
- * @brief Format the like/dislike text for a profile item.
- *
- * @param int $cnt number of people who like/dislike the item
- * @param array $arr array of pre-linked names of likers/dislikers
- * @param string $type one of 'like, 'dislike'
- * @param int $id item id
- * @return string formatted text
- */
-function format_like($cnt, $arr, $type, $id)
-{
-    $o = '';
-    if ($cnt == 1) {
-        $o .= (($type === 'like') ? sprintf(t('%s likes this.'), $arr[0]) : sprintf(t('%s doesn\'t like this.'), $arr[0])) . EOL ;
-    } else {
-        $spanatts = 'class="fakelink" onclick="openClose(\'' . $type . 'list-' . $id . '\');"';
-        $o .= (($type === 'like') ?
-                    sprintf(tt('<span  %1$s>%2$d people</span> like this.', '<span  %1$s>%2$d people</span> like this.', $cnt), $spanatts, $cnt)
-                     :
-                    sprintf(tt('<span  %1$s>%2$d people</span> don\'t like this.', '<span  %1$s>%2$d people</span> don\'t like this.', $cnt), $spanatts, $cnt) );
-        $o .= EOL;
-        $total = count($arr);
-        if ($total >= MAX_LIKERS) {
-            $arr = array_slice($arr, 0, MAX_LIKERS - 1);
-        }
-        if ($total < MAX_LIKERS) {
-            $arr[count($arr) - 1] = t('and') . ' ' . $arr[count($arr) - 1];
-        }
-        $str = implode(', ', $arr);
-        if ($total >= MAX_LIKERS) {
-            $str .= sprintf(tt(', and %d other people', ', and %d other people', $total - MAX_LIKERS), $total - MAX_LIKERS);
-        }
-        $str = (($type === 'like') ? sprintf(t('%s like this.'), $str) : sprintf(t('%s don\'t like this.'), $str));
-        $o .= "\t" . '<div id="' . $type . 'list-' . $id . '" style="display: none;" >' . $str . '</div>';
-    }
-
-    return $o;
-}
 
 
 /**
@@ -1216,12 +1067,21 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
-
+    $lat = '';
+    $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
     $setloc = t('Set your location');
-    $clearloc = ((get_pconfig($x['profile_uid'], 'system', 'use_browser_location')) ? t('Clear browser location') : '');
+    $clearloc = t('Clear your location');
+    $set_location = get_pconfig($x['profile_uid'], 'system', 'set_location');
+    if ($set_location) {
+        $tmp = explode(',', $set_location);
+        if (count($tmp) > 1) {
+            $lat = floatval(trim($tmp[0]));
+            $lon = floatval(trim($tmp[1]));
+        }
+    }
     if (x($x, 'hide_location')) {
-        $geotag = $setloc = $clearloc = '';
+        $geotag = $setloc = $clearloc = $lat = $lon = '';
     }
 
     $summaryenabled = ((array_key_exists('allow_summary', $x)) ? intval($x['allow_summary']) : false);
@@ -1260,7 +1120,6 @@ function z_status_editor($x, $popup = false)
     }
 
     if (array_key_exists('channel_select', $x) && $x['channel_select']) {
-        require_once('include/channel.php');
         $id_select = Channel::identity_selector();
     } else {
         $id_select = '';
@@ -1278,7 +1137,7 @@ function z_status_editor($x, $popup = false)
         App::$page['htmlhead'] = EMPTY_STR;
     }
 
-    App::$page['htmlhead'] .= replace_macros($tpl, array(
+    App::$page['htmlhead'] .= replace_macros($tpl, [
         '$baseurl' => z_root(),
         '$webpage' => $webpage,
         '$editselect' => (($plaintext) ? 'none' : '/(profile-jot-text|prvmail-text)/'),
@@ -1287,7 +1146,7 @@ function z_status_editor($x, $popup = false)
         '$nickname' => $x['nickname'],
         '$linkurl' => t('Please enter a link URL:'),
         '$term' => t('Tag term:'),
-        '$whereareu' => t('Where are you right now?'),
+        '$whereareu' => t('Where are you right now?') . ' ' . t('(Enter a dot . to use your current device coordinates.)'),
         '$editor_autocomplete' => ((x($x, 'editor_autocomplete')) ? $x['editor_autocomplete'] : ''),
         '$bbco_autocomplete' => ((x($x, 'bbco_autocomplete')) ? $x['bbco_autocomplete'] : ''),
         '$modalchooseimages' => t('Choose images to embed'),
@@ -1299,7 +1158,7 @@ function z_status_editor($x, $popup = false)
         '$auto_save_draft' => $feature_auto_save_draft,
         '$confirmdelete' => t('Delete this item?'),
         '$reset' => $reset
-    ));
+    ]);
 
     $tpl = Theme::get_template('jot.tpl');
 
@@ -1373,7 +1232,7 @@ function z_status_editor($x, $popup = false)
         if ($k === 'post_comments') {
             $comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
         } else {
-            $permiss[] = array($k,$perm,$limits[$k],'',$options);
+            $permiss[] = [$k,$perm,$limits[$k],'',$options];
         }
     }
 
@@ -1402,7 +1261,7 @@ function z_status_editor($x, $popup = false)
     $sharebutton = (x($x, 'button') ? $x['button'] : t('Share'));
     $placeholdtext = (x($x, 'content_label') ? $x['content_label'] : $sharebutton);
     
-    $o .= replace_macros($tpl, array(
+    $o .= replace_macros($tpl, [
         '$return_path' => ((x($x, 'return_path')) ? $x['return_path'] : App::$query_string),
         '$action' =>  z_root() . '/item',
         '$share' => $sharebutton,
@@ -1448,6 +1307,8 @@ function z_status_editor($x, $popup = false)
         '$defcommpolicy' => $defcommpolicy,
         '$defcommuntil' => $defcommuntil,
         '$clearloc' => $clearloc,
+        '$lat' => $lat,
+        '$lon' => $lon,
         '$title' => ((x($x, 'title')) ? htmlspecialchars($x['title'], ENT_COMPAT, 'UTF-8') : ''),
         '$placeholdertitle' => ((x($x, 'placeholdertitle')) ? $x['placeholdertitle'] : t('Title (optional)')),
         '$catsenabled' => $catsenabled,
@@ -1508,7 +1369,7 @@ function z_status_editor($x, $popup = false)
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
         '$disczot' => t('Find shareable objects (Zot)'),
         '$reset' => $reset
-    ));
+    ]);
 
     if ($popup === true) {
         $o = '<div id="jot-popup" style="display:none">' . $o . '</div>';
@@ -1661,7 +1522,8 @@ function conv_sort($arr, $order)
         // or other channel streams on this site which are not owned by the viewer
 
         if (local_channel()) {
-            if (LibBlock::fetch_by_entity(local_channel(), $item['author_xchan']) || LibBlock::fetch_by_entity(local_channel(), $item['owner_xchan'])) {
+            if (LibBlock::fetch_by_entity(local_channel(), $item['author_xchan'])
+                    || LibBlock::fetch_by_entity(local_channel(), $item['owner_xchan'])) {
                 continue;
             }
 
@@ -1681,7 +1543,7 @@ function conv_sort($arr, $order)
             $matches = null;
             $found = false;
 
-            $cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+            $cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)]/ism", $item['body'], $matches, PREG_SET_ORDER);
             if ($cnt) {
                 foreach ($matches as $match) {
                     if (LibBlock::fetch_by_entity(local_channel(), $match[2])) {
@@ -1697,7 +1559,7 @@ function conv_sort($arr, $order)
 
             $matches = null;
             $found = false;
-            $cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)\]/ism", $item['body'], $matches, PREG_SET_ORDER);
+            $cnt = preg_match_all("/\[share(.*?)profile='(.*?)'(.*?)]/ism", $item['body'], $matches, PREG_SET_ORDER);
             if ($cnt) {
                 foreach ($matches as $match) {
                     $r = q(
@@ -1750,15 +1612,16 @@ function conv_sort($arr, $order)
         usort($parents, 'sort_thr_received');
     } elseif (stristr($order, 'ascending')) {
         usort($parents, 'sort_thr_created_rev');
+    } elseif (stristr($order, 'distance')) {
+        usort($parents, 'sort_thr_distance');
     }
-
     if ($parents) {
         foreach ($parents as $i => $_x) {
             $parents[$i]['children'] = get_item_children($arr, $_x);
         }
 
         foreach ($parents as $k => $v) {
-            if ($parents[$k]['children']) {
+            if ($v['children']) {
                 $parents[$k]['children'] = sort_item_children($parents[$k]['children']);
             }
         }
@@ -1843,6 +1706,17 @@ function sort_thr_received($a, $b)
     return strcmp($b['changed'], $a['changed']);
 }
 
+function sort_thr_distance($a, $b)
+{
+    if (!isset($a['distance'])) {
+        $a['distance'] = 999999999;
+    }
+    if (!isset($b['distance'])) {
+        $b['distance'] = 999999999;
+    }
+    return strcmp($b['distance'], $a['distance']);
+}
+
 function sort_thr_updated($a, $b)
 {
     $indexa = (($a['changed'] > $a['edited']) ? $a['changed'] : $a['edited']);
@@ -1864,11 +1738,11 @@ function find_thread_parent_index($arr, $x)
 function format_location($item)
 {
 
-    if (strpos($item['location'], '#') === 0) {
+    if (str_starts_with($item['location'], '#')) {
         $location = substr($item['location'], 1);
-        $location = ((strpos($location, '[') !== false) ? zidify_links(bbcode($location)) : $location);
+        $location = ((str_contains($location, '[')) ? zidify_links(bbcode($location)) : $location);
     } else {
-        $locate = array('location' => $item['location'], 'coord' => $item['coord'], 'html' => '');
+        $locate = ['location' => $item['location'], 'lat' => $item['lat'], 'lon' => $item['lon'], 'coord' => $item['coord'], 'html' => ''];
         Hook::call('render_location', $locate);
         $location = ((strlen($locate['html'])) ? $locate['html'] : render_location_default($locate));
     }
@@ -1879,16 +1753,16 @@ function render_location_default($item)
 {
 
     $location = $item['location'];
-    $coord = $item['coord'];
+    $latitude = $item['lat'];
+    $longitude = $item['lon'];
 
-    if ($coord) {
+    if ($latitude || $longitude) {
         if ($location) {
-            $location .= '&nbsp;<span class="smalltext">(' . $coord . ')</span>';
+            $location .= '&nbsp;<span class="smalltext">(' . $latitude . ',' . $longitude . ')</span>';
         } else {
-            $location = '<span class="smalltext">' . $coord . '</span>';
+            $location = '<span class="smalltext">' . $latitude . ',' . $longitude . '</span>';
         }
     }
-
     return $location;
 }
 
@@ -1897,9 +1771,6 @@ function prepare_page($item)
 {
 
     $naked = 1;
-//  $naked = ((get_pconfig($item['uid'],'system','nakedpage')) ? 1 : 0);
-    $observer = App::get_observer();
-    //240 chars is the longest we can have before we start hitting problems with suhosin sites
     $preview = substr(urlencode($item['body']), 0, 240);
     $link = z_root() . '/' . App::$cmd;
     if (array_key_exists('webpage', App::$layout) && array_key_exists('authored', App::$layout['webpage'])) {
@@ -1916,9 +1787,9 @@ function prepare_page($item)
     if (App::$page['template'] == 'none') {
         $tpl = 'page_display_empty.tpl';
 
-        return replace_macros(Theme::get_template($tpl), array(
+        return replace_macros(Theme::get_template($tpl), [
             '$body' => $body['html']
-        ));
+        ]);
     }
 
     $tpl = get_pconfig($item['uid'], 'system', 'pagetemplate');
@@ -1926,7 +1797,7 @@ function prepare_page($item)
         $tpl = 'page_display.tpl';
     }
 
-    return replace_macros(Theme::get_template($tpl), array(
+    return replace_macros(Theme::get_template($tpl), [
         '$author' => (($naked) ? '' : $item['author']['xchan_name']),
         '$auth_url' => (($naked) ? '' : zid($item['author']['xchan_url'])),
         '$date' => (($naked) ? '' : datetime_convert('UTC', date_default_timezone_get(), $item['created'], 'Y-m-d H:i')),
@@ -1934,212 +1805,7 @@ function prepare_page($item)
         '$body' => $body['html'],
         '$preview' => $preview,
         '$link' => $link,
-    ));
-}
-
-
-/**
- * @brief
- *
- * @param App $a
- * @param bool $is_owner default false
- * @param string $nickname default null
- * @return void|string
- */
-function profile_tabs($a, $is_owner = false, $nickname = null)
-{
-
-    // Don't provide any profile tabs if we're running as the sys channel
-
-    if (App::$is_sys) {
-        return;
-    }
-
-    if (get_pconfig($uid, 'system', 'noprofiletabs')) {
-        return;
-    }
-
-    $channel = App::get_channel();
-
-    if (is_null($nickname)) {
-        $nickname  = $channel['channel_address'];
-    }
-
-
-    $uid = ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : local_channel());
-    $account_id = ((App::$profile['profile_uid']) ? App::$profile['channel_account_id'] : App::$channel['channel_account_id']);
-
-    if ($uid == local_channel()) {
-        return;
-    }
-
-    if ($uid == local_channel()) {
-        $cal_link = '';
-    } else {
-        $cal_link = '/cal/' . $nickname;
-    }
-
-    require_once('include/security.php');
-    $sql_options = item_permissions_sql($uid);
-
-    $r = q(
-        "select item.* from item left join iconfig on item.id = iconfig.iid
-        where item.uid = %d and iconfig.cat = 'system' and iconfig.v = '%s' 
-        and item.item_delayed = 0 and item.item_deleted = 0 
-        and ( iconfig.k = 'WEBPAGE' and item_type = %d ) 
-        $sql_options limit 1",
-        intval($uid),
-        dbesc('home'),
-        intval(ITEM_TYPE_WEBPAGE)
-    );
-
-    $has_webpages = (($r) ? true : false);
-
-    if (x($_GET, 'tab')) {
-        $tab = notags(trim($_GET['tab']));
-    }
-
-    $url = z_root() . '/channel/' . $nickname;
-    $pr  = z_root() . '/profile/' . $nickname;
-
-    $tabs = array(
-        array(
-            'label' => t('Channel'),
-            'url'   => $url,
-            'sel'   => ((argv(0) == 'channel') ? 'active' : ''),
-            'title' => t('Status Messages and Posts'),
-            'id'    => 'status-tab',
-            'icon'  => 'home'
-        ),
-    );
-
-    $p = get_all_perms($uid, get_observer_hash());
-
-    if ($p['view_profile']) {
-        $tabs[] = array(
-            'label' => t('About'),
-            'url'   => $pr,
-            'sel'   => ((argv(0) == 'profile') ? 'active' : ''),
-            'title' => t('Profile Details'),
-            'id'    => 'profile-tab',
-            'icon'  => 'user'
-        );
-    }
-    if ($p['view_storage']) {
-        $tabs[] = array(
-            'label' => t('Photos'),
-            'url'   => z_root() . '/photos/' . $nickname,
-            'sel'   => ((argv(0) == 'photos') ? 'active' : ''),
-            'title' => t('Photo Albums'),
-            'id'    => 'photo-tab',
-            'icon'  => 'photo'
-        );
-        $tabs[] = array(
-            'label' => t('Files'),
-            'url'   => z_root() . '/cloud/' . $nickname,
-            'sel'   => ((argv(0) == 'cloud' || argv(0) == 'sharedwithme') ? 'active' : ''),
-            'title' => t('Files and Storage'),
-            'id'    => 'files-tab',
-            'icon'  => 'folder-open'
-        );
-    }
-
-    if ($p['view_stream'] && $cal_link) {
-        $tabs[] = array(
-            'label' => t('Events'),
-            'url'   => z_root() . $cal_link,
-            'sel'   => ((argv(0) == 'cal' || argv(0) == 'events') ? 'active' : ''),
-            'title' => t('Events'),
-            'id'    => 'event-tab',
-            'icon'  => 'calendar'
-        );
-    }
-
-
-    if ($p['chat'] && Features::enabled($uid, 'ajaxchat')) {
-        $has_chats = Chatroom::list_count($uid);
-        if ($has_chats) {
-            $tabs[] = array(
-                'label' => t('Chatrooms'),
-                'url'   => z_root() . '/chat/' . $nickname,
-                'sel'   => ((argv(0) == 'chat') ? 'active' : '' ),
-                'title' => t('Chatrooms'),
-                'id'    => 'chat-tab',
-                'icon'  => 'comments-o'
-            );
-        }
-    }
-
-    $has_bookmarks = Menu::list_count(local_channel(), '', MENU_BOOKMARK) + menu_list_count(local_channel(), '', MENU_SYSTEM | MENU_BOOKMARK);
-
-    if ($is_owner && $has_bookmarks) {
-        $tabs[] = array(
-            'label' => t('Bookmarks'),
-            'url'   => z_root() . '/bookmarks',
-            'sel'   => ((argv(0) == 'bookmarks') ? 'active' : ''),
-            'title' => t('Saved Bookmarks'),
-            'id'    => 'bookmarks-tab',
-            'icon'  => 'bookmark'
-        );
-    }
-
-    if (Features::enabled($uid, 'cards')) {
-        $tabs[] = array(
-            'label' => t('Cards'),
-            'url'   => z_root() . '/cards/' . $nickname,
-            'sel'   => ((argv(0) == 'cards') ? 'active' : ''),
-            'title' => t('View Cards'),
-            'id'    => 'cards-tab',
-            'icon'  => 'list'
-        );
-    }
-
-    if (Features::enabled($uid, 'articles')) {
-        $tabs[] = array(
-            'label' => t('articles'),
-            'url'   => z_root() . '/articles/' . $nickname,
-            'sel'   => ((argv(0) == 'articles') ? 'active' : ''),
-            'title' => t('View Articles'),
-            'id'    => 'articles-tab',
-            'icon'  => 'file-text-o'
-        );
-    }
-
-    if ($has_webpages && Features::enabled($uid, 'webpages')) {
-        $tabs[] = array(
-            'label' => t('Webpages'),
-            'url'   => z_root() . '/page/' . $nickname . '/home',
-            'sel'   => ((argv(0) == 'webpages') ? 'active' : ''),
-            'title' => t('View Webpages'),
-            'id'    => 'webpages-tab',
-            'icon'  => 'newspaper-o'
-        );
-    }
-
-
-    if ($p['view_wiki']) {
-        if (Features::enabled($uid, 'wiki')) {
-            $tabs[] = array(
-                'label' => t('Wikis'),
-                'url'   => z_root() . '/wiki/' . $nickname,
-                'sel'   => ((argv(0) == 'wiki') ? 'active' : ''),
-                'title' => t('Wiki'),
-                'id'    => 'wiki-tab',
-                'icon'  => 'pencil-square-o'
-            );
-        }
-    }
-
-    $arr = array('is_owner' => $is_owner, 'nickname' => $nickname, 'tab' => (($tab) ? $tab : false), 'tabs' => $tabs);
-    Hook::call('profile_tabs', $arr);
-
-    $tpl = Theme::get_template('profile_tabs.tpl');
-
-    return replace_macros($tpl, array(
-        '$tabs' => $arr['tabs'],
-        '$name' => App::$profile['channel_name'],
-        '$thumb' => App::$profile['thumb']
-    ));
+    ]);
 }
 
 
@@ -2181,34 +1847,25 @@ function get_response_button_text($v, $count)
             } else {
                 return t('Likes', 'noun');
             }
-            break;
         case 'dislike':
             if (get_config('system', 'show_like_counts', true)) {
                 return $count . ' ' . tt('Dislike', 'Dislikes', $count, 'noun');
             } else {
                 return t('Dislikes', 'noun');
             }
-            break;
         case 'attendyes':
             return $count . ' ' . tt('Attending', 'Attending', $count, 'noun');
-            break;
         case 'attendno':
             return $count . ' ' . tt('Not Attending', 'Not Attending', $count, 'noun');
-            break;
         case 'attendmaybe':
             return $count . ' ' . tt('Undecided', 'Undecided', $count, 'noun');
-            break;
         case 'agree':
             return $count . ' ' . tt('Agree', 'Agrees', $count, 'noun');
-            break;
         case 'disagree':
             return $count . ' ' . tt('Disagree', 'Disagrees', $count, 'noun');
-            break;
         case 'abstain':
             return $count . ' ' . tt('Abstain', 'Abstains', $count, 'noun');
-            break;
         default:
             return '';
-            break;
     }
 }

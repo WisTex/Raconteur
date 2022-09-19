@@ -503,6 +503,122 @@ class ActivityPub
         return false;
     }
 
+    public static function copy($src, $dst)
+    {
+        if (!($src && $dst)) {
+            return;
+        }
+
+        if ($src && !is_array($src)) {
+            $src = Activity::fetch($src);
+            if (is_array($src)) {
+                $src_xchan = $src['id'];
+            }
+        }
+
+        $approvals = null;
+
+        if ($dst && !is_array($dst)) {
+            $dst = Activity::fetch($dst);
+            if (is_array($dst)) {
+                $dst_xchan = $dst['id'];
+                if (array_key_exists('alsoKnownAs', $dst)) {
+                    if (!is_array($dst['alsoKnownAs'])) {
+                        $dst['alsoKnownAs'] = [$dst['alsoKnownAs']];
+                    }
+                    $approvals = $dst['alsoKnownAs'];
+                }
+            }
+        }
+
+        if (!($src_xchan && $dst_xchan)) {
+            return;
+        }
+
+        if ($approvals) {
+            foreach ($approvals as $approval) {
+                if ($approval === $src_xchan) {
+                    $abooks = q(
+                        "select abook_channel from abook where abook_xchan = '%s'",
+                        dbesc($src_xchan)
+                    );
+                    if ($abooks) {
+                        foreach ($abooks as $abook) {
+                            // check to see if we already performed this action
+                            $x = q(
+                                "select * from abook where abook_xchan = '%s' and abook_channel = %d",
+                                dbesc($dst_xchan),
+                                intval($abook['abook_channel'])
+                            );
+                            if ($x) {
+                                continue;
+                            }
+                            // update the local abook
+                            $abc = q("select * from abconfig where chan = %d and xchan = '%s'",
+                                intval($abook['abook_channel']),
+                                dbesc($src_xchan)
+                            );
+                            if ($abc) {
+                                foreach ($abc as $abcentry) {
+                                    q("insert into abconfig (chan, xchan, cat, k, v) values ( %d, '%s', '%s', '%s', '%s')",
+                                        intval($abcentry['chan']),
+                                        dbesc($dst_xchan),
+                                        dbesc($abcentry['cat']),
+                                        dbesc($abcentry['k']),
+                                        dbesc($abcentry['v'])
+                                    );
+                                }
+                            }
+                            $pg = q("select * from pgrp_member where uid = %d and xchan = '%s'",
+                                intval($abook['abook_channel']),
+                                dbesc($src_xchan)
+                            );
+                            if ($pg) {
+                                foreach ($pg as $pgentry) {
+                                    q("insert into pgrp_member (uid, gid, xchan) values (%d, %d, '%s')",
+                                        intval($pgentry['uid']),
+                                        intval($pgentry['gid']),
+                                        dbesc($dst_xchan)
+                                    );
+                                }
+                            }
+                            $ab = q("select * from abook where abook_channel = %d and abook_xchan = '%s'",
+                                intval($abook['abook_channel']),
+                                dbesc($src_xchan)
+                            );
+                            if ($ab) {
+                                $ab = array_shift($ab);
+                                unset($ab['abook_id']);
+                                $ab['abook_xchan'] = $dst_xchan;
+                                $ab['abook_created'] = $ab['abook_updated'] = $ab['abook_connected'] = datetime_convert();
+                                abook_store_lowlevel($ab);
+                            }
+
+                            $r = q(
+                                "SELECT abook.*, xchan.*
+                                FROM abook left join xchan on abook_xchan = xchan_hash
+                                WHERE abook_channel = %d and abook_id = %d LIMIT 1",
+                                intval($abook['abook_channel']),
+                                intval($dst_xchan)
+                            );
+                            if ($r) {
+                                $clone = array_shift($r);
+                                unset($clone['abook_id']);
+                                unset($clone['abook_account']);
+                                unset($clone['abook_channel']);
+                                $abconfig = load_abconfig($abook['abook_channel'], $clone['abook_xchan']);
+                                if ($abconfig) {
+                                    $clone['abconfig'] = $abconfig;
+                                }
+                                Libsync::build_sync_packet($abook['abook_channel'], ['abook' => [$clone]]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public static function move($src, $dst)
     {
 
