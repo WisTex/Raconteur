@@ -845,6 +845,7 @@ CREATE TABLE "outq" (
   "outq_notify" text NOT NULL,
   "outq_msg" text NOT NULL,
   "outq_priority" smallint NOT NULL DEFAULT '0',
+  "outq_log" text NOT NULL,
   PRIMARY KEY ("outq_hash")
 );
 create index "outq_account" on outq ("outq_account");
