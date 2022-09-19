@@ -829,6 +829,7 @@ CREATE TABLE IF NOT EXISTS `outq` (
   `outq_notify` mediumtext NOT NULL,
   `outq_msg` mediumtext NOT NULL,
   `outq_priority` smallint(6) NOT NULL DEFAULT 0 ,
+  `outq_log` mediumtext NOT NULL,
   PRIMARY KEY (`outq_hash`(191)),
   KEY `outq_account` (`outq_account`),
   KEY `outq_channel` (`outq_channel`),
