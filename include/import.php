@@ -1422,64 +1422,6 @@ function import_conv($channel, $convs)
 }
 
 /**
- * @brief Import mails.
- *
- * @param array $channel
- * @param array $mails
- * @param bool $sync (optional) default false
- */
-function import_mail($channel, $mails, $sync = false)
-{
-    // No longer used.
-    return;
-
-    if ($channel && $mails) {
-        foreach ($mails as $mail) {
-            if (array_key_exists('flags', $mail) && in_array('deleted', $mail['flags'])) {
-                q(
-                    "delete from mail where mid = '%s' and uid = %d",
-                    dbesc($mail['message_id']),
-                    intval($channel['channel_id'])
-                );
-                continue;
-            }
-            if (array_key_exists('flags', $mail) && in_array('recalled', $mail['flags'])) {
-                q(
-                    "update mail set mail_recalled = 1 where mid = '%s' and uid = %d",
-                    dbesc($mail['message_id']),
-                    intval($channel['channel_id'])
-                );
-                continue;
-            }
-
-            $m = get_mail_elements($mail);
-            if (! $m) {
-                continue;
-            }
-            $m['account_id'] = $channel['channel_account_id'];
-            $m['channel_id'] = $channel['channel_id'];
-            $mail_id = mail_store($m);
-            if ($sync && $mail_id) {
-                // Not applicable to Zap which does not support mail
-                // Run::Summon( [ 'Notifier','single_mail',$mail_id ] );
-            }
-        }
-    }
-}
-
-/**
- * @brief Synchronise mails.
- *
- * @see import_mail
- * @param array $channel
- * @param array $mails
- */
-function sync_mail($channel, $mails)
-{
-    import_mail($channel, $mails, true);
-}
-
-/**
  * @brief Synchronise files.
  *
  * @param array $channel

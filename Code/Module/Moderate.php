@@ -36,7 +36,7 @@ class Moderate extends Controller
                 intval(ITEM_MODERATED)
             );
             if (!$r) {
-                info(t('No entries.') . EOL);
+                info(t('No posts requiring approval at this time.') . EOL);
             }
         }
 
