@@ -4,7 +4,6 @@ use Code\Lib\IConfig;
 use Code\Lib\Libzot;
 use Code\Web\HTTPSig;
 use Code\Lib\Apps;
-use Code\Lib\Connect;
 use Code\Lib\LibBlock;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;
@@ -15,6 +14,8 @@ use Code\Access\PermissionLimits;
 use Code\Lib\Menu;
 use Code\Lib\MenuItem;
 use Code\Storage\Stdio;
+
+require_once('include/attach.php');
 
 /**
  * @brief Import a channel.
@@ -1429,8 +1430,6 @@ function import_conv($channel, $convs)
  */
 function sync_files($channel, $files)
 {
-
-    require_once('include/attach.php');
 
     if ($channel && $files) {
         $limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
