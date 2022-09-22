@@ -1,0 +1,6 @@
+version: 1
+url: $baseurl/moderate
+requires: local_channel
+name: Moderate
+photo: icon:gavel
+categories: nav_featured_app, Networking

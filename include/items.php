@@ -4,7 +4,6 @@
  * @brief Items related functions.
  */
 
-use Code\Lib as Zlib;
 use Code\Lib\Libzot;
 use Code\Lib\Libsync;
 use Code\Lib\AccessList;
@@ -2308,30 +2307,27 @@ function item_update_parent_commented($item) {
 
 function send_status_notifications($item)
 {
-
-    // only send notifications for comments
     // logger('notifications: ' . print_r($item, true));
-
-    if ($item['mid'] == $item['parent_mid'] && intval($item['item_blocked']) !== ITEM_MODERATED) {
-        return;
-    }
     $original_author = false;
 
-    if ($item['mid'] == $item['parent_mid']) {
-        // This is a moderated top-level post. Find the original author.
-        if (str_contains($item['body'],'[/share]')) {
-            preg_match("/portable_id='(.*?)'/ism", $item['body'], $matches);
-            logger('matches: ' . print_r($matches, true));
-            if ($matches) {
-                $s = q("select * from xchan where xchan_hash = '%s'",
-                    dbesc(urldecode($matches[1]))
-                );
-                if ($s) {
-                    $original_author = array_shift($s);
+    if ($item['mid'] === $item['parent_mid']) {
+        if (intval($item['item_blocked']) === ITEM_MODERATED) {
+            if (str_contains($item['body'],'[/share]')) {
+                preg_match("/portable_id='(.*?)'/ism", $item['body'], $matches);
+                logger('matches: ' . print_r($matches, true));
+                if ($matches) {
+                    $s = q("select * from xchan where xchan_hash = '%s'",
+                        dbesc(urldecode($matches[1]))
+                    );
+                    if ($s) {
+                        $original_author = array_shift($s);
+                    }
                 }
             }
         }
-
+        else {
+            return;
+        }
     }
 
     $notify = false;
@@ -2350,21 +2346,21 @@ function send_status_notifications($item)
         $thr_parent_id = $r[0]['id'];
     }
 
-    $r = q("select channel_hash from channel where channel_id = %d limit 1",
-        intval($item['uid'])
-    );
-    if (!$r)
+    $r = Channel::from_id($item['uid']);
+    if (!$r) {
         return;
+    }
 
     // my own post - no notification needed
-    if ($item['author_xchan'] === $r[0]['channel_hash'] && intval($item['item_blocked']) !== ITEM_MODERATED) {
+    if ($item['author_xchan'] === $r['channel_hash'] && intval($item['item_blocked']) !== ITEM_MODERATED) {
         return;
     }
 
     // I'm the owner - notify me
 
-    if($item['owner_xchan'] === $r[0]['channel_hash'])
+    if ($item['owner_xchan'] === $r['channel_hash']) {
         $notify = true;
+    }
 
     // Was I involved in this conversation?
 
@@ -2372,28 +2368,29 @@ function send_status_notifications($item)
         dbesc($item['parent_mid']),
         intval($item['uid'])
     );
-    if($x) {
-        foreach($x as $xx) {
-            if($xx['author_xchan'] === $r[0]['channel_hash']) {
-
+    if ($x) {
+        foreach ($x as $xx) {
+            if ($xx['author_xchan'] === $r[0]['channel_hash']) {
                 $notify = true;
 
                 // check for an unfollow thread activity - we should probably decode the obj and check the id
                 // but it will be extremely rare for this to be wrong.
 
-                if(($xx['verb'] === ACTIVITY_IGNORE)
-                    && ($xx['obj_type'] === ACTIVITY_OBJ_NOTE || $xx['obj_type'] === ACTIVITY_OBJ_PHOTO)
-                    && ($xx['parent'] != $xx['id']))
+                if (($xx['verb'] === ACTIVITY_IGNORE)
+                        && ($xx['obj_type'] === ACTIVITY_OBJ_NOTE || $xx['obj_type'] === ACTIVITY_OBJ_PHOTO)
+                        && ($xx['parent'] != $xx['id'])) {
                     $unfollowed = true;
+                }
             }
-            if($xx['id'] == $xx['parent']) {
+            if ($xx['id'] == $xx['parent']) {
                 $parent = $xx['parent'];
             }
         }
     }
 
-    if($unfollowed)
+    if ($unfollowed) {
         return;
+    }
 
     if (intval($item['item_private']) === 2) {
         $notify_type = NOTIFY_MAIL;
@@ -2407,7 +2404,8 @@ function send_status_notifications($item)
     else {
         $notify_type = NOTIFY_COMMENT;
     }
-   $link =  z_root() . (($notify_type === NOTIFY_MODERATE) ? '/moderate' : '/display' ). '/?mid=' . gen_link_id($item['mid']);
+    $link =  z_root() . (($notify_type === NOTIFY_MODERATE) ? '/moderate' : '/display' )
+            . '/?mid=' . gen_link_id($item['mid']);
     $y = q("select id from notify where link = '%s' and uid = %d limit 1",
         dbesc($link),
         intval($item['uid'])
@@ -2423,7 +2421,7 @@ function send_status_notifications($item)
     Enotify::submit([
         'type'         => $notify_type,
         'from_xchan'   => $original_author ? $original_author['xchan_hash'] : $item['author_xchan'],
-        'to_xchan'     => $r[0]['channel_hash'],
+        'to_xchan'     => $r['channel_hash'],
         'item'         => $item,
         'link'         => $link,
         'verb'         => $item['verb'],
@@ -3146,7 +3144,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
     }
 
 
-    // Send Announce activities for group comments so they will show up in microblog streams
+    // Send Announce activities for group comments, so they will show up in microblog streams
 
     if ($group && $parent) {
         logger('comment arrived in group', LOGGER_DEBUG);
@@ -3168,7 +3166,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         if ($edit) {
             if (intval($item['item_deleted'])) {
                 drop_item($item['id'],DROPITEM_PHASE1);
-                Run::Summon([ 'Notifier','drop',$item['id'] ]);
+                Run::Summon(['Notifier', 'drop', $item['id'] ]);
                 return;
             }
             return;
@@ -3202,23 +3200,16 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         }
 
         $arr['author_xchan'] = $channel['channel_hash'];
-
         $arr['item_wall'] = 1;
-
         $arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
-
         $arr['item_origin'] = 1;
-
         $arr['item_thread_top'] = 0;
-
         $arr['allow_cid'] = $channel['channel_allow_cid'];
         $arr['allow_gid'] = $channel['channel_allow_gid'];
         $arr['deny_cid']  = $channel['channel_deny_cid'];
         $arr['deny_gid']  = $channel['channel_deny_gid'];
         $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
-
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
-
 
         $post = item_store($arr);
         $post_id = $post['item_id'];
@@ -3235,13 +3226,10 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         return;
     }
 
-
-
     // Change this copy of the post to a forum head message and deliver to all the tgroup members
     // also reset all the privacy bits to the forum default permissions
 
     $private = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
-
     $item_origin = ($item['item_deleted']) ? 0 : 1;
     $item_wall = 1;
     $item_uplink = 0;
@@ -3260,7 +3248,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
     else {
         $item_uplink = 1;
         if (! $edit) {
-            $r = q("update item set source_xchan = owner_xchan where id = %d",
+            q("update item set source_xchan = owner_xchan where id = %d",
                 intval($item_id)
             );
         }
