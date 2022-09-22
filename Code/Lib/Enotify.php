@@ -153,6 +153,10 @@ class Enotify
             $itemlink = z_root() . '/display/?mid=' . gen_link_id($params['item']['mid']);
         }
 
+        if (intval($params['type'] === NOTIFY_MODERATE)) {
+            $moderated = true;
+        }
+
         if (in_array(intval($params['type']), [NOTIFY_COMMENT, NOTIFY_RESHARE])) {
             // logger("notification: params = " . print_r($params, true), LOGGER_DEBUG);
 
@@ -358,7 +362,7 @@ class Enotify
 
 
 
-        if ($params['type'] == NOTIFY_WALL) {
+        if (in_array($params['type'], [NOTIFY_WALL, NOTIFY_MODERATE])) {
             $subject = sprintf(t('[$Projectname:Notify] %s posted to your profile wall'), $sender['xchan_name']);
 
             $moderated = ($params['item']['item_blocked'] == ITEM_MODERATED);

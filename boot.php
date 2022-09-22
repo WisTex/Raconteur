@@ -375,7 +375,7 @@ define ( 'NOTIFY_TAGSHARE', 0x0100 );
 define ( 'NOTIFY_POKE',     0x0200 );
 define ( 'NOTIFY_LIKE',     0x0400 );
 define ( 'NOTIFY_RESHARE',  0x0800 );
-
+define ( 'NOTIFY_MODERATE', 0x1000 );
 define ( 'NOTIFY_SYSTEM',   0x8000 );
 
 /**
@@ -398,6 +398,7 @@ define ( 'VNOTIFY_PUBS',       0x1000 );
 define ( 'VNOTIFY_LIKE',       0x2000 );
 define ( 'VNOTIFY_FORUMS',     0x4000 );
 define ( 'VNOTIFY_REPORTS',    0x8000 );
+define ( 'VNOTIFY_MODERATE',   0x10000);
 
 
 /**
