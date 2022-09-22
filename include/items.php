@@ -2306,12 +2306,33 @@ function item_update_parent_commented($item) {
 }
 
 
-function send_status_notifications($item) {
+function send_status_notifications($item)
+{
 
     // only send notifications for comments
+    // logger('notifications: ' . print_r($item, true));
 
-    if($item['mid'] == $item['parent_mid'])
+    if ($item['mid'] == $item['parent_mid'] && intval($item['item_blocked']) !== ITEM_MODERATED) {
         return;
+    }
+    $original_author = false;
+
+    if ($item['mid'] == $item['parent_mid']) {
+        // This is a moderated top-level post. Find the original author.
+        if (str_contains($item['body'],'[/share]')) {
+            preg_match("/portable_id='(.*?)'/ism", $item['body'], $matches);
+            logger('matches: ' . print_r($matches, true));
+            if ($matches) {
+                $s = q("select * from xchan where xchan_hash = '%s'",
+                    dbesc(urldecode($matches[1]))
+                );
+                if ($s) {
+                    $original_author = array_shift($s);
+                }
+            }
+        }
+
+    }
 
     $notify = false;
     $unfollowed = false;
@@ -2319,7 +2340,7 @@ function send_status_notifications($item) {
     $parent = 0;
     $thr_parent_id = 0;
 
-    if(array_key_exists('verb',$item) && (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE))) {
+    if (array_key_exists('verb', $item) && (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE))) {
 
         $r = q("select id from item where mid = '%s' and uid = %d limit 1",
             dbesc($item['thr_parent']),
@@ -2332,13 +2353,13 @@ function send_status_notifications($item) {
     $r = q("select channel_hash from channel where channel_id = %d limit 1",
         intval($item['uid'])
     );
-    if(! $r)
+    if (!$r)
         return;
 
     // my own post - no notification needed
-    if($item['author_xchan'] === $r[0]['channel_hash'])
+    if ($item['author_xchan'] === $r[0]['channel_hash'] && intval($item['item_blocked']) !== ITEM_MODERATED) {
         return;
-
+    }
 
     // I'm the owner - notify me
 
@@ -2374,8 +2395,19 @@ function send_status_notifications($item) {
     if($unfollowed)
         return;
 
-    $link =  z_root() . '/display/?mid=' . gen_link_id($item['mid']);
-
+    if (intval($item['item_private']) === 2) {
+        $notify_type = NOTIFY_MAIL;
+    }
+    elseif (intval($item['item_blocked']) === ITEM_MODERATED) {
+        $notify_type = NOTIFY_MODERATE;
+    }
+    elseif ($item['verb'] === 'Announce') {
+        $notify_type = NOTIFY_RESHARE;
+    }
+    else {
+        $notify_type = NOTIFY_COMMENT;
+    }
+   $link =  z_root() . (($notify_type === NOTIFY_MODERATE) ? '/moderate' : '/display' ). '/?mid=' . gen_link_id($item['mid']);
     $y = q("select id from notify where link = '%s' and uid = %d limit 1",
         dbesc($link),
         intval($item['uid'])
@@ -2384,26 +2416,13 @@ function send_status_notifications($item) {
     if ($y) {
         $notify = false;
     }
-
-    if (intval($item['item_private']) === 2) {
-        $notify_type = NOTIFY_MAIL;
-    }
-    elseif ($item['verb'] === 'Announce') {
-        $notify_type = NOTIFY_RESHARE;
-    }
-    else {
-        $notify_type = NOTIFY_COMMENT;
-    }
-
-
     if (! $notify) {
         return;
     }
 
-
     Enotify::submit([
         'type'         => $notify_type,
-        'from_xchan'   => $item['author_xchan'],
+        'from_xchan'   => $original_author ? $original_author['xchan_hash'] : $item['author_xchan'],
         'to_xchan'     => $r[0]['channel_hash'],
         'item'         => $item,
         'link'         => $link,
@@ -2910,6 +2929,7 @@ function i_am_mentioned($channel,$item) {
 function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $group = false, $edit = false) {
 
     // btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
+    $moderated = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated');
 
     $sourced = check_item_source($channel['channel_id'],$item);
 
@@ -3013,6 +3033,10 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
 
         $arr['item_wall'] = 1;
         $arr['item_thread_top'] = 1;
+
+        if ($moderated) {
+            $arr['item_blocked'] = ITEM_MODERATED;
+        }
 
         $bb = "[share author='" . urlencode($item['author']['xchan_name']) .
             "' profile='"       . $item['author']['xchan_url'] .
@@ -3246,7 +3270,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
     $body  = $item['body'];
 
     $r = q("update item set item_uplink = %d, item_nocomment = %d, item_flags = %d, owner_xchan = '%s', replyto = '%s', allow_cid = '%s', allow_gid = '%s',
-        deny_cid = '%s', deny_gid = '%s', item_private = %d, comment_policy = '%s', title = '%s', body = '%s', item_wall = %d, item_origin = %d  where id = %d",
+        deny_cid = '%s', deny_gid = '%s', item_private = %d, item_blocked = %d, comment_policy = '%s', title = '%s', body = '%s', item_wall = %d, item_origin = %d  where id = %d",
         intval($item_uplink),
         intval($item_nocomment),
         intval($flag_bits),
@@ -3257,6 +3281,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         dbesc($channel['channel_deny_cid']),
         dbesc($channel['channel_deny_gid']),
         intval($private),
+        intval(($moderated) ? ($item['item_blocked'] | ITEM_MODERATED) : $item['item_blocked']),
         dbesc(map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'))),
         dbesc($title),
         dbesc($body),
