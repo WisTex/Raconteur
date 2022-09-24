@@ -39,7 +39,7 @@ class Receiver
         $this->data = null;
         $this->rawdata = null;
         $this->site_id = null;
-        $this->prvkey = Config::get('system', 'prvkey');
+        $this->prvkey = Config::Get('system', 'prvkey');
 
         if ($localdata) {
             $this->rawdata = $localdata;
@@ -61,7 +61,7 @@ class Receiver
 
         if ($this->rawdata) {
             $this->data = json_decode($this->rawdata, true);
-            if (($this->data) && (!is_array($this->data)) && (substr($this->data, 0, 1) === "{")) {
+            if (($this->data) && (!is_array($this->data)) && (str_starts_with($this->data, "{"))) {
                 // Multiple json encoding has been seen in the wild and needs to be fixed on the sending side.
                 // Proceed anyway and log the event with a backtrace.
 

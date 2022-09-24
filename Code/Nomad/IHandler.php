@@ -4,7 +4,6 @@ namespace Code\Nomad;
 
 interface IHandler
 {
-
     public function Notify($data, $hub);
 
     public function Rekey($sender, $data, $hub);

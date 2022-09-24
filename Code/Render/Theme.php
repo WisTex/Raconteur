@@ -11,9 +11,7 @@ use Exception;
 
 class Theme
 {
-
     public static $system_theme = null;
-
     public static $session_theme = null;
 
     /**
@@ -86,7 +84,7 @@ class Theme
                 file_exists('view/theme/' . $t . '/css/style.css') ||
                 file_exists('view/theme/' . $t . '/php/style.php')
             ) {
-                return (array($t));
+                return ([$t]);
             }
         }
 
@@ -96,7 +94,7 @@ class Theme
 
         $fallback = array_merge(glob('view/theme/*/css/style.css'), glob('view/theme/*/php/style.php'));
         if (count($fallback)) {
-            return (array(str_replace('view/theme/', '', substr($fallback[0], 0, -14))));
+            return ([str_replace('view/theme/', '', substr($fallback[0], 0, -14))]);
         }
         return [];
     }
@@ -123,7 +121,6 @@ class Theme
         $t = $theme[0];
         $s = ((count($theme) > 1) ? $theme[1] : '');
 
-        $opts = '';
         $opts = ((App::$profile_uid) ? '?f=&puid=' . App::$profile_uid : '');
 
         $schema_str = ((x(App::$layout, 'schema')) ? '&schema=' . App::$layout['schema'] : '');
@@ -161,16 +158,16 @@ class Theme
 
         $ext = substr($file, strrpos($file, '.') + 1);
 
-        $paths = array(
+        $paths = [
             "{$root}view/theme/$thname/$ext/$file",
             "{$root}view/theme/$parent/$ext/$file",
             "{$root}view/site/$ext/$file",
             "{$root}view/$ext/$file",
-        );
+        ];
 
         foreach ($paths as $p) {
 
-            if (strpos($p, 'NOPATH') !== false) {
+            if (str_contains($p, 'NOPATH')) {
                 continue;
             }
             if (file_exists($p)) {
@@ -202,7 +199,7 @@ class Theme
             }
         }
     
-        return $info ? $info : [ 'name' => $theme ] ;
+        return $info ?: [ 'name' => $theme ] ;
     
     }
 
@@ -220,7 +217,7 @@ class Theme
                     $root = App::$override_intltext_templates[$testroot][$s]["root"];
             } elseif (App::$override_templateroot) {
                 $newroot = App::$override_templateroot.$root;
-                if ($newroot != '' && substr($newroot, -1) != '/') {
+                if ($newroot != '' && !str_ends_with($newroot, '/')) {
                                $newroot .= '/';
                 }
                 $template = $t->get_email_template($s, $newroot);
@@ -245,7 +242,7 @@ class Theme
                     $root = App::$override_markup_templates[$testroot][$s]["root"];
             } elseif (App::$override_templateroot) {
                 $newroot = App::$override_templateroot.$root;
-                if ($newroot != '' && substr($newroot, -1) != '/') {
+                if ($newroot != '' && !str_ends_with($newroot, '/')) {
                                $newroot .= '/';
                 }
                     $template = $t->get_template($s, $newroot);
@@ -267,7 +264,7 @@ class Theme
     public static function get_screenshot($theme)
     {
 
-        $exts = array('.png', '.jpg');
+        $exts = ['.png', '.jpg'];
         foreach ($exts as $ext) {
             if (file_exists('view/theme/' . $theme . '/img/screenshot' . $ext)) {
                 return(z_root() . '/view/theme/' . $theme . '/img/screenshot' . $ext);
