@@ -4,7 +4,6 @@ use Code\Lib\IConfig;
 use Code\Lib\Libzot;
 use Code\Web\HTTPSig;
 use Code\Lib\Apps;
-use Code\Lib\Connect;
 use Code\Lib\LibBlock;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;
@@ -15,6 +14,8 @@ use Code\Access\PermissionLimits;
 use Code\Lib\Menu;
 use Code\Lib\MenuItem;
 use Code\Storage\Stdio;
+
+require_once('include/attach.php');
 
 /**
  * @brief Import a channel.
@@ -69,7 +70,7 @@ function import_channel($channel, $account_id, $seize, $newname = '')
         return $r[0];
     }
 
-    if (($r) || (check_webbie(array($channel['channel_address'])) !== $channel['channel_address'])) {
+    if (($r) || (check_webbie([$channel['channel_address']]) !== $channel['channel_address'])) {
         if ($r[0]['channel_guid'] === $channel['channel_guid'] || $r[0]['channel_hash'] === $channel['channel_hash']) {
             logger('mod_import: duplicate channel. ', print_r($channel, true));
             notice(t('Cannot create a duplicate channel identifier on this system. Import failed.') . EOL);
@@ -497,7 +498,7 @@ function import_objs($channel, $objs)
 
             $obj['obj_channel'] = $channel['channel_id'];
 
-            if ($baseurl && (strpos($obj['obj_url'], $baseurl . '/thing/') !== false)) {
+            if ($baseurl && (str_contains($obj['obj_url'], $baseurl . '/thing/'))) {
                 $obj['obj_url'] = str_replace($baseurl, z_root(), $obj['obj_url']);
             }
 
@@ -541,7 +542,7 @@ function sync_objs($channel, $objs)
 
             $obj['obj_channel'] = $channel['channel_id'];
 
-            if ($baseurl && (strpos($obj['obj_url'], $baseurl . '/thing/') !== false)) {
+            if ($baseurl && (str_contains($obj['obj_url'], $baseurl . '/thing/'))) {
                 $obj['obj_url'] = str_replace($baseurl, z_root(), $obj['obj_url']);
             }
 
@@ -1024,7 +1025,7 @@ function import_items($channel, $items, $sync = false, $relocate = null)
                 intval($channel['channel_id'])
             );
             if ($r) {
-                // flags may have changed and we are probably relocating the post,
+                // flags may have changed - and we are probably relocating the post,
                 // so force an update even if we have the same timestamp
 
                 if ($item['edited'] >= $r[0]['edited']) {
@@ -1225,9 +1226,9 @@ function import_menus($channel, $menus)
                         $mitem = [];
 
                         $mitem['mitem_link'] = str_replace('[channelurl]', z_root() . '/channel/' . $channel['channel_address'], $it['link']);
-                        $mitem['mitem_link'] = str_replace('[pageurl]', z_root() . '/page/' . $channel['channel_address'], $it['link']);
-                        $mitem['mitem_link'] = str_replace('[cloudurl]', z_root() . '/cloud/' . $channel['channel_address'], $it['link']);
-                        $mitem['mitem_link'] = str_replace('[baseurl]', z_root(), $it['link']);
+                        $mitem['mitem_link'] = str_replace('[pageurl]', z_root() . '/page/' . $channel['channel_address'], $mitem['mitem_link']);
+                        $mitem['mitem_link'] = str_replace('[cloudurl]', z_root() . '/cloud/' . $channel['channel_address'], $mitem['mitem_link']);
+                        $mitem['mitem_link'] = str_replace('[baseurl]', z_root(), $mitem['mitem_link']);
 
                         $mitem['mitem_desc'] = escape_tags($it['desc']);
                         $mitem['mitem_order'] = intval($it['order']);
@@ -1322,9 +1323,9 @@ function sync_menus($channel, $menus)
                         $mitem = [];
 
                         $mitem['mitem_link'] = str_replace('[channelurl]', z_root() . '/channel/' . $channel['channel_address'], $it['link']);
-                        $mitem['mitem_link'] = str_replace('[pageurl]', z_root() . '/page/' . $channel['channel_address'], $it['link']);
-                        $mitem['mitem_link'] = str_replace('[cloudurl]', z_root() . '/cloud/' . $channel['channel_address'], $it['link']);
-                        $mitem['mitem_link'] = str_replace('[baseurl]', z_root(), $it['link']);
+                        $mitem['mitem_link'] = str_replace('[pageurl]', z_root() . '/page/' . $channel['channel_address'], $mitem['mitem_link']);
+                        $mitem['mitem_link'] = str_replace('[cloudurl]', z_root() . '/cloud/' . $channel['channel_address'], $mitem['mitem_link']);
+                        $mitem['mitem_link'] = str_replace('[baseurl]', z_root(), $mitem['mitem_link']);
 
                         $mitem['mitem_desc'] = escape_tags($it['desc']);
                         $mitem['mitem_order'] = intval($it['order']);
@@ -1430,8 +1431,6 @@ function import_conv($channel, $convs)
 function sync_files($channel, $files)
 {
 
-    require_once('include/attach.php');
-
     if ($channel && $files) {
         $limit = engr_units_to_bytes(ServiceClass::fetch($channel['channel_id'], 'attach_upload_limit'));
 
@@ -1489,7 +1488,7 @@ function sync_files($channel, $files)
                     // by the existing directory. Use the same logic we use for
                     // duplicate files.
 
-                    if (strpos($att['filename'], '.') !== false) {
+                    if (str_contains($att['filename'], '.')) {
                         $basename = substr($att['filename'], 0, strrpos($att['filename'], '.'));
                         $ext = substr($att['filename'], strrpos($att['filename'], '.'));
                     } else {
@@ -1534,7 +1533,7 @@ function sync_files($channel, $files)
                     // Note: we use $att['hash'] below after it has been escaped to
                     // fetch the file contents.
                     // If the hash ever contains any escapable chars this could cause
-                    // problems. Currently it does not.
+                    // problems. Currently, it does not.
 
                     if (!isset($att['os_path'])) {
                         $att['os_path'] = '';
@@ -1595,7 +1594,7 @@ function sync_files($channel, $files)
                     } else {
                         // it's a file
                         // for the sync version of this algorithm (as opposed to 'offline import')
-                        // we will fetch the actual file from the source server so it can be
+                        // we will fetch the actual file from the source server, so that it can be
                         // streamed directly to disk and avoid consuming PHP memory if it's a huge
                         // audio/video file or something.
 
@@ -1747,7 +1746,7 @@ function sync_files($channel, $files)
                         $str = '';
                         foreach ($p as $k => $v) {
                             $matches = false;
-                            if (preg_match('/([^a-zA-Z0-9\-\_\.])/', $k, $matches)) {
+                            if (preg_match('/([^a-zA-Z0-9\-_.])/', $k, $matches)) {
                                 continue;
                             }
 

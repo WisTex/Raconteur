@@ -27,7 +27,7 @@ class SmartyInterface extends Smarty
         if (x(App::$theme_info, "extends")) {
             $template_dirs = $template_dirs + ['extends' => "view/theme/" . App::$theme_info["extends"] . '/tpl/'];
         }
-        $template_dirs = $template_dirs + array('base' => 'view/tpl/');
+        $template_dirs = $template_dirs + ['base' => 'view/tpl/'];
         $this->setTemplateDir($template_dirs);
 
         // Cannot use get_config() here because it is called during installation when there is no DB.

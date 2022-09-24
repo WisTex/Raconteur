@@ -1,6 +1,6 @@
-version: 1
+    65;6800;1cversion: 1
 url: $baseurl/moderate
 requires: local_channel
 name: Moderate
-photo: icon:gavel
+photo: icon:strikethrough
 categories: nav_featured_app, Networking

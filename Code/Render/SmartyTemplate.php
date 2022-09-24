@@ -5,7 +5,6 @@
 namespace Code\Render;
 
 use App;
-use Code\Render\Theme;
 use Code\Storage\Stdio;
 
 class SmartyTemplate implements TemplateEngine
@@ -77,7 +76,7 @@ class SmartyTemplate implements TemplateEngine
     {
 
         $lang = App::$language;
-        if ($root != '' && substr($root, -1) != '/') {
+        if ($root != '' && !str_ends_with($root, '/')) {
             $root .= '/';
         }
         foreach ([ $root . "view/$lang/$file", $root . "view/en/$file", '' ] as $template_file) {
