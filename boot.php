@@ -1950,13 +1950,13 @@ function check_php_cli() {
         ? App::$config['system']['php_path']
         : NULL;
 
-    if (isset($cfg) && is_executable(realpath($cfg))) {
-        return realpath($cfg);
+    if (isset($cfg) && is_executable($cfg)) {
+        return $cfg;
     }
 
     $path = shell_exec('which php');
-    if ($path && is_executable(realpath(trim($path)))) {
-        return realpath(trim($path));
+    if ($path && is_executable(trim($path))) {
+        return trim($path);
     }
 
     logger('PHP command line interpreter not found.');
