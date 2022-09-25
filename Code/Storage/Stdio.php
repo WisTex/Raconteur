@@ -48,7 +48,11 @@ Class Stdio {
     {
         $size = 0;
         while (!feof($in)) {
-            $size += fwrite($out, fread($in, $bufsize));
+            $written = fwrite($out, fread($in, $bufsize));
+            if ($written === false) {
+                break;
+            }
+            $size += $written;
         }
         return $size;
     }

@@ -30,7 +30,7 @@ class Comanche
     {
         $matches = [];
 
-        $cnt = preg_match_all("/\[comment\](.*?)\[\/comment\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[comment](.*?)\[\/comment]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], '', $s);
@@ -56,14 +56,14 @@ class Comanche
          * [/switch]
          */
 
-        $cnt = preg_match_all("/\[switch (.*?)\](.*?)\[default\](.*?)\[\/default\]\s*\[\/switch\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[switch (.*?)](.*?)\[default](.*?)\[\/default]\s*\[\/switch]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $switch_done = 0;
                 $switch_var = $this->get_condition_var($mtch[1]);
                 $default = $mtch[3];
                 $cases = [];
-                $cntt = preg_match_all("/\[case (.*?)\](.*?)\[\/case\]/ism", $mtch[2], $cases, PREG_SET_ORDER);
+                $cntt = preg_match_all("/\[case (.*?)](.*?)\[\/case]/ism", $mtch[2], $cases, PREG_SET_ORDER);
                 if ($cntt) {
                     foreach ($cases as $case) {
                         if ($case[1] === $switch_var) {
@@ -79,7 +79,7 @@ class Comanche
             }
         }
 
-        $cnt = preg_match_all("/\[if (.*?)\](.*?)\[else\](.*?)\[\/if\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[if (.*?)](.*?)\[else](.*?)\[\/if]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 if ($this->test_condition($mtch[1])) {
@@ -89,7 +89,7 @@ class Comanche
                 }
             }
         } else {
-            $cnt = preg_match_all("/\[if (.*?)\](.*?)\[\/if\]/ism", $s, $matches, PREG_SET_ORDER);
+            $cnt = preg_match_all("/\[if (.*?)](.*?)\[\/if]/ism", $s, $matches, PREG_SET_ORDER);
             if ($cnt) {
                 foreach ($matches as $mtch) {
                     if ($this->test_condition($mtch[1])) {
@@ -112,50 +112,50 @@ class Comanche
 
         $matches = null;
 
-        $cnt = preg_match("/\[layout\](.*?)\[\/layout\]/ism", $s, $matches);
+        $cnt = preg_match("/\[layout](.*?)\[\/layout]/ism", $s, $matches);
         if ($cnt) {
             App::$page['template'] = trim($matches[1]);
         }
 
-        $cnt = preg_match("/\[template=(.*?)\](.*?)\[\/template\]/ism", $s, $matches);
+        $cnt = preg_match("/\[template=(.*?)](.*?)\[\/template]/ism", $s, $matches);
         if ($cnt) {
             App::$page['template'] = trim($matches[2]);
             App::$page['template_style'] = trim($matches[2]) . '_' . $matches[1];
         }
 
-        $cnt = preg_match("/\[template\](.*?)\[\/template\]/ism", $s, $matches);
+        $cnt = preg_match("/\[template](.*?)\[\/template]/ism", $s, $matches);
         if ($cnt) {
             App::$page['template'] = trim($matches[1]);
         }
 
-        $cnt = preg_match("/\[theme=(.*?)\](.*?)\[\/theme\]/ism", $s, $matches);
+        $cnt = preg_match("/\[theme=(.*?)](.*?)\[\/theme]/ism", $s, $matches);
         if ($cnt) {
             App::$layout['schema'] = trim($matches[1]);
             App::$layout['theme'] = trim($matches[2]);
         }
 
-        $cnt = preg_match("/\[theme\](.*?)\[\/theme\]/ism", $s, $matches);
+        $cnt = preg_match("/\[theme](.*?)\[\/theme]/ism", $s, $matches);
         if ($cnt) {
             App::$layout['theme'] = trim($matches[1]);
         }
 
-        $cnt = preg_match("/\[navbar\](.*?)\[\/navbar\]/ism", $s, $matches);
+        $cnt = preg_match("/\[navbar](.*?)\[\/navbar]/ism", $s, $matches);
         if ($cnt) {
             App::$layout['navbar'] = trim($matches[1]);
         }
 
-        $cnt = preg_match_all("/\[webpage\](.*?)\[\/webpage\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[webpage](.*?)\[\/webpage]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             // only the last webpage definition is used if there is more than one
             foreach ($matches as $mtch) {
-                App::$layout['webpage'] = $this->webpage($a, $mtch[1]);
+                App::$layout['webpage'] = $this->webpage($mtch[1]);
             }
         }
     }
 
     public function parse_pass1($s)
     {
-        $cnt = preg_match_all("/\[region=(.*?)\](.*?)\[\/region\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[region=(.*?)](.*?)\[\/region]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 App::$layout['region_' . $mtch[1]] = $this->region($mtch[2], $mtch[1]);
@@ -240,7 +240,7 @@ class Comanche
     public function test_condition($s)
     {
 
-        if (preg_match('/\$(.*?)\s\~\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s~=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (stripos($x, trim($matches[2])) !== false) {
                 return true;
@@ -248,7 +248,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\=\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s==\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x == trim($matches[2])) {
                 return true;
@@ -256,7 +256,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\!\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s!=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x != trim($matches[2])) {
                 return true;
@@ -264,7 +264,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\>\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s>=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x >= trim($matches[2])) {
                 return true;
@@ -272,7 +272,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\<\=\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s<=\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x <= trim($matches[2])) {
                 return true;
@@ -280,7 +280,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\>\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s>\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x > trim($matches[2])) {
                 return true;
@@ -288,7 +288,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\>\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s>\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if ($x < trim($matches[2])) {
                 return true;
@@ -296,7 +296,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\{\}\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\{}\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (is_array($x) && in_array(trim($matches[2]), $x)) {
                 return true;
@@ -304,7 +304,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\$(.*?)\s\{\*\}\s(.*?)$/', $s, $matches)) {
+        if (preg_match('/\$(.*?)\s\{\*}\s(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (is_array($x) && array_key_exists(trim($matches[2]), $x)) {
                 return true;
@@ -312,7 +312,7 @@ class Comanche
             return false;
         }
 
-        if (preg_match('/\!\$(.*?)$/', $s, $matches)) {
+        if (preg_match('/!$(.*?)$/', $s, $matches)) {
             $x = $this->get_condition_var($matches[1]);
             if (!$x) {
                 return true;
@@ -345,7 +345,7 @@ class Comanche
         $channel_id = $this->get_channel_id();
         $name = $s;
 
-        $cnt = preg_match_all("/\[var=(.*?)\](.*?)\[\/var\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[var=(.*?)](.*?)\[\/var]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $var[$mtch[1]] = $mtch[2];
@@ -357,6 +357,7 @@ class Comanche
             $m = Menu::fetch($name, $channel_id, get_observer_hash());
             return Menu::render($m, $class, $edit = false, $var);
         }
+        return '';
     }
 
 
@@ -365,6 +366,7 @@ class Comanche
         if (array_key_exists($match[1], App::$page)) {
             return App::$page[$match[1]];
         }
+        return '';
     }
 
     /**
@@ -399,7 +401,7 @@ class Comanche
         $name = $s;
         $class = (($class) ? $class : 'bblock widget');
 
-        $cnt = preg_match_all("/\[var=(.*?)\](.*?)\[\/var\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[var=(.*?)](.*?)\[\/var]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $var[$mtch[1]] = $mtch[2];
@@ -420,13 +422,13 @@ class Comanche
 
             if ($r) {
                 //check for eventual menus in the block and parse them
-                $cnt = preg_match_all("/\[menu\](.*?)\[\/menu\]/ism", $r[0]['body'], $matches, PREG_SET_ORDER);
+                $cnt = preg_match_all("/\[menu](.*?)\[\/menu]/ism", $r[0]['body'], $matches, PREG_SET_ORDER);
                 if ($cnt) {
                     foreach ($matches as $mtch) {
                         $r[0]['body'] = str_replace($mtch[0], $this->menu(trim($mtch[1])), $r[0]['body']);
                     }
                 }
-                $cnt = preg_match_all("/\[menu=(.*?)\](.*?)\[\/menu\]/ism", $r[0]['body'], $matches, PREG_SET_ORDER);
+                $cnt = preg_match_all("/\[menu=(.*?)](.*?)\[\/menu]/ism", $r[0]['body'], $matches, PREG_SET_ORDER);
                 if ($cnt) {
                     foreach ($matches as $mtch) {
                         $r[0]['body'] = str_replace($mtch[0], $this->menu(trim($mtch[2]), $mtch[1]), $r[0]['body']);
@@ -514,16 +516,15 @@ class Comanche
      * But leave it open to have richer templating options and perhaps ultimately discard this one, once we have a better idea
      * of what template and webpage options we might desire.
      *
-     * @param[in,out] array $a
      * @param string $s
      * @return array
      */
-    public function webpage(&$a, $s)
+    public function webpage($s)
     {
         $ret = [];
         $matches = [];
 
-        $cnt = preg_match_all("/\[authored\](.*?)\[\/authored\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[authored](.*?)\[\/authored]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $ret['authored'] = $mtch[1];
@@ -544,7 +545,7 @@ class Comanche
         $vars = [];
         $matches = [];
 
-        $cnt = preg_match_all("/\[var=(.*?)\](.*?)\[\/var\]/ism", $text, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[var=(.*?)](.*?)\[\/var]/ism", $text, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $vars[$mtch[1]] = $mtch[2];
@@ -611,6 +612,7 @@ class Comanche
         if (function_exists($func)) {
             return $func($vars);
         }
+        return '';
     }
 
 
@@ -621,7 +623,7 @@ class Comanche
 
         $matches = [];
 
-        $cnt = preg_match_all("/\[menu\](.*?)\[\/menu\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[menu](.*?)\[\/menu]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->menu(trim($mtch[1])), $s);
@@ -631,41 +633,41 @@ class Comanche
         // menu class e.g. [menu=horizontal]my_menu[/menu] or [menu=tabbed]my_menu[/menu]
         // allows different menu renderings to be applied
 
-        $cnt = preg_match_all("/\[menu=(.*?)\](.*?)\[\/menu\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[menu=(.*?)](.*?)\[\/menu]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->menu(trim($mtch[2]), $mtch[1]), $s);
             }
         }
-        $cnt = preg_match_all("/\[block\](.*?)\[\/block\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[block](.*?)\[\/block]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->block(trim($mtch[1])), $s);
             }
         }
 
-        $cnt = preg_match_all("/\[block=(.*?)\](.*?)\[\/block\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[block=(.*?)](.*?)\[\/block]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->block(trim($mtch[2]), trim($mtch[1])), $s);
             }
         }
 
-        $cnt = preg_match_all("/\[js\](.*?)\[\/js\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[js](.*?)\[\/js]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->js(trim($mtch[1])), $s);
             }
         }
 
-        $cnt = preg_match_all("/\[css\](.*?)\[\/css\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[css](.*?)\[\/css]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->css(trim($mtch[1])), $s);
             }
         }
 
-        $cnt = preg_match_all("/\[widget=(.*?)\](.*?)\[\/widget\]/ism", $s, $matches, PREG_SET_ORDER);
+        $cnt = preg_match_all("/\[widget=(.*?)](.*?)\[\/widget]/ism", $s, $matches, PREG_SET_ORDER);
         if ($cnt) {
             foreach ($matches as $mtch) {
                 $s = str_replace($mtch[0], $this->widget(trim($mtch[1]), $mtch[2]), $s);
@@ -692,7 +694,7 @@ class Comanche
      */
     public function register_page_template($arr)
     {
-        App::$page_layouts[$arr['template']] = array($arr['variant']);
+        App::$layout[$arr['template']] = [$arr['variant']];
         return;
     }
 }

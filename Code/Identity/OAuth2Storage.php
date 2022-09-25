@@ -13,7 +13,7 @@ class OAuth2Storage extends Pdo
      * @param string $password
      * @return bool
      */
-    public function checkUserCredentials($username, $password)
+    public function checkUserCredentials($username, $password): bool
     {
         $user = $this->getUser($username);
         if ($user) {
@@ -27,7 +27,7 @@ class OAuth2Storage extends Pdo
      * @param string $username
      * @return array|bool
      */
-    public function getUserDetails($username)
+    public function getUserDetails($username): array|bool
     {
         return $this->getUser($username);
     }
@@ -39,7 +39,7 @@ class OAuth2Storage extends Pdo
      * @param string $password
      * @return bool
      */
-    protected function checkPassword($user, $password)
+    protected function checkPassword($user, $password): bool
     {
 
         $x = account_verify_password($user, $password);
@@ -50,7 +50,7 @@ class OAuth2Storage extends Pdo
      * @param string $username
      * @return array|bool
      */
-    public function getUser($username)
+    public function getUser($username): bool|array
     {
 
         $x = Channel::from_id($username);
@@ -78,7 +78,7 @@ class OAuth2Storage extends Pdo
         ] );
     }
 
-    public function scopeExists($scope)
+    public function scopeExists($scope): bool
     {
       // Report that the scope is valid even if it's not.
       // We will only return a very small subset no matter what.
@@ -97,7 +97,7 @@ class OAuth2Storage extends Pdo
         return null;
     }
 
-    public function getUserClaims($user_id, $claims)
+    public function getUserClaims($user_id, $claims): array
     {
         // Populate the CLAIMS requested (if any).
         // @TODO: create a more reasonable/comprehensive list.
@@ -138,12 +138,12 @@ class OAuth2Storage extends Pdo
      * @param string $lastName
      * @return bool
      */
-    public function setUser($username, $password, $firstName = null, $lastName = null)
+    public function setUser($username, $password, $firstName = null, $lastName = null): bool
     {
         return true;
     }
 
-    public function setClientDetails($client_id, $client_secret = null, $redirect_uri = null, $grant_types = null, $scope = null, $user_id = null, $client_name = null)
+    public function setClientDetails($client_id, $client_secret = null, $redirect_uri = null, $grant_types = null, $scope = null, $user_id = null, $client_name = null): bool
     {
         // if it exists, update it.
         if ($this->getClientDetails($client_id)) {
@@ -155,10 +155,7 @@ class OAuth2Storage extends Pdo
         return $stmt->execute(compact('client_id', 'client_secret', 'redirect_uri', 'grant_types', 'scope', 'user_id', 'client_name'));
     }
 
-
-
-
-    public function checkRestrictedGrantType($client_id, $grant_type)
+    public function checkRestrictedGrantType($client_id, $grant_type): bool
     {
         $details = $this->getClientDetails($client_id);
         if ($details['grant_types']) {

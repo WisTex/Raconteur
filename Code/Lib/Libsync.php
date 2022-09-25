@@ -946,7 +946,7 @@ class Libsync
                 $xchan = array_shift($x);
             }
 
-            Libzot::check_location_move($sender['hash'], $arr['locations']);
+            // Libzot::check_location_move($sender['hash'], $arr['locations']);
 
             $xisting = q(
                 "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",

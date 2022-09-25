@@ -4,7 +4,6 @@ namespace Code\Update;
 
 class _1261
 {
-
     public function run()
     {
 

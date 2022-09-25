@@ -382,6 +382,7 @@ class Apps
             'Login' => t('Login'),
             'Mail' => t('Mail'),
             'Markup' => t('Markup'),
+            'Moderate' => t('Moderate'),
             'Mood' => t('Mood'),
             'My Chatrooms' => t('My Chatrooms'),
             'No Comment' => t('No Comment'),

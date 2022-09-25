@@ -375,7 +375,7 @@ define ( 'NOTIFY_TAGSHARE', 0x0100 );
 define ( 'NOTIFY_POKE',     0x0200 );
 define ( 'NOTIFY_LIKE',     0x0400 );
 define ( 'NOTIFY_RESHARE',  0x0800 );
-
+define ( 'NOTIFY_MODERATE', 0x1000 );
 define ( 'NOTIFY_SYSTEM',   0x8000 );
 
 /**
@@ -398,6 +398,7 @@ define ( 'VNOTIFY_PUBS',       0x1000 );
 define ( 'VNOTIFY_LIKE',       0x2000 );
 define ( 'VNOTIFY_FORUMS',     0x4000 );
 define ( 'VNOTIFY_REPORTS',    0x8000 );
+define ( 'VNOTIFY_MODERATE',   0x10000);
 
 
 /**
@@ -1949,13 +1950,13 @@ function check_php_cli() {
         ? App::$config['system']['php_path']
         : NULL;
 
-    if (isset($cfg) && is_executable(realpath($cfg))) {
-        return realpath($cfg);
+    if (isset($cfg) && is_executable($cfg)) {
+        return $cfg;
     }
 
     $path = shell_exec('which php');
-    if ($path && is_executable(realpath(trim($path)))) {
-        return realpath(trim($path));
+    if ($path && is_executable(trim($path))) {
+        return trim($path);
     }
 
     logger('PHP command line interpreter not found.');

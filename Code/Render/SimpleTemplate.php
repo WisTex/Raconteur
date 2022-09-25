@@ -1,14 +1,11 @@
 <?php
 
 namespace Code\Render;
-use Code\Render\Theme;
-
 
 define("KEY_NOT_EXISTS", '^R_key_not_Exists^');
 
 class SimpleTemplate implements TemplateEngine
 {
-
     public static $name = 'internal';
 
     public $r;
@@ -170,7 +167,7 @@ class SimpleTemplate implements TemplateEngine
             list($a,$b) = array_map('trim', explode('=', $newctx));
             $r[$a] = $this->_get_var($b);
         }
-        $this->nodes = array();
+        $this->nodes = [];
         $tpl = Theme::get_template($tplfile);
         $ret = $this->replace($tpl, $r);
         $this->_pop_stack();
@@ -204,13 +201,11 @@ class SimpleTemplate implements TemplateEngine
     {
         $node = $this->nodes[$m[1]];
         if (method_exists($this, "_replcb_" . $node[1])) {
-            $s = call_user_func(array($this, "_replcb_" . $node[1]), $node);
+            $s = call_user_func([$this, "_replcb_" . $node[1]], $node);
         } else {
             $s = "";
         }
-        $s = preg_replace_callback('/\|\|([0-9]+)\|\|/', array($this, "_replcb_node"), $s);
-
-        return $s;
+        return preg_replace_callback('/\|\|([0-9]+)\|\|/', [$this, "_replcb_node"], $s);
     }
 
     private function _replcb($m)
@@ -227,7 +222,7 @@ class SimpleTemplate implements TemplateEngine
         $this->done = false;
         while (!$this->done) {
             $this->done = true;
-            $s = preg_replace_callback('|{{ *([a-z]*) *([^}]*)}}([^{]*({{ *else *}}[^{]*)?){{ *end\1 *}}|', array($this, "_replcb"), $s);
+            $s = preg_replace_callback('|{{ *([a-z]*) *([^}]*)}}([^{]*({{ *else *}}[^{]*)?){{ *end\1 *}}|', [$this, "_replcb"], $s);
             if ($s == null) {
                 $this->_preg_error();
             }
@@ -249,9 +244,9 @@ class SimpleTemplate implements TemplateEngine
          * (?(1)\])                 if there was opened square bracket
          *                          (subgrup 1), match close bracket
          */
-        if (preg_match_all('/\$(\[)?([a-zA-Z0-9-_]+\.?)+(?(1)\])/', $s, $m)) {
+        if (preg_match_all('/\$(\[)?([a-zA-Z0-9-_]+\.?)+(?(1)])/', $s, $m)) {
             foreach ($m[0] as $var) {
-                $exp = str_replace(array("[", "]"), array("", ""), $var);
+                $exp = str_replace(["[", "]"], ["", ""], $var);
                 $exptks = explode("|", $exp);
 
                 $varn = $exptks[0];
@@ -309,7 +304,7 @@ class SimpleTemplate implements TemplateEngine
 
         $s = $this->_build_nodes($s);
 
-        $s = preg_replace_callback('/\|\|([0-9]+)\|\|/', array($this, "_replcb_node"), $s);
+        $s = preg_replace_callback('/\|\|([0-9]+)\|\|/', [$this, "_replcb_node"], $s);
         if ($s == null) {
             $this->_preg_error();
         }
@@ -345,10 +340,10 @@ class SimpleTemplate implements TemplateEngine
 
 function template_escape($s)
 {
-    return str_replace(array('$','{{'), array('!_Doll^Ars1Az_!','!_DoubLe^BraceS4Rw_!'), $s);
+    return str_replace(['$','{{'], ['!_Doll^Ars1Az_!','!_DoubLe^BraceS4Rw_!'], $s);
 }
 
 function template_unescape($s)
 {
-    return str_replace(array('!_Doll^Ars1Az_!','!_DoubLe^BraceS4Rw_!'), array('$','{{'), $s);
+    return str_replace(['!_Doll^Ars1Az_!','!_DoubLe^BraceS4Rw_!'], ['$','{{'], $s);
 }
