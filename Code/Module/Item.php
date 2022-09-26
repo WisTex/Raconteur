@@ -47,9 +47,6 @@ require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/security.php');
 
-
-use Code\Lib as Zlib;
-
 class Item extends Controller
 {
 
@@ -1451,7 +1448,6 @@ class Item extends Controller
         $datarray['attach'] = $attachments;
         $datarray['thr_parent'] = $thr_parent;
         $datarray['postopts'] = $postopts;
-        $datarray['item_unseen'] = intval($item_unseen);
         $datarray['item_wall'] = intval($item_wall);
         $datarray['item_origin'] = intval($item_origin);
         $datarray['item_type'] = $webpage;
@@ -1598,7 +1594,7 @@ class Item extends Controller
         }
 
         if (intval($datarray['item_unpublished'])) {
-            $draft_msg = t('Draft saved. Use <a href="stream?draft=1">Drafts</a> app to continue editing.');
+            $draft_msg = t('Draft saved. Use <a href="/stream?draft=1">Drafts</a> app to continue editing.');
         }
 
         if ($orig_post) {
@@ -1905,7 +1901,7 @@ class Item extends Controller
 
                 if ($complex) {
                     tag_deliver($i[0]['uid'], $i[0]['id']);
-                    if (intval($i[0]['item_wall']) && $complex) {
+                    if (intval($i[0]['item_wall'])) {
                         Run::Summon(['Notifier', 'drop', $i[0]['id']]);
                     }
                 }
@@ -1959,9 +1955,6 @@ class Item extends Controller
 
     public function extract_bb_poll_data(&$body, $item)
     {
-
-        $multiple = false;
-
         if (!str_contains($body, '[/question]') && !str_contains($body, '[/answer]')) {
             return false;
         }

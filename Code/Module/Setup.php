@@ -111,7 +111,7 @@ class Setup extends Controller
                 $adminmail = trim($_POST['adminmail']);
                 $siteurl = trim($_POST['siteurl']);
                 $sitename = trim($_POST['sitename']);
-    
+
                 if ($siteurl != z_root()) {
                     $test = Url::get($siteurl . '/setup/testrewrite');
                     if ((!$test['success']) || ($test['body'] !== 'ok')) {
@@ -409,7 +409,7 @@ class Setup extends Controller
             $phpath = '';
         }
 
-        $this->check_add($checks, t('Command line PHP') . ($passed ? " (<tt>$phpath</tt>)" : EMPTY_STR), $passed, false, $help);
+        $this->check_add($checks, t('Command line PHP') . ($passed ? " ($phpath)" : EMPTY_STR), $passed, false, $help);
 
         if ($passed) {
             $str = autoname(8);
