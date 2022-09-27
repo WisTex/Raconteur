@@ -1781,10 +1781,8 @@ class Item extends Controller
         }
 
         logger('post_json: ' . print_r($json, true), LOGGER_DEBUG);
-
-        echo json_encode($json);
-        killme();
-        // NOTREACHED
+        json_return_and_die($json);
+        return;
     }
 
 
@@ -1814,16 +1812,18 @@ class Item extends Controller
             );
 
             if ($i) {
+                $dropped_item = array_shift($i);
+
                 $can_delete = false;
                 $local_delete = false;
                 $regular_delete = false;
 
-                if (local_channel() && local_channel() == $i[0]['uid']) {
+                if (local_channel() && local_channel() == $dropped_item['uid']) {
                     $local_delete = true;
                 }
 
                 $ob_hash = get_observer_hash();
-                if ($ob_hash && ($ob_hash === $i[0]['author_xchan'] || $ob_hash === $i[0]['owner_xchan'] || $ob_hash === $i[0]['source_xchan'])) {
+                if ($ob_hash && ($ob_hash === $dropped_item['author_xchan'] || $ob_hash === $dropped_item['owner_xchan'] || $ob_hash === $dropped_item['source_xchan'])) {
                     $can_delete = true;
                     $regular_delete = true;
                 }
@@ -1834,7 +1834,7 @@ class Item extends Controller
 
                 if (is_site_admin()) {
                     $local_delete = true;
-                    if (intval($i[0]['item_origin'])) {
+                    if (intval($dropped_item['item_origin'])) {
                         $can_delete = true;
                     }
                 }
@@ -1845,32 +1845,32 @@ class Item extends Controller
                     return;
                 }
 
-                if ($i[0]['resource_type'] === 'event') {
+                if ($dropped_item['resource_type'] === 'event') {
                     // delete and sync the event separately
                     $r = q(
                         "SELECT * FROM event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
-                        dbesc($i[0]['resource_id']),
-                        intval($i[0]['uid'])
+                        dbesc($dropped_item['resource_id']),
+                        intval($dropped_item['uid'])
                     );
                     if ($r && $regular_delete) {
                         $sync_event = $r[0];
                         q(
                             "delete from event WHERE event_hash = '%s' AND uid = %d LIMIT 1",
-                            dbesc($i[0]['resource_id']),
-                            intval($i[0]['uid'])
+                            dbesc($dropped_item['resource_id']),
+                            intval($dropped_item['uid'])
                         );
                         $sync_event['event_deleted'] = 1;
-                        Libsync::build_sync_packet($i[0]['uid'], ['event' => [$sync_event]]);
+                        Libsync::build_sync_packet($dropped_item['uid'], ['event' => [$sync_event]]);
                     }
                 }
 
-                if ($i[0]['resource_type'] === 'photo') {
-                    attach_delete($i[0]['uid'], $i[0]['resource_id'], true);
-                    $ch = Channel::from_id($i[0]['uid']);
+                if ($dropped_item['resource_type'] === 'photo') {
+                    attach_delete($dropped_item['uid'], $dropped_item['resource_id'], true);
+                    $ch = Channel::from_id($dropped_item['uid']);
                     if ($ch && $regular_delete) {
-                        $sync = attach_export_data($ch, $i[0]['resource_id'], true);
+                        $sync = attach_export_data($ch, $dropped_item['resource_id'], true);
                         if ($sync) {
-                            Libsync::build_sync_packet($i[0]['uid'], ['file' => [$sync]]);
+                            Libsync::build_sync_packet($dropped_item['uid'], ['file' => [$sync]]);
                         }
                     }
                 }
@@ -1881,28 +1881,28 @@ class Item extends Controller
 
                 $complex = false;
 
-                if (intval($i[0]['item_type']) || ($local_delete && (!$can_delete))) {
-                    drop_item($i[0]['id']);
+                if (intval($dropped_item['item_type']) || ($local_delete && (!$can_delete))) {
+                    drop_item($dropped_item['id']);
                 } else {
                     // complex deletion that needs to propagate and be performed in phases
-                    drop_item($i[0]['id'], DROPITEM_PHASE1);
+                    drop_item($dropped_item['id'], DROPITEM_PHASE1);
                     $complex = true;
                 }
 
-                $r = q(
+                $sync = q(
                     "select * from item where id = %d",
-                    intval($i[0]['id'])
+                    intval($dropped_item['id'])
                 );
-                if ($r) {
-                    xchan_query($r);
-                    $sync_item = fetch_post_tags($r);
-                    Libsync::build_sync_packet($i[0]['uid'], [ 'item' => [ encode_item($sync_item[0], true)]]);
+                if ($sync) {
+                    xchan_query($sync);
+                    $sync_item = fetch_post_tags($sync);
+                    Libsync::build_sync_packet($dropped_item['uid'], [ 'item' => [ encode_item($sync_item[0], true)]]);
                 }
 
                 if ($complex) {
-                    tag_deliver($i[0]['uid'], $i[0]['id']);
-                    if (intval($i[0]['item_wall'])) {
-                        Run::Summon(['Notifier', 'drop', $i[0]['id']]);
+                    tag_deliver($dropped_item['uid'], $dropped_item['id']);
+                    if (intval($dropped_item['item_wall'])) {
+                        Run::Summon(['Notifier', 'drop', $dropped_item['id']]);
                     }
                 }
             }

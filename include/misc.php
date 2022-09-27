@@ -948,7 +948,7 @@ function get_tags($s)
     // Pull out single word tags. These can be @nickname, @first_last
     // and #hash tags.
 
-    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;\#])([@#]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
+    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;\#])([@#\!]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
         foreach ($match[1] as $mtch) {
             // Cleanup/ignore false positives
 
@@ -3000,6 +3000,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
     $termtype = ((strpos($tag, '#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
     $termtype = ((strpos($tag, '@') === 0)   ? TERM_MENTION  : $termtype);
+    $termtype = ((strpos($tag, '!') === 0)   ? TERM_FORUM    : $termtype);
 
     // Is it a hashtag of some kind?
 
@@ -3057,7 +3058,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
     // BEGIN mentions
 
-    if (in_array($termtype, [ TERM_MENTION ])) {
+    if (in_array($termtype, [TERM_MENTION, TERM_FORUM])) {
         // The @! tag will alter permissions
 
         // $in_network is set to false to avoid false positives on posts originating
@@ -3194,9 +3195,18 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
                     $url = $profile;
 
 					$zrl = (in_array($xc['xchan_network'], [ 'nomad', 'zot6' ]) ? 'zrl' : 'url');
-					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
 
-					$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                    if ($termtype === TERM_FORUM) {
+    					$newtag = '!' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
+	    				$body = str_replace('!' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                    }
+
+
+                    if ($termtype === TERM_MENTION) {
+    					$newtag = '@' . (($exclusive) ? '!' : '') . '[' . $zrl . '=' . $profile . ']' . $newname . '[/' . $zrl . ']';
+	    				$body = str_replace('@' . (($exclusive) ? '!' : '') . $name, $newtag, $body);
+                    }
+    
                     // append tag to str_tags
                     if (! stristr($str_tags, $newtag)) {
                         if (strlen($str_tags)) {

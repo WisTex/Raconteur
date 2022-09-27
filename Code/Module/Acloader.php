@@ -74,7 +74,7 @@ class Acloader extends Controller
             $x = q(
                 "select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s'",
                 intval(local_channel()),
-                dbesc(($type === 'm') ? '%post_mail%' : '%tag_deliver%')
+                dbesc(($type === 'm') ? '%post_mail%' : '%post_wall%')
             );
 
             $permitted = ids_to_array($x, 'xchan');
@@ -109,7 +109,7 @@ class Acloader extends Controller
         $contacts = [];
 
         if ($type == '' || $type == 'g') {
-            // Normal privacy groups
+            // Normal AccessList
 
             $r = q(
                 "SELECT pgrp.id, pgrp.hash, pgrp.gname
