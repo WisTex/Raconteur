@@ -30,7 +30,7 @@ class Libsync
 
         // logger('build_sync_packet');
 
-        $keychange = (($packet && array_key_exists('keychange', $packet)) ? true : false);
+        $keychange = $packet && array_key_exists('keychange', $packet);
         if ($keychange) {
             logger('keychange sync');
         }
@@ -90,7 +90,7 @@ class Libsync
             logger('packet: ' . print_r($packet, true), LOGGER_DATA, LOG_DEBUG);
         }
 
-        $info = (($packet) ? $packet : []);
+        $info = (($packet) ?: []);
         $info['type'] = 'sync';
         $info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
         $info['relocate'] = ['channel_address' => $channel['channel_address'], 'url' => z_root()];
@@ -108,7 +108,7 @@ class Libsync
             foreach ($channel as $k => $v) {
                 // filter out any joined tables like xchan
 
-                if (strpos($k, 'channel_') !== 0) {
+                if (!str_starts_with($k, 'channel_')) {
                     continue;
                 }
 
@@ -244,7 +244,7 @@ class Libsync
                 logger('packet: ' . print_r($packet, true), LOGGER_DATA, LOG_DEBUG);
             }
 
-            $info = (($packet) ? $packet : []);
+            $info = (($packet) ?: []);
             $info['type'] = 'sync';
             $info['encoding'] = 'red'; // note: not zot, this packet is very platform specific
 
@@ -295,7 +295,7 @@ class Libsync
         $result = [];
 
         $schema = (isset($arr['schema']) && $arr['schema']) ? $arr['schema'] : 'unknown';
-        $keychange = ((array_key_exists('keychange', $arr)) ? true : false);
+        $keychange = array_key_exists('keychange', $arr);
 
         foreach ($deliveries as $d) {
             $linked_channel = false;
@@ -404,10 +404,6 @@ class Libsync
                 import_conv($channel, $arr['conv']);
             }
 
-            if (array_key_exists('mail', $arr) && $arr['mail']) {
-                sync_mail($channel, $arr['mail']);
-            }
-
             if (array_key_exists('event', $arr) && $arr['event']) {
                 sync_events($channel, $arr['event']);
             }
@@ -433,9 +429,6 @@ class Libsync
             }
 
             if (array_key_exists('channel', $arr) && is_array($arr['channel']) && count($arr['channel'])) {
-                $remote_channel = $arr['channel'];
-                $remote_channel['channel_id'] = $channel['channel_id'];
-
                 if (array_key_exists('channel_pageflags', $arr['channel']) && intval($arr['channel']['channel_pageflags'])) {
                     // Several pageflags are site-specific and cannot be sync'd.
                     // Only allow those bits which are shareable from the remote and then
@@ -553,7 +546,7 @@ class Libsync
                         // just import the record.
                         $xc = [];
                         foreach ($abook as $k => $v) {
-                            if (strpos($k, 'xchan_') === 0) {
+                            if (str_starts_with($k, 'xchan_')) {
                                 $xc[$k] = $v;
                             }
                         }
@@ -567,7 +560,7 @@ class Libsync
                     }
 
                     foreach ($abook as $k => $v) {
-                        if (in_array($k, $disallowed) || (strpos($k, 'abook_') !== 0)) {
+                        if (in_array($k, $disallowed) || (!str_starts_with($k, 'abook_'))) {
                             continue;
                         }
                         if (!in_array($k, $fields)) {
@@ -581,7 +574,7 @@ class Libsync
                     }
 
                     $reconnect = false;
-                    if (array_key_exists('abook_instance', $clean) && $clean['abook_instance'] && strpos($clean['abook_instance'], z_root()) === false) {
+                    if (array_key_exists('abook_instance', $clean) && $clean['abook_instance'] && !str_contains($clean['abook_instance'], z_root())) {
                         // guest pass or access token - don't try to probe since it is one-way
                         // we are relying on the undocumented behaviour that the abook record also contains the xchan
                         if ($abook['xchan_network'] === 'token') {
@@ -823,7 +816,7 @@ class Libsync
             }
 
             if (array_key_exists('profile', $arr) && is_array($arr['profile']) && count($arr['profile'])) {
-                $disallowed = array('id', 'aid', 'uid', 'guid');
+                $disallowed = ['id', 'aid', 'uid', 'guid'];
 
                 foreach ($arr['profile'] as $profile) {
                     // Multiple profiles are not supported here.
@@ -948,13 +941,13 @@ class Libsync
 
             // Libzot::check_location_move($sender['hash'], $arr['locations']);
 
-            $xisting = q(
+            $existing = q(
                 "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
                 dbesc($sender['hash'])
             );
 
-            if (!$xisting) {
-                $xisting = [];
+            if (!$existing) {
+                $existing = [];
             }
 
             // See if a primary is specified
@@ -989,12 +982,12 @@ class Libsync
                     continue;
                 }
 
-                for ($x = 0; $x < count($xisting); $x++) {
+                for ($x = 0; $x < count($existing); $x++) {
                     if (
-                        ($xisting[$x]['hubloc_url'] === $location['url'])
-                        && ($xisting[$x]['hubloc_sitekey'] === $location['sitekey'])
+                        ($existing[$x]['hubloc_url'] === $location['url'])
+                        && ($existing[$x]['hubloc_sitekey'] === $location['sitekey'])
                     ) {
-                        $xisting[$x]['updated'] = true;
+                        $existing[$x]['updated'] = true;
                     }
                 }
 
@@ -1175,21 +1168,20 @@ class Libsync
                 $changed = true;
 
                 if ($location['primary']) {
-                    $r = q(
+                    $result = q(
                         "select * from hubloc where hubloc_addr = '%s' and hubloc_sitekey = '%s' limit 1",
                         dbesc($location['address']),
                         dbesc($location['sitekey'])
                     );
-                    if ($r) {
-                        hubloc_change_primary($r[0]);
-                    }
+                    if ($result) {
+                        hubloc_change_primary(array_shift($result));                   }
                 }
             }
 
             // get rid of any hubs we have for this channel which weren't reported.
 
-            if ($xisting) {
-                foreach ($xisting as $x) {
+            if ($existing) {
+                foreach ($existing as $x) {
                     if (!array_key_exists('updated', $x)) {
                         logger('Deleting unreferenced hub location ' . $x['hubloc_addr']);
                         hubloc_delete($x);
