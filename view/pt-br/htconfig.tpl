@@ -97,6 +97,7 @@ App::$config['system']['directory_mode']  = DIRECTORY_MODE_NORMAL;
 
 App::$config['system']['theme'] = 'redbasic';
 
+App::$config['system']['ssl_exceptions'] = 'lndo.site';
 
 // PHP error logging setup
 // Before doing this ensure that the webserver has permission
