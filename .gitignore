@@ -24,6 +24,7 @@ __pycache__
 ## Ignore site specific files and folders
 .htconfig.php
 .htstartup.php
+.lando.local.yml
 favicon.*
 addon/
 widget/
