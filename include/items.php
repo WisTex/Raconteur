@@ -2370,7 +2370,7 @@ function send_status_notifications($item)
     );
     if ($x) {
         foreach ($x as $xx) {
-            if ($xx['author_xchan'] === $r[0]['channel_hash']) {
+            if ($xx['author_xchan'] === $r['channel_hash']) {
                 $notify = true;
 
                 // check for an unfollow thread activity - we should probably decode the obj and check the id
@@ -2404,12 +2404,15 @@ function send_status_notifications($item)
     else {
         $notify_type = NOTIFY_COMMENT;
     }
+
     $link =  z_root() . (($notify_type === NOTIFY_MODERATE) ? '/moderate' : '/display' )
             . '/?mid=' . gen_link_id($item['mid']);
+
     $y = q("select id from notify where link = '%s' and uid = %d limit 1",
         dbesc($link),
         intval($item['uid'])
     );
+
 
     if ($y) {
         $notify = false;
