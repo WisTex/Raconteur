@@ -1,6 +1,6 @@
 <?php
 
-// Set the following for your MySQL installation
+// Set the following for your database installation
 // Copy or rename this file to .htconfig.php
 
 $db_host = '{{$dbhost}}';
@@ -28,10 +28,10 @@ $db_type = '{{$dbtype}}'; // an integer. 0 or unset for mysql, 1 for postgres
 
 App::$config['system']['timezone'] = '{{$timezone}}';
 
-// What is your site name?
+// What is your site url? DO NOT ADD A TRAILING SLASH!
 
 App::$config['system']['baseurl'] = '{{$siteurl}}';
-App::$config['system']['sitename'] = '{{sitename}}';
+App::$config['system']['sitename'] = '{{$sitename}}';
 App::$config['system']['location_hash'] = '{{$site_id}}';
 
 // These lines set additional security headers to be sent with all responses
@@ -41,7 +41,7 @@ App::$config['system']['location_hash'] = '{{$site_id}}';
 
 App::$config['system']['transport_security_header'] = 1;
 App::$config['system']['content_security_policy'] = 1;
-
+App::$config['system']['ssl_cookie_protection'] = 1;
 
 // Your choices are REGISTER_OPEN, REGISTER_APPROVE, or REGISTER_CLOSED.
 // Be certain to create your own personal account before setting 
@@ -54,13 +54,32 @@ App::$config['system']['register_policy'] = REGISTER_OPEN;
 App::$config['system']['register_text'] = '';
 App::$config['system']['admin_email'] = '{{$adminmail}}';
 
+// Recommend you leave this set to 1. Set to 0 to let people register without 
+// proving they own the email address they register with.
+
+App::$config['system']['verify_email'] = 1;
+
+// Site access restrictions. By default we will create private sites.
+// Your choices are ACCESS_PRIVATE, ACCESS_PAID, ACCESS_TIERED, and ACCESS_FREE.
+// If you leave REGISTER_OPEN above, anybody may register on your
+// site, however your site will not be listed anywhere as an open
+// registration  hub. We will use the system access policy (below) 
+// to determine whether or not to list your site in the directory 
+// as an open hub where anybody may create accounts. Your choice of 
+// paid, tiered, or free determines how these listings will be presented.  
+
+
+App::$config['system']['access_policy'] = ACCESS_PRIVATE;
+
+// If you operate a public site, you might wish that people are directed
+// to a "sellpage" where you can describe for features or policies or service plans in depth.
+// This must be an absolute URL beginning with http:// or https:// .
+
+App::$config['system']['sellpage'] = '';
+
 // Maximum size of an imported message, 0 is unlimited
 
 App::$config['system']['max_import_size'] = 200000;
-
-// maximum size of uploaded photos
-
-App::$config['system']['maximagesize'] = 8000000;
 
 // Location of PHP command line processor
 
@@ -69,7 +88,7 @@ App::$config['system']['php_path'] = '{{$phpath}}';
 // Configure how we communicate with directory servers.
 // DIRECTORY_MODE_NORMAL     = directory client, we will find a directory
 // DIRECTORY_MODE_SECONDARY  = caching directory or mirror
-// DIRECTORY_MODE_PRIMARY    = main directory server
+// DIRECTORY_MODE_PRIMARY    = main directory server - one per realm
 // DIRECTORY_MODE_STANDALONE = "off the grid" or private directory services
 
 App::$config['system']['directory_mode']  = DIRECTORY_MODE_NORMAL;
@@ -78,3 +97,16 @@ App::$config['system']['directory_mode']  = DIRECTORY_MODE_NORMAL;
 
 App::$config['system']['theme'] = 'redbasic';
 
+App::$config['system']['ssl_exceptions'] = 'lndo.site';
+
+// PHP error logging setup
+// Before doing this ensure that the webserver has permission
+// to create and write to php.out in the top level web directory,
+// or change the name (below) to a file/path where this is allowed.
+
+ini_set('display_errors', '0');
+
+// Uncomment the following lines to turn on PHP error logging.
+//error_reporting(E_ERROR | E_PARSE ); 
+//ini_set('error_log','php.out'); 
+//ini_set('log_errors','1'); 

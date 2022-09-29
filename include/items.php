@@ -2370,7 +2370,7 @@ function send_status_notifications($item)
     );
     if ($x) {
         foreach ($x as $xx) {
-            if ($xx['author_xchan'] === $r[0]['channel_hash']) {
+            if ($xx['author_xchan'] === $r['channel_hash']) {
                 $notify = true;
 
                 // check for an unfollow thread activity - we should probably decode the obj and check the id
@@ -2404,12 +2404,15 @@ function send_status_notifications($item)
     else {
         $notify_type = NOTIFY_COMMENT;
     }
+
     $link =  z_root() . (($notify_type === NOTIFY_MODERATE) ? '/moderate' : '/display' )
             . '/?mid=' . gen_link_id($item['mid']);
+
     $y = q("select id from notify where link = '%s' and uid = %d limit 1",
         dbesc($link),
         intval($item['uid'])
     );
+
 
     if ($y) {
         $notify = false;
@@ -2618,7 +2621,7 @@ function tag_deliver($uid, $item_id) {
      */
 
 
-    $terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_MENTION) : false);
+    $terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],[TERM_MENTION, TERM_FORUM]) : false);
 
     $pterms = ((isset($item['term'])) ? get_terms_oftype($item['term'], [TERM_PCATEGORY, TERM_HASHTAG] ) : false);
 
@@ -2683,13 +2686,13 @@ function tag_deliver($uid, $item_id) {
             Hook::call('tagged', $arr);
 
             /**
-             * post to a group (aka forum) via normal @-mentions *only if* the group is public
+             * post to a group via group tags (!group) or normal @-mentions *only if* the group is public
              * but let the owner change this with a hidden pconfig and either allow
              * or deny this option regardless of the type of group
              */
 
             if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
-                if (get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated'])) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+                if ((intval($term['ttype']) === TERM_FORUM || get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated']))) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
                     logger('group mention delivery for ' . $u['channel_address']);
                     start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
@@ -2830,6 +2833,9 @@ function tgroup_check($uid, $item) {
         if (get_pconfig($uid,'system','post_via_mentions',in_array($role, ['forum','forum_moderated'])) && i_am_mentioned($u,$item)) {
             return true;
         }
+        elseif (i_am_mentioned($u,$item, true)) {
+            return true;
+        }
     }
 
     // see if we already have this item. Maybe it is being updated.
@@ -2879,7 +2885,7 @@ function tgroup_check($uid, $item) {
 }
 
 
-function i_am_mentioned($channel,$item) {
+function i_am_mentioned($channel,$item,$check_groups = false) {
 
     $link = $channel['xchan_url'];
 
@@ -2887,8 +2893,8 @@ function i_am_mentioned($channel,$item) {
 
     $tagged = false;
     $matches = [];
-
-    $terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_MENTION) : false);
+    $tagtype = $check_groups ? TERM_FORUM : TERM_MENTION;
+    $terms = ((isset($item['term'])) ? get_terms_oftype($item['term'], $tagtype) : false);
 
     if ($terms) {
         foreach ($terms as $term) {

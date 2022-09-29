@@ -33,7 +33,6 @@ class Enotify
 
     public static function submit($params)
     {
-
         logger('notification: entry', LOGGER_DEBUG);
 
         // throw a small amount of entropy into the system to breakup duplicates arriving at the same precise instant.

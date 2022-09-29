@@ -99,6 +99,7 @@ App::$config['system']['directory_mode']  = DIRECTORY_MODE_NORMAL;
 
 App::$config['system']['theme'] = 'redbasic';
 
+App::$config['system']['ssl_exceptions'] = 'lndo.site';
 
 // Konfiguracja rejstracji błędów PHP.
 // Zanim to zrobisz, upewnij się, że serwer WWW ma uprawnienia

@@ -178,8 +178,8 @@ function string2bb(element) {
 			template: contact_format
 		};
 
-		// Autocomplete forums
-		forums = {
+		// Autocomplete groups
+		groups = {
 			match: /(^|\s)(\!\!*)([^ \n]{2,})$/,
 			index: 3,
 			cache: true,
@@ -217,7 +217,7 @@ function string2bb(element) {
 		$(this).each(function() {
 			var editor = new Textarea(this);
 			var textcomplete = new Textcomplete(editor);
-			textcomplete.register([contacts,smilies,tags], {className:'acpopup', zIndex:1020});
+			textcomplete.register([contacts,groups,smilies,tags], {className:'acpopup', zIndex:1020});
 		});
 
 
@@ -243,8 +243,8 @@ function string2bb(element) {
 			template: contact_format,
 		};
 
-		// Autocomplete forums
-		forums = {
+		// Autocomplete groups
+		groups = {
 			match: /(^\!)([^\n]{2,})$/,
 			index: 2,
 			cache: true,

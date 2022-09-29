@@ -41,7 +41,7 @@ class Groups
             $x2 = q(
                 "select xchan from abconfig where chan = %d and cat = 'system' and k = 'their_perms' and v like '%s' and xchan in (" . $xc . ") ",
                 intval(local_channel()),
-                dbesc('%tag_deliver%')
+                dbesc('%post_wall%')
             );
 
             if ($x2) {
