@@ -1604,6 +1604,8 @@ function conv_sort($arr, $order)
 
     if (stristr($order, 'created')) {
         usort($parents, 'sort_thr_created');
+    } elseif (stristr($order, 'distance')) {
+        usort($parents, 'sort_thr_distance');
     } elseif (stristr($order, 'commented')) {
         usort($parents, 'sort_thr_commented');
     } elseif (stristr($order, 'updated')) {
@@ -1612,8 +1614,6 @@ function conv_sort($arr, $order)
         usort($parents, 'sort_thr_received');
     } elseif (stristr($order, 'ascending')) {
         usort($parents, 'sort_thr_created_rev');
-    } elseif (stristr($order, 'distance')) {
-        usort($parents, 'sort_thr_distance');
     }
     if ($parents) {
         foreach ($parents as $i => $_x) {
@@ -1714,7 +1714,7 @@ function sort_thr_distance($a, $b)
     if (!isset($b['distance'])) {
         $b['distance'] = 999999999;
     }
-    return strcmp($b['distance'], $a['distance']);
+    return floatval($a['distance']) <=> floatval($b['distance']);
 }
 
 function sort_thr_updated($a, $b)
@@ -1746,7 +1746,7 @@ function format_location($item)
         Hook::call('render_location', $locate);
         $location = ((strlen($locate['html'])) ? $locate['html'] : render_location_default($locate));
     }
-    return $location;
+    return $location . (!empty($item['distance']) ? t(' distance: ') . sprintf("%05.03f km",$item['distance']) : '');
 }
 
 function render_location_default($item)

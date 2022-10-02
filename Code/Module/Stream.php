@@ -86,6 +86,15 @@ class Stream extends Controller
         $distance = ((x($_REQUEST, 'distance')) ? $_REQUEST['distance'] : 0);
         $distance_from = ((x($_REQUEST,'distance_from')) ? notags(trim($_REQUEST['distance_from'])) : '');
 
+        if ($distance_from) {
+            $tmp = preg_split('/[ ,\/]/', $distance_from);
+            $distance_lat = floatval($tmp[0]);
+            $distance_lon = floatval($tmp[1]);
+            if (! ($distance_lat || $distance_lon)) {
+                $distance = 0;
+            }
+        }
+
         $c_order = get_pconfig(local_channel(), 'mod_stream', 'order', 0);
         switch ($c_order) {
             case 0:
@@ -579,18 +588,30 @@ class Stream extends Controller
             $items = fetch_post_tags($items, true);
         } elseif ($this->updating) {
             // Normal conversation view
-
             if ($order === 'post') {
                 $ordering = 'created';
             } elseif ($order === 'received') {
                 $ordering = 'changed';
+            } elseif ($distance) {
+                $ordering = 'distance asc, commented';
+                $sql_extra .= " and (lat != 0 or lon != 0) ";
             } else {
                 $ordering = 'commented';
             }
+            $base_query = ($distance)
+                ?  "SELECT item.parent AS item_id, 
+                    (6371 * acos(cos(radians(lat) )
+                    * cos( radians( $distance_lat ) )
+                    * cos( radians( $distance_lon ) - radians(lon) )
+                    + sin( radians(lat) )
+                    * sin( radians( $distance_lat ) )
+                    )) as distance from item"
+                : "SELECT item.parent AS item_id FROM item";
 
             if ($this->loading) {
                 // Fetch a page full of parent items for this page
-                $r = q("SELECT item.parent AS item_id FROM item 
+
+                $r = q("$base_query 
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
 					WHERE true $uids $item_thread_top $item_normal
@@ -599,10 +620,10 @@ class Stream extends Controller
 					$sql_extra3 $sql_extra $sql_options $sql_nets
 					$net_query2
 					ORDER BY $ordering DESC $pager_sql ");
+
             } else {
                 // this is an update
-
-                $r = q("SELECT item.parent AS item_id FROM item
+                $r = q("$base_query
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
 					WHERE true $uids $item_normal_update $simple_update
@@ -621,6 +642,17 @@ class Stream extends Controller
                     dbesc($parents_str)
                 );
 
+                if ($distance) {
+                    foreach ($r as $parent) {
+                        for($cnt = 0; $cnt < count($items); $cnt ++) {
+                            if ($parent['item_id'] === $items[$cnt]['id']) {
+                                $items[$cnt]['distance'] = $parent['distance'];
+                            }
+                        }
+                    }
+                }
+
+    
                 xchan_query($items, true);
                 $items = fetch_post_tags($items, true);
                 $items = conv_sort($items, $ordering);
