@@ -196,7 +196,7 @@ class Channel
         if ($set_location) {
             $lat = false;
             $lon = false;
-            $tmp = explode(',', $set_location);
+            $tmp = preg_split('/[ ,\/]/', $set_location);
             if (count($tmp) > 1) {
                 $lat = floatval(trim($tmp[0]));
                 $lon = floatval(trim($tmp[1]));
