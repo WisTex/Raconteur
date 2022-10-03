@@ -15,7 +15,7 @@ class Settings_menu
     {
 
         if (!local_channel()) {
-            return;
+            return '';
         }
 
 
@@ -42,47 +42,53 @@ class Settings_menu
 
         $hublocs = (($x && $x[0]['total'] > 1) ? true : false);
 
-        $tabs = array(
-            array(
+        $tabs = [
+            [
                 'label' => t('Account settings'),
                 'url' => z_root() . '/settings/account',
                 'selected' => ((argv(1) === 'account') ? 'active' : ''),
-            ),
+            ],
 
-            array(
+            [
                 'label' => t('Channel settings'),
                 'url' => z_root() . '/settings/channel',
                 'selected' => ((argv(1) === 'channel') ? 'active' : ''),
-            ),
+            ],
 
-        );
+        ];
 
-        $tabs[] = array(
+        $tabs[] = [
+            'label' => t('Edit profile'),
+            'url' => z_root() . '/settings/profile_edit',
+            'selected' => ((argv(1) === 'profile_edit') ? 'active' : ''),
+        ];
+
+        $tabs[] = [
             'label' => t('Display settings'),
             'url' => z_root() . '/settings/display',
             'selected' => ((argv(1) === 'display') ? 'active' : ''),
-        );
+        ];
 
-        $tabs[] = array(
+        $tabs[] = [
             'label' => t('Manage Blocks'),
             'url' => z_root() . '/superblock',
             'selected' => ((argv(0) === 'superblock') ? 'active' : ''),
-        );
+        ];
 
 
         if ($hublocs) {
-            $tabs[] = array(
+            $tabs[] = [
                 'label' => t('Manage locations'),
                 'url' => z_root() . '/locs',
                 'selected' => ((argv(1) === 'locs') ? 'active' : ''),
-            );
+            ];
         }
 
-        $tabs[] = array(
+        $tabs[] = [
             'label' => t('Export channel'),
             'url' => z_root() . '/uexport',
             'selected' => ''
-        );
+        ];
 
 //      if(Features::enabled(local_channel(),'oauth_clients')) {
 //          $tabs[] =   array(
@@ -93,11 +99,11 @@ class Settings_menu
 //      }
 
         if (Apps::system_app_installed(local_channel(), 'Clients')) {
-            $tabs[] = array(
+            $tabs[] = [
                 'label' => t('Client apps'),
                 'url' => z_root() . '/settings/oauth2',
                 'selected' => ((argv(1) === 'oauth2') ? 'active' : ''),
-            );
+            ];
         }
 
 //      if(Features::enabled(local_channel(),'access_tokens')) {
@@ -109,11 +115,11 @@ class Settings_menu
 //      }
 
       if(Apps::system_app_installed(local_channel(),'Roles')) {
-          $tabs[] = array(
+          $tabs[] = [
               'label' => t('Permission Roles'),
               'url' => z_root() . '/settings/permcats',
               'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
-          );
+          ];
       }
 
 
@@ -134,10 +140,10 @@ class Settings_menu
 //      }
 
         $tabtpl = Theme::get_template("generic_links_widget.tpl");
-        return replace_macros($tabtpl, array(
+        return replace_macros($tabtpl, [
             '$title' => t('Settings'),
             '$class' => 'settings-widget',
             '$items' => $tabs,
-        ));
+        ]);
     }
 }
