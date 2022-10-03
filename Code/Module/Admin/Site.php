@@ -333,7 +333,7 @@ class Site
             '$default_expire_days' => ['default_expire_days', t('Expiration period in days for imported streams and cached images'), intval(get_config('system', 'default_expire_days', 60)), t('0 for no expiration of imported content')],
             '$active_expire_days' => ['active_expire_days', t('Do not expire any posts which have comments less than this many days ago'), intval(get_config('system', 'active_expire_days', 7)), ''],
             '$sellpage' => ['site_sellpage', t('Public servers: Optional landing (marketing) webpage for new registrants'), get_config('system', 'sellpage', ''), sprintf(t('Create this page first. Default is %s/register'), z_root())],
-            '$first_page' => ['first_page', t('Page to display after creating a new channel'), get_config('system', 'workflow_channel_next', 'profiles'), t('Default: profiles')],
+            '$first_page' => ['first_page', t('Page to display after creating a new channel'), get_config('system', 'workflow_channel_next', 'settings/profile_edit'), t('Default: profiles')],
             '$location' => ['site_location', t('Site location'), get_config('system', 'site_location', ''), t('Region or country - shared with other sites')],
             '$form_security_token' => get_form_security_token("admin_site"),
         ]);
