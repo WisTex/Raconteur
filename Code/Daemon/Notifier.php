@@ -479,7 +479,7 @@ class Notifier
 
                 // @FIXME add any additional recipients such as mentions, etc.
 
-                if ($top_level_post) {
+                if ($top_level_post &&  !$targe_item['item_wall']) {
                     // remove clones who will receive the post via sync
                     self::$recipients = array_values(array_diff(self::$recipients, [ $target_item['owner_xchan'] ]));
                 }

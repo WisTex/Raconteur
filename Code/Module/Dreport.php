@@ -129,6 +129,7 @@ class Dreport extends Controller
                 case 'updated':
                     $r[$x]['gravity'] = 7;
                     $r[$x]['dreport_result'] = t('updated');
+                    break;
                 case 'update ignored':
                     $r[$x]['gravity'] = 8;
                     $r[$x]['dreport_result'] = t('update ignored');
