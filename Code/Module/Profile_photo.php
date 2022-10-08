@@ -232,7 +232,7 @@ class Profile_photo extends Controller
                 }
             }
 
-            goaway(z_root() . '/profiles');
+            goaway(z_root() . '/settings/profile_edit');
         }
 
         // A new photo was uploaded. Store it and save some important details
@@ -429,7 +429,7 @@ class Profile_photo extends Controller
                 }
 
                 Run::Summon(['Directory', local_channel()]);
-                goaway(z_root() . '/profiles');
+                goaway(z_root() . '/settings/profile_edit');
             }
 
             $r = q(

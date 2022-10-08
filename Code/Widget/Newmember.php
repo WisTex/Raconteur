@@ -36,7 +36,7 @@ class Newmember
             [
                 'profile_photo' => t('Upload profile photo'),
                 'cover_photo' => t('Upload cover photo'),
-                'profiles' => t('Edit your profile'),
+                'settings/profile_edit' => t('Edit your profile'),
             ],
 
             t('Find and Connect with others'),

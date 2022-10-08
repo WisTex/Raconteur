@@ -206,7 +206,7 @@ class Libprofile
                 $ret['edit'] = [z_root() . '/profiles', t('Edit Profiles'), '', t('Edit')];
                 $ret['menu']['cr_new'] = t('Create New Profile');
             } else {
-                $ret['edit'] = [z_root() . '/profiles/' . $uid, t('Edit Profile'), '', t('Edit')];
+                $ret['edit'] = [ z_root() . '/settings/profile_edit', t('Edit Profile'), '', t('Edit')];
             }
 
             $r = q(
