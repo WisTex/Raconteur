@@ -8,7 +8,7 @@ namespace Code\Module;
 use Code\Web\Controller;
 use Code\Lib\AbConfig;
 
-class Mastodon_export_follows extends Controller
+class Export_follows extends Controller
 {
     public function init()
     {
