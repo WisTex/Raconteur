@@ -4,7 +4,6 @@ namespace Code\Module;
 
 use Code\Web\Controller;
 use Code\Lib\Account;
-use Code\Lib\Channel;
 use Code\Render\Theme;
 
     
@@ -20,7 +19,7 @@ class Email_validation extends Controller
             if (Account::approve(trim(basename($_POST['token'])))) {
                 $success = true;
                 if (get_config('system', 'auto_channel_create')) {
-                    $next_page = get_config('system', 'workflow_channel_next', 'profiles');
+                    $next_page = get_config('system', 'workflow_channel_next', 'settings/profile_edit');
                 }
                 if ($next_page) {
                     goaway(z_root() . '/' . $next_page);
@@ -40,7 +39,7 @@ class Email_validation extends Controller
             $email = hex2bin(argv(1));
         }
 
-        $o = replace_macros(Theme::get_template('email_validation.tpl'), [
+        return replace_macros(Theme::get_template('email_validation.tpl'), [
             '$title' => t('Email Verification Required'),
             '$desc' => sprintf(t('A verification token was sent to your email address [%s]. Enter that token here to complete the account verification step. Please allow a few minutes for delivery, and check your spam folder if you do not see the message.'), $email),
             '$resend' => t('Resend Email'),
@@ -48,7 +47,5 @@ class Email_validation extends Controller
             '$submit' => t('Submit'),
             '$token' => ['token', t('Validation token'), '', ''],
         ]);
-
-        return $o;
     }
 }

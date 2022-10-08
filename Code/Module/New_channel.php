@@ -137,7 +137,7 @@ class New_channel extends Controller
 
         change_channel($result['channel']['channel_id']);
 
-        $next_page = get_config('system', 'workflow_channel_next', 'profiles');
+        $next_page = get_config('system', 'workflow_channel_next', 'settings/profile_edit');
         goaway(z_root() . '/' . $next_page);
     }
 
