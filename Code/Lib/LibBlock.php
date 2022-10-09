@@ -70,9 +70,9 @@ class LibBlock
         }
     }
 
-    public static function remove($channel_id, $entity)
+    public static function remove($channel_id, $entity): bool
     {
-        return q(
+        return (bool) q(
             "delete from block where block_channel_id = %d and block_entity = '%s'",
             intval($channel_id),
             dbesc($entity)
@@ -86,9 +86,10 @@ class LibBlock
         }
         $r = q(
             "select * from block where block_channel_id = %d and block_id = %d ",
-            intval($channel_id)
+            intval($channel_id),
+            intval($id)
         );
-        return (($r) ? array_shift($r) : $r);
+        return (($r) ? array_shift($r) : false);
     }
 
 
@@ -101,18 +102,18 @@ class LibBlock
         return self::fetch_from_cache($channel_id, $entity);
     }
 
-    public static function fetch($channel_id, $type = false)
+    public static function fetch($channel_id, $type = false): array
     {
         if (!intval($channel_id)) {
             return [];
         }
 
-        $sql_extra = (($type === false) ? EMPTY_STR : " and block_type = " . intval($type));
+        $sql_extra = (($type === false) ? '' : " and block_type = " . intval($type));
 
-        $r = q(
+        $blocks = q(
             "select * from block where block_channel_id = %d $sql_extra",
             intval($channel_id)
         );
-        return $r;
+        return ($blocks) ?: [];
     }
 }

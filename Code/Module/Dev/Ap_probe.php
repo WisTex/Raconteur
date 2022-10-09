@@ -9,6 +9,7 @@ use Code\Lib\Activity;
 use Code\Lib\Channel;
 use Code\Render\Theme;
 
+require_once('include/conversation.php');
 
 class Ap_probe extends Controller
 {
@@ -17,7 +18,7 @@ class Ap_probe extends Controller
     {
         $channel = null;
 
-        $o = replace_macros(Theme::get_template('ap_probe.tpl'), [
+        $html = replace_macros(Theme::get_template('ap_probe.tpl'), [
             '$page_title' => t('ActivityPub Probe Diagnostic'),
             '$resource' => ['resource', t('Object URL'), $_REQUEST['resource'], EMPTY_STR],
             '$authf' => ['authf', t('Authenticated fetch'), $_REQUEST['authf'], EMPTY_STR, [t('No'), t('Yes')]],
@@ -36,7 +37,7 @@ class Ap_probe extends Controller
             $j = Activity::fetch($resource, $channel, true);
 
             if ($j) {
-                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($j, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+                $html .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($j, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
             }
 
             if (isset($j['type'])) {
@@ -48,18 +49,18 @@ class Ap_probe extends Controller
                                 && !str_contains($AS->obj['type'], 'Collection')) {
                             $item = Activity::decode_note($AS, true);
                             if ($item) {
-                                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($item, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
-                                require_once('include/conversation.php');
+                                $html .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($item, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+
                                 $item['attach'] = json_encode($item['attach']);
                                 $items  = [$item];
                                 xchan_query($items);
-                                $o .= conversation($items, 'search', false, 'preview');
+                                $html .= conversation($items, 'search', false, 'preview');
                             }
                         }
                     }
                 }
             }
         }
-        return $o;
+        return $html;
     }
 }

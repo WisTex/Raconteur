@@ -96,7 +96,7 @@ class IConfig
                     }
                 }
             }
-            $entry = array('cat' => $family, 'k' => $key, 'v' => $value, 'sharing' => $sharing);
+            $entry = ['cat' => $family, 'k' => $key, 'v' => $value, 'sharing' => $sharing];
 
             if (is_null($idx)) {
                 $item['iconfig'][] = $entry;

@@ -44,7 +44,7 @@ class LanguageDetect
     			return $result['language'];
     		}
         } catch (Text_LanguageDetect_Exception $e) {
-			// pass
+			logger('LanguageDetect Exception: ' . $e->getMessage());
     	}
         return '';
     }

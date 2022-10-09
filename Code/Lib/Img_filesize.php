@@ -5,7 +5,7 @@ namespace Code\Lib;
 class Img_filesize
 {
 
-    private $url;
+    private string $url;
 
     public function __construct($url)
     {
@@ -62,14 +62,14 @@ class Img_filesize
  *
  * @return int|null null if size could not be determined, or length of content
  */
-function getRemoteFileSize($url)
+function getRemoteFileSize($url): int|null
 {
     $ch = curl_init($url);
 
-    $headers = array(
+    $headers = [
         'Range: bytes=0-1',
         'Connection: close',
-    );
+    ];
 
     $in_headers = true;
     $size       = null;
@@ -95,6 +95,7 @@ function getRemoteFileSize($url)
 
         if ($header == 'content-range') {
             // found a content-range header
+            /** @noinspection PhpUnusedLocalVariableInspection */
             list($rng, $s) = explode('/', $content, 2);
             $size = (int)$s;
             return 0; // aborts transfer
