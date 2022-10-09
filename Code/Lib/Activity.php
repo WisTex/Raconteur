@@ -3621,7 +3621,6 @@ class Activity
 
         $allowed = false;
         $reason = ['init'];
-        $permit_mentions = intval(PConfig::Get($channel['channel_id'], 'system', 'permit_all_mentions') && i_am_mentioned($channel, $item));
 
         if ($is_child_node) {
             $parent_item = q(
@@ -3686,17 +3685,18 @@ class Activity
                 logger('allowed: permission allowed', LOGGER_DATA);
                 $allowed = true;
             }
-            if ($permit_mentions) {
+            if (intval(PConfig::Get($channel['channel_id'], 'system', 'permit_all_mentions')
+                && i_am_mentioned($channel, $item))) {
                 logger('allowed: permitted mention', LOGGER_DATA);
                 $allowed = true;
             }
-        }
 
-        if (tgroup_check($channel['channel_id'], $item) && (!$is_child_node)) {
-            // for relayed deliveries, make sure we keep a copy of the signed original
-            set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 0);
-            logger('allowed: tgroup');
-            $allowed = true;
+            if (tgroup_check($channel['channel_id'], $item)) {
+                // for relayed deliveries, make sure we keep a copy of the signed original
+                set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 0);
+                logger('allowed: tgroup');
+                $allowed = true;
+            }
         }
 
         if (get_abconfig($channel['channel_id'], $observer_hash, 'system', 'block_announce', false)) {
@@ -3821,28 +3821,24 @@ class Activity
             $item['item_verified'] = 1;
         }
 
-        $parent = null;
-
         if ($is_child_node) {
-            $parent = q(
-                "select * from item where mid = '%s' and uid = %d limit 1",
-                dbesc($item['parent_mid']),
-                intval($item['uid'])
-            );
-            if (!$parent) {
+            if (!$parent_item) {
                 if (!get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) {
                     return;
                 } else {
                     $fetch = false;
                     if (intval($channel['channel_system']) || (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') && (PConfig::Get($channel['channel_id'], 'system', 'hyperdrive', true) || $act->type === 'Announce'))) {
-                        $fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $act, $item) : false);
+                        $fetch = (($fetch_parents) ? self::fetch_and_store_parents($channel, $observer_hash, $item) : false);
                     }
                     if ($fetch) {
-                        $parent = q(
+                        $parent_item = q(
                             "select * from item where mid = '%s' and uid = %d limit 1",
                             dbesc($item['parent_mid']),
                             intval($item['uid'])
                         );
+                        if ($parent_item) {
+                            $parent_item = array_shift($parent_item);
+                        }
                     } else {
                         logger('no parent');
                         return;
@@ -3850,16 +3846,16 @@ class Activity
                 }
             }
 
-            $item['comment_policy'] = $parent[0]['comment_policy'];
-            $item['item_nocomment'] = $parent[0]['item_nocomment'];
-            $item['comments_closed'] = $parent[0]['comments_closed'];
+            $item['comment_policy'] = $parent_item['comment_policy'];
+            $item['item_nocomment'] = $parent_item['item_nocomment'];
+            $item['comments_closed'] = $parent_item['comments_closed'];
 
-            if ($parent[0]['parent_mid'] !== $item['parent_mid']) {
+            if ($parent_item['parent_mid'] !== $item['parent_mid']) {
                 $item['thr_parent'] = $item['parent_mid'];
             } else {
-                $item['thr_parent'] = $parent[0]['parent_mid'];
+                $item['thr_parent'] = $parent_item['parent_mid'];
             }
-            $item['parent_mid'] = $parent[0]['parent_mid'];
+            $item['parent_mid'] = $parent_item['parent_mid'];
 
             /*
              *
@@ -3871,7 +3867,7 @@ class Activity
             // public conversation, but this comment went rogue and was published privately
             // hide it from everybody except the channel owner
 
-            if (intval($parent[0]['item_private']) === 0) {
+            if (intval($parent_item['item_private']) === 0) {
                 if (intval($item['item_private'])) {
                     $item['item_restrict'] = $item['item_restrict'] | 1;
                     $item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
@@ -3919,24 +3915,24 @@ class Activity
 // can fetch the 'context'. For other platforms it's a wild guess. Additionally when we tested this, it started an infinite
 // recursion and has been disabled until the recursive behaviour is tracked down and fixed.
 
-//      if ($fetch_parents && $parent && ! intval($parent[0]['item_private'])) {
+//      if ($fetch_parents && $parent && ! intval($parent_item['item_private'])) {
 //          logger('topfetch', LOGGER_DEBUG);
 //          // if the thread owner is a connnection, we will already receive any additional comments to their posts
 //          // but if they are not we can try to fetch others in the background
 //          $x = q("SELECT abook.*, xchan.* FROM abook left join xchan on abook_xchan = xchan_hash
 //              WHERE abook_channel = %d and abook_xchan = '%s' LIMIT 1",
 //              intval($channel['channel_id']),
-//              dbesc($parent[0]['owner_xchan'])
+//              dbesc($parent_item['owner_xchan'])
 //          );
 //          if (! $x) {
 //              // determine if the top-level post provides a replies collection
-//              if ($parent[0]['obj']) {
-//                  $parent[0]['obj'] = json_decode($parent[0]['obj'],true);
+//              if ($parent_item['obj']) {
+//                  $parent_item['obj'] = json_decode($parent_item['obj'],true);
 //              }
-//              logger('topfetch: ' . print_r($parent[0],true), LOGGER_ALL);
-//              $id = ((array_path_exists('obj/replies/id',$parent[0])) ? $parent[0]['obj']['replies']['id'] : false);
+//              logger('topfetch: ' . print_r($parent_item,true), LOGGER_ALL);
+//              $id = ((array_path_exists('obj/replies/id',$parent_item)) ? $parent_item['obj']['replies']['id'] : false);
 //              if (! $id) {
-//                  $id = ((array_path_exists('obj/replies',$parent[0]) && is_string($parent[0]['obj']['replies'])) ? $parent[0]['obj']['replies'] : false);
+//                  $id = ((array_path_exists('obj/replies',$parent_item) && is_string($parent_item['obj']['replies'])) ? $parent_item['obj']['replies'] : false);
 //              }
 //              if ($id) {
 //                  Run::Summon( [ 'Convo', $id, $channel['channel_id'], $observer_hash ] );
@@ -4013,52 +4009,50 @@ class Activity
     }
 
 
-    public static function fetch_and_store_parents($channel, $observer_hash, $act, $item)
+    public static function fetch_and_store_parents($channel, $observer_hash, $item)
     {
-
         logger('fetching parents');
 
-        $p = [];
+        $conversation = [];
 
-        $current_act = $act;
         $current_item = $item;
 
         while ($current_item['parent_mid'] !== $current_item['mid']) {
-            $n = self::fetch($current_item['parent_mid']);
-            if (!$n) {
+            $json = self::fetch($current_item['parent_mid']);
+            if (!$json) {
                 break;
             }
             // set client flag to convert objects to implied activities
-            $a = new ActivityStreams($n, null, true);
+            $activity = new ActivityStreams($json, null, true);
             if (
-                $a->type === 'Announce' && is_array($a->obj)
-                && array_key_exists('object', $a->obj) && array_key_exists('actor', $a->obj)
+                $activity->type === 'Announce' && is_array($activity->obj)
+                && array_key_exists('object', $activity->obj) && array_key_exists('actor', $activity->obj)
             ) {
                 // This is a relayed/forwarded Activity (as opposed to a shared/boosted object)
                 // Reparse the encapsulated Activity and use that instead
                 logger('relayed activity', LOGGER_DEBUG);
-                $a = new ActivityStreams($a->obj, null, true);
+                $activity = new ActivityStreams($activity->obj, null, true);
             }
 
-            logger($a->debug(), LOGGER_DATA);
+            logger($activity->debug(), LOGGER_DATA);
 
-            if (!$a->is_valid()) {
+            if (!$activity->is_valid()) {
                 logger('not a valid activity');
                 break;
             }
-            if (is_array($a->actor) && array_key_exists('id', $a->actor)) {
-                self::actor_store($a->actor['id'], $a->actor);
+            if (is_array($activity->actor) && array_key_exists('id', $activity->actor)) {
+                self::actor_store($activity->actor['id'], $activity->actor);
             }
 
             // ActivityPub sourced items are cacheable
-            $item = self::decode_note($a, true);
+            $item = self::decode_note($activity, true);
 
             if (!$item) {
                 break;
             }
 
             $hookinfo = [
-                'a' => $a,
+                'activity' => $activity,
                 'item' => $item
             ];
 
@@ -4072,26 +4066,25 @@ class Activity
 
                 if (intval($channel['channel_system']) && intval($item['item_private'])) {
                     logger('private conversation ignored');
-                    $p = [];
+                    $conversation = [];
                     break;
                 }
-
-                array_unshift($p, [$a, $item]);
+                // We're fetching upstream starting with the initial post,
+                // so push each fetched activity to the head of the conversation.
+                array_unshift($conversation, ['activity' => $activity, 'item' => $item]);
 
                 if ($item['parent_mid'] === $item['mid']) {
                     break;
                 }
             }
 
-            $current_act = $a;
             $current_item = $item;
         }
 
-
-        if ($p) {
-            foreach ($p as $pv) {
-                if ($pv[0]->is_valid()) {
-                    self::store($channel, $observer_hash, $pv[0], $pv[1], false);
+        if ($conversation) {
+            foreach ($conversation as $post) {
+                if ($post['activity']->is_valid()) {
+                    self::store($channel, $observer_hash, $post['activity'], $post['item'], false);
                 }
             }
             return true;
