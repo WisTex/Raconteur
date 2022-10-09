@@ -73,7 +73,7 @@ class Activity
     }
 
 
-    public static function fetch($url, $channel = null, $hub = null, $debug = false)
+    public static function fetch($url, $channel = null, $debug = false)
     {
         if (!$url) {
             return null;

@@ -332,13 +332,12 @@ class ActivityStreams
      *
      * @param string $url
      * @param array|null $channel (signing channel, default system channel)
-     * @param null $hub
      * @return NULL|mixed
      */
 
-    public function fetch_property(string $url, array $channel = null, $hub = null): mixed
+    public function fetch_property(string $url, array $channel = null): mixed
     {
-        $x = Activity::fetch($url, $channel, $hub);
+        $x = Activity::fetch($url, $channel);
         if ($x === null && strpos($url, '/channel/')) {
             // look for other nomadic channels which might be alive
             $zf = Zotfinger::exec($url, $channel);

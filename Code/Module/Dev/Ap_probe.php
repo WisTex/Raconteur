@@ -4,10 +4,8 @@ namespace Code\Module\Dev;
 
 use App;
 use Code\Web\Controller;
-use Code\Web\HTTPSig;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
-use Code\Lib\Yaml;
 use Code\Lib\Channel;
 use Code\Render\Theme;
 
@@ -17,7 +15,6 @@ class Ap_probe extends Controller
 
     public function get()
     {
-
         $channel = null;
 
         $o = replace_macros(Theme::get_template('ap_probe.tpl'), [
@@ -36,7 +33,7 @@ class Ap_probe extends Controller
                 }
             }
 
-            $j = Activity::fetch($resource, $channel, null, true);
+            $j = Activity::fetch($resource, $channel, true);
 
             if ($j) {
                 $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($j, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
@@ -48,14 +45,14 @@ class Ap_probe extends Controller
                     if ($AS->is_valid() && isset($AS->data['type'])) {
                         if (is_array($AS->obj)
                                 && isset($AS->obj['type'])
-                                && strpos($AS->obj['type'], 'Collection') === false) {
+                                && !str_contains($AS->obj['type'], 'Collection')) {
                             $item = Activity::decode_note($AS, true);
                             if ($item) {
                                 $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($item, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
                                 require_once('include/conversation.php');
                                 $item['attach'] = json_encode($item['attach']);
                                 $items  = [$item];
-                                xchan_query($items, true);
+                                xchan_query($items);
                                 $o .= conversation($items, 'search', false, 'preview');
                             }
                         }
