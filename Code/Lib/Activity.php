@@ -1746,7 +1746,7 @@ class Activity
                                 foreach ($kw as $k) {
                                     $k = trim($k);
                                     $k = trim($k, '#,');
-                                    $ret['tag'][] = ['id' => z_root() . '/search?tag=' . urlencode($k), 'name' => '#' . urlencode($k)];
+                                    $ret['tag'][] = ['type' => 'Hashtag', 'id' => z_root() . '/search?tag=' . urlencode($k), 'name' => '#' . urlencode($k)];
                                 }
                             }
                         }
@@ -4506,6 +4506,7 @@ class Activity
             'wall' => 'sm:wall',
             'capabilities' => 'litepub:capabilities',
             'acceptsJoins' => 'litepub:acceptsJoins',
+            'Hashtag' => 'as:Hashtag',
         ];
     }
 
