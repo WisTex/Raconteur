@@ -45,7 +45,11 @@ class Admin extends Controller
             $this->sm->call('init');
         }
         if ($_GET['upgrade']) {
-            exec("util/udall > upgrade.log");
+            $cmd = 'util/udall';
+            if (is_writable('upgrade.log') || is_writable('.')) {
+                $cmd .= ' > upgrade.log';
+            }
+            exec($cmd);
             goaway(z_root() . '/admin');
         }
     }
