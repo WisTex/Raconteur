@@ -4165,7 +4165,8 @@ function svg2bb($s)
     $s = preg_replace("/\<text (.*?)\>(.*?)\>(.*?)\<\/text\>/", '<text $1>$2&gt;$3</text>', $s);
     $s = preg_replace("/\<text (.*?)\>(.*?)\[(.*?)\<\/text\>/", '<text $1>$2&#91;$3</text>', $s);
     $s = preg_replace("/\<text (.*?)\>(.*?)\](.*?)\<\/text\>/", '<text $1>$2&#93;$3</text>', $s);
-    $s = utf8_encode($s);
+    // Deprecated in php 8.2, but we may not need it at all.
+    // $s = utf8_encode($s);
     $purify = new SvgSanitizer();
     if ($purify->loadXML($s)) {
         $purify->sanitize();
