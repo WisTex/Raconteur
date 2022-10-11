@@ -27,6 +27,7 @@ class Api_router
         return null;
     }
 
+    /** @noinspection PhpUnused */
     public static function dbg(): array
     {
         return self::$routes;

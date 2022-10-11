@@ -180,7 +180,7 @@ class Addon {
         $r = q("select aname from addon where aname = '%s' and installed = 1 limit 1",
             dbesc($addon)
         );
-        return ($r) ? true : false;
+        return (bool)$r;
     }
 
 
@@ -291,6 +291,7 @@ class Addon {
                 file_put_contents("addon/$plugin/$plugin.yml", Yaml::encode($info));
             }
             catch (Exception $e) {
+                logger('Exception:' . $e->getMessage());
             }
         }
 

@@ -58,7 +58,7 @@ class Activity
         if (in_array($x['type'], [ACTIVITY_OBJ_NOTE, ACTIVITY_OBJ_ARTICLE])) {
             // Use Mastodon-specific note and media hacks if nomadic. Else HTML.
             // Eventually this needs to be passed in much further up the stack
-            // and base the decision on whether or not we are encoding for
+            // and base the decision on whether we are encoding for
             // ActivityPub or Zot6 or Nomad
 
             return self::fetch_item($x, (bool)get_config('system', 'activitypub', ACTIVITYPUB_ENABLED));
@@ -515,12 +515,12 @@ class Activity
 
                     case TERM_FORUM:
                         $term = self::lookup_term_addr($t['url'], $t['term']);
-                        $ret[] = ['type' => 'Mention', 'href' => $t['url'], 'name' => '!' . (($term) ? $term : $t['term'])];
+                        $ret[] = ['type' => 'Mention', 'href' => $t['url'], 'name' => '!' . (($term) ?: $t['term'])];
                         break;
 
                     case TERM_MENTION:
                         $term = self::lookup_term_addr($t['url'], $t['term']);
-                        $ret[] = ['type' => 'Mention', 'href' => $t['url'], 'name' => '@' . (($term) ? $term : $t['term'])];
+                        $ret[] = ['type' => 'Mention', 'href' => $t['url'], 'name' => '@' . (($term) ?: $t['term'])];
                         break;
 
                     default:
@@ -605,14 +605,14 @@ class Activity
                             $ret[] = [
                                 'type' => 'Image',
                                 'url' => $arr['href'],
-                                'name' => ($arr['name']) ? $arr['name'] : '',
+                                'name' => ($arr['name']) ?: '',
                             ];
                         }
                     } else {
                         $ret[] = [
                             'type' => 'Link',
-                            'mediaType' => isset($att['type']) ? $att['type'] : 'application/octet-stream',
-                            'href' => isset($att['href']) ? $att['href'] : ''
+                            'mediaType' => $att['type'] ?? 'application/octet-stream',
+                            'href' => $att['href'] ?? ''
                         ];
                     }
                 }

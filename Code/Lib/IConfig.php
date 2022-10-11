@@ -5,6 +5,7 @@ namespace Code\Lib;
 class IConfig
 {
 
+    /** @noinspection PhpUnusedParameterInspection */
     public static function Load(&$item)
     {
         return;
@@ -12,7 +13,6 @@ class IConfig
 
     public static function Get(&$item, $family, $key, $default = false)
     {
-
         $is_item = false;
 
         if (is_array($item)) {
@@ -78,15 +78,12 @@ class IConfig
 
     public static function Set(&$item, $family, $key, $value, $sharing = false)
     {
-
         $dbvalue = ((is_array($value))  ? serialise($value) : $value);
         $dbvalue = ((is_bool($dbvalue)) ? intval($dbvalue)  : $dbvalue);
 
-        $is_item = false;
         $idx = null;
 
         if (is_array($item)) {
-            $is_item = true;
             if ((! array_key_exists('iconfig', $item)) || (! is_array($item['iconfig']))) {
                 $item['iconfig'] = [];
             } elseif ($item['iconfig']) {
@@ -145,13 +142,7 @@ class IConfig
 
     public static function Delete(&$item, $family, $key)
     {
-
-
-        $is_item = false;
-        $idx = null;
-
         if (is_array($item)) {
-            $is_item = true;
             if (is_array($item['iconfig'])) {
                 for ($x = 0; $x < count($item['iconfig']); $x++) {
                     if ($item['iconfig'][$x]['cat'] == $family && $item['iconfig'][$x]['k'] == $key) {
