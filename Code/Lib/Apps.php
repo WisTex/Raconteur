@@ -3,11 +3,7 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Libsync;
-use Code\Lib\Channel;
-use Code\Lib\Features;
 use Code\Extend\Hook;
-use Code\Lib\Addon;
 use Code\Render\Theme;
 
 
@@ -250,24 +246,24 @@ class Apps
         $ret['type'] = 'system';
 
         foreach ($ret as $k => $v) {
-            if (strpos($v, 'http') === 0) {
-                if (!(local_channel() && strpos($v, z_root()) === 0)) {
+            if (str_starts_with($v, 'http')) {
+                if (!(local_channel() && str_starts_with($v, z_root()))) {
                     $ret[$k] = zid($v);
                 }
             }
         }
 
         if (array_key_exists('desc', $ret)) {
-            $ret['desc'] = str_replace(array('\'', '"'), array('&#39;', '&dquot;'), $ret['desc']);
+            $ret['desc'] = str_replace(['\'', '"'], ['&#39;', '&dquot;'], $ret['desc']);
         }
         if (array_key_exists('target', $ret)) {
-            $ret['target'] = str_replace(array('\'', '"'), array('&#39;', '&dquot;'), $ret['target']);
+            $ret['target'] = str_replace(['\'', '"'], ['&#39;', '&dquot;'], $ret['target']);
         }
         if (array_key_exists('version', $ret)) {
-            $ret['version'] = str_replace(array('\'', '"'), array('&#39;', '&dquot;'), $ret['version']);
+            $ret['version'] = str_replace(['\'', '"'], ['&#39;', '&dquot;'], $ret['version']);
         }
         if (array_key_exists('categories', $ret)) {
-            $ret['categories'] = str_replace(array('\'', '"'), array('&#39;', '&dquot;'), $ret['categories']);
+            $ret['categories'] = str_replace(['\'', '"'], ['&#39;', '&dquot;'], $ret['categories']);
         }
         if (array_key_exists('requires', $ret)) {
             $requires = explode(',', $ret['requires']);
@@ -275,7 +271,7 @@ class Apps
                 $require = trim(strtolower($require));
                 $config = false;
 
-                if (substr($require, 0, 7) == 'config:') {
+                if (str_starts_with($require, 'config:')) {
                     $config = true;
                     $require = ltrim($require, 'config:');
                     $require = explode('=', $require);
@@ -342,7 +338,7 @@ class Apps
 
     public static function translate_system_apps(&$arr)
     {
-        $apps = array(
+        $apps = [
             'Access Lists' => t('Access Lists'),
             'Admin' => t('Site Admin'),
             'Apps' => t('Apps'),
@@ -422,7 +418,7 @@ class Apps
             'Webpages' => t('Webpages'),
             'Wiki' => t('Wiki'),
             'ZotPost' => t('ZotPost'),
-        );
+        ];
 
         if (array_key_exists('name', $arr)) {
             if (array_key_exists($arr['name'], $apps)) {
@@ -482,7 +478,7 @@ class Apps
         // and they are allowed to see the app
 
 
-        if (strpos($papp['url'], '$baseurl') !== false || strpos($papp['url'], '$nick') !== false || strpos($papp['photo'], '$baseurl') !== false || strpos($papp['photo'], '$nick') !== false) {
+        if (str_contains($papp['url'], '$baseurl') || str_contains($papp['url'], '$nick') || str_contains($papp['photo'], '$baseurl') || str_contains($papp['photo'], '$nick')) {
             $view_channel = $channel_id;
             if (!$view_channel) {
                 $sys = Channel::get_system();
@@ -497,19 +493,19 @@ class Apps
             $papp['settings_url'] = trim($urls[1]);
         }
 
-        if (!strstr($papp['url'], '://')) {
-            $papp['url'] = z_root() . ((strpos($papp['url'], '/') === 0) ? '' : '/') . $papp['url'];
+        if (!str_contains($papp['url'], '://')) {
+            $papp['url'] = z_root() . ((str_starts_with($papp['url'], '/')) ? '' : '/') . $papp['url'];
         }
 
 
         foreach ($papp as $k => $v) {
-            if (strpos($v, 'http') === 0 && $k != 'papp') {
-                if (!($channel_id && strpos($v, z_root()) === 0)) {
+            if (str_starts_with($v, 'http') && $k != 'papp') {
+                if (!($channel_id && str_starts_with($v, z_root()))) {
                     $papp[$k] = zid($v);
                 }
             }
             if ($k === 'desc') {
-                $papp['desc'] = str_replace(array('\'', '"'), array('&#39;', '&dquot;'), $papp['desc']);
+                $papp['desc'] = str_replace(['\'', '"'], ['&#39;', '&dquot;'], $papp['desc']);
             }
 
             if ($k === 'requires') {
@@ -519,7 +515,7 @@ class Apps
                     $require = trim(strtolower($require));
                     $config = false;
 
-                    if (substr($require, 0, 7) == 'config:') {
+                    if (str_starts_with($require, 'config:')) {
                         $config = true;
                         $require = ltrim($require, 'config:');
                         $require = explode('=', $require);
@@ -599,7 +595,7 @@ class Apps
         }
 
         $install_action = (($installed) ? t('Installed') : t('Install'));
-        $icon = ((strpos($papp['photo'], 'icon:') === 0) ? substr($papp['photo'], 5) : '');
+        $icon = ((str_starts_with($papp['photo'], 'icon:')) ? substr($papp['photo'], 5) : '');
 
         if ($mode === 'navbar') {
             return replace_macros(Theme::get_template('app_nav.tpl'), [
@@ -614,8 +610,8 @@ class Apps
 
         $featured = $pinned = false;
         if (isset($papp['categories'])) {
-            $featured = ((strpos($papp['categories'], 'nav_featured_app') !== false) ? true : false);
-            $pinned = ((strpos($papp['categories'], 'nav_pinned_app') !== false) ? true : false);
+            $featured = ((str_contains($papp['categories'], 'nav_featured_app')) ? true : false);
+            $pinned = ((str_contains($papp['categories'], 'nav_pinned_app')) ? true : false);
         }
 
         return replace_macros(Theme::get_template('app.tpl'), [
@@ -693,9 +689,9 @@ class Apps
                         );
                     }
                     if (intval($r[0]['app_system'])) {
-                        Libsync::build_sync_packet($uid, array('sysapp' => [$r[0]]));
+                        Libsync::build_sync_packet($uid, ['sysapp' => [$r[0]]]);
                     } else {
-                        Libsync::build_sync_packet($uid, array('app' => [$r[0]]));
+                        Libsync::build_sync_packet($uid, ['app' => [$r[0]]]);
                     }
                 }
             }
@@ -759,9 +755,9 @@ class Apps
                     }
                     if ($uid) {
                         if (intval($x[0]['app_system'])) {
-                            Libsync::build_sync_packet($uid, array('sysapp' => $x));
+                            Libsync::build_sync_packet($uid, ['sysapp' => $x]);
                         } else {
-                            Libsync::build_sync_packet($uid, array('app' => $x));
+                            Libsync::build_sync_packet($uid, ['app' => $x]);
                         }
                     }
                 } else {
@@ -1055,8 +1051,6 @@ class Apps
             return;
         }
 
-        $newlist = [];
-
         foreach ($syslist as $k => $li) {
             if ($li['guid'] === $guid) {
                 $position = $k;
@@ -1081,7 +1075,7 @@ class Apps
 
     public static function app_decode($s)
     {
-        $x = base64_decode(str_replace(array('<br>', "\r", "\n", ' '), array('', '', '', ''), $s));
+        $x = base64_decode(str_replace(['<br>', "\r", "\n", ' '], ['', '', '', ''], $s));
         return json_decode($x, true);
     }
 
@@ -1101,8 +1095,8 @@ class Apps
 
         $observer = App::get_observer();
 
-        $arr['url'] = str_replace(array('$baseurl', '$nick'), array($baseurl, $address), $arr['url']);
-        $arr['photo'] = str_replace(array('$baseurl', '$nick'), array($baseurl, $address), $arr['photo']);
+        $arr['url'] = str_replace(['$baseurl', '$nick'], [$baseurl, $address], $arr['url']);
+        $arr['photo'] = str_replace(['$baseurl', '$nick'], [$baseurl, $address], $arr['photo']);
     }
 
 
@@ -1129,7 +1123,7 @@ class Apps
             $arr['author'] = $sys['channel_hash'];
         }
 
-        if ($arr['photo'] && (strpos($arr['photo'], 'icon:') === false) && (strpos($arr['photo'], z_root()) === false)) {
+        if ($arr['photo'] && (!str_contains($arr['photo'], 'icon:')) && (!str_contains($arr['photo'], z_root()))) {
             $x = import_remote_xchan_photo(str_replace('$baseurl', z_root(), $arr['photo']), get_observer_hash(), true);
             if ($x) {
                 $arr['photo'] = $x[1];
@@ -1222,7 +1216,7 @@ class Apps
             return $ret;
         }
 
-        if ($arr['photo'] && (strpos($arr['photo'], 'icon:') === false) && (strpos($arr['photo'], z_root()) === false)) {
+        if ($arr['photo'] && (!str_contains($arr['photo'], 'icon:')) && (!str_contains($arr['photo'], z_root()))) {
             $x = import_remote_xchan_photo(str_replace('$baseurl', z_root(), $arr['photo']), get_observer_hash(), true);
             if ($x) {
                 $arr['photo'] = $x[1];

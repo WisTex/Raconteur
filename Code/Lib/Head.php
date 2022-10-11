@@ -17,6 +17,7 @@ class Head {
         App::$css_sources[] = [ $src, $media ];
     }
 
+    /** @noinspection PhpUnused */
     public static function remove_css($src, $media = 'screen'): void
     {
 
@@ -143,6 +144,7 @@ class Head {
         App::$js_sources[$priority][] = $src;
     }
 
+    /** @noinspection PhpUnused */
     public static function remove_js($src, $priority = 0): void
     {
         $index = array_search($src, App::$js_sources[$priority]);
