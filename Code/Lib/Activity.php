@@ -3661,7 +3661,8 @@ class Activity
                 }
 
                 // At this point we know it is allowed, but check if it requires moderation.
-                if (perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated')) {
+                if (perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated')
+                        || $allowed === 'moderated') {
                     $item['item_blocked'] = ITEM_MODERATED;
                 }
             } else {
@@ -3961,7 +3962,7 @@ class Activity
         }
     }
 
-    public static function comment_allowed($channel, $item, $parent_item): bool
+    public static function comment_allowed($channel, $item, $parent_item): bool|string
     {
         // First check if comment permissions have been granted to this author.
         $allowed = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'post_comments');
@@ -3984,6 +3985,10 @@ class Activity
             // inside i_am_mentioned() that puts a limit on your tolerance to mention/tag spam. So if the
             // post mentions 87000 people, it will still be ignored.
             $allowed = ($parent_item['owner_xchan'] !== $channel['channel_hash']);
+        }
+
+        if ((!$allowed) && intval(PConfig::Get($channel['channel_id'],'system','permit_moderated_comments'))) {
+            $allowed = 'moderated';
         }
 
         // If the item comment control forbids any comments, this over-rides everything.
