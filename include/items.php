@@ -2859,6 +2859,10 @@ function tgroup_check($uid, $item) {
         return true;
     }
 
+    if (PConfig::Get($uid, 'system','permit_all_likes',true) && $item['verb'] === 'Like') {
+        return true;
+    }
+    
     $tag_result = false;
     $terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_HASHTAG) : false);
     if ($terms) {
