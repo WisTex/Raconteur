@@ -114,9 +114,6 @@ class Notifier
 
         $sys = Channel::get_system();
 
-        $top_level = false;
-
-        $url_recipients = [];
         $normal_mode = true;
 
         if ($cmd === 'request') {
@@ -265,11 +262,8 @@ class Notifier
                 return;
             }
 
-            $deleted_item = false;
-
             if (intval($target_item['item_deleted'])) {
-                logger('notifier: target item ITEM_DELETED', LOGGER_DEBUG);
-                $deleted_item = true;
+                logger('target item ITEM_DELETED', LOGGER_DEBUG);
             }
 
             if (! in_array(intval($target_item['item_type']), [ ITEM_TYPE_POST, ITEM_TYPE_MAIL ])) {
@@ -629,7 +623,7 @@ class Notifier
         $dead    = []; // known dead hubs - report them as undeliverable
         
         foreach ($hubs as $hub) {
-            if (isset($hub['site_dead']) && intval($hub['site_dead'])) {
+            if (!empty($hub['site_dead'])) {
                 $dead[] = $hub;
                 continue;
             }

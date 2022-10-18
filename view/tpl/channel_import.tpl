@@ -16,9 +16,7 @@
 		<div id="import-choice" class="section-content-info-wrapper">{{$choice}}</div>
 
 		{{include file="field_input.tpl" field=$old_address}}
-		{{include file="field_input.tpl" field=$email}}
-		{{include file="field_password.tpl" field=$password}}
-		{{include file="field_checkbox.tpl" field=$import_posts}}
+		{{include file="field_password.tpl" field=$old_password}}
 
 		<div id="import-common-desc" class="section-content-info-wrapper">{{$common}}</div>
 
