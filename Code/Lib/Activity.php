@@ -938,7 +938,7 @@ class Activity
         if ($activitypub) {
             $parent_i = [];
             $public = !$i['item_private'];
-            $top_level = !$reply;
+            $top_level = ($i['mid'] === $i['parent_mid']);
             $ret['to'] = [];
             $ret['cc'] = [];
 
