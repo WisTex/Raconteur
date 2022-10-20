@@ -11,6 +11,7 @@ class Addon
      * @param $argc
      * @param $argv
      * @return void
+     * @noinspection PhpUnusedParameterInspection
      */
     public static function run($argc, $argv): void
     {

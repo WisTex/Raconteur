@@ -49,7 +49,7 @@ class Convo
                 if (is_string($message)) {
                     $message = Activity::fetch($message, $channel);
                 }
-                // set client flag because comments will probably just be objects and not full blown activities
+                // set client flag because comments will probably just be objects and not full-blown activities
                 // and that lets us use implied_create
                 $AS = new ActivityStreams($message, null, true);
                 if ($AS->is_valid() && is_array($AS->obj)) {
