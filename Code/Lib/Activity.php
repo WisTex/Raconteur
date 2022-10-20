@@ -3624,12 +3624,14 @@ class Activity
 
         if ($is_child_node) {
             $parent_item = q(
-                "select * from item where mid = '%s' and uid = %d and item_wall = 1",
+                "select * from item where mid = '%s' and uid = %d",
                 dbesc($item['parent_mid']),
                 intval($channel['channel_id'])
             );
             if ($parent_item) {
                 $parent_item = array_shift($parent_item);
+            }
+            if ($parent_item && (bool) $parent_item['item_wall']) {
                 // set the owner to the owner of the parent
                 $item['owner_xchan'] = $parent_item['owner_xchan'];
 
@@ -3850,6 +3852,9 @@ class Activity
             $item['comment_policy'] = $parent_item['comment_policy'];
             $item['item_nocomment'] = $parent_item['item_nocomment'];
             $item['comments_closed'] = $parent_item['comments_closed'];
+
+            // If this is a nested conversation with more than one level of comments,
+            // set thr_parent to the immediate parent and set parent_mid to the conversation root.
 
             if ($parent_item['parent_mid'] !== $item['parent_mid']) {
                 $item['thr_parent'] = $item['parent_mid'];
