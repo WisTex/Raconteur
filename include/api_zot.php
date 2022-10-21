@@ -81,13 +81,6 @@ function api_zot_version($type)
     }
 }
 
-function api_mast_instance($type)
-{
-    json_return_and_die(MastAPI::format_site());
-}
-    
-
-
     /*
      * basic channel export
      */
@@ -123,7 +116,7 @@ function api_item_export_page($type)
     } else {
         $start = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['since']);
     }
-    $finish = datetime_convert(date_default_timezone_get(), 'UTC', (($_REQUEST['until']) ? $_REQUEST['until'] : 'now'));
+    $finish = datetime_convert(date_default_timezone_get(), 'UTC', (($_REQUEST['until']) ?: 'now'));
 
     json_return_and_die(Channel::export_items_page(api_user(), $start, $finish, $page, $records));
 }
@@ -261,7 +254,7 @@ function api_file_meta($type)
     );
     if ($r) {
         unset($r[0]['content']);
-        $ret = array('attach' => $r[0]);
+        $ret = ['attach' => $r[0]];
         json_return_and_die($ret);
     }
     killme();
@@ -309,7 +302,7 @@ function api_file_data($type)
             }
         }
                 
-        $ret = array('attach' => $ptr);
+        $ret = ['attach' => $ptr];
         json_return_and_die($ret);
     }
     killme();
@@ -358,7 +351,7 @@ function api_file_detail($type)
             $r[0]['content'] = base64_encode(dbunescbin($r[0]['content']));
         }
                 
-        $ret = array('attach' => $r[0]);
+        $ret = ['attach' => $r[0]];
         json_return_and_die($ret);
     }
     killme();
@@ -404,7 +397,7 @@ function api_photo_detail($type)
             $data = file_get_contents($data);
         }
         $r[0]['content'] = base64_encode($data);
-        $ret = array('photo' => $r[0]);
+        $ret = ['photo' => $r[0]];
         $i = q(
             "select id from item where uid = %d and resource_type = 'photo' and resource_id = '%s' limit 1",
             intval(local_channel()),
@@ -612,9 +605,9 @@ function red_item($type)
     }
 
     if ($_REQUEST['mid']) {
-        $arr = array('mid' => $_REQUEST['mid']);
+        $arr = ['mid' => $_REQUEST['mid']];
     } elseif ($_REQUEST['item_id']) {
-        $arr = array('item_id' => $_REQUEST['item_id']);
+        $arr = ['item_id' => $_REQUEST['item_id']];
     } else {
         json_return_and_die([]);
     }

@@ -996,7 +996,7 @@ function bb_observer($Text)
 
     $observer = App::get_observer();
 
-    if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
+    if ((str_contains($Text, '[/observer]')) || (str_contains($Text, '[/rpost]'))) {
         if ($observer) {
             $Text = preg_replace("/\[observer\=1\](.*?)\[\/observer\]/ism", '$1', $Text);
             $Text = preg_replace("/\[observer\=0\].*?\[\/observer\]/ism", '', $Text);
@@ -1010,7 +1010,7 @@ function bb_observer($Text)
 
     $channel = App::get_channel();
 
-    if (strpos($Text, '[/channel]') !== false) {
+    if (str_contains($Text, '[/channel]')) {
         if ($channel) {
             $Text = preg_replace("/\[channel\=1\](.*?)\[\/channel\]/ism", '$1', $Text);
             $Text = preg_replace("/\[channel\=0\].*?\[\/channel\]/ism", '', $Text);
@@ -1116,7 +1116,7 @@ function bb_imgoptions($match)
 
     if ($match[2] === '=') {
 
-        if (strpos($attributes,'http') === 0) {
+        if (str_starts_with($attributes, 'http')) {
             $alt = $match[4];
             $src = $match[3];
         }
@@ -1130,17 +1130,17 @@ function bb_imgoptions($match)
     }
 
     // then (optional) legacy float specifiers
-    if ($n = strpos($match[3], 'float=left') !== false) {
+    if ($n = str_contains($match[3], 'float=left')) {
         $float = 'left';
         $match[3] = substr($match[3], $n + 10);
     }
-    if ($n = strpos($match[3], 'float=right') !== false) {
+    if ($n = str_contains($match[3], 'float=right')) {
         $float = 'right';
         $match[3] = substr($match[3], $n + 11);
     }
 
     // finally alt text which extends to the close of the tag
-    if ((! $alt) && ($n = strpos($match[3], 'alt=') !== false)) {
+    if ((! $alt) && ($n = str_contains($match[3], 'alt='))) {
         $alt = substr($match[3], $n + 4);
     }
 
@@ -1307,18 +1307,18 @@ function md_bolditalic($content)
 }
 
 
-
-
+/** @noinspection HtmlUnknownAttribute */
 function md_image($content)
 {
     $url = filter_var($content[1], FILTER_SANITIZE_URL);
     $alt = '';
     if (isset($content[2])) {
         $content[2] = str_replace('"', '', $content[2]);
-        $alt = ' alt="' . filter_var($content[2], FILTER_SANITIZE_STRING) . '"';
+        $alt = 'alt="' . filter_var($content[2], FILTER_SANITIZE_STRING) . '"';
     }
 
-    return sprintf('<img src="%s"%s>', $url, $alt);
+    /** @noinspection HtmlRequiredAltAttribute */
+    return sprintf('<img src="%s" %s>', $url, $alt);
 }
 
 function md_topheader($matches)
@@ -1384,7 +1384,7 @@ function bb_nakedlinks($Text) {
     $Text = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $Text);
     $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
 
-    if (strpos($Text, 'http') !== false) {
+    if (str_contains($Text, 'http')) {
         $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
     }
 
@@ -1401,7 +1401,7 @@ function bb_xss($s)
 
     // don't allow injection of multiple params
 
-    if (strpos($s, ';') !== false) {
+    if (str_contains($s, ';')) {
         return substr($s, 0, strpos($s, ';'));
     }
     return $s;
@@ -1436,13 +1436,13 @@ function parseIdentityAwareHTML($Text)
 {
 
     // Hide all [noparse] contained bbtags by spacefying them
-    if (strpos($Text, '[noparse]') !== false) {
+    if (str_contains($Text, '[noparse]')) {
         $Text = preg_replace_callback("/\[noparse\](.*?)\[\/noparse\]/ism", 'bb_spacefy', $Text);
     }
-    if (strpos($Text, '[nobb]') !== false) {
+    if (str_contains($Text, '[nobb]')) {
         $Text = preg_replace_callback("/\[nobb\](.*?)\[\/nobb\]/ism", 'bb_spacefy', $Text);
     }
-    if (strpos($Text, '[pre]') !== false) {
+    if (str_contains($Text, '[pre]')) {
         $Text = preg_replace_callback("/\[pre\](.*?)\[\/pre\]/ism", 'bb_spacefy', $Text);
     }
     // process [observer] tags before we do anything else because we might
@@ -1450,7 +1450,7 @@ function parseIdentityAwareHTML($Text)
 
         $observer = App::get_observer();
 
-    if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
+    if ((str_contains($Text, '[/observer]')) || (str_contains($Text, '[/rpost]'))) {
         $Text = preg_replace_callback("/\[observer\.language\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_callback', $Text);
         $Text = preg_replace_callback("/\[observer\.language\!\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_necallback', $Text);
         $Text = preg_replace_callback("/\[observer\.network\=(.*?)\](.*?)\[\/observer\]/ism", 'obnetwork_callback', $Text);
@@ -1504,13 +1504,13 @@ function parseIdentityAwareHTML($Text)
 
     // Unhide all [noparse] contained bbtags unspacefying them
     // and triming the [noparse] tag.
-    if (strpos($Text, '[noparse]') !== false) {
+    if (str_contains($Text, '[noparse]')) {
         $Text = preg_replace_callback("/\[noparse\](.*?)\[\/noparse\]/ism", 'bb_unspacefy_and_trim', $Text);
     }
-    if (strpos($Text, '[nobb]') !== false) {
+    if (str_contains($Text, '[nobb]')) {
         $Text = preg_replace_callback("/\[nobb\](.*?)\[\/nobb\]/ism", 'bb_unspacefy_and_trim', $Text);
     }
-    if (strpos($Text, '[pre]') !== false) {
+    if (str_contains($Text, '[pre]')) {
         $Text = preg_replace_callback("/\[pre\](.*?)\[\/pre\]/ism", 'bb_unspacefy_and_trim', $Text);
     }
     return $Text;
@@ -1546,13 +1546,13 @@ function bbcode($Text, $options = [])
 
 
     // Hide all [noparse] contained bbtags by spacefying them
-    if (strpos($Text, '[noparse]') !== false) {
+    if (str_contains($Text, '[noparse]')) {
         $Text = preg_replace_callback("/\[noparse\](.*?)\[\/noparse\]/ism", 'bb_spacefy', $Text);
     }
-    if (strpos($Text, '[nobb]') !== false) {
+    if (str_contains($Text, '[nobb]')) {
         $Text = preg_replace_callback("/\[nobb\](.*?)\[\/nobb\]/ism", 'bb_spacefy', $Text);
     }
-    if (strpos($Text, '[pre]') !== false) {
+    if (str_contains($Text, '[pre]')) {
         $Text = preg_replace_callback("/\[pre\](.*?)\[\/pre\]/ism", 'bb_spacefy', $Text);
     }
 
@@ -1578,7 +1578,7 @@ function bbcode($Text, $options = [])
         $observer = App::get_observer();
     }
 
-    if ((strpos($Text, '[/observer]') !== false) || (strpos($Text, '[/rpost]') !== false)) {
+    if ((str_contains($Text, '[/observer]')) || (str_contains($Text, '[/rpost]'))) {
         $Text = preg_replace_callback("/\[observer\.language\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_callback', $Text);
         $Text = preg_replace_callback("/\[observer\.language\!\=(.*?)\](.*?)\[\/observer\]/ism", 'oblanguage_necallback', $Text);
         if ($observer) {
@@ -1605,7 +1605,7 @@ function bbcode($Text, $options = [])
         $channel = App::get_channel();
     }
 
-    if (strpos($Text, '[/channel]') !== false) {
+    if (str_contains($Text, '[/channel]')) {
         if ($channel) {
             $Text = preg_replace("/\[channel\=1\](.*?)\[\/channel\]/ism", '$1', $Text);
             $Text = preg_replace("/\[channel\=0\].*?\[\/channel\]/ism", '', $Text);
@@ -1636,7 +1636,7 @@ function bbcode($Text, $options = [])
     // Check for [code] text here, before the linefeeds are messed with.
     // The highlighter will unescape and re-escape the content.
 
-    if (strpos($Text, '[code=') !== false) {
+    if (str_contains($Text, '[code=')) {
         $Text = preg_replace_callback("/\[code=(.*?)\](.*?)\[\/code\]/ism", function ($match) use ($options) {
             return bb_code_protect(text_highlight($match[2], strtolower($match[1]), $options));
         }, $Text);
@@ -1733,12 +1733,12 @@ function bbcode($Text, $options = [])
     $Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
 
     // Check for [code] text
-    if (strpos($Text, '[code]') !== false) {
+    if (str_contains($Text, '[code]')) {
         $Text = preg_replace_callback("/\[code\](.*?)\[\/code\]/ism", 'bb_code', $Text);
     }
 
     // Check for [code options] text
-    if (strpos($Text, '[code ') !== false) {
+    if (str_contains($Text, '[code ')) {
         $Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_options', $Text);
     }
 
@@ -1788,12 +1788,12 @@ function bbcode($Text, $options = [])
     // Perform URL Search
 
     $count = 0;
-    while (strpos($Text, '[/share]') !== false && $count < 10) {
+    while (str_contains($Text, '[/share]') && $count < 10) {
         $Text = preg_replace_callback("/\[share(.*?)\](.*?)\[\/share\]/ism", 'bb_ShareAttributes', $Text);
         $count++;
     }
 
-    if (strpos($Text, '[/url]') !== false) {
+    if (str_contains($Text, '[/url]')) {
         $Text = preg_replace("/\#\^\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
         $Text = preg_replace("/\#\^\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
         $Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
@@ -1801,7 +1801,7 @@ function bbcode($Text, $options = [])
         $Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
     }
 
-    if (strpos($Text, '[/zrl]') !== false) {
+    if (str_contains($Text, '[/zrl]')) {
         // render hubzilla bookmarks as normal links
         $Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
         $Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
@@ -1813,16 +1813,16 @@ function bbcode($Text, $options = [])
     // named anchors do not work well in conversational text, as it is often collapsed by a "showmore" script.
     // Included here for completeness.
 
-    if (strpos($Text, '[/anchor]') !== false) {
+    if (str_contains($Text, '[/anchor]')) {
         $Text = preg_replace("/\[anchor\](.*?)\[\/anchor\]/ism", '<a name="$1"></a>', $Text);
     }
 
-    if (strpos($Text, '[/goto]') !== false) {
+    if (str_contains($Text, '[/goto]')) {
         $Text = preg_replace("/\[goto=(.*?)\](.*?)\[\/goto\]/ism", '<a href="#$1">$2</a>', $Text);
     }
 
     // Perform MAIL Search
-    if (strpos($Text, '[/mail]') !== false) {
+    if (str_contains($Text, '[/mail]')) {
         $Text = preg_replace("/\[mail\]([$MAILSearchString]*)\[\/mail\]/", '<a href="mailto:$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
         $Text = preg_replace("/\[mail\=([$MAILSearchString]*)\](.*?)\[\/mail\]/", '<a href="mailto:$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
     }
@@ -1835,121 +1835,123 @@ function bbcode($Text, $options = [])
         $Text = str_replace([ '[map]','[/map]' ], [ '','' ], $Text);
         $Text = preg_replace("/\[map=(.*?)[, ](.*?)\]/ism", 'geo:$1,$2', $Text);
     } else {
-        if (strpos($Text, '[/map]') !== false) {
+        if (str_contains($Text, '[/map]')) {
             $Text = preg_replace_callback("/\[map\](.*?)\[\/map\]/ism", 'bb_map_location', $Text);
         }
-        if (strpos($Text, '[map=') !== false) {
+        if (str_contains($Text, '[map=')) {
             $Text = preg_replace_callback("/\[map=(.*?)\/\]/ism", 'bb_map_coords', $Text);
             $Text = preg_replace_callback("/\[map=(.*?)\]/ism", 'bb_map_coords', $Text);
         }
-        if (strpos($Text, '[map]') !== false) {
+        if (str_contains($Text, '[map]')) {
             $Text = preg_replace("/\[map\/\]/", '<div class="map"></div>', $Text);
             $Text = preg_replace("/\[map\]/", '<div class="map"></div>', $Text);
         }
     }
 
     // Check for bold text
-    if (strpos($Text, '[b]') !== false) {
+    if (str_contains($Text, '[b]')) {
         $Text = preg_replace("(\[b\](.*?)\[\/b\])ism", '<strong>$1</strong>', $Text);
     }
     // Check for Italics text
-    if (strpos($Text, '[i]') !== false) {
-        $Text = preg_replace("(\[i\](.*?)\[\/i\])ism", '<em>$1</em>', $Text);
+    if (str_contains($Text, '[i]')) {
+        $Text = preg_replace("(\[i](.*?)\[/i])ism", '<em>$1</em>', $Text);
     }
     // Check for Underline text
-    if (strpos($Text, '[u]') !== false) {
-        $Text = preg_replace("(\[u\](.*?)\[\/u\])ism", '<u>$1</u>', $Text);
+    if (str_contains($Text, '[u]')) {
+        $Text = preg_replace("(\[u](.*?)\[/u])ism", '<u>$1</u>', $Text);
     }
     // Check for strike-through text
-    if (strpos($Text, '[s]') !== false) {
+    if (str_contains($Text, '[s]')) {
         $Text = preg_replace("(\[s\](.*?)\[\/s\])ism", '<span style="text-decoration: line-through;">$1</span>', $Text);
     }
     // Check for over-line text
-    if (strpos($Text, '[o]') !== false) {
+    if (str_contains($Text, '[o]')) {
         $Text = preg_replace("(\[o\](.*?)\[\/o\])ism", '<span style="text-decoration: overline;">$1</span>', $Text);
     }
-    if (strpos($Text, '[sup]') !== false) {
+    if (str_contains($Text, '[sup]')) {
         $Text = preg_replace("(\[sup\](.*?)\[\/sup\])ism", '<sup>$1</sup>', $Text);
     }
-    if (strpos($Text, '[sub]') !== false) {
+    if (str_contains($Text, '[sub]')) {
         $Text = preg_replace("(\[sub\](.*?)\[\/sub\])ism", '<sub>$1</sub>', $Text);
     }
 
     // Check for colored text
-    if (strpos($Text, '[/color]') !== false) {
+    if (str_contains($Text, '[/color]')) {
         $Text = preg_replace_callback("(\[color=(.*?)\](.*?)\[\/color\])ism", 'bb_colortag', $Text);
     }
     // Check for highlighted text
-    if (strpos($Text, '[/hl]') !== false) {
+    if (str_contains($Text, '[/hl]')) {
         $Text = preg_replace("(\[hl\](.*?)\[\/hl\])ism", "<span style=\"background-color: yellow;\">$1</span>", $Text);
         $Text = preg_replace_callback("(\[mark=(.*?)\](.*?)\[\/mark\])ism", 'bb_hltag', $Text);
     }
     // Check for highlighted text
-    if (strpos($Text, '[/mark]') !== false) {
+    if (str_contains($Text, '[/mark]')) {
         $Text = preg_replace("(\[mark\](.*?)\[\/mark\])ism", "<mark style=\"background-color: yellow;\">$1</mark>", $Text);
         $Text = preg_replace_callback("(\[mark=(.*?)\](.*?)\[\/mark\])ism", 'bb_hltag', $Text);
     }
 
     // Check for sized text
     // [size=50] --> font-size: 50px (with the unit).
-    if (strpos($Text, '[/size]') !== false) {
+    if (str_contains($Text, '[/size]')) {
         $Text = preg_replace("(\[size=(\d*?)\](.*?)\[\/size\])ism", "<span style=\"font-size: $1px;\">$2</span>", $Text);
         $Text = preg_replace_callback("(\[size=(.*?)\](.*?)\[\/size\])ism", 'bb_sizetag', $Text);
     }
     // Check for h1
-    if (strpos($Text, '[h1]') !== false) {
+    if (str_contains($Text, '[h1]')) {
         $Text = preg_replace("(\[h1\](.*?)\[\/h1\])ism", '<h1>$1</h1>', $Text);
         $Text = str_replace('</h1><br>', '</h1>', $Text);
     }
     // Check for h2
-    if (strpos($Text, '[h2]') !== false) {
+    if (str_contains($Text, '[h2]')) {
         $Text = preg_replace("(\[h2\](.*?)\[\/h2\])ism", '<h2>$1</h2>', $Text);
         $Text = str_replace('</h2><br>', '</h2>', $Text);
     }
     // Check for h3
-    if (strpos($Text, '[h3]') !== false) {
+    if (str_contains($Text, '[h3]')) {
         $Text = preg_replace("(\[h3\](.*?)\[\/h3\])ism", '<h3>$1</h3>', $Text);
         $Text = str_replace('</h3><br>', '</h3>', $Text);
     }
     // Check for h4
-    if (strpos($Text, '[h4]') !== false) {
+    if (str_contains($Text, '[h4]')) {
         $Text = preg_replace("(\[h4\](.*?)\[\/h4\])ism", '<h4>$1</h4>', $Text);
         $Text = str_replace('</h4><br>', '</h4>', $Text);
     }
     // Check for h5
-    if (strpos($Text, '[h5]') !== false) {
+    if (str_contains($Text, '[h5]')) {
         $Text = preg_replace("(\[h5\](.*?)\[\/h5\])ism", '<h5>$1</h5>', $Text);
         $Text = str_replace('</h5><br>', '</h5>', $Text);
     }
     // Check for h6
-    if (strpos($Text, '[h6]') !== false) {
+    if (str_contains($Text, '[h6]')) {
         $Text = preg_replace("(\[h6\](.*?)\[\/h6\])ism", '<h6>$1</h6>', $Text);
         $Text = str_replace('</h6><br>', '</h6>', $Text);
     }
 
     // Check for table of content without params
-    while (strpos($Text, '[toc]') !== false) {
+    while (str_contains($Text, '[toc]')) {
         $toc_id = 'toc-' . random_string(10);
         $Text = preg_replace("/\[toc\]/ism", '<ul id="' . $toc_id . '" class="toc" data-toc=".section-content-wrapper"></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
         $Text = preg_replace("/\[toc\/\]/ism", '<ul id="' . $toc_id . '" class="toc" data-toc=".section-content-wrapper"></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
     }
     // Check for table of content with params
-    while (strpos($Text, '[toc') !== false) {
+    while (str_contains($Text, '[toc')) {
         $toc_id = 'toc-' . random_string(10);
+        /** @noinspection HtmlUnknownAttribute */
         $Text = preg_replace("/\[toc([^\]]+?)\/\]/ism", '<ul id="' . $toc_id . '" class="toc"$1></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
+        /** @noinspection HtmlUnknownAttribute */
         $Text = preg_replace("/\[toc([^\]]+?)\]/ism", '<ul id="' . $toc_id . '" class="toc"$1></ul><script>$("#' . $toc_id . '").toc();</script>', $Text, 1);
     }
     // Check for centered text
-    if (strpos($Text, '[/center]') !== false) {
+    if (str_contains($Text, '[/center]')) {
         $Text = preg_replace("(\[center\](.*?)\[\/center\])ism", "<div style=\"text-align:center;\">$1</div>", $Text);
     }
     // Check for footer
-    if (strpos($Text, '[/footer]') !== false) {
+    if (str_contains($Text, '[/footer]')) {
         $Text = preg_replace("(\[footer\](.*?)\[\/footer\])ism", "<div class=\"wall-item-footer\">$1</div>", $Text);
     }
 
     // Check for bdi
-    if (strpos($Text, '[/bdi]') !== false) {
+    if (str_contains($Text, '[/bdi]')) {
         $Text = preg_replace("(\[bdi\](.*?)\[\/bdi\])ism", "<bdi>$1</bdi>", $Text);
     }
 
@@ -1963,11 +1965,11 @@ function bbcode($Text, $options = [])
     $endlessloop = 0;
 
     while (
-        (((strpos($Text, "[/list]") !== false) && (strpos($Text, "[list") !== false)) ||
-            ((strpos($Text, "[/ol]") !== false) && (strpos($Text, "[ol]") !== false)) ||
-            ((strpos($Text, "[/ul]") !== false) && (strpos($Text, "[ul]") !== false)) ||
-            ((strpos($Text, "[/dl]") !== false) && (strpos($Text, "[dl")  !== false)) ||
-            ((strpos($Text, "[/li]") !== false) && (strpos($Text, "[li]") !== false))) && (++$endlessloop < 20)
+        (((str_contains($Text, "[/list]")) && (str_contains($Text, "[list"))) ||
+            ((str_contains($Text, "[/ol]")) && (str_contains($Text, "[ol]"))) ||
+            ((str_contains($Text, "[/ul]")) && (str_contains($Text, "[ul]"))) ||
+            ((str_contains($Text, "[/dl]")) && (str_contains($Text, "[dl"))) ||
+            ((str_contains($Text, "[/li]")) && (str_contains($Text, "[li]")))) && (++$endlessloop < 20)
     ) {
         $Text = preg_replace("/\[list\](.*?)\[\/list\]/ism", '<ul class="listbullet" style="list-style-type: circle;">$1</ul>', $Text);
         $Text = preg_replace("/\[list=\](.*?)\[\/list\]/ism", '<ul class="listnone" style="list-style-type: none;">$1</ul>', $Text);
@@ -1990,31 +1992,31 @@ function bbcode($Text, $options = [])
     }
 
     // Friendica generates this
-    if (strpos($Text, '[/abstract]') !== false) {
+    if (str_contains($Text, '[/abstract]')) {
         $Text = preg_replace("/\[abstract\](.*?)\[\/abstract\]/ism", '<h3>$1</h3>', $Text);
     }
 
-    if (strpos($Text, '[checklist]') !== false) {
+    if (str_contains($Text, '[checklist]')) {
         $Text = preg_replace_callback("/\[checklist\](.*?)\[\/checklist\]/ism", 'bb_checklist', $Text);
     }
 
 
     $loop = 0;
-    while (strpos($Text, '[/table]') !== false && strpos($Text, "[table") !== false && ++$loop < 20) {
+    while (str_contains($Text, '[/table]') && str_contains($Text, "[table") && ++$loop < 20) {
         $Text = preg_replace("/\[table\](.*?)\[\/table\]/ism", '<table class="table">$1</table>', $Text);
         $Text = preg_replace("/\[table border=1\](.*?)\[\/table\]/ism", '<table class="table table-responsive table-bordered" >$1</table>', $Text);
         $Text = preg_replace("/\[table border=0\](.*?)\[\/table\]/ism", '<table class="table table-responsive" >$1</table>', $Text);
     }
-    if (strpos($Text, '[th]') !== false) {
+    if (str_contains($Text, '[th]')) {
         $Text = preg_replace("/\[th\](.*?)\[\/th\]/ism", '<th>$1</th>', $Text);
     }
-    if (strpos($Text, '[td]') !== false) {
+    if (str_contains($Text, '[td]')) {
         $Text = preg_replace("/\[td\](.*?)\[\/td\]/ism", '<td>$1</td>', $Text);
     }
-    if (strpos($Text, '[tr]') !== false) {
+    if (str_contains($Text, '[tr]')) {
         $Text = preg_replace("/\[tr\](.*?)\[\/tr\]/ism", '<tr>$1</tr>', $Text);
     }
-    if (strpos($Text, '[tbody]') !== false) {
+    if (str_contains($Text, '[tbody]')) {
         $Text = preg_replace("/\[tbody\](.*?)\[\/tbody\]/ism", '<tbody>$1</tbody>', $Text);
     }
 
@@ -2027,35 +2029,35 @@ function bbcode($Text, $options = [])
     $Text = str_replace('[nosmile]', '', $Text);
 
     // Check for font change text
-    if (strpos($Text, '[/font]') !== false) {
+    if (str_contains($Text, '[/font]')) {
         $Text = preg_replace_callback("/\[font=(.*?)\](.*?)\[\/font\]/sm", 'bb_fonttag', $Text);
     }
 
-    if (strpos($Text, '[/summary]') !== false) {
+    if (str_contains($Text, '[/summary]')) {
         $Text = preg_replace_callback("/^(.*?)\[summary\](.*?)\[\/summary\](.*?)$/ism", 'bb_summary', $Text);
     }
 
     // Check for [spoiler] text
     $endlessloop = 0;
-    while ((strpos($Text, "[/spoiler]") !== false) && (strpos($Text, "[spoiler]") !== false) && (++$endlessloop < 20)) {
+    while ((str_contains($Text, "[/spoiler]")) && (str_contains($Text, "[spoiler]")) && (++$endlessloop < 20)) {
         $Text = preg_replace_callback("/\[spoiler\](.*?)\[\/spoiler\]/ism", 'bb_spoilertag', $Text);
     }
 
     // Check for [spoiler=Author] text
     $endlessloop = 0;
-    while ((strpos($Text, "[/spoiler]") !== false) && (strpos($Text, "[spoiler=") !== false) && (++$endlessloop < 20)) {
+    while ((str_contains($Text, "[/spoiler]")) && (str_contains($Text, "[spoiler=")) && (++$endlessloop < 20)) {
         $Text = preg_replace_callback("/\[spoiler=(.*?)\](.*?)\[\/spoiler\]/ism", 'bb_spoilertag', $Text);
     }
 
     // Check for [open] text
     $endlessloop = 0;
-    while ((strpos($Text, "[/open]") !== false) && (strpos($Text, "[open]") !== false) && (++$endlessloop < 20)) {
+    while ((str_contains($Text, "[/open]")) && (str_contains($Text, "[open]")) && (++$endlessloop < 20)) {
         $Text = preg_replace_callback("/\[open\](.*?)\[\/open\]/ism", 'bb_opentag', $Text);
     }
 
     // Check for [open=Title] text
     $endlessloop = 0;
-    while ((strpos($Text, "[/open]") !== false) && (strpos($Text, "[open=") !== false) && (++$endlessloop < 20)) {
+    while ((str_contains($Text, "[/open]")) && (str_contains($Text, "[open=")) && (++$endlessloop < 20)) {
         $Text = preg_replace_callback("/\[open=(.*?)\](.*?)\[\/open\]/ism", 'bb_opentag', $Text);
     }
 
@@ -2067,7 +2069,7 @@ function bbcode($Text, $options = [])
     // Check for [quote] text
     // handle nested quotes
     $endlessloop = 0;
-    while ((strpos($Text, "[/quote]") !== false) && (strpos($Text, "[quote]") !== false) && (++$endlessloop < 20)) {
+    while ((str_contains($Text, "[/quote]")) && (str_contains($Text, "[quote]")) && (++$endlessloop < 20)) {
         $Text = preg_replace("/\[quote\](.*?)\[\/quote\]/ism", "$QuoteLayout", $Text);
     }
 
@@ -2077,7 +2079,7 @@ function bbcode($Text, $options = [])
 
     // handle nested quotes
     $endlessloop = 0;
-    while ((strpos($Text, "[/quote]") !== false) && (strpos($Text, "[quote=") !== false) && (++$endlessloop < 20)) {
+    while ((str_contains($Text, "[/quote]")) && (str_contains($Text, "[quote=")) && (++$endlessloop < 20)) {
         $Text = preg_replace(
             "/\[quote=[\"\']*(.*?)[\"\']*\](.*?)\[\/quote\]/ism",
             "<span class=" . '"bb-quote"' . ">" . $t_wrote . "</span><blockquote>$2</blockquote>",
@@ -2093,10 +2095,10 @@ function bbcode($Text, $options = [])
     // Images
 
     // [img]pathtoimage[/img]
-    if (strpos($Text, '[/img]') !== false) {
+    if (str_contains($Text, '[/img]')) {
         $Text = preg_replace("/\[img\](.*?)\[\/img\]/ism", '<img style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" loading="eager" />', $Text);
     }
-    if (strpos($Text, '[/zmg]') !== false) {
+    if (str_contains($Text, '[/zmg]')) {
         $Text = preg_replace("/\[zmg\](.*?)\[\/zmg\]/ism", '<img class="zrl" style="max-width: 100%;" src="$1" alt="' . t('Image/photo') . '" loading="eager" />', $Text);
     }
 
@@ -2113,12 +2115,12 @@ function bbcode($Text, $options = [])
     }
 
     // style (sanitized)
-    if (strpos($Text, '[/style]') !== false) {
+    if (str_contains($Text, '[/style]')) {
         $Text = preg_replace_callback("(\[style=(.*?)\](.*?)\[\/style\])ism", "bb_sanitize_style", $Text);
     }
 
     // crypt
-    if (strpos($Text, '[/crypt]') !== false) {
+    if (str_contains($Text, '[/crypt]')) {
         if ($activitypub) {
             $Text = preg_replace_callback("/\[crypt (.*?)\](.*?)\[\/crypt\]/ism", 'bb_parse_b64_crypt', $Text);
         } else {
@@ -2126,7 +2128,7 @@ function bbcode($Text, $options = [])
         }
     }
 
-    if (strpos($Text, '[/app]') !== false) {
+    if (str_contains($Text, '[/app]')) {
         if ($activitypub) {
             $Text = preg_replace_callback("/\[app\](.*?)\[\/app\]/ism", 'bb_parse_app_ap', $Text);
         } else {
@@ -2134,38 +2136,38 @@ function bbcode($Text, $options = [])
         }
     }
 
-    if (strpos($Text, '[/element]') !== false) {
+    if (str_contains($Text, '[/element]')) {
         $Text = preg_replace_callback("/\[element\](.*?)\[\/element\]/ism", 'bb_parse_element', $Text);
     }
 
     // html5 video and audio
-    if (strpos($Text, '[/video]') !== false) {
+    if (str_contains($Text, '[/video]')) {
         $Text = preg_replace_callback("/\[video (.*?)\](.*?)\[\/video\]/ism", 'videowithopts', $Text);
         $Text = preg_replace_callback("/\[video\](.*?)\[\/video\]/ism", 'tryzrlvideo', $Text);
     }
-    if (strpos($Text, '[/audio]') !== false) {
+    if (str_contains($Text, '[/audio]')) {
         $Text = preg_replace_callback("/\[audio\](.*?)\[\/audio\]/ism", 'tryzrlaudio', $Text);
     }
-    if (strpos($Text, '[/zvideo]') !== false) {
+    if (str_contains($Text, '[/zvideo]')) {
         $Text = preg_replace_callback("/\[zvideo (.*?)\](.*?)\[\/zvideo\]/ism", 'videowithopts', $Text);
         $Text = preg_replace_callback("/\[zvideo\](.*?)\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
     }
-    if (strpos($Text, '[/zaudio]') !== false) {
+    if (str_contains($Text, '[/zaudio]')) {
         $Text = preg_replace_callback("/\[zaudio\](.*?)\[\/zaudio\]/ism", 'tryzrlaudio', $Text);
     }
 
     // if video couldn't be embedded, link to it instead.
-    if (strpos($Text, '[/video]') !== false) {
+    if (str_contains($Text, '[/video]')) {
         $Text = preg_replace("/\[video\](.*?)\[\/video\]/", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
     }
-    if (strpos($Text, '[/audio]') !== false) {
+    if (str_contains($Text, '[/audio]')) {
         $Text = preg_replace("/\[audio\](.*?)\[\/audio\]/", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
     }
 
-    if (strpos($Text, '[/zvideo]') !== false) {
+    if (str_contains($Text, '[/zvideo]')) {
         $Text = preg_replace("/\[zvideo\](.*?)\[\/zvideo\]/", '<a class="zid" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
     }
-    if (strpos($Text, '[/zaudio]') !== false) {
+    if (str_contains($Text, '[/zaudio]')) {
         $Text = preg_replace("/\[zaudio\](.*?)\[\/zaudio\]/", '<a class="zid" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
     }
 
@@ -2211,13 +2213,13 @@ function bbcode($Text, $options = [])
 
     // Unhide all [noparse] contained bbtags unspacefying them
     // and triming the [noparse] tag.
-    if (strpos($Text, '[noparse]') !== false) {
+    if (str_contains($Text, '[noparse]')) {
         $Text = preg_replace_callback("/\[noparse\](.*?)\[\/noparse\]/ism", 'bb_unspacefy_and_trim', $Text);
     }
-    if (strpos($Text, '[nobb]') !== false) {
+    if (str_contains($Text, '[nobb]')) {
         $Text = preg_replace_callback("/\[nobb\](.*?)\[\/nobb\]/ism", 'bb_unspacefy_and_trim', $Text);
     }
-    if (strpos($Text, '[pre]') !== false) {
+    if (str_contains($Text, '[pre]')) {
         $Text = preg_replace_callback("/\[pre\](.*?)\[\/pre\]/ism", 'bb_unspacefy_and_trim', $Text);
     }
 
@@ -2231,7 +2233,7 @@ function bbcode($Text, $options = [])
 
     // fix any escaped ampersands that may have been converted into links
 
-    if (strpos($Text, '&amp;') !== false) {
+    if (str_contains($Text, '&amp;')) {
         $Text = preg_replace("/\<(.*?)(src|href)=(.*?)\&amp\;(.*?)\>/ism", '<$1$2=$3&$4>', $Text);
     }
 
