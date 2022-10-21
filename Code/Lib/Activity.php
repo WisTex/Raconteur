@@ -164,7 +164,8 @@ class Activity
             }
 
             return json_decode($x['body'], true);
-        } else {
+        }
+        else {
             logger('fetch failed: ' . $url);
             if ($debug) {
                 return $x;
