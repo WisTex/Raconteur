@@ -28,10 +28,10 @@ function timezone_cmp($a, $b)
         }
         return ( t($a) < t($b)) ? -1 : 1;
     }
-    if (strstr($a, '/')) {
+    if (str_contains($a, '/')) {
         return -1;
     }
-    if (strstr($b, '/')) {
+    if (str_contains($b, '/')) {
         return  1;
     }
     if (t($a) == t($b)) {
@@ -43,11 +43,7 @@ function timezone_cmp($a, $b)
 
 function is_null_date($s)
 {
-    if ($s === '0000-00-00 00:00:00' || $s === '0001-01-01 00:00:00') {
-        return true;
-    }
-
-    return false;
+    return $s === '0000-00-00 00:00:00' || $s === '0001-01-01 00:00:00';
 }
 
 /**
