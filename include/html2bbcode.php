@@ -2,6 +2,7 @@
 
 
 use Code\Extend\Hook;
+use Code\Lib\SvgSanitizer;
 
 /** @file */
 /*
