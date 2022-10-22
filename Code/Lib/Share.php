@@ -112,13 +112,20 @@ class Share
             'title' => $this->item['mid'],
         ];
 
-        $this->tags = ($this->item['term']) ? $this->item['term'] : [];
+        $this->tags = ($this->item['term']) ?: [];
 
         $this->tags[] = [
-            'type' => 'Link',
             'url' => $this->item['mid'],
             'ttype' => TERM_QUOTED,
+            'otype' => TERM_OBJ_POST,
             'term' => 'RE: ' . $this->item['mid'],
+        ];
+
+        $this->tags[] = [
+            'url' => $this->item['author']['xchan_url'],
+            'ttype' => TERM_MENTION,
+            'otype' => TERM_OBJ_POST,
+            'term' => substr($this->item['author']['xchan_addr'],0,strpos($this->item['author']['xchan_addr'],'@'))
         ];
 
         if ($item_author['network'] === 'activitypub') {
