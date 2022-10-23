@@ -265,7 +265,7 @@ function is_item_normal($item) {
  *
  * @param string $observer_xchan
  * @param array $item
- * @return boolean
+ * @return bool
  */
 function can_comment_on_post($observer_xchan, $item)
 {
@@ -296,15 +296,7 @@ function can_comment_on_post($observer_xchan, $item)
         return false;
     }
 
-    if ($item['comment_policy'] === 'none') {
-        return false;
-    }
-
-    if (intval($item['item_nocomment'])) {
-        return false;
-    }
-
-    if (comments_are_now_closed($item)) {
+    if ($item['comment_policy'] === 'none' || intval($item['item_nocomment']) || comments_are_now_closed($item)) {
         return false;
     }
 
@@ -314,9 +306,6 @@ function can_comment_on_post($observer_xchan, $item)
 
     switch ($item['comment_policy']) {
         case 'self':
-            if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
-                return true;
-            }
             break;
         case 'public':
         case 'authenticated':
