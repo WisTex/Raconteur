@@ -140,7 +140,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
     }
 
     if (! $xchan) {
-        return;
+        return '';
     }
 
     $connect = false;
