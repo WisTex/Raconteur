@@ -7,10 +7,10 @@ use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Newmember
+class Newmember implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {

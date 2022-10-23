@@ -4,10 +4,10 @@ namespace Code\Widget;
 
 use App;
 
-class Random_block
+class Random_block implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $channel_id = 0;

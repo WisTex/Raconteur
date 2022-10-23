@@ -7,9 +7,9 @@ use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Findpeople
+class Findpeople implements WidgetInterface
 {
-    public function widget($arr)
+    public function widget(array $arr): string
     {
         return self::findpeople_widget();
     }

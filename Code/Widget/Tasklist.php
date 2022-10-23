@@ -6,10 +6,10 @@ use Code\Lib\Apps;
 
 require_once('include/event.php');
 
-class Tasklist
+class Tasklist implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $o = EMPTY_STR;

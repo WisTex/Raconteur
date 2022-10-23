@@ -9,10 +9,10 @@ use Code\Extend\Hook;
 use Code\Render\Theme;
 
 
-class Activity_filter
+class Activity_filter implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {

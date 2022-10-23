@@ -200,14 +200,7 @@ class Libprofile
                 'entries' => [],
             ];
 
-            $multi_profiles = Features::enabled(local_channel(), 'multi_profiles');
-            if ($multi_profiles) {
-                $ret['multi'] = 1;
-                $ret['edit'] = [z_root() . '/profiles', t('Edit Profiles'), '', t('Edit')];
-                $ret['menu']['cr_new'] = t('Create New Profile');
-            } else {
-                $ret['edit'] = [ z_root() . '/settings/profile_edit', t('Edit Profile'), '', t('Edit')];
-            }
+            $ret['edit'] = [ z_root() . '/settings/profile_edit', t('Edit Profile'), '', t('Edit')];
 
             $r = q(
                 "SELECT * FROM profile WHERE uid = %d",
@@ -216,7 +209,7 @@ class Libprofile
 
             if ($r) {
                 foreach ($r as $rr) {
-                    if (!($multi_profiles || $rr['is_default'])) {
+                    if (!$rr['is_default']) {
                         continue;
                     }
 

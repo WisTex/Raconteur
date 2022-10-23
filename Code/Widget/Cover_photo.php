@@ -8,10 +8,10 @@ use Code\Lib\Channel;
 use Code\Render\Theme;
 
 
-class Cover_photo
+class Cover_photo implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $o = '';

@@ -8,10 +8,10 @@ use Code\Render\Theme;
 
 require_once('include/attach.php');
 
-class Portfolio
+class Portfolio implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $args): string
     {
 
 

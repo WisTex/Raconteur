@@ -6,10 +6,10 @@ use App;
 use Code\Render\Theme;
 
 
-class Filer
+class Filer implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
         if (!local_channel()) {
             return '';
@@ -25,20 +25,20 @@ class Filer
             intval(TERM_FILE)
         );
         if (!$r) {
-            return;
+            return '';
         }
 
         foreach ($r as $rr) {
-            $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
+            $terms[] = ['name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : '')];
         }
 
-        return replace_macros(Theme::get_template('fileas_widget.tpl'), array(
+        return replace_macros(Theme::get_template('fileas_widget.tpl'), [
             '$title' => t('Saved Folders'),
             '$desc' => '',
             '$sel_all' => (($selected == '') ? 'selected' : ''),
             '$all' => t('Everything'),
             '$terms' => $terms,
             '$base' => z_root() . '/' . App::$cmd
-        ));
+        ]);
     }
 }

@@ -4,15 +4,15 @@ namespace Code\Widget;
 
 use App;
 
-class Tagcloud
+class Tagcloud implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arr): string
     {
 
         $o = '';
         $uid = App::$profile_uid;
-        $count = ((x($args, 'count')) ? intval($args['count']) : 24);
+        $count = ((x($arr, 'count')) ? intval($arr['count']) : 24);
         $flags = 0;
         $type = TERM_HASHTAG;
 

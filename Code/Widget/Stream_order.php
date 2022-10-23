@@ -7,10 +7,10 @@ use Code\Extend\Hook;
 use Code\Render\Theme;
 use App;
 
-class Stream_order
+class Stream_order implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {
@@ -131,13 +131,13 @@ class Stream_order
             'sel' => $received_active,
             'title' => t('Order by received date'),
         ];
-        $tabs[] = array(
+        $tabs[] = [
             'label' => t('Date Unthreaded'),
             'icon' => '',
             'url' => z_root() . '/' . $cmd . '?f=&order=unthreaded' . $filter,
             'sel' => $unthreaded_active,
             'title' => t('Order unthreaded by received date'),
-        );
+        ];
 
         $arr = ['tabs' => $tabs];
 

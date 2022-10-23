@@ -5,10 +5,10 @@ namespace Code\Widget;
 use Code\Lib\LibBlock;
 use Code\Extend\Hook;
 
-class Activity
+class Activity implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {

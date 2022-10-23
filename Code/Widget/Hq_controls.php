@@ -5,14 +5,14 @@ namespace Code\Widget;
 use Code\Render\Theme;
 
 
-class Hq_controls
+class Hq_controls implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {
-            return;
+            return '';
         }
 
         return replace_macros(

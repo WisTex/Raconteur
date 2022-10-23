@@ -4,14 +4,13 @@ namespace Code\Widget;
 
 use App;
 use Code\Lib\Apps;
-use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Settings_menu
+class Settings_menu implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {

@@ -21,7 +21,7 @@ class Features {
                 }
             }
         }
-        $arr = array('uid' => $uid, 'feature' => $feature, 'enabled' => $x);
+        $arr = ['uid' => $uid, 'feature' => $feature, 'enabled' => $x];
         Hook::call('feature_enabled', $arr);
         return($arr['enabled']);
     }
@@ -60,15 +60,6 @@ class Features {
             'general' => [
 
                 t('General Features'),
-
-//                [
-  //                  'start_menu',
-    //                t('New Member Links'),
-      //              t('Display new member quick links menu'),
-        //            (($account && $account['account_created'] > datetime_convert('', '', 'now - 30 days')) ? true : false),
-          //          get_config('feature_lock', 'start_menu'),
-            //        self::level('start_menu', 1),
-              //  ],
 
                 [
                     'advanced_profiles',
@@ -161,15 +152,6 @@ class Features {
                     self::level('groups', 0),
                 ],
 
-    //          [
-    //              'multi_profiles',
-    //              t('Multiple Profiles'),
-    //              t('Ability to create multiple profiles'),
-    //              false,
-    //              get_config('feature_lock','multi_profiles'),
-    //              self::level('multi_profiles',3),
-    //          ],
-
 
               [
                   'permcats',
@@ -180,14 +162,6 @@ class Features {
                   self::level('permcats',2),
               ],
 
-    //          [
-    //              'oauth_clients',
-    //              t('OAuth1 Clients'),
-    //              t('Manage OAuth1 authenticatication tokens for mobile and remote apps.'),
-    //              false,
-    //              get_config('feature_lock','oauth_clients'),
-    //              self::level('oauth_clients',1),
-    //          ],
 
                 [
                     'oauth2_clients',
@@ -198,14 +172,6 @@ class Features {
                     self::level('oauth2_clients', 1),
                 ],
 
-    //          [
-    //              'access_tokens',
-    //              t('Access Tokens'),
-    //              t('Create access tokens so that non-members can access private content.'),
-    //              false,
-    //              get_config('feature_lock','access_tokens'),
-    //              self::level('access_tokens',2),
-    //          ],
 
             ],
 
@@ -214,23 +180,6 @@ class Features {
 
                 t('Post Composition Features'),
 
-    //          [
-    //              'large_photos',
-    //              t('Large Photos'),
-    //              t('Include large (1024px) photo thumbnails in posts. If not enabled, use small (640px) photo thumbnails'),
-    //              false,
-    //              get_config('feature_lock','large_photos'),
-    //              self::level('large_photos',1),
-    //          ],
-
-    //          [
-    //              'channel_sources',
-    //              t('Channel Sources'),
-    //              t('Automatically import channel content from other channels or feeds'),
-    //              false,
-    //              get_config('feature_lock','channel_sources'),
-    //              self::level('channel_sources',3),
-    //          ],
 
                 [
                     'content_encrypt',
@@ -241,41 +190,7 @@ class Features {
                     self::level('content_encrypt', 3),
                 ],
 
-    //          [
-    //              'consensus_tools',
-    //              t('Enable Voting Tools'),
-    //              t('Provide a class of post which others can vote on'),
-    //              false,
-    //              get_config('feature_lock','consensus_tools'),
-    //              self::level('consensus_tools',3),
-    //          ],
 
-    //          [
-    //              'disable_comments',
-    //              t('Disable Comments'),
-    //              t('Provide the option to disable comments for a post'),
-    //              false,
-    //              get_config('feature_lock','disable_comments'),
-    //              self::level('disable_comments',2),
-    //          ],
-
-    //          [
-    //              'delayed_posting',
-    //              t('Delayed Posting'),
-    //              t('Allow posts to be published at a later date'),
-    //              false,
-    //              get_config('feature_lock','delayed_posting'),
-    //              self::level('delayed_posting',2),
-    //          ],
-
-    //          [
-    //              'content_expire',
-    //              t('Content Expiration'),
-    //              t('Remove posts/comments and/or private messages at a future time'),
-    //              false,
-    //              get_config('feature_lock','content_expire'),
-    //              self::level('content_expire',1),
-    //          ],
 
                 [
                     'suppress_duplicates',
@@ -437,16 +352,7 @@ class Features {
                     self::level('dislike', 1),
                 ],
 
-    //          [
-    //              'star_posts',
-    //              t('Star Posts'),
-    //              t('Ability to mark special posts with a star indicator'),
-    //              false,
-    //              get_config('feature_lock','star_posts'),
-    //              self::level('star_posts',1),
-    //          ],
-    //
-                [
+             [
                     'tagadelic',
                     t('Tag Cloud'),
                     t('Provide a personal tag cloud on your channel page'),

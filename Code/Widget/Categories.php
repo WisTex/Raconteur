@@ -7,10 +7,10 @@ use Code\Lib\Apps;
 use Code\Render\Theme;
 
 
-class Categories
+class Categories implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $cards = ((array_key_exists('cards', $arr) && $arr['cards']) ? true : false);

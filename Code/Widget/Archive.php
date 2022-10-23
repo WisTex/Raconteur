@@ -7,14 +7,11 @@ use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Archive
+class Archive implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
-
-        $o = '';
-
         if (!App::$profile_uid) {
             return '';
         }
@@ -33,7 +30,7 @@ class Archive
         $wall = ((array_key_exists('articles', $arr)) ? 2 : $wall);
 
         $style = ((array_key_exists('style', $arr)) ? $arr['style'] : 'select');
-        $showend = ((get_pconfig($uid, 'system', 'archive_show_end_date')) ? true : false);
+        $showend = (bool)get_pconfig($uid, 'system', 'archive_show_end_date');
         $mindate = get_pconfig($uid, 'system', 'archive_mindate');
         $visible_years = get_pconfig($uid, 'system', 'archive_visible_years', 5);
 
@@ -46,9 +43,9 @@ class Archive
         }
 
         $cutoff_year = intval(datetime_convert('', date_default_timezone_get(), 'now', 'Y')) - $visible_years;
-        $cutoff = ((array_key_exists($cutoff_year, $ret)) ? true : false);
+        $cutoff = array_key_exists($cutoff_year, $ret);
 
-        $o = replace_macros(Theme::get_template('posted_date_widget.tpl'), array(
+        return replace_macros(Theme::get_template('posted_date_widget.tpl'), [
             '$title' => t('Archives'),
             '$size' => $visible_years,
             '$cutoff_year' => $cutoff_year,
@@ -57,7 +54,7 @@ class Archive
             '$style' => $style,
             '$showend' => $showend,
             '$dates' => $ret
-        ));
-        return $o;
+        ]);
+
     }
 }

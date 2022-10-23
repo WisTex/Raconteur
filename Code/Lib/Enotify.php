@@ -497,7 +497,7 @@ class Enotify
             // ?
         }
 
-        $h = array(
+        $h = [
         'params'    => $params,
         'subject'   => $subject,
         'preamble'  => $preamble,
@@ -510,7 +510,7 @@ class Enotify
         'itemlink'  => $itemlink,
         'sender'    => $sender,
         'recipient' => $recip
-        );
+        ];
 
         Hook::call('enotify', $h);
 
@@ -672,9 +672,9 @@ class Enotify
                 return;
             }
 
-            $textversion = strip_tags(html_entity_decode(bbcode(stripslashes(str_replace(array("\\r", "\\n"), array( "", "\n"), $body))), ENT_QUOTES, 'UTF-8'));
+            $textversion = strip_tags(html_entity_decode(bbcode(stripslashes(str_replace(["\\r", "\\n"], ["", "\n"], $body))), ENT_QUOTES, 'UTF-8'));
 
-            $htmlversion = bbcode(stripslashes(str_replace(array("\\r","\\n"), array("","<br>\n"), $body)));
+            $htmlversion = bbcode(stripslashes(str_replace(["\\r","\\n"], ["","<br>\n"], $body)));
 
 
             // use $_SESSION['zid_override'] to force zid() to use
@@ -758,7 +758,7 @@ class Enotify
 
             // load the template for private message notifications
             $tpl = Theme::get_template('email_notify_html.tpl');
-            $email_html_body = replace_macros($tpl, array(
+            $email_html_body = replace_macros($tpl, [
             '$banner'       => $datarray['banner'],
             '$notify_icon'  => System::get_site_icon(),
             '$product'      => $datarray['product'],
@@ -777,11 +777,11 @@ class Enotify
             '$opt_out2'     => $datarray['hopt_out2'],
             '$title'        => $datarray['title'],
             '$htmlversion'  => $datarray['htmlversion'],
-            ));
+            ]);
 
             // load the template for private message notifications
             $tpl = Theme::get_template('email_notify_text.tpl');
-            $email_text_body = replace_macros($tpl, array(
+            $email_text_body = replace_macros($tpl, [
                 '$banner'       => $datarray['banner'],
                 '$product'      => $datarray['product'],
                 '$preamble'     => $salutation . "\n\n" . $datarray['preamble'],
@@ -799,7 +799,7 @@ class Enotify
                 '$opt_out2'     => $datarray['opt_out2'],
                 '$title'        => $datarray['title'],
                 '$textversion'  => $datarray['textversion'],
-            ));
+            ]);
 
             //      logger('text: ' . $email_text_body);
 
@@ -815,7 +815,7 @@ class Enotify
             $addrs = explode(',', $to_email);
 
             foreach ($addrs as $addr) {
-                self::send(array(
+                self::send([
                 'fromName'             => $sender_name,
                 'fromEmail'            => $sender_email,
                 'replyTo'              => $reply_email,
@@ -824,7 +824,7 @@ class Enotify
                 'htmlVersion'          => $email_html_body,
                 'textVersion'          => $email_text_body,
                 'additionalMailHeader' => $datarray['headers'],
-                ));
+                ]);
             }
         }
 
@@ -835,7 +835,7 @@ class Enotify
     /**
      * @brief Send a multipart/alternative message with Text and HTML versions.
      *
-     * @param array $params an assoziative array with:
+     * @param array $params an associative array with:
      *  * \e string \b fromName        name of the sender
      *  * \e string \b fromEmail       email of the sender
      *  * \e string \b replyTo         address to direct responses
@@ -951,7 +951,7 @@ class Enotify
 
         // convert this logic into a json array just like the system notifications
 
-        $x = array(
+        $x = [
             'notify_link' => $item['llink'],
             'name' => $item['author']['xchan_name'],
             'addr' => $item['author']['xchan_addr'],
@@ -967,7 +967,7 @@ class Enotify
             'hash' => $item['author']['xchan_hash'],
             'uid' => local_channel(),
             'display' => true
-        );
+        ];
 
         $post_date = (($edit) ? $item['edited'] : $item['created']);
         if ($post_date && $post_date < $expire_date) {

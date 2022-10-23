@@ -6,10 +6,10 @@ use App;
 
 require_once('include/photos.php');
 
-class Photo_rand
+class Photo_rand implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $style = false;
@@ -33,7 +33,7 @@ class Photo_rand
 
         $scale = ((array_key_exists('scale', $arr)) ? intval($arr['scale']) : 0);
 
-        $ret = photos_list_photos(array('channel_id' => $channel_id), App::get_observer(), $album);
+        $ret = photos_list_photos(['channel_id' => $channel_id], App::get_observer(), $album);
 
         $filtered = [];
         if ($ret['success'] && $ret['photos']) {
@@ -49,7 +49,7 @@ class Photo_rand
             $url = $filtered[$e];
         }
 
-        if (strpos($url, 'http') !== 0) {
+        if (!str_starts_with($url, 'http')) {
             return '';
         }
 
@@ -59,7 +59,7 @@ class Photo_rand
 
         // ensure they can't sneak in an eval(js) function
 
-        if (strpos($style, '(') !== false) {
+        if (str_contains($style, '(')) {
             return '';
         }
 

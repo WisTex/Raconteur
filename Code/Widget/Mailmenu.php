@@ -5,14 +5,14 @@ namespace Code\Widget;
 use Code\Render\Theme;
 
 
-class Mailmenu
+class Mailmenu implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {
-            return;
+            return '';
         }
 
         return replace_macros(Theme::get_template('message_side.tpl'), array(

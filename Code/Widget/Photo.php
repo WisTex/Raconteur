@@ -2,7 +2,7 @@
 
 namespace Code\Widget;
 
-class Photo
+class Photo implements WidgetInterface
 {
 
 
@@ -17,7 +17,7 @@ class Photo
      * @return string with parsed HTML
      */
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $style = $zrl = false;
@@ -26,7 +26,7 @@ class Photo
             $url = $arr['src'];
         }
 
-        if (strpos($url, 'http') !== 0) {
+        if (!str_starts_with($url, 'http')) {
             return '';
         }
 

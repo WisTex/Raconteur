@@ -4,9 +4,9 @@ namespace Code\Widget;
 
 use Code\Lib\Libzotdir;
 
-class Dirsort
+class Dirsort implements WidgetInterface
 {
-    public function widget($arr)
+    public function widget(array $arr): string
     {
         if (intval($_REQUEST['suggest'])) {
             return EMPTY_STR;

@@ -7,10 +7,10 @@ use Code\Lib\Channel;
 
 require_once('include/photos.php');
 
-class Photo_albums
+class Photo_albums implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!App::$profile['profile_uid']) {

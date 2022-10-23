@@ -6,10 +6,10 @@ use App;
 use Code\Render\Theme;
 use Code\Lib\Socgraph;
 
-class Common_friends
+class Common_friends implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (

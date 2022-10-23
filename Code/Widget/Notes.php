@@ -6,10 +6,10 @@ use Code\Lib\Apps;
 use Code\Render\Theme;
 
 
-class Notes
+class Notes implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
         if (!local_channel()) {
             return '';

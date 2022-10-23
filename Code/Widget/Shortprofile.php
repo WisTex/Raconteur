@@ -5,10 +5,10 @@ namespace Code\Widget;
 use App;
 use Code\Lib\Libprofile;
 
-class Shortprofile
+class Shortprofile implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
         if (App::$profile['profile_uid']) {
             return Libprofile::widget(App::$profile, false, true, true);

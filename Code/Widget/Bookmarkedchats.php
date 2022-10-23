@@ -7,10 +7,11 @@ use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Bookmarkedchats
+class Bookmarkedchats implements WidgetInterface
+
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!Features::enabled(App::$profile['profile_uid'], 'ajaxchat')) {
@@ -19,7 +20,7 @@ class Bookmarkedchats
 
         $h = get_observer_hash();
         if (!$h) {
-            return;
+            return '';
         }
         $r = q(
             "select xchat_url, xchat_desc from xchat where xchat_xchan = '%s' order by xchat_desc",
@@ -30,9 +31,9 @@ class Bookmarkedchats
                 $r[$x]['xchat_url'] = zid($r[$x]['xchat_url']);
             }
         }
-        return replace_macros(Theme::get_template('bookmarkedchats.tpl'), array(
+        return replace_macros(Theme::get_template('bookmarkedchats.tpl'), [
             '$header' => t('Bookmarked Chatrooms'),
             '$rooms' => $r
-        ));
+        ]);
     }
 }

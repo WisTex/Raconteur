@@ -7,10 +7,10 @@ use Code\Extend\Hook;
 use Code\Render\Theme;
 
 
-class Affinity
+class Affinity implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if (!local_channel()) {

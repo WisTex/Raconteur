@@ -2,10 +2,10 @@
 
 namespace Code\Widget;
 
-class Groups
+class Groups implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $output = EMPTY_STR;

@@ -4,10 +4,10 @@ namespace Code\Widget;
 
 use App;
 
-class Catcloud_wall
+class Catcloud_wall implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if ((!App::$profile['profile_uid']) || (!App::$profile['channel_hash'])) {

@@ -6,10 +6,10 @@ use App;
 
 require_once('include/security.php');
 
-class Item
+class Item implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $channel_id = 0;

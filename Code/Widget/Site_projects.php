@@ -4,10 +4,10 @@ namespace Code\Widget;
 
 use Code\Render\Theme;
 
-class Site_projects
+class Site_projects implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arr): string
     {
         $results = [];
         $query = q("select site_project, site_type, count(site_project) as total from site

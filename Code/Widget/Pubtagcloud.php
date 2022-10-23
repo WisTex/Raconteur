@@ -2,10 +2,10 @@
 
 namespace Code\Widget;
 
-class Pubtagcloud
+class Pubtagcloud implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         $trending = ((array_key_exists('trending', $arr)) ? intval($arr['trending']) : 0);
@@ -29,6 +29,5 @@ class Pubtagcloud
 
         return pubtagblock($public_stream_mode, $limit, $trending, $safemode);
 
-        return '';
     }
 }

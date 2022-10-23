@@ -5,10 +5,10 @@ namespace Code\Widget;
 use App;
 use Code\Lib\Apps;
 
-class Tagcloud_wall
+class Tagcloud_wall implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if ((!App::$profile['profile_uid']) || (!App::$profile['channel_hash'])) {

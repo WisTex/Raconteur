@@ -7,10 +7,10 @@ use Code\Lib\Apps;
 use Code\Render\Theme;
 use Code\Lib\Socgraph;
 
-class Suggestions
+class Suggestions implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arr): string
     {
 
         if ((!local_channel()) || (!Apps::system_app_installed(local_channel(), 'Suggest Channels'))) {

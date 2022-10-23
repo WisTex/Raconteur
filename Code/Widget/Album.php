@@ -8,10 +8,10 @@ use Code\Render\Theme;
 
 require_once('include/attach.php');
 
-class Album
+class Album implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arr): string
     {
         $owner_uid = App::$profile_uid;
         $sql_extra = permissions_sql($owner_uid);
@@ -27,12 +27,12 @@ class Album
         $album = '';
         $title = '';
 
-        if ($args['album']) {
-            $album = $args['album'];
+        if ($arr['album']) {
+            $album = $arr['album'];
         }
 
-        if ($args['title']) {
-            $title = $args['title'];
+        if ($arr['title']) {
+            $title = $arr['title'];
         }
 
         /**
@@ -88,7 +88,7 @@ class Album
                 $imagelink = (z_root() . '/photos/' . App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
 
 
-                $photos[] = array(
+                $photos[] = [
                     'id' => $rr['id'],
                     'twist' => ' ' . $twist . rand(2, 4),
                     'link' => $imagelink,
@@ -99,7 +99,7 @@ class Album
                     'ext' => $ext,
                     'hash' => $rr['resource_id'],
                     'unknown' => t('Unknown')
-                );
+                ];
             }
         }
 

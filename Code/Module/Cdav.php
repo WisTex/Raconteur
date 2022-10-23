@@ -1026,8 +1026,7 @@ class Cdav extends Controller
 
             $sources = rtrim($sources, ', ');
 
-            $first_day = Features::enabled(local_channel(), 'cal_first_day');
-            $first_day = (($first_day) ? $first_day : 0);
+            $first_day = intval(get_pconfig($channel['channel_id'], 'system', 'cal_first_day', 0));
 
             $title = ['title', t('Event title')];
             $dtstart = ['dtstart', t('Start date and time')];
