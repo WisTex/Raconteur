@@ -14,7 +14,7 @@ use Code\Lib\PConfig;
 class Onepoll
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         logger('onepoll: start');

@@ -92,7 +92,7 @@ function random_string($size = 64, $type = RANDOM_STRING_HEX)
  */
 function notags($string)
 {
-    return(str_replace(array("<",">"), array('[',']'), $string));
+    return(str_replace(["<",">"], ['[',']'], $string));
 }
 
 
@@ -305,27 +305,27 @@ function purify_html($s, $opts = [])
     if (in_array('allow_position', $opts)) {
         $cssDefinition = $config->getCSSDefinition();
 
-        $cssDefinition->info['position'] = new HTMLPurifier_AttrDef_Enum(array('absolute', 'fixed', 'relative', 'static', 'inherit'), false);
+        $cssDefinition->info['position'] = new HTMLPurifier_AttrDef_Enum(['absolute', 'fixed', 'relative', 'static', 'inherit'], false);
 
-        $cssDefinition->info['left'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
+        $cssDefinition->info['left'] = new HTMLPurifier_AttrDef_CSS_Composite([
             new HTMLPurifier_AttrDef_CSS_Length(),
             new HTMLPurifier_AttrDef_CSS_Percentage()
-        ));
+        ]);
 
-        $cssDefinition->info['right'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
+        $cssDefinition->info['right'] = new HTMLPurifier_AttrDef_CSS_Composite([
             new HTMLPurifier_AttrDef_CSS_Length(),
             new HTMLPurifier_AttrDef_CSS_Percentage()
-        ));
+        ]);
 
-        $cssDefinition->info['top'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
+        $cssDefinition->info['top'] = new HTMLPurifier_AttrDef_CSS_Composite([
             new HTMLPurifier_AttrDef_CSS_Length(),
             new HTMLPurifier_AttrDef_CSS_Percentage()
-        ));
+        ]);
 
-        $cssDefinition->info['bottom'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
+        $cssDefinition->info['bottom'] = new HTMLPurifier_AttrDef_CSS_Composite([
             new HTMLPurifier_AttrDef_CSS_Length(),
             new HTMLPurifier_AttrDef_CSS_Percentage()
-        ));
+        ]);
     }
 
     $purifier = new HTMLPurifier($config);
@@ -353,12 +353,12 @@ function autoname($len)
         return '';
     }
 
-    $vowels = array('a','a','ai','au','e','e','e','ee','ea','i','ie','o','ou','u');
+    $vowels = ['a','a','ai','au','e','e','e','ee','ea','i','ie','o','ou','u'];
     if (mt_rand(0, 5) == 4) {
         $vowels[] = 'y';
     }
 
-    $cons = array(
+    $cons = [
             'b','bl','br',
             'c','ch','cl','cr',
             'd','dr',
@@ -379,14 +379,14 @@ function autoname($len)
             'w','wh',
             'x',
             'z','zh'
-            );
+    ];
 
-    $midcons = array('ck','ct','gn','ld','lf','lm','lt','mb','mm', 'mn','mp',
-                'nd','ng','nk','nt','rn','rp','rt');
+    $midcons = ['ck','ct','gn','ld','lf','lm','lt','mb','mm', 'mn','mp',
+                'nd','ng','nk','nt','rn','rp','rt'];
 
     // avoid these consonant pairs at the end of the string
-    $noend = array('bl', 'br', 'cl','cr','dr','fl','fr','gl','gr',
-                'kh', 'kl','kr','mn','pl','pr','rh','tr','qu','wh');
+    $noend = ['bl', 'br', 'cl','cr','dr','fl','fr','gl','gr',
+                'kh', 'kl','kr','mn','pl','pr','rh','tr','qu','wh'];
 
     $start = mt_rand(0, 2);
     if ($start == 0) {
@@ -417,7 +417,7 @@ function autoname($len)
         }
     }
     // avoid the letter 'q' as it does not make a very good word ending
-    if (substr($word, -1) == 'q') {
+    if (str_ends_with($word, 'q')) {
         $word = substr($word, 0, -1);
     }
 
@@ -489,7 +489,7 @@ function xmlify($str)
 function unxmlify($s)
 {
     $ret = str_replace('&amp;', '&', $s);
-    $ret = str_replace(array('&lt;', '&gt;', '&quot;', '&apos;'), array('<', '>', '"', "'"), $ret);
+    $ret = str_replace(['&lt;', '&gt;', '&quot;', '&apos;'], ['<', '>', '"', "'"], $ret);
 
     return $ret;
 }
@@ -591,7 +591,7 @@ function alt_pager($i, $more = '', $less = '')
        $url = $url . '?f=';
     }
 
-    return replace_macros(Theme::get_template('alt_pager.tpl'), array(
+    return replace_macros(Theme::get_template('alt_pager.tpl'), [
         '$has_less' => ((App::$pager['page'] > 1) ? true : false),
         '$has_more' => (($i > 0 && $i >= App::$pager['itemspage']) ? true : false),
         '$less' => $less,
@@ -599,7 +599,7 @@ function alt_pager($i, $more = '', $less = '')
         '$url' => $url,
         '$prevpage' => App::$pager['page'] - 1,
         '$nextpage' => App::$pager['page'] + 1,
-    ));
+    ]);
 }
 
 
@@ -613,12 +613,7 @@ function alt_pager($i, $more = '', $less = '')
 function item_message_id()
 {
 
-    try {
-        $hash = (string) Uuid::v4();
-    } catch (UnsatisfiedDependencyException $e) {
-        $hash = random_string(48);
-    }
-
+    $hash = (string) Uuid::v4();
     $mid = z_root() . '/item/' . $hash;
 
     return $mid;
@@ -633,13 +628,7 @@ function item_message_id()
  */
 function photo_new_resource()
 {
-
-    try {
-        $hash = (string) Uuid::v4();
-    } catch (UnsatisfiedDependencyException $e) {
-        $hash = random_string(48);
-    }
-
+    $hash = (string) Uuid::v4();
     return $hash;
 }
 
@@ -668,13 +657,7 @@ function new_token($minlen = 36, $maxlen = 48)
  */
 function new_uuid()
 {
-
-    try {
-        $hash = (string) Uuid::v4();
-    } catch (UnsatisfiedDependencyException $e) {
-        $hash = random_string(48);
-    }
-
+    $hash = (string) Uuid::v4();
     return $hash;
 }
 
@@ -747,7 +730,7 @@ function logger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
     $where = basename($stack[0]['file']) . ':' . $stack[0]['line'] . ':' . $stack[1]['function'] . ': ';
 
     $s = datetime_convert('UTC', 'UTC', 'now', ATOM_TIME) . ':' . log_priority_str($priority) . ':' . logid() . ':' . $where . $msg . PHP_EOL;
-    $pluginfo = array('filename' => $logfile, 'loglevel' => $level, 'message' => $s,'priority' => $priority, 'logged' => false);
+    $pluginfo = ['filename' => $logfile, 'loglevel' => $level, 'message' => $s,'priority' => $priority, 'logged' => false];
 
     if (! (App::$module == 'setup')) {
         Hook::call('logger', $pluginfo);
@@ -806,7 +789,7 @@ function btlogger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
 
 function log_priority_str($priority)
 {
-    $parr = array(
+    $parr = [
         LOG_EMERG   => 'LOG_EMERG',
         LOG_ALERT   => 'LOG_ALERT',
         LOG_CRIT    => 'LOG_CRIT',
@@ -815,7 +798,7 @@ function log_priority_str($priority)
         LOG_NOTICE  => 'LOG_NOTICE',
         LOG_INFO    => 'LOG_INFO',
         LOG_DEBUG   => 'LOG_DEBUG'
-    );
+    ];
 
     if ($parr[$priority]) {
         return $parr[$priority];
@@ -899,7 +882,7 @@ function activity_match($haystack, $needle)
  * and strip the period from any tags which end with one.
  *
  * @param string $s
- * @return Returns array of tags found, or empty array.
+ * @return array
  */
 function get_tags($s)
 {
@@ -957,11 +940,11 @@ function get_tags($s)
                 continue;
             }
             // likewise for trailing period. Strip it off rather than complicate the regex further.
-            if (substr($mtch, -1, 1) === '.') {
+            if (str_ends_with($mtch, '.')) {
                 $mtch = substr($mtch, 0, -1);
             }
             // ignore strictly numeric tags like #1 or #^ bookmarks or ## double hash
-            if ((strpos($mtch, '#') === 0) && ( ctype_digit(substr($mtch, 1)) || in_array(substr($mtch, 1, 1), [ '^', '#' ]))) {
+            if ((str_starts_with($mtch, '#')) && ( ctype_digit(substr($mtch, 1)) || in_array(substr($mtch, 1, 1), [ '^', '#' ]))) {
                 continue;
             }
             // or quote remnants from the quoted strings we already picked out earlier
@@ -1045,27 +1028,27 @@ function magiclink_url($observer, $myaddr, $url)
 function search($s, $id = 'search-box', $url = '/search', $save = false)
 {
 
-    return replace_macros(Theme::get_template('searchbox.tpl'), array(
+    return replace_macros(Theme::get_template('searchbox.tpl'), [
         '$s' => $s,
         '$id' => $id,
         '$action_url' => z_root() . $url,
         '$search_label' => t('Search'),
         '$save_label' => t('Save'),
         '$savedsearch' => Features::enabled(local_channel(), 'savedsearch')
-    ));
+    ]);
 }
 
 
 function searchbox($s, $id = 'search-box', $url = '/search', $save = false)
 {
-    return replace_macros(Theme::get_template('searchbox.tpl'), array(
+    return replace_macros(Theme::get_template('searchbox.tpl'), [
         '$s' => $s,
         '$id' => $id,
         '$action_url' => z_root() . '/' . $url,
         '$search_label' => t('Search'),
         '$save_label' => t('Save'),
         '$savedsearch' => ($save && Features::enabled(local_channel(), 'savedsearch'))
-    ));
+    ]);
 }
 
 /**
@@ -1113,7 +1096,7 @@ function sslify($s, $cache_enable = true)
     if ((! $cache_enable) || (! intval(get_config('system', 'cache_images', 1)))) {
         // if caching is prevented for whatever reason, proxy any non-SSL photos
 
-        if (strpos(z_root(), 'https:') === false) {
+        if (!str_contains(z_root(), 'https:')) {
             return $s;
         }
 
@@ -1188,18 +1171,18 @@ function uncache($s)
 function get_poke_verbs()
 {
     if (get_config('system', 'poke_basic')) {
-        $arr = array(
-            'poke' => array('poked', t('poke'), t('poked')),
-        );
+        $arr = [
+            'poke' => ['poked', t('poke'), t('poked')],
+        ];
     } else {
-        $arr = array(
-            'poke' => array( 'poked', t('poke'), t('poked')),
-            'ping' => array( 'pinged', t('ping'), t('pinged')),
-            'prod' => array( 'prodded', t('prod'), t('prodded')),
-            'slap' => array( 'slapped', t('slap'), t('slapped')),
-            'finger' => array( 'fingered', t('finger'), t('fingered')),
-            'rebuff' => array( 'rebuffed', t('rebuff'), t('rebuffed')),
-        );
+        $arr = [
+            'poke' => ['poked', t('poke'), t('poked')],
+            'ping' => ['pinged', t('ping'), t('pinged')],
+            'prod' => ['prodded', t('prod'), t('prodded')],
+            'slap' => ['slapped', t('slap'), t('slapped')],
+            'finger' => ['fingered', t('finger'), t('fingered')],
+            'rebuff' => ['rebuffed', t('rebuff'), t('rebuffed')],
+        ];
 
         /**
          * @hooks poke_verbs
@@ -1257,12 +1240,12 @@ function get_mood_verbs()
 /**
  * @brief Function to list all smilies, both internal and from addons.
  *
- * @return Returns array with keys 'texts' and 'icons'
+ * @return array
  */
 function list_smilies($default_only = false)
 {
 
-    $texts =  array(
+    $texts =  [
         '&lt;3',
         '&lt;/3',
         ':-)',
@@ -1294,9 +1277,9 @@ function list_smilies($default_only = false)
         ':facepalm',
         ':like',
         ':dislike'
-    );
+    ];
 
-    $icons = array(
+    $icons = [
         '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-heart.gif" alt="&lt;3" />',
         '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-brokenheart.gif" alt="&lt;/3" />',
         '<img class="smiley" src="' . z_root() . '/images/emoticons/smiley-smile.gif" alt=":-)" />',
@@ -1329,9 +1312,9 @@ function list_smilies($default_only = false)
         '<img class="smiley" src="' . z_root() . '/images/emoticons/like.gif" alt=":like" />',
         '<img class="smiley" src="' . z_root() . '/images/emoticons/dislike.gif" alt=":dislike" />'
 
-    );
+    ];
 
-    $params = array('texts' => $texts, 'icons' => $icons);
+    $params = ['texts' => $texts, 'icons' => $icons];
 
     if ($default_only) {
         return $params;
@@ -1433,14 +1416,14 @@ function preg_heart($x)
 function day_translate($s)
 {
     $ret = str_replace(
-        array('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'),
-        array( t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday'), t('Sunday')),
+        ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+        [t('Monday'), t('Tuesday'), t('Wednesday'), t('Thursday'), t('Friday'), t('Saturday'), t('Sunday')],
         $s
     );
 
     $ret = str_replace(
-        array('January','February','March','April','May','June','July','August','September','October','November','December'),
-        array( t('January'), t('February'), t('March'), t('April'), t('May'), t('June'), t('July'), t('August'), t('September'), t('October'), t('November'), t('December')),
+        ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        [t('January'), t('February'), t('March'), t('April'), t('May'), t('June'), t('July'), t('August'), t('September'), t('October'), t('November'), t('December')],
         $ret
     );
 
@@ -1455,7 +1438,7 @@ function day_translate($s)
  */
 function normalise_link($url)
 {
-    $ret = str_replace(array('https:', '//www.'), array('http:', '//'), $url);
+    $ret = str_replace(['https:', '//www.'], ['http:', '//'], $url);
 
     return(rtrim($ret, '/'));
 }
@@ -1591,13 +1574,13 @@ function format_categories(&$item, $writeable)
                 continue;
             }
             $removelink = (($writeable) ?  z_root() . '/filerm/' . $item['id'] . '?f=&cat=' . urlencode($t['term']) : '');
-            $categories[] = array('term' => $term, 'writeable' => $writeable, 'removelink' => $removelink, 'url' => zid($t['url']));
+            $categories[] = ['term' => $term, 'writeable' => $writeable, 'removelink' => $removelink, 'url' => zid($t['url'])];
         }
 
-        $s = replace_macros(Theme::get_template('item_categories.tpl'), array(
+        $s = replace_macros(Theme::get_template('item_categories.tpl'), [
             '$remove' => t('remove category'),
             '$categories' => $categories
-        ));
+        ]);
     }
 
     return $s;
@@ -1618,7 +1601,7 @@ function format_hashtags(&$item)
         return $s;
     }
 
-    $terms = get_terms_oftype($item['term'], array(TERM_HASHTAG,TERM_COMMUNITYTAG));
+    $terms = get_terms_oftype($item['term'], [TERM_HASHTAG,TERM_COMMUNITYTAG]);
     if ($terms) {
         foreach ($terms as $t) {
             $term = htmlspecialchars($t['term'], ENT_COMPAT, 'UTF-8', false) ;
@@ -1730,13 +1713,13 @@ function format_filer(&$item)
                 continue;
             }
             $removelink = z_root() . '/filerm/' . $item['id'] . '?f=&term=' . urlencode($t['term']);
-            $categories[] = array('term' => $term, 'removelink' => $removelink);
+            $categories[] = ['term' => $term, 'removelink' => $removelink];
         }
 
-        $s = replace_macros(Theme::get_template('item_filer.tpl'), array(
+        $s = replace_macros(Theme::get_template('item_filer.tpl'), [
             '$remove' => t('remove from file'),
             '$categories' => $categories
-        ));
+        ]);
     }
 
     return $s;
@@ -1880,12 +1863,12 @@ function prepare_body(&$item, $attach = false, $opts = false)
         $event['header'] .= '<i class="fa fa-asterisk" title="' . t('Added to your calendar') . '"></i>' . '&nbsp;' . t('Added to your calendar');
     }
 
-    $prep_arr = array(
+    $prep_arr = [
         'item' => $item,
         'html' => $event ? $event['content'] : $s,
         'event' => ((is_array($event)) ? $event['header'] : EMPTY_STR),
         'photo' => $photo
-    );
+    ];
 
     Hook::call('prepare_body', $prep_arr);
 
@@ -1897,7 +1880,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         return $s;
     }
 
-    if (strpos($s, '<div class="map">') !== false) {
+    if (str_contains($s, '<div class="map">')) {
         if ($item['lat'] || $item['lon']) {
             $lat = $item['lat'];
             $lon = $item['lon'];
@@ -1953,7 +1936,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         $event = sslify($event, $cache_enable);
     }
 
-    $prep_arr = array(
+    $prep_arr = [
         'item' => $item,
         'photo' => $photo,
         'html' => $s,
@@ -1963,7 +1946,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
         'tags' => $tags,
         'mentions' => $mentions,
         'attachments' => $attachments
-    );
+    ];
 
     Hook::call('prepare_body_final', $prep_arr);
 
@@ -2229,9 +2212,9 @@ function layout_select($channel_id, $current = '')
         }
     }
 
-    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), array(
-        '$field'    => array('layout_mid', t('Page layout'), $selected, t('You can create your own with the layouts tool'), $options)
-    ));
+    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), [
+        '$field'    => ['layout_mid', t('Page layout'), $selected, t('You can create your own with the layouts tool'), $options]
+    ]);
 
     return $o;
 }
@@ -2258,9 +2241,9 @@ function mimetype_select($channel_id, $current = 'text/x-multicode', $choices = 
         $options .= '<option value="' . $y . '"' . $selected . '>' . $z . '</option>';
     }
 
-    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), array(
-        '$field'    => array( $element, t('Page content type'), $selected, '', $options)
-    ));
+    $o = replace_macros(Theme::get_template('field_select_raw.tpl'), [
+        '$field'    => [$element, t('Page content type'), $selected, '', $options]
+    ]);
 
     return $o;
 }
@@ -2342,14 +2325,14 @@ function cleardiv()
 
 function bb_translate_video($s)
 {
-    $arr = array('string' => $s);
+    $arr = ['string' => $s];
     Hook::call('bb_translate_video', $arr);
     return $arr['string'];
 }
 
 function html2bb_video($s)
 {
-    $arr = array('string' => $s);
+    $arr = ['string' => $s];
     Hook::call('html2bb_video', $arr);
     return $arr['string'];
 }
@@ -2474,7 +2457,7 @@ function undo_post_tagging($s)
 
 function quote_tag($s)
 {
-    if (strpos($s, ' ') !== false) {
+    if (str_contains($s, ' ')) {
         return '&quot;' . $s . '&quot;';
     }
     return $s;
@@ -2499,7 +2482,7 @@ function is_a_date_arg($s)
 {
     $i = intval($s);
     if ($i > 1900) {
-        $y = date('Y');
+        $y = intval((date('Y'));
         if ($i <= $y + 1 && strpos($s, '-') == 4) {
             $m = intval(substr($s, 5));
             if ($m > 0 && $m <= 12) {
@@ -2882,7 +2865,7 @@ function design_tools()
 
     $who = $channel['channel_address'];
 
-    return replace_macros(Theme::get_template('design_tools.tpl'), array(
+    return replace_macros(Theme::get_template('design_tools.tpl'), [
         '$title'  => t('Design Tools'),
         '$who'    => $who,
         '$sys'    => $sys,
@@ -2890,7 +2873,7 @@ function design_tools()
         '$menus'  => t('Menus'),
         '$layout' => t('Layouts'),
         '$pages'  => t('Pages')
-    ));
+    ]);
 }
 
 /**
@@ -2910,7 +2893,7 @@ function website_portation_tools()
         $sys = true;
     }
 
-    return replace_macros(Theme::get_template('website_portation_tools.tpl'), array(
+    return replace_macros(Theme::get_template('website_portation_tools.tpl'), [
         '$title'               => t('Import'),
         '$import_label'        => t('Import website...'),
         '$import_placeholder'  => t('Select folder to import'),
@@ -2927,7 +2910,7 @@ function website_portation_tools()
         '$cloud_export_desc'   => t('/path/to/export/folder'),
         '$cloud_export_hint'   => t('Enter a path to a cloud files destination.'),
         '$cloud_export_select' => t('Specify folder'),
-    ));
+    ]);
 }
 
 /**
@@ -2944,7 +2927,7 @@ function in_arrayi($needle, $haystack)
 
 function normalise_openid($s)
 {
-    return trim(str_replace(array('http://','https://'), array('',''), $s), '/');
+    return trim(str_replace(['http://','https://'], ['',''], $s), '/');
 }
 
 /**
@@ -2960,7 +2943,7 @@ function extra_query_args()
     if (count($_GET)) {
         foreach ($_GET as $k => $v) {
             // these are request vars we don't want to duplicate
-            if (! in_array($k, array('req','f','zid','page','PHPSESSID'))) {
+            if (! in_array($k, ['req','f','zid','page','PHPSESSID'])) {
                 $s .= '&' . $k . '=' . urlencode($v);
             }
         }
@@ -2968,7 +2951,7 @@ function extra_query_args()
     if (count($_POST)) {
         foreach ($_POST as $k => $v) {
             // these are request vars we don't want to duplicate
-            if (! in_array($k, array('req','f','zid','page','PHPSESSID'))) {
+            if (! in_array($k, ['req','f','zid','page','PHPSESSID'])) {
                 $s .= '&' . $k . '=' . urlencode($v);
             }
         }
@@ -2998,9 +2981,9 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
     $r = null;
     $match = [];
 
-    $termtype = ((strpos($tag, '#') === 0)   ? TERM_HASHTAG  : TERM_UNKNOWN);
-    $termtype = ((strpos($tag, '@') === 0)   ? TERM_MENTION  : $termtype);
-    $termtype = ((strpos($tag, '!') === 0)   ? TERM_FORUM    : $termtype);
+    $termtype = ((str_starts_with($tag, '#'))   ? TERM_HASHTAG  : TERM_UNKNOWN);
+    $termtype = ((str_starts_with($tag, '@'))   ? TERM_MENTION  : $termtype);
+    $termtype = ((str_starts_with($tag, '!'))   ? TERM_FORUM    : $termtype);
 
     // Is it a hashtag of some kind?
 
@@ -3014,10 +2997,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
         if (! $replaced) {
             // double-quoted hashtags: base tag has the htmlentity name only
 
-            if ((substr($tag, 0, 7) === '#&quot;') && (substr($tag, -6, 6) === '&quot;')) {
+            if ((str_starts_with($tag, '#&quot;')) && (str_ends_with($tag, '&quot;'))) {
                 $basetag = substr($tag, 7);
                 $basetag = substr($basetag, 0, -6);
-            } elseif ((substr($tag, 0, 2) === '#"') && (substr($tag, -1, 1) === '"')) {
+            } elseif ((str_starts_with($tag, '#"')) && (str_ends_with($tag, '"'))) {
                 $basetag = substr($tag, 2);
                 $basetag = substr($basetag, 0, -1);
             } else {
@@ -3064,7 +3047,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
         // $in_network is set to false to avoid false positives on posts originating
         // on a network which does not implement privacy tags or implements them differently.
 
-        $exclusive = (((strpos(substr($tag, 1), '!') === 0) && $in_network) ? true : false);
+        $exclusive = (((str_starts_with(substr($tag, 1), '!')) && $in_network) ? true : false);
 
         // is it already replaced?
         if (strpos($tag, "[zrl=") || strpos($tag, "[url=")) {
@@ -3082,7 +3065,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
         // is it some generated (autocompleted) name?
 
-        if (substr($name, 0, 1) === '{' && substr($name, -1, 1) === '}') {
+        if (str_starts_with($name, '{') && str_ends_with($name, '}')) {
             $newname = substr($name, 1);
             $newname = substr($newname, 0, -1);
 
@@ -3102,10 +3085,10 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
             // We see this after input filtering so quotes have been html entity encoded
 
-            if ((substr($name, 0, 6) === '&quot;') && (substr($name, -6, 6) === '&quot;')) {
+            if ((str_starts_with($name, '&quot;')) && (str_ends_with($name, '&quot;'))) {
                 $newname = substr($name, 6);
                 $newname = substr($newname, 0, -6);
-            } elseif ((substr($name, 0, 1) === '"') && (substr($name, -1, 1) === '"')) {
+            } elseif ((str_starts_with($name, '"')) && (str_ends_with($name, '"'))) {
                 $newname = substr($name, 1);
                 $newname = substr($newname, 0, -1);
             }
@@ -3319,7 +3302,7 @@ function linkify_tags(&$body, $uid, $in_network = true)
  */
 function getIconFromType($type)
 {
-    $iconMap = array(
+    $iconMap = [
         //Folder
         t('Collection') => 'fa-folder-o',
         'multipart/mixed' => 'fa-folder-o', //dirs in attach use this mime type
@@ -3358,7 +3341,7 @@ function getIconFromType($type)
         'video/webm' => 'fa-file-video-o',
         'video/mp4' => 'fa-file-video-o',
         'video/x-matroska' => 'fa-file-video-o'
-    );
+    ];
 
     $catMap = [
         'application' => 'fa-file-code-o',
@@ -3403,7 +3386,7 @@ function userReadableSize($size)
     if (is_numeric($size)) {
         $incr = 0;
         $k = 1024;
-        $unit = array('bytes', 'KB', 'MB', 'GB', 'TB', 'PB');
+        $unit = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
         while (($size / $k) >= 1) {
             $incr++;
             $size = round($size / $k, 2);
@@ -3636,14 +3619,14 @@ function pdl_selector($uid, $current = '')
         intval($uid)
     );
 
-    $arr = array('channel_id' => $uid, 'current' => $current, 'entries' => $r);
+    $arr = ['channel_id' => $uid, 'current' => $current, 'entries' => $r];
     Hook::call('pdl_selector', $arr);
 
     $entries = $arr['entries'];
     $current = $arr['current'];
 
     $o .= '<select name="pdl_select" id="pdl_select" size="1">';
-    $entries[] = array('title' => t('Default'), 'mid' => '');
+    $entries[] = ['title' => t('Default'), 'mid' => ''];
     foreach ($entries as $selection) {
         $selected = (($selection == $current) ? ' selected="selected" ' : '');
         $o .= "<option value=\"{$selection['mid']}\" $selected >{$selection['v']}</option>";
@@ -3866,7 +3849,7 @@ function share_shield($m)
 
 function share_unshield($m)
 {
-    $x = str_replace(array('!=+=+=!','=+!=+!='), array('',''), $m[1]);
+    $x = str_replace(['!=+=+=!','=+!=+!='], ['',''], $m[1]);
     return str_replace($m[1], base64url_decode($x), $m[0]);
 }
 
@@ -3947,7 +3930,7 @@ function gen_link_id($mid)
 function unpack_link_id($mid)
 {
     $mid = decode_safe_param($mid);
-    if (strpos($mid, 'b64.') === 0) {
+    if (str_starts_with($mid, 'b64.')) {
         $mid = base64url_decode(preg_replace('/[^A-Za-z0-9\-_].*/', '', substr($mid, 4)));
     }
     return $mid;
@@ -3991,7 +3974,7 @@ function ellipsify($s, $maxlen)
 
 function purify_filename($s)
 {
-    if (($s[0] === '.') || strpos($s, '/') !== false) {
+    if (($s[0] === '.') || str_contains($s, '/')) {
         return '';
     }
     return $s;
@@ -4142,7 +4125,7 @@ function unserialise($x)
     if (is_array($x)) {
         return $x;
     }
-    $y = ((substr($x, 0, 5) === 'json:') ? json_decode(substr($x, 5), true) : '');
+    $y = ((str_starts_with($x, 'json:')) ? json_decode(substr($x, 5), true) : '');
     return ((is_array($y)) ? $y : $x);
 }
 

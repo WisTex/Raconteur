@@ -8,7 +8,7 @@ use Code\Lib\Channel;
 class Expire
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
         cli_startup();
 

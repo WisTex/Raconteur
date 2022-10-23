@@ -86,7 +86,7 @@ class Notifier
     public static $channel      = null;
     public static $private      = false;
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if ($argc < 3) {

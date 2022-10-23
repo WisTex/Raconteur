@@ -5,15 +5,15 @@ namespace Code\Daemon;
 class Importdoc
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         require_once('include/help.php');
 
-        self::update_docs_dir('doc/*');
+        $this->update_docs_dir('doc/*');
     }
 
-    public static function update_docs_dir($s)
+    public function update_docs_dir($s)
     {
         $f = basename($s);
         $d = dirname($s);

@@ -9,7 +9,7 @@ require_once('include/photos.php');
 
 class CacheThumb
 {
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
         if ($argc != 2) {
             return;

@@ -12,7 +12,7 @@ class Cache_image
      * @param $argv
      * @return void
      */
-    public static function run($argc, $argv): void
+    public function run($argc, $argv): void
     {
         cli_startup();
         logger('caching: ' . $argv[1] . ' to ' . $argv[2]);

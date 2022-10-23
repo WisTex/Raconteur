@@ -14,7 +14,7 @@ class Content_importer
 {
 
     /** @noinspection PhpUnusedParameterInspection */
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
         cli_startup();
 

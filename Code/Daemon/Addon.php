@@ -13,7 +13,7 @@ class Addon
      * @return void
      * @noinspection PhpUnusedParameterInspection
      */
-    public static function run($argc, $argv): void
+    public function run($argc, $argv): void
     {
         Hook::call('daemon_addon', $argv);
     }

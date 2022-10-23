@@ -8,7 +8,7 @@ class Channel_purge
 {
 
     /** @noinspection PhpUnusedParameterInspection */
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         cli_startup();

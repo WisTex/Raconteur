@@ -13,7 +13,7 @@ require_once('include/import.php');
 class File_importer
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         cli_startup();

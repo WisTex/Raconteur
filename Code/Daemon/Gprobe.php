@@ -13,7 +13,7 @@ use Code\Lib\Zotfinger;
 class Gprobe
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if ($argc != 2) {

@@ -9,7 +9,7 @@ use Code\Lib\Queue;
 class Deliver
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
         if ($argc < 2) {
             return;

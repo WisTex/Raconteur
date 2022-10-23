@@ -10,7 +10,7 @@ class Cache_embeds
      * @param $argv
      * @return void
      */
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if (! $argc == 2) {

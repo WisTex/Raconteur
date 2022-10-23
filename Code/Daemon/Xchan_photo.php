@@ -7,7 +7,7 @@ namespace Code\Daemon;
 class Xchan_photo
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if ($argc != 3) {

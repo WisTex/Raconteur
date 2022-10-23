@@ -10,7 +10,7 @@ use Code\Lib\Channel;
 class Convo
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         logger('convo invoked: ' . print_r($argv, true));
