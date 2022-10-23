@@ -3,7 +3,6 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Channel;
 use Code\Extend\Hook;
 
 class ServiceClass {        
@@ -24,7 +23,7 @@ class ServiceClass {
      */
     public static function identity_check_service_class($account_id)
     {
-        $ret = array('success' => false, 'message' => '');
+        $ret = ['success' => false, 'message' => ''];
 
         $r = q(
             "select count(channel_id) as total from channel where channel_account_id = %d and channel_removed = 0 ",

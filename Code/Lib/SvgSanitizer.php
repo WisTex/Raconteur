@@ -2,11 +2,10 @@
 
 namespace Code\Lib;
 
-use DomDocument;
-use Code\Lib\Config;
+use DOMDocument;
 
 /**
- *  SVGSantiizer
+ *  SVGSanitizer
  *
  *  Allowlist-based PHP SVG sanitizer.
  *
@@ -120,7 +119,7 @@ class SvgSanitizer
                     } // check for disallowed functions
                     elseif (
                         preg_match_all(
-                            '/([a-zA-Z0-9]+)[\s]*\(/',
+                            '/([a-zA-Z0-9]+)\s*\(/',
                             $currentNode->attributes->item($x)->textContent,
                             $matches,
                             PREG_SET_ORDER
@@ -129,10 +128,12 @@ class SvgSanitizer
                         if ($attrName === 'text') {
                             continue;
                         }
-                        foreach ($matches as $match) {
-                            if (!in_array($match[1], self::$allowed_functions)) {
-                                logger('queue_remove_function: ' . $match[1], LOGGER_DEBUG);
-                                $this->removedattrs[] = $attrName;
+                        if ($matches) {
+                            foreach ($matches as $match) {
+                                if (!in_array($match[1], self::$allowed_functions)) {
+                                    logger('queue_remove_function: ' . $match[1], LOGGER_DEBUG);
+                                    $this->removedattrs[] = $attrName;
+                                }
                             }
                         }
                     }
