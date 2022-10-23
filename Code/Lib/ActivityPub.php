@@ -2,14 +2,8 @@
 
 namespace Code\Lib;
 
-use Code\Lib\LDSignatures;
-use Code\Lib\ActivityStreams;
-use Code\Lib\Activity;
-use Code\Lib\Queue;
-use Code\Lib\Libsync;
+
 use Code\Daemon\Run;
-use Code\Lib\IConfig;
-use Code\Lib\Channel;
 
 class ActivityPub
 {
@@ -25,7 +19,7 @@ class ActivityPub
 
         // logger('notifier_array: ' . print_r($arr,true), LOGGER_ALL, LOG_INFO);
 
-        $purge_all = (($arr['packet_type'] === 'purge' && (!intval($arr['private']))) ? true : false);
+        $purge_all = $arr['packet_type'] === 'purge' && !intval($arr['private']);
 
         $signed_msg = null;
 
@@ -159,9 +153,9 @@ class ActivityPub
                 if ($qi) {
                     $arr['queued'][] = $qi;
                 }
-                continue;
             }
-        } else {
+        }
+        else {
             // public message
 
             // See if we can deliver all of them at once
@@ -174,7 +168,8 @@ class ActivityPub
                 if ($qi) {
                     $arr['queued'][] = $qi;
                 }
-            } else {
+            }
+            else {
                 $r = q(
                     "select * from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url = '%s' and xchan_network = 'activitypub' ",
                     dbesc($arr['hub']['hubloc_url'])
@@ -187,7 +182,6 @@ class ActivityPub
 
                 foreach ($r as $contact) {
                     // $single = deliverable_singleton($arr['channel']['channel_id'],$contact);
-
                     $qi = self::queue_message($jmsg, $arr['channel'], $contact, $target_item['mid']);
                     if ($qi) {
                         $arr['queued'][] = $qi;
@@ -195,8 +189,6 @@ class ActivityPub
                 }
             }
         }
-
-        return;
     }
 
 
@@ -280,7 +272,7 @@ class ActivityPub
             ]],
             [
                 'id' => z_root() . '/follow/' . $x['recipient']['abook_id'] . (($orig_follow) ? '/' . md5($orig_follow) : EMPTY_STR),
-                'type' => (($orig_follow_type) ? $orig_follow_type : 'Follow'),
+                'type' => (($orig_follow_type) ?: 'Follow'),
                 'actor' => $p,
                 'object' => $x['recipient']['xchan_hash'],
                 'to' => [$x['recipient']['xchan_hash']],
@@ -358,7 +350,7 @@ class ActivityPub
                 'type' => 'Accept',
                 'actor' => $p,
                 'object' => [
-                    'type' => (($follow_type) ? $follow_type : 'Follow'),
+                    'type' => (($follow_type) ?: 'Follow'),
                     'id' => $accept,
                     'actor' => $x['recipient']['xchan_hash'],
                     'object' => z_root() . '/channel/' . $x['sender']['channel_address']
@@ -509,7 +501,7 @@ class ActivityPub
             return;
         }
 
-        if ($src && !is_array($src)) {
+        if (!is_array($src)) {
             $src = Activity::fetch($src);
             if (is_array($src)) {
                 $src_xchan = $src['id'];
@@ -518,7 +510,7 @@ class ActivityPub
 
         $approvals = null;
 
-        if ($dst && !is_array($dst)) {
+        if (!is_array($dst)) {
             $dst = Activity::fetch($dst);
             if (is_array($dst)) {
                 $dst_xchan = $dst['id'];
@@ -626,7 +618,7 @@ class ActivityPub
             return;
         }
 
-        if ($src && !is_array($src)) {
+        if (!is_array($src)) {
             $src = Activity::fetch($src);
             if (is_array($src)) {
                 $src_xchan = $src['id'];
@@ -635,7 +627,7 @@ class ActivityPub
 
         $approvals = null;
 
-        if ($dst && !is_array($dst)) {
+        if (!is_array($dst)) {
             $dst = Activity::fetch($dst);
             if (is_array($dst)) {
                 $dst_xchan = $dst['id'];

@@ -2357,28 +2357,26 @@ class Activity
         );
         if (!$r) {
             // create a new record
-            $r = xchan_store_lowlevel(
-                [
-                    'xchan_hash' => $url,
-                    'xchan_guid' => $url,
-                    'xchan_pubkey' => $pubkey,
-                    'xchan_addr' => $webfinger,
-                    'xchan_url' => $profile,
-                    'xchan_name' => $name,
-                    'xchan_hidden' => intval($hidden),
-                    'xchan_updated' => datetime_convert(),
-                    'xchan_name_date' => datetime_convert(),
-                    'xchan_network' => 'activitypub',
-                    'xchan_type' => $xchan_type,
-                    'xchan_photo_date' => datetime_convert('UTC', 'UTC', '1968-01-01'),
-                    'xchan_photo_l' => z_root() . '/' . Channel::get_default_profile_photo(),
-                    'xchan_photo_m' => z_root() . '/' . Channel::get_default_profile_photo(80),
-                    'xchan_photo_s' => z_root() . '/' . Channel::get_default_profile_photo(48),
-                    'xchan_photo_mimetype' => 'image/png',
-                    'xchan_censored' => $censored
+            xchan_store_lowlevel( [
+                'xchan_hash' => $url,
+                'xchan_guid' => $url,
+                'xchan_pubkey' => $pubkey,
+                'xchan_addr' => $webfinger,
+                'xchan_url' => $profile,
+                'xchan_name' => $name,
+                'xchan_hidden' => intval($hidden),
+                'xchan_updated' => datetime_convert(),
+                'xchan_name_date' => datetime_convert(),
+                'xchan_network' => 'activitypub',
+                'xchan_type' => $xchan_type,
+                'xchan_photo_date' => datetime_convert('UTC', 'UTC', '1968-01-01'),
+                'xchan_photo_l' => z_root() . '/' . Channel::get_default_profile_photo(),
+                'xchan_photo_m' => z_root() . '/' . Channel::get_default_profile_photo(80),
+                'xchan_photo_s' => z_root() . '/' . Channel::get_default_profile_photo(48),
+                'xchan_photo_mimetype' => 'image/png',
+                'xchan_censored' => $censored
 
-                ]
-            );
+            ]);
         }
         else {
             // Record exists. Cache existing records for a set number of days
@@ -2484,43 +2482,42 @@ class Activity
         }
 
         if (!$h) {
-            $r = hubloc_store_lowlevel(
-                [
-                    'hubloc_guid' => $url,
-                    'hubloc_hash' => $url,
-                    'hubloc_id_url' => $profile,
-                    'hubloc_addr' => $webfinger,
-                    'hubloc_network' => 'activitypub',
-                    'hubloc_url' => $baseurl,
-                    'hubloc_host' => $hostname,
-                    'hubloc_callback' => $inbox,
-                    'hubloc_updated' => datetime_convert(),
-                    'hubloc_primary' => 1
-                ]
-            );
-        } else {
+            hubloc_store_lowlevel([
+                'hubloc_guid' => $url,
+                'hubloc_hash' => $url,
+                'hubloc_id_url' => $profile,
+                'hubloc_addr' => $webfinger,
+                'hubloc_network' => 'activitypub',
+                'hubloc_url' => $baseurl,
+                'hubloc_host' => $hostname,
+                'hubloc_callback' => $inbox,
+                'hubloc_updated' => datetime_convert(),
+                'hubloc_primary' => 1
+            ]);
+        }
+        else {
             if ($webfinger !== $h[0]['hubloc_addr']) {
-                $r = q(
+                q(
                     "update hubloc set hubloc_addr = '%s' where hubloc_hash = '%s'",
                     dbesc($webfinger),
                     dbesc($url)
                 );
             }
             if ($inbox !== $h[0]['hubloc_callback']) {
-                $r = q(
+                q(
                     "update hubloc set hubloc_callback = '%s' where hubloc_hash = '%s'",
                     dbesc($inbox),
                     dbesc($url)
                 );
             }
             if ($profile !== $h[0]['hubloc_id_url']) {
-                $r = q(
+                q(
                     "update hubloc set hubloc_id_url = '%s' where hubloc_hash = '%s'",
                     dbesc($profile),
                     dbesc($url)
                 );
             }
-            $r = q(
+            q(
                 "update hubloc set hubloc_updated = '%s' where hubloc_hash = '%s'",
                 dbesc(datetime_convert()),
                 dbesc($url)

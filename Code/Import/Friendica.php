@@ -21,11 +21,6 @@ class Friendica
 
     private $data;
     private $settings;
-
-    private $default_group = null;
-
-    private $groups = null;
-    private $members = null;
     private $contacts = null;
 
 
@@ -168,43 +163,39 @@ class Friendica
 
         $newuid = $channel['channel_id'];
 
-        $r = xchan_store_lowlevel(
-            [
-                'xchan_hash' => $channel['channel_hash'],
-                'xchan_guid' => $channel['channel_guid'],
-                'xchan_guid_sig' => $channel['channel_guid_sig'],
-                'xchan_pubkey' => $channel['channel_pubkey'],
-                'xchan_photo_mimetype' => (($phototype) ?: 'image/png'),
-                'xchan_photo_l' => z_root() . "/photo/profile/l/$newuid",
-                'xchan_photo_m' => z_root() . "/photo/profile/m/$newuid",
-                'xchan_photo_s' => z_root() . "/photo/profile/s/$newuid",
-                'xchan_addr' => Channel::get_webfinger($channel),
-                'xchan_url' => Channel::url($channel),
-                'xchan_follow' => z_root() . '/follow?f=&url=%s',
-                'xchan_connurl' => z_root() . '/poco/' . $channel['channel_address'],
-                'xchan_name' => $channel['channel_name'],
-                'xchan_network' => 'nomad',
-                'xchan_updated' => datetime_convert(),
-                'xchan_photo_date' => datetime_convert(),
-                'xchan_name_date' => datetime_convert(),
-                'xchan_system' => 0
-            ]
-        );
+        xchan_store_lowlevel([
+            'xchan_hash' => $channel['channel_hash'],
+            'xchan_guid' => $channel['channel_guid'],
+            'xchan_guid_sig' => $channel['channel_guid_sig'],
+            'xchan_pubkey' => $channel['channel_pubkey'],
+            'xchan_photo_mimetype' => (($phototype) ?: 'image/png'),
+            'xchan_photo_l' => z_root() . "/photo/profile/l/$newuid",
+            'xchan_photo_m' => z_root() . "/photo/profile/m/$newuid",
+            'xchan_photo_s' => z_root() . "/photo/profile/s/$newuid",
+            'xchan_addr' => Channel::get_webfinger($channel),
+            'xchan_url' => Channel::url($channel),
+            'xchan_follow' => z_root() . '/follow?f=&url=%s',
+            'xchan_connurl' => z_root() . '/poco/' . $channel['channel_address'],
+            'xchan_name' => $channel['channel_name'],
+            'xchan_network' => 'nomad',
+            'xchan_updated' => datetime_convert(),
+            'xchan_photo_date' => datetime_convert(),
+            'xchan_name_date' => datetime_convert(),
+            'xchan_system' => 0
+        ]);
 
-        $r = Channel::profile_store_lowlevel(
-            [
-                'aid' => intval($channel['channel_account_id']),
-                'uid' => intval($newuid),
-                'profile_guid' => new_uuid(),
-                'profile_name' => t('Default Profile'),
-                'is_default' => 1,
-                'publish' => ((isset($this->data['profile']['publish'])) ? $this->data['profile']['publish'] : 1),
-                'fullname' => $channel['channel_name'],
-                'photo' => z_root() . "/photo/profile/l/$newuid",
-                'thumb' => z_root() . "/photo/profile/m/$newuid",
-                'homepage' => ((isset($this->data['profile']['homepage'])) ? $this->data['profile']['homepage'] : EMPTY_STR),
-            ]
-        );
+        Channel::profile_store_lowlevel([
+            'aid' => intval($channel['channel_account_id']),
+            'uid' => intval($newuid),
+            'profile_guid' => new_uuid(),
+            'profile_name' => t('Default Profile'),
+            'is_default' => 1,
+            'publish' => ((isset($this->data['profile']['publish'])) ? $this->data['profile']['publish'] : 1),
+            'fullname' => $channel['channel_name'],
+            'photo' => z_root() . "/photo/profile/l/$newuid",
+            'thumb' => z_root() . "/photo/profile/m/$newuid",
+            'homepage' => ((isset($this->data['profile']['homepage'])) ? $this->data['profile']['homepage'] : EMPTY_STR),
+        ]);
 
         if ($role_permissions) {
             $myperms = ((array_key_exists('perms_connect', $role_permissions)) ? $role_permissions['perms_connect'] : []);
@@ -213,17 +204,15 @@ class Friendica
             $myperms = $x['perms_connect'];
         }
 
-        $r = abook_store_lowlevel(
-            [
-                'abook_account' => intval($channel['channel_account_id']),
-                'abook_channel' => intval($newuid),
-                'abook_xchan' => $channel['channel_hash'],
-                'abook_closeness' => 0,
-                'abook_created' => datetime_convert(),
-                'abook_updated' => datetime_convert(),
-                'abook_self' => 1
-            ]
-        );
+        abook_store_lowlevel([
+            'abook_account' => intval($channel['channel_account_id']),
+            'abook_channel' => intval($newuid),
+            'abook_xchan' => $channel['channel_hash'],
+            'abook_closeness' => 0,
+            'abook_created' => datetime_convert(),
+            'abook_updated' => datetime_convert(),
+            'abook_self' => 1
+        ]);
 
 
         $x = Permissions::serialise(Permissions::FilledPerms($myperms));
@@ -272,13 +261,13 @@ class Friendica
 
             // auto-follow any of the hub's pre-configured channel choices.
             // Only do this if it's the first channel for this account;
-            // otherwise it could get annoying. Don't make this list too big
+            // otherwise it could get annoying. Don't make this list too big,
             // or it will impact registration time.
 
             $accts = get_config('system', 'auto_follow');
             if (($accts) && (!$total_identities)) {
                 if (!is_array($accts)) {
-                    $accts = array($accts);
+                    $accts = [$accts];
                 }
 
                 foreach ($accts as $acct) {
@@ -300,8 +289,8 @@ class Friendica
             Hook::call('create_identity', $newuid);
         }
 
-        $this->groups = ((isset($this->data['group'])) ? $this->data['group'] : null);
-        $this->members = ((isset($this->data['group_member'])) ? $this->data['group_member'] : null);
+        $groups = ((isset($this->data['group'])) ? $this->data['group'] : null);
+        $members = ((isset($this->data['group_member'])) ? $this->data['group_member'] : null);
 
         // import contacts
 
@@ -311,7 +300,7 @@ class Friendica
                     continue;
                 }
                 logger('connecting: ' . $contact['url'], LOGGER_DEBUG);
-                $result = Connect::connect($channel, (($contact['addr']) ? $contact['addr'] : $contact['url']));
+                $result = Connect::connect($channel, (($contact['addr']) ?: $contact['url']));
                 if ($result['success'] && isset($result['abook'])) {
                     $contact['xchan_hash'] = $result['abook']['abook_xchan'];
                     $this->contacts[] = $contact;
@@ -337,12 +326,12 @@ class Friendica
         // So some of the following code is redundant in that regard.
         // Mostly this is used to create and populate any other groups.
 
-        if ($this->groups) {
-            foreach ($this->groups as $group) {
+        if ($groups) {
+            foreach ($groups as $group) {
                 if (!intval($group['deleted'])) {
                     AccessList::add($channel['channel_id'], $group['name'], intval($group['visible']));
-                    if ($this->members) {
-                        foreach ($this->members as $member) {
+                    if ($members) {
+                        foreach ($members as $member) {
                             if (intval($member['gid']) === intval(AccessList::byname($channel['channel_id'], $group['name']))) {
                                 $contact_id = $member['contact-id'];
                                 if ($this->contacts) {

@@ -20,7 +20,7 @@ use Code\Extend\Hook;
  * provide a sane default for any existing connections. You may or may not wish to provide a
  * default auto permission. If in doubt, leave this alone as custom permissions by definition
  * are the responsibility of the channel owner to manage. You just don't want to create any
- * suprises or break things so you have an opportunity to provide sane settings.
+ * suprises or break things, so you have an opportunity to provide sane settings.
  *
  * Update the version here and in PermissionRoles.
  *
@@ -99,7 +99,7 @@ class Permissions
     {
 
         $res = [];
-        $perms = PermissionLimits::Std_limits();
+        $perms = PermissionLimits::Std_Limits();
         foreach ($perms as $perm => $limit) {
             if ($limit != PERMS_PUBLIC) {
                 $res[] = $perm;
@@ -150,6 +150,8 @@ class Permissions
      * @return array Indexed array with elements that look like
      *   * \e string \b name the perm name (e.g. view_stream)
      *   * \e int \b value the value of the perm (e.g. 1)
+     * @noinspection PhpMissingReturnTypeInspection
+     * @noinspection PhpUnused
      */
     public static function OPerms($arr)
     {
@@ -221,8 +223,6 @@ class Permissions
     {
 
         $my_perms = [];
-        $permcat = null;
-        $automatic = 0;
 
         // If a default permcat exists, use that
 
@@ -254,7 +254,7 @@ class Permissions
         }
 
         // If we reached this point without having any permission information,
-        // it is likely a custom permissions role. First see if there are any
+        // it is likely to be a custom permissions role. First see if there are any
         // automatic permissions.
 
         if (! $my_perms) {
@@ -265,7 +265,7 @@ class Permissions
         }
 
         // If we reached this point with no permissions, the channel is using
-        // custom perms but they are not automatic. They will be stored in abconfig with
+        // custom perms, but they are not automatic. They will be stored in abconfig with
         // the channel's channel_hash (the 'self' connection).
 
         if (! $my_perms) {
