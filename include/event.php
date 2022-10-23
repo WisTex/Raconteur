@@ -1172,7 +1172,7 @@ function event_store_item($arr, $event)
         );
         if ($i) {
             xchan_query($i);
-            $item = fetch_post_tags($i, true);
+            $item = fetch_post_tags($i);
         }
     }
 

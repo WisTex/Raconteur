@@ -136,7 +136,7 @@ function search_doc_files($s)
         intval(ITEM_TYPE_DOC)
     );
 
-    $r = fetch_post_tags($r, true);
+    $r = fetch_post_tags($r);
 
     for ($x = 0; $x < count($r); $x++) {
         $position = stripos($r[$x]['body'], $s);

@@ -35,7 +35,7 @@ class Tagrm extends Controller
             goaway(z_root() . '/' . $_SESSION['photo_return']);
         }
 
-        $r = fetch_post_tags($r, true);
+        $r = fetch_post_tags($r);
 
         $item = $r[0];
         $new_tags = [];
@@ -86,7 +86,7 @@ class Tagrm extends Controller
                 goaway(z_root() . '/' . $_SESSION['photo_return']);
             }
 
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
 
             $item = $r[0];
 
@@ -128,7 +128,7 @@ class Tagrm extends Controller
                 goaway(z_root() . '/' . $_SESSION['photo_return']);
             }
 
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
 
             if (!count($r[0]['term'])) {
                 goaway(z_root() . '/' . $_SESSION['photo_return']);

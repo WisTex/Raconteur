@@ -191,7 +191,7 @@ class Page extends Controller
         }
 
         xchan_query($r);
-        $r = fetch_post_tags($r, true);
+        $r = fetch_post_tags($r);
 
         if ($r[0]['mimetype'] === 'application/x-pdl') {
             App::$page['pdl_content'] = true;

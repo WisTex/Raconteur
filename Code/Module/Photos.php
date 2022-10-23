@@ -1036,7 +1036,7 @@ class Photos extends Controller
 
             if ($linked_items) {
                 xchan_query($linked_items);
-                $linked_items = fetch_post_tags($linked_items, true);
+                $linked_items = fetch_post_tags($linked_items);
 
                 $link_item = $linked_items[0];
                 $item_normal = item_normal();
@@ -1050,7 +1050,7 @@ class Photos extends Controller
 
                 if ($r) {
                     xchan_query($r);
-                    $items = fetch_post_tags($r, true);
+                    $items = fetch_post_tags($r);
                     $sorted_items = conv_sort($items, 'commented');
                 }
 

@@ -120,7 +120,7 @@ class Oep extends Controller
         }
 
         xchan_query($p, true);
-        $p = fetch_post_tags($p, true);
+        $p = fetch_post_tags($p);
 
         // This function can get tripped up if the item is already a reshare
         // (the multiple share declarations do not parse cleanly if nested)
@@ -216,7 +216,7 @@ class Oep extends Controller
 
         if ($r) {
             xchan_query($r);
-            $p = fetch_post_tags($r, true);
+            $p = fetch_post_tags($r);
         }
 
         $x = '2eGriplW^*Jmf4';
@@ -306,7 +306,7 @@ class Oep extends Controller
 
         if ($r) {
             xchan_query($r);
-            $p = fetch_post_tags($r, true);
+            $p = fetch_post_tags($r);
         }
 
         $x = '2eGriplW^*Jmf4';
@@ -385,7 +385,7 @@ class Oep extends Controller
         }
 
         xchan_query($p, true);
-        $p = fetch_post_tags($p, true);
+        $p = fetch_post_tags($p);
 
         // This function can get tripped up if the item is already a reshare
         // (the multiple share declarations do not parse cleanly if nested)

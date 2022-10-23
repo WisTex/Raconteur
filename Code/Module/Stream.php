@@ -585,7 +585,7 @@ class Stream extends Controller
 				ORDER BY item.edited DESC $pager_sql ");
 
             xchan_query($items);
-            $items = fetch_post_tags($items, true);
+            $items = fetch_post_tags($items);
         } elseif ($this->updating) {
             // Normal conversation view
             if ($order === 'post') {
@@ -654,7 +654,7 @@ class Stream extends Controller
 
     
                 xchan_query($items, true);
-                $items = fetch_post_tags($items, true);
+                $items = fetch_post_tags($items);
                 $items = conv_sort($items, $ordering);
             }
 

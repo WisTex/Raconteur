@@ -57,7 +57,7 @@ class Item
         }
 
         xchan_query($r);
-        $r = fetch_post_tags($r, true);
+        $r = fetch_post_tags($r);
 
         $o = prepare_page($r[0]);
         return $o;

@@ -144,7 +144,7 @@ class Like extends Controller
             );
 
             xchan_query($r, true);
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
             $r[0]['obj'] = json_decode($r[0]['obj'], true);
             $object = Activity::encode_activity($r[0], true);
 

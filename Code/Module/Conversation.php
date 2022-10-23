@@ -109,7 +109,7 @@ class Conversation extends Controller
             }
 
             xchan_query($items, true);
-            $items = fetch_post_tags($items, true);
+            $items = fetch_post_tags($items);
 
             $observer = App::get_observer();
             $parent = $items[0];

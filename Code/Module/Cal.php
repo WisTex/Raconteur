@@ -258,7 +258,7 @@ class Cal extends Controller
 
             if ($r) {
                 xchan_query($r);
-                $r = fetch_post_tags($r, true);
+                $r = fetch_post_tags($r);
 
                 $r = sort_by_date($r);
             }

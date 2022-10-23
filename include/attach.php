@@ -2302,7 +2302,7 @@ function attach_export_data($channel, $resource_id, $deleted = false)
             );
             if ($items) {
                 xchan_query($items);
-                $items = fetch_post_tags($items, true);
+                $items = fetch_post_tags($items);
                 foreach ($items as $rr) {
                     $ret['item'][] = encode_item($rr, true);
                 }

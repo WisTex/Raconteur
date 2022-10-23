@@ -88,7 +88,7 @@ class Id extends Controller
             }
 
             xchan_query($r, true);
-            $items = fetch_post_tags($r, true);
+            $items = fetch_post_tags($r);
 
             $i = Activity::encode_item($items[0], (get_config('system', 'activitypub', ACTIVITYPUB_ENABLED) ? true : false));
 

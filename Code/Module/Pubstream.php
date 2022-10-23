@@ -270,7 +270,7 @@ class Pubstream extends Controller
                 // for sys_channel owned items.
 
                 xchan_query($items, true, (($sys) ? local_channel() : 0));
-                $items = fetch_post_tags($items, true);
+                $items = fetch_post_tags($items);
                 $items = conv_sort($items, $ordering);
             } else {
                 $items = [];

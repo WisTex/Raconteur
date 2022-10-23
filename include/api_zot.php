@@ -410,7 +410,7 @@ function api_photo_detail($type)
             );
             if ($ii) {
                 xchan_query($ii, true, 0);
-                $ii = fetch_post_tags($ii, true);
+                $ii = fetch_post_tags($ii);
                 if ($ii) {
                     $ret['item'] = [];
                     foreach ($ii as $iii) {

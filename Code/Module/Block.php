@@ -89,7 +89,7 @@ class Block extends Controller
         }
 
         xchan_query($r);
-        $r = fetch_post_tags($r, true);
+        $r = fetch_post_tags($r);
 
         return prepare_page($r[0]);
     }

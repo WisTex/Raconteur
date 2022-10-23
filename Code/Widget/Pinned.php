@@ -100,7 +100,7 @@ class Pinned
         );
         if ($r) {
             xchan_query($r, true);
-            $items = fetch_post_tags($r, true);
+            $items = fetch_post_tags($r);
 
             for ($x = 0; $x < count($items); $x++) {
                 $items[$x]['item_id'] = 'pin-' . $items[$x]['item_id'];

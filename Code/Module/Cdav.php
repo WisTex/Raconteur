@@ -961,7 +961,7 @@ class Cdav extends Controller
                 );
                 if ($r) {
                     xchan_query($r);
-                    $r = fetch_post_tags($r, true);
+                    $r = fetch_post_tags($r);
 
                     $r[0]['dtstart'] = (($r[0]['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $r[0]['dtstart'], 'c') : datetime_convert('UTC', 'UTC', $r[0]['dtstart'], 'c'));
                     $r[0]['dtend'] = (($r[0]['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $r[0]['dtend'], 'c') : datetime_convert('UTC', 'UTC', $r[0]['dtend'], 'c'));

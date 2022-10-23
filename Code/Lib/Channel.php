@@ -1160,7 +1160,7 @@ class Channel
             if ($r) {
                 $ret['event_item'] = [];
                 xchan_query($r);
-                $r = fetch_post_tags($r, true);
+                $r = fetch_post_tags($r);
                 foreach ($r as $rr) {
                     $ret['event_item'][] = encode_item($rr, true);
                 }
@@ -1186,7 +1186,7 @@ class Channel
             if ($r) {
                 $ret['item'] = [];
                 xchan_query($r);
-                $r = fetch_post_tags($r, true);
+                $r = fetch_post_tags($r);
                 foreach ($r as $rr) {
                     $ret['item'][] = encode_item($rr, true);
                 }
@@ -1291,7 +1291,7 @@ class Channel
         if ($r) {
             $ret['item'] = [];
             xchan_query($r);
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
             foreach ($r as $rr) {
                 $ret['item'][] = encode_item($rr, true);
             }
@@ -1364,7 +1364,7 @@ class Channel
         if ($r) {
             $ret['item'] = [];
             xchan_query($r);
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
             foreach ($r as $rr) {
                 $ret['item'][] = encode_item($rr, true);
             }

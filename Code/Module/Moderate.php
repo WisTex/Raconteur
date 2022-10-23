@@ -133,7 +133,7 @@ class Moderate extends Controller
 
         if ($r) {
             xchan_query($r);
-            $items = fetch_post_tags($r, true);
+            $items = fetch_post_tags($r);
         } else {
             $items = [];
         }

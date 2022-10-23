@@ -3567,7 +3567,7 @@ function item_expire($uid,$days,$comment_days = 7) {
         return;
     }
 
-    $r = fetch_post_tags($r,true);
+    $r = fetch_post_tags($r);
 
     foreach ($r as $item) {
 
@@ -3957,10 +3957,9 @@ function posted_dates($uid,$wall) {
  * @brief Extend an item array with the associated tags of the posts.
  *
  * @param array $items
- * @param boolean $link (optional) default false
  * @return array Return the provided $items array after extended the posts with tags
  */
-function fetch_post_tags($items, $link = false) {
+function fetch_post_tags($items) {
 
     $tag_finder = [];
     if ($items) {
@@ -4395,7 +4394,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 
         xchan_query($items);
-        $items = fetch_post_tags($items,true);
+        $items = fetch_post_tags($items);
 
     }
     else {
@@ -4449,7 +4448,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
             );
 
             xchan_query($items);
-            $items = fetch_post_tags($items,false);
+            $items = fetch_post_tags($items);
 
             require_once('include/conversation.php');
             $items = conv_sort($items,$ordering);
@@ -4924,7 +4923,7 @@ function copy_of_pubitem($channel,$mid) {
 
     if ($r) {
         logger('exists');
-        $item = fetch_post_tags($r,true);
+        $item = fetch_post_tags($r);
         return array_shift($item);
     }
 
@@ -4943,7 +4942,7 @@ function copy_of_pubitem($channel,$mid) {
     }
 
     if ($r) {
-        $items = fetch_post_tags($r,true);
+        $items = fetch_post_tags($r);
         foreach ($items as $rv) {
             $d = q("select id from item where mid = '%s' and uid = %d limit 1",
                 dbesc($rv['mid']),

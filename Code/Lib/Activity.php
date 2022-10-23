@@ -238,7 +238,7 @@ class Activity
         );
         if ($r) {
             xchan_query($r);
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
             if ($r[0]['verb'] === 'Invite') {
                 return self::encode_activity($r[0], $activitypub);
             }
