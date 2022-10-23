@@ -11,7 +11,7 @@ require_once('include/attach.php');
 class Portfolio implements WidgetInterface
 {
 
-    public function widget(array $args): string
+    public function widget(array $arr): string
     {
 
 
@@ -23,19 +23,19 @@ class Portfolio implements WidgetInterface
             return '';
         }
 
-        if ($args['album']) {
-            $album = $args['album'];
+        if ($arr['album']) {
+            $album = $arr['album'];
         }
-        if ($args['title']) {
-            $title = $args['title'];
+        if ($arr['title']) {
+            $title = $arr['title'];
         }
-        if (array_key_exists('mode', $args) && isset($args['mode'])) {
-            $mode = $args['mode'];
+        if (array_key_exists('mode', $arr) && isset($arr['mode'])) {
+            $mode = $arr['mode'];
         } else {
             $mode = '';
         }
-        if (array_key_exists('count', $args) && isset($args['count'])) {
-            $count = $args['count'];
+        if (array_key_exists('count', $arr) && isset($arr['count'])) {
+            $count = $arr['count'];
         } else {
             $count = '';
         }
@@ -85,6 +85,8 @@ class Portfolio implements WidgetInterface
                 } else {
                     $twist = 'rotright';
                 }
+                $ph = photo_factory('');
+                $phototypes = $ph->supportedTypes();
 
                 $ext = $phototypes[$rr['mimetype']];
 
@@ -94,7 +96,7 @@ class Portfolio implements WidgetInterface
                 $imagelink = (z_root() . '/photos/' . App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
 
 
-                $photos[] = array(
+                $photos[] = [
                     'id' => $rr['id'],
                     'twist' => ' ' . $twist . rand(2, 4),
                     'link' => $imagelink,
@@ -107,26 +109,24 @@ class Portfolio implements WidgetInterface
                     'ext' => $ext,
                     'hash' => $rr['resource_id'],
                     'unknown' => t('Unknown')
-                );
+                ];
             }
         }
 
 
-        $tpl = Theme::get_template('photo_album_portfolio.tpl');
-        $o .= replace_macros($tpl, array(
+        return replace_macros(Theme::get_template('photo_album_portfolio.tpl'), [
             '$photos' => $photos,
             '$mode' => $mode,
             '$count' => $count,
             '$album' => (($title) ? $title : $album),
             '$album_id' => rand(),
-            '$album_edit' => array(t('Edit Album'), $album_edit),
+            '$album_edit' => [t('Edit Album'), $album_edit],
             '$can_post' => false,
-            '$upload' => array(t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
+            '$upload' => [t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)],
             '$order' => false,
-            '$upload_form' => $upload_form,
-            '$usage' => $usage_message
-        ));
-
-        return $o;
+            '$upload_form' => '',
+            '$usage' => ''
+        ]);
+        
     }
 }
