@@ -1238,7 +1238,8 @@ class App {
     * @param string $name Template engine name
     *
     * @return mixed
-    */
+     * @noinspection PhpInconsistentReturnPointsInspection
+     */
     public static function template_engine($name = '') {
         if ($name !== '') {
             $template_engine = $name;
