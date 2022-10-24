@@ -13,7 +13,6 @@ use Code\Lib\SvgSanitizer;
 use Code\Lib\Img_cache;
 use Code\Lib\PConfig;
 use Code\Lib\Config;
-use Code\Lib\Activity;
 use Code\Lib\Channel;
 use Code\Lib\Features;
 use Code\Extend\Hook;
@@ -25,7 +24,7 @@ use Symfony\Component\Uid\Uuid;
 /**
  * @brief This is our template processor.
  *
- * @param string|SmartyEngine $s the string requiring macro substitution,
+ * @param string $s the string requiring macro substitution,
  *   or an instance of SmartyEngine
  * @param array $r key value pairs (search => replace)
  *
@@ -70,13 +69,13 @@ function replace_macros($s, $r)
  */
 
 
-define('RANDOM_STRING_HEX', 0x00);
-define('RANDOM_STRING_TEXT', 0x01);
+const RANDOM_STRING_HEX = 0x00;
+const RANDOM_STRING_TEXT = 0x01;
 
 function random_string($size = 64, $type = RANDOM_STRING_HEX)
 {
     // generate a bit of entropy and run it through the whirlpool
-    $s = hash('whirlpool', (string) rand() . uniqid(rand(), true) . (string) rand(), (($type == RANDOM_STRING_TEXT) ? true : false));
+    $s = hash('whirlpool', rand() . uniqid(rand(), true) . rand(), $type == RANDOM_STRING_TEXT);
     $s = (($type == RANDOM_STRING_TEXT) ? str_replace("\n", "", base64url_encode($s, true)) : $s);
 
     return(substr($s, 0, $size));
@@ -592,8 +591,8 @@ function alt_pager($i, $more = '', $less = '')
     }
 
     return replace_macros(Theme::get_template('alt_pager.tpl'), [
-        '$has_less' => ((App::$pager['page'] > 1) ? true : false),
-        '$has_more' => (($i > 0 && $i >= App::$pager['itemspage']) ? true : false),
+        '$has_less' => App::$pager['page'] > 1,
+        '$has_more' => $i > 0 && $i >= App::$pager['itemspage'],
         '$less' => $less,
         '$more' => $more,
         '$url' => $url,
@@ -724,8 +723,6 @@ function logger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
         return;
     }
 
-    $where = '';
-
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
     $where = basename($stack[0]['file']) . ':' . $stack[0]['line'] . ':' . $stack[1]['function'] . ': ';
 
@@ -838,11 +835,8 @@ function dlogger($msg, $level = 0)
         return;
     }
 
-    $where = '';
-
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
     $where = basename($stack[0]['file']) . ':' . $stack[0]['line'] . ':' . $stack[1]['function'] . ': ';
-
 
     @file_put_contents($logfile, datetime_convert('UTC', 'UTC', 'now', ATOM_TIME) . ':' . logid() . ' ' . $where . $msg . PHP_EOL, FILE_APPEND);
 }
@@ -1013,21 +1007,8 @@ function chanlink_cid($d)
     return z_root() . '/chanview?f=&cid=' . intval($d);
 }
 
-function magiclink_url($observer, $myaddr, $url)
-{
-    return (($observer)
-        ? z_root() . '/magic?f=&owa=1&bdest=' . bin2hex($url) . '&addr=' . $myaddr
-        : $url
-    );
-}
-
-
-
-
-
 function search($s, $id = 'search-box', $url = '/search', $save = false)
 {
-
     return replace_macros(Theme::get_template('searchbox.tpl'), [
         '$s' => $s,
         '$id' => $id,
@@ -1037,7 +1018,6 @@ function search($s, $id = 'search-box', $url = '/search', $save = false)
         '$savedsearch' => Features::enabled(local_channel(), 'savedsearch')
     ]);
 }
-
 
 function searchbox($s, $id = 'search-box', $url = '/search', $save = false)
 {
@@ -1064,7 +1044,7 @@ function linkify($s, $me = false)
     if ($me) {
         $rel .= ' me';
     }
-    $s = preg_replace("/(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\@\~\#\'\%\$\!\+\,\@]*)/u", '<a href="$1" rel="' . $rel . '" >$1</a>', $s);
+    $s = preg_replace("/(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\@\~\#\'\%\$\!\+\,]*)/u", '<a href="$1" rel="' . $rel . '" >$1</a>', $s);
     $s = preg_replace("/\<(.*?)(src|href)=(.*?)\&amp\;(.*?)\>/ism", '<$1$2=$3&$4>', $s);
 
     return($s);
@@ -1454,7 +1434,7 @@ function normalise_link($url)
  *
  * @param string $a
  * @param string $b
- * @return true if the URLs match, otherwise false
+ * @return bool
  */
 function link_compare($a, $b)
 {
@@ -1469,7 +1449,7 @@ function link_compare($a, $b)
 // If attach is true, also add icons for item attachments
 
 
-function unobscure(&$item)
+function unobscure($item)
 {
     return;
 }
@@ -1487,7 +1467,7 @@ function unobscure_mail(&$item)
 }
 
 
-function theme_attachments(&$item)
+function theme_attachments($item)
 {
 
     $s = EMPTY_STR;
@@ -1498,7 +1478,7 @@ function theme_attachments(&$item)
         $attaches = [];
         foreach ($arr as $r) {
             $label = EMPTY_STR;
-            $icon = getIconFromType(isset($r['type']) ? $r['type'] : 'application/octet-stream');
+            $icon = getIconFromType($r['type'] ?? 'application/octet-stream');
 
             if (isset($r['title']) && $r['title']) {
                 $label = urldecode(htmlspecialchars($r['title'], ENT_COMPAT, 'UTF-8'));
@@ -1556,7 +1536,7 @@ function theme_attachments(&$item)
 }
 
 
-function format_categories(&$item, $writeable)
+function format_categories($item, $writeable)
 {
 
     $s = EMPTY_STR;
@@ -1593,7 +1573,7 @@ function format_categories(&$item, $writeable)
  * @return string HTML link of hashtag
  */
 
-function format_hashtags(&$item)
+function format_hashtags($item)
 {
     $s = '';
 
@@ -1628,7 +1608,7 @@ function format_hashtags(&$item)
 
 
 
-function format_mentions(&$item)
+function format_mentions($item)
 {
     $s = EMPTY_STR;
 
@@ -1672,7 +1652,7 @@ function format_mentions(&$item)
                         $txt = $x[0]['xchan_name'];
                         break;
                     case 1:
-                        $txt = (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_name']);
+                        $txt = (($x[0]['xchan_addr']) ?: $x[0]['xchan_name']);
                         break;
                     case 2:
                     default;
@@ -1761,7 +1741,7 @@ function generate_named_map($location)
      */
     Hook::call('generate_named_map', $arr);
 
-    return (($arr['html']) ? $arr['html'] : $location);
+    return (($arr['html']) ?: $location);
 }
 
 function item_is_censored($item, $observer) {
@@ -1771,16 +1751,13 @@ function item_is_censored($item, $observer) {
         return false;
     }
 
-    $censored = ((($item['author']['abook_censor']
+    $censored = ($item['author']['abook_censor']
         || $item['owner']['abook_censor']
         || $item['author']['xchan_selfcensored']
         || $item['owner']['xchan_selfcensored']
         || $item['author']['xchan_censored']
         || $item['owner']['xchan_censored']
-        || intval($item['item_nsfw'])) && (get_safemode()))
-        ? true
-        : false
-    );
+        || intval($item['item_nsfw'])) && (get_safemode());
 
     return $censored;
 }
@@ -1800,7 +1777,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
     $s = '';
     $photo = '';
 
-    $is_photo = ((($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) ? true : false);
+    $is_photo = ($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO);
 
     if ($is_photo) {
         $object = is_array($item['obj']) ? $item['obj'] : json_decode($item['obj'], true);
@@ -1900,7 +1877,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
 
     $attachments = theme_attachments($item);
 
-    $writeable = ((get_observer_hash() == $item['owner_xchan']) ? true : false);
+    $writeable = get_observer_hash() == $item['owner_xchan'];
 
     $tags = format_hashtags($item);
 
@@ -1921,7 +1898,7 @@ function prepare_body(&$item, $attach = false, $opts = false)
     if ($cache_expire <= 0) {
         $cache_expire = 60;
     }
-    $cache_enable = ((($cache_expire) && ($item['created'] < datetime_convert('UTC', 'UTC', 'now - ' . $cache_expire . ' days'))) ? false : true);
+    $cache_enable = !((($cache_expire) && ($item['created'] < datetime_convert('UTC', 'UTC', 'now - ' . $cache_expire . ' days'))));
 
     // disable Unicode RTL over-ride since it can destroy presentation in some cases, use HTML or CSS instead
     $s = str_replace([ '&#x202e;', '&#x202E;', html_entity_decode('&#x202e;', ENT_QUOTES, 'UTF-8') ], [ '','','' ], $s);
@@ -1957,6 +1934,8 @@ function prepare_body(&$item, $attach = false, $opts = false)
 
 function separate_img_links($s)
 {
+    /** @noinspection HtmlRequiredAltAttribute */
+    /** @noinspection HtmlUnknownAttribute */
     $x = preg_replace(
         '/\<a (.*?)\>\<img(.*?)\>\<\/a\>/ism',
         '<img$2><br><a $1>' . t('Link') . '</a><br>',
@@ -1982,7 +1961,7 @@ function format_poll($item, $s, $opts)
     $commentable = can_comment_on_post(((local_channel()) ? get_observer_hash() : EMPTY_STR), $item);
 
     //logger('format_poll: ' . print_r($item,true));
-    $activated = ((local_channel() && local_channel() == $item['uid'] && get_observer_hash() !== $item['owner_xchan']) ? true : false);
+    $activated = local_channel() && local_channel() == $item['uid'] && get_observer_hash() !== $item['owner_xchan'];
     $output = $s . EOL . EOL;
 
     $closed = false;
@@ -1991,7 +1970,7 @@ function format_poll($item, $s, $opts)
     if ($item['comments_closed'] > NULL_DATE) {
         $closing = true;
         $t = datetime_convert('UTC', date_default_timezone_get(), $item['comments_closed'], 'Y-m-d H:i');
-        $closed = ((datetime_convert() > $item['comments_closed']) ? true : false);
+        $closed = datetime_convert() > $item['comments_closed'];
         if ($closed) {
             $commentable = false;
         }
@@ -2101,6 +2080,7 @@ function prepare_text($text, $content_type = 'text/x-multicode', $opts = false)
 
     switch ($content_type) {
         case 'text/plain':
+        case 'application/x-pdl';
             $s = escape_tags($text);
             break;
 
@@ -2111,10 +2091,6 @@ function prepare_text($text, $content_type = 'text/x-multicode', $opts = false)
         case 'text/markdown':
             $text = MarkdownSoap::unescape($text);
             $s = MarkdownExtra::defaultTransform($text);
-            break;
-
-        case 'application/x-pdl';
-            $s = escape_tags($text);
             break;
 
         // No security checking is done here at display time - so we need to verify
@@ -2161,7 +2137,7 @@ function create_export_photo_body(&$item)
     if (($item['verb'] === ACTIVITY_POST) && ($item['obj_type'] === ACTIVITY_OBJ_PHOTO)) {
         $j = json_decode($item['obj'], true);
         if ($j) {
-            $item['body'] .= "\n\n" . (($j['source']['content']) ? $j['source']['content'] : $item['content']);
+            $item['body'] .= "\n\n" . (($j['source']['content']) ?: $item['content']);
             $item['sig'] = '';
         }
     }
@@ -2253,19 +2229,12 @@ function engr_units_to_bytes($size_str)
     if (! $size_str) {
         return $size_str;
     }
-    switch (substr(trim($size_str), -1)) {
-        case 'M':
-        case 'm':
-            return (int)$size_str * 1048576;
-        case 'K':
-        case 'k':
-            return (int)$size_str * 1024;
-        case 'G':
-        case 'g':
-            return (int)$size_str * 1073741824;
-        default:
-            return $size_str;
-    }
+    return match (substr(trim($size_str), -1)) {
+        'M', 'm' => (int)$size_str * 1048576,
+        'K', 'k' => (int)$size_str * 1024,
+        'G', 'g' => (int)$size_str * 1073741824,
+        default => $size_str,
+    };
 }
 
 
@@ -2414,7 +2383,6 @@ function undo_post_tagging($s)
 {
 
     $matches = null;
-    $x = null;
     // undo tags and mentions
     $cnt = preg_match_all('/([@#])(\!*)\[zrl=(.*?)\](.*?)\[\/zrl\]/ism', $s, $matches, PREG_SET_ORDER);
     if ($cnt) {
@@ -2427,7 +2395,7 @@ function undo_post_tagging($s)
                 );
             }
             if ($x) {
-                $s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
+                $s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ?: $x[0]['xchan_url']) . '}', $s);
             } else {
                 $s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]), $s);
             }
@@ -2446,7 +2414,7 @@ function undo_post_tagging($s)
                 );
             }
             if ($x) {
-                $s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ? $x[0]['xchan_addr'] : $x[0]['xchan_url']) . '}', $s);
+                $s = str_replace($mtch[0], $mtch[1] . $mtch[2] . '{' . (($x[0]['xchan_addr']) ?: $x[0]['xchan_url']) . '}', $s);
             } else {
                 $s = str_replace($mtch[0], $mtch[1] . $mtch[2] . quote_tag($mtch[4]), $s);
             }
@@ -2608,9 +2576,9 @@ function ids_to_querystr($arr, $idx = 'id', $quote = false)
  * similar to ids_to_querystr, but allows a different delimiter instead of a db-quote option
  * empty elements (evaluated after trim()) are ignored.
  * @param $arr array
- * @param $elm string key to extract from sub-array
- * @param $delim string default ','
- * @param $each filter function to apply to each element before evaluation, default is 'trim'.
+ * @param $elm string //  to extract from sub-array
+ * @param $delim string // default ','
+ * @param $each // filter function to apply to each element before evaluation, default is 'trim'.
  * @returns string
  */
 
@@ -2971,7 +2939,7 @@ function extra_query_args()
  * @param int $profile_uid
  * @param string $tag the tag to replace
  * @param bool $in_network default true
- * @return bool true if replaced, false if not replaced
+ * @return bool|array
  */
 function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 {
@@ -2987,7 +2955,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
 
     // Is it a hashtag of some kind?
 
-    if (in_array($termtype, [ TERM_HASHTAG ])) {
+    if ($termtype == TERM_HASHTAG) {
         // if the tag is already replaced...
         if ((strpos($tag, '[zrl=')) || (strpos($tag, '[url='))) {
             // ...do nothing
@@ -3534,7 +3502,7 @@ function sanitise_acl(&$item)
  * @brief Convert an ACL array to a storable string.
  *
  * @param array $p
- * @return array
+ * @return string
  */
 function perms2str($p)
 {
@@ -3645,7 +3613,7 @@ function pdl_selector($uid, $current = '')
  * Array ( [0] => foo [1] => bar [2] => baz [3] => blip [4] => zob [5] => glob [6] => grip )
  *
  * @param array $arr multi-dimensional array
- * @return one-dimensional array
+ * @return array
  */
 function flatten_array_recursive($arr)
 {
@@ -3878,7 +3846,7 @@ function cleanup_bbcode($body)
     // markdown code blocks are slightly more complicated
 
     $body = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', function ($match) {
-        return $match[1] . $match[2] . "\n" . bb_code_protect($match[4]) . "\n" . $match[2] . (($match[5]) ? $match[5] : "\n");
+        return $match[1] . $match[2] . "\n" . bb_code_protect($match[4]) . "\n" . $match[2] . (($match[5]) ?: "\n");
     }, $body);
 
     $body = preg_replace_callback('/\[code(.*?)\[\/(code)\]/ism', '\red_escape_codeblock', $body);
@@ -4096,7 +4064,7 @@ function get_forum_channels($uid, $collections = 0)
 {
 
     if (! $uid) {
-        return;
+        return false;
     }
 
     if ($collections) {
@@ -4141,6 +4109,7 @@ function unobscurify($s)
     return base64url_decode(str_rot47($s));
 }
 
+/** @noinspection HtmlUnknownAttribute */
 function svg2bb($s)
 {
 

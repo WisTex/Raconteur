@@ -96,7 +96,7 @@ function abook_connections($channel_id, $sql_conditions = '')
 		and abook_self = 0 $sql_conditions",
         intval($channel_id)
     );
-    return(($r) ? $r : []);
+    return(($r) ?: []);
 }
 
 
@@ -243,7 +243,7 @@ function abook_toggle_flag($abook, $flag)
             break;
     }
     if (! $field) {
-        return;
+        return false;
     }
 
     $r = q(
