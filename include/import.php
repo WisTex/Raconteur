@@ -249,7 +249,7 @@ function sync_atoken($channel, $atokens)
                         continue;
                     }
 
-                    $r = q(
+                    q(
                         "UPDATE atoken SET " . TQUOT . "%s" . TQUOT . " = '%s' WHERE atoken_guid = '%s' AND atoken_uid = %d",
                         dbesc($k),
                         dbesc($v),
@@ -847,10 +847,8 @@ function sync_sysapps($channel, $apps)
     $sysapps = Apps::get_system_apps(false);
 
     if ($channel && $apps) {
-        $columns = db_columns('app');
 
         foreach ($apps as $app) {
-            $exists = false;
             $term = ((array_key_exists('term', $app)) ? $app['term'] : null);
 
             if (array_key_exists('app_system', $app) && (! intval($app['app_system']))) {
@@ -1590,7 +1588,6 @@ function sync_files($channel, $files)
                     if ($att['filetype'] === 'multipart/mixed' && $att['is_dir']) {
                         Stdio::mkdir($newfname, STORAGE_DEFAULT_PERMISSIONS, true);
                         $attachment_stored = true;
-                        continue;
                     } else {
                         // it's a file
                         // for the sync version of this algorithm (as opposed to 'offline import')
@@ -1635,7 +1632,6 @@ function sync_files($channel, $files)
                         if ($x['success']) {
                             $attachment_stored = true;
                         }
-                        continue;
                     }
                 }
             }
@@ -1843,11 +1839,10 @@ function scan_webpage_elements($path, $type, $cloud = false)
                         $metadata = json_decode(file_get_contents($jsonfilepath), true);
                         if ($cloud) {
                             $contentfilename = get_filename_by_cloudname($metadata['contentfile'], $channel, $folder);
-                            $metadata['path'] = $folder . '/' . $contentfilename;
                         } else {
                             $contentfilename = $metadata['contentfile'];
-                            $metadata['path'] = $folder . '/' . $contentfilename;
                         }
+                        $metadata['path'] = $folder . '/' . $contentfilename;
                         if ($metadata['contentfile'] === '') {
                             logger('Invalid ' . $type . ' content file');
                             return false;
@@ -1885,7 +1880,6 @@ function import_webpage_element($element, $channel, $type)
             $namespace = 'WEBPAGE';
             $name = $element['pagelink'];
             if ($name) {
-                require_once('library/urlify/URLify.php');
                 $name = strtolower(URLify::transliterate($name));
             }
             $arr['title'] = $element['title'];
@@ -1958,7 +1952,7 @@ function import_webpage_element($element, $channel, $type)
     // The element owner is the channel importing the elements
     $arr['owner_xchan'] = get_observer_hash();
     // The author is either the owner or whomever was specified
-    $arr['author_xchan'] = (($element['author_xchan']) ? $element['author_xchan'] : get_observer_hash());
+    $arr['author_xchan'] = (($element['author_xchan']) ?: get_observer_hash());
     // Import mimetype if it is a valid mimetype for the element
     $mimetypes = [
         'text/bbcode',
@@ -1986,7 +1980,7 @@ function import_webpage_element($element, $channel, $type)
         intval(local_channel())
     );
 
-    IConfig::Set($arr, 'system', $namespace, (($name) ? $name : substr($arr['mid'], 0, 16)), true);
+    IConfig::Set($arr, 'system', $namespace, (($name) ?: substr($arr['mid'], 0, 16)), true);
 
     if ($i) {
         $arr['id'] = $i[0]['id'];
@@ -1994,17 +1988,9 @@ function import_webpage_element($element, $channel, $type)
         if ($arr['edited'] > $i[0]['edited']) {
             $x = item_store_update($arr, $execflag);
         }
-    } else {
-        if (($i) && (intval($i[0]['item_deleted']))) {
-            // was partially deleted already, finish it off
-            q(
-                "delete from item where mid = '%s' and uid = %d",
-                dbesc($arr['mid']),
-                intval(local_channel())
-            );
-        } else {
-            $x = item_store($arr, $execflag);
-        }
+    }
+    else {
+        $x = item_store($arr, $execflag);
     }
 
     if ($x && $x['success']) {
