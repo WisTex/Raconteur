@@ -12,7 +12,7 @@ use Code\Render\Theme;
 class Activity_filter implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {
@@ -183,41 +183,6 @@ class Activity_filter implements WidgetInterface
             ];
         }
 
-        if (Features::enabled(local_channel(), 'filing')) {
-            $terms = q(
-                "select distinct term from term where uid = %d and ttype = %d order by term asc",
-                intval(local_channel()),
-                intval(TERM_FILE)
-            );
-
-            if ($terms) {
-                foreach ($terms as $t) {
-                    if (x($_GET, 'file')) {
-                        $file_active = (($_GET['file'] == $t['term']) ? 'active' : '');
-                        $filter_active = 'file';
-                    }
-                    $tsub[] = [
-                        'label' => $t['term'],
-                        'icon' => '',
-                        'url' => z_root() . '/' . $cmd . '/?f=&file=' . $t['term'],
-                        'sel' => $file_active,
-                        'title' => sprintf(t('Show posts that I have filed to %s'), $t['term']),
-                    ];
-                }
-
-                $tabs[] = [
-                    'id' => 'saved_folders',
-                    'label' => t('Saved Folders'),
-                    'icon' => 'folder',
-                    'url' => '#',
-                    'sel' => (($filter_active == 'file') ? true : false),
-                    'title' => t('Show filed post categories'),
-                    'sub' => $tsub
-
-                ];
-            }
-        }
-
         $ft = get_pconfig(local_channel(), 'system', 'followed_tags', EMPTY_STR);
         if (is_array($ft) && $ft) {
             foreach ($ft as $t) {
@@ -246,18 +211,6 @@ class Activity_filter implements WidgetInterface
             ];
         }
 
-
-//      if(x($_GET,'search')) {
-//          $filter_active = 'search';
-//          $tabs[] = [
-//              'label' => t('Search'),
-//              'icon' => 'search',
-//              'url' => z_root() . '/' . $cmd . '/?search=' . $_GET['search'],
-//              'sel' => 'active disabled',
-//              'title' => t('Panel search')
-//          ];
-//      }
-
         $name = [];
         if (isset($_GET['name']) && $_GET['name']) {
             $filter_active = 'name';
@@ -285,14 +238,12 @@ class Activity_filter implements WidgetInterface
 
         Hook::call('activity_filter', $arr);
 
-        $o = '';
-
         if ($arr['tabs']) {
             $content = replace_macros(Theme::get_template('common_pills.tpl'), [
                 '$pills' => $arr['tabs']
             ]);
 
-            $o .= replace_macros(Theme::get_template('activity_filter_widget.tpl'), [
+            return replace_macros(Theme::get_template('activity_filter_widget.tpl'), [
                 '$title' => t('Stream Filters'),
     			'$content_id' => 'activity-filter-widget',
                 '$reset' => $reset,
@@ -300,7 +251,6 @@ class Activity_filter implements WidgetInterface
                 '$name' => $name
             ]);
         }
-
-        return $o;
+        return '';
     }
 }

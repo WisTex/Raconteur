@@ -9,7 +9,7 @@ use Code\Render\Theme;
 
 class Findpeople implements WidgetInterface
 {
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         return self::findpeople_widget();
     }

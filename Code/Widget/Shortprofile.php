@@ -8,7 +8,7 @@ use Code\Lib\Libprofile;
 class Shortprofile implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         if (App::$profile['profile_uid']) {
             return Libprofile::widget(App::$profile, false, true, true);

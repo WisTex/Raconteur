@@ -9,7 +9,7 @@ use Code\Lib\Menu;
 class Menu_preview implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         if (!App::$data['menu_item']) {
             return '';

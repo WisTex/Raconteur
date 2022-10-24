@@ -7,12 +7,12 @@ use App;
 class Tagcloud implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $o = '';
         $uid = App::$profile_uid;
-        $count = ((x($arr, 'count')) ? intval($arr['count']) : 24);
+        $count = ((x($arguments, 'count')) ? intval($arguments['count']) : 24);
         $flags = 0;
         $type = TERM_HASHTAG;
 

@@ -9,7 +9,7 @@ class Photo implements WidgetInterface
     /**
      * @brief Widget to display a single photo.
      *
-     * @param array $arr associative array with
+     * @param array $arguments associative array with
      *    * \e string \b src URL of photo; URL must be an http or https URL
      *    * \e boolean \b zrl use zid in URL
      *    * \e string \b style CSS string
@@ -17,21 +17,21 @@ class Photo implements WidgetInterface
      * @return string with parsed HTML
      */
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $style = $zrl = false;
 
-        if (array_key_exists('src', $arr) && isset($arr['src'])) {
-            $url = $arr['src'];
+        if (array_key_exists('src', $arguments) && isset($arguments['src'])) {
+            $url = $arguments['src'];
         }
 
         if (!str_starts_with($url, 'http')) {
             return '';
         }
 
-        if (array_key_exists('style', $arr) && isset($arr['style'])) {
-            $style = $arr['style'];
+        if (array_key_exists('style', $arguments) && isset($arguments['style'])) {
+            $style = $arguments['style'];
         }
 
         // ensure they can't sneak in an eval(js) function
@@ -40,8 +40,8 @@ class Photo implements WidgetInterface
             $style = '';
         }
 
-        if (array_key_exists('zrl', $arr) && isset($arr['zrl'])) {
-            $zrl = (($arr['zrl']) ? true : false);
+        if (array_key_exists('zrl', $arguments) && isset($arguments['zrl'])) {
+            $zrl = (($arguments['zrl']) ? true : false);
         }
 
         if ($zrl) {

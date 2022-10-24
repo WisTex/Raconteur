@@ -7,12 +7,12 @@ use App;
 class Random_block implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $channel_id = 0;
-        if (array_key_exists('channel_id', $arr) && intval($arr['channel_id'])) {
-            $channel_id = intval($arr['channel_id']);
+        if (array_key_exists('channel_id', $arguments) && intval($arguments['channel_id'])) {
+            $channel_id = intval($arguments['channel_id']);
         }
         if (!$channel_id) {
             $channel_id = App::$profile_uid;
@@ -21,8 +21,8 @@ class Random_block implements WidgetInterface
             return '';
         }
 
-        if (array_key_exists('contains', $arr)) {
-            $contains = $arr['contains'];
+        if (array_key_exists('contains', $arguments)) {
+            $contains = $arguments['contains'];
         }
 
         $o = '';

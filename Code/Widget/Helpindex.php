@@ -5,7 +5,7 @@ namespace Code\Widget;
 class Helpindex implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         return EMPTY_STR;
 

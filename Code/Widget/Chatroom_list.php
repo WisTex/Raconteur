@@ -10,7 +10,7 @@ use Code\Render\Theme;
 class Chatroom_list implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         if (!App::$profile) {
             return '';

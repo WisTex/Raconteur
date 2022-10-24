@@ -5,10 +5,10 @@ namespace Code\Widget;
 class Pubtagcloud implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
-        $trending = ((array_key_exists('trending', $arr)) ? intval($arr['trending']) : 0);
+        $trending = ((array_key_exists('trending', $arguments)) ? intval($arguments['trending']) : 0);
 
         if (!intval(get_config('system', 'open_pubstream', 0))) {
             if (!local_channel()) {
@@ -25,7 +25,7 @@ class Pubtagcloud implements WidgetInterface
         $safemode = get_xconfig(get_observer_hash(), 'directory', 'safemode', 1);
 
 
-        $limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 75);
+        $limit = ((array_key_exists('limit', $arguments)) ? intval($arguments['limit']) : 75);
 
         return pubtagblock($public_stream_mode, $limit, $trending, $safemode);
 

@@ -9,20 +9,20 @@ require_once('include/photos.php');
 class Photo_rand implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $style = false;
 
-        if (array_key_exists('album', $arr) && isset($arr['album'])) {
-            $album = $arr['album'];
+        if (array_key_exists('album', $arguments) && isset($arguments['album'])) {
+            $album = $arguments['album'];
         } else {
             $album = '';
         }
 
         $channel_id = 0;
-        if (array_key_exists('channel_id', $arr) && intval($arr['channel_id'])) {
-            $channel_id = intval($arr['channel_id']);
+        if (array_key_exists('channel_id', $arguments) && intval($arguments['channel_id'])) {
+            $channel_id = intval($arguments['channel_id']);
         }
         if (!$channel_id) {
             $channel_id = App::$profile_uid;
@@ -31,7 +31,7 @@ class Photo_rand implements WidgetInterface
             return '';
         }
 
-        $scale = ((array_key_exists('scale', $arr)) ? intval($arr['scale']) : 0);
+        $scale = ((array_key_exists('scale', $arguments)) ? intval($arguments['scale']) : 0);
 
         $ret = photos_list_photos(['channel_id' => $channel_id], App::get_observer(), $album);
 
@@ -53,8 +53,8 @@ class Photo_rand implements WidgetInterface
             return '';
         }
 
-        if (array_key_exists('style', $arr) && isset($arr['style'])) {
-            $style = $arr['style'];
+        if (array_key_exists('style', $arguments) && isset($arguments['style'])) {
+            $style = $arguments['style'];
         }
 
         // ensure they can't sneak in an eval(js) function

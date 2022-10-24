@@ -10,16 +10,16 @@ use Code\Render\Theme;
 class Categories implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
-        $cards = ((array_key_exists('cards', $arr) && $arr['cards']) ? true : false);
+        $cards = ((array_key_exists('cards', $arguments) && $arguments['cards']) ? true : false);
 
         if (($cards) && (!Apps::system_app_installed(App::$profile['profile_uid'], 'Cards'))) {
             return '';
         }
 
-        $articles = ((array_key_exists('articles', $arr) && $arr['articles']) ? true : false);
+        $articles = ((array_key_exists('articles', $arguments) && $arguments['articles']) ? true : false);
 
         if (($articles) && (!Apps::addon_app_installed(App::$profile['profile_uid'], 'articles'))) {
             return '';

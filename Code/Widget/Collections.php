@@ -8,9 +8,9 @@ use Code\Lib\AccessList;
 class Collections implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
-        $mode = ((array_key_exists('mode', $arr)) ? $arr['mode'] : 'conversation');
+        $mode = ((array_key_exists('mode', $arguments)) ? $arguments['mode'] : 'conversation');
 
         switch ($mode) {
             case 'conversation':

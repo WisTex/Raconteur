@@ -10,7 +10,7 @@ use Code\Render\Theme;
 class Suggestedchats implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!Features::enabled(App::$profile['profile_uid'], 'ajaxchat')) {

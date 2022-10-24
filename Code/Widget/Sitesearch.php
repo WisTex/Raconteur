@@ -9,7 +9,7 @@ use Code\Render\Theme;
 class Sitesearch implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $search = ((x($_GET, 'search')) ? $_GET['search'] : '');

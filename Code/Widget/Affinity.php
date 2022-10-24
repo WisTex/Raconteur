@@ -10,7 +10,7 @@ use Code\Render\Theme;
 class Affinity implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {
@@ -44,9 +44,9 @@ class Affinity implements WidgetInterface
                 '$labels' => $labels,
             ]);
 
-            $arr = array('html' => $x);
-            Hook::call('main_slider', $arr);
-            return $arr['html'];
+            $arguments = array('html' => $x);
+            Hook::call('main_slider', $arguments);
+            return $arguments['html'];
         }
         return '';
     }

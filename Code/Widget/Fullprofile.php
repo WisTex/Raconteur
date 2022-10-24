@@ -8,7 +8,7 @@ use Code\Lib\Libprofile;
 class Fullprofile implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!App::$profile['profile_uid']) {

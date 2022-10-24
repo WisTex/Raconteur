@@ -10,7 +10,7 @@ use Code\Render\Theme;
 class Settings_menu implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {

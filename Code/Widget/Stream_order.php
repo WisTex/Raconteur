@@ -10,7 +10,7 @@ use App;
 class Stream_order implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {
@@ -139,15 +139,15 @@ class Stream_order implements WidgetInterface
             'title' => t('Order unthreaded by received date'),
         ];
 
-        $arr = ['tabs' => $tabs];
+        $arguments = ['tabs' => $tabs];
 
-        Hook::call('activity_order', $arr);
+        Hook::call('activity_order', $arguments);
 
         $o = '';
 
-        if ($arr['tabs']) {
+        if ($arguments['tabs']) {
             $content = replace_macros(Theme::get_template('common_pills.tpl'), [
-                '$pills' => $arr['tabs'],
+                '$pills' => $arguments['tabs'],
             ]);
 
             $o = replace_macros(Theme::get_template('common_widget.tpl'), [

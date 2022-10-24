@@ -9,7 +9,7 @@ require_once('include/event.php');
 class Tasklist implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $o = EMPTY_STR;

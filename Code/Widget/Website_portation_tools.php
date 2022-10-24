@@ -7,7 +7,7 @@ use App;
 class Website_portation_tools implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         // mod menu doesn't load a profile. For any modules which load a profile, check it.

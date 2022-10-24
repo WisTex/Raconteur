@@ -7,7 +7,7 @@ use Code\Render\Theme;
 class Site_projects implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         $results = [];
         $query = q("select site_project, site_type, count(site_project) as total from site

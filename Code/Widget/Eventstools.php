@@ -8,7 +8,7 @@ use Code\Render\Theme;
 class Eventstools implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {

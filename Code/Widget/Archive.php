@@ -10,7 +10,7 @@ use Code\Render\Theme;
 class Archive implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         if (!App::$profile_uid) {
             return '';
@@ -26,10 +26,10 @@ class Archive implements WidgetInterface
             return '';
         }
 
-        $wall = ((array_key_exists('wall', $arr)) ? intval($arr['wall']) : 0);
-        $wall = ((array_key_exists('articles', $arr)) ? 2 : $wall);
+        $wall = ((array_key_exists('wall', $arguments)) ? intval($arguments['wall']) : 0);
+        $wall = ((array_key_exists('articles', $arguments)) ? 2 : $wall);
 
-        $style = ((array_key_exists('style', $arr)) ? $arr['style'] : 'select');
+        $style = ((array_key_exists('style', $arguments)) ? $arguments['style'] : 'select');
         $showend = (bool)get_pconfig($uid, 'system', 'archive_show_end_date');
         $mindate = get_pconfig($uid, 'system', 'archive_mindate');
         $visible_years = get_pconfig($uid, 'system', 'archive_visible_years', 5);

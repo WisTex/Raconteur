@@ -9,7 +9,7 @@ use Code\Render\Theme;
 class Filer implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
         if (!local_channel()) {
             return '';

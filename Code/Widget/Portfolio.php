@@ -11,7 +11,7 @@ require_once('include/attach.php');
 class Portfolio implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
 
@@ -23,19 +23,19 @@ class Portfolio implements WidgetInterface
             return '';
         }
 
-        if ($arr['album']) {
-            $album = $arr['album'];
+        if ($arguments['album']) {
+            $album = $arguments['album'];
         }
-        if ($arr['title']) {
-            $title = $arr['title'];
+        if ($arguments['title']) {
+            $title = $arguments['title'];
         }
-        if (array_key_exists('mode', $arr) && isset($arr['mode'])) {
-            $mode = $arr['mode'];
+        if (array_key_exists('mode', $arguments) && isset($arguments['mode'])) {
+            $mode = $arguments['mode'];
         } else {
             $mode = '';
         }
-        if (array_key_exists('count', $arr) && isset($arr['count'])) {
-            $count = $arr['count'];
+        if (array_key_exists('count', $arguments) && isset($arguments['count'])) {
+            $count = $arguments['count'];
         } else {
             $count = '';
         }

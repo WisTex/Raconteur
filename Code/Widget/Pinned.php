@@ -21,7 +21,7 @@ class Pinned implements WidgetInterface
      *
      */
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         $ret = '';
@@ -30,7 +30,7 @@ class Pinned implements WidgetInterface
 
         $this->uid = App::$profile_uid;
 
-        $types = (($arr['types']) ?: [ITEM_TYPE_POST]);
+        $types = (($arguments['types']) ?: [ITEM_TYPE_POST]);
 
         $id_list = $this->list($types);
 

@@ -7,17 +7,17 @@ use App;
 class Catcloud implements WidgetInterface
 {
 
-    public function widget(array $arr): string
+    public function widget(array $arguments): string
     {
 
         if ((!App::$profile['profile_uid']) || (!App::$profile['channel_hash'])) {
             return '';
         }
 
-        $limit = ((array_key_exists('limit', $arr)) ? intval($arr['limit']) : 50);
+        $limit = ((array_key_exists('limit', $arguments)) ? intval($arguments['limit']) : 50);
 
-        if (array_key_exists('type', $arr)) {
-            switch ($arr['type']) {
+        if (array_key_exists('type', $arguments)) {
+            switch ($arguments['type']) {
                 case 'cards':
                     if (!perm_is_allowed(App::$profile['profile_uid'], get_observer_hash(), 'view_pages')) {
                         return '';
