@@ -68,7 +68,7 @@ class Enotify
         push_lang($recip['account_language']); // should probably have a channel language
 
         $banner     = t('$Projectname Notification');
-        $product    = t('$projectname'); // PLATFORM_NAME;
+        $product    = t('$projectname'); // REPOSITORY_ID;
         $siteurl    = z_root();
         $thanks     = t('Thank You,');
         $sitename   = get_config('system', 'sitename');

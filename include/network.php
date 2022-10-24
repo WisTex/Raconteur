@@ -1098,7 +1098,7 @@ function deliverable_singleton($channel_id, $xchan)
 
 function get_repository_version($branch = 'release')
 {
-    $path = 'https://raw.codeberg.page/streams/' . PLATFORM_NAME . "/@$branch/version.php";
+    $path = 'https://raw.codeberg.page/streams/' . REPOSITORY_ID . "/@$branch/version.php";
 
     $x = Url::get($path);
     if ($x['success']) {

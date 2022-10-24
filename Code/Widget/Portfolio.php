@@ -13,11 +13,10 @@ class Portfolio implements WidgetInterface
 
     public function widget(array $arguments): string
     {
-
-
         $owner_uid = App::$profile_uid;
         $sql_extra = permissions_sql($owner_uid);
-
+        $album = '';
+        $title = '';
 
         if (!perm_is_allowed($owner_uid, get_observer_hash(), 'view_storage')) {
             return '';
@@ -118,7 +117,7 @@ class Portfolio implements WidgetInterface
             '$photos' => $photos,
             '$mode' => $mode,
             '$count' => $count,
-            '$album' => (($title) ? $title : $album),
+            '$album' => (($title) ?: $album),
             '$album_id' => rand(),
             '$album_edit' => [t('Edit Album'), $album_edit],
             '$can_post' => false,

@@ -385,7 +385,7 @@ function import_xchans($xchans) {
         foreach ($xchans as $xchan) {
             // Provide backward compatibility for zot11 based projects
 
-            if ($xchan['xchan_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+            if ($xchan['xchan_network'] === 'nomad' && version_compare(NOMAD_PROTOCOL_VERSION, '10.0') <= 0) {
                 $xchan['xchan_network'] = 'zot6';
             }
 
@@ -425,7 +425,7 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false)
         foreach ($hublocs as $hubloc) {
             // Provide backward compatibility for zot11 based projects
 
-            if ($hubloc['hubloc_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+            if ($hubloc['hubloc_network'] === 'nomad' && version_compare(NOMAD_PROTOCOL_VERSION, '10.0') <= 0) {
                 $hubloc['hubloc_network'] = 'zot6';
             }
 

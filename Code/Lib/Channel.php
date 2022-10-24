@@ -419,7 +419,7 @@ class Channel
 
         // The site channel gets the project logo as a profile photo.
         if ($arr['account_id'] === 'xxx') {
-            $photo_type = import_channel_photo_from_url(z_root() . '/images/' . PLATFORM_NAME . '.png', 0, $r[0]['channel_id']);
+            $photo_type = import_channel_photo_from_url(z_root() . '/images/' . REPOSITORY_ID . '.png', 0, $r[0]['channel_id']);
         }
         elseif ($z['photo_url']) {
             $photo_type = import_channel_photo_from_url($z['photo_url'], $arr['account_id'], $r[0]['channel_id']);
@@ -938,7 +938,7 @@ class Channel
         // with a non-standard platform and version.
 
         $ret['compatibility'] = [
-            'project'     => PLATFORM_NAME,
+            'project'     => REPOSITORY_ID,
             'codebase'    => 'zap',
             'schema'      => 'streams',
             'version'     => STD_VERSION,

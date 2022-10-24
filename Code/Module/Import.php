@@ -251,7 +251,7 @@ class Import extends Controller
             foreach ($xchans as $xchan) {
                 // Provide backward compatibility for zot11 based projects
 
-                if ($xchan['xchan_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+                if ($xchan['xchan_network'] === 'nomad' && version_compare(NOMAD_PROTOCOL_VERSION, '10.0') <= 0) {
                     $xchan['xchan_network'] = 'zot6';
                 }
 

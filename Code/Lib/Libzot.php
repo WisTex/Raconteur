@@ -2486,7 +2486,7 @@ class Libzot
                     'sitekey' => $hub['hubloc_sitekey'],
                     'deleted' => (intval($hub['hubloc_deleted']) ? true : false)
                 ];
-                if ($hub['hubloc_url'] === z_root() && version_compare(ZOT_REVISION, '11.0') >= 0) {
+                if ($hub['hubloc_url'] === z_root() && version_compare(NOMAD_PROTOCOL_VERSION, '11.0') >= 0) {
                     $tmp['driver'] = 'nomad';
                 }
 

@@ -26,17 +26,11 @@ use Code\Lib\Url;
 
 require_once('version.php');
 
-define ( 'PLATFORM_NAME',           'streams' );
-
-define ( 'DB_UPDATE_VERSION',       1262 );
-define ( 'ZOT_REVISION',            '11.0' );
-
-define ( 'PLATFORM_ARCHITECTURE',   'zap' );
-
-define ( 'PROJECT_BASE',   __DIR__ );
-
-define ( 'ACTIVITYPUB_ENABLED', true );
-
+const REPOSITORY_ID = 'streams';
+const DB_UPDATE_VERSION = 1262;
+const PROJECT_BASE = __DIR__;
+const ACTIVITYPUB_ENABLED = true;
+const NOMAD_PROTOCOL_VERSION = '11.0';
 
 // composer autoloader for all namespaced Classes
 require_once('vendor/autoload.php');
@@ -1147,7 +1141,7 @@ class App {
         }
 
         if (! x(self::$page,'title')) {
-            self::$page['title'] = ucfirst(App::$module) . ' | ' . ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : PLATFORM_NAME);
+            self::$page['title'] = ucfirst(App::$module) . ' | ' . ((array_path_exists('system/sitename',self::$config)) ? self::$config['system']['sitename'] : REPOSITORY_ID);
         }
 
         if (! self::$meta->get_field('og:title')) {
