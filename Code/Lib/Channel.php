@@ -382,7 +382,7 @@ class Channel
                 'channel_pageflags'   => intval($pageflags),
                 'channel_system'      => intval($system),
                 'channel_expire_days' => intval($expire),
-                'channel_timezone'    => App::$timezone
+                'channel_timezone'    => date_default_timezone_get()
             ]
         );
 
