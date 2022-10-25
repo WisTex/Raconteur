@@ -1343,18 +1343,7 @@ function proc_run() {
 
     $args = array_map('escapeshellarg',$args);
     $cmdline = implode(' ', $args);
-
-    if (is_windows()) {
-        $cwd = getcwd();
-        $cmd = "cmd /c start \"title\" /D \"$cwd\" /b $cmdline";
-        proc_close(proc_open($cmd, [], $foo));
-    }
-    else {
-        if (get_config('system','use_proc_open'))
-            proc_close(proc_open($cmdline ." &", [], $foo));
-        else
-            exec($cmdline . ' > /dev/null &');
-    }
+    exec($cmdline . ' > /dev/null &');
 }
 
 function check_php_cli() {
@@ -1375,20 +1364,6 @@ function check_php_cli() {
     logger('PHP command line interpreter not found.');
     /** @noinspection PhpUnhandledExceptionInspection */
     throw new Exception('interpreter not  found.');
-}
-
-
-/**
- * @brief Checks if we are running on M$ Windows.
- *
- * @return bool true if we run on M$ Windows
- *
- * It's possible you might be able to run on WAMP or XAMPP, and this
- * has been accomplished, but is not officially supported. Good luck.
- *
- */
-function is_windows() {
-    return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
 }
 
 /**
