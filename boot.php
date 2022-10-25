@@ -310,7 +310,7 @@ class App {
 
         /*
          * Figure out if we are running at the top of a domain
-         * or in a sub-directory and adjust accordingly
+         * or in a subdirectory and adjust accordingly
          */
         $path = trim(dirname($_SERVER['SCRIPT_NAME']),'/\\');
         if (strlen($path) && ($path != self::$path)) {
@@ -411,18 +411,14 @@ class App {
 
     }
 
-    public static function get_baseurl($ssl = false) {
+    public static function get_baseurl() {
         if(is_array(self::$config)
             && array_key_exists('system',self::$config)
             && is_array(self::$config['system'])
             && array_key_exists('baseurl',self::$config['system'])
             && strlen(self::$config['system']['baseurl'])) {
-            // get_baseurl() is a heavily used function.
-            // Do not use punify() here until we find a library that performs better than what we have now.
-            // $url = punify(self::$config['system']['baseurl']);
             $url = self::$config['system']['baseurl'];
-            $url = trim($url,'\\/');
-            return $url;
+            return trim($url,'\\/');
         }
 
         $scheme = self::$scheme;
@@ -726,7 +722,7 @@ class App {
 
 
 /**
- * @brief Multi-purpose function to check variable state.
+ * @brief Multipurpose function to check variable state.
  *
  * Usage: x($var) or x($array, 'key')
  *
@@ -871,8 +867,8 @@ function check_config() {
         $oldhost = substr($oldurl, strpos($oldurl, '//') + 2);
         $host = substr(z_root(), strpos(z_root(), '//') + 2);
 
-        $is_ip_addr = ((preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/",$host)) ? true : false);
-        $was_ip_addr = ((preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/",$oldhost)) ? true : false);
+        $is_ip_addr = (bool)preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/", $host);
+        $was_ip_addr = (bool)preg_match("/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/", $oldhost);
         // only change the url to an ip address if it was already an ip and not a dns name
         if((! $is_ip_addr) || ($is_ip_addr && $was_ip_addr)) {
             fix_system_urls($oldurl,z_root());
@@ -883,7 +879,7 @@ function check_config() {
     }
 
     // This will actually set the url to the one stored in .htconfig, and ignore what
-    // we're passing - unless we are installing and it has never been set.
+    // we're passing - unless we are installing, and it has never been set.
 
     App::set_baseurl(z_root());
 
@@ -892,6 +888,7 @@ function check_config() {
 
     Channel::create_system();
 
+    /** @noinspection PhpUnusedLocalVariableInspection */
     $x = new DB_Upgrade(DB_UPDATE_VERSION);
 
     Hook::load();
@@ -911,7 +908,7 @@ function fix_system_urls($oldurl, $newurl) {
     // cause wasted communications.
     // What we need to do after fixing this up is to send a revocation of the old URL to every other site that we communicate with so
     // that they can clean up their hubloc tables (this includes directories).
-    // It's a very expensive operation so you don't want to have to do it often or after your site gets to be large.
+    // It's a very expensive operation, so you don't want to have to do it often or after your site gets to be large.
 
     $r = q("select xchan.*, hubloc.* from xchan left join hubloc on xchan_hash = hubloc_hash where hubloc_url like '%s' and hublod_deleted = 0",
         dbesc($oldurl . '%')
@@ -948,7 +945,7 @@ function fix_system_urls($oldurl, $newurl) {
 
             $replace_xchan_url = str_contains($rv['xchan_url'], $oldurl);
 
-            $x = q("update xchan set xchan_addr = '%s', xchan_url = '%s', xchan_connurl = '%s', xchan_follow = '%s', xchan_connpage = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
+            q("update xchan set xchan_addr = '%s', xchan_url = '%s', xchan_connurl = '%s', xchan_follow = '%s', xchan_connpage = '%s', xchan_photo_l = '%s', xchan_photo_m = '%s', xchan_photo_s = '%s', xchan_photo_date = '%s' where xchan_hash = '%s'",
                 dbesc($channel_address . '@' . $rhs),
                 dbesc(($replace_xchan_url) ? str_replace($oldurl,$newurl,$rv['xchan_url']) : $rv['xchan_url']),
                 dbesc(str_replace($oldurl,$newurl,$rv['xchan_connurl'])),
@@ -962,7 +959,7 @@ function fix_system_urls($oldurl, $newurl) {
             );
 
 
-            $y = q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_site_id = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
+            q("update hubloc set hubloc_addr = '%s', hubloc_url = '%s', hubloc_id_url = '%s', hubloc_url_sig = '%s', hubloc_site_id = '%s', hubloc_host = '%s', hubloc_callback = '%s' where hubloc_hash = '%s' and hubloc_url = '%s'",
                 dbesc($channel_address . '@' . $rhs),
                 dbesc($newurl),
                 dbesc(str_replace($oldurl,$newurl,$rv['hubloc_id_url'])),
@@ -974,7 +971,7 @@ function fix_system_urls($oldurl, $newurl) {
                 dbesc($oldurl)
             );
 
-            $z = q("update profile set photo = '%s', thumb = '%s' where uid = %d",
+            q("update profile set photo = '%s', thumb = '%s' where uid = %d",
                 dbesc(str_replace($oldurl,$newurl,$rv['xchan_photo_l'])),
                 dbesc(str_replace($oldurl,$newurl,$rv['xchan_photo_m'])),
                 intval($c[0]['channel_id'])
@@ -1336,6 +1333,7 @@ function proc_run() {
     }
 
     if (count($args) > 1  && $args[0] === 'php') {
+        /** @noinspection PhpUnhandledExceptionInspection */
         $php = check_php_cli();
         if (! $php) {
             return;
@@ -1375,6 +1373,7 @@ function check_php_cli() {
     }
 
     logger('PHP command line interpreter not found.');
+    /** @noinspection PhpUnhandledExceptionInspection */
     throw new Exception('interpreter not  found.');
 }
 
@@ -1741,7 +1740,7 @@ function construct_page() {
 
     // There's some experimental support for right-to-left text in the view/php/default.php page template.
     // In v1.9 we started providing direction preference in the per language hstrings.php file
-    // This requires somebody with fluency in a RTL language to make happen
+    // This requires somebody with fluency in RTL languages to make happen
 
     $page['direction'] = 0; // ((App::$rtl) ? 1 : 0);
 
@@ -1959,12 +1958,11 @@ function get_loadtime($module) {
         return $_SESSION[$n];
     }
     if (local_channel()) {
-        $x = PConfig::Get(local_channel(),'system',$n, false);
+        $x = PConfig::Get(local_channel(),'system', $n);
         if ($x) {
             return ($x);
         }
     }
     return datetime_convert();
-
 }
 
