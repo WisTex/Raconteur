@@ -175,7 +175,6 @@
                                 {{if $vnotify16}}
                                     {{include file="field_intcheckbox.tpl" field=$vnotify16}}
                                 {{/if}}
-                                {{include file="field_intcheckbox.tpl" field=$always_show_in_notices}}
                             </div>
                         </div>
                         {{if $notify_addon}}

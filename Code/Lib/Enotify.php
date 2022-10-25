@@ -125,8 +125,6 @@ class Enotify
             $title = $body = '';
         }
 
-
-        $always_show_in_notices = get_pconfig($recip['channel_id'], 'system', 'always_show_in_notices');
         $vnotify = get_pconfig($recip['channel_id'], 'system', 'vnotify');
 
         $salutation = $recip['channel_name'];
@@ -166,8 +164,7 @@ class Enotify
             $action = t('commented on');
 
             if (array_key_exists('item', $params) && in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
-                if (! $always_show_in_notices || !($vnotify & VNOTIFY_LIKE)) {
-                    logger('notification: not a visible activity. Ignoring.');
+                if (!$vnotify & VNOTIFY_LIKE) {
                     pop_lang();
                     return;
                 }
@@ -285,7 +282,7 @@ class Enotify
             $itemlink =  $params['link'];
 
             if (array_key_exists('item', $params) && (! activity_match($params['item']['verb'], ACTIVITY_LIKE))) {
-                if (! $always_show_in_notices  || !($vnotify & VNOTIFY_LIKE)) {
+                if (!$vnotify & VNOTIFY_LIKE) {
                     logger('notification: not a visible activity. Ignoring.');
                     pop_lang();
                     return;
@@ -577,25 +574,8 @@ class Enotify
             return;
         }
 
-
-    // create notification entry in DB
+        // create notification entry in DB
         $seen = 0;
-
-    // Mark some notifications as seen right away
-    // Note! The notification have to be created, because they are used to send emails
-    // So the easiest solution to hide them from Notices is to mark them as seen right away.
-    // Another option would be to not add them to the DB, and change how emails are handled
-    // (probably would be better that way)
-
-        if (!$always_show_in_notices) {
-            if (($params['type'] == NOTIFY_WALL) || ($params['type'] == NOTIFY_INTRO)) {
-                $seen = 1;
-            }
-            // set back to unseen for moderated wall posts
-            if ($params['type'] == NOTIFY_WALL && $params['item']['item_blocked'] == ITEM_MODERATED) {
-                $seen = 0;
-            }
-        }
 
         $e = q(
             "select * from notify where otype = '%s' and xname = '%s' and verb = '%s' and link = '%s' and ntype = %d limit 1",
