@@ -7,7 +7,8 @@ use Code\Lib\Channel;
 class Channel_purge
 {
 
-    public static function run($argc, $argv)
+    /** @noinspection PhpUnusedParameterInspection */
+    public function run($argc, $argv)
     {
 
         cli_startup();

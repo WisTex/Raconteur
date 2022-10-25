@@ -9,20 +9,20 @@ use Code\Lib\Channel;
 use Code\Render\Theme;
 
 
-class Cdav
+class Cdav implements WidgetInterface
 {
 
-    public function widget()
+    public function widget(array $arguments): string
     {
         if (!local_channel()) {
-            return;
+            return '';
         }
 
         $channel = App::get_channel();
         $principalUri = 'principals/' . $channel['channel_address'];
 
         if (!cdav_principal($principalUri)) {
-            return;
+            return '';
         }
 
         $pdo = DBA::$dba->db;
@@ -77,7 +77,7 @@ class Cdav
                 $share_displayname = [];
 
                 foreach ($invites as $invite) {
-                    if (strpos($invite->href, 'mailto:') !== false) {
+                    if (str_contains($invite->href, 'mailto:')) {
                         $sharee = Channel::from_username(substr($invite->principal, 11));
                         $sharees[] = [
                             'name' => $sharee['channel_name'],
@@ -193,5 +193,6 @@ class Cdav
 
             return $o;
         }
+        return '';
     }
 }

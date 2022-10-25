@@ -14,7 +14,7 @@ class System
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('platform_name', App::$config['system'])) {
             return App::$config['system']['platform_name'];
         }
-        return PLATFORM_NAME;
+        return REPOSITORY_ID;
     }
 
     public static function get_site_name(): string
@@ -58,7 +58,7 @@ class System
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('icon', App::$config['system'])) {
             return App::$config['system']['icon'];
         }
-        return z_root() . '/images/' . PLATFORM_NAME . '-64.png';
+        return z_root() . '/images/' . REPOSITORY_ID . '-64.png';
     }
 
     public static function get_project_favicon()
@@ -66,7 +66,7 @@ class System
         if (is_array(App::$config) && is_array(App::$config['system']) && array_key_exists('favicon', App::$config['system'])) {
             return App::$config['system']['favicon'];
         }
-        return z_root() . '/images/' . PLATFORM_NAME . '.ico';
+        return z_root() . '/images/' . REPOSITORY_ID . '.ico';
     }
 
 
@@ -90,7 +90,6 @@ class System
         return DB_UPDATE_VERSION;
     }
 
-
     public static function get_notify_icon()
     {
         if (is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['email_notify_icon_url']) {
@@ -112,34 +111,19 @@ class System
         return self::get_project_favicon();
     }
 
-    public static function get_project_link()
-    {
-        if (is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_link']) {
-            return App::$config['system']['project_link'];
-        }
-        return 'https://zotlabs.com/' . PLATFORM_NAME;
-    }
-
     public static function get_project_srclink()
     {
         if (is_array(App::$config) && is_array(App::$config['system']) && App::$config['system']['project_srclink']) {
             return App::$config['system']['project_srclink'];
         }
-        if (PLATFORM_NAME === 'streams') {
-            return 'https://codeberg.org/streams/' . PLATFORM_NAME;
-		}
 
-        return 'https://codeberg.org/zot/' . PLATFORM_NAME;
-    }
+        return 'https://codeberg.org/streams/' . REPOSITORY_ID;
 
-    public static function ebs()
-    {
-        return Config::Get('system','ebsstate', 'armed');
     }
 
     public static function get_zot_revision()
     {
-        $x = [ 'revision' => ZOT_REVISION ];
+        $x = [ 'revision' => NOMAD_PROTOCOL_VERSION ];
         Hook::call('zot_revision', $x);
         return $x['revision'];
     }

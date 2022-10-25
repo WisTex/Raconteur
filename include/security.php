@@ -665,28 +665,6 @@ function check_form_security_token_ForbiddenOnErr($typename = '', $formname = 'f
 }
 
 
-// Returns an array of group hash id's on this entire site (across all channels) that this connection is a member of.
-// var $contact_id = xchan_hash of connection
-
-function init_groups_visitor($contact_id)
-{
-    $groups = [];
-
-    // physical groups this channel is a member of
-
-    $r = q(
-        "SELECT hash FROM pgrp left join pgrp_member on pgrp.id = pgrp_member.gid WHERE xchan = '%s' ",
-        dbesc($contact_id)
-    );
-    if ($r) {
-        foreach ($r as $rr) {
-            $groups[] = $rr['hash'];
-        }
-    }
-    return $groups;
-}
-
-
 function get_security_ids($channel_id, $ob_hash)
 {
 

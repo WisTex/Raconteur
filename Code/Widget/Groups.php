@@ -2,10 +2,10 @@
 
 namespace Code\Widget;
 
-class Groups
+class Groups implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         $output = EMPTY_STR;
@@ -15,14 +15,14 @@ class Groups
             return $output;
         }
 
-        if (is_array($arr) && array_key_exists('limit', $arr) && intval($arr['limit']) >= 0) {
-            $limit = " limit " . intval($arr['limit']) . " ";
+        if (is_array($arguments) && array_key_exists('limit', $arguments) && intval($arguments['limit']) >= 0) {
+            $limit = " limit " . intval($arguments['limit']) . " ";
         } else {
             $limit = EMPTY_STR;
         }
 
         $unseen = 0;
-        if (is_array($arr) && array_key_exists('unseen', $arr) && intval($arr['unseen'])) {
+        if (is_array($arguments) && array_key_exists('unseen', $arguments) && intval($arguments['unseen'])) {
             $unseen = 1;
         }
 

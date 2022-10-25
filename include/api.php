@@ -79,7 +79,7 @@ function api_call()
 
     if (strrpos($p, '.')) {
         $type = substr($p, strrpos($p, '.')+1);
-        if (strpos($type, '/') === false) {
+        if (!str_contains($type, '/')) {
             $p = substr($p, 0, strrpos($p, '.'));
             // recalculate App argc,argv since we just extracted the type from it
             App::$argv = explode('/', $p);
@@ -148,7 +148,7 @@ function api_call()
             break;
         case "json":
             header('Content-Type: application/json');
-            return json_encode(array('error' => 'not implemented'));
+            return json_encode(['error' => 'not implemented']);
             break;
         case "rss":
             header('Content-Type: application/rss+xml');

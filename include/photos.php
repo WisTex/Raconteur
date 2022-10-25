@@ -107,7 +107,7 @@ function photo_upload($channel, $observer, $args)
         // allow an import from a binary string representing the image.
         // This bypasses the upload step and max size limit checking
 
-        $imagedata = (($args['content']) ? $args['content'] : $args['data']);
+        $imagedata = (($args['content']) ?: $args['data']);
         $filename = $args['filename'];
         $filesize = strlen($imagedata);
         // this is going to be deleted if it exists
@@ -223,7 +223,6 @@ function photo_upload($channel, $observer, $args)
     if (! $height) {
         $height = $ph->getHeight();
     }
-    $smallest = 0;
 
     $photo_hash = (($args['resource_id']) ?: photo_new_resource());
 
@@ -509,7 +508,7 @@ function photo_upload($channel, $observer, $args)
             } else {
                 $item['aid'] = $channel['channel_account_id'];
                 $item['uid'] = $channel['channel_id'];
-                $item_result = item_store($item, false, $deliver);
+                item_store($item, false, $deliver);
             }
         }
     } else {
@@ -595,8 +594,6 @@ function photo_calculate_scale($arr)
     $max    = $arr['max'];
     $width  = $arr[0];
     $height = $arr[1];
-
-    $dest_width = $dest_height = 0;
 
     if (! ($width && $height)) {
         return false;
@@ -698,7 +695,6 @@ function photos_albums_list($channel, $observer, $sort_key = 'display_path', $di
                         if ($xv['total'] != 0 && attach_can_view_folder($channel_id, $observer_xchan, $xv['folder'])) {
                             $albums[] = [ 'album' => $rv['display_path'], 'folder' => $xv['folder'], 'total' => $xv['total'] ];
                         }
-                        continue;
                     }
                 }
             }

@@ -154,7 +154,7 @@ class Libprofile
         }
 
         if ($p[0]['keywords']) {
-            $keywords = str_replace(array('#', ',', ' ', ',,'), array('', ' ', ',', ','), $p[0]['keywords']);
+            $keywords = str_replace(['#', ',', ' ', ',,'], ['', ' ', ',', ','], $p[0]['keywords']);
             if (strlen($keywords) && $can_view_profile) {
                 if (!isset(App::$page['htmlhead'])) {
                     App::$page['htmlhead'] = EMPTY_STR;
@@ -195,19 +195,12 @@ class Libprofile
 
         // show edit profile to profile owner
         if ($is_owner) {
-            $ret['menu'] = array(
+            $ret['menu'] = [
                 'chg_photo' => t('Change profile photo'),
                 'entries' => [],
-            );
+            ];
 
-            $multi_profiles = Features::enabled(local_channel(), 'multi_profiles');
-            if ($multi_profiles) {
-                $ret['multi'] = 1;
-                $ret['edit'] = [z_root() . '/profiles', t('Edit Profiles'), '', t('Edit')];
-                $ret['menu']['cr_new'] = t('Create New Profile');
-            } else {
-                $ret['edit'] = [ z_root() . '/settings/profile_edit', t('Edit Profile'), '', t('Edit')];
-            }
+            $ret['edit'] = [ z_root() . '/settings/profile_edit', t('Edit Profile'), '', t('Edit')];
 
             $r = q(
                 "SELECT * FROM profile WHERE uid = %d",
@@ -216,7 +209,7 @@ class Libprofile
 
             if ($r) {
                 foreach ($r as $rr) {
-                    if (!($multi_profiles || $rr['is_default'])) {
+                    if (!$rr['is_default']) {
                         continue;
                     }
 
@@ -390,7 +383,7 @@ class Libprofile
             $tpl = Theme::get_template('profile_vcard.tpl');
         }
 
-        $o .= replace_macros($tpl, array(
+        $o .= replace_macros($tpl, [
             '$zcard' => $zcard,
             '$profile' => $profile,
             '$connect' => $connect,
@@ -413,7 +406,7 @@ class Libprofile
             '$copyto' => t('Copy to clipboard'),
             '$copied' => t('Address copied to clipboard'),
             '$editmenu' => self::edit_menu($profile['uid'])
-        ));
+        ]);
 
         $arr = [
             'profile' => $profile,
@@ -439,22 +432,22 @@ class Libprofile
         // This can easily get throw off if the observer language is different
         // than the channel owner language.
 
-        if (strpos(strtolower($gender), strtolower(t('Female'))) !== false) {
+        if (str_contains(strtolower($gender), strtolower(t('Female')))) {
             return 'venus';
         }
-        if (strpos(strtolower($gender), strtolower(t('Male'))) !== false) {
+        if (str_contains(strtolower($gender), strtolower(t('Male')))) {
             return 'mars';
         }
-        if (strpos(strtolower($gender), strtolower(t('Trans'))) !== false) {
+        if (str_contains(strtolower($gender), strtolower(t('Trans')))) {
             return 'transgender';
         }
-        if (strpos(strtolower($gender), strtolower(t('Inter'))) !== false) {
+        if (str_contains(strtolower($gender), strtolower(t('Inter')))) {
             return 'transgender';
         }
-        if (strpos(strtolower($gender), strtolower(t('Neuter'))) !== false) {
+        if (str_contains(strtolower($gender), strtolower(t('Neuter')))) {
             return 'neuter';
         }
-        if (strpos(strtolower($gender), strtolower(t('Non-specific'))) !== false) {
+        if (str_contains(strtolower($gender), strtolower(t('Non-specific')))) {
             return 'genderless';
         }
 
@@ -468,13 +461,13 @@ class Libprofile
         // This can easily get throw off if the observer language is different
         // than the channel owner language.
 
-        if (strpos(strtolower($pronouns), strtolower(t('She'))) !== false) {
+        if (str_contains(strtolower($pronouns), strtolower(t('She')))) {
             return 'venus';
         }
-        if (strpos(strtolower($pronouns), strtolower(t('Him'))) !== false) {
+        if (str_contains(strtolower($pronouns), strtolower(t('Him')))) {
             return 'mars';
         }
-        if (strpos(strtolower($pronouns), strtolower(t('Them'))) !== false) {
+        if (str_contains(strtolower($pronouns), strtolower(t('Them')))) {
             return 'users';
         }
 
@@ -512,10 +505,10 @@ class Libprofile
 
             $profile = [];
 
-            $profile['fullname'] = array(t('Full Name:'), App::$profile['fullname']);
+            $profile['fullname'] = [t('Full Name:'), App::$profile['fullname']];
 
             if (App::$profile['gender']) {
-                $profile['gender'] = array(t('Gender:'), App::$profile['gender']);
+                $profile['gender'] = [t('Gender:'), App::$profile['gender']];
             }
 
 
@@ -557,15 +550,15 @@ class Libprofile
                         ? day_translate(datetime_convert('UTC', 'UTC', App::$profile['dob'] . ' 00:00 +00:00', $year_bd_format))
                         : day_translate(datetime_convert('UTC', 'UTC', '2001-' . substr(App::$profile['dob'], 5) . ' 00:00 +00:00', $short_bd_format)));
                 }
-                $profile['birthday'] = array(t('Birthday:'), $val);
+                $profile['birthday'] = [t('Birthday:'), $val];
             }
 
             if ($age = age(App::$profile['dob'], App::$profile['timezone'], '')) {
-                $profile['age'] = array(t('Age:'), $age);
+                $profile['age'] = [t('Age:'), $age];
             }
 
             if (App::$profile['marital']) {
-                $profile['marital'] = array(t('Status:'), App::$profile['marital']);
+                $profile['marital'] = [t('Status:'), App::$profile['marital']];
             }
 
             if (App::$profile['partner']) {
@@ -585,84 +578,84 @@ class Libprofile
                         $karr[$cnt] = '<a href="' . z_root() . '/directory/f=&keywords=' . trim($karr[$cnt]) . '">' . $karr[$cnt] . '</a>';
                     }
                 }
-                $profile['keywords'] = array(t('Tags:'), implode(' ', $karr));
+                $profile['keywords'] = [t('Tags:'), implode(' ', $karr)];
             }
 
 
             if (App::$profile['sexual']) {
-                $profile['sexual'] = array(t('Sexual Preference:'), App::$profile['sexual']);
+                $profile['sexual'] = [t('Sexual Preference:'), App::$profile['sexual']];
             }
 
             if (App::$profile['pronouns']) {
-                $profile['pronouns'] = array(t('Pronouns:'), App::$profile['pronouns']);
+                $profile['pronouns'] = [t('Pronouns:'), App::$profile['pronouns']];
             }
 
             if (App::$profile['homepage']) {
-                $profile['homepage'] = array(t('Homepage:'), linkify(App::$profile['homepage']));
+                $profile['homepage'] = [t('Homepage:'), linkify(App::$profile['homepage'])];
             }
 
             if (App::$profile['hometown']) {
-                $profile['hometown'] = array(t('Hometown:'), linkify(App::$profile['hometown']));
+                $profile['hometown'] = [t('Hometown:'), linkify(App::$profile['hometown'])];
             }
 
             if (App::$profile['politic']) {
-                $profile['politic'] = array(t('Political Views:'), App::$profile['politic']);
+                $profile['politic'] = [t('Political Views:'), App::$profile['politic']];
             }
 
             if (App::$profile['religion']) {
-                $profile['religion'] = array(t('Religion:'), App::$profile['religion']);
+                $profile['religion'] = [t('Religion:'), App::$profile['religion']];
             }
 
             if ($txt = prepare_text(App::$profile['about'])) {
-                $profile['about'] = array(t('About:'), $txt);
+                $profile['about'] = [t('About:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['interest'])) {
-                $profile['interest'] = array(t('Hobbies/Interests:'), $txt);
+                $profile['interest'] = [t('Hobbies/Interests:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['likes'])) {
-                $profile['likes'] = array(t('Likes:'), $txt);
+                $profile['likes'] = [t('Likes:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['dislikes'])) {
-                $profile['dislikes'] = array(t('Dislikes:'), $txt);
+                $profile['dislikes'] = [t('Dislikes:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['contact'])) {
-                $profile['contact'] = array(t('Contact information and Social Networks:'), $txt);
+                $profile['contact'] = [t('Contact information and Social Networks:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['channels'])) {
-                $profile['channels'] = array(t('My other channels:'), $txt);
+                $profile['channels'] = [t('My other channels:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['music'])) {
-                $profile['music'] = array(t('Musical interests:'), $txt);
+                $profile['music'] = [t('Musical interests:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['book'])) {
-                $profile['book'] = array(t('Books, literature:'), $txt);
+                $profile['book'] = [t('Books, literature:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['tv'])) {
-                $profile['tv'] = array(t('Television:'), $txt);
+                $profile['tv'] = [t('Television:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['film'])) {
-                $profile['film'] = array(t('Film/dance/culture/entertainment:'), $txt);
+                $profile['film'] = [t('Film/dance/culture/entertainment:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['romance'])) {
-                $profile['romance'] = array(t('Love/Romance:'), $txt);
+                $profile['romance'] = [t('Love/Romance:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['employment'])) {
-                $profile['employment'] = array(t('Work/employment:'), $txt);
+                $profile['employment'] = [t('Work/employment:'), $txt];
             }
 
             if ($txt = prepare_text(App::$profile['education'])) {
-                $profile['education'] = array(t('School/education:'), $txt);
+                $profile['education'] = [t('School/education:'), $txt];
             }
 
             if (App::$profile['extra_fields']) {
@@ -672,7 +665,7 @@ class Libprofile
                         dbesc($f)
                     );
                     if ($x && $txt = prepare_text(App::$profile[$f])) {
-                        $profile[$f] = array($x[0]['field_desc'] . ':', $txt);
+                        $profile[$f] = [$x[0]['field_desc'] . ':', $txt];
                     }
                 }
                 $profile['extra_fields'] = App::$profile['extra_fields'];
@@ -685,7 +678,7 @@ class Libprofile
 
             //      $exportlink = ((App::$profile['profile_vcard']) ? zid(z_root() . '/profile/' . App::$profile['channel_address'] . '/vcard') : '');
 
-            return replace_macros($tpl, array(
+            return replace_macros($tpl, [
                 '$title' => t('Profile'),
                 '$canlike' => (($profile['canlike']) ? true : false),
                 '$likethis' => t('Like this thing'),
@@ -695,7 +688,7 @@ class Libprofile
                 '$fields' => $clean_fields,
                 '$editmenu' => self::edit_menu(App::$profile['profile_uid']),
                 '$things' => $things
-            ));
+            ]);
         }
 
         return '';

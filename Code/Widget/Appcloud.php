@@ -2,10 +2,10 @@
 
 namespace Code\Widget;
 
-class Appcloud
+class Appcloud implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
         if (!local_channel()) {
             return '';

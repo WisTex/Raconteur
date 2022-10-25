@@ -4,13 +4,10 @@ namespace Code\Lib;
 
 use App;
 use Code\Daemon\Run;
-use Code\Lib\Libsync;
-use Code\Lib\Channel;
 use Code\Extend\Hook;
 
 class Share
 {
-
     private $item = null;
     private $attach = null;
     private $tags = null;
@@ -53,7 +50,7 @@ class Share
             return;
         }
 
-        if (! in_array($r[0]['mimetype'], [ 'text/bbcode', 'text/x-multicode' ])) {
+        if (!in_array($r[0]['mimetype'], ['text/bbcode', 'text/x-multicode'])) {
             return;
         }
 
@@ -65,7 +62,7 @@ class Share
         }
 
         xchan_query($r);
-        $r = fetch_post_tags($r, true);
+        $r = fetch_post_tags($r);
 
         $this->item = array_shift($r);
 
@@ -76,27 +73,6 @@ class Share
 
         $channel = Channel::from_id($this->item['uid']);
         $observer = App::get_observer();
-
-        $r = q(
-            "select * from xchan where xchan_hash = '%s' limit 1",
-            dbesc($this->item['owner_xchan'])
-        );
-
-        if ($r) {
-            $thread_owner = array_shift($r);
-        } else {
-            return;
-        }
-
-        $r = q(
-            "select * from xchan where xchan_hash = '%s' limit 1",
-            dbesc($this->item['author_xchan'])
-        );
-        if ($r) {
-            $item_author = array_shift($r);
-        } else {
-            return;
-        }
 
         if ($this->item['attach']) {
             $this->attach = json_decode($this->item['attach'],true);
@@ -112,16 +88,23 @@ class Share
             'title' => $this->item['mid'],
         ];
 
-        $this->tags = ($this->item['term']) ? $this->item['term'] : [];
+        $this->tags = ($this->item['term']) ?: [];
 
         $this->tags[] = [
-            'type' => 'Link',
             'url' => $this->item['mid'],
             'ttype' => TERM_QUOTED,
+            'otype' => TERM_OBJ_POST,
             'term' => 'RE: ' . $this->item['mid'],
         ];
 
-        if ($item_author['network'] === 'activitypub') {
+        $this->tags[] = [
+            'url' => $this->item['author']['xchan_url'],
+            'ttype' => TERM_MENTION,
+            'otype' => TERM_OBJ_POST,
+            'term' => substr($this->item['author']['xchan_addr'],0,strpos($this->item['author']['xchan_addr'],'@'))
+        ];
+
+        if ($this->item['author']['network'] === 'activitypub') {
             // for Mastodon compatibility, send back an ActivityPub Announce activity.
             // We don't need or want these on our own network as there is no mechanism for providing
             // a fair-use defense to copyright claims and frivolous lawsuits.
@@ -165,8 +148,6 @@ class Share
 
             Run::Summon([ 'Notifier','like',$post_id ]);
         }
-
-        return;
     }
 
     public function obj()
@@ -188,7 +169,7 @@ class Share
         $obj['name']          = $this->item['title'];
         $obj['published']     = $this->item['created'];
         $obj['updated']       = $this->item['edited'];
-        $obj['attributedTo']  =  ((strpos($this->item['author']['xchan_hash'], 'http') === 0)
+        $obj['attributedTo']  =  ((str_starts_with($this->item['author']['xchan_hash'], 'http'))
             ? $this->item['author']['xchan_hash']
             : $this->item['author']['xchan_url']);
 
@@ -223,13 +204,13 @@ class Share
             }
         }
 
-        $special_object = (in_array($this->item['obj_type'], [ ACTIVITY_OBJ_PHOTO, 'Event', 'Question' ]) ? true : false);
+        $special_object = in_array($this->item['obj_type'], [ ACTIVITY_OBJ_PHOTO, 'Event', 'Question' ]);
         if ($special_object) {
             $object = json_decode($this->item['obj'], true);
             $special = (($object['source']) ? $object['source']['content'] : $object['body']);
         }
 
-        if (strpos($this->item['body'], "[/share]") !== false) {
+        if (str_contains($this->item['body'], "[/share]")) {
             $pos = strpos($this->item['body'], "[share");
             $bb = substr($this->item['body'], $pos);
         } else {

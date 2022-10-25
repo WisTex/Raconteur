@@ -5,10 +5,10 @@ namespace Code\Widget;
 use App;
 use Code\Lib\Libprofile;
 
-class Fullprofile
+class Fullprofile implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if (!App::$profile['profile_uid']) {

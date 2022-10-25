@@ -45,7 +45,7 @@ class Event extends Controller
             }
 
             xchan_query($r, true);
-            $items = fetch_post_tags($r, true);
+            $items = fetch_post_tags($r);
 
             $channel = Channel::from_id($items[0]['uid']);
 

@@ -9,10 +9,10 @@ namespace Code\Widget;
 
 use App;
 
-class Pinned
+class Pinned implements WidgetInterface
 {
 
-    private $allowed_types = 0;
+    private $allowed_types = [];
     private $uid = 0;
 
 
@@ -21,7 +21,7 @@ class Pinned
      *
      */
 
-    public function widget($args)
+    public function widget(array $arguments): string
     {
 
         $ret = '';
@@ -30,7 +30,7 @@ class Pinned
 
         $this->uid = App::$profile_uid;
 
-        $types = (($args['types']) ?: [ITEM_TYPE_POST]);
+        $types = (($arguments['types']) ?: [ITEM_TYPE_POST]);
 
         $id_list = $this->list($types);
 
@@ -100,7 +100,7 @@ class Pinned
         );
         if ($r) {
             xchan_query($r, true);
-            $items = fetch_post_tags($r, true);
+            $items = fetch_post_tags($r);
 
             for ($x = 0; $x < count($items); $x++) {
                 $items[$x]['item_id'] = 'pin-' . $items[$x]['item_id'];

@@ -7,10 +7,10 @@ use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Suggestedchats
+class Suggestedchats implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if (!Features::enabled(App::$profile['profile_uid'], 'ajaxchat')) {
@@ -29,7 +29,7 @@ class Suggestedchats
 
         $h = get_observer_hash();
         if (!$h) {
-            return;
+            return '';
         }
         $r = q("select xchat_url, xchat_desc, count(xchat_xchan) as total from xchat group by xchat_url, xchat_desc order by total desc, xchat_desc limit 24");
         if ($r) {

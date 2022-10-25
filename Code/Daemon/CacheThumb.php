@@ -9,7 +9,7 @@ require_once('include/photos.php');
 
 class CacheThumb
 {
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
         if ($argc != 2) {
             return;
@@ -23,7 +23,7 @@ class CacheThumb
         }
 
         $max_thumb = get_config('system', 'max_cache_thumbnail', 1024);
-        $resizer = new Resizer(get_config('system','imagick_convert_path'), $imageisze);
+        $resizer = new Resizer(get_config('system','imagick_convert_path'), $imagesize);
         $resized = $resizer->resize(PROJECT_BASE . '/' . $path, PROJECT_BASE . '/' . $path . '-001', $max_thumb);
         if ($resized) {
             @rename($path . '-001', $path);

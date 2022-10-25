@@ -2,12 +2,12 @@
 
 namespace Code\Widget;
 
-class Clock
+class Clock implements WidgetInterface
 {
 
-    public function widget($arr): string
+    public function widget(array $arguments): string
     {
-        $miltime = ((isset($arr['military']) && $arr['military']) ? intval($arr['military']) : false);
+        $miltime = ((isset($arguments['military']) && $arguments['military']) ? intval($arguments['military']) : false);
         return <<< EOT
 <div class="widget">
 <h3 class="clockface"></h3>

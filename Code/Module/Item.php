@@ -153,7 +153,7 @@ class Item extends Controller
             // If we get to this point we have determined we can access the original in $r (fetched much further above), so use it.
 
             xchan_query($r, true);
-            $items = fetch_post_tags($r, false);
+            $items = fetch_post_tags($r);
 
             $chan = Channel::from_id($items[0]['uid']);
 
@@ -280,7 +280,7 @@ class Item extends Controller
             }
 
             xchan_query($items, true);
-            $items = fetch_post_tags($items, true);
+            $items = fetch_post_tags($items);
 
             if (!$items) {
                 http_status_exit(404, 'Not found');

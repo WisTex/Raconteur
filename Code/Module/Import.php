@@ -46,8 +46,7 @@ class Import extends Controller
         $max_feeds = ServiceClass::account_fetch($account_id, 'total_feeds');
         $data = null;
         $seize = ((x($_REQUEST, 'make_primary')) ? intval($_REQUEST['make_primary']) : 0);
-        $import_posts = ((x($_REQUEST, 'import_posts')) ? intval($_REQUEST['import_posts']) : 0);
-        $moving = false; // intval($_REQUEST['moving']);
+        $import_posts = 0;
         $src = $_FILES['filename']['tmp_name'];
         $filename = basename($_FILES['filename']['name']);
         $filesize = intval($_FILES['filename']['size']);
@@ -69,6 +68,9 @@ class Import extends Controller
             }
             unlink($src);
         }
+        else {
+            $import_posts = true;
+        }
 
         // import channel from another server
         if (!$src) {
@@ -78,27 +80,28 @@ class Import extends Controller
                 notice(t('Nothing to import.') . EOL);
                 return;
             } elseif (strpos($old_address, '＠')) {
-                // if you copy the identity address from your profile page, make it work for convenience - WARNING: this is a utf-8 variant and NOT an ASCII ampersand. Please do not edit.
+                // if you copy the identity address from your profile page, make it work for convenience
+                // - WARNING: this is a utf-8 variant and NOT an ASCII ampersand. Please do not edit.
                 $old_address = str_replace('＠', '@', $old_address);
             }
+            $split = explode('@', $old_address);
+            if (count($split) !== 2)  {
+                notice(t('An invalid channel address was entered. This resembles an email address (xyz@example.com).'));
+                return;
+            }
+            $channelname = $split[0];
+            $servername = $split[1];
 
-            $email = ((x($_REQUEST, 'email')) ? $_REQUEST['email'] : '');
-            $password = ((x($_REQUEST, 'password')) ? $_REQUEST['password'] : '');
-
-            $channelname = substr($old_address, 0, strpos($old_address, '@'));
-            $servername = substr($old_address, strpos($old_address, '@') + 1);
+            $password = ((x($_REQUEST, 'old_password')) ? $_REQUEST['old_password'] : '');
 
             $api_path = probe_api_path($servername);
             if (!$api_path) {
-                notice(t('Unable to download data from old server') . EOL);
+                notice(t('Unable to connect to old server') . EOL);
                 return;
             }
 
-            $api_path .= 'channel/export/basic?f=&zap_compat=1&channel=' . $channelname;
-            if ($import_posts) {
-                $api_path .= '&posts=1';
-            }
-            $opts = ['http_auth' => $email . ':' . $password];
+            $api_path .= 'channel/export/basic?f=&zap_compat=1';
+            $opts = ['http_auth' => $channelname . ':' . $password];
             $ret = Url::get($api_path, $opts);
             if ($ret['success']) {
                 $data = $ret['body'];
@@ -125,7 +128,6 @@ class Import extends Controller
         if (array_path_exists('user/parent-uid', $data)) {
             $settings = ['account_id' => $account_id, 'seize' => 1, 'newname' => $newname];
             $f = new Friendica($data, $settings);
-
             return;
         }
 
@@ -143,10 +145,6 @@ class Import extends Controller
             return;
         }
         $schema = (array_path_exists('compatibility/schema', $data) && $data['compatibility']['schema']) ? $data['compatibility']['schema'] : 'unknown';
-
-        if ($moving) {
-            $seize = 1;
-        }
 
         // import channel
 
@@ -253,7 +251,7 @@ class Import extends Controller
             foreach ($xchans as $xchan) {
                 // Provide backward compatibility for zot11 based projects
 
-                if ($xchan['xchan_network'] === 'nomad' && version_compare(ZOT_REVISION, '10.0') <= 0) {
+                if ($xchan['xchan_network'] === 'nomad' && version_compare(NOMAD_PROTOCOL_VERSION, '10.0') <= 0) {
                     $xchan['xchan_network'] = 'zot6';
                 }
 
@@ -718,19 +716,15 @@ class Import extends Controller
 
         return replace_macros(Theme::get_template('channel_import.tpl'), [
             '$title' => t('Import Channel'),
-            '$desc' => t('Use this form to import an existing channel from a different server. You may retrieve the channel identity from the old server via the network or provide an export file.'),
-            '$label_filename' => t('File to Upload'),
-            '$choice' => t('Or provide the old server details'),
-            '$old_address' => ['old_address', t('Your old identity address (xyz@example.com)'), '', ''],
-            '$email' => ['email', t('Your old login email address'), '', ''],
-            '$password' => ['password', t('Your old login password'), '', ''],
-            '$import_posts' => ['import_posts', t('Import a few months of posts if possible (limited by available memory)'), false, '', [t('No'), t('Yes')]],
+            '$desc' => t('Use this form to make a copy (clone) of an existing channel from a different site/instance to this site. You may choose to retrieve the channel data from the old site via the network or provide an export file you downloaded previously.'),
+            '$label_filename' => t('File to upload'),
+            '$choice' => t('Or provide the connection details to an existing site/instance. This information is used immediately to download your existing content and is not saved or stored.'),
+            '$old_address' => ['old_address', t('Your old channel address (xyz@example.com)'), '', ''],
+            '$old_password' => ['old_password', t('Your old login password'), '', ''],
+            '$common' => t('Your primary location determines which URL or address should be displayed publicly. This should be the location you intend to use most often.'),
 
-            '$common' => t('For either option, please choose whether to make this hub your new primary address, or whether your old location should continue this role. You will be able to post from either location, but only one can be marked as the primary location for files, photos, and media.'),
-
-            '$make_primary' => ['make_primary', t('Make this hub my primary location'), false, '', [t('No'), t('Yes')]],
-            '$moving' => ['moving', t('Move this channel (disable all previous locations)'), false, '', [t('No'), t('Yes')]],
-            '$newname' => ['newname', t('Use this channel nickname instead of the one provided'), '', t('Leave blank to keep your existing channel nickname. You will be randomly assigned a similar nickname if either name is already allocated on this site.')],
+            '$make_primary' => ['make_primary', t('Make this instance my primary location'), false, '', [t('No'), t('Yes')]],
+            '$newname' => ['newname', t('Use this channel nickname (optional)'), '', t('Leave blank to keep your existing channel nickname. You will be randomly assigned a similar nickname if either name is already allocated on this site.')],
 
             '$pleasewait' => t('This process may take several minutes to complete and considerably longer if importing a large amount of posts and files. Please submit the form only once and leave this page open until finished.'),
 

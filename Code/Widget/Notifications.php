@@ -6,10 +6,10 @@ use App;
 use Code\Render\Theme;
 
 
-class Notifications
+class Notifications implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if (local_channel()) {
@@ -146,14 +146,14 @@ class Notifications
             ];
         }
 
-        $o = replace_macros(Theme::get_template('notifications_widget.tpl'), array(
+        $o = replace_macros(Theme::get_template('notifications_widget.tpl'), [
             '$module' => App::$module,
             '$notifications' => $notifications,
 			'$notifications_label' => t('Notifications'),
             '$no_notifications' => t('Sorry, you have got no notifications at the moment'),
             '$loading' => t('Loading'),
             '$startpage' => get_pconfig(local_channel(), 'system', 'startpage')
-        ));
+        ]);
 
         return $o;
     }

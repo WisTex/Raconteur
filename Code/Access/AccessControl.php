@@ -76,6 +76,7 @@ class AccessControl
      * or values that have been set explicitly.
      *
      * @return bool
+     * @noinspection PhpUnused
      */
     public function get_explicit(): bool
     {

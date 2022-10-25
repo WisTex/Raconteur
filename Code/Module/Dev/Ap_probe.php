@@ -4,23 +4,21 @@ namespace Code\Module\Dev;
 
 use App;
 use Code\Web\Controller;
-use Code\Web\HTTPSig;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
-use Code\Lib\Yaml;
 use Code\Lib\Channel;
 use Code\Render\Theme;
 
+require_once('include/conversation.php');
 
 class Ap_probe extends Controller
 {
 
     public function get()
     {
-
         $channel = null;
 
-        $o = replace_macros(Theme::get_template('ap_probe.tpl'), [
+        $html = replace_macros(Theme::get_template('ap_probe.tpl'), [
             '$page_title' => t('ActivityPub Probe Diagnostic'),
             '$resource' => ['resource', t('Object URL'), $_REQUEST['resource'], EMPTY_STR],
             '$authf' => ['authf', t('Authenticated fetch'), $_REQUEST['authf'], EMPTY_STR, [t('No'), t('Yes')]],
@@ -36,10 +34,10 @@ class Ap_probe extends Controller
                 }
             }
 
-            $j = Activity::fetch($resource, $channel, null, true);
+            $j = Activity::fetch($resource, $channel, true);
 
             if ($j) {
-                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($j, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+                $html .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($j, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
             }
 
             if (isset($j['type'])) {
@@ -48,21 +46,21 @@ class Ap_probe extends Controller
                     if ($AS->is_valid() && isset($AS->data['type'])) {
                         if (is_array($AS->obj)
                                 && isset($AS->obj['type'])
-                                && strpos($AS->obj['type'], 'Collection') === false) {
+                                && !str_contains($AS->obj['type'], 'Collection')) {
                             $item = Activity::decode_note($AS, true);
                             if ($item) {
-                                $o .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($item, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
-                                require_once('include/conversation.php');
+                                $html .= '<pre>' . str_replace('\\n', "\n", htmlspecialchars(json_encode($item, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT))) . '</pre>';
+
                                 $item['attach'] = json_encode($item['attach']);
                                 $items  = [$item];
-                                xchan_query($items, true);
-                                $o .= conversation($items, 'search', false, 'preview');
+                                xchan_query($items);
+                                $html .= conversation($items, 'search', false, 'preview');
                             }
                         }
                     }
                 }
             }
         }
-        return $o;
+        return $html;
     }
 }

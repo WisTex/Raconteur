@@ -316,10 +316,10 @@ class Cdav extends Controller
                 }
 
                 $title = $_REQUEST['title'];
-                $start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
+                $start = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['dtstart']);
                 $dtstart = new DateTime($start);
                 if ($_REQUEST['dtend']) {
-                    $end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
+                    $end = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['dtend']);
                     $dtend = new DateTime($end);
                 }
                 $description = $_REQUEST['description'];
@@ -349,7 +349,7 @@ class Cdav extends Controller
                 ]);
                 if ($dtend) {
                     $vcalendar->VEVENT->add('DTEND', $dtend);
-                    $vcalendar->VEVENT->DTEND['TZID'] = App::$timezone;
+                    $vcalendar->VEVENT->DTEND['TZID'] = date_default_timezone_get();
                 }
                 if ($description) {
                     $vcalendar->VEVENT->add('DESCRIPTION', $description);
@@ -358,7 +358,7 @@ class Cdav extends Controller
                     $vcalendar->VEVENT->add('LOCATION', $location);
                 }
 
-                $vcalendar->VEVENT->DTSTART['TZID'] = App::$timezone;
+                $vcalendar->VEVENT->DTSTART['TZID'] = date_default_timezone_get();
 
                 $calendarData = $vcalendar->serialize();
 
@@ -397,10 +397,10 @@ class Cdav extends Controller
 
                 $uri = $_REQUEST['uri'];
                 $title = $_REQUEST['title'];
-                $start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
+                $start = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['dtstart']);
                 $dtstart = new DateTime($start);
                 if ($_REQUEST['dtend']) {
-                    $end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
+                    $end = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['dtend']);
                     $dtend = new DateTime($end);
                 }
                 $description = $_REQUEST['description'];
@@ -457,10 +457,10 @@ class Cdav extends Controller
                 }
 
                 $uri = $_REQUEST['uri'];
-                $start = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtstart']);
+                $start = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['dtstart']);
                 $dtstart = new DateTime($start);
                 if ($_REQUEST['dtend']) {
-                    $end = datetime_convert(App::$timezone, 'UTC', $_REQUEST['dtend']);
+                    $end = datetime_convert(date_default_timezone_get(), 'UTC', $_REQUEST['dtend']);
                     $dtend = new DateTime($end);
                 }
 
@@ -961,7 +961,7 @@ class Cdav extends Controller
                 );
                 if ($r) {
                     xchan_query($r);
-                    $r = fetch_post_tags($r, true);
+                    $r = fetch_post_tags($r);
 
                     $r[0]['dtstart'] = (($r[0]['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $r[0]['dtstart'], 'c') : datetime_convert('UTC', 'UTC', $r[0]['dtstart'], 'c'));
                     $r[0]['dtend'] = (($r[0]['adjust']) ? datetime_convert('UTC', date_default_timezone_get(), $r[0]['dtend'], 'c') : datetime_convert('UTC', 'UTC', $r[0]['dtend'], 'c'));
@@ -1026,8 +1026,7 @@ class Cdav extends Controller
 
             $sources = rtrim($sources, ', ');
 
-            $first_day = Features::enabled(local_channel(), 'cal_first_day');
-            $first_day = (($first_day) ? $first_day : 0);
+            $first_day = intval(get_pconfig($channel['channel_id'], 'system', 'cal_first_day', 0));
 
             $title = ['title', t('Event title')];
             $dtstart = ['dtstart', t('Start date and time')];
@@ -1049,7 +1048,7 @@ class Cdav extends Controller
                 '$sources' => $sources,
                 '$color' => $color,
                 '$lang' => App::$language,
-                '$timezone' => App::$timezone,
+                '$timezone' => date_default_timezone_get(),
                 '$first_day' => $first_day,
                 '$prev' => t('Previous'),
                 '$next' => t('Next'),

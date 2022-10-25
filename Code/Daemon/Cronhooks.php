@@ -8,7 +8,7 @@ use Code\Extend\Hook;
 class Cronhooks
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         logger('cronhooks: start');

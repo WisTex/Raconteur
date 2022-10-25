@@ -8,34 +8,33 @@ use Code\Render\Theme;
 
 require_once('include/attach.php');
 
-class Portfolio
+class Portfolio implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arguments): string
     {
-
-
         $owner_uid = App::$profile_uid;
         $sql_extra = permissions_sql($owner_uid);
-
+        $album = '';
+        $title = '';
 
         if (!perm_is_allowed($owner_uid, get_observer_hash(), 'view_storage')) {
             return '';
         }
 
-        if ($args['album']) {
-            $album = $args['album'];
+        if ($arguments['album']) {
+            $album = $arguments['album'];
         }
-        if ($args['title']) {
-            $title = $args['title'];
+        if ($arguments['title']) {
+            $title = $arguments['title'];
         }
-        if (array_key_exists('mode', $args) && isset($args['mode'])) {
-            $mode = $args['mode'];
+        if (array_key_exists('mode', $arguments) && isset($arguments['mode'])) {
+            $mode = $arguments['mode'];
         } else {
             $mode = '';
         }
-        if (array_key_exists('count', $args) && isset($args['count'])) {
-            $count = $args['count'];
+        if (array_key_exists('count', $arguments) && isset($arguments['count'])) {
+            $count = $arguments['count'];
         } else {
             $count = '';
         }
@@ -85,6 +84,8 @@ class Portfolio
                 } else {
                     $twist = 'rotright';
                 }
+                $ph = photo_factory('');
+                $phototypes = $ph->supportedTypes();
 
                 $ext = $phototypes[$rr['mimetype']];
 
@@ -94,7 +95,7 @@ class Portfolio
                 $imagelink = (z_root() . '/photos/' . App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
 
 
-                $photos[] = array(
+                $photos[] = [
                     'id' => $rr['id'],
                     'twist' => ' ' . $twist . rand(2, 4),
                     'link' => $imagelink,
@@ -107,26 +108,24 @@ class Portfolio
                     'ext' => $ext,
                     'hash' => $rr['resource_id'],
                     'unknown' => t('Unknown')
-                );
+                ];
             }
         }
 
 
-        $tpl = Theme::get_template('photo_album_portfolio.tpl');
-        $o .= replace_macros($tpl, array(
+        return replace_macros(Theme::get_template('photo_album_portfolio.tpl'), [
             '$photos' => $photos,
             '$mode' => $mode,
             '$count' => $count,
-            '$album' => (($title) ? $title : $album),
+            '$album' => (($title) ?: $album),
             '$album_id' => rand(),
-            '$album_edit' => array(t('Edit Album'), $album_edit),
+            '$album_edit' => [t('Edit Album'), $album_edit],
             '$can_post' => false,
-            '$upload' => array(t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)),
+            '$upload' => [t('Upload'), z_root() . '/photos/' . App::$profile['channel_address'] . '/upload/' . bin2hex($album)],
             '$order' => false,
-            '$upload_form' => $upload_form,
-            '$usage' => $usage_message
-        ));
-
-        return $o;
+            '$upload_form' => '',
+            '$usage' => ''
+        ]);
+        
     }
 }

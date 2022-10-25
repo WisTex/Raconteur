@@ -10,7 +10,7 @@ class Cache_embeds
      * @param $argv
      * @return void
      */
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if (! $argc == 2) {
@@ -35,6 +35,6 @@ class Cache_embeds
         $cache_enable = !(($cache_expire) && ($item['created'] < datetime_convert('UTC', 'UTC', 'now - ' . $cache_expire . ' days')));
 
         $s = bbcode($item['body']);
-        $s = sslify($s, $cache_enable);
+        sslify($s, $cache_enable);
     }
 }

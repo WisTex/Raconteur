@@ -44,6 +44,14 @@ class Admin extends Controller
         if (argc() > 1) {
             $this->sm->call('init');
         }
+        if ($_GET['upgrade']) {
+            $cmd = 'util/udall';
+            if (is_writable('upgrade.log') || is_writable('.')) {
+                $cmd .= ' > upgrade.log';
+            }
+            exec($cmd);
+            goaway(z_root() . '/admin');
+        }
     }
 
 
@@ -165,7 +173,7 @@ class Admin extends Controller
         $vrelease = get_repository_version('release');
         $vdev = get_repository_version('dev');
         $upgrade = ((version_compare(STD_VERSION, $vrelease) < 0) ? t('Your software should be updated') : '');
-
+        $git_cmd = exec('which git');
         $t = Theme::get_template('admin_summary.tpl');
         return replace_macros($t, [
             '$title' => t('Administration'),
@@ -180,6 +188,8 @@ class Admin extends Controller
             '$vmaster' => [t('Repository version (release)'), $vrelease],
             '$vdev' => [t('Repository version (dev)'), $vdev],
             '$upgrade' => $upgrade,
+            '$update' => t('Update'),
+            '$can_upgrade' => is_dir('.git') && $git_cmd,
             '$build' => Config::Get('system', 'db_version')
         ]);
     }

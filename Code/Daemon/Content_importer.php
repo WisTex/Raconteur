@@ -13,7 +13,8 @@ require_once('include/import.php');
 class Content_importer
 {
 
-    public static function run($argc, $argv)
+    /** @noinspection PhpUnusedParameterInspection */
+    public function run($argc, $argv)
     {
         cli_startup();
 

@@ -7,10 +7,10 @@ use Code\Lib\Features;
 use Code\Render\Theme;
 
 
-class Savedsearch
+class Savedsearch implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if ((!local_channel()) || (!Features::enabled(local_channel(), 'savedsearch'))) {

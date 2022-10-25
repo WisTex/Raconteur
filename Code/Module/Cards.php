@@ -192,7 +192,7 @@ class Cards extends Controller
             );
             if ($items) {
                 xchan_query($items);
-                $items = fetch_post_tags($items, true);
+                $items = fetch_post_tags($items);
                 $items_result = conv_sort($items, 'updated');
             }
         }

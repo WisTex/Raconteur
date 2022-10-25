@@ -32,7 +32,7 @@ require_once('include/security.php');
 function z_mime_content_type($filename)
 {
 
-    $mime_types = array(
+    $mime_types = [
 
     'txt'  => 'text/plain',
     'htm'  => 'text/html',
@@ -125,7 +125,7 @@ function z_mime_content_type($filename)
     'otf' => 'application/vnd.oasis.opendocument.formula-template',
     'oti' => 'application/vnd.oasis.opendocument.image-template',
     'oth' => 'application/vnd.oasis.opendocument.text-web'
-    );
+    ];
 
     $last_dot = strrpos($filename, '.');
     if ($last_dot !== false) {
@@ -146,7 +146,7 @@ function z_mime_content_type($filename)
  * @param string $hash (optional)
  * @param string $filename (optional)
  * @param string $filetype (optional)
- * @return associative array with:
+ * @return array
  *  * \e boolean \b success
  *  * \e int|boolean \b results amount of found results, or false
  *  * \e string \b message with error messages if any
@@ -178,7 +178,7 @@ function attach_count_files($channel_id, $observer, $hash = '', $filename = '', 
         intval($channel_id)
     );
 
-    $ret['success'] = ((is_array($r)) ? true : false);
+    $ret['success'] = is_array($r);
     $ret['results'] = ((is_array($r)) ? count($r) : false);
 
     return $ret;
@@ -189,13 +189,13 @@ function attach_count_files($channel_id, $observer, $hash = '', $filename = '', 
  *
  * @param $channel_id
  * @param $observer
- * @param $hash (optional)
- * @param $filename (optional)
- * @param $filetype (optional)
+ * @param $hash
+ * @param $filename
+ * @param $filetype
  * @param $orderby
  * @param $start
  * @param $entries
- * @return associative array with:
+ * @return array
  *  * \e boolean \b success
  *  * \e array|boolean \b results array with results, or false
  *  * \e string \b message with error messages if any
@@ -242,7 +242,7 @@ function attach_list_files($channel_id, $observer, $hash = '', $filename = '', $
         intval($channel_id)
     );
 
-    $ret['success'] = ((is_array($r)) ? true : false);
+    $ret['success'] = is_array($r);
     $ret['results'] = ((is_array($r)) ? $r : []);
 
     return $ret;
@@ -381,7 +381,8 @@ function attach_can_view_folder($uid, $ob_hash, $folder_hash, $token = EMPTY_STR
  * @param string $hash
  * @param string $observer_hash
  * @param int $rev (optional) revision default 0
- * @return associative array with everything except data
+ * @return array
+ *  with everything except data
  *  * \e boolean \b success boolean true or false
  *  * \e string \b message (optional) only when success is false
  *  * \e array \b data array of attach DB entry without data component
@@ -489,7 +490,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
      */
     Hook::call('photo_upload_begin', $arr);
 
-    $ret = array('success' => false);
+    $ret = ['success' => false];
     $channel_id = $channel['channel_id'];
     $sql_options = '';
     $source = (($arr) ? $arr['source'] : '');
@@ -713,7 +714,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
         $pathname = filepath_macro($upload_path);
     }
 
-    $darr = array('pathname' => $pathname);
+    $darr = ['pathname' => $pathname];
 
     // if we need to create a directory, use the channel default permissions.
 
@@ -749,7 +750,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
             dbesc($folder_hash)
         );
         if ($existing) {
-            $overwrite = (($import_replace || get_pconfig($channel_id, 'system', 'overwrite_dup_files')) ? true : false);
+            $overwrite = $import_replace || get_pconfig($channel_id, 'system', 'overwrite_dup_files');
             if (($overwrite) || ($options === 'import')) {
                 if (! array_key_exists('edited', $arr)) {
                     $arr['edited'] = datetime_convert();
@@ -759,7 +760,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
                 $existing_size = intval($existing[0]['filesize']);
                 $hash = $existing[0]['hash'];
             } else {
-                if (strpos($filename, '.') !== false) {
+                if (str_contains($filename, '.')) {
                     $basename = substr($filename, 0, strrpos($filename, '.'));
                     $ext = substr($filename, strrpos($filename, '.'));
                 } else {
@@ -929,7 +930,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
             display_path = '%s', allow_cid = '%s', allow_gid = '%s', deny_cid = '%s', deny_gid  = '%s' where id = %d and uid = %d",
             dbesc((array_key_exists('filename', $arr))  ? $arr['filename']  : $x[0]['filename']),
             dbesc((array_key_exists('filetype', $arr))  ? $arr['filetype']  : $x[0]['filetype']),
-            dbesc(($folder_hash) ? $folder_hash : $x[0]['folder']),
+            dbesc(($folder_hash) ?: $x[0]['folder']),
             dbesc($created),
             dbesc((array_key_exists('os_storage', $arr))  ? $arr['os_storage']  : $x[0]['os_storage']),
             dbesc((array_key_exists('is_photo', $arr))  ? $arr['is_photo']  : $x[0]['is_photo']),
@@ -975,7 +976,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
         // This may fail if the image format isn't supported by the image library *or* memory is exhausted during the attempt.
         // That's why this is called at the end of the upload when all the important work to store as a normal file has been accomplished.
 
-        $args = array( 'source' => $source, 'visible' => $visible, 'resource_id' => $hash, 'album' => $pathname, 'folder' => $folder_hash, 'os_syspath' => $os_basepath . $os_relpath, 'os_path' => $os_path, 'display_path' => $display_path, 'filename' => $filename, 'getimagesize' => $gis, 'directory' => $direct, 'options' => $options );
+        $args = ['source' => $source, 'visible' => $visible, 'resource_id' => $hash, 'album' => $pathname, 'folder' => $folder_hash, 'os_syspath' => $os_basepath . $os_relpath, 'os_path' => $os_path, 'display_path' => $display_path, 'filename' => $filename, 'getimagesize' => $gis, 'directory' => $direct, 'options' => $options];
         if ($arr['contact_allow']) {
             $args['contact_allow'] = $arr['contact_allow'];
         }
@@ -1093,7 +1094,7 @@ function attach_store($channel, $observer_hash, $options = '', $arr = null)
         $sync = attach_export_data($channel, $hash);
 
         if ($sync) {
-            Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+            Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
         }
     }
 
@@ -1149,7 +1150,7 @@ function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '')
             return z_readdir($channel_id, $observer_hash, implode('/', $paths), $r[0]['hash']);
         }
     } else {
-        $paths = array($pathname);
+        $paths = [$pathname];
     }
 
     $r = q(
@@ -1188,7 +1189,7 @@ function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '')
 function attach_mkdir($channel, $observer_hash, $arr = null)
 {
 
-    $ret = array('success' => false);
+    $ret = ['success' => false];
     $channel_id = $channel['channel_id'];
 
     $sql_options = '';
@@ -1213,7 +1214,7 @@ function attach_mkdir($channel, $observer_hash, $arr = null)
         return $ret;
     }
 
-    $arr['hash'] = (($arr['hash']) ? $arr['hash'] : new_uuid());
+    $arr['hash'] = (($arr['hash']) ?: new_uuid());
 
     // Check for duplicate name.
     // Check both the filename and the hash as we will be making use of both.
@@ -1464,7 +1465,7 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
         return;
     }
 
-    $private = (($allow_cid || $allow_gid || $deny_cid || $deny_gid) ? true : false);
+    $private = $allow_cid || $allow_gid || $deny_cid || $deny_gid;
 
     // preserve any existing tokens that may have been set for this file
     // @fixme - we need a way to unconditionally clear these if desired.
@@ -1474,7 +1475,7 @@ function attach_change_permissions($channel_id, $resource, $allow_cid, $allow_gi
         if (preg_match_all('/\<token:(.*?)\>/', $r[0]['allow_cid'], $token_matches, PREG_SET_ORDER)) {
             foreach ($token_matches as $m) {
                 $tok = '<token:' . $m[1] . '>';
-                if (strpos($allow_cid, $tok) === false) {
+                if (!str_contains($allow_cid, $tok)) {
                     $allow_cid .= $tok;
                 }
             }
@@ -1886,7 +1887,7 @@ function file_activity($channel_id, $object, $allow_cid, $allow_gid, $deny_cid, 
     // filter out receivers which do not have permission to view filestorage
     $arr_allow_cid = check_list_permissions($channel_id, $arr_allow_cid, 'view_storage');
 
-    $is_dir = (intval($object['is_dir']) ? true : false);
+    $is_dir = (bool)intval($object['is_dir']);
 
     // do not send activity for folders for now
     if ($is_dir) {
@@ -2301,7 +2302,7 @@ function attach_export_data($channel, $resource_id, $deleted = false)
             );
             if ($items) {
                 xchan_query($items);
-                $items = fetch_post_tags($items, true);
+                $items = fetch_post_tags($items);
                 foreach ($items as $rr) {
                     $ret['item'][] = encode_item($rr, true);
                 }
@@ -2322,7 +2323,7 @@ function attach_export_data($channel, $resource_id, $deleted = false)
 function get_attach_binname($s)
 {
     $p = $s;
-    if (strpos($s, 'store/') === 0) {
+    if (str_starts_with($s, 'store/')) {
         $p = substr($s, 6);
         $p = substr($p, strpos($p, '/') + 1);
     }
@@ -2341,10 +2342,10 @@ function get_dirpath_by_cloudpath($channel, $path)
     if (! $h || !x($h, 'path')) {
         return null;
     }
-    if (substr($h['path'], -1, 1) === '/') {
+    if (str_ends_with($h['path'], '/')) {
         $h['path'] = substr($h['path'], 0, -1);
     }
-    if (substr($h['path'], 0, 1) === '/') {
+    if (str_starts_with($h['path'], '/')) {
         $h['path'] = substr($h['path'], 1);
     }
     $folders = explode('/', $h['path']);
@@ -2360,7 +2361,7 @@ function get_dirpath_by_cloudpath($channel, $path)
     while ($folders && $valid && is_dir($clouddir . $subdir) && is_readable($clouddir . $subdir)) {
         $valid = false;
         $f = array_shift($folders);
-        $items = array_diff(scandir($clouddir . $subdir), array('.', '..')); // hashed names
+        $items = array_diff(scandir($clouddir . $subdir), ['.', '..']); // hashed names
         foreach ($items as $item) {
             $filename = find_filename_by_hash($channel['channel_id'], $item);
             if ($filename === $f) {
@@ -2378,7 +2379,7 @@ function get_dirpath_by_cloudpath($channel, $path)
 
 function get_filename_by_cloudname($cloudname, $channel, $storepath)
 {
-    $items = array_diff(scandir($storepath), array('.', '..')); // hashed names
+    $items = array_diff(scandir($storepath), ['.', '..']); // hashed names
     foreach ($items as $item) {
         $filename = find_filename_by_hash($channel['channel_id'], $item);
         if ($filename === $cloudname) {
@@ -2403,12 +2404,12 @@ function copy_folder_to_cloudfiles($channel, $observer_hash, $srcpath, $cloudpat
         logger('Error reading source path: ' . $srcpath, LOGGER_NORMAL);
         return false;
     }
-    $nodes = array_diff(scandir($srcpath), array('.', '..'));
+    $nodes = array_diff(scandir($srcpath), ['.', '..']);
     foreach ($nodes as $node) {
         $clouddir = $cloudpath . '/' . $node;  // Sub-folder in cloud files destination
         $nodepath = $srcpath . '/' . $node;    // Sub-folder in source path
         if (is_dir($nodepath)) {
-            $x = attach_mkdirp($channel, $observer_hash, array('pathname' => $clouddir));
+            $x = attach_mkdirp($channel, $observer_hash, ['pathname' => $clouddir]);
             if (!$x['success']) {
                 logger('Error creating cloud path: ' . $clouddir, LOGGER_NORMAL);
                 return false;
@@ -2526,7 +2527,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
                 /// @fixme
                 return;
             } else {
-                if (strpos($newfilename, '.') !== false) {
+                if (str_contains($newfilename, '.')) {
                     $basename = substr($newfilename, 0, strrpos($newfilename, '.'));
                     $ext = substr($newfilename, strrpos($newfilename, '.'));
                 } else {
@@ -2535,7 +2536,7 @@ function attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
                 }
 
                 $matches = false;
-                if (preg_match('/(.*?)\([0-9]{1,}\)$/', $basename, $matches)) {
+                if (preg_match('/(.*?)\([0-9]+\)$/', $basename, $matches)) {
                     $basename = $matches[1];
                 }
 

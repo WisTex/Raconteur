@@ -202,7 +202,7 @@ if (
 
     if (((x($_POST, 'auth-params')) && ($_POST['auth-params'] === 'logout')) || (App::$module === 'logout')) {
         // process logout request
-        $args = array('channel_id' => local_channel());
+        $args = ['channel_id' => local_channel()];
         Hook::call('logging_out', $args);
 
 
@@ -241,7 +241,7 @@ if (
                 intval($_SESSION['atoken'])
             );
             if ($y) {
-                $r = array(atoken_xchan($y[0]));
+                $r = [atoken_xchan($y[0])];
             }
         } else {
             $r = q(
@@ -256,7 +256,6 @@ if (
             unset($_SESSION['visitor_id']);
             unset($_SESSION['authenticated']);
         }
-        App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
     }
 
     // already logged in user returning

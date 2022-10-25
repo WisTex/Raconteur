@@ -8,7 +8,7 @@ use Code\Render\Theme;
 
 class Libacl
 {
-    public static function fixacl(&$item)
+    public static function fixacl(&$item): void
     {
         $item = str_replace([ '<', '>' ], [ '', '' ], $item);
     }
@@ -31,7 +31,6 @@ class Libacl
         $allow_cid = $allow_gid = $deny_cid = $deny_gid = false;
         $showall_origin = '';
         $showall_icon   = 'fa-globe';
-        $role = get_pconfig(local_channel(), 'system', 'permissions_role');
 
         if (! $emptyACL_description) {
             $showall_caption = t('Visible to your default audience');
@@ -118,7 +117,7 @@ class Libacl
         }
 
         $tpl = Theme::get_template("acl_selector.tpl");
-        $o = replace_macros($tpl, array(
+        return replace_macros($tpl, [
             '$showall'         => $showall_caption,
             '$onlyme'          => t('Only me'),
             '$groups'          => $groups,
@@ -140,15 +139,12 @@ class Libacl
             '$aclModalTitle'   => t('Permissions'),
             '$aclModalDesc'    => $dialog_description,
             '$aclModalDismiss' => t('Close'),
-    //      '$helpUrl'         => (($context_help == '') ? '' : (z_root() . '/help/' . $context_help))
-        ));
-
-        return $o;
+        ]);
     }
 
     /**
      * Returns a string that's suitable for passing as the $dialog_description argument to a
-     * populate() call for wall posts or network posts.
+     * call to populate() for wall posts or network posts.
      *
      * This string is needed in 3 different files, and our .po translation system currently
      * cannot be used as a string table (because the value is always the key in english) so
@@ -165,13 +161,7 @@ class Libacl
         // *shown* the post, istead of who is able to see the post, i.e. make it clear that clicking
         // the "Show"  button on a group does not post it to the feed of people in that group, it
         // mearly allows those people to view the post if they are viewing/following this channel.
-        $description = t('Post permissions cannot be changed after a post is shared.<br>These permissions set who is allowed to view the post.');
-
-        // Lets keep the emphasis styling seperate from the translation. It may change.
-        //$emphasisOpen  = '<b><a href="' . z_root() . '/help/acl_dialog_post" target="hubzilla-help">';
-        //$emphasisClose = '</a></b>';
-
-        return $description;
+        return t('Post permissions cannot be changed after a post is shared.<br>These permissions set who is allowed to view the post.');
     }
 
     

@@ -89,8 +89,7 @@ class LDSignatures
         try {
             $d = jsonld_normalize($data, ['algorithm' => 'URDNA2015', 'format' => 'application/nquads']);
         } catch (Exception $e) {
-            // Don't log the exception - this can exhaust memory
-            // logger('normalise error:' . print_r($e,true));
+            logger('normalise error: ' . $e->getMessage());
             logger('normalise error: ' . print_r($data, true));
         }
         return $d;

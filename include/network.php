@@ -901,7 +901,6 @@ function get_site_info()
         'admin'                        => $admin,
         'dbdriver'                     => DBA::$dba->getdriver() . ' ' . ((ACTIVE_DBTYPE == DBTYPE_POSTGRES) ? 'postgres' : 'mysql'),
         'lastpoll'                     => get_config('system', 'lastpoll'),
-        'ebs'                          => System::ebs(), // bit.ly/3DGCmki
         'info'                         => (($site_info) ? $site_info : '')
 
     ];
@@ -1099,7 +1098,7 @@ function deliverable_singleton($channel_id, $xchan)
 
 function get_repository_version($branch = 'release')
 {
-    $path = 'https://raw.codeberg.page/streams/' . PLATFORM_NAME . "/@$branch/version.php";
+    $path = 'https://raw.codeberg.page/streams/' . REPOSITORY_ID . "/@$branch/version.php";
 
     $x = Url::get($path);
     if ($x['success']) {

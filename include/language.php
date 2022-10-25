@@ -69,7 +69,7 @@ function get_browser_language()
  *
  * If there is no match fall back to config['system']['language']
  *
- * @return Language code in 2-letter ISO 639-1 (en).
+ * @return string // code in 2-letter ISO 639-1 (en).
  */
 function get_best_language()
 {
@@ -113,7 +113,7 @@ function get_best_language()
         $preferred = 'unset';
     }
 
-    $arr = array('langs' => $langs, 'preferred' => $preferred);
+    $arr = ['langs' => $langs, 'preferred' => $preferred];
 
     Hook::call('get_best_language', $arr);
 
@@ -168,6 +168,7 @@ function pop_lang()
  *
  * @param string $lang language code in 2-letter ISO 639-1 (en, de, fr) format
  * @param bool $install (optional) default false
+ * @noinspection PhpIncludeInspection
  */
 function load_translation_table($lang, $install = false)
 {
@@ -224,7 +225,7 @@ function t($s, $ctx = '')
 
 function translate_projectname($s)
 {
-    if (strpos($s, 'rojectname') !== false) {
+    if (str_contains($s, 'rojectname')) {
         return str_replace([ '$projectname','$Projectname' ], [ System::get_project_name(), ucfirst(System::get_project_name()) ], $s);
     }
     return $s;
@@ -291,10 +292,10 @@ function string_plural_select_default($n)
 function get_language_name($s, $l = null)
 {
     // get() expects the second part to be in upper case
-    if (strpos($s, '-') !== false) {
+    if (str_contains($s, '-')) {
         $s = substr($s, 0, 2) . strtoupper(substr($s, 2));
     }
-    if ($l !== null && strpos($l, '-') !== false) {
+    if ($l !== null && str_contains($l, '-')) {
         $l = substr($l, 0, 2) . strtoupper(substr($l, 2));
     }
 
@@ -372,11 +373,9 @@ function lang_selector()
 
     $tpl = Theme::get_template('lang_selector.tpl');
 
-    $o = replace_macros($tpl, array(
+    return replace_macros($tpl, [
         '$title' => t('Select an alternate language'),
-        '$langs' => array($lang_options, $selected),
+        '$langs' => [$lang_options, $selected],
 
-    ));
-
-    return $o;
+    ]);
 }

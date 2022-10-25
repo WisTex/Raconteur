@@ -8,10 +8,10 @@ use Code\Lib\Channel;
 use Code\Render\Theme;
 
 
-class Cover_photo
+class Cover_photo implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         $o = '';
@@ -30,8 +30,8 @@ class Cover_photo
             $site_banner = System::get_site_name();
         }
 
-        if (array_key_exists('channel_id', $arr) && intval($arr['channel_id'])) {
-            $channel_id = intval($arr['channel_id']);
+        if (array_key_exists('channel_id', $arguments) && intval($arguments['channel_id'])) {
+            $channel_id = intval($arguments['channel_id']);
         }
         if (!$channel_id) {
             $channel_id = App::$profile_uid;
@@ -52,8 +52,8 @@ class Cover_photo
 
         $channel = Channel::from_id($channel_id);
 
-        if (array_key_exists('style', $arr) && isset($arr['style'])) {
-            $style = $arr['style'];
+        if (array_key_exists('style', $arguments) && isset($arguments['style'])) {
+            $style = $arguments['style'];
         } else {
             $style = 'width:100%; height: auto;';
         }
@@ -64,15 +64,15 @@ class Cover_photo
             $style = '';
         }
 
-        if (array_key_exists('title', $arr) && isset($arr['title'])) {
-            $title = $arr['title'];
+        if (array_key_exists('title', $arguments) && isset($arguments['title'])) {
+            $title = $arguments['title'];
         } else {
             $title = $channel['channel_name'];
         }
 
 
-        if (array_key_exists('subtitle', $arr) && isset($arr['subtitle'])) {
-            $subtitle = $arr['subtitle'];
+        if (array_key_exists('subtitle', $arguments) && isset($arguments['subtitle'])) {
+            $subtitle = $arguments['subtitle'];
         } else {
             $subtitle = str_replace('@', '&#x40;', $channel['xchan_addr']);
         }

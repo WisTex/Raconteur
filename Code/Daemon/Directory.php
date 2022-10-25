@@ -10,7 +10,7 @@ use Code\Lib\Channel;
 class Directory
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if ($argc < 2) {

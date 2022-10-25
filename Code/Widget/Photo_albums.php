@@ -7,10 +7,10 @@ use Code\Lib\Channel;
 
 require_once('include/photos.php');
 
-class Photo_albums
+class Photo_albums implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if (!App::$profile['profile_uid']) {
@@ -23,8 +23,8 @@ class Photo_albums
             return EMPTY_STR;
         }
 
-        $sortkey = ((array_key_exists('sortkey', $arr)) ? $arr['sortkey'] : 'display_path');
-        $direction = ((array_key_exists('direction', $arr)) ? $arr['direction'] : 'asc');
+        $sortkey = ((array_key_exists('sortkey', $arguments)) ? $arguments['sortkey'] : 'display_path');
+        $direction = ((array_key_exists('direction', $arguments)) ? $arguments['direction'] : 'asc');
 
         return photos_album_widget($channel, App::get_observer(), $sortkey, $direction);
     }

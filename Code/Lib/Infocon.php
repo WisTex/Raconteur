@@ -18,11 +18,13 @@ class Infocon {
                 $info = Yaml::parseFile($name);
             }
             catch (Exception $e) {
+                logger('exception: ' . $e->getMessage());
             }
         }
         return $info;
-    } 
+    }
 
+    /** @noinspection PhpUnused */
     public static function from_str($str) {
         $info = NULL;
         if ($str) {
@@ -30,18 +32,20 @@ class Infocon {
                 $info = Yaml::parse($str);
             }
             catch (Exception $e) {
+                logger('exception: ' . $e->getMessage());
             }
         }
         return $info;
     }
 
-    public static function from_c_comment($file) {
+    public static function from_c_comment($file): array|null  {
 
         $info = NULL;
         try {
             $code = file_get_contents($file);
         }
         catch (Exception $e) {
+            logger('exception: ' . $e->getMessage());
         }
 
         // Match and fetch the first C-style comment

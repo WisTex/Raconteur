@@ -31,6 +31,7 @@ class Keyutils
     /**
      * @param string $key
      * @return string
+     * @noinspection PhpUnused
      */
     public static function rsaToPem(string $key): string
     {
@@ -38,12 +39,14 @@ class Keyutils
         $rsa = new RSA();
         $rsa->setPublicKey($key);
 
+        /** @noinspection PhpRedundantOptionalArgumentInspection */
         return $rsa->getPublicKey(RSA::PUBLIC_FORMAT_PKCS8);
     }
 
     /**
      * @param string $key
      * @return string
+     * @noinspection PhpUnused
      */
     public static function pemToRsa(string $key): string
     {
@@ -73,10 +76,12 @@ class Keyutils
     /**
      * @param string $pubkey
      * @return string
+     * @noinspection PhpUnused
      */
     public static function salmonKey(string $pubkey): string
     {
         self::pemToMe($pubkey, $m, $e);
+        /** @noinspection PhpRedundantOptionalArgumentInspection */
         return 'RSA' . '.' . base64url_encode($m, true) . '.' . base64url_encode($e, true);
     }
 

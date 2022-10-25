@@ -73,7 +73,7 @@ function api_login()
     if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
         /* Basic authentication */
 
-        if (substr(trim($_SERVER['HTTP_AUTHORIZATION']), 0, 5) === 'Basic') {
+        if (str_starts_with(trim($_SERVER['HTTP_AUTHORIZATION']), 'Basic')) {
             // ignore base64 decoding errors caused by tricksters
             $userpass = @base64_decode(substr(trim($_SERVER['HTTP_AUTHORIZATION']), 6)) ;
             if (strlen($userpass)) {
@@ -85,7 +85,7 @@ function api_login()
 
         /* OpenWebAuth */
 
-        if (substr(trim($_SERVER['HTTP_AUTHORIZATION']), 0, 9) === 'Signature') {
+        if (str_starts_with(trim($_SERVER['HTTP_AUTHORIZATION']), 'Signature')) {
             $record = null;
 
             $sigblock = HTTPSig::parse_sigheader($_SERVER['HTTP_AUTHORIZATION']);

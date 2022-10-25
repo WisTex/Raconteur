@@ -10,7 +10,7 @@ use Code\Lib\Channel;
 class Importfile
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         logger('Importfile: ' . print_r($argv, true));

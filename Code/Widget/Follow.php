@@ -7,10 +7,10 @@ use Code\Lib\ServiceClass;
 use Code\Render\Theme;
 
     
-class Follow
+class Follow implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {

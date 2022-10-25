@@ -328,7 +328,7 @@ function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $
     }
 
     if (($item['parent'] != $item['id']) || ($item['parent_mid'] !== $item['mid']) || (($item['thr_parent'] !== '') && ($item['thr_parent'] !== $item['mid']))) {
-        $parent_item = (($item['thr_parent']) ? $item['thr_parent'] : $item['parent_mid']);
+        $parent_item = (($item['thr_parent']) ?: $item['parent_mid']);
 
         $o .= '<thr:in-reply-to ref="' . xmlify($parent_item) . '" type="text/html" href="' .  xmlify($item['plink']) . '" />' . "\r\n";
     }

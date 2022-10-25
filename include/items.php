@@ -265,7 +265,7 @@ function is_item_normal($item) {
  *
  * @param string $observer_xchan
  * @param array $item
- * @return boolean
+ * @return bool
  */
 function can_comment_on_post($observer_xchan, $item)
 {
@@ -296,15 +296,7 @@ function can_comment_on_post($observer_xchan, $item)
         return false;
     }
 
-    if ($item['comment_policy'] === 'none') {
-        return false;
-    }
-
-    if (intval($item['item_nocomment'])) {
-        return false;
-    }
-
-    if (comments_are_now_closed($item)) {
+    if ($item['comment_policy'] === 'none' || intval($item['item_nocomment']) || comments_are_now_closed($item)) {
         return false;
     }
 
@@ -314,9 +306,6 @@ function can_comment_on_post($observer_xchan, $item)
 
     switch ($item['comment_policy']) {
         case 'self':
-            if ($observer_xchan === $item['author_xchan'] || $observer_xchan === $item['owner_xchan']) {
-                return true;
-            }
             break;
         case 'public':
         case 'authenticated':
@@ -1036,9 +1025,8 @@ function map_scope($scope, $strip = false) {
             return 'site: ' . App::get_hostname();
         case PERMS_PENDING:
             return 'any connections';
-// uncomment a few releases after the corresponding changes are made in can_comment_on_post. Here it was done on 2021-11-18
-//        case PERMS_SPECIFIC:
-//            return 'specific';
+        case PERMS_SPECIFIC:
+            return 'specific';
         case PERMS_CONTACTS:
         default:
             return 'contacts';
@@ -2860,6 +2848,10 @@ function tgroup_check($uid, $item) {
         return true;
     }
 
+    if (PConfig::Get($uid, 'system','permit_all_likes',true) && $item['verb'] === 'Like') {
+        return true;
+    }
+    
     $tag_result = false;
     $terms = ((isset($item['term'])) ? get_terms_oftype($item['term'],TERM_HASHTAG) : false);
     if ($terms) {
@@ -3564,7 +3556,7 @@ function item_expire($uid,$days,$comment_days = 7) {
         return;
     }
 
-    $r = fetch_post_tags($r,true);
+    $r = fetch_post_tags($r);
 
     foreach ($r as $item) {
 
@@ -3954,10 +3946,9 @@ function posted_dates($uid,$wall) {
  * @brief Extend an item array with the associated tags of the posts.
  *
  * @param array $items
- * @param boolean $link (optional) default false
  * @return array Return the provided $items array after extended the posts with tags
  */
-function fetch_post_tags($items, $link = false) {
+function fetch_post_tags($items) {
 
     $tag_finder = [];
     if ($items) {
@@ -4392,7 +4383,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
 
         xchan_query($items);
-        $items = fetch_post_tags($items,true);
+        $items = fetch_post_tags($items);
 
     }
     else {
@@ -4446,7 +4437,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
             );
 
             xchan_query($items);
-            $items = fetch_post_tags($items,false);
+            $items = fetch_post_tags($items);
 
             require_once('include/conversation.php');
             $items = conv_sort($items,$ordering);
@@ -4921,7 +4912,7 @@ function copy_of_pubitem($channel,$mid) {
 
     if ($r) {
         logger('exists');
-        $item = fetch_post_tags($r,true);
+        $item = fetch_post_tags($r);
         return array_shift($item);
     }
 
@@ -4940,7 +4931,7 @@ function copy_of_pubitem($channel,$mid) {
     }
 
     if ($r) {
-        $items = fetch_post_tags($r,true);
+        $items = fetch_post_tags($r);
         foreach ($items as $rv) {
             $d = q("select id from item where mid = '%s' and uid = %d limit 1",
                 dbesc($rv['mid']),

@@ -9,7 +9,7 @@ use Code\Extend\Hook;
 class Thumbnail
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         if (! ($argc == 2)) {

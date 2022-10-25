@@ -12,7 +12,7 @@ use Code\Lib\Addon;
 class Cron
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         $maxsysload = intval(get_config('system', 'maxloadavg'));

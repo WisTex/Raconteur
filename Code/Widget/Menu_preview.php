@@ -6,13 +6,13 @@ use App;
 use Code\Lib\Menu;
 
 
-class Menu_preview
+class Menu_preview implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
         if (!App::$data['menu_item']) {
-            return;
+            return '';
         }
 
         return Menu::render(App::$data['menu_item']);

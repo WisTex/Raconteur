@@ -3,13 +3,12 @@
 namespace Code\Lib;
 
 use Code\Render\Theme;
-use Code\Lib\System;
 
 class Stringsjs {
 
-    public static function strings()
+    public static function strings(): string
     {
-        return replace_macros(Theme::get_template('js_strings.tpl'), array(
+        return replace_macros(Theme::get_template('js_strings.tpl'), [
             '$icon'        => System::get_project_icon(),
             '$delitem'     => t('Delete this item?'),
             '$comment'     => t('Comment'),
@@ -118,7 +117,7 @@ class Stringsjs {
             '$channel_forum_moderated' => t('A public group where posts are moderated by the owner. The [moderated] permission may be removed from any group member once trust is established'),
             '$channel_collection' => t('A sub-channel of your main channel - often devoted to a specific language or topic. Replies are sent back to your main channel'),
             '$channel_collection_restricted' => t('A private sub-channel of your main channel - often devoted to a specific language or topic. Replies are sent back to your main channel'),
-        ));
+        ]);
     }
 
 

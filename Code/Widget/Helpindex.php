@@ -2,10 +2,10 @@
 
 namespace Code\Widget;
 
-class Helpindex
+class Helpindex implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
         return EMPTY_STR;
 

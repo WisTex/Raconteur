@@ -4,10 +4,10 @@ namespace Code\Widget;
 
 use App;
 
-class Vcard
+class Vcard implements WidgetInterface
 {
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
-        return vcard_from_xchan('', App::get_observer());
+        return vcard_from_xchan('', App::get_observer()) ?: '';
     }
 }

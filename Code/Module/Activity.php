@@ -92,7 +92,7 @@ class Activity extends Controller
             }
 
             xchan_query($r, true);
-            $items = fetch_post_tags($r, false);
+            $items = fetch_post_tags($r);
 
             if ($portable_id && (!intval($items[0]['item_private']))) {
                 $c = q(
@@ -221,7 +221,7 @@ class Activity extends Controller
             }
 
             xchan_query($items, true);
-            $items = fetch_post_tags($items, true);
+            $items = fetch_post_tags($items);
 
             $observer = App::get_observer();
             $parent = $items[0];

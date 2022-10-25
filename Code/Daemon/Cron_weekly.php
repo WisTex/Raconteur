@@ -8,7 +8,7 @@ use Code\Extend\Hook;
 class Cron_weekly
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         /**

@@ -8,9 +8,6 @@ namespace Code\Lib;
  */
 
 use App;
-use Code\Lib\Crypto;
-use Code\Lib\System;
-use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -47,7 +44,7 @@ class Account {
             $result['error'] = true;
         }
 
-        $arr = array('email' => $email, 'result' => $result);
+        $arr = ['email' => $email, 'result' => $result];
         Hook::call('check_account_email', $arr);
 
         return $arr['result'];
@@ -439,7 +436,7 @@ class Account {
     public static function allow($hash)
     {
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         $register = q(
             "SELECT * FROM register WHERE hash = '%s' LIMIT 1",
@@ -560,9 +557,6 @@ class Account {
 
     public static function approve($hash)
     {
-
-        $ret = false;
-
         // Note: when the password in the register table is 'verify', the uid actually contains the account_id
 
         $register = q(
@@ -571,7 +565,7 @@ class Account {
         );
 
         if (! $register) {
-            return $ret;
+            return false;
         }
 
         $account = q(
@@ -580,7 +574,7 @@ class Account {
         );
 
         if (! $account) {
-            return $ret;
+            return false;
         }
 
         $r = q(
@@ -615,7 +609,7 @@ class Account {
         );
 
         if (! $account) {
-            return $ret;
+            return false;
         }
 
         if (get_config('system', 'auto_channel_create')) {

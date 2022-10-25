@@ -5,10 +5,10 @@ namespace Code\Widget;
 use Code\Render\Theme;
 
 
-class Appcategories
+class Appcategories implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {
@@ -45,10 +45,10 @@ class Appcategories
 
         if ($r) {
             foreach ($r as $rr) {
-                $terms[] = array('name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : ''));
+                $terms[] = ['name' => $rr['term'], 'selected' => (($selected == $rr['term']) ? 'selected' : '')];
             }
 
-            return replace_macros(Theme::get_template('categories_widget.tpl'), array(
+            return replace_macros(Theme::get_template('categories_widget.tpl'), [
                 '$title' => t('Categories'),
                 '$desc' => '',
                 '$sel_all' => (($selected == '') ? 'selected' : ''),
@@ -56,7 +56,8 @@ class Appcategories
                 '$terms' => $terms,
                 '$base' => $srchurl,
 
-            ));
+            ]);
         }
+        return '';
     }
 }

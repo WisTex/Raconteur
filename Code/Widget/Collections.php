@@ -5,16 +5,12 @@ namespace Code\Widget;
 use App;
 use Code\Lib\AccessList;
 
-class Collections
+class Collections implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arguments): string
     {
-
-//      if(argc() < 2)
-//          return;
-
-        $mode = ((array_key_exists('mode', $args)) ? $args['mode'] : 'conversation');
+        $mode = ((array_key_exists('mode', $arguments)) ? $arguments['mode'] : 'conversation');
 
         switch ($mode) {
             case 'conversation':
@@ -51,7 +47,6 @@ class Collections
                 break;
             default:
                 return '';
-                break;
         }
 
         return AccessList::widget($every, $each, $edit, $current, $abook_id, $wmode);

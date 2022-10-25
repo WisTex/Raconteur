@@ -5,10 +5,10 @@ namespace Code\Widget;
 use Code\Render\Theme;
 
 
-class Appstore
+class Appstore implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
         $store = ((argc() > 1 && argv(1) === 'available') ? 1 : 0);
         return replace_macros(Theme::get_template('appstore.tpl'), [

@@ -574,10 +574,8 @@ class Libzot
                     }
                 }
             }
-            return true;
-        } else {
-            return true;
         }
+        return true;
     }
 
     /**
@@ -1644,25 +1642,6 @@ class Libzot
 
             $DR->set_name($channel['channel_name'] . ' <' . Channel::get_webfinger($channel) . '>');
 
-//          if ($act->type === 'Tombstone') {
-//              $r = q("select * from item where mid in ( '%s', '%s' ) and uid = %d",
-//                  dbesc($act->id),
-//                  dbesc(str_replace('/activity/','/item/',$act->id))
-//                  intval($channel['channel_id'])
-//              );
-//              if ($r) {
-//                  if (($r[0]['author_xchan'] === $sender) || ($r[0]['owner_xchan'] === $sender)) {
-//                      drop_item($r[0]['id']);
-//                  }
-//                  $DR->update('item deleted');
-//                  $result[] = $DR->get();
-//                  continue;
-//              }
-//              $DR->update('deleted item not found');
-//              $result[] = $DR->get();
-//              continue;
-//          }
-
             if (($act) && ($act->obj) && (!is_array($act->obj))) {
                 // The initial object fetch failed using the sys channel credentials.
                 // Try again using the delivery channel credentials.
@@ -1790,18 +1769,9 @@ class Libzot
                             dbesc($arr['parent_mid']),
                             intval($channel['channel_id'])
                         );
-                        if ($parent) {
-                            $allowed = can_comment_on_post($sender, $parent[0]);
-                        }
-                        if ((!$allowed) && $permit_mentions) {
-                            if ($parent && $parent[0]['owner_xchan'] === $channel['channel_hash']) {
-                                $allowed = false;
-                            } else {
-                                $allowed = true;
-                            }
-                        }
-                        if ($parent && absolutely_no_comments($parent[0])) {
-                            $allowed = false;
+                        $allowed = can_comment_on_post($sender, $parent[0]);
+                        if (! $allowed) {
+                            $allowed = Activity::comment_allowed($channel, $arr, $parent[0]);
                         }
                     } elseif ($permit_mentions) {
                         $allowed = true;
@@ -1852,7 +1822,7 @@ class Libzot
             }
 
             if ($arr['mid'] !== $arr['parent_mid']) {
-                if (perm_is_allowed($channel['channel_id'], $sender, 'moderated') && $relay) {
+                if ((perm_is_allowed($channel['channel_id'], $sender, 'moderated') || $allowed === 'moderated') && $relay) {
                     $arr['item_blocked'] = ITEM_MODERATED;
                 }
 
@@ -2036,7 +2006,6 @@ class Libzot
                 $item_id = 0;
 
                 Activity::rewrite_mentions($arr);
-
 
                 $maxlen = get_max_import_size();
 
@@ -2517,7 +2486,7 @@ class Libzot
                     'sitekey' => $hub['hubloc_sitekey'],
                     'deleted' => (intval($hub['hubloc_deleted']) ? true : false)
                 ];
-                if ($hub['hubloc_url'] === z_root() && version_compare(ZOT_REVISION, '11.0') >= 0) {
+                if ($hub['hubloc_url'] === z_root() && version_compare(NOMAD_PROTOCOL_VERSION, '11.0') >= 0) {
                     $tmp['driver'] = 'nomad';
                 }
 

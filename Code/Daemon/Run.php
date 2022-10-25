@@ -19,10 +19,10 @@ if (array_search(__file__, get_included_files()) === 0) {
 class Run
 {
 
-    // These processes should be ignored by addons which enforce timeouts (e.g. queueworker)
-    // as it could result in corrupt data. Please add additional long running tasks to this list as they arise.
-    // Ideally the queueworker should probably be provided an allow list rather than a deny list as it will be easier
-    // to maintain. This was a quick hack to fix truncation of very large synced files when the queueworker addon is installed.
+    // These processes should be ignored by addons which enforce timeouts (e.g. queueworker),
+    // as it could result in corrupt data. Please add additional long-running tasks to this list as they arise.
+    // Ideally the queueworker should probably use an allow list, as it will be easier to maintain.
+    // This was a quick hack to fix truncation of very large synced files when the queueworker addon is installed.
 
     public static array $long_running = [ 'Addon', 'Channel_purge', 'Checksites', 'Content_importer', 'Convo',
         'Cron', 'Cron_daily', 'Cron_weekly', 'Delxitems', 'Expire', 'File_importer', 'Importfile'
@@ -52,6 +52,7 @@ class Run
         proc_run('php', 'Code/Daemon/Run.php', $arr);
     }
 
+    /** @noinspection PhpUnusedParameterInspection */
     public static function Release($argc, $argv): void
     {
         cli_startup();
@@ -72,8 +73,8 @@ class Run
         }
 
         logger('Run: release: ' . print_r($argv, true), LOGGER_ALL, LOG_DEBUG);
-        $cls = '\\Code\\Daemon\\' . $argv[0];
-        /** @noinspection PhpUndefinedMethodInspection */
-        $cls::run($argc, $argv);
+        $className = '\\Code\\Daemon\\' . $argv[0];
+        $daemon = new $className();
+        $daemon->run($argc, $argv);
     }
 }

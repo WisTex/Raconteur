@@ -6,10 +6,10 @@ use App;
 use Code\Render\Theme;
 
 
-class Sblock
+class Sblock implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {

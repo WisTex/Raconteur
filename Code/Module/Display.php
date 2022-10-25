@@ -338,7 +338,7 @@ class Display extends Controller
                     dbesc($parents_str)
                 );
                 xchan_query($items);
-                $items = fetch_post_tags($items, true);
+                $items = fetch_post_tags($items);
                 $items = conv_sort($items, 'created');
             }
         } else {

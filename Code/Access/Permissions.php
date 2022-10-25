@@ -20,7 +20,7 @@ use Code\Extend\Hook;
  * provide a sane default for any existing connections. You may or may not wish to provide a
  * default auto permission. If in doubt, leave this alone as custom permissions by definition
  * are the responsibility of the channel owner to manage. You just don't want to create any
- * suprises or break things so you have an opportunity to provide sane settings.
+ * suprises or break things, so you have an opportunity to provide sane settings.
  *
  * Update the version here and in PermissionRoles.
  *
@@ -60,14 +60,14 @@ class Permissions
 
         $perms = [
             'view_stream'    => t('Grant viewing access to your channel stream and posts'),
-            'deliver_stream' => t('Permit delivery of your channel stream and posts'),
-            'view_profile'   => t('Grant viewing access to your default channel profile'),
+            'deliver_stream' => t('Will send them your posts and conversations'),
+            'view_profile'   => t('Grant viewing access to your profile'),
             'view_contacts'  => t('Grant viewing access to your address book (connections)'),
             'view_storage'   => t('Grant viewing access to your file storage and photos'),
             'post_wall'      => t('Grant permission to post on your channel (wall) page'),
             'post_mail'      => t('Accept delivery of direct messages and personal mail'),
-            'send_stream'    => t('Accept delivery of their posts and all comments to their posts'),
-            'post_comments'  => t('Accept delivery of their comments and likes on your posts'),
+            'send_stream'    => t('Accept delivery of their posts and conversations'),
+            'post_comments'  => t('Accept delivery of their comments on your posts'),
             'write_storage'  => t('Grant upload permissions to your file storage and photos'),
             'republish'      => t('Grant permission to republish/mirror your posts'),
             'moderated'      => t('Accept comments and wall posts only after approval (moderation)'),
@@ -99,7 +99,7 @@ class Permissions
     {
 
         $res = [];
-        $perms = PermissionLimits::Std_limits();
+        $perms = PermissionLimits::Std_Limits();
         foreach ($perms as $perm => $limit) {
             if ($limit != PERMS_PUBLIC) {
                 $res[] = $perm;
@@ -150,6 +150,8 @@ class Permissions
      * @return array Indexed array with elements that look like
      *   * \e string \b name the perm name (e.g. view_stream)
      *   * \e int \b value the value of the perm (e.g. 1)
+     * @noinspection PhpMissingReturnTypeInspection
+     * @noinspection PhpUnused
      */
     public static function OPerms($arr)
     {
@@ -221,8 +223,6 @@ class Permissions
     {
 
         $my_perms = [];
-        $permcat = null;
-        $automatic = 0;
 
         // If a default permcat exists, use that
 
@@ -254,7 +254,7 @@ class Permissions
         }
 
         // If we reached this point without having any permission information,
-        // it is likely a custom permissions role. First see if there are any
+        // it is likely to be a custom permissions role. First see if there are any
         // automatic permissions.
 
         if (! $my_perms) {
@@ -265,7 +265,7 @@ class Permissions
         }
 
         // If we reached this point with no permissions, the channel is using
-        // custom perms but they are not automatic. They will be stored in abconfig with
+        // custom perms, but they are not automatic. They will be stored in abconfig with
         // the channel's channel_hash (the 'self' connection).
 
         if (! $my_perms) {

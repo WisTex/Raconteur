@@ -5,14 +5,14 @@ namespace Code\Widget;
 use Code\Render\Theme;
 
 
-class Eventstools
+class Eventstools implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         if (!local_channel()) {
-            return;
+            return '';
         }
 
         return replace_macros(Theme::get_template('events_tools_side.tpl'), array(

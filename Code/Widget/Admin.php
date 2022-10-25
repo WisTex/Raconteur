@@ -7,10 +7,10 @@ use Code\Extend\Hook;
 use Code\Render\Theme;
 
 
-class Admin
+class Admin implements WidgetInterface
 {
 
-    public function widget($arr)
+    public function widget(array $arguments): string
     {
 
         /*
@@ -23,21 +23,15 @@ class Admin
 
         $o = '';
 
-        // array( url, name, extra css classes )
-
         $aside = [
-            'site' => array(z_root() . '/admin/site/', t('Site'), 'site'),
-//          'profile_photo' => array(z_root() . '/admin/profile_photo', t('Site icon/logo'), 'profile_photo'),
-//          'cover_photo'   => array(z_root() . '/admin/cover_photo', t('Site photo'), 'cover_photo'),
-            'accounts' => array(z_root() . '/admin/accounts/', t('Accounts'), 'accounts', 'pending-update', t('Member registrations waiting for confirmation')),
-            'channels' => array(z_root() . '/admin/channels/', t('Channels'), 'channels'),
-            'security' => array(z_root() . '/admin/security/', t('Security'), 'security'),
-//          'features'      => array(z_root() . '/admin/features/', t('Features'),       'features'),
-            'addons' => array(z_root() . '/admin/addons/', t('Addons'), 'addons'),
-            'themes' => array(z_root() . '/admin/themes/', t('Themes'), 'themes'),
-            'queue' => array(z_root() . '/admin/queue', t('Inspect queue'), 'queue'),
-//          'profs'         => array(z_root() . '/admin/profs',     t('Profile Fields'), 'profs'),
-            'dbsync' => array(z_root() . '/admin/dbsync/', t('DB updates'), 'dbsync')
+            'site' => [z_root() . '/admin/site/', t('Site'), 'site'],
+            'accounts' => [z_root() . '/admin/accounts/', t('Accounts'), 'accounts', 'pending-update', t('Member registrations waiting for confirmation')],
+            'channels' => [z_root() . '/admin/channels/', t('Channels'), 'channels'],
+            'security' => [z_root() . '/admin/security/', t('Security'), 'security'],
+            'addons' => [z_root() . '/admin/addons/', t('Addons'), 'addons'],
+            'themes' => [z_root() . '/admin/themes/', t('Themes'), 'themes'],
+            'queue' => [z_root() . '/admin/queue', t('Inspect queue'), 'queue'],
+            'dbsync' => [z_root() . '/admin/dbsync/', t('DB updates'), 'dbsync']
         ];
 
         /* get plugins admin page */
@@ -48,28 +42,27 @@ class Admin
         if ($r) {
             foreach ($r as $h) {
                 $plugin = $h['aname'];
-                $plugins[] = array(z_root() . '/admin/addons/' . $plugin, $plugin, 'plugin');
+                $plugins[] = [z_root() . '/admin/addons/' . $plugin, $plugin, 'plugin'];
                 // temp plugins with admin
                 App::$addons_admin[] = $plugin;
             }
         }
 
-        $logs = array(z_root() . '/admin/logs/', t('Logs'), 'logs');
+        $logs = [z_root() . '/admin/logs/', t('Logs'), 'logs'];
 
-        $arr = array('links' => $aside, 'plugins' => $plugins, 'logs' => $logs);
-        Hook::call('admin_aside', $arr);
+        $arguments = ['links' => $aside, 'plugins' => $plugins, 'logs' => $logs];
+        Hook::call('admin_aside', $arguments);
 
-        $o .= replace_macros(Theme::get_template('admin_aside.tpl'), array(
-            '$admin' => $arr['links'],
+        return replace_macros(Theme::get_template('admin_aside.tpl'), [
+            '$admin' => $arguments['links'],
             '$admtxt' => t('Admin'),
             '$plugadmtxt' => t('Addon Features'),
-            '$plugins' => $arr['plugins'],
+            '$plugins' => $arguments['plugins'],
             '$logtxt' => t('Logs'),
-            '$logs' => $arr['logs'],
+            '$logs' => $arguments['logs'],
             '$h_pending' => t('Member registrations waiting for confirmation'),
             '$admurl' => z_root() . '/admin/'
-        ));
+        ]);
 
-        return $o;
     }
 }

@@ -20,7 +20,8 @@ use Code\Render\Theme;
 function localize_item(&$item)
 {
 
-    if (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE) || $item['verb'] === 'Announce') {
+    if (activity_match($item['verb'], ACTIVITY_LIKE) || activity_match($item['verb'], ACTIVITY_DISLIKE)
+            || $item['verb'] === 'Announce') {
         if (! $item['obj']) {
             return;
         }
@@ -37,7 +38,8 @@ function localize_item(&$item)
 
         if (isset($obj['actor']) && is_string($obj['actor']) && $obj['actor']) {
             $author_link = $obj['actor'];
-        } elseif (isset($obj['attributedTo']) && is_string($obj['attributedTo']) && $obj['attributedTo']) {
+        }
+        elseif (isset($obj['attributedTo']) && is_string($obj['attributedTo']) && $obj['attributedTo']) {
             $author_link = $obj['attributedTo'];
         }
         else {
@@ -222,7 +224,7 @@ function localize_item(&$item)
 /**
  * @brief Count the total of comments on this item and its desendants.
  *
- * @param array $item an assoziative item-array which provides:
+ * @param array $item an associative item-array which provides:
  *  * \e array \b children
  * @return number
  */
@@ -517,23 +519,14 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
                 $locktype = intval($item['item_private']);
 
-                $likebuttons = false;
-                $shareable = false;
-
                 $verified = (intval($item['item_verified']) ? t('Message signature validated') : '');
                 $forged = ((($item['sig']) && (! intval($item['item_verified']))) ? t('Message signature incorrect') : '');
 
                 $unverified = '';
 
-//              $tags=[];
-//              $terms = get_terms_oftype($item['term'],array(TERM_HASHTAG,TERM_MENTION,TERM_UNKNOWN,TERM_COMMUNITYTAG));
-//              if(count($terms))
-//                  foreach($terms as $tag)
-//                      $tags[] = format_term_for_display($tag);
-
                 $body = prepare_body($item, true);
 
-                $has_tags = (($body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders']) ? true : false);
+                $has_tags = $body['tags'] || $body['categories'] || $body['mentions'] || $body['attachments'] || $body['folders'];
 
                 if (strcmp(datetime_convert('UTC', 'UTC', $item['created']), datetime_convert('UTC', 'UTC', 'now - 12 hours')) > 0) {
                     $is_new = true;
@@ -543,9 +536,9 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
                 $conv_link = ((in_array($item['item_type'], [ ITEM_TYPE_CARD, ITEM_TYPE_ARTICLE])) ? $item['plink'] : z_root() . '/display/?mid=' . gen_link_id($conv_link_mid));
 
-                $allowed_type = (in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ])) ? true : false);
+                $allowed_type = in_array($item['item_type'], get_config('system', 'pin_types', [ ITEM_TYPE_POST ]));
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
-                $pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
+                $pinned = ! empty($pinned_items) && in_array($item['mid'], $pinned_items);
 
                 $tmp_item = [
                     'template' => $tpl,
@@ -601,7 +594,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'edpost' => false,
                     'star' => ((Features::enabled(local_channel(), 'star_posts')) ? $star : ''),
                     'drop' => $drop,
-                    'vote' => $likebuttons,
+                    'vote' => false,
                     'like' => '',
                     'dislike' => '',
                     'comment' => '',
@@ -708,33 +701,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     return $o;
 }
-
-
-function best_link_url($item)
-{
-
-    $best_url = '';
-    $sparkle  = false;
-
-    $clean_url = normalise_link($item['author-link']);
-
-    if ((local_channel()) && (local_channel() == $item['uid'])) {
-        if (isset(App::$contacts) && x(App::$contacts, $clean_url)) {
-            $best_url = App::$contacts[$clean_url]['url'];
-        }
-    }
-    if (! $best_url) {
-        if (strlen($item['author-link'])) {
-            $best_url = $item['author-link'];
-        } else {
-            $best_url = $item['url'];
-        }
-    }
-
-    return $best_url;
-}
-
-
 
 function thread_action_menu($item, $mode = '')
 {

@@ -5,13 +5,12 @@ namespace Code\Widget;
 use App;
 use Code\Render\Theme;
 
-
 require_once('include/attach.php');
 
-class Album
+class Album implements WidgetInterface
 {
 
-    public function widget($args)
+    public function widget(array $arguments): string
     {
         $owner_uid = App::$profile_uid;
         $sql_extra = permissions_sql($owner_uid);
@@ -27,12 +26,12 @@ class Album
         $album = '';
         $title = '';
 
-        if ($args['album']) {
-            $album = $args['album'];
+        if ($arguments['album']) {
+            $album = $arguments['album'];
         }
 
-        if ($args['title']) {
-            $title = $args['title'];
+        if ($arguments['title']) {
+            $title = $arguments['title'];
         }
 
         /**
@@ -67,7 +66,7 @@ class Album
             intval(PHOTO_PROFILE)
         );
 
-        //edit album name
+        // edit album name
         $album_edit = null;
 
         $photos = [];
@@ -88,7 +87,7 @@ class Album
                 $imagelink = (z_root() . '/photos/' . App::$profile['channel_address'] . '/image/' . $rr['resource_id']);
 
 
-                $photos[] = array(
+                $photos[] = [
                     'id' => $rr['id'],
                     'twist' => ' ' . $twist . rand(2, 4),
                     'link' => $imagelink,
@@ -99,7 +98,7 @@ class Album
                     'ext' => $ext,
                     'hash' => $rr['resource_id'],
                     'unknown' => t('Unknown')
-                );
+                ];
             }
         }
 

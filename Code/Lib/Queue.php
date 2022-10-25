@@ -458,7 +458,7 @@ class Queue
         logger('deliver: dest: ' . $outq['outq_posturl'], LOGGER_DEBUG);
 
 
-        if ($outq['outq_posturl'] === z_root() . '/zot') {
+        if (in_array($outq['outq_posturl'], [z_root() . '/zot', z_root() . '/nomad'])) {
             // local delivery
             $zot = new Receiver(new NomadHandler(), $outq['outq_notify']);
             $result = $zot->run();

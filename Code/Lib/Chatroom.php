@@ -2,8 +2,6 @@
 
 namespace Code\Lib;
 
-use Code\Lib\Libsync;
-use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
     
 /**
@@ -272,7 +270,7 @@ class Chatroom
         $ret = array('success' => false);
 
         if (!$text) {
-            return;
+            return $ret;
         }
 
         $sql_extra = permissions_sql($uid);

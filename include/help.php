@@ -1,6 +1,5 @@
 <?php
 
-use Michelf\MarkdownExtra;
 use Code\Lib\IConfig;
 use Code\Lib\Channel;
 
@@ -8,7 +7,7 @@ use Code\Lib\Channel;
  * @brief
  *
  * @param string $path
- * @return string|unknown
+ * @return string
  */
 
 function get_help_fullpath($path, $suffix = null)
@@ -42,7 +41,7 @@ function find_docfile($name, $language)
  * @brief
  *
  * @param string $tocpath
- * @return string|unknown
+ * @return string
  */
 function get_help_content($tocpath = false)
 {
@@ -70,7 +69,7 @@ function get_help_content($tocpath = false)
 /**
  * @brief
  *
- * @return bool|array
+ * @return array
  */
 function determine_help_language()
 {
@@ -93,7 +92,7 @@ function determine_help_language()
         $from_url = false;
     }
 
-    return array('language' => $lang, 'from_url' => $from_url);
+    return ['language' => $lang, 'from_url' => $from_url];
 }
 
 function load_doc_file($s)
@@ -118,7 +117,7 @@ function find_doc_file($s)
  * @brief
  *
  * @param string $s
- * @return number|mixed|unknown|bool
+ * @return number|mixed|bool
  */
 function search_doc_files($s)
 {
@@ -137,7 +136,7 @@ function search_doc_files($s)
         intval(ITEM_TYPE_DOC)
     );
 
-    $r = fetch_post_tags($r, true);
+    $r = fetch_post_tags($r);
 
     for ($x = 0; $x < count($r); $x++) {
         $position = stripos($r[$x]['body'], $s);
@@ -217,7 +216,7 @@ function load_context_help()
  * @brief
  *
  * @param string $s
- * @return void|bool|number[]|string[]|unknown[]
+ * @return void|bool|number[]|string[]
  */
 function store_doc_file($s)
 {

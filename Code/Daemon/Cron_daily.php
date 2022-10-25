@@ -10,7 +10,7 @@ use Code\Extend\Hook;
 class Cron_daily
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         logger('cron_daily: start');

@@ -5,7 +5,6 @@
 use Sabre\VObject\Component\VCard;
 use Sabre\VObject\Reader;
 use Code\Daemon\Run;
-use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Render\Theme;
@@ -97,7 +96,7 @@ function abook_connections($channel_id, $sql_conditions = '')
 		and abook_self = 0 $sql_conditions",
         intval($channel_id)
     );
-    return(($r) ? $r : []);
+    return(($r) ?: []);
 }
 
 
@@ -141,7 +140,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
     }
 
     if (! $xchan) {
-        return;
+        return '';
     }
 
     $connect = false;
@@ -244,7 +243,7 @@ function abook_toggle_flag($abook, $flag)
             break;
     }
     if (! $field) {
-        return;
+        return false;
     }
 
     $r = q(
@@ -465,7 +464,7 @@ function contact_remove($channel_id, $abook_id, $atoken_sync = false)
             "select * from xchan where xchan_hash = '%s'",
             dbesc($abook['abook_xchan'])
         );
-        if ($xchan && strpos($xchan[0]['xchan_addr'], 'guest:') === 0 && strpos($abook['abook_xchan'], '.')) {
+        if ($xchan && str_starts_with($xchan[0]['xchan_addr'], 'guest:') && strpos($abook['abook_xchan'], '.')) {
             $atoken_guid = substr($abook['abook_xchan'], strrpos($abook['abook_xchan'], '.') + 1);
             if ($atoken_guid) {
                 Channel::atoken_delete_and_sync($channel_id, $atoken_guid);
@@ -953,7 +952,7 @@ function contact_block()
 
         if (count($r)) {
             $contacts = t('Connections');
-            $micropro = array();
+            $micropro = [];
             foreach ($r as $rr) {
                 // There is no setting to discover if you are bi-directionally connected
                 // Use the ability to post comments as an indication that this relationship is more
@@ -968,14 +967,14 @@ function contact_block()
     }
 
     $tpl = Theme::get_template('contact_block.tpl');
-    $o = replace_macros($tpl, array(
+    $o = replace_macros($tpl, [
         '$contacts' => $contacts,
         '$nickname' => App::$profile['channel_address'],
         '$viewconnections' => (($total > $shown) ? sprintf(t('View all %s connections'), $total) : ''),
         '$micropro' => $micropro,
-    ));
+    ]);
 
-    $arr = array('contacts' => $r, 'output' => $o);
+    $arr = ['contacts' => $r, 'output' => $o];
 
     Hook::call('contact_block_end', $arr);
     return $o;
@@ -999,7 +998,7 @@ function micropro($contact, $redirect = false, $class = '', $mode = false)
         $tpl = 'micropro_card.tpl';
     }
 
-    return replace_macros(Theme::get_template($tpl), array(
+    return replace_macros(Theme::get_template($tpl), [
         '$click' => (($contact['click']) ? $contact['click'] : ''),
         '$class' => $class . (($contact['archived']) ? ' archived' : ''),
         '$oneway' => (($contact['oneway']) ? true : false),
@@ -1009,5 +1008,5 @@ function micropro($contact, $redirect = false, $class = '', $mode = false)
         '$addr' => $contact['xchan_addr'],
         '$title' => $contact['xchan_name'] . ' [' . $contact['xchan_addr'] . ']',
         '$network' => sprintf(t('Network: %s'), network_to_name($contact['xchan_network']))
-    ));
+    ]);
 }

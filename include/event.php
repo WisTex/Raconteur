@@ -124,23 +124,23 @@ function format_event_obj($jobject)
         $dtend = ((array_key_exists('endTime', $object)) ? $object['endTime'] : NULL_DATE);
         $title = ((isset($object['summary']) && $object['summary']) ? zidify_links(smilies(bbcode($object['summary']))) : $object['name']);
 
-        $event['header'] = replace_macros(Theme::get_template('event_item_header.tpl'), array(
+        $event['header'] = replace_macros(Theme::get_template('event_item_header.tpl'), [
             '$title'     => $title,
             '$dtstart_label' => t('Starts:'),
             '$dtstart_title' => datetime_convert('UTC', 'UTC', $object['startTime'], ((strpos($object['startTime'], 'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
             '$dtstart_dt'    => ((strpos($object['startTime'], 'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $object['startTime'], $bd_format)) : day_translate(datetime_convert('UTC', 'UTC', $object['startTime'], $bd_format))),
-            '$finish'    => ((array_key_exists('endTime', $object)) ? true : false),
+            '$finish'    => array_key_exists('endTime', $object),
             '$dtend_label'   => t('Finishes:'),
             '$dtend_title'   => datetime_convert('UTC', 'UTC', $dtend, ((strpos($object['startTime'], 'Z')) ? ATOM_TIME : 'Y-m-d\TH:i:s' )),
             '$dtend_dt'  => ((strpos($object['startTime'], 'Z')) ? day_translate(datetime_convert('UTC', date_default_timezone_get(), $dtend, $bd_format)) :  day_translate(datetime_convert('UTC', 'UTC', $dtend, $bd_format)))
 
-        ));
+        ]);
 
-        $event['content'] = replace_macros(Theme::get_template('event_item_content.tpl'), array(
+        $event['content'] = replace_macros(Theme::get_template('event_item_content.tpl'), [
             '$description'    => $object['content'],
             '$location_label' => t('Location:'),
             '$location'   => ((array_path_exists('location/content', $object)) ? zidify_links(smilies(bbcode($object['location']['content']))) : EMPTY_STR)
-        ));
+        ]);
     }
 
     return $event;
@@ -176,9 +176,7 @@ function format_event_ical($ev)
         return format_todo_ical($ev);
     }
 
-    $o = '';
-
-    $o .= "\r\nBEGIN:VEVENT";
+    $o = "\r\nBEGIN:VEVENT";
 
     $o .= "\r\nCREATED:" . datetime_convert('UTC', 'UTC', $ev['created'], 'Ymd\\THis\\Z');
     $o .= "\r\nLAST-MODIFIED:" . datetime_convert('UTC', 'UTC', $ev['edited'], 'Ymd\\THis\\Z');
@@ -583,14 +581,15 @@ function event_store_event($arr)
 
         if (array_key_exists('external_id', $arr)) {
             $hash = $arr['external_id'];
-        } elseif (array_key_exists('event_hash', $arr)) {
+        }
+        elseif (array_key_exists('event_hash', $arr)) {
             $hash = $arr['event_hash'];
-        } else {
-            try {
-                $hash = (string) Uuid::v4();
-            } catch (UnsatisfiedDependencyException $e) {
-                $hash = random_string(48);
-            }
+        }
+        else {
+            $hash = (string) Uuid::v4();
+        }
+        if (!$hash) {
+            $hash = random_string(48);
         }
 
         $r = q(
@@ -702,7 +701,7 @@ function event_addtocal($item_id, $uid)
             $item['resource_id'] = $event['event_hash'];
             $item['resource_type'] = 'event';
 
-            $i = array($item);
+            $i = [$item];
             xchan_query($i);
             $sync_item = fetch_post_tags($i);
             $z = q(
@@ -711,7 +710,7 @@ function event_addtocal($item_id, $uid)
                 intval($channel['channel_id'])
             );
             if ($z) {
-                Libsync::build_sync_packet($channel['channel_id'], array('event_item' => array(encode_item($sync_item[0], true)),'event' => $z));
+                Libsync::build_sync_packet($channel['channel_id'], ['event_item' => [encode_item($sync_item[0], true)],'event' => $z]);
             }
             return true;
         }
@@ -770,7 +769,7 @@ function parse_vobject($ical, $type)
     $ev['dtstart'] = datetime_convert(
         (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
         'UTC',
-        $dtstart->format(DateTime::W3C)
+        $dtstart->format(DateTimeInterface::W3C)
     );
 
 
@@ -779,14 +778,14 @@ function parse_vobject($ical, $type)
         $ev['dtend'] = datetime_convert(
             (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
             'UTC',
-            $dtend->format(DateTime::W3C)
+            $dtend->format(DateTimeInterface::W3C)
         );
     } elseif (isset($ical->DTEND)) {
         $dtend = $ical->DTEND->getDateTime();
         $ev['dtend'] = datetime_convert(
             (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
             'UTC',
-            $dtend->format(DateTime::W3C)
+            $dtend->format(DateTimeInterface::W3C)
         );
     } else {
         $ev['nofinish'] = 1;
@@ -799,16 +798,16 @@ function parse_vobject($ical, $type)
 
     if (isset($ical->CREATED)) {
         $created = $ical->CREATED->getDateTime();
-        $ev['created'] = datetime_convert('UTC', 'UTC', $created->format(DateTime::W3C));
+        $ev['created'] = datetime_convert('UTC', 'UTC', $created->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'DTSTAMP'})) {
         $edited = $ical->{'DTSTAMP'}->getDateTime();
-        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTime::W3C));
+        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTimeInterface::W3C));
     }
     if (isset($ical->{'LAST-MODIFIED'})) {
         $edited = $ical->{'LAST-MODIFIED'}->getDateTime();
-        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTime::W3C));
+        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'X-ZOT-LOCATION'})) {
@@ -848,7 +847,7 @@ function parse_vobject($ical, $type)
 
     if (isset($ical->{'COMPLETED'})) {
         $completed = $ical->{'COMPLETED'}->getDateTime();
-        $ev['event_status_date'] = datetime_convert('UTC', 'UTC', $completed->format(DateTime::W3C));
+        $ev['event_status_date'] = datetime_convert('UTC', 'UTC', $completed->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'PERCENT-COMPLETE'})) {
@@ -921,7 +920,7 @@ function event_import_ical($ical, $uid)
     $ev['dtstart'] = datetime_convert(
         (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
         'UTC',
-        $dtstart->format(DateTime::W3C)
+        $dtstart->format(DateTimeInterface::W3C)
     );
 
     if (isset($ical->DTEND)) {
@@ -929,7 +928,7 @@ function event_import_ical($ical, $uid)
         $ev['dtend'] = datetime_convert(
             (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
             'UTC',
-            $dtend->format(DateTime::W3C)
+            $dtend->format(DateTimeInterface::W3C)
         );
     } else {
         $ev['nofinish'] = 1;
@@ -941,12 +940,12 @@ function event_import_ical($ical, $uid)
 
     if (isset($ical->CREATED)) {
         $created = $ical->CREATED->getDateTime();
-        $ev['created'] = datetime_convert('UTC', 'UTC', $created->format(DateTime::W3C));
+        $ev['created'] = datetime_convert('UTC', 'UTC', $created->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'LAST-MODIFIED'})) {
         $edited = $ical->{'LAST-MODIFIED'}->getDateTime();
-        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTime::W3C));
+        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'X-ZOT-LOCATION'})) {
@@ -1038,7 +1037,7 @@ function event_import_ical_task($ical, $uid)
     $ev['dtstart'] = datetime_convert(
         (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
         'UTC',
-        $dtstart->format(DateTime::W3C)
+        $dtstart->format(DateTimeInterface::W3C)
     );
 
 
@@ -1047,7 +1046,7 @@ function event_import_ical_task($ical, $uid)
         $ev['dtend'] = datetime_convert(
             (($ev['adjust']) ? 'UTC' : date_default_timezone_get()),
             'UTC',
-            $dtend->format(DateTime::W3C)
+            $dtend->format(DateTimeInterface::W3C)
         );
     } else {
         $ev['nofinish'] = 1;
@@ -1060,17 +1059,17 @@ function event_import_ical_task($ical, $uid)
 
     if (isset($ical->CREATED)) {
         $created = $ical->CREATED->getDateTime();
-        $ev['created'] = datetime_convert('UTC', 'UTC', $created->format(DateTime::W3C));
+        $ev['created'] = datetime_convert('UTC', 'UTC', $created->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'DTSTAMP'})) {
         $edited = $ical->{'DTSTAMP'}->getDateTime();
-        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTime::W3C));
+        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'LAST-MODIFIED'})) {
         $edited = $ical->{'LAST-MODIFIED'}->getDateTime();
-        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTime::W3C));
+        $ev['edited'] = datetime_convert('UTC', 'UTC', $edited->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'X-ZOT-LOCATION'})) {
@@ -1129,7 +1128,7 @@ function event_import_ical_task($ical, $uid)
 
     if (isset($ical->{'COMPLETED'})) {
         $completed = $ical->{'COMPLETED'}->getDateTime();
-        $ev['event_status_date'] = datetime_convert('UTC', 'UTC', $completed->format(DateTime::W3C));
+        $ev['event_status_date'] = datetime_convert('UTC', 'UTC', $completed->format(DateTimeInterface::W3C));
     }
 
     if (isset($ical->{'PERCENT-COMPLETE'})) {
@@ -1173,7 +1172,7 @@ function event_store_item($arr, $event)
         );
         if ($i) {
             xchan_query($i);
-            $item = fetch_post_tags($i, true);
+            $item = fetch_post_tags($i);
         }
     }
 
@@ -1418,13 +1417,13 @@ function event_store_item($arr, $event)
 
 function todo_stat()
 {
-    return array(
+    return [
         ''             => t('Not specified'),
         'NEEDS-ACTION' => t('Needs Action'),
         'COMPLETED'    => t('Completed'),
         'IN-PROCESS'   => t('In Process'),
         'CANCELLED'    => t('Cancelled')
-    );
+    ];
 }
 
 

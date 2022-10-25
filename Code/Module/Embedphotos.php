@@ -5,7 +5,6 @@ namespace Code\Module;
 use App;
 use Code\Web\Controller;
 use Code\Lib\Channel;
-use Code\Lib\Features;
 use Code\Render\Theme;
 
 
@@ -74,9 +73,9 @@ class Embedphotos extends Controller
 
         $output = EMPTY_STR;
         if ($channel) {
-            $resolution = ((Features::enabled($channel['channel_id'], 'large_photos')) ? 1 : 2);
+            $resolution = 1;
             $r = q(
-                "select mimetype, height, width, title from photo where resource_id = '%s' and $resolution = %d and uid = %d limit 1",
+                "select mimetype, height, width, title from photo where resource_id = '%s' and resolution = %d and uid = %d limit 1",
                 dbesc($resource),
                 intval($resolution),
                 intval($channel['channel_id'])
@@ -116,6 +115,7 @@ class Embedphotos extends Controller
 
             return $output;
         }
+        return '';
     }
 
 
@@ -229,11 +229,11 @@ class Embedphotos extends Controller
             '$photos' => $photos,
             '$album' => (($title) ? $title : $album),
             '$album_id' => rand(),
-            '$album_edit' => [t('Edit Album'), $album_edit],
+            '$album_edit' => [t('Edit Album'), false],
             '$can_post' => false,
             '$upload' => [t('Upload'), z_root() . '/photos/' . $channel['channel_address'] . '/upload/' . bin2hex($album)],
             '$order' => false,
-            '$upload_form' => $upload_form,
+            '$upload_form' => false,
             '$no_fullscreen_btn' => true
         ]);
 

@@ -382,7 +382,7 @@ class Channel
                 'channel_pageflags'   => intval($pageflags),
                 'channel_system'      => intval($system),
                 'channel_expire_days' => intval($expire),
-                'channel_timezone'    => App::$timezone
+                'channel_timezone'    => date_default_timezone_get()
             ]
         );
 
@@ -419,7 +419,7 @@ class Channel
 
         // The site channel gets the project logo as a profile photo.
         if ($arr['account_id'] === 'xxx') {
-            $photo_type = import_channel_photo_from_url(z_root() . '/images/' . PLATFORM_NAME . '.png', 0, $r[0]['channel_id']);
+            $photo_type = import_channel_photo_from_url(z_root() . '/images/' . REPOSITORY_ID . '.png', 0, $r[0]['channel_id']);
         }
         elseif ($z['photo_url']) {
             $photo_type = import_channel_photo_from_url($z['photo_url'], $arr['account_id'], $r[0]['channel_id']);
@@ -938,7 +938,7 @@ class Channel
         // with a non-standard platform and version.
 
         $ret['compatibility'] = [
-            'project'     => PLATFORM_NAME,
+            'project'     => REPOSITORY_ID,
             'codebase'    => 'zap',
             'schema'      => 'streams',
             'version'     => STD_VERSION,
@@ -1160,7 +1160,7 @@ class Channel
             if ($r) {
                 $ret['event_item'] = [];
                 xchan_query($r);
-                $r = fetch_post_tags($r, true);
+                $r = fetch_post_tags($r);
                 foreach ($r as $rr) {
                     $ret['event_item'][] = encode_item($rr, true);
                 }
@@ -1186,7 +1186,7 @@ class Channel
             if ($r) {
                 $ret['item'] = [];
                 xchan_query($r);
-                $r = fetch_post_tags($r, true);
+                $r = fetch_post_tags($r);
                 foreach ($r as $rr) {
                     $ret['item'][] = encode_item($rr, true);
                 }
@@ -1291,7 +1291,7 @@ class Channel
         if ($r) {
             $ret['item'] = [];
             xchan_query($r);
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
             foreach ($r as $rr) {
                 $ret['item'][] = encode_item($rr, true);
             }
@@ -1364,7 +1364,7 @@ class Channel
         if ($r) {
             $ret['item'] = [];
             xchan_query($r);
-            $r = fetch_post_tags($r, true);
+            $r = fetch_post_tags($r);
             foreach ($r as $rr) {
                 $ret['item'][] = encode_item($rr, true);
             }

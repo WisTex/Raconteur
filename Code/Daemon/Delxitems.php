@@ -9,7 +9,7 @@ namespace Code\Daemon;
 class Delxitems
 {
 
-    public static function run($argc, $argv)
+    public function run($argc, $argv)
     {
 
         cli_startup();
