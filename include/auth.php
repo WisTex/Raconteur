@@ -256,7 +256,6 @@ if (
             unset($_SESSION['visitor_id']);
             unset($_SESSION['authenticated']);
         }
-        App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
     }
 
     // already logged in user returning

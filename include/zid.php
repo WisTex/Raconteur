@@ -402,7 +402,6 @@ function owt_init($token)
     Hook::call('magic_auth_success', $arr);
 
     App::set_observer($hubloc);
-    App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
     if (! get_config('system', 'hide_owa_greeting')) {
         info(sprintf(t('OpenWebAuth: %1$s welcomes %2$s'), App::get_hostname(), $hubloc['xchan_name']));
     }
@@ -470,5 +469,4 @@ function observer_auth($ob_hash)
     $_SESSION['DNT'] = 1;
 
     App::set_observer($hubloc);
-    App::set_groups(init_groups_visitor($_SESSION['visitor_id']));
 }
