@@ -125,6 +125,10 @@ class Poke extends Controller
             return $o;
         }
 
+        return t('Poke app is installed. To use, select Poke from the author drop-down menu in your stream.');
+
+    /**
+
         Navbar::set_selected('Poke');
 
         $name = '';
@@ -153,5 +157,7 @@ class Poke extends Controller
         ));
 
         return $o;
+    */
+
     }
 }
