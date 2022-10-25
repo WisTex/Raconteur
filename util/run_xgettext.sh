@@ -2,7 +2,7 @@
 
 #FULLPATH=$(dirname $(readlink -f "$0"))
 
-VINFO=`echo "<?php include 'boot.php'; echo PLATFORM_NAME . \" \" . STD_VERSION . \"\\n\";" | php`
+VINFO=`echo "<?php include 'boot.php'; echo REPOSITORY_ID . \" \" . STD_VERSION . \"\\n\";" | php`
 
 PROJECTNAME=streams
 F9KVERSION=`echo $VINFO | awk '{print $2;}'`
