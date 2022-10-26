@@ -31,7 +31,6 @@ require_once('include/photos.php');
 
 class Connedit extends Controller
 {
-
     /**
      * @brief Initialize the connection-editor
      */
