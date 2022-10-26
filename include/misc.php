@@ -94,6 +94,21 @@ function notags($string)
     return(str_replace(["<",">"], ['[',']'], $string));
 }
 
+// Basically explode(), but entries are trimmed and empty entries discarded.
+
+function strtoarr($separator = ',', $string) {
+    $array = [];
+    if ($string) {
+        $tmp = explode($separator, $string);
+        foreach ($tmp as $t) {
+            $t = trim($t);
+            if ($t) {
+                $array[] = $t;
+            }
+        }
+    }
+    return $array;
+}
 
 /**
  * use this on input where angle chars shouldn't be removed,
