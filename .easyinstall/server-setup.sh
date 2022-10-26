@@ -419,7 +419,7 @@ function create_website_db {
         SQL="${Q1}${Q2}${Q3}${Q4}"
         mysql -uroot -p$mysqlpass -e "$SQL"
     else
-        die "Can't write over an already existing database!"
+        print_info "data base does exist already..."
     fi
 }
 
@@ -456,18 +456,24 @@ function install_letsencrypt {
     then
         die "Failed to install let's encrypt: 'le_email' is empty in $configfile"
     fi
+    # installing certbot via snapd is the preferred method (10/2022) https://certbot.eff.org/instructions
+    nocheck_install "snapd"
+    print_info "ensure that version of snapd is up to date..."
+    snap install core
+    snap refresh core
+    print_info "install certbot via snap..."
+    snap install --classic certbot
     if [ $webserver = "nginx" ]
     then
-        nocheck_install "certbot"
         print_info "run certbot..."
         systemctl stop nginx
         certbot certonly --standalone -d $le_domain -m $le_email --agree-tos --non-interactive
         systemctl start nginx
     elif [ $webserver = "apache" ]
     then
-        nocheck_install "certbot python-certbot-apache"
         print_info "run certbot ..."
-	certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
+        ln -s /snap/bin/certbot /usr/bin/certbot
+        certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
         service apache2 restart
     fi
 }
@@ -566,7 +572,7 @@ function configure_daily_update {
 function configure_cron_daily {
     print_info "configuring cron..."
     # every 10 min for poller.php
-    if [ -z "`grep '$install_path.*Run.php' /etc/crontab`" ]
+    if [ -z "`grep 'php Code/Daemon/Run.php' /etc/crontab`" ]
     then
         echo "*/10 * * * * www-data cd $install_path; php Code/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
