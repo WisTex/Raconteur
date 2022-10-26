@@ -25,6 +25,8 @@ use Code\Render\Theme;
 class Channel
 {
 
+    protected $autoperms = 0;
+    protected $publish = 0;
 
     public function post()
     {
@@ -46,95 +48,7 @@ class Channel
         }
 
         if (($role != $oldrole) || ($role === 'custom')) {
-            if ($role === 'custom') {
-                $hide_presence = (((x($_POST, 'hide_presence')) && (intval($_POST['hide_presence']) == 1)) ? 1 : 0);
-                $def_group = ((x($_POST, 'group-selection')) ? notags(trim($_POST['group-selection'])) : '');
-                $r = q(
-                    "update channel set channel_default_group = '%s' where channel_id = %d",
-                    dbesc($def_group),
-                    intval(local_channel())
-                );
-
-                $global_perms = Permissions::Perms();
-
-                foreach ($global_perms as $k => $v) {
-                    PermissionLimits::Set(local_channel(), $k, intval($_POST[$k]));
-                }
-                $acl = new AccessControl($channel);
-                $acl->set_from_array($_POST);
-                $x = $acl->get();
-
-                $r = q(
-                    "update channel set channel_allow_cid = '%s', channel_allow_gid = '%s',
-                    channel_deny_cid = '%s', channel_deny_gid = '%s' where channel_id = %d",
-                    dbesc($x['allow_cid']),
-                    dbesc($x['allow_gid']),
-                    dbesc($x['deny_cid']),
-                    dbesc($x['deny_gid']),
-                    intval(local_channel())
-                );
-            } else {
-                $role_permissions = PermissionRoles::role_perms($_POST['permissions_role']);
-                if (!$role_permissions) {
-                    notice('Permissions category could not be found.');
-                    return;
-                }
-                $hide_presence = 1 - (intval($role_permissions['online']));
-                if ($role_permissions['default_collection']) {
-                    $r = q(
-                        "select hash from pgrp where uid = %d and gname = '%s' limit 1",
-                        intval(local_channel()),
-                        dbesc(t('Friends'))
-                    );
-                    if (!$r) {
-                        AccessList::add(local_channel(), t('Friends'));
-                        AccessList::member_add(local_channel(), t('Friends'), $channel['channel_hash']);
-                        $r = q(
-                            "select hash from pgrp where uid = %d and gname = '%s' limit 1",
-                            intval(local_channel()),
-                            dbesc(t('Friends'))
-                        );
-                    }
-                    if ($r) {
-                        q(
-                            "update channel set channel_default_group = '%s', channel_allow_gid = '%s', channel_allow_cid = '', channel_deny_gid = '', channel_deny_cid = '' where channel_id = %d",
-                            dbesc($r[0]['hash']),
-                            dbesc('<' . $r[0]['hash'] . '>'),
-                            intval(local_channel())
-                        );
-                    } else {
-                        notice(sprintf('Default access list \'%s\' not found. Please create and re-submit permission change.', t('Friends')) . EOL);
-                        return;
-                    }
-                } // no default permissions
-                else {
-                    q(
-                        "update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '',
-                         channel_deny_cid = '' where channel_id = %d",
-                        intval(local_channel())
-                    );
-                }
-
-                if ($role_permissions['perms_connect']) {
-                    $x = Permissions::FilledPerms($role_permissions['perms_connect']);
-                    $str = Permissions::serialise($x);
-                    set_abconfig(local_channel(), $channel['channel_hash'], 'system', 'my_perms', $str);
-
-                    $autoperms = intval($role_permissions['perms_auto']);
-                }
-
-                if ($role_permissions['limits']) {
-                    foreach ($role_permissions['limits'] as $k => $v) {
-                        PermissionLimits::Set(local_channel(), $k, $v);
-                    }
-                }
-                if (array_key_exists('directory_publish', $role_permissions)) {
-                    $publish = intval($role_permissions['directory_publish']);
-                }
-            }
-
-            set_pconfig(local_channel(), 'system', 'hide_online_status', $hide_presence);
-            set_pconfig(local_channel(), 'system', 'permissions_role', $role);
+            $this->change_permissions_role($channel, $role);
         }
 
         // The post_comments permission is critical to privacy so we always allow you to set it, no matter what
@@ -150,7 +64,7 @@ class Channel
         $view_contacts = array_key_exists('view_contacts', $_POST) ? intval($_POST['view_contacts']) : $default_view_contacts;
         PermissionLimits::Set(local_channel(), 'view_contacts', $view_contacts);
 
-        $publish = (((x($_POST, 'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1 : 0);
+        $this->publish = (((x($_POST, 'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1 : 0);
         $username = ((x($_POST, 'username')) ? escape_tags(trim($_POST['username'])) : '');
         $timezone = ((x($_POST, 'timezone_select')) ? notags(trim($_POST['timezone_select'])) : '');
         $defloc = ((x($_POST, 'defloc')) ? notags(trim($_POST['defloc'])) : '');
@@ -189,8 +103,8 @@ class Channel
         }
 
         // allow a permission change to over-ride the autoperms setting from the form
-        if (!isset($autoperms)) {
-            $autoperms = ((x($_POST, 'autoperms')) ? intval($_POST['autoperms']) : 0);
+        if (!isset($this->autoperms)) {
+            $this->autoperms = ((x($_POST, 'autoperms')) ? intval($_POST['autoperms']) : 0);
         }
         $set_location = (isset($_POST['set_location']) ? trim($_POST['set_location']) : '');
         if ($set_location) {
@@ -296,10 +210,6 @@ class Channel
             $vnotify += intval($_POST['vnotify16']);
         }
 
-        $always_show_in_notices = x($_POST, 'always_show_in_notices') ? 1 : 0;
-
-        $err = '';
-
         $name_change = false;
 
         if ($username != $channel['channel_name']) {
@@ -316,7 +226,6 @@ class Channel
                 date_default_timezone_set($timezone);
             }
         }
-
 
         $followed_tags = $_POST['followed_tags'];
         $ntags = [];
@@ -339,7 +248,6 @@ class Channel
         set_pconfig(local_channel(), 'system', 'blocktags', $blocktags);
         set_pconfig(local_channel(), 'system', 'channel_menu', $channel_menu);
         set_pconfig(local_channel(), 'system', 'vnotify', $vnotify);
-        set_pconfig(local_channel(), 'system', 'always_show_in_notices', $always_show_in_notices);
         set_pconfig(local_channel(), 'system', 'evdays', $evdays);
         set_pconfig(local_channel(), 'system', 'photo_path', $photo_path);
         set_pconfig(local_channel(), 'system', 'attach_path', $attach_path);
@@ -347,10 +255,9 @@ class Channel
         set_pconfig(local_channel(), 'system', 'default_permcat', $defpermcat);
         set_pconfig(local_channel(), 'system', 'email_notify_host', $mailhost);
         set_pconfig(local_channel(), 'system', 'profile_assign', $profile_assign);
-//      set_pconfig(local_channel(), 'system', 'anymention', $anymention);
         set_pconfig(local_channel(), 'system', 'hyperdrive', $hyperdrive);
         set_pconfig(local_channel(), 'system', 'activitypub', $activitypub);
-        set_pconfig(local_channel(), 'system', 'autoperms', $autoperms);
+        set_pconfig(local_channel(), 'system', 'autoperms', $this->autoperms);
         set_pconfig(local_channel(), 'system', 'tag_username', $tag_username);
         set_pconfig(local_channel(), 'system', 'permit_all_mentions', $permit_all_mentions);
         set_pconfig(local_channel(), 'system', 'unless_mention_count', $unless_mention_count);
@@ -377,12 +284,12 @@ class Channel
 
         $r = q(
             "UPDATE profile SET publish = %d WHERE is_default = 1 AND uid = %d",
-            intval($publish),
+            intval($this->publish),
             intval(local_channel())
         );
         $r = q(
             "UPDATE xchan SET xchan_hidden = %d WHERE xchan_hash = '%s'",
-            intval(1 - $publish),
+            intval(1 - $this->publish),
             intval($channel['channel_hash'])
         );
 
@@ -417,9 +324,7 @@ class Channel
 
         require_once('include/permissions.php');
 
-
         $yes_no = [t('No'), t('Yes')];
-
 
         $p = q(
             "SELECT * FROM profile WHERE is_default = 1 AND uid = %d LIMIT 1",
@@ -428,8 +333,6 @@ class Channel
         if (count($p)) {
             $profile = $p[0];
         }
-
-        load_pconfig(local_channel(), 'expire');
 
         $channel = App::get_channel();
 
@@ -462,7 +365,7 @@ class Channel
             } elseif ($k === 'view_contacts') {
                 $view_contact_perms = [$k, $perm, $limits[$k], '', $options];
             } else {
-                $permiss[] = array($k, $perm, $limits[$k], '', $options);
+                $permiss[] = [$k, $perm, $limits[$k], '', $options];
             }
         }
 
@@ -481,23 +384,6 @@ class Channel
 
         $hide_presence = intval(get_pconfig(local_channel(), 'system', 'hide_online_status'));
 
-        $expire_items = get_pconfig(local_channel(), 'expire', 'items');
-        $expire_items = (($expire_items === false) ? '1' : $expire_items); // default if not set: 1
-
-        $expire_notes = get_pconfig(local_channel(), 'expire', 'notes');
-        $expire_notes = (($expire_notes === false) ? '1' : $expire_notes); // default if not set: 1
-
-        $expire_starred = get_pconfig(local_channel(), 'expire', 'starred');
-        $expire_starred = (($expire_starred === false) ? '1' : $expire_starred); // default if not set: 1
-
-
-        $expire_photos = get_pconfig(local_channel(), 'expire', 'photos');
-        $expire_photos = (($expire_photos === false) ? '0' : $expire_photos); // default if not set: 0
-
-        $expire_network_only = get_pconfig(local_channel(), 'expire', 'network_only');
-        $expire_network_only = (($expire_network_only === false) ? '0' : $expire_network_only); // default if not set: 0
-
-
         $suggestme = get_pconfig(local_channel(), 'system', 'suggestme');
         $suggestme = (($suggestme === false) ? '0' : $suggestme); // default if not set: 0
 
@@ -513,28 +399,26 @@ class Channel
         $blocktags = get_pconfig(local_channel(), 'system', 'blocktags');
         $blocktags = (($blocktags === false) ? '0' : $blocktags);
 
-        $timezone = date_default_timezone_get();
-
         $opt_tpl = Theme::get_template("field_checkbox.tpl");
         if (get_config('system', 'publish_all')) {
             $profile_in_dir = '<input type="hidden" name="profile_in_directory" value="1" />';
         } else {
-            $profile_in_dir = replace_macros($opt_tpl, array(
-                '$field' => array('profile_in_directory', t('Publish your profile in the network directory'), $profile['publish'], '', $yes_no),
-            ));
+            $profile_in_dir = replace_macros($opt_tpl, [
+                '$field' => ['profile_in_directory', t('Publish your profile in the network directory'), $profile['publish'], '', $yes_no],
+            ]);
         }
 
-        $suggestme = replace_macros($opt_tpl, array(
-            '$field' => array('suggestme', t('Allow us to suggest you as a potential friend to new members?'), $suggestme, '', $yes_no),
+        $suggestme = replace_macros($opt_tpl, [
+            '$field' => ['suggestme', t('Allow us to suggest you as a potential friend to new members?'), $suggestme, '', $yes_no],
 
-        ));
+        ]);
 
         $subdir = ((strlen(App::get_path())) ? '<br>' . t('or') . ' ' . z_root() . '/channel/' . $nickname : '');
 
         $webbie = $nickname . '@' . App::get_hostname();
         $intl_nickname = unpunify($nickname) . '@' . unpunify(App::get_hostname());
 
-        $prof_addr = replace_macros(Theme::get_template('channel_settings_header.tpl'), array(
+        $prof_addr = replace_macros(Theme::get_template('channel_settings_header.tpl'), [
             '$desc' => t('Your channel address is'),
             '$nickname' => (($intl_nickname === $webbie) ? $webbie : $intl_nickname . '&nbsp;(' . $webbie . ')'),
             '$compat' => t('Friends using compatible applications can use this address to connect with you.'),
@@ -546,7 +430,7 @@ class Channel
             '$or' => t('or'),
             '$davspath' => 'davs://' . App::get_hostname() . '/dav/' . $nickname,
             '$basepath' => App::get_hostname()
-        ));
+        ]);
 
 
         $pcat = new Permcat(local_channel());
@@ -572,9 +456,9 @@ class Channel
         if ($m1) {
             $menu = [];
             $current = get_pconfig(local_channel(), 'system', 'channel_menu');
-            $menu[] = array('name' => '', 'selected' => ((!$current) ? true : false));
+            $menu[] = ['name' => '', 'selected' => ((!$current) ? true : false)];
             foreach ($m1 as $m) {
-                $menu[] = array('name' => htmlspecialchars($m['menu_name'], ENT_COMPAT, 'UTF-8'), 'selected' => (($m['menu_name'] === $current) ? ' selected="selected" ' : false));
+                $menu[] = ['name' => htmlspecialchars($m['menu_name'], ENT_COMPAT, 'UTF-8'), 'selected' => (($m['menu_name'] === $current) ? ' selected="selected" ' : false)];
             }
         }
 
@@ -611,7 +495,6 @@ class Channel
 
 
         $vnotify = get_pconfig(local_channel(), 'system', 'vnotify');
-        $always_show_in_notices = get_pconfig(local_channel(), 'system', 'always_show_in_notices');
         if ($vnotify === false) {
             $vnotify = (-1);
         }
@@ -641,18 +524,18 @@ class Channel
             '$form_security_token' => get_form_security_token("settings"),
             '$nickname_block' => $prof_addr,
             '$h_basic' => t('Basic Settings'),
-            '$username' => array('username', t('Full name'), $username, ''),
-            '$timezone' => array('timezone_select', t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()),
-            '$defloc' => array('defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')),
-            '$allowloc' => array('allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(), 'system', 'use_browser_location')) ? 1 : ''), '', $yes_no),
+            '$username' => ['username', t('Full name'), $username, ''],
+            '$timezone' => ['timezone_select', t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()],
+            '$defloc' => ['defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')],
+            '$allowloc' => ['allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(), 'system', 'use_browser_location')) ? 1 : ''), '', $yes_no],
             '$set_location' => [ 'set_location', t('Over-ride your web browser or device and use these coordinates (latitude,longitude)'), get_pconfig(local_channel(),'system','set_location')],
-            '$adult' => array('adult', t('Adult content'), $adult_flag, t('Enable to indicate if this channel frequently or regularly publishes adult content. (Please also tag any adult material and/or nudity with #NSFW)'), $yes_no),
+            '$adult' => ['adult', t('Adult content'), $adult_flag, t('Enable to indicate if this channel frequently or regularly publishes adult content. (Please also tag any adult material and/or nudity with #NSFW)'), $yes_no],
 
             '$h_prv' => t('Security and Privacy'),
             '$permissions_set' => $permissions_set,
             '$perms_set_msg' => t('Your permissions are already configured. Click to view/adjust'),
 
-            '$hide_presence' => array('hide_presence', t('Hide your online presence'), $hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no),
+            '$hide_presence' => ['hide_presence', t('Hide your online presence'), $hide_presence, t('Prevents displaying in your profile that you are online'), $yes_no],
             '$preview_outbox' => [ 'preview_outbox', t('Preview some public posts from new connections prior to connection approval'), intval(get_pconfig($channel['channel_id'], 'system','preview_outbox', false)), '', $yes_no ],
             '$permiss_arr' => $permiss,
             '$comment_perms' => $comment_perms,
@@ -660,12 +543,12 @@ class Channel
             '$view_contact_perms' => $view_contact_perms,
             '$noindex' => ['noindex', t('Forbid indexing of your public channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
             '$close_comments' => ['close_comments', t('Disable acceptance of comments on your posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
-            '$blocktags' => array('blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no),
+            '$blocktags' => ['blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no],
 
             '$lbl_p2macro' => t('Channel Permission Limits'),
 
-            '$expire' => array('expire', t('Expire conversations you have not participated in after this many days'), $expire, t('0 or blank to use the website limit.') . ' ' . ((intval($sys_expire)) ? sprintf(t('This website expires after %d days.'), intval($sys_expire)) : t('This website does not provide an expiration policy.')) . ' ' . t('The website limit takes precedence if lower than your limit.')),
-            '$maxreq' => array('maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']), t('May reduce spam activity')),
+            '$expire' => ['expire', t('Expire conversations you have not participated in after this many days'), $expire, t('0 or blank to use the website limit.') . ' ' . ((intval($sys_expire)) ? sprintf(t('This website expires after %d days.'), intval($sys_expire)) : t('This website does not provide an expiration policy.')) . ' ' . t('The website limit takes precedence if lower than your limit.')],
+            '$maxreq' => ['maxreq', t('Maximum Friend Requests/Day:'), intval($channel['channel_max_friend_req']), t('May reduce spam activity')],
             '$permissions' => t('Default Access List'),
             '$permdesc' => t("(click to open/close)"),
             '$aclselect' => Libacl::populate($perm_defaults, false, PermissionDescription::fromDescription(t('Use your default audience setting for the type of object published'))),
@@ -680,7 +563,7 @@ class Channel
             '$group_select' => $group_select,
             '$can_change_role' => ((in_array($permissions_role, ['collection', 'collection_restricted'])) ? false : true),
             '$permissions_role' => $permissions_role,
-            '$role' => array('permissions_role', t('Channel type and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'),
+            '$role' => ['permissions_role', t('Channel type and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'],
             '$defpermcat' => ['defpermcat', t('Default Permissions Role'), $default_permcat, '', $permcats],
             '$permcat_enable' => Apps::system_app_installed(local_channel(), 'Roles'),
             '$profile_in_dir' => $profile_in_dir,
@@ -691,50 +574,49 @@ class Channel
             '$close' => t('Close'),
             '$h_not' => t('Notifications'),
             '$activity_options' => t('By default post a status message when:'),
-            '$post_newfriend' => array('post_newfriend', t('accepting a friend request'), $post_newfriend, '', $yes_no),
-            '$post_joingroup' => array('post_joingroup', t('joining a group/community'), $post_joingroup, '', $yes_no),
-            '$post_profilechange' => array('post_profilechange', t('making an <em>interesting</em> profile change'), $post_profilechange, '', $yes_no),
+            '$post_newfriend' => ['post_newfriend', t('accepting a friend request'), $post_newfriend, '', $yes_no],
+            '$post_joingroup' => ['post_joingroup', t('joining a group/community'), $post_joingroup, '', $yes_no],
+            '$post_profilechange' => ['post_profilechange', t('making an <em>interesting</em> profile change'), $post_profilechange, '', $yes_no],
             '$lbl_not' => t('Send a notification email when:'),
-            '$notify1' => array('notify1', t('You receive a connection request'), ($notify & NOTIFY_INTRO), NOTIFY_INTRO, '', $yes_no),
+            '$notify1' => ['notify1', t('You receive a connection request'), ($notify & NOTIFY_INTRO), NOTIFY_INTRO, '', $yes_no],
 //          '$notify2'  => array('notify2', t('Your connections are confirmed'), ($notify & NOTIFY_CONFIRM), NOTIFY_CONFIRM, '', $yes_no),
-            '$notify3' => array('notify3', t('Someone writes on your profile wall'), ($notify & NOTIFY_WALL), NOTIFY_WALL, '', $yes_no),
-            '$notify4' => array('notify4', t('Someone writes a followup comment'), ($notify & NOTIFY_COMMENT), NOTIFY_COMMENT, '', $yes_no),
-            '$notify10' => array('notify10', t('Someone shares a followed conversation'), ($notify & NOTIFY_RESHARE), NOTIFY_RESHARE, '', $yes_no),
-            '$notify5' => array('notify5', t('You receive a direct (private) message'), ($notify & NOTIFY_MAIL), NOTIFY_MAIL, '', $yes_no),
+            '$notify3' => ['notify3', t('Someone writes on your profile wall'), ($notify & NOTIFY_WALL), NOTIFY_WALL, '', $yes_no],
+            '$notify4' => ['notify4', t('Someone writes a followup comment'), ($notify & NOTIFY_COMMENT), NOTIFY_COMMENT, '', $yes_no],
+            '$notify10' => ['notify10', t('Someone shares a followed conversation'), ($notify & NOTIFY_RESHARE), NOTIFY_RESHARE, '', $yes_no],
+            '$notify5' => ['notify5', t('You receive a direct (private) message'), ($notify & NOTIFY_MAIL), NOTIFY_MAIL, '', $yes_no],
 //          '$notify6'  => array('notify6', t('You receive a friend suggestion'), ($notify & NOTIFY_SUGGEST), NOTIFY_SUGGEST, '', $yes_no),
-            '$notify7' => array('notify7', t('You are tagged in a post'), ($notify & NOTIFY_TAGSELF), NOTIFY_TAGSELF, '', $yes_no),
+            '$notify7' => ['notify7', t('You are tagged in a post'), ($notify & NOTIFY_TAGSELF), NOTIFY_TAGSELF, '', $yes_no],
 //          '$notify8'  => array('notify8', t('You are poked/prodded/etc. in a post'), ($notify & NOTIFY_POKE), NOTIFY_POKE, '', $yes_no),
 
-            '$notify9' => array('notify9', t('Someone likes your post/comment'), ($notify & NOTIFY_LIKE), NOTIFY_LIKE, '', $yes_no),
+            '$notify9' => ['notify9', t('Someone likes your post/comment'), ($notify & NOTIFY_LIKE), NOTIFY_LIKE, '', $yes_no],
 
 
             '$lbl_vnot' => t('Show visual notifications including:'),
 
-            '$vnotify1' => array('vnotify1', t('Unseen stream activity'), ($vnotify & VNOTIFY_NETWORK), VNOTIFY_NETWORK, '', $yes_no),
-            '$vnotify2' => array('vnotify2', t('Unseen channel activity'), ($vnotify & VNOTIFY_CHANNEL), VNOTIFY_CHANNEL, '', $yes_no),
-            '$vnotify3' => array('vnotify3', t('Unseen direct messages'), ($vnotify & VNOTIFY_MAIL), VNOTIFY_MAIL, t('Recommended'), $yes_no),
-            '$vnotify4' => array('vnotify4', t('Upcoming events'), ($vnotify & VNOTIFY_EVENT), VNOTIFY_EVENT, '', $yes_no),
-            '$vnotify5' => array('vnotify5', t('Events today'), ($vnotify & VNOTIFY_EVENTTODAY), VNOTIFY_EVENTTODAY, '', $yes_no),
-            '$vnotify6' => array('vnotify6', t('Upcoming birthdays'), ($vnotify & VNOTIFY_BIRTHDAY), VNOTIFY_BIRTHDAY, t('Not available in all themes'), $yes_no),
-            '$vnotify7' => array('vnotify7', t('System (personal) notifications'), ($vnotify & VNOTIFY_SYSTEM), VNOTIFY_SYSTEM, '', $yes_no),
-            '$vnotify8' => array('vnotify8', t('System info messages'), ($vnotify & VNOTIFY_INFO), VNOTIFY_INFO, t('Recommended'), $yes_no),
-            '$vnotify9' => array('vnotify9', t('System critical alerts'), ($vnotify & VNOTIFY_ALERT), VNOTIFY_ALERT, t('Recommended'), $yes_no),
-            '$vnotify10' => array('vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no),
-            '$vnotify11' => ((is_site_admin()) ? array('vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no) : []),
+            '$vnotify1' => ['vnotify1', t('Unseen stream activity'), ($vnotify & VNOTIFY_NETWORK), VNOTIFY_NETWORK, '', $yes_no],
+            '$vnotify2' => ['vnotify2', t('Unseen channel activity'), ($vnotify & VNOTIFY_CHANNEL), VNOTIFY_CHANNEL, '', $yes_no],
+            '$vnotify3' => ['vnotify3', t('Unseen direct messages'), ($vnotify & VNOTIFY_MAIL), VNOTIFY_MAIL, t('Recommended'), $yes_no],
+            '$vnotify4' => ['vnotify4', t('Upcoming events'), ($vnotify & VNOTIFY_EVENT), VNOTIFY_EVENT, '', $yes_no],
+            '$vnotify5' => ['vnotify5', t('Events today'), ($vnotify & VNOTIFY_EVENTTODAY), VNOTIFY_EVENTTODAY, '', $yes_no],
+            '$vnotify6' => ['vnotify6', t('Upcoming birthdays'), ($vnotify & VNOTIFY_BIRTHDAY), VNOTIFY_BIRTHDAY, t('Not available in all themes'), $yes_no],
+            '$vnotify7' => ['vnotify7', t('System (personal) notifications'), ($vnotify & VNOTIFY_SYSTEM), VNOTIFY_SYSTEM, '', $yes_no],
+            '$vnotify8' => ['vnotify8', t('System info messages'), ($vnotify & VNOTIFY_INFO), VNOTIFY_INFO, t('Recommended'), $yes_no],
+            '$vnotify9' => ['vnotify9', t('System critical alerts'), ($vnotify & VNOTIFY_ALERT), VNOTIFY_ALERT, t('Recommended'), $yes_no],
+            '$vnotify10' => ['vnotify10', t('New connections'), ($vnotify & VNOTIFY_INTRO), VNOTIFY_INTRO, t('Recommended'), $yes_no],
+            '$vnotify11' => ((is_site_admin()) ? ['vnotify11', t('System Registrations'), ($vnotify & VNOTIFY_REGISTER), VNOTIFY_REGISTER, '', $yes_no] : []),
 //          '$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
             '$vnotify13' => (($public_stream_mode) ? ['vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no] : []),
-            '$vnotify14' => array('vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no),
-            '$vnotify15' => array('vnotify15', t('Unseen group posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no),
-            '$vnotify16' => ((is_site_admin()) ? array('vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no) : []),
+            '$vnotify14' => ['vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no],
+            '$vnotify15' => ['vnotify15', t('Unseen group posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no],
+            '$vnotify16' => ((is_site_admin()) ? ['vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no] : []),
             '$desktop_notifications_info' => t('Desktop notifications are unavailable because the required browser permission has not been granted'),
             '$desktop_notifications_request' => t('Grant permission'),
             '$mailhost' => ['mailhost', t('Email notifications sent from (hostname)'), get_pconfig(local_channel(), 'system', 'email_notify_host', App::get_hostname()), sprintf(t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'), App::get_hostname())],
-            '$always_show_in_notices' => array('always_show_in_notices', t('Show new wall posts, private messages and connections under Notices'), $always_show_in_notices, 1, '', $yes_no),
             '$permit_all_mentions' => ['permit_all_mentions', t('Accept messages from strangers which mention you'), get_pconfig(local_channel(), 'system', 'permit_all_mentions'), t('This setting bypasses normal permissions'), $yes_no],
             '$followed_tags' => ['followed_tags', t('Accept messages from strangers which include any of the following hashtags'), $followed, t('comma separated, do not include the #')],
             '$unless_mention_count' => ['unless_mention_count', t('Unless more than this many channels are mentioned'), $mention_count, t('0 for unlimited')],
             '$unless_tag_count' => ['unless_tag_count', t('Unless more than this many hashtags are used'), $tag_count, t('0 for unlimited')],
-            '$evdays' => array('evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')),
+            '$evdays' => ['evdays', t('Notify me of events this many days in advance'), $evdays, t('Must be greater than 0')],
             '$basic_addon' => $plugin['basic'],
             '$sec_addon' => $plugin['security'],
             '$notify_addon' => $plugin['notify'],
@@ -744,8 +626,8 @@ class Channel
             '$h_advn' => t('Advanced Account/Page Type Settings'),
             '$h_descadvn' => t('Change the behaviour of this account for special situations'),
             '$lbl_misc' => t('Miscellaneous'),
-            '$photo_path' => array('photo_path', t('Default photo upload folder name'), get_pconfig(local_channel(), 'system', 'photo_path'), t('%Y - current year, %m -  current month')),
-            '$attach_path' => array('attach_path', t('Default file upload folder name'), get_pconfig(local_channel(), 'system', 'attach_path'), t('%Y - current year, %m -  current month')),
+            '$photo_path' => ['photo_path', t('Default photo upload folder name'), get_pconfig(local_channel(), 'system', 'photo_path'), t('%Y - current year, %m -  current month')],
+            '$attach_path' => ['attach_path', t('Default file upload folder name'), get_pconfig(local_channel(), 'system', 'attach_path'), t('%Y - current year, %m -  current month')],
             '$menus' => $menu,
             '$menu_desc' => t('Personal menu to display in your channel pages'),
             '$removeme' => t('Remove Channel'),
@@ -758,7 +640,7 @@ class Channel
                     127 => t('no preference, use the system default'),
                 ]],
 
-            '$cal_first_day' => array('first_day', t('Calendar week begins on'), intval(get_pconfig(local_channel(), 'system', 'cal_first_day')), t('This varies by country/culture'),
+            '$cal_first_day' => ['first_day', t('Calendar week begins on'), intval(get_pconfig(local_channel(), 'system', 'cal_first_day')), t('This varies by country/culture'),
                 [0 => t('Sunday'),
                     1 => t('Monday'),
                     2 => t('Tuesday'),
@@ -766,10 +648,114 @@ class Channel
                     4 => t('Thursday'),
                     5 => t('Friday'),
                     6 => t('Saturday')
-                ]),
+                ]],
         ]);
 
         Hook::call('settings_form', $o);
         return $o;
     }
+
+    protected function change_permissions_role($channel, $role)
+    {
+        if ($role === 'custom') {
+            $this->set_custom_role($channel);
+        }
+        else {
+            $this->set_standard_role($channel, $role);
+        }
+        set_pconfig(local_channel(), 'system', 'permissions_role', $role);
+    }
+
+    protected function set_custom_role($channel)
+    {
+        $hide_presence = (((x($_POST, 'hide_presence')) && (intval($_POST['hide_presence']) == 1)) ? 1 : 0);
+        $def_group = ((x($_POST, 'group-selection')) ? notags(trim($_POST['group-selection'])) : '');
+        q(
+            "update channel set channel_default_group = '%s' where channel_id = %d",
+            dbesc($def_group),
+            intval(local_channel())
+        );
+
+        $global_perms = Permissions::Perms();
+
+        foreach ($global_perms as $k => $v) {
+            PermissionLimits::Set(local_channel(), $k, intval($_POST[$k]));
+        }
+        $acl = new AccessControl($channel);
+        $acl->set_from_array($_POST);
+        $x = $acl->get();
+
+        q(
+            "update channel set channel_allow_cid = '%s', channel_allow_gid = '%s',
+                    channel_deny_cid = '%s', channel_deny_gid = '%s' where channel_id = %d",
+            dbesc($x['allow_cid']),
+            dbesc($x['allow_gid']),
+            dbesc($x['deny_cid']),
+            dbesc($x['deny_gid']),
+            intval(local_channel())
+        );
+        set_pconfig(local_channel(), 'system', 'hide_online_status', $hide_presence);
+    }
+    protected function set_standard_role($channel, $role)
+    {
+        $role_permissions = PermissionRoles::role_perms($role);
+        if (!$role_permissions) {
+            notice('Permissions category could not be found.');
+            return;
+        }
+        $hide_presence = 1 - (intval($role_permissions['online']));
+        if ($role_permissions['default_collection']) {
+            $r = q(
+                "select hash from pgrp where uid = %d and gname = '%s' limit 1",
+                intval(local_channel()),
+                dbesc(t('Friends'))
+            );
+            if (!$r) {
+                AccessList::add(local_channel(), t('Friends'));
+                AccessList::member_add(local_channel(), t('Friends'), $channel['channel_hash']);
+                $r = q(
+                    "select hash from pgrp where uid = %d and gname = '%s' limit 1",
+                    intval(local_channel()),
+                    dbesc(t('Friends'))
+                );
+            }
+            if ($r) {
+                q(
+                    "update channel set channel_default_group = '%s', channel_allow_gid = '%s', channel_allow_cid = '', channel_deny_gid = '', channel_deny_cid = '' where channel_id = %d",
+                    dbesc($r[0]['hash']),
+                    dbesc('<' . $r[0]['hash'] . '>'),
+                    intval(local_channel())
+                );
+            } else {
+                notice(sprintf('Default access list \'%s\' not found. Please create and re-submit permission change.', t('Friends')) . EOL);
+                return;
+            }
+        } // no default permissions
+        else {
+            q(
+                "update channel set channel_default_group = '', channel_allow_gid = '', channel_allow_cid = '', channel_deny_gid = '',
+                         channel_deny_cid = '' where channel_id = %d",
+                intval(local_channel())
+            );
+        }
+
+        if ($role_permissions['perms_connect']) {
+            $x = Permissions::FilledPerms($role_permissions['perms_connect']);
+            $str = Permissions::serialise($x);
+            set_abconfig(local_channel(), $channel['channel_hash'], 'system', 'my_perms', $str);
+
+            $this->autoperms = intval($role_permissions['perms_auto']);
+        }
+
+        if ($role_permissions['limits']) {
+            foreach ($role_permissions['limits'] as $k => $v) {
+                PermissionLimits::Set(local_channel(), $k, $v);
+            }
+        }
+        if (array_key_exists('directory_publish', $role_permissions)) {
+            $this->publish = intval($role_permissions['directory_publish']);
+        }
+        set_pconfig(local_channel(), 'system', 'hide_online_status', $hide_presence);
+    }
+
 }

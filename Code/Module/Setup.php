@@ -390,11 +390,7 @@ class Setup extends Controller
         if (strlen($phpath)) {
             $passed = file_exists($phpath);
         } elseif (function_exists('shell_exec')) {
-            if (is_windows()) {
-                $phpath = trim(shell_exec('where php'));
-            } else {
-                $phpath = trim(shell_exec('which php'));
-            }
+            $phpath = trim(shell_exec('which php'));
             $passed = strlen($phpath);
         }
 
