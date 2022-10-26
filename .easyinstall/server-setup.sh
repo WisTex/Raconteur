@@ -68,8 +68,9 @@
 # Credits
 # -------
 #
-# The script is based on Thomas Willinghams script "debian-setup.sh"
-# which he used to install the red#matrix.
+# The script is based on
+# - Tom Wiedenhöfts (OJ Random) script homeinstall (for Hubzilla, ZAP,...) that was based on 
+# - Thomas Willinghams script "debian-setup.sh" which he used to install the red#matrix.
 #
 # The documentation for bash is here
 # https://www.gnu.org/software/bash/manual/bash.html
