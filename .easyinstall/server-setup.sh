@@ -463,6 +463,7 @@ function install_letsencrypt {
     snap refresh core
     print_info "install certbot via snap..."
     snap install --classic certbot
+    ln -s /snap/bin/certbot /usr/bin/certbot
     if [ $webserver = "nginx" ]
     then
         print_info "run certbot..."
@@ -472,7 +473,6 @@ function install_letsencrypt {
     elif [ $webserver = "apache" ]
     then
         print_info "run certbot ..."
-        ln -s /snap/bin/certbot /usr/bin/certbot
         certbot --apache -w $install_path -d $le_domain -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
         service apache2 restart
     fi
