@@ -2081,11 +2081,12 @@ class Libzot
 
     public static function fetch_conversation($channel, $mid)
     {
-
-        // Use Zotfinger to create a signed request
+        if (! PConfig::Get($channel['channel_id'], 'system', 'hyperdrive', true)) {
+            return false;
+        }
 
         logger('fetching conversation: ' . $mid, LOGGER_DEBUG);
-
+        // Use Zotfinger to create a signed request
         $a = Zotfinger::exec($mid, $channel);
 
         logger('received conversation: ' . print_r($a, true), LOGGER_DATA);
