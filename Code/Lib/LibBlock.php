@@ -137,3 +137,4 @@ class LibBlock
         }
         return $blocked;
     }
+}
