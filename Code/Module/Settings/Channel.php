@@ -132,7 +132,7 @@ class Channel
         }
         for ($x = 1; $x <= 16; $x++) {
             if(isset($_POST['vnotify' . $x])) {
-                $notify += intval($_POST['vnotify' . $x]);
+                $vnotify += intval($_POST['vnotify' . $x]);
             }
         }
 
