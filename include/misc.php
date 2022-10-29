@@ -96,7 +96,7 @@ function notags($string)
 
 // Basically explode(), but entries are trimmed and empty entries discarded.
 
-function strtoarr($separator = ',', $string) {
+function strtoarr($separator, $string) {
     $array = [];
     if ($string) {
         $tmp = explode($separator, $string);
