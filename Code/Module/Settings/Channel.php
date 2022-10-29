@@ -51,7 +51,7 @@ class Channel
             $this->change_permissions_role($channel, $role);
         }
 
-        // The post_comments permission is critical to privacy so we always allow you to set it, no matter what
+        // The post_comments permission is critical to privacy, so we always allow you to set it, no matter what
         // permission role is in place.
 
         $post_comments = array_key_exists('post_comments', $_POST) ? intval($_POST['post_comments']) : PERMS_SPECIFIC;
@@ -68,7 +68,6 @@ class Channel
         $username = ((x($_POST, 'username')) ? escape_tags(trim($_POST['username'])) : '');
         $timezone = ((x($_POST, 'timezone_select')) ? notags(trim($_POST['timezone_select'])) : '');
         $defloc = ((x($_POST, 'defloc')) ? notags(trim($_POST['defloc'])) : '');
-        $openid = ((x($_POST, 'openid_url')) ? notags(trim($_POST['openid_url'])) : '');
         $maxreq = ((x($_POST, 'maxreq')) ? intval($_POST['maxreq']) : 0);
         $expire = ((x($_POST, 'expire')) ? intval($_POST['expire']) : 0);
         $evdays = ((x($_POST, 'evdays')) ? intval($_POST['evdays']) : 3);
@@ -96,11 +95,7 @@ class Channel
         $profile_assign = ((x($_POST, 'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
         $permit_all_mentions = (($_POST['permit_all_mentions'] == 1) ? 1 : 0);
         $close_comment_days = (($_POST['close_comments']) ? intval($_POST['close_comments']) : 0);
-        if ($close_comment_days) {
-            set_pconfig(local_channel(), 'system', 'close_comments', $close_comment_days . ' days');
-        } else {
-            set_pconfig(local_channel(), 'system', 'close_comments', EMPTY_STR);
-        }
+        set_pconfig(local_channel(), 'system', 'close_comments', $close_comment_days ? $close_comment_days . ' days' : '');
 
         // allow a permission change to over-ride the autoperms setting from the form
         if (!isset($this->autoperms)) {
@@ -117,7 +112,7 @@ class Channel
             }
             $valid = $lat || $lon;
             if ($valid) {
-                PConfig::Set(local_channel(),'system', 'set_location', (string) $lat . ',' . (string) $lon);
+                PConfig::Set(local_channel(),'system', 'set_location', $lat . ',' . $lon);
             }
         }
 
@@ -129,86 +124,19 @@ class Channel
 
 
         $notify = 0;
-
-        if (x($_POST, 'notify1')) {
-            $notify += intval($_POST['notify1']);
-        }
-        if (x($_POST, 'notify2')) {
-            $notify += intval($_POST['notify2']);
-        }
-        if (x($_POST, 'notify3')) {
-            $notify += intval($_POST['notify3']);
-        }
-        if (x($_POST, 'notify4')) {
-            $notify += intval($_POST['notify4']);
-        }
-        if (x($_POST, 'notify5')) {
-            $notify += intval($_POST['notify5']);
-        }
-        if (x($_POST, 'notify6')) {
-            $notify += intval($_POST['notify6']);
-        }
-        if (x($_POST, 'notify7')) {
-            $notify += intval($_POST['notify7']);
-        }
-        if (x($_POST, 'notify8')) {
-            $notify += intval($_POST['notify8']);
-        }
-        if (x($_POST, 'notify10')) {
-            $notify += intval($_POST['notify10']);
-        }
-
-
         $vnotify = 0;
+        for ($x = 1; $x <= 10; $x++) {
+            if(isset($_POST['notify' . $x])) {
+                $notify += intval($_POST['notify' . $x]);
+            }
+        }
+        for ($x = 1; $x <= 16; $x++) {
+            if(isset($_POST['vnotify' . $x])) {
+                $notify += intval($_POST['vnotify' . $x]);
+            }
+        }
 
-        if (x($_POST, 'vnotify1')) {
-            $vnotify += intval($_POST['vnotify1']);
-        }
-        if (x($_POST, 'vnotify2')) {
-            $vnotify += intval($_POST['vnotify2']);
-        }
-        if (x($_POST, 'vnotify3')) {
-            $vnotify += intval($_POST['vnotify3']);
-        }
-        if (x($_POST, 'vnotify4')) {
-            $vnotify += intval($_POST['vnotify4']);
-        }
-        if (x($_POST, 'vnotify5')) {
-            $vnotify += intval($_POST['vnotify5']);
-        }
-        if (x($_POST, 'vnotify6')) {
-            $vnotify += intval($_POST['vnotify6']);
-        }
-        if (x($_POST, 'vnotify7')) {
-            $vnotify += intval($_POST['vnotify7']);
-        }
-        if (x($_POST, 'vnotify8')) {
-            $vnotify += intval($_POST['vnotify8']);
-        }
-        if (x($_POST, 'vnotify9')) {
-            $vnotify += intval($_POST['vnotify9']);
-        }
-        if (x($_POST, 'vnotify10')) {
-            $vnotify += intval($_POST['vnotify10']);
-        }
-        if (x($_POST, 'vnotify11') && is_site_admin()) {
-            $vnotify += intval($_POST['vnotify11']);
-        }
-        if (x($_POST, 'vnotify12')) {
-            $vnotify += intval($_POST['vnotify12']);
-        }
-        if (x($_POST, 'vnotify13')) {
-            $vnotify += intval($_POST['vnotify13']);
-        }
-        if (x($_POST, 'vnotify14')) {
-            $vnotify += intval($_POST['vnotify14']);
-        }
-        if (x($_POST, 'vnotify15')) {
-            $vnotify += intval($_POST['vnotify15']);
-        }
-        if (x($_POST, 'vnotify16')) {
-            $vnotify += intval($_POST['vnotify16']);
-        }
+        date_default_timezone_set($timezone ?: 'UTC');
 
         $name_change = false;
 
@@ -221,25 +149,9 @@ class Channel
             }
         }
 
-        if ($timezone != $channel['channel_timezone']) {
-            if (strlen($timezone)) {
-                date_default_timezone_set($timezone);
-            }
-        }
+        $ntags = strtoarr(',', $_POST['followed_tags']);
 
-        $followed_tags = $_POST['followed_tags'];
-        $ntags = [];
-        if ($followed_tags) {
-            $tags = explode(',', $followed_tags);
-            foreach ($tags as $t) {
-                $t = trim($t);
-                if ($t) {
-                    $ntags[] = $t;
-                }
-            }
-        }
-
-        set_pconfig(local_channel(), 'system', 'followed_tags', ($ntags) ? $ntags : EMPTY_STR);
+        set_pconfig(local_channel(), 'system', 'followed_tags', ($ntags) ?: EMPTY_STR);
         set_pconfig(local_channel(), 'system', 'use_browser_location', $allow_location);
         set_pconfig(local_channel(), 'system', 'suggestme', $suggestme);
         set_pconfig(local_channel(), 'system', 'post_newfriend', $post_newfriend);
@@ -316,7 +228,7 @@ class Channel
         Libsync::build_sync_packet();
 
         goaway(z_root() . '/settings');
-        return; // NOTREACHED
+
     }
 
     public function get()
@@ -351,7 +263,7 @@ class Channel
 
         foreach ($global_perms as $k => $perm) {
             $options = [];
-            $can_be_public = ((strstr($k, 'view') || ($k === 'post_comments' && $anon_comments)) ? true : false);
+            $can_be_public = strstr($k, 'view') || ($k === 'post_comments' && $anon_comments);
             foreach ($perm_opts as $opt) {
                 if ($opt[1] == PERMS_PUBLIC && (!$can_be_public)) {
                     continue;
@@ -456,7 +368,7 @@ class Channel
         if ($m1) {
             $menu = [];
             $current = get_pconfig(local_channel(), 'system', 'channel_menu');
-            $menu[] = ['name' => '', 'selected' => ((!$current) ? true : false)];
+            $menu[] = ['name' => '', 'selected' => !$current];
             foreach ($m1 as $m) {
                 $menu[] = ['name' => htmlspecialchars($m['menu_name'], ENT_COMPAT, 'UTF-8'), 'selected' => (($m['menu_name'] === $current) ? ' selected="selected" ' : false)];
             }
@@ -487,7 +399,7 @@ class Channel
             $activitypub = '<input type="hidden" name="activitypub" value="' . intval(ACTIVITYPUB_ENABLED) . '" >' . EOL;
         }
 
-        $permissions_set = (($permissions_role != 'custom') ? true : false);
+        $permissions_set = $permissions_role != 'custom';
 
         $perm_roles = PermissionRoles::roles();
         // Don't permit changing to a collection (@TODO unless there is a mechanism to select the channel_parent)
@@ -561,7 +473,7 @@ class Channel
             '$deny_gid' => acl2json($perm_defaults['deny_gid']),
             '$suggestme' => $suggestme,
             '$group_select' => $group_select,
-            '$can_change_role' => ((in_array($permissions_role, ['collection', 'collection_restricted'])) ? false : true),
+            '$can_change_role' => !in_array($permissions_role, ['collection', 'collection_restricted']),
             '$permissions_role' => $permissions_role,
             '$role' => ['permissions_role', t('Channel type and privacy'), $permissions_role, '', $perm_roles, ' onchange="update_role_text(); return false;"'],
             '$defpermcat' => ['defpermcat', t('Default Permissions Role'), $default_permcat, '', $permcats],

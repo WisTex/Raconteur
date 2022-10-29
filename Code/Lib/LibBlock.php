@@ -116,4 +116,25 @@ class LibBlock
         );
         return ($blocks) ?: [];
     }
+
+    public static function check_clones($channel_id, $identity) {
+
+        $blocked = false;
+        $blocking = LibBlock::fetch($channel_id, BLOCKTYPE_SERVER);
+        if ($blocking) {
+            $hubs = q("select hubloc_url from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0",
+                dbesc($identity)
+            );
+            if ($hubs) {
+                foreach ($hubs as $hub) {
+                    foreach ($blocking as $block) {
+                        if (str_contains($hub['hubloc_url'], $block['block_entity'])) {
+                            $blocked = true;
+                        }
+                    }
+                }
+            }
+        }
+        return $blocked;
+    }
 }

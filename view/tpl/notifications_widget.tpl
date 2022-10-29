@@ -53,7 +53,7 @@
 			return;
 		{{else}}
 			{{if $module == 'display'}}
-			history.pushState(stateObj, '', 'display/' + b64mid);
+			history.pushState(stateObj, '', 'display?mid=' + b64mid);
 			{{/if}}
 
 			{{if $module == 'hq'}}
