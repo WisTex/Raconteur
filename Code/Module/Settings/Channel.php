@@ -149,7 +149,7 @@ class Channel
             }
         }
 
-        $ntags = strtoarr(string: $_POST['followed_tags']);
+        $ntags = strtoarr(',', $_POST['followed_tags']);
 
         set_pconfig(local_channel(), 'system', 'followed_tags', ($ntags) ?: EMPTY_STR);
         set_pconfig(local_channel(), 'system', 'use_browser_location', $allow_location);
