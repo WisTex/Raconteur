@@ -575,7 +575,14 @@ class Enotify
         }
 
         // create notification entry in DB
-        $seen = 0;
+
+        // Mark some notifications as seen right away
+        // Note! The notification have to be created, because they are used to send emails
+        // So the easiest solution to hide them from Notices is to mark them as seen right away.
+        // Another option would be to not add them to the DB, and change how emails are handled.
+        // These are duplicate notifications which will be shown elsewhere.
+        $seen = ($params['type'] == NOTIFY_WALL && $params['item']['item_blocked'] != ITEM_MODERATED)
+            || $params['type'] == NOTIFY_INTRO;
 
         $e = q(
             "select * from notify where otype = '%s' and xname = '%s' and verb = '%s' and link = '%s' and ntype = %d limit 1",
