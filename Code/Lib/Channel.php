@@ -979,7 +979,7 @@ class Channel
                 intval($channel_id)
             );
 
-            if ($r) {
+            if ($r && $r[0]['content']) {
                 $ret['photo'] = [
                     'type' => $r[0]['mimetype'],
                     'data' => (($r[0]['os_storage'])
