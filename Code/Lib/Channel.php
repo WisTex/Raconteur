@@ -243,9 +243,9 @@ class Channel
     /**
      * @brief Return the total number of channels on this site.
      *
-     * No filtering is performed except to check PAGE_REMOVED.
+     * No filtering is performed except to check channel_removed.
      *
-     * @returns int|booleean
+     * @returns int|bool
      *   on error returns boolean false
      */
     public static function channel_total()
