@@ -30,14 +30,11 @@ class Channel
 
     public function post()
     {
-
         $channel = App::get_channel();
 
         check_form_security_token_redirectOnErr('/settings', 'settings');
 
         Hook::call('settings_post', $_POST);
-
-        $set_perms = '';
 
         $role = ((x($_POST, 'permissions_role')) ? notags(trim($_POST['permissions_role'])) : '');
         $oldrole = get_pconfig(local_channel(), 'system', 'permissions_role');
@@ -47,7 +44,7 @@ class Channel
             $role = $oldrole;
         }
 
-        if (($role != $oldrole) || ($role === 'custom')) {
+        if (($role !== $oldrole) || ($role === 'custom')) {
             $this->change_permissions_role($channel, $role);
         }
 
@@ -177,9 +174,9 @@ class Channel
         set_pconfig(local_channel(), 'system', 'noindex', $noindex);
         set_pconfig(local_channel(), 'system', 'preview_outbox', $preview_outbox);
 
-
         $r = q(
-            "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', channel_notifyflags = %d, channel_max_friend_req = %d, channel_expire_days = %d $set_perms where channel_id = %d",
+            "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', 
+                   channel_notifyflags = %d, channel_max_friend_req = %d, channel_expire_days = %d where channel_id = %d",
             dbesc($username),
             intval($pageflags),
             dbesc($timezone),

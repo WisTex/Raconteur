@@ -22,6 +22,14 @@ services:
         XDEBUG_SESSION_START: lando
     config:
       php: .vscode/php.ini
+    build_as_root:
+      - apt-get update -y
+      - apt-get install cron -y
+      - cp -f /app/.lando/cron-helper.sh /usr/local/bin/docker-php-entrypoint
+    run_as_root:
+      - service cron start
+    run:
+      - crontab /app/.lando/cron.txt
 proxy:
   mailservice:
     - mail.lndo.site
