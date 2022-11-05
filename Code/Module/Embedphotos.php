@@ -75,7 +75,7 @@ class Embedphotos extends Controller
         if ($channel) {
             $resolution = 1;
             $r = q(
-                "select mimetype, height, width, title from photo where resource_id = '%s' and resolution = %d and uid = %d limit 1",
+                "select mimetype, height, width, title from photo where resource_id = '%s' and imgscale = %d and uid = %d limit 1",
                 dbesc($resource),
                 intval($resolution),
                 intval($channel['channel_id'])
