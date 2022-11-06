@@ -1371,7 +1371,8 @@ class Libzot
                     IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
                     $j = json_decode($AS->meta['signed_data'], true);
                     if ($j) {
-                        IConfig::Set($arr, 'activitypub', 'rawmsg', json_encode(JSalmon::unpack($j['data'])), true);
+                        ObjCache::Set($arr['mid'], json_encode(JSalmon::unpack($j['data'])));
+                        // IConfig::Set($arr, 'activitypub', 'rawmsg', json_encode(JSalmon::unpack($j['data'])), false);
                     }
                 }
 

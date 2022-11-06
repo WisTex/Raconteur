@@ -17,6 +17,7 @@ use Code\Lib\MarkdownSoap;
 use Code\Lib\MessageFilter;
 use Code\Lib\Config;
 use Code\Lib\IConfig;
+use Code\Lib\ObjCache;
 use Code\Lib\PConfig;
 use Code\Lib\LibBlock;
 use Code\Lib\ThreadListener;
@@ -3777,6 +3778,13 @@ function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
     q("delete from iconfig where iid = %d",
         intval($item['id'])
     );
+
+    $n = q("select id from item where mid = '%s'",
+        dbesc($item['mid'])
+    );
+    if (!$n) {
+        ObjCache::Delete($item['mid']);
+    }
 
     q("delete from term where oid = %d and otype = %d",
         intval($item['id']),

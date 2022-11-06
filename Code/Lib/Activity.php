@@ -312,7 +312,8 @@ class Activity
         if ($items) {
             $x = [];
             foreach ($items as $i) {
-                $m = get_iconfig($i['id'], 'activitypub', 'rawmsg');
+                //$m = get_iconfig($i['id'], 'activitypub', 'rawmsg');
+                $m = ObjCache::Get($i['mid']);
                 if ($m) {
                     $t = json_decode($m, true);
                 } else {
@@ -3335,7 +3336,8 @@ class Activity
         }
 
 
-        set_iconfig($s, 'activitypub', 'rawmsg', $act->raw, 0);
+        // set_iconfig($s, 'activitypub', 'rawmsg', $act->raw, 0);
+        ObjCache::Set($s['mid'],$act->raw);
 
         // Restrict html caching to ActivityPub senders.
         // Zot has dynamic content and this library is used by both.
@@ -3647,7 +3649,8 @@ class Activity
 
             if (tgroup_check($channel['channel_id'], $item)) {
                 // for relayed deliveries, make sure we keep a copy of the signed original
-                set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 0);
+                // set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 0);
+                ObjCache::Set($item['mid'], $act->raw);
                 logger('allowed: tgroup');
                 $allowed = true;
             }
