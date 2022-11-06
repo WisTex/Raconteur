@@ -284,8 +284,8 @@ function hubloc_mark_as_down($posturl)
 function hubloc_delete($hubloc) {
     if (is_array($hubloc) && array_key_exists('hubloc_id',$hubloc)) {
         q("update hubloc set hubloc_deleted = 1, hubloc_updated = '%s' where hubloc_id = %d",
+            dbesc(datetime_convert()),
             intval($hubloc['hubloc_id']),
-            dbesc(datetime_convert())
         );
     }
 }
