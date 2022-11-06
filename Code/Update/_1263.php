@@ -16,6 +16,9 @@ class _1263
                 break;
             }
             foreach ($results as $result) {
+                if (!$result['mid']) {
+                    continue;
+                }
                 ObjCache::Set($result['mid'],$result['v']);
                 q("delete from iconfig where id = %d",
                     intval($result['id'])
