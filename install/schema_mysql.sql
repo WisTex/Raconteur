@@ -1,7 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS `abconfig` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `chan` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `chan` int unsigned NOT NULL DEFAULT 0 ,
   `xchan` varchar(255) NOT NULL DEFAULT '',
   `cat` varchar(255) NOT NULL DEFAULT '',
   `k` varchar(255) NOT NULL DEFAULT '',
@@ -13,28 +13,28 @@ CREATE TABLE IF NOT EXISTS `abconfig` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `abook` (
-  `abook_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `abook_account` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `abook_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `abook_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `abook_account` int unsigned NOT NULL DEFAULT 0 ,
+  `abook_channel` int unsigned NOT NULL DEFAULT 0 ,
   `abook_xchan` varchar(255) NOT NULL DEFAULT '',
   `abook_alias` varchar(255) NOT NULL DEFAULT '',
-  `abook_closeness` tinyint(3) unsigned NOT NULL DEFAULT 99,
+  `abook_closeness` tinyint unsigned NOT NULL DEFAULT 99,
   `abook_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_connected` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `abook_dob` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `abook_flags` int(11) NOT NULL DEFAULT 0 ,
-  `abook_censor` int(11) NOT NULL DEFAULT 0 ,
-  `abook_blocked` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_ignored` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_hidden` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_archived` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_pending` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_unconnected` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_self` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_rself` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_feed` tinyint(4) NOT NULL DEFAULT 0 ,
-  `abook_not_here` tinyint(4) NOT NULL DEFAULT 0 ,
+  `abook_flags` int NOT NULL DEFAULT 0 ,
+  `abook_censor` int NOT NULL DEFAULT 0 ,
+  `abook_blocked` tinyint NOT NULL DEFAULT 0 ,
+  `abook_ignored` tinyint NOT NULL DEFAULT 0 ,
+  `abook_hidden` tinyint NOT NULL DEFAULT 0 ,
+  `abook_archived` tinyint NOT NULL DEFAULT 0 ,
+  `abook_pending` tinyint NOT NULL DEFAULT 0 ,
+  `abook_unconnected` tinyint NOT NULL DEFAULT 0 ,
+  `abook_self` tinyint NOT NULL DEFAULT 0 ,
+  `abook_rself` tinyint NOT NULL DEFAULT 0 ,
+  `abook_feed` tinyint NOT NULL DEFAULT 0 ,
+  `abook_not_here` tinyint NOT NULL DEFAULT 0 ,
   `abook_profile` varchar(255) NOT NULL DEFAULT '',
   `abook_incl` text NOT NULL,
   `abook_excl` text NOT NULL,
@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS `abook` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `account` (
-  `account_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `account_parent` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `account_default_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `account_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `account_parent` int unsigned NOT NULL DEFAULT 0 ,
+  `account_default_channel` int unsigned NOT NULL DEFAULT 0 ,
   `account_salt` varchar(255) NOT NULL DEFAULT '',
   `account_password` varchar(255) NOT NULL DEFAULT '',
   `account_email` varchar(255) NOT NULL DEFAULT '',
@@ -73,13 +73,13 @@ CREATE TABLE IF NOT EXISTS `account` (
   `account_language` varchar(16) NOT NULL DEFAULT 'en',
   `account_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `account_lastlog` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `account_flags` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `account_roles` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `account_flags` int unsigned NOT NULL DEFAULT 0 ,
+  `account_roles` int unsigned NOT NULL DEFAULT 0 ,
   `account_reset` varchar(255) NOT NULL DEFAULT '',
   `account_expires` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `account_expire_notified` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `account_service_class` varchar(255) NOT NULL DEFAULT '',
-  `account_level` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `account_level` int unsigned NOT NULL DEFAULT 0 ,
   `account_password_changed` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   PRIMARY KEY (`account_id`),
   KEY `account_email` (`account_email`(191)),
@@ -96,13 +96,13 @@ CREATE TABLE IF NOT EXISTS `account` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `addon` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `aname` varchar(255) NOT NULL DEFAULT '',
   `version` varchar(255) NOT NULL DEFAULT '',
-  `installed` tinyint(1) NOT NULL DEFAULT 0 ,
-  `hidden` tinyint(1) NOT NULL DEFAULT 0 ,
-  `tstamp` bigint(20) NOT NULL DEFAULT 0 ,
-  `plugin_admin` tinyint(1) NOT NULL DEFAULT 0 ,
+  `installed` tinyint NOT NULL DEFAULT 0 ,
+  `hidden` tinyint NOT NULL DEFAULT 0 ,
+  `tstamp` bigint NOT NULL DEFAULT 0 ,
+  `plugin_admin` tinyint NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`),
   KEY `hidden` (`hidden`),
   KEY `aname` (`aname`(191)),
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `addon` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `app` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `app_id` varchar(255) NOT NULL DEFAULT '',
   `app_sig` varchar(255) NOT NULL DEFAULT '',
   `app_author` varchar(255) NOT NULL DEFAULT '',
@@ -119,15 +119,15 @@ CREATE TABLE IF NOT EXISTS `app` (
   `app_url` varchar(255) NOT NULL DEFAULT '',
   `app_photo` varchar(255) NOT NULL DEFAULT '',
   `app_version` varchar(255) NOT NULL DEFAULT '',
-  `app_channel` int(11) NOT NULL DEFAULT 0 ,
+  `app_channel` int NOT NULL DEFAULT 0 ,
   `app_addr` varchar(255) NOT NULL DEFAULT '',
   `app_price` varchar(255) NOT NULL DEFAULT '',
   `app_page` varchar(255) NOT NULL DEFAULT '',
   `app_requires` varchar(512) NOT NULL DEFAULT '',
-  `app_deleted` int(11) NOT NULL DEFAULT 0 ,
-  `app_system` int(11) NOT NULL DEFAULT 0 ,
+  `app_deleted` int NOT NULL DEFAULT 0 ,
+  `app_system` int NOT NULL DEFAULT 0 ,
   `app_plugin` varchar(255) NOT NULL DEFAULT '',
-  `app_options` int(11) NOT NULL DEFAULT 0 ,
+  `app_options` int NOT NULL DEFAULT 0 ,
   `app_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `app_edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   PRIMARY KEY (`id`),
@@ -146,10 +146,10 @@ CREATE TABLE IF NOT EXISTS `app` (
 
 
 CREATE TABLE IF NOT EXISTS `atoken` (
-  `atoken_id` int(11) NOT NULL AUTO_INCREMENT,
+  `atoken_id` int NOT NULL AUTO_INCREMENT,
   `atoken_guid` varchar(255) NOT NULL DEFAULT '',
-  `atoken_aid` int(11) NOT NULL DEFAULT 0 ,
-  `atoken_uid` int(11) NOT NULL DEFAULT 0 ,
+  `atoken_aid` int NOT NULL DEFAULT 0 ,
+  `atoken_uid` int NOT NULL DEFAULT 0 ,
   `atoken_name` varchar(255) NOT NULL DEFAULT '',
   `atoken_token` varchar(255) NOT NULL DEFAULT '',
   `atoken_expires` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -163,20 +163,20 @@ CREATE TABLE IF NOT EXISTS `atoken` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `attach` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `aid` int unsigned NOT NULL DEFAULT 0 ,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
   `hash` varchar(255) NOT NULL DEFAULT '',
   `creator` varchar(255) NOT NULL DEFAULT '',
   `filename` varchar(4095) NOT NULL DEFAULT '',
   `filetype` varchar(255) NOT NULL DEFAULT '',
-  `filesize` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `revision` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `filesize` int unsigned NOT NULL DEFAULT 0 ,
+  `revision` int unsigned NOT NULL DEFAULT 0 ,
   `folder` varchar(255) NOT NULL DEFAULT '',
-  `flags` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `is_dir` tinyint(1) NOT NULL DEFAULT 0 ,
-  `is_photo` tinyint(1) NOT NULL DEFAULT 0 ,
-  `os_storage` tinyint(1) NOT NULL DEFAULT 0 ,
+  `flags` int unsigned NOT NULL DEFAULT 0 ,
+  `is_dir` tinyint NOT NULL DEFAULT 0 ,
+  `is_photo` tinyint NOT NULL DEFAULT 0 ,
+  `os_storage` tinyint NOT NULL DEFAULT 0 ,
   `os_path` mediumtext NOT NULL,
   `display_path` mediumtext NOT NULL,
   `content` longblob NOT NULL,
@@ -205,10 +205,10 @@ CREATE TABLE IF NOT EXISTS `attach` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `block` (
-  `block_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `block_channel_id` int(10) UNSIGNED NOT NULL,
+  `block_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `block_channel_id` int UNSIGNED NOT NULL,
   `block_entity` varchar(1023) NOT NULL,
-  `block_type` int(11) NOT NULL,
+  `block_type` int NOT NULL,
   `block_comment` mediumtext NOT NULL,
   PRIMARY KEY (`block_id`),
   KEY `block_channel_id` (`block_channel_id`),
@@ -224,9 +224,9 @@ CREATE TABLE IF NOT EXISTS `cache` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `cal` (
-  `cal_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `cal_aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `cal_uid` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `cal_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `cal_aid` int unsigned NOT NULL DEFAULT 0 ,
+  `cal_uid` int unsigned NOT NULL DEFAULT 0 ,
   `cal_hash` varchar(255) NOT NULL DEFAULT '',
   `cal_name` varchar(255) NOT NULL DEFAULT '',
   `uri` varchar(1023) NOT NULL DEFAULT '',
@@ -244,9 +244,9 @@ CREATE TABLE IF NOT EXISTS `cal` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `channel` (
-  `channel_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `channel_account_id` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `channel_primary` tinyint(1) unsigned NOT NULL DEFAULT 0 ,
+  `channel_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `channel_account_id` int unsigned NOT NULL DEFAULT 0 ,
+  `channel_primary` tinyint unsigned NOT NULL DEFAULT 0 ,
   `channel_name` varchar(255) NOT NULL DEFAULT '',
   `channel_parent` varchar(255) NOT NULL DEFAULT '',
   `channel_address` varchar(255) NOT NULL DEFAULT '',
@@ -259,23 +259,23 @@ CREATE TABLE IF NOT EXISTS `channel` (
   `channel_startpage` varchar(255) NOT NULL DEFAULT '',
   `channel_pubkey` text NOT NULL,
   `channel_prvkey` text NOT NULL,
-  `channel_notifyflags` int(10) unsigned NOT NULL DEFAULT 65535,
-  `channel_pageflags` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `channel_notifyflags` int unsigned NOT NULL DEFAULT 65535,
+  `channel_pageflags` int unsigned NOT NULL DEFAULT 0 ,
   `channel_dirdate` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `channel_lastpost` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `channel_deleted` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `channel_active` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `channel_max_anon_mail` int(10) unsigned NOT NULL DEFAULT 10,
-  `channel_max_friend_req` int(10) unsigned NOT NULL DEFAULT 10,
-  `channel_expire_days` int(11) NOT NULL DEFAULT 0 ,
+  `channel_max_anon_mail` int unsigned NOT NULL DEFAULT 10,
+  `channel_max_friend_req` int unsigned NOT NULL DEFAULT 10,
+  `channel_expire_days` int NOT NULL DEFAULT 0 ,
   `channel_passwd_reset` varchar(255) NOT NULL DEFAULT '',
   `channel_default_group` varchar(255) NOT NULL DEFAULT '',
   `channel_allow_cid` mediumtext NOT NULL,
   `channel_allow_gid` mediumtext NOT NULL,
   `channel_deny_cid` mediumtext NOT NULL,
   `channel_deny_gid` mediumtext NOT NULL,
-  `channel_removed` tinyint(1) NOT NULL DEFAULT 0 ,
-  `channel_system` tinyint(1) NOT NULL DEFAULT 0 ,
+  `channel_removed` tinyint NOT NULL DEFAULT 0 ,
+  `channel_system` tinyint NOT NULL DEFAULT 0 ,
   `channel_moved` varchar(255) NOT NULL DEFAULT '',
   `channel_password` varchar(255) NOT NULL,
   `channel_salt` varchar(255) NOT NULL,
@@ -306,8 +306,8 @@ CREATE TABLE IF NOT EXISTS `channel` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `chat` (
-  `chat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `chat_room` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `chat_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `chat_room` int unsigned NOT NULL DEFAULT 0 ,
   `chat_xchan` varchar(255) NOT NULL DEFAULT '',
   `chat_text` mediumtext NOT NULL,
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -318,8 +318,8 @@ CREATE TABLE IF NOT EXISTS `chat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `chatpresence` (
-  `cp_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `cp_room` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `cp_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `cp_room` int unsigned NOT NULL DEFAULT 0 ,
   `cp_xchan` varchar(255) NOT NULL DEFAULT '',
   `cp_last` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `cp_status` varchar(255) NOT NULL DEFAULT '',
@@ -332,13 +332,13 @@ CREATE TABLE IF NOT EXISTS `chatpresence` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `chatroom` (
-  `cr_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `cr_aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `cr_uid` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `cr_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `cr_aid` int unsigned NOT NULL DEFAULT 0 ,
+  `cr_uid` int unsigned NOT NULL DEFAULT 0 ,
   `cr_name` varchar(255) NOT NULL DEFAULT '',
   `cr_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `cr_edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `cr_expire` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `cr_expire` int unsigned NOT NULL DEFAULT 0 ,
   `allow_cid` mediumtext NOT NULL,
   `allow_gid` mediumtext NOT NULL,
   `deny_cid` mediumtext NOT NULL,
@@ -358,12 +358,12 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `redirect_uri` varchar(200) NOT NULL DEFAULT '',
   `clname` text,
   `icon` text,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
+  `uid` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`client_id`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `config` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `cat` varchar(255) NOT NULL DEFAULT '',
   `k` varchar(255) NOT NULL DEFAULT '',
   `v` text NOT NULL,
@@ -372,8 +372,8 @@ CREATE TABLE IF NOT EXISTS `config` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `dreport` (
-  `dreport_id` int(11) NOT NULL AUTO_INCREMENT,
-  `dreport_channel` int(11) NOT NULL DEFAULT 0 ,
+  `dreport_id` int NOT NULL AUTO_INCREMENT,
+  `dreport_channel` int NOT NULL DEFAULT 0 ,
   `dreport_mid` varchar(255) NOT NULL DEFAULT '',
   `dreport_site` varchar(255) NOT NULL DEFAULT '',
   `dreport_recip` varchar(255) NOT NULL DEFAULT '',
@@ -393,10 +393,10 @@ CREATE TABLE IF NOT EXISTS `dreport` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `event` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
-  `cal_id` int(11) unsigned NOT NULL DEFAULT 0 ,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `aid` int unsigned NOT NULL DEFAULT 0 ,
+  `uid` int NOT NULL DEFAULT 0 ,
+  `cal_id` int unsigned NOT NULL DEFAULT 0 ,
   `event_xchan` varchar(255) NOT NULL DEFAULT '',
   `event_hash` varchar(255) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -407,19 +407,19 @@ CREATE TABLE IF NOT EXISTS `event` (
   `description` text NOT NULL,
   `location` text NOT NULL,
   `etype` varchar(255) NOT NULL DEFAULT '',
-  `nofinish` tinyint(1) NOT NULL DEFAULT 0 ,
-  `adjust` tinyint(1) NOT NULL DEFAULT 1,
-  `dismissed` tinyint(1) NOT NULL DEFAULT 0 ,
+  `nofinish` tinyint NOT NULL DEFAULT 0 ,
+  `adjust` tinyint NOT NULL DEFAULT 1,
+  `dismissed` tinyint NOT NULL DEFAULT 0 ,
   `allow_cid` mediumtext NOT NULL,
   `allow_gid` mediumtext NOT NULL,
   `deny_cid` mediumtext NOT NULL,
   `deny_gid` mediumtext NOT NULL,
   `event_status` varchar(255) NOT NULL DEFAULT '',
   `event_status_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `event_percent` smallint(6) NOT NULL DEFAULT 0 ,
+  `event_percent` smallint NOT NULL DEFAULT 0 ,
   `event_repeat` text NOT NULL,
-  `event_sequence` smallint(6) NOT NULL DEFAULT 0 ,
-  `event_priority` smallint(6) NOT NULL DEFAULT 0 ,
+  `event_sequence` smallint NOT NULL DEFAULT 0 ,
+  `event_priority` smallint NOT NULL DEFAULT 0 ,
   `event_vdata` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
@@ -439,11 +439,11 @@ CREATE TABLE IF NOT EXISTS `event` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `pgrp` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(255) NOT NULL DEFAULT '',
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `visible` tinyint(1) NOT NULL DEFAULT 0 ,
-  `deleted` tinyint(1) NOT NULL DEFAULT 0 ,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
+  `visible` tinyint NOT NULL DEFAULT 0 ,
+  `deleted` tinyint NOT NULL DEFAULT 0 ,
   `gname` varchar(255) NOT NULL DEFAULT '',
   `rule` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
@@ -456,9 +456,9 @@ CREATE TABLE IF NOT EXISTS `pgrp` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `pgrp_member` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `gid` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
+  `gid` int unsigned NOT NULL DEFAULT 0 ,
   `xchan` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
@@ -467,12 +467,12 @@ CREATE TABLE IF NOT EXISTS `pgrp_member` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `hook` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `hook` varchar(255) NOT NULL DEFAULT '',
   `file` varchar(255) NOT NULL DEFAULT '',
   `fn` varchar(255) NOT NULL DEFAULT '',
   `priority` smallint NOT NULL DEFAULT 0 ,
-  `hook_version` int(11) NOT NULL DEFAULT 0 ,
+  `hook_version` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`),
   KEY `hook` (`hook`(191)),
   KEY `priority` (`priority`),
@@ -481,15 +481,15 @@ CREATE TABLE IF NOT EXISTS `hook` (
 
 
 CREATE TABLE IF NOT EXISTS `hubloc` (
-  `hubloc_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `hubloc_id` int unsigned NOT NULL AUTO_INCREMENT,
   `hubloc_guid` varchar(255) NOT NULL DEFAULT '',
   `hubloc_guid_sig` text NOT NULL,
   `hubloc_id_url` varchar(255) NOT NULL DEFAULT '0',
   `hubloc_hash` varchar(255) NOT NULL DEFAULT '',
   `hubloc_addr` varchar(255) NOT NULL DEFAULT '',
   `hubloc_network` varchar(255) NOT NULL DEFAULT '',
-  `hubloc_flags` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `hubloc_status` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `hubloc_flags` int unsigned NOT NULL DEFAULT 0 ,
+  `hubloc_status` int unsigned NOT NULL DEFAULT 0 ,
   `hubloc_url` varchar(255) NOT NULL DEFAULT '',
   `hubloc_url_sig` text NOT NULL,
   `hubloc_site_id` varchar(255) NOT NULL DEFAULT '',
@@ -499,10 +499,10 @@ CREATE TABLE IF NOT EXISTS `hubloc` (
   `hubloc_sitekey` text NOT NULL,
   `hubloc_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `hubloc_connected` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `hubloc_primary` tinyint(1) NOT NULL DEFAULT 0 ,
-  `hubloc_orphancheck` tinyint(1) NOT NULL DEFAULT 0 ,
-  `hubloc_error` tinyint(1) NOT NULL DEFAULT 0 ,
-  `hubloc_deleted` tinyint(1) NOT NULL DEFAULT 0 ,
+  `hubloc_primary` tinyint NOT NULL DEFAULT 0 ,
+  `hubloc_orphancheck` tinyint NOT NULL DEFAULT 0 ,
+  `hubloc_error` tinyint NOT NULL DEFAULT 0 ,
+  `hubloc_deleted` tinyint NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`hubloc_id`),
   KEY `hubloc_url` (`hubloc_url`(191)),
   KEY `hubloc_site_id` (`hubloc_site_id`(191)),
@@ -524,12 +524,12 @@ CREATE TABLE IF NOT EXISTS `hubloc` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `iconfig` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `iid` int(11) NOT NULL DEFAULT 0 ,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `iid` int NOT NULL DEFAULT 0 ,
   `cat` varchar(255) NOT NULL DEFAULT '',
   `k` varchar(255) NOT NULL DEFAULT '',
   `v` mediumtext NOT NULL,
-  `sharing` int(11) NOT NULL DEFAULT 0 ,
+  `sharing` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`),
   KEY `iid` (`iid`),
   KEY `cat` (`cat`(191)),
@@ -538,15 +538,15 @@ CREATE TABLE IF NOT EXISTS `iconfig` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `item` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `mid` varchar(512) NOT NULL DEFAULT '',
   `uuid` varchar(255) NOT NULL DEFAULT '',
-  `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `parent` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `aid` int unsigned NOT NULL DEFAULT 0 ,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
+  `parent` int unsigned NOT NULL DEFAULT 0 ,
   `parent_mid` varchar(512) NOT NULL DEFAULT '',
   `thr_parent` varchar(512) NOT NULL DEFAULT '',
-  `item_level` int(10) unsigned NOT NULL DEFAULT 0,
+  `item_level` int unsigned NOT NULL DEFAULT 0,
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `expires` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -565,7 +565,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `html` mediumtext NOT NULL,
   `app` varchar(255) NOT NULL DEFAULT '',
   `lang` varchar(255) NOT NULL DEFAULT '',
-  `revision` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `revision` int unsigned NOT NULL DEFAULT 0 ,
   `verb` varchar(255) NOT NULL DEFAULT '',
   `obj_type` varchar(255) NOT NULL DEFAULT '',
   `obj` text NOT NULL,
@@ -588,32 +588,32 @@ CREATE TABLE IF NOT EXISTS `item` (
   `allow_gid` mediumtext NOT NULL,
   `deny_cid` mediumtext NOT NULL,
   `deny_gid` mediumtext NOT NULL,
-  `item_restrict` int(11) NOT NULL DEFAULT 0 ,
-  `item_flags` int(11) NOT NULL DEFAULT 0 ,
-  `item_private` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_origin` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_unseen` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_starred` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_uplink` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_consensus` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_wall` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_thread_top` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_notshown` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_nsfw` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_relay` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_mentionsme` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_nocomment` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_obscured` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_verified` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_retained` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_rss` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_deleted` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_type` int(11) NOT NULL DEFAULT 0 ,
-  `item_hidden` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_unpublished` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_delayed` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_pending_remove` tinyint(1) NOT NULL DEFAULT 0 ,
-  `item_blocked` tinyint(1) NOT NULL DEFAULT 0 ,
+  `item_restrict` int NOT NULL DEFAULT 0 ,
+  `item_flags` int NOT NULL DEFAULT 0 ,
+  `item_private` tinyint NOT NULL DEFAULT 0 ,
+  `item_origin` tinyint NOT NULL DEFAULT 0 ,
+  `item_unseen` tinyint NOT NULL DEFAULT 0 ,
+  `item_starred` tinyint NOT NULL DEFAULT 0 ,
+  `item_uplink` tinyint NOT NULL DEFAULT 0 ,
+  `item_consensus` tinyint NOT NULL DEFAULT 0 ,
+  `item_wall` tinyint NOT NULL DEFAULT 0 ,
+  `item_thread_top` tinyint NOT NULL DEFAULT 0 ,
+  `item_notshown` tinyint NOT NULL DEFAULT 0 ,
+  `item_nsfw` tinyint NOT NULL DEFAULT 0 ,
+  `item_relay` tinyint NOT NULL DEFAULT 0 ,
+  `item_mentionsme` tinyint NOT NULL DEFAULT 0 ,
+  `item_nocomment` tinyint NOT NULL DEFAULT 0 ,
+  `item_obscured` tinyint NOT NULL DEFAULT 0 ,
+  `item_verified` tinyint NOT NULL DEFAULT 0 ,
+  `item_retained` tinyint NOT NULL DEFAULT 0 ,
+  `item_rss` tinyint NOT NULL DEFAULT 0 ,
+  `item_deleted` tinyint NOT NULL DEFAULT 0 ,
+  `item_type` int NOT NULL DEFAULT 0 ,
+  `item_hidden` tinyint NOT NULL DEFAULT 0 ,
+  `item_unpublished` tinyint NOT NULL DEFAULT 0 ,
+  `item_delayed` tinyint NOT NULL DEFAULT 0 ,
+  `item_pending_remove` tinyint NOT NULL DEFAULT 0 ,
+  `item_blocked` tinyint NOT NULL DEFAULT 0 ,
   `lat` float NOT NULL DEFAULT '0',
   `lon` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -676,11 +676,11 @@ CREATE TABLE IF NOT EXISTS `item` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `likes` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `channel_id` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `channel_id` int unsigned NOT NULL DEFAULT 0 ,
   `liker` varchar(255) NOT NULL DEFAULT '',
   `likee` varchar(255) NOT NULL DEFAULT '',
-  `iid` int(11) unsigned NOT NULL DEFAULT 0 ,
+  `iid` int unsigned NOT NULL DEFAULT 0 ,
   `i_mid` varchar(255) NOT NULL DEFAULT '',
   `verb` varchar(255) NOT NULL DEFAULT '',
   `target_type` varchar(255) NOT NULL DEFAULT '',
@@ -698,24 +698,24 @@ CREATE TABLE IF NOT EXISTS `likes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `linkid` (
-  `link_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `link_id` int UNSIGNED NOT NULL AUTO_INCREMENT,
   `ident` varchar(255) NOT NULL DEFAULT '',
   `link` varchar(255) NOT NULL DEFAULT '',
   `ikey` text NOT NULL,
   `lkey` text NOT NULL,
   `isig` text NOT NULL,
   `lsig` text NOT NULL,
-  `sigtype` int(11) NOT NULL DEFAULT 0 ,
+  `sigtype` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`link_id`),
   KEY `ident` (`ident`(191)),
   KEY `link` (`link`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS listeners (
-  id int(11) NOT NULL AUTO_INCREMENT,
+  id int NOT NULL AUTO_INCREMENT,
   target_id varchar(255) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
   portable_id varchar(255) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
-  ltype int(11) NOT NULL DEFAULT '0',
+  ltype int NOT NULL DEFAULT '0',
   PRIMARY KEY (id),
   KEY target_id (target_id(191)),
   KEY portable_id (portable_id(191)),
@@ -723,11 +723,11 @@ CREATE TABLE IF NOT EXISTS listeners (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `menu` (
-  `menu_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `menu_channel_id` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `menu_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `menu_channel_id` int unsigned NOT NULL DEFAULT 0 ,
   `menu_name` varchar(255) NOT NULL DEFAULT '',
   `menu_desc` varchar(255) NOT NULL DEFAULT '',
-  `menu_flags` int(11) NOT NULL DEFAULT 0 ,
+  `menu_flags` int NOT NULL DEFAULT 0 ,
   `menu_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `menu_edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   PRIMARY KEY (`menu_id`),
@@ -739,17 +739,17 @@ CREATE TABLE IF NOT EXISTS `menu` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `menu_item` (
-  `mitem_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `mitem_id` int unsigned NOT NULL AUTO_INCREMENT,
   `mitem_link` varchar(1024) NOT NULL DEFAULT '',
   `mitem_desc` varchar(1024) NOT NULL DEFAULT '',
-  `mitem_flags` int(11) NOT NULL DEFAULT 0 ,
+  `mitem_flags` int NOT NULL DEFAULT 0 ,
   `allow_cid` mediumtext NOT NULL,
   `allow_gid` mediumtext NOT NULL,
   `deny_cid` mediumtext NOT NULL,
   `deny_gid` mediumtext NOT NULL,
-  `mitem_channel_id` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `mitem_menu_id` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `mitem_order` int(11) NOT NULL DEFAULT 0 ,
+  `mitem_channel_id` int unsigned NOT NULL DEFAULT 0 ,
+  `mitem_menu_id` int unsigned NOT NULL DEFAULT 0 ,
+  `mitem_order` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`mitem_id`),
   KEY `mitem_channel_id` (`mitem_channel_id`),
   KEY `mitem_menu_id` (`mitem_menu_id`),
@@ -757,19 +757,19 @@ CREATE TABLE IF NOT EXISTS `menu_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `notify` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `hash` varchar(255) NOT NULL DEFAULT '',
   `xname` varchar(255) NOT NULL DEFAULT '',
   `url` varchar(255) NOT NULL DEFAULT '',
   `photo` varchar(255) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `msg` mediumtext NOT NULL,
-  `aid` int(11) NOT NULL DEFAULT 0 ,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
+  `aid` int NOT NULL DEFAULT 0 ,
+  `uid` int NOT NULL DEFAULT 0 ,
   `link` varchar(255) NOT NULL DEFAULT '',
   `parent` varchar(255) NOT NULL DEFAULT '',
-  `seen` tinyint(1) NOT NULL DEFAULT 0 ,
-  `ntype` int(11) NOT NULL DEFAULT 0 ,
+  `seen` tinyint NOT NULL DEFAULT 0 ,
+  `ntype` int NOT NULL DEFAULT 0 ,
   `verb` varchar(255) NOT NULL DEFAULT '',
   `otype` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
@@ -785,18 +785,18 @@ CREATE TABLE IF NOT EXISTS `notify` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `obj` (
-  `obj_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `obj_id` int unsigned NOT NULL AUTO_INCREMENT,
   `obj_page` varchar(255) NOT NULL DEFAULT '',
   `obj_verb` varchar(255) NOT NULL DEFAULT '',
-  `obj_type` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `obj_type` int unsigned NOT NULL DEFAULT 0 ,
   `obj_obj` varchar(255) NOT NULL DEFAULT '',
-  `obj_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `obj_channel` int unsigned NOT NULL DEFAULT 0 ,
   `obj_term` varchar(255) NOT NULL DEFAULT '',
   `obj_url` varchar(255) NOT NULL DEFAULT '',
   `obj_imgurl` varchar(255) NOT NULL DEFAULT '',
   `obj_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `obj_edited` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `obj_quantity` int(11) NOT NULL DEFAULT 0 ,
+  `obj_quantity` int NOT NULL DEFAULT 0 ,
   `allow_cid` mediumtext NOT NULL,
   `allow_gid` mediumtext NOT NULL,
   `deny_cid` mediumtext NOT NULL,
@@ -817,18 +817,18 @@ CREATE TABLE IF NOT EXISTS `obj` (
 
 CREATE TABLE IF NOT EXISTS `outq` (
   `outq_hash` varchar(255) NOT NULL,
-  `outq_account` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `outq_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `outq_account` int unsigned NOT NULL DEFAULT 0 ,
+  `outq_channel` int unsigned NOT NULL DEFAULT 0 ,
   `outq_driver` varchar(128) NOT NULL DEFAULT '',
   `outq_posturl` varchar(255) NOT NULL DEFAULT '',
-  `outq_async` tinyint(1) NOT NULL DEFAULT 0 ,
-  `outq_delivered` tinyint(1) NOT NULL DEFAULT 0 ,
+  `outq_async` tinyint NOT NULL DEFAULT 0 ,
+  `outq_delivered` tinyint NOT NULL DEFAULT 0 ,
   `outq_created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `outq_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `outq_scheduled` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `outq_notify` mediumtext NOT NULL,
   `outq_msg` mediumtext NOT NULL,
-  `outq_priority` smallint(6) NOT NULL DEFAULT 0 ,
+  `outq_priority` smallint NOT NULL DEFAULT 0 ,
   `outq_log` mediumtext NOT NULL,
   PRIMARY KEY (`outq_hash`(191)),
   KEY `outq_account` (`outq_account`),
@@ -844,8 +844,8 @@ CREATE TABLE IF NOT EXISTS `outq` (
 
 
 CREATE TABLE IF NOT EXISTS `pconfig` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uid` int NOT NULL DEFAULT 0 ,
   `cat` varchar(255) NOT NULL DEFAULT '',
   `k` varchar(255) NOT NULL DEFAULT '',
   `v` mediumtext NOT NULL,
@@ -854,9 +854,9 @@ CREATE TABLE IF NOT EXISTS `pconfig` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `photo` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `aid` int unsigned NOT NULL DEFAULT 0 ,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
   `xchan` varchar(255) NOT NULL DEFAULT '',
   `resource_id` varchar(255) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
@@ -867,18 +867,18 @@ CREATE TABLE IF NOT EXISTS `photo` (
   `album` varchar(255) NOT NULL DEFAULT '',
   `filename` varchar(4095) NOT NULL DEFAULT '',
   `mimetype` varchar(255) NOT NULL DEFAULT 'image/jpeg',
-  `height` smallint(6) NOT NULL DEFAULT 0 ,
-  `width` smallint(6) NOT NULL DEFAULT 0 ,
-  `filesize` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `height` smallint NOT NULL DEFAULT 0 ,
+  `width` smallint NOT NULL DEFAULT 0 ,
+  `filesize` int unsigned NOT NULL DEFAULT 0 ,
   `content` mediumblob NOT NULL,
-  `imgscale` tinyint(3) NOT NULL DEFAULT 0 ,
-  `photo_usage` smallint(6) NOT NULL DEFAULT 0 ,
-  `profile` tinyint(1) NOT NULL DEFAULT 0 ,
-  `is_nsfw` tinyint(1) NOT NULL DEFAULT 0 ,
-  `os_storage` tinyint(1) NOT NULL DEFAULT 0 ,
+  `imgscale` tinyint NOT NULL DEFAULT 0 ,
+  `photo_usage` smallint NOT NULL DEFAULT 0 ,
+  `profile` tinyint NOT NULL DEFAULT 0 ,
+  `is_nsfw` tinyint NOT NULL DEFAULT 0 ,
+  `os_storage` tinyint NOT NULL DEFAULT 0 ,
   `os_path` mediumtext NOT NULL,
   `display_path` mediumtext NOT NULL,
-  `photo_flags` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `photo_flags` int unsigned NOT NULL DEFAULT 0 ,
   `allow_cid` mediumtext NOT NULL,
   `allow_gid` mediumtext NOT NULL,
   `deny_cid` mediumtext NOT NULL,
@@ -901,13 +901,13 @@ CREATE TABLE IF NOT EXISTS `photo` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `poll` (
-  `poll_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `poll_id` int unsigned NOT NULL AUTO_INCREMENT,
   `poll_guid` varchar(255) NOT NULL,
-  `poll_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `poll_channel` int unsigned NOT NULL DEFAULT 0 ,
   `poll_author` varchar(255) NOT NULL,
   `poll_desc` text NOT NULL,
-  `poll_flags` int(11) NOT NULL DEFAULT 0 ,
-  `poll_votes` int(11) NOT NULL DEFAULT 0 ,
+  `poll_flags` int NOT NULL DEFAULT 0 ,
+  `poll_votes` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`poll_id`),
   KEY `poll_guid` (`poll_guid`(191)),
   KEY `poll_channel` (`poll_channel`),
@@ -917,13 +917,13 @@ CREATE TABLE IF NOT EXISTS `poll` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `poll_elm` (
-  `pelm_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pelm_id` int unsigned NOT NULL AUTO_INCREMENT,
   `pelm_guid` varchar(255) NOT NULL,
-  `pelm_poll` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `pelm_poll` int unsigned NOT NULL DEFAULT 0 ,
   `pelm_desc` text NOT NULL,
-  `pelm_flags` int(11) NOT NULL DEFAULT 0 ,
+  `pelm_flags` int NOT NULL DEFAULT 0 ,
   `pelm_result` float NOT NULL DEFAULT 0 ,
-  `pelm_order` int(11) NOT NULL DEFAULT 0 ,
+  `pelm_order` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`pelm_id`),
   KEY `pelm_guid` (`pelm_guid`(191)),
   KEY `pelm_poll` (`pelm_poll`),
@@ -932,7 +932,7 @@ CREATE TABLE IF NOT EXISTS `poll_elm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profdef` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `field_name` varchar(255) NOT NULL DEFAULT '',
   `field_type` varchar(255) NOT NULL DEFAULT '',
   `field_desc` varchar(255) NOT NULL DEFAULT '',
@@ -943,8 +943,8 @@ CREATE TABLE IF NOT EXISTS `profdef` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profext` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `channel_id` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `channel_id` int unsigned NOT NULL DEFAULT 0 ,
   `hash` varchar(255) NOT NULL DEFAULT '',
   `k` varchar(255) NOT NULL DEFAULT '',
   `v` mediumtext NOT NULL,
@@ -955,13 +955,13 @@ CREATE TABLE IF NOT EXISTS `profext` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `profile` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `profile_guid` varchar(255) NOT NULL DEFAULT '',
-  `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
+  `aid` int unsigned NOT NULL DEFAULT 0 ,
+  `uid` int NOT NULL DEFAULT 0 ,
   `profile_name` varchar(255) NOT NULL DEFAULT '',
-  `is_default` tinyint(1) NOT NULL DEFAULT 0 ,
-  `hide_friends` tinyint(1) NOT NULL DEFAULT 0 ,
+  `is_default` tinyint NOT NULL DEFAULT 0 ,
+  `hide_friends` tinyint NOT NULL DEFAULT 0 ,
   `fullname` varchar(255) NOT NULL DEFAULT '',
   `pdesc` varchar(255) NOT NULL DEFAULT '',
   `chandesc` text NOT NULL,
@@ -999,7 +999,7 @@ CREATE TABLE IF NOT EXISTS `profile` (
   `homepage` varchar(255) NOT NULL DEFAULT '',
   `photo` varchar(255) NOT NULL DEFAULT '',
   `thumb` varchar(255) NOT NULL DEFAULT '',
-  `publish` tinyint(1) NOT NULL DEFAULT 0 ,
+  `publish` tinyint NOT NULL DEFAULT 0 ,
   `profile_vcard` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `guid` (`profile_guid`(191),`uid`),
@@ -1019,10 +1019,10 @@ CREATE TABLE IF NOT EXISTS `profile` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `register` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `hash` varchar(255) NOT NULL DEFAULT '',
   `created` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
   `password` varchar(255) NOT NULL DEFAULT '',
   `lang` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
@@ -1032,10 +1032,10 @@ CREATE TABLE IF NOT EXISTS `register` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `session` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `sid` varchar(255) NOT NULL DEFAULT '',
   `sess_data` text NOT NULL,
-  `expire` bigint(20) unsigned NOT NULL DEFAULT 0 ,
+  `expire` bigint unsigned NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`),
   KEY `sid` (`sid`(191)),
   KEY `expire` (`expire`)
@@ -1043,13 +1043,13 @@ CREATE TABLE IF NOT EXISTS `session` (
 
 CREATE TABLE IF NOT EXISTS `site` (
   `site_url` varchar(255) NOT NULL,
-  `site_access` int(11) NOT NULL DEFAULT 0 ,
-  `site_flags` int(11) NOT NULL DEFAULT 0 ,
+  `site_access` int NOT NULL DEFAULT 0 ,
+  `site_flags` int NOT NULL DEFAULT 0 ,
   `site_update` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `site_pull` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `site_sync` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `site_directory` varchar(255) NOT NULL DEFAULT '',
-  `site_register` int(11) NOT NULL DEFAULT 0 ,
+  `site_register` int NOT NULL DEFAULT 0 ,
   `site_sellpage` varchar(255) NOT NULL DEFAULT '',
   `site_location` varchar(255) NOT NULL DEFAULT '',
   `site_realm` varchar(255) NOT NULL DEFAULT '',
@@ -1075,8 +1075,8 @@ CREATE TABLE IF NOT EXISTS `site` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `source` (
-  `src_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `src_channel_id` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `src_id` int unsigned NOT NULL AUTO_INCREMENT,
+  `src_channel_id` int unsigned NOT NULL DEFAULT 0 ,
   `src_channel_xchan` varchar(255) NOT NULL DEFAULT '',
   `src_xchan` varchar(255) NOT NULL DEFAULT '',
   `src_patt` mediumtext NOT NULL,
@@ -1088,12 +1088,12 @@ CREATE TABLE IF NOT EXISTS `source` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `term` (
-  `tid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `aid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `uid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `oid` int(10) unsigned NOT NULL DEFAULT 0 ,
-  `otype` tinyint(3) unsigned NOT NULL DEFAULT 0 ,
-  `ttype` tinyint(3) unsigned NOT NULL DEFAULT 0 ,
+  `tid` int unsigned NOT NULL AUTO_INCREMENT,
+  `aid` int unsigned NOT NULL DEFAULT 0 ,
+  `uid` int unsigned NOT NULL DEFAULT 0 ,
+  `oid` int unsigned NOT NULL DEFAULT 0 ,
+  `otype` tinyint unsigned NOT NULL DEFAULT 0 ,
+  `ttype` tinyint unsigned NOT NULL DEFAULT 0 ,
   `term` varchar(255) NOT NULL DEFAULT '',
   `url` varchar(255) NOT NULL DEFAULT '',
   `imgurl` varchar(255) NOT NULL DEFAULT '',
@@ -1113,12 +1113,12 @@ CREATE TABLE IF NOT EXISTS `term` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `updates` (
-  `ud_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `ud_id` int unsigned NOT NULL AUTO_INCREMENT,
   `ud_hash` varchar(255) NOT NULL DEFAULT '',
   `ud_guid` varchar(255) NOT NULL DEFAULT '',
   `ud_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `ud_last` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `ud_flags` int(11) NOT NULL DEFAULT 0 ,
+  `ud_flags` int NOT NULL DEFAULT 0 ,
   `ud_addr` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`ud_id`),
   KEY `ud_date` (`ud_date`),
@@ -1130,8 +1130,8 @@ CREATE TABLE IF NOT EXISTS `updates` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `verify` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `channel` int unsigned NOT NULL DEFAULT 0 ,
   `vtype` varchar(255) NOT NULL DEFAULT '',
   `token` varchar(255) NOT NULL DEFAULT '',
   `meta` varchar(255) NOT NULL DEFAULT '',
@@ -1164,13 +1164,13 @@ CREATE TABLE IF NOT EXISTS `xchan` (
   `xchan_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `xchan_photo_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `xchan_name_date` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `xchan_hidden` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_orphan` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_censored` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_selfcensored` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_system` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_type` tinyint(1) NOT NULL DEFAULT 0 ,
-  `xchan_deleted` tinyint(1) NOT NULL DEFAULT 0 ,
+  `xchan_hidden` tinyint NOT NULL DEFAULT 0 ,
+  `xchan_orphan` tinyint NOT NULL DEFAULT 0 ,
+  `xchan_censored` tinyint NOT NULL DEFAULT 0 ,
+  `xchan_selfcensored` tinyint NOT NULL DEFAULT 0 ,
+  `xchan_system` tinyint NOT NULL DEFAULT 0 ,
+  `xchan_type` tinyint NOT NULL DEFAULT 0 ,
+  `xchan_deleted` tinyint NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`xchan_hash`(191)),
   KEY `xchan_guid` (`xchan_guid`(191)),
   KEY `xchan_addr` (`xchan_addr`(191)),
@@ -1191,7 +1191,7 @@ CREATE TABLE IF NOT EXISTS `xchan` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xchat` (
-  `xchat_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `xchat_id` int unsigned NOT NULL AUTO_INCREMENT,
   `xchat_url` varchar(255) NOT NULL DEFAULT '',
   `xchat_desc` varchar(255) NOT NULL DEFAULT '',
   `xchat_xchan` varchar(255) NOT NULL DEFAULT '',
@@ -1204,7 +1204,7 @@ CREATE TABLE IF NOT EXISTS `xchat` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xconfig` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `xchan` varchar(255) NOT NULL DEFAULT '',
   `cat` varchar(255) NOT NULL DEFAULT '',
   `k` varchar(255) NOT NULL DEFAULT '',
@@ -1216,8 +1216,8 @@ CREATE TABLE IF NOT EXISTS `xconfig` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xign` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL DEFAULT 0 ,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int NOT NULL DEFAULT 0 ,
   `xchan` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
@@ -1225,13 +1225,13 @@ CREATE TABLE IF NOT EXISTS `xign` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xlink` (
-  `xlink_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `xlink_id` int unsigned NOT NULL AUTO_INCREMENT,
   `xlink_xchan` varchar(255) NOT NULL DEFAULT '',
   `xlink_link` varchar(255) NOT NULL DEFAULT '',
-  `xlink_rating` int(11) NOT NULL DEFAULT 0 ,
+  `xlink_rating` int NOT NULL DEFAULT 0 ,
   `xlink_rating_text` text NOT NULL,
   `xlink_updated` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
-  `xlink_static` tinyint(1) NOT NULL DEFAULT 0 ,
+  `xlink_static` tinyint NOT NULL DEFAULT 0 ,
   `xlink_sig` text NOT NULL,
   PRIMARY KEY (`xlink_id`),
   KEY `xlink_xchan` (`xlink_xchan`(191)),
@@ -1242,9 +1242,9 @@ CREATE TABLE IF NOT EXISTS `xlink` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xperm` (
-  `xp_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `xp_id` int unsigned NOT NULL AUTO_INCREMENT,
   `xp_client` varchar(255) NOT NULL DEFAULT '',
-  `xp_channel` int(10) unsigned NOT NULL DEFAULT 0 ,
+  `xp_channel` int unsigned NOT NULL DEFAULT 0 ,
   `xp_perm` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`xp_id`),
   KEY `xp_client` (`xp_client`(191)),
@@ -1254,7 +1254,7 @@ CREATE TABLE IF NOT EXISTS `xperm` (
 
 CREATE TABLE IF NOT EXISTS `xprof` (
   `xprof_hash` varchar(255) NOT NULL,
-  `xprof_age` tinyint(3) unsigned NOT NULL DEFAULT 0 ,
+  `xprof_age` tinyint unsigned NOT NULL DEFAULT 0 ,
   `xprof_desc` varchar(255) NOT NULL DEFAULT '',
   `xprof_dob` varchar(255) NOT NULL DEFAULT '',
   `xprof_gender` varchar(255) NOT NULL DEFAULT '',
@@ -1284,10 +1284,10 @@ CREATE TABLE IF NOT EXISTS `xprof` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `xtag` (
-  `xtag_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `xtag_id` int unsigned NOT NULL AUTO_INCREMENT,
   `xtag_hash` varchar(255) NOT NULL DEFAULT '',
   `xtag_term` varchar(255) NOT NULL DEFAULT '',
-  `xtag_flags` int(11) NOT NULL DEFAULT 0 ,
+  `xtag_flags` int NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`xtag_id`),
   KEY `xtag_term` (`xtag_term`(191)),
   KEY `xtag_hash` (`xtag_hash`(191)),
@@ -1295,45 +1295,45 @@ CREATE TABLE IF NOT EXISTS `xtag` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists addressbooks (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     principaluri VARBINARY(255),
     displayname VARCHAR(255),
     uri VARBINARY(200),
     description TEXT,
-    synctoken INT(11) UNSIGNED NOT NULL DEFAULT '1',
+    synctoken int UNSIGNED NOT NULL DEFAULT '1',
     UNIQUE(principaluri(100), uri(100))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists cards (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    addressbookid INT(11) UNSIGNED NOT NULL,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    addressbookid int UNSIGNED NOT NULL,
     carddata MEDIUMBLOB,
     uri VARBINARY(200),
-    lastmodified INT(11) UNSIGNED,
+    lastmodified int UNSIGNED,
     etag VARBINARY(32),
-    size INT(11) UNSIGNED NOT NULL
+    size int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists addressbookchanges (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     uri VARBINARY(200) NOT NULL,
-    synctoken INT(11) UNSIGNED NOT NULL,
-    addressbookid INT(11) UNSIGNED NOT NULL,
-    operation TINYINT(1) NOT NULL,
+    synctoken int UNSIGNED NOT NULL,
+    addressbookid int UNSIGNED NOT NULL,
+    operation tinyint NOT NULL,
     INDEX addressbookid_synctoken (addressbookid, synctoken)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists calendarobjects (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     calendardata MEDIUMBLOB,
     uri VARBINARY(200),
     calendarid INTEGER UNSIGNED NOT NULL,
-    lastmodified INT(11) UNSIGNED,
+    lastmodified int UNSIGNED,
     etag VARBINARY(32),
-    size INT(11) UNSIGNED NOT NULL,
+    size int UNSIGNED NOT NULL,
     componenttype VARBINARY(8),
-    firstoccurence INT(11) UNSIGNED,
-    lastoccurence INT(11) UNSIGNED,
+    firstoccurence int UNSIGNED,
+    lastoccurence int UNSIGNED,
     uid VARBINARY(200),
     UNIQUE(calendarid, uri),
     INDEX calendarid_time (calendarid, firstoccurence)
@@ -1349,55 +1349,55 @@ CREATE TABLE if not exists calendarinstances (
     id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     calendarid INTEGER UNSIGNED NOT NULL,
     principaluri VARBINARY(100),
-    access TINYINT(1) NOT NULL DEFAULT '1' COMMENT '1 = owner, 2 = read, 3 = readwrite',
+    access tinyint NOT NULL DEFAULT '1' COMMENT '1 = owner, 2 = read, 3 = readwrite',
     displayname VARCHAR(100),
     uri VARBINARY(200),
     description TEXT,
-    calendarorder INT(11) UNSIGNED NOT NULL DEFAULT '0',
+    calendarorder int UNSIGNED NOT NULL DEFAULT '0',
     calendarcolor VARBINARY(10),
     timezone TEXT,
-    transparent TINYINT(1) NOT NULL DEFAULT '0',
+    transparent tinyint NOT NULL DEFAULT '0',
     share_href VARBINARY(100),
     share_displayname VARCHAR(100),
-    share_invitestatus TINYINT(1) NOT NULL DEFAULT '2' COMMENT '1 = noresponse, 2 = accepted, 3 = declined, 4 = invalid',
+    share_invitestatus tinyint NOT NULL DEFAULT '2' COMMENT '1 = noresponse, 2 = accepted, 3 = declined, 4 = invalid',
     UNIQUE(principaluri, uri),
     UNIQUE(calendarid, principaluri),
     UNIQUE(calendarid, share_href)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists calendarchanges (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     uri VARBINARY(200) NOT NULL,
-    synctoken INT(11) UNSIGNED NOT NULL,
-    calendarid INT(11) UNSIGNED NOT NULL,
-    operation TINYINT(1) NOT NULL,
+    synctoken int UNSIGNED NOT NULL,
+    calendarid int UNSIGNED NOT NULL,
+    operation tinyint NOT NULL,
     INDEX calendarid_synctoken (calendarid, synctoken)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists calendarsubscriptions (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     uri VARBINARY(200) NOT NULL,
     principaluri VARBINARY(100) NOT NULL,
     source TEXT,
     displayname VARCHAR(100),
     refreshrate VARCHAR(10),
-    calendarorder INT(11) UNSIGNED NOT NULL DEFAULT '0',
+    calendarorder int UNSIGNED NOT NULL DEFAULT '0',
     calendarcolor VARBINARY(10),
-    striptodos TINYINT(1) NULL,
-    stripalarms TINYINT(1) NULL,
-    stripattachments TINYINT(1) NULL,
-    lastmodified INT(11) UNSIGNED,
+    striptodos tinyint NULL,
+    stripalarms tinyint NULL,
+    stripattachments tinyint NULL,
+    lastmodified int UNSIGNED,
     UNIQUE(principaluri, uri)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists schedulingobjects (
-    id INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    id int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     principaluri VARBINARY(255),
     calendardata MEDIUMBLOB,
     uri VARBINARY(200),
-    lastmodified INT(11) UNSIGNED,
+    lastmodified int UNSIGNED,
     etag VARBINARY(32),
-    size INT(11) UNSIGNED NOT NULL
+    size int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE if not exists locks (
@@ -1449,17 +1449,17 @@ CREATE TABLE if not exists calendarinstances (
     id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     calendarid INTEGER UNSIGNED NOT NULL,
     principaluri VARBINARY(100),
-    access TINYINT(1) NOT NULL DEFAULT '1' COMMENT '1 = owner, 2 = read, 3 = readwrite',
+    access tinyint NOT NULL DEFAULT '1' COMMENT '1 = owner, 2 = read, 3 = readwrite',
     displayname VARCHAR(100),
     uri VARBINARY(200),
     description TEXT,
-    calendarorder INT(11) UNSIGNED NOT NULL DEFAULT '0',
+    calendarorder int UNSIGNED NOT NULL DEFAULT '0',
     calendarcolor VARBINARY(10),
     timezone TEXT,
-    transparent TINYINT(1) NOT NULL DEFAULT '0',
+    transparent tinyint NOT NULL DEFAULT '0',
     share_href VARBINARY(100),
     share_displayname VARCHAR(100),
-    share_invitestatus TINYINT(1) NOT NULL DEFAULT '2' COMMENT '1 = noresponse, 2 = accepted, 3 = declined, 4 = invalid',
+    share_invitestatus tinyint NOT NULL DEFAULT '2' COMMENT '1 = noresponse, 2 = accepted, 3 = declined, 4 = invalid',
     UNIQUE(principaluri, uri),
     UNIQUE(calendarid, principaluri),
     UNIQUE(calendarid, share_href)
@@ -1472,7 +1472,7 @@ CREATE TABLE if not exists oauth_clients (
   redirect_uri          VARCHAR(2000),
   grant_types           VARCHAR(80),
   scope                 VARCHAR(4000),
-  user_id               int(10) unsigned NOT NULL DEFAULT 0,
+  user_id               int unsigned NOT NULL DEFAULT 0,
   client_name           VARCHAR(80),
   PRIMARY KEY (client_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -1481,7 +1481,7 @@ CREATE TABLE if not exists oauth_access_tokens (
   id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   access_token         VARCHAR(1500)    NOT NULL,
   client_id            VARCHAR(80)    NOT NULL,
-  user_id              int(10) unsigned NOT NULL DEFAULT 0,
+  user_id              int unsigned NOT NULL DEFAULT 0,
   expires              TIMESTAMP      NOT NULL,
   scope                VARCHAR(4000),
   KEY `access_token` (`access_token`(191))
@@ -1490,7 +1490,7 @@ CREATE TABLE if not exists oauth_access_tokens (
 CREATE TABLE if not exists oauth_authorization_codes (
   authorization_code  VARCHAR(80)     NOT NULL,
   client_id           VARCHAR(80)     NOT NULL,
-  user_id             int(10) unsigned NOT NULL DEFAULT 0,
+  user_id             int unsigned NOT NULL DEFAULT 0,
   redirect_uri        VARCHAR(2000),
   expires             TIMESTAMP       NOT NULL,
   scope               VARCHAR(4000),
@@ -1501,7 +1501,7 @@ CREATE TABLE if not exists oauth_authorization_codes (
 CREATE TABLE if not exists oauth_refresh_tokens (
   refresh_token       VARCHAR(40)     NOT NULL,
   client_id           VARCHAR(80)     NOT NULL,
-  user_id             int(10) unsigned NOT NULL DEFAULT 0,
+  user_id             int unsigned NOT NULL DEFAULT 0,
   expires             TIMESTAMP       NOT NULL,
   scope               VARCHAR(4000),
   PRIMARY KEY (refresh_token)
@@ -1509,7 +1509,7 @@ CREATE TABLE if not exists oauth_refresh_tokens (
 
 CREATE TABLE if not exists oauth_scopes (
   scope               VARCHAR(255)    NOT NULL,
-  is_default          TINYINT(1),
+  is_default          tinyint,
   PRIMARY KEY (scope(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
