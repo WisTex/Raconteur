@@ -1033,6 +1033,8 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
+    $feature_checkin = false;
+
     $lat = '';
     $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
@@ -1307,6 +1309,8 @@ function z_status_editor($x, $popup = false)
         '$jotcoll_label' => t('Collections'),
         '$defexpire' => $defexpire,
         '$feature_expire' => $feature_expire,
+        '$feature_checkin' => $feature_checkin,
+        '$checkin' => t('Check In'),
         '$expires' => t('Set expiration date'),
         '$save' => $permanent_draft,
         '$is_draft' => ((array_key_exists('is_draft', $x) && intval($x['is_draft'])) ? true : false),

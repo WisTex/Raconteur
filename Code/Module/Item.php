@@ -490,7 +490,7 @@ class Item extends Controller
         $layout_mid = ((x($_REQUEST, 'layout_mid')) ? escape_tags($_REQUEST['layout_mid']) : '');
         $plink = ((x($_REQUEST, 'permalink')) ? escape_tags($_REQUEST['permalink']) : '');
         $obj_type = ((x($_REQUEST, 'obj_type')) ? escape_tags($_REQUEST['obj_type']) : ACTIVITY_OBJ_NOTE);
-
+        $checkin = ((x($_REQUEST, 'checkin')) ? 1 : 0);
 
         $item_unpublished = ((isset($_REQUEST['draft'])) ? intval($_REQUEST['draft']) : 0);
 
@@ -1310,6 +1310,9 @@ class Item extends Controller
 
         if (!strlen($verb)) {
             $verb = ACTIVITY_POST;
+        }
+        if ($checkin) {
+            $verb = 'Arrive';
         }
 
         $notify_type = (($parent) ? 'comment-new' : 'wall-new');

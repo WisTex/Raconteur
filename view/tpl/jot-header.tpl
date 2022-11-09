@@ -334,6 +334,11 @@ let activeCommentText = '';
 		});
 	}
 
+	function jotCheckin() {
+	    let checkinVal = $('#jot-checkin').val();
+	    $('#jot-checkin').val(1 - checkinVal);
+	}
+
 	function jotEmbed(id,post_type) {
 
 		if ($('#jot-popup').length != 0) $('#jot-popup').show();
