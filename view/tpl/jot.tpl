@@ -29,6 +29,7 @@
 		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
 		<input type="hidden" name="draft" id="jot-draft" value="0" />
+		<input type="hidden" name="checkin" id="jot-checkin" value="0" />
 		<input type="hidden" name="hidden_mentions" id="jot-hidden-mentions" value="{{$hidden_mentions}}" />
 		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 
@@ -166,6 +167,11 @@
 				{{if $feature_encrypt}}
 					<button id="profile-encrypt-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$encrypt}}" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text');return false;">
 						<i id="profile-encrypt" class="fa fa-key jot-icons"></i>
+					</button>
+				{{/if}}
+				{{if $feature_checkin}}
+					<button id="profile-checkin-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
+						<i id="profile-checkin" class="fa fa-map-marker jot-icons"></i>
 					</button>
 				{{/if}}
 

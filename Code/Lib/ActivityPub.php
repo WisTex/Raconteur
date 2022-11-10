@@ -29,7 +29,8 @@ class ActivityPub
                 return;
             }
 
-            $signed_msg = get_iconfig($arr['target_item'], 'activitypub', 'rawmsg');
+            //$signed_msg = get_iconfig($arr['target_item'], 'activitypub', 'rawmsg');
+            $signed_msg = ObjCache::Get($arr['target_item']['mid']);
 
             // If we have an activity already stored with an LD-signature
             // which we are sending downstream, use that signed activity as is.

@@ -3,6 +3,7 @@
 namespace Code\Module;
 
 use App;
+use Code\Lib\ObjCache;
 use Code\Web\Controller;
 use Code\Lib\Activity;
 use Code\Lib\Channel;
@@ -66,7 +67,8 @@ class Inspect extends Controller
 
                 $output .= '<pre>' . escape_tags(json_encode(Activity::encode_activity($item, true), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL . EOL;
 
-                $output .= '<pre>' . escape_tags(json_encode(json_decode(get_iconfig($item['id'], 'activitypub', 'rawmsg'), true), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL . EOL;
+                $output .= '<pre>' . escape_tags(json_encode(json_decode(ObjCache::Get($item['mid'])),
+                            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) . '</pre>' . EOL . EOL;
             }
         }
 
