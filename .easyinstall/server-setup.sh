@@ -758,7 +758,6 @@ fi
 
 install_sendmail
 install_sury_repo
-php_version
 if [ $webserver = "nginx" ]
 then
     install_nginx
@@ -783,6 +782,7 @@ then
         add_vhost
     fi
 fi
+php_version
 install_composer
 install_mysql
 install_adminer
