@@ -295,6 +295,12 @@ function install_sury_repo {
 function php_version {
     # We need to be able to find php version and use  it with install_php
     phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
+    minPHPversion=8.1
+    is_min_php=`echo "$minPHPversion >= $phpversion" | bc`
+    echo $is_min_php
+    if [ $is_min_php -eq 0 ]; then 
+	    die "min php version $minPHPversion >= $phpversion"
+    fi 
 }
 
 function install_php {
@@ -752,6 +758,7 @@ fi
 
 install_sendmail
 install_sury_repo
+php_version
 if [ $webserver = "nginx" ]
 then
     install_nginx
