@@ -1137,18 +1137,14 @@ class Activity
         if ($i['app']) {
             $ret['generator'] = ['type' => 'Application', 'name' => $i['app']];
         }
-        $locptr = $i['verb'] === 'Arrive' ? $ret : $ret['location'];
-        if (! is_array($locptr)) {
-            $locptr = [];
-        }
         if ($i['location'] || $i['lat'] || $i['lon']) {
-            $locptr['type'] = 'Place';
+            $ret['location'] = ['type' => 'Place'];
             if ($i['location']) {
-                $locptr['name'] = $i['location'];
+                $ret['location']['name'] = $i['location'];
             }
             if ($i['lat'] || $i['lon']) {
-                $locptr['latitude'] = $i['lat'] ?? 0;
-                $locptr['longitude'] = $i['lon'] ?? 0;
+                $ret['location']['latitude'] = $i['lat'] ?? 0;
+                $ret['location']['longitude'] = $i['lon'] ?? 0;
             }
         }
         if (intval($i['item_wall']) && $i['mid'] === $i['parent_mid']) {
