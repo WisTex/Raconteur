@@ -334,7 +334,7 @@ function install_composer {
         then
             >&2 echo 'ERROR: Invalid installer checksum'
             rm composer-setup.php
-            exit 1
+            die 'ERROR: Invalid installer checksum'
         fi
         php composer-setup.php --quiet
         RESULT=$?
