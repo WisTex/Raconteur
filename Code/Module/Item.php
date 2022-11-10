@@ -490,7 +490,7 @@ class Item extends Controller
         $layout_mid = ((x($_REQUEST, 'layout_mid')) ? escape_tags($_REQUEST['layout_mid']) : '');
         $plink = ((x($_REQUEST, 'permalink')) ? escape_tags($_REQUEST['permalink']) : '');
         $obj_type = ((x($_REQUEST, 'obj_type')) ? escape_tags($_REQUEST['obj_type']) : ACTIVITY_OBJ_NOTE);
-
+        $checkin = ((x($_REQUEST, 'checkin')) ? 1 : 0);
 
         $item_unpublished = ((isset($_REQUEST['draft'])) ? intval($_REQUEST['draft']) : 0);
 
@@ -973,6 +973,12 @@ class Item extends Controller
             $str_group_allow = '';
         }
 
+        if (!strlen($verb)) {
+            $verb = ACTIVITY_POST;
+        }
+        if ($checkin) {
+            $verb = 'Arrive';
+        }
 
         if (in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) {
             // BBCODE alert: the following functions assume bbcode input
@@ -1176,6 +1182,18 @@ class Item extends Controller
             }
         }
 
+        if ($verb ===  'Arrive') {
+            $body = preg_replace('/\[map=(.*?)\]/','', $body);
+            $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
+
+            if ($lat || $lon) {
+                $body .= "\n\n" . '[map=' . $lat . ',' . $lon . ']' . "\n";
+            }
+            elseif ($location)  {
+                $body .= "\n\n" . '[map]' . $location . '[/map]' . "\n";
+            }
+        }
+
         // BBCODE end alert
 
         $netgroup = false;
@@ -1308,9 +1326,7 @@ class Item extends Controller
         }
 
 
-        if (!strlen($verb)) {
-            $verb = ACTIVITY_POST;
-        }
+
 
         $notify_type = (($parent) ? 'comment-new' : 'wall-new');
 
