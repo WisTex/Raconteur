@@ -335,8 +335,14 @@ let activeCommentText = '';
 	}
 
 	function jotCheckin() {
-	    let checkinVal = $('#jot-checkin').val();
-	    $('#jot-checkin').val(1 - checkinVal);
+	    let checkinVal = 1 - $('#jot-checkin').val();
+	    $('#jot-checkin').val(checkinVal);
+	    if (checkinVal) {
+	        $('#profile-checkin-wrapper').addClass('_orange');
+	    }
+	    else {
+	          $('#profile-checkin-wrapper').removeClass('_orange');
+	    }
 	}
 
 	function jotEmbed(id,post_type) {

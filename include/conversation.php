@@ -818,6 +818,16 @@ function thread_author_menu($item, $mode = '')
         ];
     }
 
+    if (local_channel() && ($item['lat'] || $item['lon'])) {
+        $menu[] = [
+            'menu' => 'distance_search',
+            'title' => t('Nearby'),
+            'icon' => 'fw',
+            'action' => '',
+            'href' => 'stream?distance=1&distance_from=' . $item['lat'] . ',' . $item['lon']
+        ];
+    }
+
     if (isset($posts_link) && $posts_link) {
         $menu[] = [
             'menu' => 'view_posts',
@@ -1033,7 +1043,7 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
-    $feature_checkin = false;
+    $feature_checkin = true;
 
     $lat = '';
     $lon = '';
@@ -1683,6 +1693,9 @@ function sort_thr_distance($a, $b)
     }
     if (!isset($b['distance'])) {
         $b['distance'] = 999999999;
+    }
+    if ($a['distance'] === $b['distance']) {
+        return strcmp($b['commented'], $a['commented']);
     }
     return floatval($a['distance']) <=> floatval($b['distance']);
 }

@@ -973,6 +973,12 @@ class Item extends Controller
             $str_group_allow = '';
         }
 
+        if (!strlen($verb)) {
+            $verb = ACTIVITY_POST;
+        }
+        if ($checkin) {
+            $verb = 'Arrive';
+        }
 
         if (in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) {
             // BBCODE alert: the following functions assume bbcode input
@@ -1176,6 +1182,18 @@ class Item extends Controller
             }
         }
 
+        if ($verb ===  'Arrive') {
+            $body = preg_replace('/\[map=(.*?)\]/','', $body);
+            $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
+
+            if ($lat || $lon) {
+                $body .= "\n\n" . '[map=' . $lat . ',' . $lon . ']' . "\n";
+            }
+            elseif ($location)  {
+                $body .= "\n\n" . '[map]' . $location . '[/map]' . "\n";
+            }
+        }
+
         // BBCODE end alert
 
         $netgroup = false;
@@ -1308,12 +1326,7 @@ class Item extends Controller
         }
 
 
-        if (!strlen($verb)) {
-            $verb = ACTIVITY_POST;
-        }
-        if ($checkin) {
-            $verb = 'Arrive';
-        }
+
 
         $notify_type = (($parent) ? 'comment-new' : 'wall-new');
 

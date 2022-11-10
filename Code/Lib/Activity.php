@@ -3339,6 +3339,15 @@ class Activity
         // set_iconfig($s, 'activitypub', 'rawmsg', $act->raw, 0);
         ObjCache::Set($s['mid'],$act->raw);
 
+
+        if ($s['verb'] ===  'Arrive') {
+            if ($s['lat'] || $s[['lon']]) {
+                $s['body'] .= "\n\n" . '[map=' . $s['lat'] . ',' . $s['lon'] . ']' . "\n";
+            }
+            elseif ($s['location'])  {
+                $s['body'] .= "\n\n" . '[map]' . $s['location'] . '[/map]' . "\n";
+            }
+        }
         // Restrict html caching to ActivityPub senders.
         // Zot has dynamic content and this library is used by both.
 
