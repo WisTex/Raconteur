@@ -334,6 +334,17 @@ let activeCommentText = '';
 		});
 	}
 
+	function jotCheckin() {
+	    let checkinVal = 1 - $('#jot-checkin').val();
+	    $('#jot-checkin').val(checkinVal);
+	    if (checkinVal) {
+	        $('#profile-checkin-wrapper').addClass('_orange');
+	    }
+	    else {
+	          $('#profile-checkin-wrapper').removeClass('_orange');
+	    }
+	}
+
 	function jotEmbed(id,post_type) {
 
 		if ($('#jot-popup').length != 0) $('#jot-popup').show();

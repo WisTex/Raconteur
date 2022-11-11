@@ -818,6 +818,16 @@ function thread_author_menu($item, $mode = '')
         ];
     }
 
+    if (local_channel() && ($item['lat'] || $item['lon'])) {
+        $menu[] = [
+            'menu' => 'distance_search',
+            'title' => t('Nearby'),
+            'icon' => 'fw',
+            'action' => '',
+            'href' => 'stream?distance=1&distance_from=' . $item['lat'] . ',' . $item['lon']
+        ];
+    }
+
     if (isset($posts_link) && $posts_link) {
         $menu[] = [
             'menu' => 'view_posts',
@@ -1032,6 +1042,8 @@ function z_status_editor($x, $popup = false)
     if (x($x, 'hide_markup')) {
         $feature_markup = false;
     }
+
+    $feature_checkin = true;
 
     $lat = '';
     $lon = '';
@@ -1307,6 +1319,8 @@ function z_status_editor($x, $popup = false)
         '$jotcoll_label' => t('Collections'),
         '$defexpire' => $defexpire,
         '$feature_expire' => $feature_expire,
+        '$feature_checkin' => $feature_checkin,
+        '$checkin' => t('Check In'),
         '$expires' => t('Set expiration date'),
         '$save' => $permanent_draft,
         '$is_draft' => ((array_key_exists('is_draft', $x) && intval($x['is_draft'])) ? true : false),
@@ -1679,6 +1693,9 @@ function sort_thr_distance($a, $b)
     }
     if (!isset($b['distance'])) {
         $b['distance'] = 999999999;
+    }
+    if ($a['distance'] === $b['distance']) {
+        return strcmp($b['commented'], $a['commented']);
     }
     return floatval($a['distance']) <=> floatval($b['distance']);
 }
