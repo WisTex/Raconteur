@@ -1196,7 +1196,7 @@ function z_status_editor($x, $popup = false)
             $options[$opt[1]] = $opt[0];
         }
         if ($k === 'post_comments') {
-            $comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
+            $comment_perms = [ $k, t('Accept delivery of comments on this post from'), $limits[$k],'',$options ];
         } else {
             $permiss[] = [$k,$perm,$limits[$k],'',$options];
         }
