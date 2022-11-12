@@ -3336,10 +3336,10 @@ class Activity
         }
 
         if ($s['verb'] ===  'Arrive') {
-            if ($s['lat'] || $s[['lon']]) {
+            if (($s['lat'] || $s['lon']) && !str_contains($s['body'],'[map=')) {
                 $s['body'] .= "\n\n" . '[map=' . $s['lat'] . ',' . $s['lon'] . ']' . "\n";
             }
-            elseif ($s['location'])  {
+            elseif ($s['location'] && !str_contains($s['body'],'[map]'))  {
                 $s['body'] .= "\n\n" . '[map]' . $s['location'] . '[/map]' . "\n";
             }
         }
