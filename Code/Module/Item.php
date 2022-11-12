@@ -1182,6 +1182,12 @@ class Item extends Controller
             }
         }
 
+        $hook_args = ['location' => $location, 'latitude' => $lat, 'longitude' => $lon];
+        Hook::call('post_location', $hook_args);
+        $location = $hook_args['location'];
+        $lat = $hook_args['latitude'];
+        $lon = $hook_args['longitude'];
+
         if ($verb ===  'Arrive') {
             $body = preg_replace('/\[map=(.*?)\]/','', $body);
             $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
