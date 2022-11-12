@@ -103,11 +103,9 @@ class Connedit extends Controller
         }
 
         $autoperms = null;
-        $is_self = false;
 
         if (intval($orig_record['abook_self'])) {
             $autoperms = intval($_POST['autoperms']);
-            $is_self = true;
         }
 
         $profile_id = ((array_key_exists('profile_assign', $_POST)) ? $_POST['profile_assign'] : $orig_record['abook_profile']);

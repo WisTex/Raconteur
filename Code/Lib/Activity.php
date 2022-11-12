@@ -3335,11 +3335,6 @@ class Activity
             $s['item_private'] = 2;
         }
 
-
-        // set_iconfig($s, 'activitypub', 'rawmsg', $act->raw, 0);
-        ObjCache::Set($s['mid'],$act->raw);
-
-
         if ($s['verb'] ===  'Arrive') {
             if ($s['lat'] || $s[['lon']]) {
                 $s['body'] .= "\n\n" . '[map=' . $s['lat'] . ',' . $s['lon'] . ']' . "\n";
@@ -3348,6 +3343,7 @@ class Activity
                 $s['body'] .= "\n\n" . '[map]' . $s['location'] . '[/map]' . "\n";
             }
         }
+
         // Restrict html caching to ActivityPub senders.
         // Zot has dynamic content and this library is used by both.
 
@@ -3657,9 +3653,6 @@ class Activity
             }
 
             if (tgroup_check($channel['channel_id'], $item)) {
-                // for relayed deliveries, make sure we keep a copy of the signed original
-                // set_iconfig($item, 'activitypub', 'rawmsg', $act->raw, 0);
-                ObjCache::Set($item['mid'], $act->raw);
                 logger('allowed: tgroup');
                 $allowed = true;
             }
@@ -3869,11 +3862,13 @@ class Activity
         if ($r) {
             if ($item['edited'] > $r[0]['edited']) {
                 $item['id'] = $r[0]['id'];
+                ObjCache::Set($item['mid'], $act->raw);
                 $x = item_store_update($item, deliver: false);
             } else {
                 return;
             }
         } else {
+            ObjCache::Set($item['mid'], $act->raw);
             $x = item_store($item, deliver: false);
         }
 
@@ -3987,11 +3982,17 @@ class Activity
         logger('fetching parents');
 
         $conversation = [];
+        $seen_mids = [];
 
         $current_item = $item;
 
         while ($current_item['parent_mid'] !== $current_item['mid']) {
+            // recursion breaker
+            if (in_array($current_item['parent_mid'], $seen_mids)) {
+                break;
+            }
             $json = self::fetch($current_item['parent_mid']);
+            $seen_mids[] = $current_item['parent_mid'];
             if (!$json) {
                 break;
             }
@@ -4054,7 +4055,7 @@ class Activity
             $current_item = $item;
         }
 
-        if ($conversation) {
+        if ($conversation && $conversation[0]['item']['mid'] === $conversation[0]['item']['parent_md']) {
             foreach ($conversation as $post) {
                 if ($post['activity']->is_valid()) {
                     self::store($channel, $observer_hash, $post['activity'], $post['item'], false);

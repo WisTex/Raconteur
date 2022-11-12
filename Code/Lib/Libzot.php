@@ -1971,6 +1971,7 @@ class Libzot
                     $arr['id'] = $r[0]['id'];
                     $arr['uid'] = $channel['channel_id'];
                     if (post_is_importable($channel['channel_id'], $arr, $abook)) {
+                        // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
@@ -2025,7 +2026,7 @@ class Libzot
                     if (str_contains($arr['body'], "#^[")) {
                         $arr['body'] = str_replace("#^[", "[", $arr['body']);
                     }
-
+                    // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
                     $item_result = item_store($arr);
                     if ($item_result['success']) {
                         $item_id = $item_result['item_id'];
