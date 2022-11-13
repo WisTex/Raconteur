@@ -1304,7 +1304,7 @@ class Libzot
                     "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                     dbesc($AS->actor['id'])
                 );
-                if (! $r) {
+                if (!$r) {
                     // Author is unknown to this site. Perform channel discovery and try again.
                     $z = discover_resource($AS->actor['id']);
                     if ($z) {
@@ -1382,19 +1382,21 @@ class Libzot
                 $relay = (($env['type'] === 'response') ? true : false);
 
                 $result = self::process_delivery($env['sender'], $AS, $arr, $deliveries, $relay, false, $message_request);
-            } elseif ($env['type'] === 'sync') {
-                $arr = json_decode($data, true);
-
-                logger('Channel sync received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
-                logger('Channel sync recipients: ' . print_r($deliveries, true), LOGGER_DATA, LOG_DEBUG);
-
-                if ($env['encoding'] === 'red') {
-                    $result = Libsync::process_channel_sync_delivery($env['sender'], $arr, $deliveries);
-                } else {
-                    logger('unsupported sync packet encoding ignored.');
-                }
             }
         }
+        elseif ($env['type'] === 'sync') {
+            $arr = json_decode($data, true);
+
+            logger('Channel sync received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
+            logger('Channel sync recipients: ' . print_r($deliveries, true), LOGGER_DATA, LOG_DEBUG);
+
+            if ($env['encoding'] === 'red') {
+                $result = Libsync::process_channel_sync_delivery($env['sender'], $arr, $deliveries);
+            } else {
+                logger('unsupported sync packet encoding ignored.');
+            }
+        }
+        
         if ($result) {
             $return = array_merge($return, $result);
         }
