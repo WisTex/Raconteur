@@ -415,10 +415,9 @@ function import_xchans($xchans) {
  * @param array $channel
  * @param array $hublocs
  * @param bool $seize
- * @param bool $moving (optional) default false
  */
 
-function import_hublocs($channel, $hublocs, $seize, $moving = false)
+function import_hublocs($channel, $hublocs, $seize)
 {
 
     if ($channel && $hublocs) {
@@ -448,10 +447,6 @@ function import_hublocs($channel, $hublocs, $seize, $moving = false)
                     logger('forged hubloc: ' . print_r($hubloc, true));
                     continue;
                 }
-            }
-
-            if ($moving && $hubloc['hubloc_hash'] === $channel['channel_hash'] && $hubloc['hubloc_url'] !== z_root()) {
-                $hubloc['hubloc_deleted'] = 1;
             }
 
             $arr = [
