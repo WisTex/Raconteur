@@ -150,6 +150,9 @@ class Url {
         }
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $validate_ssl);
+        if (! $validate_ssl) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        }
 
         $prx = @get_config('system', 'proxy');
         if (strlen($prx)) {
@@ -356,6 +359,9 @@ class Url {
         }
 
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $validate_ssl);
+        if (! $validate_ssl) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        }
 
         $prx = get_config('system', 'proxy');
         if (strlen($prx)) {
