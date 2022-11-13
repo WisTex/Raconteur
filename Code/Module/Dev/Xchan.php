@@ -20,12 +20,16 @@ class Xchan extends Controller
 
         if (x($_GET, 'addr')) {
             $addr = trim($_GET['addr']);
-
-            $r = q(
-                "select * from xchan where xchan_hash like '%s%%' or xchan_addr = '%s' group by xchan_hash",
+            $h = q("select * from hubloc where hubloc_hash like '%s%%' or hubloc_addr = '%s'",
                 dbesc($addr),
                 dbesc($addr)
             );
+            if ($h) {
+                $r = q(
+                    "select * from xchan where xchan_hash = '%s'",
+                    dbesc($h[0]['hubloc_hash']),
+                );
+            }
 
             if ($r) {
                 foreach ($r as $rr) {
