@@ -30,8 +30,12 @@ Class Stdio {
         if ($in && $out) {
             $size = self::pipe_streams($in, $out, $bufsize);
         }
-        fclose($in);
-        fclose($out);
+        if ($in) {
+            fclose($in);
+        }
+        if ($out) {
+            fclose($out);
+        }
         restore_error_handler();
         return $size;
     }

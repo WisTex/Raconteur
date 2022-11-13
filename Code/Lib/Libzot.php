@@ -1304,7 +1304,7 @@ class Libzot
                     "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                     dbesc($AS->actor['id'])
                 );
-                if (! $r) {
+                if (!$r) {
                     // Author is unknown to this site. Perform channel discovery and try again.
                     $z = discover_resource($AS->actor['id']);
                     if ($z) {
@@ -1382,19 +1382,21 @@ class Libzot
                 $relay = (($env['type'] === 'response') ? true : false);
 
                 $result = self::process_delivery($env['sender'], $AS, $arr, $deliveries, $relay, false, $message_request);
-            } elseif ($env['type'] === 'sync') {
-                $arr = json_decode($data, true);
-
-                logger('Channel sync received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
-                logger('Channel sync recipients: ' . print_r($deliveries, true), LOGGER_DATA, LOG_DEBUG);
-
-                if ($env['encoding'] === 'red') {
-                    $result = Libsync::process_channel_sync_delivery($env['sender'], $arr, $deliveries);
-                } else {
-                    logger('unsupported sync packet encoding ignored.');
-                }
             }
         }
+        elseif ($env['type'] === 'sync') {
+            $arr = json_decode($data, true);
+
+            logger('Channel sync received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
+            logger('Channel sync recipients: ' . print_r($deliveries, true), LOGGER_DATA, LOG_DEBUG);
+
+            if ($env['encoding'] === 'red') {
+                $result = Libsync::process_channel_sync_delivery($env['sender'], $arr, $deliveries);
+            } else {
+                logger('unsupported sync packet encoding ignored.');
+            }
+        }
+        
         if ($result) {
             $return = array_merge($return, $result);
         }
@@ -1971,6 +1973,7 @@ class Libzot
                     $arr['id'] = $r[0]['id'];
                     $arr['uid'] = $channel['channel_id'];
                     if (post_is_importable($channel['channel_id'], $arr, $abook)) {
+                        // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
@@ -2025,7 +2028,7 @@ class Libzot
                     if (str_contains($arr['body'], "#^[")) {
                         $arr['body'] = str_replace("#^[", "[", $arr['body']);
                     }
-
+                    // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
                     $item_result = item_store($arr);
                     if ($item_result['success']) {
                         $item_id = $item_result['item_id'];

@@ -98,7 +98,7 @@ function api_call()
         $info = false;
     }
 
-    logger('API info: ' . $p . ' type: ' . $type . ' ' . print_r($info, true), LOGGER_DEBUG, LOG_INFO);
+    logger('API info: ' . $_SERVER['REMOTE_ADDR'] . ' ' . $p . ' type: ' . $type . ' ' . print_r($info, true), LOGGER_DEBUG, LOG_INFO);
 
     if ($info) {
         if ($info['auth'] === true && api_user() === false) {

@@ -180,8 +180,8 @@ class Import extends Controller
             }
 
             $channel = import_channel($data['channel'], $account_id, $seize, $newname);
-        } else {
-            $moving = false;
+        }
+        else {
             $channel = App::get_channel();
         }
 
@@ -316,7 +316,7 @@ class Import extends Controller
 
 
         if (is_array($data['hubloc'])) {
-            import_hublocs($channel, $data['hubloc'], $seize, $moving);
+            import_hublocs($channel, $data['hubloc'], $seize);
         }
 
         logger('import step 7');
