@@ -1043,8 +1043,14 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
+    $body = ((x($x, 'body')) ? htmlspecialchars($x['body'], ENT_COMPAT, 'UTF-8') : '');
+    
     $feature_checkin = true;
     $checkin_checked = isset($x['checkin']) ? intval($x['checkin']): 0;
+    if ($checkin_checked) {
+        $body = preg_replace('/\[map=(.*?)\]/','', $body);
+        $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
+    }
     
     $lat = '';
     $lon = '';
@@ -1295,7 +1301,7 @@ function z_status_editor($x, $popup = false)
         '$placeholdercategory' => t('Categories (optional, comma-separated list)'),
         '$permset' => t('Permission settings'),
         '$ptyp' => ((x($x, 'ptyp')) ? $x['ptyp'] : ''),
-        '$content' => ((x($x, 'body')) ? htmlspecialchars($x['body'], ENT_COMPAT, 'UTF-8') : ''),
+        '$content' => $body, 
         '$attachment' => ((x($x, 'attachment')) ? $x['attachment'] : ''),
         '$post_id' => ((x($x, 'post_id')) ? $x['post_id'] : ''),
         '$defloc' => $x['default_location'],

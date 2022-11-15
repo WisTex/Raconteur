@@ -347,8 +347,8 @@ let activeCommentText = '';
 	}
 
     function jotCheckinStatus() {
-        let checkinVal = $('#jot-checkin').val();
-        if (checkinVal) {
+        let checkinVal = parseInt($('#jot-checkin').val());
+        if (checkinVal > 0) {
             $('#profile-checkin-wrapper').addClass('_orange');
         }
         else {
