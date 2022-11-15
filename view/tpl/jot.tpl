@@ -29,7 +29,7 @@
 		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
 		<input type="hidden" name="draft" id="jot-draft" value="0" />
-		<input type="hidden" name="checkin" id="jot-checkin" value="0" />
+		<input type="hidden" name="checkin" id="jot-checkin" value="{{$checkin_checked}}" />
 		<input type="hidden" name="hidden_mentions" id="jot-hidden-mentions" value="{{$hidden_mentions}}" />
 		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 

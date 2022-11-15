@@ -1044,7 +1044,8 @@ function z_status_editor($x, $popup = false)
     }
 
     $feature_checkin = true;
-
+    $checkin_checked = isset($x['checkin']) ? intval($x['checkin']): 0;
+    
     $lat = '';
     $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
@@ -1348,6 +1349,7 @@ function z_status_editor($x, $popup = false)
         '$discombed2' => t('This <em>may</em> subject viewers of this post to behaviour tracking'),
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
         '$disczot' => t('Find shareable objects (Zot)'),
+        '$checkin_checked' => $checkin_checked,
         '$reset' => $reset
     ]);
 

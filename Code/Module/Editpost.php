@@ -167,7 +167,8 @@ class Editpost extends Controller
             'collections' => $collections,
             'jotnets' => true,
             'hide_expire' => true,
-            'bbcode' => true
+            'bbcode' => true,
+            'checkin' => ($item['verb'] === 'Arrive')
         ];
 
         $editor = status_editor($x);

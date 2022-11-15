@@ -82,6 +82,7 @@ let activeCommentText = '';
 		});
 
         jotLocateStatus();
+        jotCheckinStatus();
 
 		$('#jot-add-option').on('click', jotAddOption);
 		$(document).on('click', '.poll-option-close', jotRemoveOption);
@@ -345,7 +346,17 @@ let activeCommentText = '';
 	    }
 	}
 
-	function jotEmbed(id,post_type) {
+    function jotCheckinStatus() {
+        let checkinVal = $('#jot-checkin').val();
+        if (checkinVal) {
+            $('#profile-checkin-wrapper').addClass('_orange');
+        }
+        else {
+            $('#profile-checkin-wrapper').removeClass('_orange');
+        }
+    }
+
+function jotEmbed(id,post_type) {
 
 		if ($('#jot-popup').length != 0) $('#jot-popup').show();
 
