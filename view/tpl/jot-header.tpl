@@ -356,7 +356,7 @@ let activeCommentText = '';
         }
     }
 
-function jotEmbed(id,post_type) {
+    function jotEmbed(id,post_type) {
 
 		if ($('#jot-popup').length != 0) $('#jot-popup').show();
 
