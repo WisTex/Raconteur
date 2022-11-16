@@ -1738,8 +1738,7 @@ function generate_map($lat, $lon, $zoom = 16)
      *   * \e string \b html the parsed HTML to return
      */
     Hook::call('generate_map', $arr);
-
-    return (($arr['html']) ?? 'geo:' . $lat . ',' . $lon . '&z=' . $zoom);
+    return (strlen($arr['html'])) ? $arr['html'] : 'geo:' . $lat . ',' . $lon . '&z=' . $zoom;
 }
 
 function generate_named_map($location)
