@@ -1043,8 +1043,15 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
+    $body = ((x($x, 'body')) ? htmlspecialchars($x['body'], ENT_COMPAT, 'UTF-8') : '');
+    
     $feature_checkin = true;
-
+    $checkin_checked = isset($x['checkin']) ? intval($x['checkin']): 0;
+    if ($checkin_checked) {
+        $body = preg_replace('/\[map=(.*?)\]/','', $body);
+        $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
+    }
+    
     $lat = '';
     $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
@@ -1294,7 +1301,7 @@ function z_status_editor($x, $popup = false)
         '$placeholdercategory' => t('Categories (optional, comma-separated list)'),
         '$permset' => t('Permission settings'),
         '$ptyp' => ((x($x, 'ptyp')) ? $x['ptyp'] : ''),
-        '$content' => ((x($x, 'body')) ? htmlspecialchars($x['body'], ENT_COMPAT, 'UTF-8') : ''),
+        '$content' => $body, 
         '$attachment' => ((x($x, 'attachment')) ? $x['attachment'] : ''),
         '$post_id' => ((x($x, 'post_id')) ? $x['post_id'] : ''),
         '$defloc' => $x['default_location'],
@@ -1348,6 +1355,7 @@ function z_status_editor($x, $popup = false)
         '$discombed2' => t('This <em>may</em> subject viewers of this post to behaviour tracking'),
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
         '$disczot' => t('Find shareable objects (Zot)'),
+        '$checkin_checked' => $checkin_checked,
         '$reset' => $reset
     ]);
 

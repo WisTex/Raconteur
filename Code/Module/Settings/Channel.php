@@ -62,7 +62,7 @@ class Channel
         PermissionLimits::Set(local_channel(), 'view_contacts', $view_contacts);
 
         $this->publish = (((x($_POST, 'profile_in_directory')) && (intval($_POST['profile_in_directory']) == 1)) ? 1 : 0);
-        $username = ((x($_POST, 'username')) ? escape_tags(trim($_POST['username'])) : '');
+        $channel_name = ((x($_POST, 'channel_name')) ? escape_tags(trim($_POST['channel_name'])) : '');
         $timezone = ((x($_POST, 'timezone_select')) ? notags(trim($_POST['timezone_select'])) : '');
         $defloc = ((x($_POST, 'defloc')) ? notags(trim($_POST['defloc'])) : '');
         $maxreq = ((x($_POST, 'maxreq')) ? intval($_POST['maxreq']) : 0);
@@ -137,9 +137,9 @@ class Channel
 
         $name_change = false;
 
-        if ($username != $channel['channel_name']) {
+        if ($channel_name != $channel['channel_name']) {
             $name_change = true;
-            $err = Zlib\Channel::validate_channelname($username);
+            $err = Zlib\Channel::validate_channelname($channel_name);
             if ($err) {
                 notice($err);
                 return;
@@ -177,7 +177,7 @@ class Channel
         $r = q(
             "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', 
                    channel_notifyflags = %d, channel_max_friend_req = %d, channel_expire_days = %d where channel_id = %d",
-            dbesc($username),
+            dbesc($channel_name),
             intval($pageflags),
             dbesc($timezone),
             dbesc($defloc),
@@ -206,17 +206,17 @@ class Channel
             // catch xchans for all protocols by matching the url
             $r = q(
                 "update xchan set xchan_name = '%s', xchan_name_date = '%s' where xchan_url = '%s'",
-                dbesc($username),
+                dbesc($channel_name),
                 dbesc(datetime_convert()),
                 dbesc(z_root() . '/channel/' . $channel['channel_address'])
             );
             $r = q(
                 "update profile set fullname = '%s' where uid = %d and is_default = 1",
-                dbesc($username),
+                dbesc($channel_name),
                 intval($channel['channel_id'])
             );
             if (Zlib\Channel::is_system($channel['channel_id'])) {
-                set_config('system', 'sitename', $username);
+                set_config('system', 'sitename', $channel_name);
             }
         }
 
@@ -280,7 +280,7 @@ class Channel
 
         //      logger('permiss: ' . print_r($permiss,true));
 
-        $username = $channel['channel_name'];
+        $channel_name = $channel['channel_name'];
         $nickname = $channel['channel_address'];
         $timezone = $channel['channel_timezone'];
         $notify = $channel['channel_notifyflags'];
@@ -433,7 +433,7 @@ class Channel
             '$form_security_token' => get_form_security_token("settings"),
             '$nickname_block' => $prof_addr,
             '$h_basic' => t('Basic Settings'),
-            '$username' => ['username', t('Full name'), $username, ''],
+            '$channel_name' => ['channel_name', t('Full name'), $channel_name, ''],
             '$timezone' => ['timezone_select', t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()],
             '$defloc' => ['defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')],
             '$allowloc' => ['allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(), 'system', 'use_browser_location')) ? 1 : ''), '', $yes_no],
