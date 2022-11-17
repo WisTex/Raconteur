@@ -882,9 +882,8 @@ class Item extends Controller
             $body = ((isset($_REQUEST['body'])) ? trim($_REQUEST['body']) : EMPTY_STR);
             $body .= ((isset($_REQUEST['attachment'])) ? trim($_REQUEST['attachment']) : EMPTY_STR);
             $postopts = '';
-
-            $allow_empty = ((array_key_exists('allow_empty', $_REQUEST)) ? intval($_REQUEST['allow_empty']) : 0);
-
+            $haslocation = $lat || $lon;
+            $allow_empty = (($checkin && $haslocation) || $_REQUEST['allow_empty']);
             $private = ((isset($private) && $private) ? $private : intval($acl->is_private() || ($public_policy)));
 
             // If this is a comment, set the permissions from the parent.
