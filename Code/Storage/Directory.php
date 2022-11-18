@@ -63,7 +63,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         $this->ext_path = $ext_path;
         // remove "/cloud" from the beginning of the path
         $modulename = App::$module;
-        $this->red_path = ((strpos($ext_path, '/' . $modulename) === 0) ? substr($ext_path, strlen($modulename) + 1) : $ext_path);
+        $this->red_path = ((str_starts_with($ext_path, '/' . $modulename)) ? substr($ext_path, strlen($modulename) + 1) : $ext_path);
         if (!$this->red_path) {
             $this->red_path = '/';
         }
@@ -71,9 +71,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         $this->folder_hash = '';
         $this->getDir();
 
-        if ($this->auth->browser) {
-            $this->auth->browser->set_writeable();
-        }
+        $this->auth->browser?->set_writeable();
     }
 
     private function log()
@@ -184,7 +182,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         if ($ch) {
             $sync = attach_export_data($ch, $this->folder_hash);
             if ($sync) {
-                Libsync::build_sync_packet($ch['channel_id'], array('file' => array($sync)));
+                Libsync::build_sync_packet($ch['channel_id'], ['file' => [$sync]]);
             }
         }
 
@@ -390,7 +388,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         $sync = attach_export_data($channel, $hash);
 
         if ($sync) {
-            Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+            Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
         }
     }
 
@@ -416,14 +414,14 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
             // folder already exists.
 
             require_once('include/attach.php');
-            $result = attach_mkdir($channel, $this->auth->observer, array('filename' => $name, 'folder' => $this->folder_hash, 'force' => true));
+            $result = attach_mkdir($channel, $this->auth->observer, ['filename' => $name, 'folder' => $this->folder_hash, 'force' => true]);
 
             if ($result['success']) {
                 $sync = attach_export_data($channel, $result['data']['hash']);
                 logger('createDirectory: attach_export_data returns $sync:' . print_r($sync, true), LOGGER_DEBUG);
 
                 if ($sync) {
-                    Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+                    Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
                 }
             } else {
                 logger('error ' . print_r($result, true), LOGGER_DEBUG);
@@ -454,7 +452,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         if ($channel) {
             $sync = attach_export_data($channel, $this->folder_hash, true);
             if ($sync) {
-                Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+                Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
             }
         }
     }
@@ -710,7 +708,7 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
         );
 
         foreach ($r as $rr) {
-            if (App::$module === 'cloud' && (strpos($rr['filename'], '.') === 0) && (!get_pconfig($channel_id, 'system', 'show_dot_files'))) {
+            if (App::$module === 'cloud' && (str_starts_with($rr['filename'], '.')) && (!get_pconfig($channel_id, 'system', 'show_dot_files'))) {
                 continue;
             }
 

@@ -90,7 +90,7 @@ class File extends DAV\Node implements DAV\IFile {
 		}
 
         // attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
-        
+
 		$newName = str_replace('/', '%2F', $newName);
 
 		$r = q("UPDATE attach SET filename = '%s' WHERE hash = '%s' AND id = %d",
