@@ -1155,16 +1155,19 @@ class Activity
             $ret['directMessage'] = true;
         }
 
-        if (intval($i['item_nocomment'])) {
-            if ($ret['commentPolicy']) {
-                $ret['commentPolicy'] .= ' ';
+        // avoid double addition of the until= clause
+        if (!str_contains($ret['commentPolicy'], 'until=')) {
+            if (intval($i['item_nocomment'])) {
+                if ($ret['commentPolicy']) {
+                    $ret['commentPolicy'] .= ' ';
+                }
+                $ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME);
+            } elseif (array_key_exists('comments_closed', $i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] > NULL_DATE) {
+                if ($ret['commentPolicy']) {
+                    $ret['commentPolicy'] .= ' ';
+                }
+                $ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['comments_closed'], ATOM_TIME);
             }
-            $ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['created'], ATOM_TIME);
-        } elseif (array_key_exists('comments_closed', $i) && $i['comments_closed'] !== EMPTY_STR && $i['comments_closed'] > NULL_DATE) {
-            if ($ret['commentPolicy']) {
-                $ret['commentPolicy'] .= ' ';
-            }
-            $ret['commentPolicy'] .= 'until=' . datetime_convert('UTC', 'UTC', $i['comments_closed'], ATOM_TIME);
         }
 
         $ret['attributedTo'] = self::encode_person($i['author'],false);
