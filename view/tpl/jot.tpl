@@ -131,7 +131,6 @@
 					<button type="button" id="profile-poll-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$poll}}" onclick="initPoll();">
 						<i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>
 					</button>
-
 				</div>
 				<div class="btn-group mr-2 d-none d-lg-flex">
 					{{if $setloc}}
@@ -143,6 +142,11 @@
 					<button id="profile-nolocation-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$clearloc}}" onclick="jotClearLocation();return false;" disabled="disabled">
 						<i id="profile-nolocation" class="fa fa-circle-o jot-icons"></i>
 					</button>
+					{{/if}}
+					{{if $feature_checkin}}
+						<button id="profile-checkin-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
+							<i id="profile-checkin" class="fa fa-map-marker jot-icons"></i>
+						</button>
 					{{/if}}
 				{{else}}
 				<div class="btn-group d-none d-lg-flex">
@@ -167,11 +171,6 @@
 				{{if $feature_encrypt}}
 					<button id="profile-encrypt-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$encrypt}}" onclick="hz_encrypt('{{$cipher}}','#profile-jot-text');return false;">
 						<i id="profile-encrypt" class="fa fa-key jot-icons"></i>
-					</button>
-				{{/if}}
-				{{if $feature_checkin}}
-					<button id="profile-checkin-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
-						<i id="profile-checkin" class="fa fa-map-marker jot-icons"></i>
 					</button>
 				{{/if}}
 

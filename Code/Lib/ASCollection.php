@@ -44,7 +44,7 @@ class ASCollection
         }
 
         if (!in_array($data['type'], ['Collection', 'OrderedCollection'])) {
-            return false;
+            return;
         }
 
         if ($this->direction) {

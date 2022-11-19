@@ -1396,7 +1396,7 @@ class Libzot
                 logger('unsupported sync packet encoding ignored.');
             }
         }
-        
+
         if ($result) {
             $return = array_merge($return, $result);
         }
