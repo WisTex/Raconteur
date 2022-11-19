@@ -54,7 +54,9 @@ class Convo
                 $AS = new ActivityStreams($message, null, true);
                 if ($AS->is_valid() && is_array($AS->obj)) {
                     $item = Activity::decode_note($AS, true);
-                    Activity::store($channel, $contact['abook_xchan'], $AS, $item, true, true);
+                    if ($item) {
+                        Activity::store($channel, $contact['abook_xchan'], $AS, $item, true, true);
+                    }
                 }
             }
         }
