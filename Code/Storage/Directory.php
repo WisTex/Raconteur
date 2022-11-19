@@ -450,10 +450,10 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
 
         $channel = Channel::from_id($this->auth->owner_id);
         if ($channel) {
-            $sync = attach_export_data($channel, $this->folder_hash, true);
-            if ($sync) {
-                Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
-            }
+                $sync = attach_export_data($channel, $this->folder_hash, true);
+                if ($sync) {
+                    Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
+                }
         }
     }
 
@@ -495,7 +495,17 @@ class Directory extends DAV\Node implements DAV\ICollection, DAV\IQuota, DAV\IMo
             return false;
         }
 
-        return attach_move($this->auth->owner_id, $sourceNode->data['hash'], $this->folder_hash);
+        $result = attach_move($this->auth->owner_id, $sourceNode->data['hash'], $this->folder_hash);
+        if ($result) {
+            $channel = Channel::from_id($this->auth->owner_id);
+            if ($channel) {
+                $sync = attach_export_data($channel, $sourceNode->data['hash'], false);
+                if ($sync) {
+                    Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
+                }
+            }
+        }
+        return $result;
     }
 
 

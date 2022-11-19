@@ -94,7 +94,6 @@ class Filestorage extends Controller
 
     public function get()
     {
-
         if (argc() > 1) {
             $channel = Channel::from_username(argv(1));
         }
