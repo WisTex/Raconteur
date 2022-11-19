@@ -287,7 +287,7 @@ function mark_orphan_hubsxchans()
 
 
 	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
-		and hubloc_network in ('nomad','zot6') and hubloc_connected < %s - interval %s",
+		and hubloc_network in ('nomad','zot6') and hubloc_connected != '0001-01-01 00:00:00' hubloc_connected < %s - interval %s",
 		db_utcnow(), db_quoteinterval('36 day')
 	);
 
