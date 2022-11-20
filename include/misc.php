@@ -33,8 +33,8 @@ use Symfony\Component\Uid\Uuid;
 function replace_macros($template, $map)
 {
     $arr = [
-        'template' => $s,
-        'params' => $r
+        'template' => $template,
+        'params' => $map,
     ];
 
     /**
