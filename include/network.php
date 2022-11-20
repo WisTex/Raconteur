@@ -484,7 +484,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
                     $current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
                     $repeated_tag_index[$tag . '_' . $level]++;
                 } else { // This section will make the value an array if multiple tags with the same name appear together
-                    $current[$tag] = array($current[$tag],$result); // This will combine the existing item and the new item together to make an array
+                    $current[$tag] = [$current[$tag],$result]; // This will combine the existing item and the new item together to make an array
                     $repeated_tag_index[$tag . '_' . $level] = 2;
 
                     if (isset($current[$tag . '_attr'])) { // The attribute of the last(0th) tag must be moved as well
@@ -513,7 +513,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
                     }
                     $repeated_tag_index[$tag . '_' . $level]++;
                 } else { // If it is not an array...
-                    $current[$tag] = array($current[$tag],$result); //...Make it an array using the existing value and the new value
+                    $current[$tag] = [$current[$tag],$result]; //...Make it an array using the existing value and the new value
                     $repeated_tag_index[$tag . '_' . $level] = 1;
                     if ($priority == 'tag' and $get_attributes) {
                         if (isset($current[$tag . '_attr'])) { // The attribute of the last(0th) tag must be moved as well
@@ -999,7 +999,7 @@ function check_pubstream_siteallowed($url)
     }
 
     // your own site is always allowed
-    if (strpos($url, z_root()) !== false) {
+    if (str_contains($url, z_root())) {
         return $retvalue;
     }
 
@@ -1048,7 +1048,7 @@ function check_pubstream_channelallowed($hash)
 
     $retvalue = true;
 
-    $arr = array('hash' => $hash);
+    $arr = ['hash' => $hash];
     /**
      * @hooks check_channelallowed
      *   Used to over-ride or bypass the channel black/white block lists.
@@ -1087,7 +1087,7 @@ function deliverable_singleton($channel_id, $xchan)
         if (! $r[0]['abook_instance']) {
             return true;
         }
-        if (strpos($r[0]['abook_instance'], z_root()) !== false) {
+        if (str_contains($r[0]['abook_instance'], z_root())) {
             return true;
         }
     }
@@ -1119,13 +1119,13 @@ function get_repository_version($branch = 'release')
 function network_to_name($s)
 {
 
-    $nets = array(
+    $nets = [
         NETWORK_FEED        => t('RSS/Atom'),
         NETWORK_ACTIVITYPUB => t('ActivityPub'),
         NETWORK_DIASPORA    => t('Diaspora'),
         NETWORK_NOMAD       => t('Nomad'),
         NETWORK_ZOT6        => t('Zot6'),
-    );
+    ];
 
     /**
      * @hooks network_to_name

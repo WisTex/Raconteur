@@ -2,7 +2,6 @@
 
 namespace Code\Widget;
 
-use App;
 use Code\Render\Theme;
 
 

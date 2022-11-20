@@ -26,17 +26,16 @@ class Site_projects implements WidgetInterface
                 $results[] = $result;
             }
 
-            $output = replace_macros(Theme::get_template('site_projects.tpl'), [
+            return replace_macros(Theme::get_template('site_projects.tpl'), [
                 '$title' => t('Community Types'),
                 '$desc' => '',
                 '$all' => t('All community types'),
                 'base' => z_root() . '/communities',
-                '$sel_all' => (($_REQUEST['project']) ? false : true),
+                '$sel_all' => !$_REQUEST['project'],
                 '$terms' => $results
             ]);
-
-            return $output;
         }
+        return '';
     }
 
     public static function site_sort($a, $b)

@@ -2993,7 +2993,7 @@ class Libzot
             $ret['follow_url'] = z_root() . '/follow?f=&url=%s';
         }
 
-        $permissions = get_all_perms($e['channel_id'], $ztarget_hash, false);
+        $permissions = get_all_perms($e['channel_id'], $ztarget_hash);
 
         if ($ztarget_hash) {
             $permissions['connected'] = false;

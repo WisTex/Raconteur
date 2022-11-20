@@ -20,26 +20,12 @@ class Settings_menu implements WidgetInterface
 
         $channel = App::get_channel();
 
-        $abook_self_id = 0;
-
-        // Retrieve the 'self' address book entry for use in the auto-permissions link
-
-        $role = get_pconfig(local_channel(), 'system', 'permissions_role');
-
-        $abk = q(
-            "select abook_id from abook where abook_channel = %d and abook_self = 1 limit 1",
-            intval(local_channel())
-        );
-        if ($abk) {
-            $abook_self_id = $abk[0]['abook_id'];
-        }
-
         $x = q(
             "select count(*) as total from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 ",
             dbesc($channel['channel_hash'])
         );
 
-        $hublocs = (($x && $x[0]['total'] > 1) ? true : false);
+        $hublocs = $x && $x[0]['total'] > 1;
 
         $tabs = [
             [
