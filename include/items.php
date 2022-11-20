@@ -1073,7 +1073,10 @@ function encode_item_xchan($xchan) {
     $ret['address']  = $xchan['xchan_addr'];
     $ret['url']      = $xchan['xchan_url'];
     $ret['network']  = $xchan['xchan_network'];
-    $ret['photo']    = [ 'mimetype' => $xchan['xchan_photo_mimetype'], 'src' => $xchan['xchan_photo_m'] ];
+    $ret['photo']    = [
+        'mimetype' => $xchan['xchan_photo_mimetype'],
+        'src' => $xchan['xchan_photo_m']
+    ];
     $ret['id']       = $xchan['xchan_guid'];
     $ret['id_sig']   = $xchan['xchan_guid_sig'];
     $ret['key']      = $xchan['xchan_pubkey'];
@@ -1132,7 +1135,8 @@ function decode_item_meta($meta) {
  * @return string
  */
 function termtype($t) {
-    $types = ['unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum'];
+    $types = ['unknown', 'hashtag', 'mention', 'category', 'personal_category', 'file',
+        'search', 'thing', 'bookmark', 'hierarchy', 'communitytag', 'forum'];
 
     return(($types[$t]) ?: 'unknown');
 }
