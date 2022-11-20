@@ -30,7 +30,7 @@ use Symfony\Component\Uid\Uuid;
  *
  * @return string substituted string
  */
-function replace_macros($s, $r)
+function replace_macros($template, $map)
 {
     $arr = [
         'template' => $s,

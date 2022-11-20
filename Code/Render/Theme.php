@@ -227,27 +227,27 @@ class Theme
         }
     }
 
-    public static function get_template($s, $root = '')
+    public static function get_template($filename, $root = '')
     {
             $testroot = ($root=='') ? $testroot = "ROOT" : $root;
 
             $t = App::template_engine();
 
-        if (isset(App::$override_markup_templates[$testroot][$s]["content"])) {
-                return App::$override_markup_templates[$testroot][$s]["content"];
+        if (isset(App::$override_markup_templates[$testroot][$filename]["content"])) {
+                return App::$override_markup_templates[$testroot][$filename]["content"];
         } else {
-            if (isset(App::$override_markup_templates[$testroot][$s]["root"]) &&
-                   isset(App::$override_markup_templates[$testroot][$s]["file"])) {
-                    $s = App::$override_markup_templates[$testroot][$s]["file"];
-                    $root = App::$override_markup_templates[$testroot][$s]["root"];
+            if (isset(App::$override_markup_templates[$testroot][$filename]["root"]) &&
+                   isset(App::$override_markup_templates[$testroot][$filename]["file"])) {
+                    $filename = App::$override_markup_templates[$testroot][$filename]["file"];
+                    $root = App::$override_markup_templates[$testroot][$filename]["root"];
             } elseif (App::$override_templateroot) {
                 $newroot = App::$override_templateroot.$root;
                 if ($newroot != '' && !str_ends_with($newroot, '/')) {
                                $newroot .= '/';
                 }
-                    $template = $t->get_template($s, $newroot);
+                    $template = $t->get_template($filename, $newroot);
             }
-                $template = $t->get_template($s, $root);
+                $template = $t->get_template($filename, $root);
                 return $template;
         }
     }

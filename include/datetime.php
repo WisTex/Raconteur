@@ -246,9 +246,9 @@ function datetimesel($format, $min, $max, $default, $label, $id = 'datetimepicke
     $readable_format = str_replace('i', 'MM', $readable_format);
 
     $tpl = Theme::get_template('field_input.tpl');
-    $o .= replace_macros($tpl, array(
-            '$field' => array($id, $label, $input_text, (($required) ? t('Required') : ''), (($required) ? '*' : ''), 'placeholder="' . $readable_format . '"'),
-        ));
+    $o .= replace_macros($tpl, [
+            '$field' => [$id, $label, $input_text, (($required) ? t('Required') : ''), (($required) ? '*' : ''), 'placeholder="' . $readable_format . '"'],
+    ]);
     $o .= "<script>\$(function () {var picker = \$('#id_$id').datetimepicker({step:15,format:'$dateformat' $minjs $maxjs $pickers $defaultdatejs,dayOfWeekStart:$first_day}) $extra_js})</script>";
 
     return $o;
@@ -290,14 +290,14 @@ function relative_date($posted_date, $format = null)
         return sprintf(t('less than a second %s'), $direction);
     }
 
-    $a = array( 12 * 30 * 24 * 60 * 60  =>  'y',
+    $a = [12 * 30 * 24 * 60 * 60  =>  'y',
                 30 * 24 * 60 * 60       =>  'm',
                 7  * 24 * 60 * 60       =>  'w',
                 24 * 60 * 60            =>  'd',
                 60 * 60                 =>  'h',
                 60                      =>  'i',
                 1                       =>  's'
-    );
+    ];
 
 
     foreach ($a as $secs => $str) {
@@ -315,31 +315,16 @@ function relative_date($posted_date, $format = null)
 function plural_dates($k, $n)
 {
 
-    switch ($k) {
-        case 'y':
-            return tt('year', 'years', $n, 'relative_date');
-            break;
-        case 'm':
-            return tt('month', 'months', $n, 'relative_date');
-            break;
-        case 'w':
-            return tt('week', 'weeks', $n, 'relative_date');
-            break;
-        case 'd':
-            return tt('day', 'days', $n, 'relative_date');
-            break;
-        case 'h':
-            return tt('hour', 'hours', $n, 'relative_date');
-            break;
-        case 'i':
-            return tt('minute', 'minutes', $n, 'relative_date');
-            break;
-        case 's':
-            return tt('second', 'seconds', $n, 'relative_date');
-            break;
-        default:
-            return;
-    }
+    return match ($k) {
+        'y' => tt('year', 'years', $n, 'relative_date'),
+        'm' => tt('month', 'months', $n, 'relative_date'),
+        'w' => tt('week', 'weeks', $n, 'relative_date'),
+        'd' => tt('day', 'days', $n, 'relative_date'),
+        'h' => tt('hour', 'hours', $n, 'relative_date'),
+        'i' => tt('minute', 'minutes', $n, 'relative_date'),
+        's' => tt('second', 'seconds', $n, 'relative_date'),
+        default => '',
+    };
 }
 
 /**
@@ -490,7 +475,7 @@ function cal($y = 0, $m = 0, $links = false, $class = '')
         $day = str_replace(' ', '&nbsp;', sprintf('%2.2d', $d));
         if ($started) {
             if (is_array($links) && isset($links[$d])) {
-                $o .=  "<a href=\"{$links[$d]}\">$day</a>";
+                $o .=  "<a href=\"$links[$d]\">$day</a>";
             } else {
                 $o .= $day;
             }
@@ -594,7 +579,7 @@ function update_birthdays()
 
             $z = event_store_event($ev);
             if ($z) {
-                $item_id = event_store_item($ev, $z);
+                event_store_item($ev, $z);
                 q(
                     "update abook set abook_dob = '%s' where abook_id = %d",
                     dbesc(intval($rr['abook_dob']) + 1 . substr($rr['abook_dob'], 4)),

@@ -105,12 +105,12 @@ function http_status_exit($val, $msg = '')
 function unparse_url($parsed_url)
 {
     $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
-    $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+    $host     = $parsed_url['host'] ?? '';
     $port     = ((isset($parsed_url['port']) && intval($parsed_url['port'])) ? ':' . intval($parsed_url['port']) : '');
-    $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+    $user     = $parsed_url['user'] ?? '';
     $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
     $pass     = ($user || $pass) ? "$pass@" : '';
-    $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+    $path     = $parsed_url['path'] ?? '';
     $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
     $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
     return "$scheme$user$pass$host$port$path$query$fragment";
@@ -422,11 +422,8 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
         return [];
     }
 
-    //Initializations
+    // Initializations
     $xml_array = [];
-    $parents = [];
-    $opened_tags = [];
-    $arr = [];
 
     $current = &$xml_array; // Reference
 
@@ -600,8 +597,6 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject')
  */
 function discover_resource(string $resource, $protocol = '', $verify = true)
 {
-    $network  = null;
-
     $x = Webfinger::exec($resource);
 
     $address = EMPTY_STR;
@@ -1398,7 +1393,7 @@ function get_request_string($url)
 
     $m = parse_url($url);
     if ($m) {
-        return ( (isset($m['path']) ? $m['path'] : '/' ) . (isset($m['query']) ? '?' . $m['query'] : '') );
+        return ( ($m['path'] ?? '/') . (isset($m['query']) ? '?' . $m['query'] : '') );
     }
 
     return '';

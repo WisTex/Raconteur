@@ -37,9 +37,9 @@ class Suggestedchats implements WidgetInterface
                 $r[$x]['xchat_url'] = zid($r[$x]['xchat_url']);
             }
         }
-        return replace_macros(Theme::get_template('bookmarkedchats.tpl'), array(
+        return replace_macros(Theme::get_template('bookmarkedchats.tpl'), [
             '$header' => t('Suggested Chatrooms'),
             '$rooms' => $r
-        ));
+        ]);
     }
 }

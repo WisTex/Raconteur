@@ -470,13 +470,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     }
                 }
 
-                $sp = false;
-//              $profile_link = best_link_url($item,$sp);
-//              if($sp)
-//                  $sparkle = ' sparkle';
-//              else
-//                  $profile_link = zid($profile_link);
-
                 $profile_name = $item['author']['xchan_name'];
                 $profile_link = $item['author']['xchan_url'];
                 $profile_avatar = $item['author']['xchan_photo_m'];
