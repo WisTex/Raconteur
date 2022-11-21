@@ -264,9 +264,7 @@ class Account {
 
     public static function verify_email_address($arr)
     {
-
         if (array_key_exists('resend', $arr)) {
-            $email = $arr['email'];
             $a = q(
                 "select * from account where account_email = '%s' limit 1",
                 dbesc($arr['email'])

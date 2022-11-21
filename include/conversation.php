@@ -1040,11 +1040,12 @@ function z_status_editor($x, $popup = false)
     
     $feature_checkin = true;
     $checkin_checked = isset($x['checkin']) ? intval($x['checkin']): 0;
-    if ($checkin_checked) {
+    $feature_checkout = true;
+    $checkout_checked = isset($x['checkout']) ? intval($x['checkout']): 0;
+    if ($checkin_checked || $checkout_checked) {
         $body = preg_replace('/\[map=(.*?)\]/','', $body);
         $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
     }
-    
     $lat = '';
     $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
@@ -1320,7 +1321,9 @@ function z_status_editor($x, $popup = false)
         '$defexpire' => $defexpire,
         '$feature_expire' => $feature_expire,
         '$feature_checkin' => $feature_checkin,
+        '$feature_checkout' => $feature_checkout,
         '$checkin' => t('Check In'),
+        '$checkout' => t('Check Out'),
         '$expires' => t('Set expiration date'),
         '$save' => $permanent_draft,
         '$is_draft' => ((array_key_exists('is_draft', $x) && intval($x['is_draft'])) ? true : false),
@@ -1349,6 +1352,7 @@ function z_status_editor($x, $popup = false)
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
         '$disczot' => t('Find shareable objects (Zot)'),
         '$checkin_checked' => $checkin_checked,
+        '$checkout_checked' => $checkout_checked,
         '$reset' => $reset
     ]);
 

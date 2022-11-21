@@ -30,6 +30,7 @@
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
 		<input type="hidden" name="draft" id="jot-draft" value="0" />
 		<input type="hidden" name="checkin" id="jot-checkin" value="{{$checkin_checked}}" />
+		<input type="hidden" name="checkout" id="jot-checkout" value="{{$checkout_checked}}" />
 		<input type="hidden" name="hidden_mentions" id="jot-hidden-mentions" value="{{$hidden_mentions}}" />
 		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 
@@ -146,6 +147,11 @@
 					{{if $feature_checkin}}
 						<button id="profile-checkin-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
 							<i id="profile-checkin" class="fa fa-map-marker jot-icons"></i>
+						</button>
+					{{/if}}
+					{{if $feature_checkout}}
+						<button id="profile-checkout-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkout}}" onclick="jotCheckout(); return false;">
+							<i id="profile-checkout" class="fa fa-sign-out jot-icons"></i>
 						</button>
 					{{/if}}
 				{{else}}

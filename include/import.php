@@ -461,7 +461,7 @@ function import_hublocs($channel, $hublocs, $seize)
                 $hubloc['hubloc_primary'] = 0;
             }
 
-            if (($x = Libzot::gethub($arr, false)) === false) {
+            if (($x = Libzot::gethub($arr)) === false) {
                 unset($hubloc['hubloc_id']);
                 hubloc_store_lowlevel($hubloc);
             } else {
