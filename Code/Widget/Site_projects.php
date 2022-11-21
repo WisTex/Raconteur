@@ -10,14 +10,13 @@ class Site_projects implements WidgetInterface
     public function widget(array $arguments): string
     {
         $results = [];
-        $query = q("select site_project, site_type, count(site_project) as total from site
-            where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project, site_type order by site_project desc");
+        $query = q("select site_project, count(site_project) as total from site
+            where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project by site_project desc");
         if ($query) {
             usort($query, ['self', 'site_sort']);
             foreach ($query as $rv) {
                 $result = [];
                 $result['name'] = $rv['site_project'];
-                $result['type'] = $rv['site_type'];
                 $result['cname'] = ucfirst($result['name']);
                 if ($rv['site_project'] === $_REQUEST['project']) {
                     $result['selected'] = true;
