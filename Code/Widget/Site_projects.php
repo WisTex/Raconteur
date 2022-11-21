@@ -11,7 +11,7 @@ class Site_projects implements WidgetInterface
     {
         $results = [];
         $query = q("select site_project, count(site_project) as total from site
-            where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project by site_project desc");
+            where site_project != '' and site_flags != 256 and site_dead = 0 group by site_project order by site_project desc");
         if ($query) {
             usort($query, ['self', 'site_sort']);
             foreach ($query as $rv) {
