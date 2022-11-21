@@ -372,6 +372,11 @@ class ThreadItem
         $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
         $pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
 
+        $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-map-marker"></i>&nbsp' : '';
+        if (!$locicon) {
+            $locicon = ($item['verb'] === 'Leave') ? '<i class="fa fa-fw fa-sign-out"></i>&nbsp' : '';
+        }
+        
         $tmp_item = array(
             'template' => $this->get_template(),
             'mode' => $mode,
@@ -413,7 +418,7 @@ class ThreadItem
             'thumb' => $profile_avatar,
             'osparkle' => $osparkle,
             'sparkle' => $sparkle,
-            'title' => $item['title'],
+            'title' => $locicon . $item['title'],
             'title_tosource' => get_pconfig($conv->get_profile_owner(), 'system', 'title_tosource'),
             'ago' => relative_date($item['created']),
             'app' => $item['app'],
