@@ -491,6 +491,7 @@ class Item extends Controller
         $plink = ((x($_REQUEST, 'permalink')) ? escape_tags($_REQUEST['permalink']) : '');
         $obj_type = ((x($_REQUEST, 'obj_type')) ? escape_tags($_REQUEST['obj_type']) : ACTIVITY_OBJ_NOTE);
         $checkin = ((x($_REQUEST, 'checkin')) ? 1 : 0);
+        $checkout = ((x($_REQUEST, 'checkout')) ? 1 : 0);
 
         $item_unpublished = ((isset($_REQUEST['draft'])) ? intval($_REQUEST['draft']) : 0);
 
@@ -883,7 +884,7 @@ class Item extends Controller
             $body .= ((isset($_REQUEST['attachment'])) ? trim($_REQUEST['attachment']) : EMPTY_STR);
             $postopts = '';
             $haslocation = $lat || $lon;
-            $allow_empty = (($checkin && $haslocation) || $_REQUEST['allow_empty']);
+            $allow_empty = ((($checkin || $checkout) && $haslocation) || $_REQUEST['allow_empty']);
             $private = ((isset($private) && $private) ? $private : intval($acl->is_private() || ($public_policy)));
 
             // If this is a comment, set the permissions from the parent.
@@ -977,6 +978,9 @@ class Item extends Controller
         }
         if ($checkin) {
             $verb = 'Arrive';
+        }
+        if ($checkout) {
+            $verb = 'Leave';
         }
 
         if (in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) {
@@ -1187,7 +1191,7 @@ class Item extends Controller
         $lat = $hook_args['latitude'];
         $lon = $hook_args['longitude'];
 
-        if ($verb ===  'Arrive') {
+        if (in_array($verb, ['Arrive', 'Leave'])) {
             $body = preg_replace('/\[map=(.*?)\]/','', $body);
             $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
 

@@ -109,7 +109,7 @@ function xchan_store($arr)
                 continue;
             }
 
-            if (in_array($columns, 'xchan_' . $k)) {
+            if (in_array('xchan_' . $k, $columns)) {
                 $x['xchan_' . $k] = escape_tags($v);
             }
         }
@@ -273,7 +273,7 @@ function xchan_keychange_acl($table, $column, $oldxchan, $newxchan)
 }
 
 
-function xchan_change_key($oldx, $newx, $data)
+function xchan_change_key($oldx, $newx)
 {
 
     $tables = [

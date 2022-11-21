@@ -30,11 +30,11 @@ use Symfony\Component\Uid\Uuid;
  *
  * @return string substituted string
  */
-function replace_macros($s, $r)
+function replace_macros($template, $map)
 {
     $arr = [
-        'template' => $s,
-        'params' => $r
+        'template' => $template,
+        'params' => $map,
     ];
 
     /**
@@ -170,7 +170,7 @@ function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false)
  * @see HTMLPurifier
  *
  * @param string $s raw HTML
- * @param bool $allow_position allow CSS position
+ * @param array $opts
  * @return string standards compliant filtered HTML
  */
 function purify_html($s, $opts = [])

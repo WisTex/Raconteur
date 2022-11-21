@@ -756,7 +756,7 @@ class Channel
             );
         }
 
-        xchan_change_key($oldxchan, $newxchan, $stored);
+        xchan_change_key($oldxchan, $newxchan);
 
         Run::Summon([ 'Notifier', 'keychange', $channel['channel_id'] ]);
 

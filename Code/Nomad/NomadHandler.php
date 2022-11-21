@@ -140,7 +140,7 @@ class NomadHandler implements IHandler
         // if ! $update create a linked identity
 
 
-        xchan_change_key($xchan, $newxchan, $data);
+        xchan_change_key($xchan, $newxchan);
 
         $ret['success'] = true;
         return $ret;

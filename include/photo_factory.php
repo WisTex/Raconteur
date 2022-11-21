@@ -4,9 +4,7 @@ use Code\Photo\PhotoDriver;
 use Code\Photo\PhotoGd;
 use Code\Photo\PhotoImagick;
 use Code\Lib\Config;
-use Code\Lib\Img_cache;
 use Code\Lib\Hashpath;
-use Code\Lib\Channel;
 use Code\Lib\Url;
 
 /**
@@ -24,7 +22,6 @@ use Code\Lib\Url;
 function photo_factory($data, $type = null)
 {
     $ph = null;
-    $m = null;
 
     $unsupported_types = [
         'image/bmp',
@@ -70,19 +67,19 @@ function photo_factory($data, $type = null)
  * @param string $headers (optional)
  *   Headers to check for Content-Type (from curl request)
  * @return null|string Guessed mimetype
+ * @throws ImagickException
  */
 
 function guess_image_type($filename, $headers = '')
 {
     //  logger('Photo: guess_image_type: '.$filename . ($headers?' from curl headers':''), LOGGER_DEBUG);
     $type = null;
-    $m = null;
 
     if ($headers) {
         $hdrs = [];
         $h = explode("\n", $headers);
         foreach ($h as $l) {
-            if (strpos($l, ':') !== false) {
+            if (str_contains($l, ':')) {
                 list($k, $v) = array_map('trim', explode(':', trim($l), 2));
                 $hdrs[strtolower($k)] = $v;
             }
@@ -121,20 +118,20 @@ function guess_image_type($filename, $headers = '')
             }
         }
 
-        if (is_null($type) && (strpos($filename, 'http') === false)) {
+        if (is_null($type) && (!str_contains($filename, 'http'))) {
             $size = getimagesize($filename);
             $ph = photo_factory('');
             $types = $ph->supportedTypes();
             $type = ((array_key_exists($size['mime'], $types)) ? $size['mime'] : 'image/jpeg');
         }
         if (is_null($type)) {
-            if (strpos(strtolower($filename), 'jpg') !== false) {
+            if (str_contains(strtolower($filename), 'jpg')) {
                 $type = 'image/jpeg';
-            } elseif (strpos(strtolower($filename), 'jpeg') !== false) {
+            } elseif (str_contains(strtolower($filename), 'jpeg')) {
                 $type = 'image/jpeg';
-            } elseif (strpos(strtolower($filename), 'gif') !== false) {
+            } elseif (str_contains(strtolower($filename), 'gif')) {
                 $type = 'image/gif';
-            } elseif (strpos(strtolower($filename), 'png') !== false) {
+            } elseif (str_contains(strtolower($filename), 'png')) {
                 $type = 'image/png';
             }
         }
@@ -164,7 +161,7 @@ function delete_thing_photo($url, $ob_hash)
         return;
     }
 
-    if (strpos($url, '/xp/') !== false && strpos($url, '.obj') !== false) {
+    if (str_contains($url, '/xp/') && str_contains($url, '.obj')) {
         $xppath = 'cache/xp/' . substr($hash, 0, 2) . '/' . substr($hash, 2, 2) . '/' . $hash;
         if (file_exists($xppath)) {
             unlink($xppath);
@@ -217,11 +214,9 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     $path = Hashpath::path((($thing) ? $src . $xchan : $xchan), 'cache/xp', 2);
     $hash = basename($path);
 
-    $cached_file = $path . '-4' . (($thing) ? '.obj' : EMPTY_STR);
-
     // Maybe it's already a cached xchan photo on our site. Do nothing.
 
-    if (strpos($src, z_root() . '/xp/') === 0) {
+    if (str_starts_with($src, z_root() . '/xp/')) {
         return false;
     }
 
@@ -237,7 +232,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
         @file_put_contents('cache/' . $hash, $result['body']);
         $info = getimagesize('cache/' . $hash);
         @unlink('cache/' . $hash);
-        if (isset($info) && is_array($info) && array_key_exists('mime', $info)) {
+        if (is_array($info) && array_key_exists('mime', $info)) {
             $type = $info['mime'];
         }
         if ($type) {
@@ -253,7 +248,6 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
                         $img->cropImage(300, ($margin / 2), 0, $height, $height);
                     } elseif (($height / $width) > 1.2) {
                         // crop out the bottom
-                        $margin = $height - $width;
                         $img->cropImage(300, 0, 0, $width, $width);
                     } else {
                         $img->scaleImageSquare(300);
@@ -301,7 +295,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     }
 
     logger('cached photo: ' . $photo, LOGGER_DEBUG);
-    return([$photo, $thumb, $micro, $type, ($failure ? true : false)]);
+    return([$photo, $thumb, $micro, $type, (bool)$failure]);
 }
 
 
@@ -309,8 +303,6 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
 function import_remote_cover_photo($src, $xchan)
 {
 
-    $failure  = [];
-    $type = EMPTY_STR;
 
     if (!Config::Get('system','remote_cover_photos')) {
         return false;
@@ -319,11 +311,10 @@ function import_remote_cover_photo($src, $xchan)
     logger(sprintf('importing %s for %s', $src, $xchan), LOGGER_DEBUG);
 
     $path = Hashpath::path($xchan, 'cache/xp', 2);
-    $hash = basename($path);
 
     // Maybe it's already a cached xchan photo on our site. Do nothing.
 
-    if (strpos($src, z_root() . '/xp/') === 0) {
+    if (str_starts_with($src, z_root() . '/xp/')) {
         return false;
     }
 
@@ -331,7 +322,7 @@ function import_remote_cover_photo($src, $xchan)
 
     $fp = fopen($orig, 'wb');
     if (!$fp) {
-        logger('failed to create storage file.', LOGGER_NORMAL);
+        logger('failed to create storage file');
         return false;
     }
     $result = Url::get($src, ['filep' => $fp]);
@@ -358,12 +349,13 @@ function import_remote_cover_photo($src, $xchan)
 }
 
 /**
-  * @brief Import channel photo from a URL.
+ * @brief Import channel photo from a URL.
  *
  * @param string $photo URL to a photo
  * @param int $aid
  * @param int $uid channel_id
  * @return null|string Guessed image mimetype or null.
+ * @throws ImagickException
  */
 function import_channel_photo_from_url($photo, $aid, $uid)
 {

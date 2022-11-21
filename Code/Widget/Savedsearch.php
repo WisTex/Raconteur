@@ -52,22 +52,19 @@ class Savedsearch implements WidgetInterface
         $srchurl = App::$query_string;
 
         $srchurl = rtrim(preg_replace('/searchsave\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
-        $hasq = ((strpos($srchurl, '?') !== false) ? true : false);
         $srchurl = rtrim(preg_replace('/searchremove\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
 
         $srchurl = rtrim(preg_replace('/search\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
         $srchurl = rtrim(preg_replace('/submit\=[^\&].*?(\&|$)/is', '', $srchurl), '&');
-        $srchurl = str_replace(array('?f=', '&f='), array('', ''), $srchurl);
+        $srchurl = str_replace(['?f=', '&f='], ['', ''], $srchurl);
 
 
-        $hasq = ((strpos($srchurl, '?') !== false) ? true : false);
-        $hasamp = ((strpos($srchurl, '&') !== false) ? true : false);
+        $hasq = str_contains($srchurl, '?');
+        $hasamp = str_contains($srchurl, '&');
 
         if (($hasamp) && (!$hasq)) {
             $srchurl = substr($srchurl, 0, strpos($srchurl, '&')) . '?f=&' . substr($srchurl, strpos($srchurl, '&') + 1);
         }
-
-        $o = '';
 
         $r = q(
             "select tid,term from term WHERE uid = %d and ttype = %d ",
@@ -79,7 +76,7 @@ class Savedsearch implements WidgetInterface
 
         if (count($r)) {
             foreach ($r as $rr) {
-                $saved[] = array(
+                $saved[] = [
                     'id' => $rr['tid'],
                     'term' => $rr['term'],
                     'dellink' => z_root() . '/' . $srchurl . (($hasq || $hasamp) ? '' : '?f=') . '&amp;searchremove=1&amp;search=' . urlencode($rr['term']),
@@ -88,18 +85,17 @@ class Savedsearch implements WidgetInterface
                     'encodedterm' => urlencode($rr['term']),
                     'delete' => t('Remove term'),
                     'selected' => ($search == $rr['term']),
-                );
+                ];
             }
         }
 
         $tpl = Theme::get_template("saved_searches.tpl");
-        $o = replace_macros($tpl, array(
+        return replace_macros($tpl, [
             '$title' => t('Saved Searches'),
             '$add' => t('add'),
             '$searchbox' => searchbox($search, 'netsearch-box', $srchurl . (($hasq) ? '' : '?f='), true),
             '$saved' => $saved,
-        ));
+        ]);
 
-        return $o;
     }
 }

@@ -168,7 +168,8 @@ class Editpost extends Controller
             'jotnets' => true,
             'hide_expire' => true,
             'bbcode' => true,
-            'checkin' => ($item['verb'] === 'Arrive')
+            'checkin' => ($item['verb'] === 'Arrive'),
+            'checkout' => ($item['verb'] === 'Leave'),
         ];
 
         $editor = status_editor($x);

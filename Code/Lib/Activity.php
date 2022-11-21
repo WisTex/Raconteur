@@ -3338,7 +3338,7 @@ class Activity
             $s['item_private'] = 2;
         }
 
-        if ($s['verb'] ===  'Arrive') {
+        if (in_array($s['verb'], ['Arrive', 'Leave'])) {
             if (($s['lat'] || $s['lon']) && !str_contains($s['body'],'[map=')) {
                 $s['body'] .= "\n\n" . '[map=' . $s['lat'] . ',' . $s['lon'] . ']' . "\n";
             }

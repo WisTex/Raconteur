@@ -461,7 +461,7 @@ function import_hublocs($channel, $hublocs, $seize)
                 $hubloc['hubloc_primary'] = 0;
             }
 
-            if (($x = Libzot::gethub($arr, false)) === false) {
+            if (($x = Libzot::gethub($arr)) === false) {
                 unset($hubloc['hubloc_id']);
                 hubloc_store_lowlevel($hubloc);
             } else {
@@ -1024,12 +1024,12 @@ function import_items($channel, $items, $sync = false, $relocate = null)
                 if ($item['edited'] >= $r[0]['edited']) {
                     $item['id'] = $r[0]['id'];
                     $item['uid'] = $channel['channel_id'];
-                    $item_result = item_store_update($item, $allow_code, $deliver, false);
+                    $item_result = item_store_update($item, $allow_code, $deliver);
                 }
             } else {
                 $item['aid'] = $channel['channel_account_id'];
                 $item['uid'] = $channel['channel_id'];
-                $item_result = item_store($item, $allow_code, $deliver, false);
+                $item_result = item_store($item, $allow_code, $deliver);
             }
 
             // preserve conversations you've been involved in from being expired

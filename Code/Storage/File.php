@@ -54,10 +54,10 @@ class File extends DAV\Node implements DAV\IFile {
 	 *
 	 * @param string $name
 	 * @param array $data from attach table
-	 * @param &$auth
+	 * @param $auth
 	 */
 
-	public function __construct($name, $data, &$auth) {
+	public function __construct($name, $data, $auth) {
 		$this->name = $name;
 		$this->data = $data;
 		$this->auth = $auth;

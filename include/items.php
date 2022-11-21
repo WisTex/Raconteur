@@ -306,8 +306,6 @@ function can_comment_on_post($observer_xchan, $item)
     }
 
     switch ($item['comment_policy']) {
-        case 'self':
-            break;
         case 'public':
         case 'authenticated':
             // Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
@@ -326,6 +324,7 @@ function can_comment_on_post($observer_xchan, $item)
                 return true;
             }
             break;
+        case 'self':
         default:
             break;
     }
@@ -400,7 +399,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
     $arr['aid'] = ((isset($arr['aid'])) ? $arr['aid'] : $channel['channel_account_id']);
     $arr['uid'] = ((isset($arr['uid'])) ? $arr['uid'] : $channel['channel_id']);
 
-    if (! perm_is_allowed($arr['uid'],$observer['xchan_hash'],(($is_comment) ? 'post_comments' : 'post_wall'))) {
+    if (! perm_is_allowed($arr['uid'], $observer['xchan_hash'], (($is_comment) ? 'post_comments' : 'post_wall'))) {
         $ret['message'] = t('Permission denied');
         return $ret;
     }
@@ -1073,7 +1072,10 @@ function encode_item_xchan($xchan) {
     $ret['address']  = $xchan['xchan_addr'];
     $ret['url']      = $xchan['xchan_url'];
     $ret['network']  = $xchan['xchan_network'];
-    $ret['photo']    = [ 'mimetype' => $xchan['xchan_photo_mimetype'], 'src' => $xchan['xchan_photo_m'] ];
+    $ret['photo']    = [
+        'mimetype' => $xchan['xchan_photo_mimetype'],
+        'src' => $xchan['xchan_photo_m']
+    ];
     $ret['id']       = $xchan['xchan_guid'];
     $ret['id_sig']   = $xchan['xchan_guid_sig'];
     $ret['key']      = $xchan['xchan_pubkey'];
@@ -1132,7 +1134,8 @@ function decode_item_meta($meta) {
  * @return string
  */
 function termtype($t) {
-    $types = ['unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum'];
+    $types = ['unknown', 'hashtag', 'mention', 'category', 'personal_category', 'file',
+        'search', 'thing', 'bookmark', 'hierarchy', 'communitytag', 'forum'];
 
     return(($types[$t]) ?: 'unknown');
 }
@@ -1402,7 +1405,7 @@ function item_json_encapsulate($arr,$k)  {
  *   * \e boolean \b success
  *   * \e int \b item_id
  */
-function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) {
+function item_store($arr, $allow_exec = false, $deliver = true) {
 
     $d = [
             'item' => $arr,
@@ -1923,7 +1926,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
  * @param boolean $deliver (optional) default true
  * @return array
  */
-function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid = true) {
+function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
     $d = [
             'item' => $arr,
@@ -2252,13 +2255,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
     $ret['success'] = true;
     $ret['item_id'] = $orig_post_id;
 
-//    if($linkid) {
-//        $li = [ $ret['item'] ];
-//        xchan_query($li);
-//        $sync_item = fetch_post_tags($li);
-//        Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
-//    }
-
     return $ret;
 }
 
@@ -2497,7 +2493,7 @@ function tag_deliver($uid, $item_id) {
     if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
         // group delivery via DM - use post_wall permission since send_stream is probably turned off
         // and this will be turned into an embedded wall-to-wall post
-        if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+        if(perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
             logger('group DM delivery for ' . $u['channel_address']);
             start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
             q("update item set item_blocked = %d where id = %d",
@@ -2526,7 +2522,7 @@ function tag_deliver($uid, $item_id) {
                 $id = $a['id'];
             }
             if ($id == z_root() . '/outbox/' . $u['channel_address']) {
-                if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+                if(perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
                     logger('group collection delivery for ' . $u['channel_address']);
                     start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
@@ -2681,7 +2677,7 @@ function tag_deliver($uid, $item_id) {
              */
 
             if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
-                if ((intval($term['ttype']) === TERM_FORUM || get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated']))) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+                if ((intval($term['ttype']) === TERM_FORUM || get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated']))) && perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
                     logger('group mention delivery for ' . $u['channel_address']);
                     start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
@@ -2728,7 +2724,7 @@ function tag_deliver($uid, $item_id) {
 
             // ptagged - keep going, next check permissions
 
-            if ((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u['channel_parent'])) {
+            if ((! perm_is_allowed($uid, $item['author_xchan'], 'write_collection')) && ($item['author_xchan'] !== $u['channel_parent'])) {
                 logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
                 continue;
             }
@@ -2839,7 +2835,7 @@ function tgroup_check($uid, $item) {
     }
 
 
-    if (($is_collection) && (perm_is_allowed($uid,$item['author_xchan'],'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
+    if (($is_collection) && (perm_is_allowed($uid, $item['author_xchan'], 'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
         return true;
     }
 
@@ -4077,7 +4073,7 @@ function zot_feed($uid, $observer_hash, $arr) {
     if($message_id)
         logger('message_id: ' . $message_id,LOGGER_DEBUG);
 
-    if(! perm_is_allowed($uid,$observer_hash,'view_stream')) {
+    if(! perm_is_allowed($uid, $observer_hash, 'view_stream')) {
         logger('zot_feed: permission denied.');
         return $result;
     }

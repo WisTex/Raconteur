@@ -469,7 +469,7 @@ class Display extends Controller
                         if ($item['item_private']) {
                             continue;
                         }
-                        $atom .= atom_entry($item, $type, [], [], true, '', false);
+                        $atom .= atom_entry($item, $type, [], [], true, '');
                     }
                 }
 

@@ -1290,6 +1290,6 @@ class Libsync
             );
         }
 
-        xchan_change_key($oldxchan, $newxchan, $arr['keychange']);
+        xchan_change_key($oldxchan, $newxchan);
     }
 }

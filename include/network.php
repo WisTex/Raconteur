@@ -105,12 +105,12 @@ function http_status_exit($val, $msg = '')
 function unparse_url($parsed_url)
 {
     $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
-    $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+    $host     = $parsed_url['host'] ?? '';
     $port     = ((isset($parsed_url['port']) && intval($parsed_url['port'])) ? ':' . intval($parsed_url['port']) : '');
-    $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+    $user     = $parsed_url['user'] ?? '';
     $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
     $pass     = ($user || $pass) ? "$pass@" : '';
-    $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+    $path     = $parsed_url['path'] ?? '';
     $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
     $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
     return "$scheme$user$pass$host$port$path$query$fragment";
@@ -422,11 +422,8 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
         return [];
     }
 
-    //Initializations
+    // Initializations
     $xml_array = [];
-    $parents = [];
-    $opened_tags = [];
-    $arr = [];
 
     $current = &$xml_array; // Reference
 
@@ -484,7 +481,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
                     $current[$tag][$repeated_tag_index[$tag . '_' . $level]] = $result;
                     $repeated_tag_index[$tag . '_' . $level]++;
                 } else { // This section will make the value an array if multiple tags with the same name appear together
-                    $current[$tag] = array($current[$tag],$result); // This will combine the existing item and the new item together to make an array
+                    $current[$tag] = [$current[$tag],$result]; // This will combine the existing item and the new item together to make an array
                     $repeated_tag_index[$tag . '_' . $level] = 2;
 
                     if (isset($current[$tag . '_attr'])) { // The attribute of the last(0th) tag must be moved as well
@@ -513,7 +510,7 @@ function xml2array($contents, $namespaces = true, $get_attributes = 1, $priority
                     }
                     $repeated_tag_index[$tag . '_' . $level]++;
                 } else { // If it is not an array...
-                    $current[$tag] = array($current[$tag],$result); //...Make it an array using the existing value and the new value
+                    $current[$tag] = [$current[$tag],$result]; //...Make it an array using the existing value and the new value
                     $repeated_tag_index[$tag . '_' . $level] = 1;
                     if ($priority == 'tag' and $get_attributes) {
                         if (isset($current[$tag . '_attr'])) { // The attribute of the last(0th) tag must be moved as well
@@ -600,8 +597,6 @@ function email_header_encode($in_str, $charset = 'UTF-8', $header = 'Subject')
  */
 function discover_resource(string $resource, $protocol = '', $verify = true)
 {
-    $network  = null;
-
     $x = Webfinger::exec($resource);
 
     $address = EMPTY_STR;
@@ -999,7 +994,7 @@ function check_pubstream_siteallowed($url)
     }
 
     // your own site is always allowed
-    if (strpos($url, z_root()) !== false) {
+    if (str_contains($url, z_root())) {
         return $retvalue;
     }
 
@@ -1048,7 +1043,7 @@ function check_pubstream_channelallowed($hash)
 
     $retvalue = true;
 
-    $arr = array('hash' => $hash);
+    $arr = ['hash' => $hash];
     /**
      * @hooks check_channelallowed
      *   Used to over-ride or bypass the channel black/white block lists.
@@ -1087,7 +1082,7 @@ function deliverable_singleton($channel_id, $xchan)
         if (! $r[0]['abook_instance']) {
             return true;
         }
-        if (strpos($r[0]['abook_instance'], z_root()) !== false) {
+        if (str_contains($r[0]['abook_instance'], z_root())) {
             return true;
         }
     }
@@ -1119,13 +1114,13 @@ function get_repository_version($branch = 'release')
 function network_to_name($s)
 {
 
-    $nets = array(
+    $nets = [
         NETWORK_FEED        => t('RSS/Atom'),
         NETWORK_ACTIVITYPUB => t('ActivityPub'),
         NETWORK_DIASPORA    => t('Diaspora'),
         NETWORK_NOMAD       => t('Nomad'),
         NETWORK_ZOT6        => t('Zot6'),
-    );
+    ];
 
     /**
      * @hooks network_to_name
@@ -1398,7 +1393,7 @@ function get_request_string($url)
 
     $m = parse_url($url);
     if ($m) {
-        return ( (isset($m['path']) ? $m['path'] : '/' ) . (isset($m['query']) ? '?' . $m['query'] : '') );
+        return ( ($m['path'] ?? '/') . (isset($m['query']) ? '?' . $m['query'] : '') );
     }
 
     return '';

@@ -20,14 +20,13 @@ require_once('include/security.php');
  *
  * @param int $uid The channel_id associated with the resource owner
  * @param string $observer_xchan The xchan_hash representing the observer
- * @param bool $check_siteblock (default true)
  *          if false, bypass check for "Block Public" on the site
  * @param bool $default_ignored (default true)
  *          if false, lie and pretend the ignored person has permissions you are ignoring (used in channel discovery)
  *
  * @returns array of all permissions, key is permission name, value is true or false
  */
-function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_ignored = true)
+function get_all_perms($uid, $observer_xchan, $default_ignored = true)
 {
 
     $api = App::get_oauth_key();
@@ -106,7 +105,7 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
                 continue;
             }
 
-            // Check if this is a write permission and they are being ignored
+            // Check if write permission is being ignored
             // This flag is only visible internally.
 
             $blocked_anon_perms = Permissions::BlockedAnonPerms();
@@ -233,10 +232,10 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
         $ret[$perm_name] = false;
     }
 
-    $arr = array(
+    $arr = [
         'channel_id'    => $uid,
         'observer_hash' => $observer_xchan,
-        'permissions'   => $ret);
+        'permissions'   => $ret];
 
     Hook::call('get_all_perms', $arr);
 
@@ -252,11 +251,10 @@ function get_all_perms($uid, $observer_xchan, $check_siteblock = true, $default_
  * @param int $uid The channel_id associated with the resource owner
  * @param string $observer_xchan The xchan_hash representing the observer
  * @param string $permission
- * @param bool $check_siteblock (default true)
  *     if false bypass check for "Block Public" at the site level
  * @return bool true if permission is allowed for observer on channel
  */
-function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = true)
+function perm_is_allowed($uid, $observer_xchan, $permission)
 {
 
     $api = App::get_oauth_key();
@@ -275,8 +273,6 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
     if ($arr['result'] !== 'unset') {
         return $arr['result'];
     }
-
-    $global_perms = Permissions::Perms();
 
     // First find out what the channel owner declared permissions to be.
 
@@ -373,7 +369,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
     if (! $x) {
         // The deliver_stream permission is only evaluated for connections.
         // It is only used to prune the delivery list of any connections that are
-        // followers-only and we specifically don't want to send stuff to.
+        // followers-only, and we specifically don't want to send stuff to.
         // It returns true for anybody not connected. 
         if ($permission === 'deliver_stream') {
             return true;
@@ -399,7 +395,7 @@ function perm_is_allowed($uid, $observer_xchan, $permission, $check_siteblock = 
 
     // Permission granted to certain channels. Let's see if the observer is one of them
 
-    if (($r) && ($channel_perm & PERMS_SPECIFIC)) {
+    if ($channel_perm & PERMS_SPECIFIC) {
         if ($abperms) {
             $arr = explode(',', $abperms);
             if ($arr) {
@@ -452,10 +448,10 @@ function get_all_api_perms($uid, $api)
         }
     }
 
-    $arr = array(
+    $arr = [
         'channel_id'    => $uid,
         'observer_hash' => get_observer_hash(),
-        'permissions'   => $ret);
+        'permissions'   => $ret];
 
     Hook::call('get_all_api_perms', $arr);
 
@@ -466,12 +462,12 @@ function get_all_api_perms($uid, $api)
 function api_perm_is_allowed($uid, $api, $permission)
 {
 
-    $arr = array(
+    $arr = [
         'channel_id'    => $uid,
         'observer_hash' => get_observer_hash(),
         'permission'    => $permission,
         'result'        => false
-    );
+    ];
 
     Hook::call('api_perm_is_allowed', $arr);
     if ($arr['result']) {
@@ -551,7 +547,7 @@ function site_default_perms()
 
     $ret = [];
 
-    $typical = array(
+    $typical = [
         'view_stream'   => PERMS_PUBLIC,
         'deliver_stream'=> PERMS_SPECIFIC,
         'view_profile'  => PERMS_PUBLIC,
@@ -570,7 +566,7 @@ function site_default_perms()
         'write_wiki'    => PERMS_SPECIFIC,
         'delegate'      => PERMS_SPECIFIC,
         'post_like'     => PERMS_NETWORK
-    );
+    ];
 
     $global_perms = Permissions::Perms();
 

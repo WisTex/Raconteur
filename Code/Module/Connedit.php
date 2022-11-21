@@ -705,7 +705,7 @@ class Connedit extends Controller
 
             $global_perms = Permissions::Perms();
 
-            $existing = get_all_perms(local_channel(), $contact['abook_xchan'], false);
+            $existing = get_all_perms(local_channel(), $contact['abook_xchan']);
 
             $unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'), t('Yes')));
 
