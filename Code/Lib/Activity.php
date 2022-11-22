@@ -3339,11 +3339,15 @@ class Activity
         }
 
         if (in_array($s['verb'], ['Arrive', 'Leave'])) {
-            if (($s['lat'] || $s['lon']) && !str_contains($s['body'],'[map=')) {
-                $s['body'] .= "\n\n" . '[map=' . $s['lat'] . ',' . $s['lon'] . ']' . "\n";
+            if ($s['lat'] || $s['lon']) {
+                if (!str_contains($s['body'],'[map=')) {
+                    $s['body'] .= "\n\n" . '[map=' . $s['lat'] . ',' . $s['lon'] . ']' . "\n";
+                }
             }
-            elseif ($s['location'] && !str_contains($s['body'],'[map]'))  {
-                $s['body'] .= "\n\n" . '[map]' . $s['location'] . '[/map]' . "\n";
+            elseif ($s['location']) {
+                if (!str_contains($s['body'],'[map]'))  {
+                    $s['body'] .= "\n\n" . '[map]' . $s['location'] . '[/map]' . "\n";
+                }
             }
         }
 
