@@ -207,7 +207,7 @@ class Ping extends Controller
             if ($r) {
                 xchan_query($r);
                 foreach ($r as $rr) {
-                    $rr['llink'] = str_replace('display/', 'pubstream/?f=&mid=', $rr['llink']);
+                    $rr['llink'] = str_replace('display/', 'pubstream/', $rr['llink']);
                     $z = Enotify::format($rr);
                     if ($z) {
                         $local_result[] = $z;
