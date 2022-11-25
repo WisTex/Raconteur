@@ -303,7 +303,7 @@ class Ping extends Controller
                 foreach ($t as $tt) {
                     $message = trim(strip_tags(bbcode($tt['msg'])));
 
-                    if (strpos($message, $tt['xname']) === 0) {
+                    if (str_starts_with($message, $tt['xname'])) {
                         $message = substr($message, strlen($tt['xname']) + 1);
                     }
 
@@ -319,12 +319,12 @@ class Ping extends Controller
                             intval(local_channel())
                         );
 
-                        $b64mid = ((strpos($r[0]['thr_parent'], 'b64.') === 0) ? $r[0]['thr_parent'] : gen_link_id($r[0]['thr_parent']));
+                        $b64mid = ((str_starts_with($r[0]['thr_parent'], 'b64.')) ? $r[0]['thr_parent'] : gen_link_id($r[0]['thr_parent']));
                     } else {
-                        $b64mid = ((strpos($mid, 'b64.') === 0) ? $mid : gen_link_id($mid));
+                        $b64mid = ((str_starts_with($mid, 'b64.')) ? $mid : gen_link_id($mid));
                     }
 
-                    $notifs[] = array(
+                    $notifs[] = [
                         'notify_link' => z_root() . '/notify/view/' . $tt['id'],
                         'name' => $tt['xname'],
                         'url' => $tt['url'],
@@ -334,7 +334,7 @@ class Ping extends Controller
                         'b64mid' => (($tt['otype'] == 'item') ? $b64mid : 'undefined'),
                         'notify_id' => (($tt['otype'] == 'item') ? $tt['id'] : 'undefined'),
                         'message' => $message
-                    );
+                    ];
                 }
             }
 
@@ -448,7 +448,7 @@ class Ping extends Controller
             );
             if ($r) {
                 foreach ($r as $rr) {
-                    $result[] = array(
+                    $result[] = [
                         'notify_link' => z_root() . '/admin/accounts',
                         'name' => $rr['account_email'],
                         'addr' => $rr['account_email'],
@@ -457,7 +457,7 @@ class Ping extends Controller
                         'when' => relative_date($rr['account_created']),
                         'hclass' => ('notify-unseen'),
                         'message' => t('requires approval')
-                    );
+                    ];
                 }
             }
 
@@ -485,7 +485,7 @@ class Ping extends Controller
                     $today = ((substr($strt, 0, 10) === datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y-m-d')) ? true : false);
                     $when = day_translate(datetime_convert('UTC', (($rr['adjust']) ? date_default_timezone_get() : 'UTC'), $rr['dtstart'], $bd_format)) . (($today) ? ' ' . t('[today]') : '');
 
-                    $result[] = array(
+                    $result[] = [
                         'notify_link' => z_root() . '/events', /// @FIXME this takes you to an edit page and it may not be yours, we really want to just view the single event  --> '/events/event/' . $rr['event_hash'],
                         'name' => $rr['xchan_name'],
                         'addr' => $rr['xchan_addr'],
@@ -494,7 +494,7 @@ class Ping extends Controller
                         'when' => $when,
                         'hclass' => ('notify-unseen'),
                         'message' => t('posted an event')
-                    );
+                    ];
                 }
             }
 
@@ -519,7 +519,7 @@ class Ping extends Controller
             );
             if ($r) {
                 foreach ($r as $rr) {
-                    $result[] = array(
+                    $result[] = [
                         'notify_link' => z_root() . '/sharedwithme',
                         'name' => $rr['xchan_name'],
                         'addr' => $rr['xchan_addr'],
@@ -528,7 +528,7 @@ class Ping extends Controller
                         'when' => relative_date($rr['created']),
                         'hclass' => ('notify-unseen'),
                         'message' => t('shared a file with you')
-                    );
+                    ];
                 }
             }
 
@@ -611,7 +611,7 @@ class Ping extends Controller
             );
 
             if ($r) {
-                $arr = array('items' => $r);
+                $arr = ['items' => $r];
                 Hook::call('network_ping', $arr);
 
                 foreach ($r as $it) {
