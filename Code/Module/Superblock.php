@@ -4,7 +4,7 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
-use Code\Lib\Apps;
+use Code\Lib\Activity;
 use Code\Lib\Libsync;
 use Code\Lib\LibBlock;
 use Code\Lib\Libzot;
@@ -17,92 +17,66 @@ class Superblock extends Controller
     public function init()
     {
 
+        $handled = false;
         if (!local_channel()) {
             return;
         }
 
-        $inline = (isset($_REQUEST['manual_block']) ? true : false);
+        $inline = isset($_REQUEST['manual_block']);
+        $reason = (!empty($_REQUEST['reason'])) ? escape_tags($_REQUEST['reason']) : '';
 
         $type = BLOCKTYPE_CHANNEL;
         $blocked = trim($_REQUEST['block']);
-        if (!$blocked) {
-            $blocked = trim($_REQUEST['blocksite']);
-            if ($blocked) {
-                $type = BLOCKTYPE_SERVER;
-            }
-        }
-
-        $m = parse_url($blocked);
-        if ($m['scheme'] && $m['host'] && (($type === BLOCKTYPE_SERVER) || (!$m['path']))) {
-            if (strcasecmp($m['host'], App::get_hostname()) === 0) {
-                notice(t('Blocking this site is not permitted.'));
-                if ($inline) {
-                    return;
-                }
-                killme();
-            }
-            $type = BLOCKTYPE_SERVER;
-            $blocked = $m['host'];
-        }
-
-        $handled = false;
-        $ignored = [];
-
         if ($blocked) {
             $handled = true;
-            if ($type === BLOCKTYPE_CHANNEL) {
-                $r = q(
-                    "select * from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
-                    dbesc($blocked),
-                    dbesc($blocked),
-                    dbesc($blocked)
-                );
+            $r = q(
+                "select * from xchan where ( xchan_hash = '%s' or xchan_addr = '%s' or xchan_url = '%s' )",
+                dbesc($blocked),
+                dbesc($blocked),
+                dbesc($blocked)
+            );
 
-                if (!$r) {
-                    // not in cache - try discovery
-                    $wf = discover_resource($blocked, '', false);
+            if (!$r) {
+                // not in cache - try discovery
+                $wf = discover_resource($blocked, '', false);
 
-                    if (!$wf) {
-                        notice(t('Channel not found.') . EOL);
-                        if ($inline) {
-                            return;
-                        }
-                        killme();
+                if (!$wf) {
+                    notice(t('Channel not found.') . EOL);
+                    if ($inline) {
+                        return;
                     }
-
-                    if ($wf) {
-                        // something was discovered - find the record which was just created.
-
-                        $r = q(
-                            "select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
-                            dbesc(($wf) ? $wf : $blocked),
-                            dbesc($blocked),
-                            dbesc($blocked)
-                        );
-                    }
+                    killme();
                 }
 
-                if ($r) {
-                    $r = Libzot::zot_record_preferred($r, 'xchan_network');
-                    $blocked = $r['xchan_hash'];
+                if ($wf) {
+                    // something was discovered - find the record which was just created.
+
+                    $r = q(
+                        "select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' )",
+                        dbesc($wf),
+                        dbesc($blocked),
+                        dbesc($blocked)
+                    );
                 }
             }
 
-            $bl = [
-                'block_channel_id' => local_channel(),
-                'block_entity' => $blocked,
-                'block_type' => $type,
-                'block_comment' => t('Added by Superblock')
-            ];
+            if ($r) {
+                $r = Libzot::zot_record_preferred($r, 'xchan_network');
+                $blocked = $r['xchan_hash'];
 
-            LibBlock::store($bl);
+                $bl = [
+                    'block_channel_id' => local_channel(),
+                    'block_entity' => $blocked,
+                    'block_type' => $type,
+                    'block_comment' => t('Added by Superblock')
+                ];
 
-            $sync = [];
+                LibBlock::store($bl);
+                $sync = [];
 
-            $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blocked)];
-            $sync['block_xchan'] = [$r];
-    
-            if ($type === BLOCKTYPE_CHANNEL) {
+                $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blocked)];
+                $sync['block_xchan'] = [$r];
+
                 $z = q(
                     "insert into xign ( uid, xchan ) values ( %d , '%s' ) ",
                     intval(local_channel()),
@@ -140,31 +114,23 @@ class Superblock extends Controller
                 $sync['xign'] = [['uid' => local_channel(), 'xchan' => $_GET['block']]];
             }
             Libsync::build_sync_packet(0, $sync);
-        }
-
-        $type = BLOCKTYPE_CHANNEL;
-        $unblocked = trim($_REQUEST['unblock']);
-        if (!$unblocked) {
-            $unblocked = trim($_REQUEST['unblocksite']);
+        } else {
+            $unblocked = trim($_REQUEST['unblock']);
             if ($unblocked) {
-                $type = BLOCKTYPE_SERVER;
-            }
-        }
-        if ($unblocked) {
-            $handled = true;
-            if (check_form_security_token('superblock', 'sectok')) {
-                $r = LibBlock::fetch_by_entity(local_channel(), $unblocked);
-                if ($r) {
-                    LibBlock::remove(local_channel(), $unblocked);
+                $handled = true;
+                if (check_form_security_token('superblock', 'sectok')) {
+                    $r = LibBlock::fetch_by_entity(local_channel(), $unblocked);
+                    if ($r) {
+                        LibBlock::remove(local_channel(), $unblocked);
 
-                    $sync = [];
-                    $sync['block'] = [[
-                        'block_channel_id' => local_channel(),
-                        'block_entity' => $unblocked,
-                        'block_type' => $type,
-                        'deleted' => true,
-                    ]];
-                    if ($type === BLOCKTYPE_CHANNEL) {
+                        $sync = [];
+                        $sync['block'] = [[
+                            'block_channel_id' => local_channel(),
+                            'block_entity' => $unblocked,
+                            'block_type' => $type,
+                            'deleted' => true,
+                        ]];
+
                         $ab = q(
                             "select * from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_xchan = '%s'",
                             intval(local_channel()),
@@ -192,7 +158,65 @@ class Superblock extends Controller
                             intval(local_channel()),
                             dbesc($unblocked)
                         );
+
+                        Libsync::build_sync_packet(0, $sync);
                     }
+                    else {
+                        return;
+                    }
+                }
+            }
+        }
+
+        $type = BLOCKTYPE_SERVER;
+        $blocked = trim($_REQUEST['blocksite']);
+        if ($blocked) {
+            $handled = true;
+            $servers = Activity::get_actor_hublocs($blocked);
+            if ($servers) {
+                foreach ($servers as $server) {
+                    $m = parse_url($server['hubloc_url']);
+                    if ($m['scheme'] && $m['host']) {
+                        if (strcasecmp($m['host'], App::get_hostname()) === 0) {
+                            notice(t('Blocking this site is not permitted.'));
+                            if ($inline) {
+                                return;
+                            }
+                            killme();
+                        }
+                        $blocked = $m['host'];
+                        $bl = [
+                            'block_channel_id' => local_channel(),
+                            'block_entity' => $blocked,
+                            'block_type' => $type,
+                            'block_comment' => t('Added by Superblock')
+                        ];
+
+                        LibBlock::store($bl);
+
+                        $sync = [];
+
+                        $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blocked)];
+                        Libsync::build_sync_packet(0, $sync);
+                    }
+                }
+            }
+        }
+        $unblocked = trim($_REQUEST['unblocksite']);
+        if ($unblocked) {
+            $handled = true;
+            if (check_form_security_token('superblock', 'sectok')) {
+                $r = LibBlock::fetch_by_entity(local_channel(), $unblocked);
+                if ($r) {
+                    LibBlock::remove(local_channel(), $unblocked);
+                    $sync = [];
+                    $sync['block'] = [[
+                        'block_channel_id' => local_channel(),
+                        'block_entity' => $unblocked,
+                        'block_type' => $type,
+                        'deleted' => true,
+                    ]];
+
                     Libsync::build_sync_packet(0, $sync);
                 }
             }
@@ -204,9 +228,9 @@ class Superblock extends Controller
             if ($unblocked || $inline) {
                 return;
             }
-
             killme();
         }
+
     }
 
     public function get()
@@ -255,7 +279,7 @@ class Superblock extends Controller
         ]);
 
         return replace_macros(Theme::get_template('generic_app_settings.tpl'), [
-            '$addon' => array('superblock', t('Manage Blocks'), '', t('Submit')),
+            '$addon' => ['superblock', t('Manage Blocks'), '', t('Submit')],
             '$content' => $sc
         ]);
     }
