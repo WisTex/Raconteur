@@ -7,10 +7,10 @@ namespace Code\Daemon;
 use Code\Lib\ServiceClass;
 use Code\Lib\Addon;
         
-class Poller
+class Poller implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         $maxsysload = intval(get_config('system', 'maxloadavg'));

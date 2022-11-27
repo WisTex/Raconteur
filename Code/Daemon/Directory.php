@@ -2,15 +2,13 @@
 
 namespace Code\Daemon;
 
-use Code\Lib\Libzot;
 use Code\Lib\Libzotdir;
-use Code\Lib\Queue;
 use Code\Lib\Channel;
 
-class Directory
+class Directory implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         if ($argc < 2) {

@@ -4,10 +4,10 @@
 
 namespace Code\Daemon;
 
-class Xchan_photo
+class Xchan_photo implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         if ($argc != 3) {

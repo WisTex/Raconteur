@@ -6,10 +6,10 @@ namespace Code\Daemon;
 
 use Code\Extend\Hook;
     
-class Thumbnail
+class Thumbnail implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         if (! ($argc == 2)) {

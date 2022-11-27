@@ -11,10 +11,10 @@ use Code\Lib\ASCollection;
 use Code\Lib\Socgraph;
 use Code\Lib\PConfig;
 
-class Onepoll
+class Onepoll implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         logger('onepoll: start');

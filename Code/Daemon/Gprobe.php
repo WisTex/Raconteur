@@ -10,10 +10,10 @@ use Code\Lib\Zotfinger;
 
 // performs zot_finger on $argv[1], which is a hex_encoded webbie/reddress
 
-class Gprobe
+class Gprobe implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         if ($argc != 2) {

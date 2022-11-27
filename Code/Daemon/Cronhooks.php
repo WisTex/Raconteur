@@ -5,10 +5,10 @@
 namespace Code\Daemon;
 use Code\Extend\Hook;
 
-class Cronhooks
+class Cronhooks implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         logger('cronhooks: start');
@@ -16,7 +16,5 @@ class Cronhooks
         $d = datetime_convert();
 
         Hook::call('cron', $d);
-
-        return;
     }
 }

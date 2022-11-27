@@ -10,10 +10,10 @@ require_once('include/cli_startup.php');
 require_once('include/attach.php');
 require_once('include/import.php');
 
-class File_importer
+class File_importer implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         cli_startup();

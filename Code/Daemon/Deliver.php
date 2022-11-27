@@ -6,10 +6,10 @@ namespace Code\Daemon;
 
 use Code\Lib\Queue;
 
-class Deliver
+class Deliver implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
         if ($argc < 2) {
             return;
