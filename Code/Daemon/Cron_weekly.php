@@ -5,10 +5,10 @@ namespace Code\Daemon;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 
-class Cron_weekly
+class Cron_weekly implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         /**

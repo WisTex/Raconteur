@@ -6,13 +6,12 @@ namespace Code\Daemon;
 
 use Code\Lib\Config;
 use Code\Lib\Libsync;
-use Code\Lib\Channel;
 use Code\Lib\Addon;
 
-class Cron
+class Cron implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         $maxsysload = intval(get_config('system', 'maxloadavg'));

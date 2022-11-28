@@ -7,10 +7,10 @@ namespace Code\Daemon;
 use Code\Lib\Libsync;
 use Code\Lib\Channel;
 
-class Importfile
+class Importfile implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         logger('Importfile: ' . print_r($argv, true));
@@ -50,9 +50,7 @@ class Importfile
 
         $sync = attach_export_data($channel, $hash);
         if ($sync) {
-            Libsync::build_sync_packet($channel['channel_id'], array('file' => array($sync)));
+            Libsync::build_sync_packet($channel['channel_id'], ['file' => [$sync]]);
         }
-
-        return;
     }
 }

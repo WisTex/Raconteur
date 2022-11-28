@@ -4,11 +4,11 @@ namespace Code\Daemon;
 
 use Code\Lib\Channel;
 
-class Channel_purge
+class Channel_purge implements DaemonInterface
 {
 
     /** @noinspection PhpUnusedParameterInspection */
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         cli_startup();

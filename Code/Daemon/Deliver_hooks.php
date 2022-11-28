@@ -4,10 +4,10 @@ namespace Code\Daemon;
 
 use Code\Extend\Hook;
 
-class Deliver_hooks
+class Deliver_hooks implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         if ($argc < 2) {

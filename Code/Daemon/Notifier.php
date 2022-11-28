@@ -74,7 +74,7 @@ require_once('include/bbcode.php');
  *       keychange               channel_id
  *
  */
-class Notifier
+class Notifier implements DaemonInterface
 {
 
     public static $deliveries   = [];
@@ -86,7 +86,7 @@ class Notifier
     public static $channel      = null;
     public static $private      = false;
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         if ($argc < 3) {

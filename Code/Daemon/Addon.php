@@ -4,7 +4,7 @@ namespace Code\Daemon;
 
 use Code\Extend\Hook;
 
-class Addon
+class Addon implements DaemonInterface
 {
 
     /**

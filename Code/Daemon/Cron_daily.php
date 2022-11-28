@@ -3,14 +3,13 @@
 namespace Code\Daemon;
 
 use Code\Lib\ServiceClass;    
-use Code\Lib\Libzotdir;
 use Code\Lib\Libzot;
 use Code\Extend\Hook;
     
-class Cron_daily
+class Cron_daily implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         logger('cron_daily: start');

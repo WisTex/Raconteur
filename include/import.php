@@ -461,16 +461,18 @@ function import_hublocs($channel, $hublocs, $seize)
                 $hubloc['hubloc_primary'] = 0;
             }
 
-            if (($x = Libzot::gethub($arr)) === false) {
-                unset($hubloc['hubloc_id']);
-                hubloc_store_lowlevel($hubloc);
-            } else {
+            $x = Libzot::gethub($arr);
+            if ($x) {
                 q(
                     "UPDATE hubloc set hubloc_primary = %d, hubloc_deleted = %d where hubloc_id = %d",
                     intval($hubloc['hubloc_primary']),
                     intval($hubloc['hubloc_deleted']),
                     intval($x['hubloc_id'])
                 );
+            }
+            else  {
+                unset($hubloc['hubloc_id']);
+                hubloc_store_lowlevel($hubloc);
             }
         }
     }

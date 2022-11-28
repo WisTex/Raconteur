@@ -2,10 +2,10 @@
 
 namespace Code\Daemon;
 
-class Importdoc
+class Importdoc implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         require_once('include/help.php');
@@ -30,7 +30,7 @@ class Importdoc
                     self::update_docs_dir("$fi/*");
                 } else {
                     // don't update media content
-                    if (strpos(z_mime_content_type($fi), 'text') === 0) {
+                    if (str_starts_with(z_mime_content_type($fi), 'text')) {
                         store_doc_file($fi);
                     }
                 }
