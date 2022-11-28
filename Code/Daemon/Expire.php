@@ -5,10 +5,10 @@ namespace Code\Daemon;
 use Code\Lib\ServiceClass;
 use Code\Lib\Channel;
             
-class Expire
+class Expire implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
         cli_startup();
 

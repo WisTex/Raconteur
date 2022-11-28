@@ -7,7 +7,7 @@ use Code\Lib\ActivityStreams;
 use Code\Lib\ASCollection;
 use Code\Lib\Channel;
 
-class Convo
+class Convo implements DaemonInterface
 {
 
     /**

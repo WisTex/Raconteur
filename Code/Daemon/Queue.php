@@ -6,10 +6,10 @@ namespace Code\Daemon;
 
 use Code\Lib as Zlib;
 
-class Queue
+class Queue implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
         $queue_id = ($argc > 1) ? $argv[1] : '';
 

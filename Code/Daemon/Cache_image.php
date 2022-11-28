@@ -4,15 +4,15 @@ namespace Code\Daemon;
 
 use Code\Lib\Img_cache;
 
-class Cache_image
+class Cache_image implements DaemonInterface
 {
 
     /**
-     * @param $argc
-     * @param $argv
+     * @param int $argc
+     * @param array $argv
      * @return void
      */
-    public function run($argc, $argv): void
+    public function run(int $argc, array $argv): void
     {
         cli_startup();
         logger('caching: ' . $argv[1] . ' to ' . $argv[2]);

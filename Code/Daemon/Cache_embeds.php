@@ -2,17 +2,16 @@
 
 namespace Code\Daemon;
 
-class Cache_embeds
+class Cache_embeds implements DaemonInterface
 {
 
     /**
-     * @param $argc
-     * @param $argv
+     * @param int $argc
+     * @param array $argv
      * @return void
      */
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
-
         if (! $argc == 2) {
             return;
         }

@@ -6,10 +6,10 @@ namespace Code\Daemon;
  * Daemon to remove 'item' resources in the background from a removed connection
  */
 
-class Delxitems
+class Delxitems implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         cli_startup();
@@ -19,7 +19,5 @@ class Delxitems
         }
 
         remove_abook_items($argv[1], $argv[2]);
-
-        return;
     }
 }

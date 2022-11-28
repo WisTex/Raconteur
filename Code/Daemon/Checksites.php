@@ -7,10 +7,10 @@ namespace Code\Daemon;
 require_once('include/hubloc.php');
 
 
-class Checksites
+class Checksites implements DaemonInterface
 {
 
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
 
         logger('checksites: start');

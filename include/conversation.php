@@ -533,6 +533,12 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
                 $pinned = ! empty($pinned_items) && in_array($item['mid'], $pinned_items);
 
+                $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-map-marker"></i>&nbsp' : '';
+                if (!$locicon) {
+                    $locicon = ($item['verb'] === 'Leave') ? '<i class="fa fa-fw fa-sign-out"></i>&nbsp' : '';
+                }
+
+
                 $tmp_item = [
                     'template' => $tpl,
                     'toplevel' => 'toplevel_item',
@@ -551,7 +557,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'lock' => $lock,
                     'locktype' => $locktype,
                     'thumb' => $profile_avatar,
-                    'title' => $item['title'],
+                    'title' => $locicon . $item['title'],
                     'body' => $body['html'],
                     'event' => $body['event'],
                     'photo' => $body['photo'],
@@ -1239,7 +1245,9 @@ function z_status_editor($x, $popup = false)
 
     $sharebutton = (x($x, 'button') ? $x['button'] : t('Share'));
     $placeholdtext = (x($x, 'content_label') ? $x['content_label'] : $sharebutton);
-    
+
+
+
     $o .= replace_macros($tpl, [
         '$return_path' => ((x($x, 'return_path')) ? $x['return_path'] : App::$query_string),
         '$action' =>  z_root() . '/item',
@@ -1350,7 +1358,7 @@ function z_status_editor($x, $popup = false)
         '$discombed' => t('Load remote media players'),
         '$discombed2' => t('This <em>may</em> subject viewers of this post to behaviour tracking'),
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
-        '$disczot' => t('Find shareable objects (Zot)'),
+        '$disczot' => t('Find shareable objects'),
         '$checkin_checked' => $checkin_checked,
         '$checkout_checked' => $checkout_checked,
         '$reset' => $reset
@@ -1536,7 +1544,19 @@ function conv_sort($arr, $order)
                     }
                 }
             }
-
+            if ($item['obj']) {
+                $local = json_decode($item['obj'],true);
+                if (!empty($local['source']) && !empty($local['source']['mediaType']) && !empty($local['source']['content'])) {
+                    $cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)]/ism", $local['source']['content'], $matches, PREG_SET_ORDER);
+                    if ($cnt) {
+                        foreach ($matches as $match) {
+                            if (LibBlock::fetch_by_entity(local_channel(), $match[2])) {
+                                $found = true;
+                            }
+                        }
+                    }
+                }
+            }
             if ($found) {
                 continue;
             }
