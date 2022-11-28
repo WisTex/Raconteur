@@ -3,6 +3,8 @@
 namespace Code\Module;
 
 use App;
+use Code\Access\PermissionRoles;
+use Code\Lib\AbConfig;
 use Code\Web\Controller;
 use Code\Lib\Libzot;
 use Code\Lib\Libsync;
@@ -225,6 +227,16 @@ class Connedit extends Controller
                     AccessList::member_add(local_channel(), '', App::$poi['abook_xchan'], $g['id']);
                 }
             }
+
+            // Provide default "their_perms" if not provided already. .
+            $their_perms = AbConfig::Get($channel['channel_id'], App::$poi['abook_xchan'], 'system', 'their_perms', '');
+            if (! $their_perms) {
+                $x = PermissionRoles::role_perms('social');
+                $p = Permissions::FilledPerms($x['perms_connect']);
+                $their_perms = Permissions::serialise($p);
+                AbConfig::Get($channel['channel_id'], App::$poi['abook_xchan'], 'system', 'their_perms', $their_perms);
+            }
+
 
             // Check if settings permit ("post new friend activity" is allowed, and
             // friends in general or this friend in particular aren't hidden)
@@ -546,84 +558,84 @@ class Connedit extends Controller
                 }
             }
 
-            $tools = array(
+            $tools = [
 
-                'view' => array(
+                'view' => [
                     'label' => t('View Profile'),
                     'url' => chanlink_cid($contact['abook_id']),
                     'sel' => '',
                     'title' => sprintf(t('View %s\'s profile'), $contact['xchan_name']),
-                ),
+                ],
 
-                'refresh' => array(
+                'refresh' => [
                     'label' => t('Refresh Permissions'),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/refresh',
                     'sel' => '',
                     'title' => t('Fetch updated permissions'),
-                ),
+                ],
 
-                'rephoto' => array(
+                'rephoto' => [
                     'label' => t('Refresh Photo'),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/resetphoto',
                     'sel' => '',
                     'title' => t('Fetch updated photo'),
-                ),
+                ],
 
-                'recent' => array(
+                'recent' => [
                     'label' => t('Recent Activity'),
                     'url' => z_root() . '/stream/?f=&cid=' . $contact['abook_id'],
                     'sel' => '',
                     'title' => t('View recent posts and comments'),
-                ),
+                ],
 
-                'block' => array(
+                'block' => [
                     'label' => (intval($contact['abook_blocked']) ? t('Unblock') : t('Block')),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/block',
                     'sel' => (intval($contact['abook_blocked']) ? 'active' : ''),
                     'title' => t('Block (or Unblock) all communications with this connection'),
                     'info' => (intval($contact['abook_blocked']) ? t('This connection is blocked') : ''),
-                ),
+                ],
 
-                'ignore' => array(
+                'ignore' => [
                     'label' => (intval($contact['abook_ignored']) ? t('Unignore') : t('Ignore')),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/ignore',
                     'sel' => (intval($contact['abook_ignored']) ? 'active' : ''),
                     'title' => t('Ignore (or Unignore) all inbound communications from this connection'),
                     'info' => (intval($contact['abook_ignored']) ? t('This connection is ignored') : ''),
-                ),
+                ],
 
-                'censor' => array(
+                'censor' => [
                     'label' => (intval($contact['abook_censor']) ? t('Uncensor') : t('Censor')),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/censor',
                     'sel' => (intval($contact['abook_censor']) ? 'active' : ''),
                     'title' => t('Censor (or Uncensor) images from this connection'),
                     'info' => (intval($contact['abook_censor']) ? t('This connection is censored') : ''),
-                ),
+                ],
 
-                'archive' => array(
+                'archive' => [
                     'label' => (intval($contact['abook_archived']) ? t('Unarchive') : t('Archive')),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/archive',
                     'sel' => (intval($contact['abook_archived']) ? 'active' : ''),
                     'title' => t('Archive (or Unarchive) this connection - mark channel dead but keep content'),
                     'info' => (intval($contact['abook_archived']) ? t('This connection is archived') : ''),
-                ),
+                ],
 
-                'hide' => array(
+                'hide' => [
                     'label' => (intval($contact['abook_hidden']) ? t('Unhide') : t('Hide')),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/hide',
                     'sel' => (intval($contact['abook_hidden']) ? 'active' : ''),
                     'title' => t('Hide or Unhide this connection from your other connections'),
                     'info' => (intval($contact['abook_hidden']) ? t('This connection is hidden') : ''),
-                ),
+                ],
 
-                'delete' => array(
+                'delete' => [
                     'label' => t('Delete'),
                     'url' => z_root() . '/connedit/' . $contact['abook_id'] . '/drop',
                     'sel' => '',
                     'title' => t('Delete this connection'),
-                ),
+                ],
 
-            );
+            ];
 
 
             if (in_array($contact['xchan_network'], [ 'zot6', 'nomad' ])) {
@@ -684,11 +696,11 @@ class Connedit extends Controller
 
                 $slideval = intval($contact['abook_closeness']);
 
-                $slide = replace_macros($slider_tpl, array(
+                $slide = replace_macros($slider_tpl, [
                     '$min' => 1,
                     '$val' => $slideval,
                     '$labels' => $labels,
-                ));
+                ]);
             }
 
             if (Apps::system_app_installed(local_channel(), 'Content Filter')) {
@@ -707,7 +719,7 @@ class Connedit extends Controller
 
             $existing = get_all_perms(local_channel(), $contact['abook_xchan']);
 
-            $unapproved = array('pending', t('Approve this connection'), '', t('Accept connection to allow communication'), array(t('No'), t('Yes')));
+            $unapproved = ['pending', t('Approve this connection'), '', t('Accept connection to allow communication'), [t('No'), t('Yes')]];
 
             $multiprofs = ((Features::enabled(local_channel(), 'multi_profiles')) ? true : false);
 
@@ -746,7 +758,7 @@ class Connedit extends Controller
                     $thisperm = "1";
                 }
 
-                $perms[] = array('perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, $yes_no, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited);
+                $perms[] = ['perms_' . $k, $v, ((array_key_exists($k, $their_perms)) ? intval($their_perms[$k]) : ''), $thisperm, $yes_no, (($checkinherited & PERMS_SPECIFIC) ? '' : '1'), '', $checkinherited];
             }
 
             $current_permcat = EMPTY_STR;
@@ -787,7 +799,7 @@ class Connedit extends Controller
 
             $o .= replace_macros($tpl, [
                 '$header' => (($self) ? t('Connection Default Permissions') : sprintf(t('Connection: %s'), $contact['xchan_name']) . (($contact['abook_alias']) ? ' &lt;' . $contact['abook_alias'] . '&gt;' : '')),
-                '$autoperms' => array('autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no),
+                '$autoperms' => ['autoperms', t('Apply these permissions automatically'), ((get_pconfig(local_channel(), 'system', 'autoperms')) ? 1 : 0), t('Connection requests will be approved without your interaction'), $yes_no],
                 '$permcat' => ['permcat', t('Permission role'), $current_permcat, '<span class="loading invisible">' . t('Loading') . '<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span></span>', $permcats],
                 '$permcat_new' => t('Add permission role'),
                 '$permcat_enable' => Apps::system_app_installed(local_channel(),'Roles'),
@@ -809,9 +821,9 @@ class Connedit extends Controller
                 '$lbl_slider' => t('Slide to adjust your degree of friendship'),
                 '$connfilter' => Apps::system_app_installed(local_channel(), 'Content Filter'),
                 '$connfilter_label' => t('Custom Filter'),
-                '$incl' => array('abook_incl', t('Only import posts with this text'), $contact['abook_incl'], t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')),
-                '$excl' => array('abook_excl', t('Do not import posts with this text'), $contact['abook_excl'], t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')),
-                '$alias' => array('abook_alias', t('Nickname'), $contact['abook_alias'], t('optional - allows you to search by a name that you have chosen')),
+                '$incl' => ['abook_incl', t('Only import posts with this text'), $contact['abook_incl'], t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')],
+                '$excl' => ['abook_excl', t('Do not import posts with this text'), $contact['abook_excl'], t('words one per line or #tags, $categories, /patterns/, or lang=xx, leave blank to import all posts')],
+                '$alias' => ['abook_alias', t('Nickname'), $contact['abook_alias'], t('optional - allows you to search by a name that you have chosen')],
                 '$slide' => $slide,
                 '$affinity' => $affinity,
                 '$pending_label' => t('Connection Pending Approval'),
@@ -864,7 +876,7 @@ class Connedit extends Controller
                 '$country' => t('Country')
             ]);
 
-            $arr = array('contact' => $contact, 'output' => $o);
+            $arr = ['contact' => $contact, 'output' => $o];
 
             Hook::call('contact_edit', $arr);
 
