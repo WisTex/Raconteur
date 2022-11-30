@@ -94,7 +94,7 @@ class Moderate extends Controller
                     $item['item_blocked'] = 0;
 
                     item_update_parent_commented($item);
-
+//                    \Code\Lib\Activity::send_accept_activity(App::get_channel(),$item['author'], $item, $parent_item);
                     notice(t('Comment approved') . EOL);
                 } elseif ($action === 'drop') {
                     drop_item($post_id);

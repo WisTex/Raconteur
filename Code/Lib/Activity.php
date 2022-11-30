@@ -3653,19 +3653,26 @@ class Activity
 
                 $allowed = self::comment_allowed($channel, $item, $parent_item);
 
-                if (!$allowed) {
+                if ($allowed) {
+                    // At this point we know it is allowed, but check if it requires moderation.
+                    if (perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated')
+                        || $allowed === 'moderated') {
+                        $item['item_blocked'] = ITEM_MODERATED;
+                    }
+                    if ($item['item_blocked'] !== ITEM_MODERATED) {
+                        self::send_accept_activity($channel, $item['author_xchan'], $item, $parent_item);
+                    }
+
+                }
+                else {
                     logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
                     logger('rejected: ' . print_r($item, true), LOGGER_DATA);
                     // let the sender know we received their comment, but we don't permit spam here.
-                    self::send_rejection_activity($channel, $item['author_xchan'], $item);
+                    self::send_reject_activity($channel, $item['author_xchan'], $item, $parent_item);
                     return;
                 }
 
-                // At this point we know it is allowed, but check if it requires moderation.
-                if (perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated')
-                        || $allowed === 'moderated') {
-                    $item['item_blocked'] = ITEM_MODERATED;
-                }
+
             } else {
                 // By default, if we allow you to send_stream and comments and this is a comment, it is allowed.
                 // A side effect of this action is that if you take away send_stream permission, comments to those
@@ -4338,7 +4345,7 @@ class Activity
         return $content;
     }
 
-    public static function send_rejection_activity($channel, $observer_hash, $item)
+    public static function send_accept_activity($channel, $observer_hash, $item, $inReplyTo = '')
     {
 
         $recip = q(
@@ -4350,13 +4357,50 @@ class Activity
         }
 
         $arr = [
-            'id' => z_root() . '/bounces/' . new_uuid(),
-            'to' => [$observer_hash],
+            'id' => z_root() . '/approvals/' . new_uuid(),
+            'to' => [$recip[0]['hubloc_id_url']],
+            'type' => 'Accept',
+            'actor' => Channel::url($channel),
+            'name' => 'Permission denied',
+            'object' => $item['mid']
+        ];
+        if ($inReplyTo) {
+            $arr['inReplyTo'] = $inReplyTo;
+        }
+
+        $msg = array_merge(['@context' => [
+            ACTIVITYSTREAMS_JSONLD_REV,
+            'https://w3id.org/security/v1',
+            self::ap_schema()
+        ]], $arr);
+
+        $queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES), $channel, $recip[0]);
+        do_delivery([$queue_id]);
+    }
+
+    public static function send_reject_activity($channel, $observer_hash, $item, $inReplyTo)
+    {
+
+        $recip = q(
+            "select * from hubloc where hubloc_hash = '%s' and hubloc_deleted = 0 limit 1",
+            dbesc($observer_hash)
+        );
+        if (!$recip) {
+            return;
+        }
+
+        $arr = [
+            'id' => z_root() . '/approvals/' . new_uuid(),
+            'to' => [$recip[0]['hubloc_id_url']],
             'type' => 'Reject',
             'actor' => Channel::url($channel),
             'name' => 'Permission denied',
             'object' => $item['mid']
         ];
+
+        if ($inReplyTo) {
+            $arr['inReplyTo'] = $inReplyTo;
+        }
 
         $msg = array_merge(['@context' => [
             ACTIVITYSTREAMS_JSONLD_REV,
