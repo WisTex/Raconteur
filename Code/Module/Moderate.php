@@ -5,7 +5,6 @@ namespace Code\Module;
 use App;
 use Code\Web\Controller;
 use Code\Lib\Libsync;
-use Code\Lib\Channel;
 use Code\Daemon\Run;
 use Code\Access\PermissionRoles;
 
@@ -118,9 +117,9 @@ class Moderate extends Controller
                         // Announce activity so microblog destinations will see it in their home timeline
                         $role = get_pconfig(local_channel(), 'system', 'permissions_role');
                         $rolesettings = PermissionRoles::role_perms($role);
-                        $channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+                        $channel_type = $rolesettings['channel_type'] ?? 'normal';
 
-                        $is_group = (($channel_type === 'group') ? true : false);
+                        $is_group = $channel_type === 'group';
                         if ($is_group) {
                             tag_deliver(local_channel(), $post_id);
                         }
@@ -138,7 +137,7 @@ class Moderate extends Controller
             $items = [];
         }
 
-        $o = conversation($items, 'moderate', false, 'traditional');
+        $o = conversation($items, 'moderate', false);
         $o .= alt_pager(count($items));
         return $o;
     }
