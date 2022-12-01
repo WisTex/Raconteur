@@ -372,7 +372,7 @@ class ThreadItem
         $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
         $pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
 
-        $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-map-marker"></i>&nbsp' : '';
+        $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-sign-in"></i>&nbsp' : '';
         if (!$locicon) {
             $locicon = ($item['verb'] === 'Leave') ? '<i class="fa fa-fw fa-sign-out"></i>&nbsp' : '';
         }
