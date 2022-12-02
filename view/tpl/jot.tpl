@@ -146,7 +146,7 @@
 					{{/if}}
 					{{if $feature_checkin}}
 						<button id="profile-checkin-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
-							<i id="profile-checkin" class="fa fa-map-marker jot-icons"></i>
+							<i id="profile-checkin" class="fa fa-sign-in jot-icons"></i>
 						</button>
 					{{/if}}
 					{{if $feature_checkout}}

@@ -22,10 +22,10 @@ class ThreadItem
     // list of supported reaction emojis - a site can over-ride this via config system.reactions
     // Deprecated. Use your operating system or a browser plugin.
     private $reactions = ['1f60a','1f44f','1f37e','1f48b','1f61e','2665','1f606','1f62e','1f634','1f61c','1f607','1f608'];
-    private $toplevel = false;
+    private $toplevel;
     private $children = [];
     private $parent = null;
-    private $conversation = null;
+    private $conversation;
     private $redirect_url = null;
     private $owner_url = '';
     private $owner_photo = '';
@@ -33,7 +33,7 @@ class ThreadItem
     private $owner_addr = '';
     private $owner_censored = false;
     private $wall_to_wall = false;
-    private $threaded = false;
+    private $threaded;
     private $visiting = false;
     private $channel = null;
     private $display_mode = 'normal';
@@ -98,11 +98,9 @@ class ThreadItem
 
         $item     = $this->get_data();
 
-        $sparkle = '';
         $dropping = false;
         $star = false;
         $is_comment = false;
-        $osparkle = '';
         $total_children = $this->count_descendants();
         $unseen_comments = ((isset($item['real_uid']) && $item['real_uid']) ? 0 : $this->count_unseen_descendants());
         $privacy_warning = false;
@@ -148,7 +146,7 @@ class ThreadItem
         $edlink = 'editpost';
 
         if (local_channel() && $observer['xchan_hash'] === $item['author_xchan']) {
-            $edpost = array(z_root() . '/' . $edlink . '/' . $item['id'], t('Edit'));
+            $edpost = [z_root() . '/' . $edlink . '/' . $item['id'], t('Edit')];
         } else {
             $edpost = false;
         }
@@ -183,32 +181,32 @@ class ThreadItem
 
 
         if ($dropping) {
-            $drop = array(
+            $drop = [
                 'dropping' => $dropping,
                 'delete' => t('Delete'),
-            );
+            ];
         } elseif (is_site_admin()) {
             $drop = [ 'dropping' => true, 'delete' => t('Admin Delete') ];
         }
 
         if (isset($observer_is_pageowner) && $observer_is_pageowner) {
-            $multidrop = array(
+            $multidrop = [
                 'select' => t('Select'),
-            );
+            ];
         }
 
         $filer = ((($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid', $item))) ? t('Save to Folder') : false);
 
+        $large_avatar = $item['author']['xchan_photo_l'];
         $profile_avatar = $item['author']['xchan_photo_m'];
         $profile_link   = chanlink_hash($item['author_xchan']);
         $profile_name   = $item['author']['xchan_name'];
 
-        $profile_addr = $item['author']['xchan_addr'] ? $item['author']['xchan_addr'] : $item['author']['xchan_url'];
+        $profile_addr = $item['author']['xchan_addr'] ?: $item['author']['xchan_url'];
 
         $location = format_location($item);
         $isevent = false;
         $attend = null;
-        $canvote = false;
 
         // process action responses - e.g. like/dislike/attend/agree/whatever
         $response_verbs = [ 'like', 'dislike' ];
@@ -219,7 +217,7 @@ class ThreadItem
             $response_verbs[] = 'attendmaybe';
             if ($this->is_commentable() && $observer) {
                 $isevent = true;
-                $attend = array( t('I will attend'), t('I will not attend'), t('I might attend'));
+                $attend = [t('I will attend'), t('I will not attend'), t('I might attend')];
                 $undo_attend = t('Undo attendance');
             }
         }
@@ -272,7 +270,7 @@ class ThreadItem
             if (local_channel() && ($conv->get_profile_owner() == local_channel() || intval($item['item_private']) === 0)) {
                 $star = [
                     'toggle' => t('Save'),
-                    'isstarred' => ((intval($item['item_starred'])) ? true : false),
+                    'isstarred' => (bool) $item['item_starred']
                 ];
             }
         } else {
@@ -286,10 +284,10 @@ class ThreadItem
 
 
         if ($conv->get_profile_owner() == local_channel()) {
-            $tagger = array(
+            $tagger = [
                 'tagit' => t("Add Tag"),
                 'classtagger' => "",
-            );
+            ];
         }
 
         $has_bookmarks = false;
@@ -307,8 +305,8 @@ class ThreadItem
         }
 
         if ($this->is_commentable() && $observer) {
-            $like = array( t('I like this'), t('Undo like'));
-            $dislike = array( t('I don\'t like this'), t('Undo dislike') );
+            $like = [t('I like this'), t('Undo like')];
+            $dislike = [t('I don\'t like this'), t('Undo dislike')];
         }
 
         $share = $embed = EMPTY_STR;
@@ -372,12 +370,12 @@ class ThreadItem
         $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
         $pinned = ((! empty($pinned_items) && in_array($item['mid'], $pinned_items)) ? true : false);
 
-        $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-map-marker"></i>&nbsp' : '';
+        $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-sign-in"></i>&nbsp' : '';
         if (!$locicon) {
             $locicon = ($item['verb'] === 'Leave') ? '<i class="fa fa-fw fa-sign-out"></i>&nbsp' : '';
         }
         
-        $tmp_item = array(
+        $tmp_item = [
             'template' => $this->get_template(),
             'mode' => $mode,
             'item_type' => intval($item['item_type']),
@@ -399,7 +397,6 @@ class ThreadItem
             'undo_attend' => $undo_attend,
             'consensus' => '',
             'conlabels' => '',
-            'canvote' => $canvote,
             'linktitle' => sprintf(t('View %s\'s profile - %s'), $profile_name, (($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url'])),
             'olinktitle' => sprintf(t('View %s\'s profile - %s'), $this->get_owner_name(), (($this->get_owner_addr()) ? $this->get_owner_addr() : $this->get_owner_url())),
             'llink' => $item['llink'],
@@ -416,8 +413,7 @@ class ThreadItem
             'myconv' => $myconv,
             'name' => $profile_name,
             'thumb' => $profile_avatar,
-            'osparkle' => $osparkle,
-            'sparkle' => $sparkle,
+            'large_avatar' => $large_avatar,
             'title' => $locicon . $item['title'],
             'title_tosource' => get_pconfig($conv->get_profile_owner(), 'system', 'title_tosource'),
             'ago' => relative_date($item['created']),
@@ -505,9 +501,9 @@ class ThreadItem
             'thread_level' => $thread_level,
             'indentpx' => intval(get_pconfig(local_channel(), 'system', 'thread_indent_px', get_config('system', 'thread_indent_px', 0))),
             'thread_max' => intval(get_config('system', 'thread_maxlevel', 20)) + 1
-        );
+        ];
 
-        $arr = array('item' => $item, 'output' => $tmp_item);
+        $arr = ['item' => $item, 'output' => $tmp_item];
         Hook::call('display_item', $arr);
 
         $result = $arr['output'];
@@ -740,8 +736,6 @@ class ThreadItem
      */
     public function set_conversation($conv)
     {
-        $previous_mode = ($this->conversation ? $this->conversation->get_mode() : '');
-
         $this->conversation = $conv;
 
         // Set it on our children too
@@ -837,33 +831,6 @@ class ThreadItem
         return $total;
     }
 
-
-    private function label_descendants($count = 0)
-    {
-        if (! array_key_exists('sequence', $this->data)) {
-            if ($count) {
-                $count++;
-            }
-            $this->data['sequence'] = $count;
-        }
-        logger('labelled: ' . print_r($this->data, true), LOGGER_DATA);
-        $children = $this->get_children();
-        $total = count($children);
-        if ($total > 0) {
-            foreach ($children as $child) {
-                if (! visible_activity($child->data)) {
-                    continue;
-                }
-                if (! array_key_exists('sequence', $this->data)) {
-                    $count++;
-                    $child->data['sequence'] = $count;
-                    logger('labelled_child: ' . print_r($child->data, true), LOGGER_DATA);
-                }
-                $child->label_descendants($count);
-            }
-        }
-    }
-
     private function count_unseen_descendants()
     {
         $children = $this->get_children();
@@ -918,7 +885,7 @@ class ThreadItem
 
         $observer = $conv->get_observer();
 
-        $arr = array('comment_buttons' => '','id' => $this->get_id());
+        $arr = ['comment_buttons' => '','id' => $this->get_id()];
         Hook::call('comment_buttons', $arr);
         $comment_buttons = $arr['comment_buttons'];
 
@@ -927,7 +894,7 @@ class ThreadItem
 
 
 
-        $comment_box = replace_macros($template, array(
+        $comment_box = replace_macros($template, [
             '$return_path' => '',
             '$threaded' => $this->is_threaded(),
             '$jsreload' => $conv->reload,
@@ -955,20 +922,20 @@ class ThreadItem
             '$reset' => t('Reset'),
             '$indent' => $indent,
             '$can_upload' => (perm_is_allowed($conv->get_profile_owner(), get_observer_hash(), 'write_storage') && $conv->is_uploadable()),
-            '$feature_encrypt' => ((Apps::system_app_installed($conv->get_profile_owner(), 'Secrets')) ? true : false),
-            '$feature_markup' => ((Apps::system_app_installed($conv->get_profile_owner(), 'Markup')) ? true : false),
+            '$feature_encrypt' => Apps::system_app_installed($conv->get_profile_owner(), 'Secrets'),
+            '$feature_markup' => Apps::system_app_installed($conv->get_profile_owner(), 'Markup'),
             '$encrypt' => t('Encrypt text'),
             '$cipher' => $conv->get_cipher(),
             '$sourceapp' => App::$sourcename,
             '$observer' => get_observer_hash(),
-            '$anoncomments' => ((($conv->get_mode() === 'channel' || $conv->get_mode() === 'display') && perm_is_allowed($conv->get_profile_owner(), '', 'post_comments')) ? true : false),
+            '$anoncomments' => ($conv->get_mode() === 'channel' || $conv->get_mode() === 'display') && perm_is_allowed($conv->get_profile_owner(), '', 'post_comments'),
             '$anonname' => [ 'anonname', t('Your full name (required)') ],
             '$anonmail' => [ 'anonmail', t('Your email address (required)') ],
             '$anonurl'  => [ 'anonurl',  t('Your website URL (optional)') ],
             '$auto_save_draft' => $feature_auto_save_draft,
             '$save' => $permanent_draft,
             '$top' => $this->is_toplevel()
-        ));
+        ]);
 
         return $comment_box;
     }
@@ -1031,7 +998,7 @@ class ThreadItem
                         'photo' => $child['author']['xchan_photo_m'],
                         'name' => $child['author']['xchan_name'],
                         'addr' => $child['author']['xchan_addr'],
-                        'censored' => (($child['author']['xchan_censored'] || $child['author']['abook_censor']) ? true : false)
+                        'censored' => $child['author']['xchan_censored'] || $child['author']['abook_censor']
                     ];
                 }
                 if ($child['children']) {
