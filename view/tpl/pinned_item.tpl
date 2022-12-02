@@ -37,9 +37,13 @@
 						{{if $thread_author_menu}}
 							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-toggle="dropdown"></i>
 							<div class="dropdown-menu">
+								<img src="{{$item.large_avatar}}" style="width: 200px; height: 200px;" id="wall-item-popup-photo-{{$item.id}}" alt="{{$item.name}}" />
+								<div style="margin-top: 20px;">
+									<hr>
 								{{foreach $thread_author_menu as $mitem}}
 									<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
 								{{/foreach}}
+								</div>
 							</div>
 						{{/if}}
 					</div>

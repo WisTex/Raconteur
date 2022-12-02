@@ -197,6 +197,7 @@ class ThreadItem
 
         $filer = ((($conv->get_profile_owner() == local_channel()) && (! array_key_exists('real_uid', $item))) ? t('Save to Folder') : false);
 
+        $large_avatar = $item['author']['xchan_photo_l'];
         $profile_avatar = $item['author']['xchan_photo_m'];
         $profile_link   = chanlink_hash($item['author_xchan']);
         $profile_name   = $item['author']['xchan_name'];
@@ -412,6 +413,7 @@ class ThreadItem
             'myconv' => $myconv,
             'name' => $profile_name,
             'thumb' => $profile_avatar,
+            'large_avatar' => $large_avatar,
             'title' => $locicon . $item['title'],
             'title_tosource' => get_pconfig($conv->get_profile_owner(), 'system', 'title_tosource'),
             'ago' => relative_date($item['created']),
