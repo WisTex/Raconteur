@@ -61,13 +61,14 @@ class Lists extends Controller
                 http_status_exit(404, 'Not found');
             }
 
+            $sqlExtra = '';
             if (!$group['visible']) {
                 if ($channel['channel_hash'] !== get_observer_hash()) {
-                    http_status_exit(403, 'Permission denied');
+                    $sqlExtra = " AND xchan_hash = '" . dbesc(get_observer_hash()) . "' ";
                 }
             }
 
-            $total = AccessList::members($group['uid'], $group['id'], true);
+            $total = AccessList::members($group['uid'], $group['id'], true, sqlExtra: $sqlExtra);
             if ($total) {
                 App::set_pager_total($total);
                 App::set_pager_itemspage(100);
@@ -78,7 +79,8 @@ class Lists extends Controller
                 $ret['name'] = $group['gname'];
                 $ret['attributedTo'] = Channel::url($channel);
             } else {
-                $members = AccessList::members($group['uid'], $group['id'], false, App::$pager['start'], App::$pager['itemspage']);
+                $members = AccessList::members($group['uid'], $group['id'], false, App::$pager['start'],
+                    App::$pager['itemspage'], sqlExtra: $sqlExtra);
                 $ret = Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection', $total);
                 $ret['name'] = $group['gname'];
                 $ret['attributedTo'] = Channel::url($channel);
