@@ -33,12 +33,19 @@ class Following extends Controller
 
         $observer_hash = get_observer_hash();
 
+        $sqlExtra = '';
+
         if (!perm_is_allowed($channel['channel_id'], $observer_hash, 'view_contacts')) {
-            http_status_exit(403, 'Forbidden');
+            $sqlExtra = ($observer_hash) ? " AND xchan_hash = '" . dbesc($observer_hash) . "' "  : '';
         }
 
         $t = q(
-            "select count(xchan_hash) as total from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'my_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0",
+            "select count(xchan_hash) as total from xchan 
+            left join abconfig on abconfig.xchan = xchan_hash 
+            left join abook on abook_xchan = xchan_hash 
+            where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'my_perms' 
+              and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 
+              and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 $sqlExtra ",
             intval($channel['channel_id']),
             intval($channel['channel_id']),
             dbesc($channel['channel_hash'])
@@ -55,7 +62,11 @@ class Following extends Controller
             $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
             $r = q(
-                "select * from xchan left join abconfig on abconfig.xchan = xchan_hash left join abook on abook_xchan = xchan_hash where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'my_perms' and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 $pager_sql",
+                "select * from xchan left join abconfig on abconfig.xchan = xchan_hash 
+                left join abook on abook_xchan = xchan_hash 
+                where abook_channel = %d and abconfig.chan = %d and abconfig.cat = 'system' and abconfig.k = 'my_perms' 
+                  and abconfig.v like '%%send_stream%%' and xchan_hash != '%s' and xchan_orphan = 0 
+                  and xchan_deleted = 0 and abook_hidden = 0 and abook_pending = 0 and abook_self = 0 $sqlExtra $pager_sql",
                 intval($channel['channel_id']),
                 intval($channel['channel_id']),
                 dbesc($channel['channel_hash'])
