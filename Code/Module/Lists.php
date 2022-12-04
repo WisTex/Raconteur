@@ -51,9 +51,8 @@ class Lists extends Controller
                 http_status_exit(403, 'Permission denied');
             }
 
-            if (!perm_is_allowed($group['uid'], get_observer_hash(), 'view_contacts')) {
-                http_status_exit(403, 'Permission denied');
-            }
+            $observer_hash = get_observer_hash();
+            $hasPermission = perm_is_allowed($group['uid'], $observer_hash, 'view_contacts');
 
             $channel = Channel::from_id($group['uid']);
 
@@ -62,11 +61,17 @@ class Lists extends Controller
             }
 
             $sqlExtra = '';
-            if (!$group['visible']) {
-                if ($channel['channel_hash'] !== get_observer_hash()) {
-                    $sqlExtra = " AND xchan_hash = '" . dbesc(get_observer_hash()) . "' ";
+            if (!$group['visible'] || !$hasPermission) {
+                if ($observer_hash) {
+                    if ($observer_hash !== $channel['channel_hash']) {
+                        $sqlExtra = " AND xchan_hash = '" . dbesc(get_observer_hash()) . "' ";
+                    }
+                }
+                else {
+                    http_status_exit(403, 'Permission denied');
                 }
             }
+
 
             $total = AccessList::members($group['uid'], $group['id'], true, sqlExtra: $sqlExtra);
             if ($total) {
