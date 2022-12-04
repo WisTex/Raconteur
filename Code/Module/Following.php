@@ -29,14 +29,30 @@ class Following extends Controller
             http_status_exit(404, 'Not found');
         }
 
+        $sigdata = HTTPSig::verify(EMPTY_STR);
+        if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+            $portable_id = $sigdata['portable_id'];
+            if (!check_channelallowed($portable_id)) {
+                http_status_exit(403, 'Permission denied');
+            }
+            if (!check_siteallowed($sigdata['signer'])) {
+                http_status_exit(403, 'Permission denied');
+            }
+            observer_auth($portable_id);
+        }
+
         Libprofile::load(argv(1));
 
         $observer_hash = get_observer_hash();
 
         $sqlExtra = '';
-
         if (!perm_is_allowed($channel['channel_id'], $observer_hash, 'view_contacts')) {
-            $sqlExtra = ($observer_hash) ? " AND xchan_hash = '" . dbesc($observer_hash) . "' "  : '';
+            if ($observer_hash) {
+                $sqlExtra = " AND xchan_hash = '" . dbesc($observer_hash) . "' ";
+            }
+            else {
+                http_status_exit(403, 'Permission denied');
+            }
         }
 
         $t = q(
