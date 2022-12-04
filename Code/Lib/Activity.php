@@ -1170,6 +1170,17 @@ class Activity
             }
         }
 
+        if (in_array($ret['commentPolicy'], ['public', 'authenticated'])) {
+            $ret['canReply'] = ACTIVITY_PUBLIC_INBOX;
+        }
+        elseif (in_array($ret['commentPolicy'], ['contacts', 'specific'])) {
+            $ret['canReply'] = z_root() . '/followers/' . substr($i['author']['xchan_addr'], 0, strpos($i['author']['xchan_addr'], '@'));
+        }
+        elseif (in_array($ret['commentPolicy'], ['self', 'none']) || $i['item_nocomment'] || datetime_convert('UTC','UTC', $i['comments_closed']) <= datetime_convert('UTC','UTC', 'now')) {
+            $ret['canReply'] = [];
+        }
+
+
         $ret['attributedTo'] = self::encode_person($i['author'],false);
 
         if ($i['mid'] !== $i['parent_mid']) {
@@ -2967,12 +2978,35 @@ class Activity
                 if ($until !== false) {
                     $s['comments_closed'] = datetime_convert('UTC', 'UTC', substr($act->obj['commentPolicy'], $until + 6));
                     if ($s['comments_closed'] < datetime_convert()) {
-                        $s['nocomment'] = true;
+                        $s['item_nocomment'] = true;
                     }
                 }
                 $remainder = substr($act->obj['commentPolicy'], 0, (($until) ?: strlen($act->obj['commentPolicy'])));
                 if (!empty($remainder)) {
                     $s['comment_policy'] = $remainder;
+                }
+            }
+            if (!$s['comment_policy'] && isset($act->objprop['canReply'])) {
+                if (empty($act->objprop['canReply'])) {
+                    $s['item_nocomment'] = true;
+                }
+                elseif (! is_array($act->objprop['canReply'])) {
+                    $act->objprop['canReply'] = [$act->objprop['canReply']];
+                }
+                if (is_array($act->objprop['canReply'])) {
+                    foreach ($act->objprop['canReply'] as $canReply) {
+                        if (in_array($canReply, [ACTIVITY_PUBLIC_INBOX, 'Public', 'as:Public'])) {
+                            $s['comment_policy'] = 'authenticated';
+                            break;
+                        }
+                    }
+                    if (!$s['comment_policy']) {
+                        foreach ($act->objprop['canReply'] as $canReply) {
+                            if (strpos($canReply, 'follow')) {
+                                $s['comment_policy'] = 'contacts';
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -4473,6 +4507,8 @@ class Activity
             'capabilities' => 'litepub:capabilities',
             'acceptsJoins' => 'litepub:acceptsJoins',
             'Hashtag' => 'as:Hashtag',
+            'canReply' => 'toot:canReply',
+            'replyApproval' => 'toot:replyApproval',
         ];
     }
 

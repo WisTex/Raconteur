@@ -670,7 +670,7 @@ function bb_ShareAttributes($match)
     $headline = '<div class="shared_container"><div class="shared_header">';
 
     if ($avatar != "") {
-        $headline .= '<a href="' . (($auth) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . htmlspecialchars($author, ENT_COMPAT, 'UTF-8', false) . '" height="32" width="32" loading="lazy" /></a>';
+        $headline .= '<a href="' . (($auth) ? zid($profile) : $profile) . '" ><img src="' . $avatar . '" alt="' . htmlspecialchars($author, ENT_COMPAT, 'UTF-8', false) . '" height="32" width="32" loading="lazy" /></a>&nbsp;';
     }
 
     if (strpos($link, '/cards/')) {

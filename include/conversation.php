@@ -473,6 +473,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 $profile_name = $item['author']['xchan_name'];
                 $profile_link = $item['author']['xchan_url'];
                 $profile_avatar = $item['author']['xchan_photo_m'];
+                $large_avatar = $item['author']['xchan_photo_l'];
 
                 if ($item['mid'] === $item['parent_mid'] && $item['author_xchan'] !== $item['owner_xchan']) {
                     $owner_name = $item['owner']['xchan_name'];
@@ -557,6 +558,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'lock' => $lock,
                     'locktype' => $locktype,
                     'thumb' => $profile_avatar,
+                    'large_avatar' => $large_avatar,
                     'title' => $locicon . $item['title'],
                     'body' => $body['html'],
                     'event' => $body['event'],
