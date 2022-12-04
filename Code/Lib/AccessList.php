@@ -281,7 +281,7 @@ class AccessList
                     "SELECT count(xchan) as total FROM pgrp_member
                     LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
                     WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0
-                    and abook_blocked = 0 and abook_pending = 0",
+                    and abook_blocked = 0 and abook_pending = 0 $sqlExtra",
                     intval($gid),
                     intval($uid),
                     intval($uid)
@@ -294,7 +294,7 @@ class AccessList
             $r = q(
                 "SELECT * FROM pgrp_member
                 LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
-                WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC $pager_sql",
+                WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sqlExtra ORDER BY xchan_name ASC $pager_sql",
                 intval($gid),
                 intval($uid),
                 intval($uid)
