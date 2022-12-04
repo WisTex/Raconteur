@@ -35,7 +35,12 @@ class Followers extends Controller
 
         $sqlExtra = '';
         if (!perm_is_allowed($channel['channel_id'], $observer_hash, 'view_contacts')) {
-            $sqlExtra = ($observer_hash) ? " AND xchan_hash = '" . dbesc($observer_hash) . "' "  : '';
+            if ($observer_hash) {
+                $sqlExtra = " AND xchan_hash = '" . dbesc($observer_hash) . "' ";
+            }
+            else {
+                http_status_exit(403, 'Permission denied');
+            }
         }
 
         $t = q(
