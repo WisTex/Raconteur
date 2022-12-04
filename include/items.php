@@ -375,7 +375,7 @@ function absolutely_no_comments($item) {
  *  * \e boolean \b success true or false
  *  * \e array \b activity the resulting activity if successful
  */
-function post_activity_item($arr, $allow_code = false, $deliver = true) {
+function post_activity_item($arr, $allow_code = false, $deliver = true, $channel = null, $observer = null) {
 
     $ret = [ 'success' => false ];
 
@@ -393,8 +393,12 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
         $arr['item_thread_top'] = 1;
     }
 
-    $channel  = App::get_channel();
-    $observer = App::get_observer();
+    if (!$channel) {
+        $channel = App::get_channel();
+    }
+    if (!$observer) {
+        $observer = App::get_observer();
+    }
 
     $arr['aid'] = ((isset($arr['aid'])) ? $arr['aid'] : $channel['channel_account_id']);
     $arr['uid'] = ((isset($arr['uid'])) ? $arr['uid'] : $channel['channel_id']);

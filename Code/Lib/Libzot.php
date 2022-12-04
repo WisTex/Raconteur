@@ -1599,6 +1599,7 @@ class Libzot
     {
 
         $result = [];
+        $commentApproval = null;
 
         // logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
 
@@ -1731,6 +1732,7 @@ class Libzot
             $perm = 'send_stream';
             if (($arr['mid'] !== $arr['parent_mid']) && ($relay)) {
                 $perm = 'post_comments';
+                $commentApproval = new CommentApproval($channel, $arr);
             }
 
             // This is our own post, possibly coming from a channel clone
@@ -1817,6 +1819,11 @@ class Libzot
                 }
 
                 if (!$allowed) {
+                    if ($arr['mid'] !== $arr['parent_mid']) {
+                        if ($commentApproval) {
+                            $commentApproval->Reject();
+                        }
+                    }
                     logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
                     $DR->update('permission denied');
                     $result[] = $DR->get();
@@ -1850,6 +1857,9 @@ class Libzot
                         dbesc($prnt),
                         intval($channel['channel_id'])
                     );
+                }
+                if ($commentApproval) {
+                    $commentApproval->Accept();
                 }
 
                 if ($r) {
