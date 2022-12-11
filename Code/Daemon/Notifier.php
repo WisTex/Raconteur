@@ -2,6 +2,7 @@
 
 namespace Code\Daemon;
 
+use Code\Lib\IConfig;
 use Code\Lib\Libzot;
 use Code\Lib\Queue;
 use Code\Lib\Activity;
@@ -387,44 +388,52 @@ class Notifier implements DaemonInterface
 
             if (($relay_to_owner || $uplink) && ($cmd !== 'relay')) {
                 logger('followup relay (upstream delivery)', LOGGER_DEBUG);
-                $sendto = ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'];
-                self::$recipients = [ $sendto ];
-                // over-ride upstream recipients if 'replyTo' was set in the parent.
-                if ($parent_item['replyto'] && (! $uplink)) {
-                    logger('replyto: over-riding owner '  . $sendto, LOGGER_DEBUG);
-                    // unserialise is a no-op if presented with data that wasn't serialised.
-                    $ptr = unserialise($parent_item['replyto']);
-                    if (is_string($ptr)) {
-                        if (ActivityStreams::is_url($sendto)) {
-                            $sendto = $ptr;
-                            self::$recipients = [ $sendto ];
-                        }
-                    } elseif (is_array($ptr)) {
-                        $sendto = [];
-                        foreach ($ptr as $rto) {
-                            if (is_string($rto)) {
-                                $sendto[] = $rto;
-                            } elseif (is_array($rto) && isset($rto['id'])) {
-                                $sendto[] = $rto['id'];
+
+                $comment_recipient = IConfig::Get($target_item['id'], 'system', 'comment_recipient');
+                if ($comment_recipient) {
+                    $sendto = $comment_recipient;
+                    self::$recipients = [$comment_recipient];
+                    self::$private = false;
+                }
+                else {
+                    $sendto = ($uplink) ? $parent_item['source_xchan'] : $parent_item['owner_xchan'];
+                    self::$recipients = [$sendto];
+                    // over-ride upstream recipients if 'replyTo' was set in the parent.
+                    if ($parent_item['replyto'] && (!$uplink)) {
+                        logger('replyto: over-riding owner ' . $sendto, LOGGER_DEBUG);
+                        // unserialise is a no-op if presented with data that wasn't serialised.
+                        $ptr = unserialise($parent_item['replyto']);
+                        if (is_string($ptr)) {
+                            if (ActivityStreams::is_url($sendto)) {
+                                $sendto = $ptr;
+                                self::$recipients = [$sendto];
                             }
+                        } elseif (is_array($ptr)) {
+                            $sendto = [];
+                            foreach ($ptr as $rto) {
+                                if (is_string($rto)) {
+                                    $sendto[] = $rto;
+                                } elseif (is_array($rto) && isset($rto['id'])) {
+                                    $sendto[] = $rto['id'];
+                                }
+                            }
+                            self::$recipients = $sendto;
                         }
-                        self::$recipients = $sendto;
                     }
                 }
-                
                 logger('replyto: upstream recipients ' . print_r($sendto, true), LOGGER_DEBUG);
-                
 
                 self::$private = true;
                 $upstream = true;
                 self::$packet_type = 'response';
-                $is_moderated = their_perms_contains($parent_item['uid'], $sendto, 'moderated');
-                if ($relay_to_owner && $thread_is_public && (! $is_moderated) && (! $question) && (! Channel::is_group($parent_item['uid']))) {
+                $is_moderated = their_perms_contains($parent_item['uid'], (is_array($sendto) ? $sendto[0] : $sendto), 'moderated');
+                if ($relay_to_owner && $thread_is_public && $target_item['approved'] && (! $is_moderated) && (! $question) && (! Channel::is_group($parent_item['uid']))) {
                     if (get_pconfig($target_item['uid'], 'system', 'hyperdrive', true)) {
                         Run::Summon([ 'Notifier' , 'hyper', $item_id ]);
                     }
                 }
-            } else {
+            }
+            else {
                 if ($cmd === 'relay') {
                     logger('owner relay (downstream delivery)');
                 } else {
@@ -451,7 +460,8 @@ class Notifier implements DaemonInterface
                     }
                 }
 
-                if ($thread_is_public && $cmd === 'hyper') {
+
+                if ($thread_is_public && $target_item['approved'] && $cmd === 'hyper') {
                     self::$recipients = [];
                     $r = q(
                         "select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and not abook_xchan in ( '%s', '%s', '%s' ) ",
@@ -465,8 +475,8 @@ class Notifier implements DaemonInterface
                             self::$recipients[] = $rv['abook_xchan'];
                         }
                     }
-                    self::$private = false;
-                } else {
+                }
+                else {
                     self::$private = false;
                     self::$recipients = collect_recipients($parent_item, self::$private);
                 }

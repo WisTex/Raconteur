@@ -73,7 +73,7 @@ class Activity
     }
 
 
-    public static function fetch($url, $channel = null, $debug = false)
+    public static function fetch($url, $channel = null, $must_verify = false, $debug = false)
     {
         if (!$url) {
             return null;
@@ -154,7 +154,9 @@ class Activity
 
             if (($y['type']) && (!ActivityStreams::is_an_actor($y['type']))) {
                 $sigblock = HTTPSig::verify($x);
-
+                if ($must_verify && !$sigblock['header_signed']) {
+                    return null;
+                }
                 if (($sigblock['header_signed']) && (!$sigblock['header_valid'])) {
                     if ($debug) {
                         return array_merge($x, $sigblock);
@@ -805,6 +807,11 @@ class Activity
             // but *not* for comments and RSVPs, where it should only be present in the object
 
             if (!in_array($activity['type'], ['Create', 'Update', 'Accept', 'Reject', 'TentativeAccept', 'TentativeReject'])) {
+                $activity['inReplyTo'] = $item['thr_parent'];
+            }
+
+            // For comment approvals and rejections
+            if (in_array($activity['type'], ['Accept','Reject']) && is_string($item['obj']) && strlen($item['obj'])) {
                 $activity['inReplyTo'] = $item['thr_parent'];
             }
 
@@ -3002,6 +3009,7 @@ class Activity
             }
         }
 
+
         if (!(array_key_exists('created', $s) && $s['created'])) {
             $s['created'] = datetime_convert();
         }
@@ -3573,6 +3581,7 @@ class Activity
 
         $is_system = Channel::is_system($channel['channel_id']);
         $is_child_node = false;
+        $commentApproval = null;
 
         // Pleroma scrobbles can be really noisy and contain lots of duplicate activities. Disable them by default.
 
@@ -3629,7 +3638,46 @@ class Activity
                         $item['obj_type'] = 'Answer';
                     }
                 }
+                if ($item['approved']) {
+                    $valid = CommentApproval::verify($item, $channel);
+                    if (!$valid) {
+                        logger('commentApproval failed');
+                        return;
+                    }
+                }
 
+                if (in_array($item['verb'], ['Accept', 'Reject'])) {
+                    $i = q("select * from item where mid = '%s' and uid = %d",
+                        dbesc(is_array($item['obj']) ? $item['obj']['id'] : $item['obj']),
+                        intval($channel['channel_id'])
+                    );
+                    if ($i) {
+                        if ($item['verb'] === 'Accept') {
+                            $valid = CommentApproval::verify($i[0],$channel,$act);
+                            if ($valid) {
+                                q("update item set approved = '%s' where mid = '%s' and uid = %d",
+                                    dbesc($item['mid']),
+                                    dbesc(is_array($item['obj']) ? $item['obj']['id'] : $item['obj']),
+                                    intval($channel['channel_id'])
+                                );
+                            }
+                        }
+                        else {
+                            $valid = CommentApproval::verifyReject($i[0],$channel,$act);
+                            if ($valid) {
+                                q("update item set approved = '%s' where mid = '%s' and uid = %d",
+                                    dbesc(''),
+                                    dbesc(is_array($item['obj']) ? $item['obj']['id'] : $item['obj']),
+                                    intval($channel['channel_id'])
+                                );
+                            }
+                        }
+                    }
+                }
+
+                if (!$item['approved'] && $parent_item['owner_xchan'] === $channel['channel_hash'] && $item['author_xchan'] !== $channel['channel_hash']) {
+                    $commentApproval = new CommentApproval($channel, $item);
+                }
                 // quietly reject group comment boosts by group owner
                 // (usually only sent via ActivityPub so groups will work on microblog platforms)
                 // This catches those activities if they slipped in via a conversation fetch
@@ -3649,8 +3697,8 @@ class Activity
                         || $allowed === 'moderated') {
                         $item['item_blocked'] = ITEM_MODERATED;
                     }
-                    if ($item['item_blocked'] !== ITEM_MODERATED) {
-                        self::send_accept_activity($channel, $item['author_xchan'], $item, $parent_item);
+                    if ($item['item_blocked'] !== ITEM_MODERATED && $commentApproval) {
+                        $commentApproval->Accept();
                     }
 
                 }
@@ -3658,7 +3706,9 @@ class Activity
                     logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
                     logger('rejected: ' . print_r($item, true), LOGGER_DATA);
                     // let the sender know we received their comment, but we don't permit spam here.
-                    self::send_reject_activity($channel, $item['author_xchan'], $item, $parent_item);
+                    if ($commentApproval) {
+                        $commentApproval->Reject();
+                    }
                     return;
                 }
 
@@ -3893,12 +3943,12 @@ class Activity
         }
 
         $r = q(
-            "select id, created, edited from item where mid = '%s' and uid = %d limit 1",
+            "select id, created, edited, approved from item where mid = '%s' and uid = %d limit 1",
             dbesc($item['mid']),
             intval($item['uid'])
         );
         if ($r) {
-            if ($item['edited'] > $r[0]['edited']) {
+            if ($item['edited'] > $r[0]['edited'] || $item['approved'] !== $r[0]['approved']) {
                 $item['id'] = $r[0]['id'];
                 ObjCache::Set($item['mid'], $act->raw);
                 $x = item_store_update($item, deliver: false);

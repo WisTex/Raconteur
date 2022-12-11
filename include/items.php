@@ -377,6 +377,7 @@ function absolutely_no_comments($item) {
  */
 function post_activity_item($arr, $allow_code = false, $deliver = true, $channel = null, $observer = null) {
 
+    logger('input: ' . print_r($arr,true),  LOGGER_DATA);
     $ret = [ 'success' => false ];
 
     $is_comment = false;
@@ -436,8 +437,8 @@ function post_activity_item($arr, $allow_code = false, $deliver = true, $channel
 
     $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
-    if ((! $arr['plink']) && (intval($arr['item_thread_top']))) {
-        $arr['plink'] = substr(z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']),0,190);
+    if (empty($arr['plink'])) {
+        $arr['plink'] = $arr['mid'];
     }
 
     // for the benefit of plugins, we will behave as if this is an API call rather than a normal online post
