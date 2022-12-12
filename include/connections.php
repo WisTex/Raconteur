@@ -157,7 +157,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 
     // don't provide a connect button for transient or one-way identities
 
-    if (in_array($xchan['xchan_network'], [ 'rss','anon','token','unknown' ])) {
+    if (in_array($xchan['xchan_network'], ['rss', 'anon', 'token', 'unknown' ])) {
         $connect = false;
     }
 
@@ -184,13 +184,9 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 				. '&to='
 				. urlencode($xchan['xchan_hash'])
 				. '&body='
-				. urlencode('@!{' . $xchan['xchan_addr'] ? $xchan['xchan_addr'] : $xchan['xchan_url'] . '}');
+				. urlencode('@!{' . (($xchan['xchan_addr']) ?: $xchan['xchan_url']) . '}' );
 		}
 	}
-
-
-
-
 
     return replace_macros(Theme::get_template('xchan_vcard.tpl'), [
         '$name'    => $xchan['xchan_name'],
