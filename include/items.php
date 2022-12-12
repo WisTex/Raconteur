@@ -3122,6 +3122,9 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
         $merge = (($item['attach']) ? $item['attach'] : []);
+        if (is_string($merge)) {
+            $merge = json_decode($merge, true);
+        }
         $arr['attach'] = array_merge($merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
 
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
