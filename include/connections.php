@@ -184,7 +184,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 				. '&to='
 				. urlencode($xchan['xchan_hash'])
 				. '&body='
-				. urlencode('@!{' . (($xchan['xchan_addr']) ?: $xchan['xchan_url']) . '}' );
+				. urlencode('@!{' . ($xchan['xchan_addr'] ?: $xchan['xchan_url']) . '}' );
 		}
 	}
 
