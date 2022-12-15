@@ -37,11 +37,7 @@ function as_return_and_die($obj, $channel)
 {
 
     if(is_array($obj)) {
-        $x = array_merge(['@context' => [
-            ACTIVITYSTREAMS_JSONLD_REV,
-            'https://w3id.org/security/v1',
-            Activity::ap_schema()
-        ]], $obj);
+        $x = array_merge(Activity::ap_context(), $obj);
     }
 
     $headers = [];

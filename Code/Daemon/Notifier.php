@@ -347,11 +347,7 @@ class Notifier implements DaemonInterface
             if ($m && (! intval($target_item['item_deleted']))) {
                 self::$encoded_item = json_decode($m, true);
             } else {
-                self::$encoded_item = array_merge(['@context' => [
-                    ACTIVITYSTREAMS_JSONLD_REV,
-                    'https://w3id.org/security/v1',
-                    Activity::ap_schema()
-                    ]], Activity::encode_activity($target_item, true));
+                self::$encoded_item = array_merge(Activity::ap_context(), Activity::encode_activity($target_item, true));
                 self::$encoded_item['signature'] = LDSignatures::sign(self::$encoded_item, self::$channel);
             }
 

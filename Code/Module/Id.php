@@ -96,11 +96,7 @@ class Id extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            $x = array_merge(['@context' => [
-                ACTIVITYSTREAMS_JSONLD_REV,
-                'https://w3id.org/security/v1',
-                Activity::ap_schema()
-            ]], $i);
+            $x = array_merge(Activity::ap_context(), $i);
 
             $headers = [];
             $headers['Content-Type'] = 'application/x-nomad+json';
