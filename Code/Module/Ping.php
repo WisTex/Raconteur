@@ -739,7 +739,7 @@ class Ping extends Controller
             $result['birthdays'] = 0;
         }
 
-
+/*
         if ($vnotify & VNOTIFY_FORUMS) {
             $forums = get_forum_channels(local_channel());
 
@@ -788,7 +788,7 @@ class Ping extends Controller
                 $result['forums_sub'] = $forums;
             }
         }
-
+*/
         // Mark all of the stream notifications seen if all three of them are caught up.
         // This also resets the pconfig storage for items_seen
 

@@ -234,7 +234,7 @@ class Connedit extends Controller
                 $x = PermissionRoles::role_perms('social');
                 $p = Permissions::FilledPerms($x['perms_connect']);
                 $their_perms = Permissions::serialise($p);
-                AbConfig::Get($channel['channel_id'], App::$poi['abook_xchan'], 'system', 'their_perms', $their_perms);
+                AbConfig::Set($channel['channel_id'], App::$poi['abook_xchan'], 'system', 'their_perms', $their_perms);
             }
 
 
