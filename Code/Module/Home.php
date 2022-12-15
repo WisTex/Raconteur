@@ -27,11 +27,7 @@ class Home extends Controller
         Hook::call('home_init', $ret);
 
         if (ActivityStreams::is_as_request()) {
-            $x = array_merge(['@context' => [
-                ACTIVITYSTREAMS_JSONLD_REV,
-                'https://w3id.org/security/v1',
-                Activity::ap_schema()
-            ]], Activity::encode_site());
+            $x = array_merge(Activity::ap_context(), Activity::encode_site());
 
             $headers = [];
             $headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"';

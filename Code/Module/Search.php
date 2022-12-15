@@ -350,11 +350,7 @@ class Search extends Controller
     
             $i = Activity::encode_item_collection($items, 'search?' . $saved_id , 'OrderedCollection', true, count($items));
     
-            $x = array_merge(['@context' => [
-                ACTIVITYSTREAMS_JSONLD_REV,
-                'https://w3id.org/security/v1',
-                Activity::ap_schema()
-            ]], $i);
+            $x = array_merge(Activity::ap_context(), $i);
 
             $headers = [];
             $headers['Content-Type'] = 'application/x-nomad+json';

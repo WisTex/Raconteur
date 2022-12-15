@@ -4358,12 +4358,7 @@ class Activity
             'object' => $item['mid']
         ];
 
-        $msg = array_merge(['@context' => [
-            ACTIVITYSTREAMS_JSONLD_REV,
-            'https://w3id.org/security/v1',
-            self::ap_schema()
-        ]], $arr);
-
+        $msg = array_merge(self::ap_context(), $arr);
         $queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES), $channel, $recip[0]);
         do_delivery([$queue_id]);
     }
@@ -4476,6 +4471,17 @@ class Activity
         return $ret;
     }
 
+    public static function ap_context(): array
+    {
+        return ['@context' => [
+            ACTIVITYSTREAMS_JSONLD_REV,
+            'https://w3id.org/security/v1',
+            'https://www.w3.org/ns/did/v1',
+            'https://w3id.org/security/data-integrity/v1',
+            self::ap_schema()
+        ]];
+    }
+
     public static function ap_schema()
     {
 
@@ -4485,6 +4491,7 @@ class Activity
             'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
             'sm' => 'http://smithereen.software/ns#',
+            'fep' => 'https://codeberg.org/fediverse/fep#',
             'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
@@ -4509,6 +4516,7 @@ class Activity
             'Hashtag' => 'as:Hashtag',
             'canReply' => 'toot:canReply',
             'replyApproval' => 'toot:replyApproval',
+            'Identity' => 'fep:Identity',
         ];
     }
 
