@@ -1725,7 +1725,7 @@ class Libzot
                 }
             }
 
-            // perform pre-storage check to see if it's "likely" that this is a group or collection post
+
 
             if (in_array($arr['verb'], ['Accept', 'Reject'])) {
                 logger('verifying comment accept/reject');
@@ -1764,7 +1764,7 @@ class Libzot
 
 
 
-
+            // perform pre-storage check to see if it's "likely" that this is a group or collection post
 
             $tag_delivery = tgroup_check($channel['channel_id'], $arr);
 
