@@ -1725,44 +1725,11 @@ class Libzot
                 }
             }
 
-
-
             if (in_array($arr['verb'], ['Accept', 'Reject'])) {
-                logger('verifying comment accept/reject');
-                $i = q("select * from item where mid = '%s' and uid = %d",
-                    dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                    intval($channel['channel_id'])
-                );
-                logger('haveItem');
-                if ($i) {
-                    if ($arr['verb'] === 'Accept' && !$i[0]['approved']) {
-                        $valid = CommentApproval::verify($i[0],$channel,$act);
-                        if ($valid) {
-                            q("update item set approved = '%s' where mid = '%s' and uid = %d",
-                                dbesc($arr['mid']),
-                                dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                                intval($channel['channel_id'])
-                            );
-                            //Run::Summon(['Notifier', 'activity', $i[0]['id']]);
-                        }
-                    }
-                    elseif ($i[0]['approved']) {
-                        $valid = CommentApproval::verifyReject($i[0],$channel,$act);
-                        if ($valid) {
-                            q("update item set approved = '%s' where mid = '%s' and uid = %d",
-                                dbesc(''),
-                                dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                                intval($channel['channel_id'])
-                            );
-                        }
-                        // Run::Summon(['Notifier', 'activity', $i[0]['id']]);
-                    }
-                    // Do not store these
+                if (CommentApproval::doVerify($arr, $channel, $act)) {
                     continue;
                 }
             }
-
-
 
             // perform pre-storage check to see if it's "likely" that this is a group or collection post
 

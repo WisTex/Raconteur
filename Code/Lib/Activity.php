@@ -3647,31 +3647,8 @@ class Activity
                 }
 
                 if (in_array($item['verb'], ['Accept', 'Reject'])) {
-                    $i = q("select * from item where mid = '%s' and uid = %d",
-                        dbesc(is_array($item['obj']) ? $item['obj']['id'] : $item['obj']),
-                        intval($channel['channel_id'])
-                    );
-                    if ($i) {
-                        if ($item['verb'] === 'Accept') {
-                            $valid = CommentApproval::verify($i[0],$channel,$act);
-                            if ($valid) {
-                                q("update item set approved = '%s' where mid = '%s' and uid = %d",
-                                    dbesc($item['mid']),
-                                    dbesc(is_array($item['obj']) ? $item['obj']['id'] : $item['obj']),
-                                    intval($channel['channel_id'])
-                                );
-                            }
-                        }
-                        else {
-                            $valid = CommentApproval::verifyReject($i[0],$channel,$act);
-                            if ($valid) {
-                                q("update item set approved = '%s' where mid = '%s' and uid = %d",
-                                    dbesc(''),
-                                    dbesc(is_array($item['obj']) ? $item['obj']['id'] : $item['obj']),
-                                    intval($channel['channel_id'])
-                                );
-                            }
-                        }
+                    if (CommentApproval::doVerify($item, $channel, $act)) {
+                        return;
                     }
                 }
 
