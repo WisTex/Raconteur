@@ -3695,7 +3695,16 @@ class Activity
                 // A side effect of this action is that if you take away send_stream permission, comments to those
                 // posts you previously allowed will still be accepted. It is possible but might be difficult to fix this.
 
-                $allowed = true;
+                if ($item['approved']) {
+                    $allowed = CommentApproval::verify($item, $channel);
+                    if (!$allowed) {
+                        logger('commentApproval failed');
+                        return;
+                    }
+                }
+                else {
+                    $allowed = !Config::Get('system', 'use_fep5624');
+                }
 
                 // reject public stream comments that weren't sent by the conversation owner
                 // but only on remote message deliveries to our site ($fetch_parents === true)

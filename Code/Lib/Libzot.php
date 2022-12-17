@@ -1736,9 +1736,7 @@ class Libzot
             $tag_delivery = tgroup_check($channel['channel_id'], $arr);
 
             $perm = 'send_stream';
-            if (($arr['mid'] !== $arr['parent_mid']) && ($relay)) {
-                $perm = 'post_comments';
-
+            if ($arr['mid'] !== $arr['parent_mid'])  {
                 if ($arr['approved']) {
                     $valid = CommentApproval::verify($arr, $channel);
                     if (!$valid) {
@@ -1747,8 +1745,12 @@ class Libzot
                     }
                 }
 
-                if (!$arr['approved'] && $arr['author_xchan'] !== $channel['channel_hash']) {
-                    $commentApproval = new CommentApproval($channel, $arr);
+                if ($relay) {
+                    $perm = 'post_comments';
+
+                    if (!$arr['approved'] && $arr['author_xchan'] !== $channel['channel_hash']) {
+                        $commentApproval = new CommentApproval($channel, $arr);
+                    }
                 }
             }
 
@@ -1835,6 +1837,9 @@ class Libzot
                     }
                 }
 
+                if($arr['mid'] !== $arr['parent_mid'] && !$arr['approved'] && !$arr['item_wall'] && $arr['author_xchan'] !== $d && !$relay) {
+                    $allowed = !Config::Get('system', 'use_fep5624');
+                }
 
                 if (!$allowed) {
                     if ($arr['mid'] !== $arr['parent_mid']) {
@@ -1854,31 +1859,15 @@ class Libzot
                     $arr['item_blocked'] = ITEM_MODERATED;
                 }
 
-                // check source route.
-                // We are only going to accept comments from this sender if the comment has the same route as the top-level-post,
-                // this is so that permissions mismatches between senders apply to the entire conversation
-                // As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
-                // processing it is pointless.
-
-                // The original author won't have a token in their copy of the message
-
-                $prnt = ((str_contains($arr['parent_mid'], 'token=')) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
+                if ($commentApproval) {
+                    $commentApproval->Accept();
+                }
 
                 $r = q(
                     "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                     dbesc($arr['parent_mid']),
                     intval($channel['channel_id'])
                 );
-                if (!$r) {
-                    $r = q(
-                        "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
-                        dbesc($prnt),
-                        intval($channel['channel_id'])
-                    );
-                }
-                if ($commentApproval) {
-                    $commentApproval->Accept();
-                }
 
                 if ($r) {
                     // if this is a multi-threaded conversation, preserve the threading information
