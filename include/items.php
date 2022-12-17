@@ -572,7 +572,7 @@ function get_item_elements($x,$allow_code = false) {
     $arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
     $arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
-
+    $arr['approved'] = (($x['appproved']) ? htmlspecialchars($x['approved'],  ENT_COMPAT,'UTF-8',false) : '');
     // fix old-style signatures imported from hubzilla via polling and zot_feed
     // so they verify. 
 
@@ -703,7 +703,6 @@ function get_item_elements($x,$allow_code = false) {
     if ($mirror) {
 
         // extended export encoding
-
         $arr['revision'] = $x['revision'];
         $arr['allow_cid'] = $x['allow_cid'];
         $arr['allow_gid'] = $x['allow_gid'];

@@ -246,6 +246,18 @@ class CommentApproval
                 intval($channel['channel_id'])
             );
         }
+        $r = q(
+            "select * from item where mid = '%s' and uid = %d",
+            dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
+            intval($channel['channel_id'])
+        );
+        
+        if ($r) {
+            xchan_query($r);
+            $sync_item = fetch_post_tags($r);
+            Libsync::build_sync_packet($channel['channel_id'], ['item' => [encode_item($sync_item[0], true)]]);
+        }
+
     }
 
 
