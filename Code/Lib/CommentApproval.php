@@ -96,12 +96,11 @@ class CommentApproval
         if(!$approvalActivity) {
             $approvalActivity = Activity::fetch($item['approved'], $channel, true);
         }
-        $parent_item = q("select * from item where mid = '%s'", $item['parent_mid']);
-
         if (! $approvalActivity) {
             logger('no approval activity');
             return false;
         }
+        $parent_item = q("select * from item where mid = '%s'", $item['parent_mid']);
         if (!$parent_item) {
             logger('no parent item');
             return false;
@@ -209,58 +208,44 @@ class CommentApproval
             if ($arr['verb'] === 'Accept' && !$i[0]['approved']) {
                 $valid = self::verify($i[0], $channel, $act);
                 if ($valid) {
-                    q("update item set approved = '%s' where mid = '%s' and uid = %d",
-                        dbesc($arr['mid']),
-                        dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                        intval($channel['channel_id'])
-                    );
-                    $saved = q("select * from item where mid = '%s' and uid = %d",
-                        dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                        intval($channel['channel_id'])
-                    );
-                    if ($saved) {
-                        // we will need to remove the object and provide an author array
-                        // in order to re-generate the object JSON with the added approval
-                        xchan_query($saved, true);
-                        $saved[0]['obj'] = '';
-                        q("update item set obj = '%s' where mid = '%s' and uid = '%s'",
-                            dbesc(json_encode(Activity::encode_item($saved[0], true), JSON_UNESCAPED_SLASHES)),
-                            dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                            intval($channel['channel_id'])
-                        );
-                    }
-                    // xdebug_break();
+                    self::storeApprove($arr, $channel, $arr['mid']);
                     Run::Summon(['Notifier', 'activity', $i[0]['id']]);
                 }
-            } elseif ($i[0]['approved']) {
+            }
+            elseif ($i[0]['approved']) {
                 $valid = self::verifyReject($i[0], $channel, $act);
                 if ($valid) {
-                    q("update item set approved = '%s' where mid = '%s' and uid = %d",
-                        dbesc(''),
-                        dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                        intval($channel['channel_id'])
-                    );
-                    $saved = q("select * from item where mid = '%s' and uid = %d",
-                        dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                        intval($channel['channel_id'])
-                    );
-                    if ($saved) {
-                        xchan_query($saved, true);
-                        $saved[0]['obj'] = '';
-
-                        q("update item set obj = '%s' where mid = '%s' and uid = '%s'",
-                            dbesc(json_encode(Activity::encode_item($saved[0], true), JSON_UNESCAPED_SLASHES)),
-                            dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
-                            intval($channel['channel_id'])
-                        );
-                    }
-                    // xdebug_break();
+                    self::storeApprove($arr, $channel, '');
                     Run::Summon(['Notifier', 'activity', $i[0]['id']]);
                 }
             }
             return true;
         }
         return false;
+    }
+
+    public static function storeApprove($arr, $channel, $value)
+    {
+        q("update item set approved = '%s' where mid = '%s' and uid = %d",
+            dbesc($value),
+            dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
+            intval($channel['channel_id'])
+        );
+        $saved = q("select * from item where mid = '%s' and uid = %d",
+            dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
+            intval($channel['channel_id'])
+        );
+        if ($saved) {
+            // we will need to remove the object and provide an author array
+            // in order to re-generate the object JSON with the added approval
+            xchan_query($saved);
+            $saved[0]['obj'] = '';
+            q("update item set obj = '%s' where mid = '%s' and uid = '%s'",
+                dbesc(json_encode(Activity::encode_item($saved[0], true), JSON_UNESCAPED_SLASHES)),
+                dbesc(is_array($arr['obj']) ? $arr['obj']['id'] : $arr['obj']),
+                intval($channel['channel_id'])
+            );
+        }
     }
 
 
