@@ -424,7 +424,7 @@ class Notifier implements DaemonInterface
                 $upstream = true;
                 self::$packet_type = 'response';
                 $is_moderated = their_perms_contains($parent_item['uid'], (is_array($sendto) ? $sendto[0] : $sendto), 'moderated');
-                $allowed_comment = Config::Get('system', 'use_fep5624') || $target_item['approved'];
+                $allowed_comment = $target_item['approved'] || !Config::Get('system', 'use_fep5624');
                 if ($relay_to_owner && $thread_is_public && $allowed_comment && (! $is_moderated) && (! $question) && (! Channel::is_group($parent_item['uid']))) {
                     if (get_pconfig($target_item['uid'], 'system', 'hyperdrive', true)) {
                         Run::Summon([ 'Notifier' , 'hyper', $item_id ]);

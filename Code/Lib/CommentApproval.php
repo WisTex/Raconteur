@@ -21,6 +21,16 @@ class CommentApproval
         if (! is_array($obj)) {
             $obj = json_decode($obj, true);
         }
+
+        // Have I approved this already?
+        $approvals = q("select * from item where verb = 'Accept' and obj = '%s' and uid = %d",
+            dbesc('"' . $obj['id'] . '"'),
+            dbesc($this->channel['channel_id'])
+        );
+
+        if ($approvals) {
+            return;
+        }
         $parent = $this->get_parent();
         $activity = post_activity_item(
             [
@@ -43,6 +53,11 @@ class CommentApproval
         if ($activity['item_id']) {
             IConfig::Set($activity['item_id'], 'system', 'comment_recipient', $this->item['author_xchan']);
         }
+        q("UPDATE item SET approved = '%s' WHERE id = %d",
+            dbesc(str_replace('/item/','/activity/', $activity['activity']['mid'])),
+            intval($activity['item_id'])
+        );
+
         Run::Summon(['Notifier', 'comment_approval', $activity['item_id']]);
     }
 
@@ -51,6 +66,16 @@ class CommentApproval
         $obj = $this->item['obj'];
         if (! is_array($obj)) {
             $obj = json_decode($obj, true);
+        }
+
+        // Have I rejected this already?
+        $rejections = q("select * from item where verb = 'Reject' and obj = '%s' and uid = %d",
+            dbesc('"' . $obj['id'] . '"'),
+            dbesc($this->channel['channel_id'])
+        );
+
+        if ($rejections) {
+            return;
         }
         $parent = $this->get_parent();
         $activity = post_activity_item(
@@ -74,6 +99,10 @@ class CommentApproval
         if ($activity['item_id']) {
             IConfig::Set($activity['item_id'], 'system', 'comment_recipient', $this->item['author_xchan']);
         }
+        q("UPDATE item SET approved = '' WHERE id = %d",
+            intval($activity['item_id'])
+        );
+
         Run::Summon(['Notifier', 'comment_approval', $activity['item_id']]);
     }
 
