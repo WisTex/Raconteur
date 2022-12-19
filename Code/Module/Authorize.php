@@ -10,6 +10,7 @@ use Code\Identity\OAuth2Server;
 use Code\Identity\OAuth2Storage;
 use OAuth2\Request;
 use OAuth2\Response;
+use OAuth2\GrantType;
 use Code\Render\Theme;
 
 
@@ -55,7 +56,12 @@ class Authorize extends Controller
         }
 
         $storage = new OAuth2Storage(DBA::$dba->db);
-        $s = new OAuth2Server($storage);
+        $server = new OAuth2Server($storage);
+        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
+        $server->addGrantType(new GrantType\ClientCredentials($storage));
+        // Add the "Authorization Code" grant type (this is where the oauth magic happens)
+        $server->addGrantType(new GrantType\AuthorizationCode($storage));
+
 
         // TODO: The automatic client registration protocol below should adhere more
         // closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
@@ -126,14 +132,14 @@ class Authorize extends Controller
         $response->setParameter('client_secret', $client['client_secret']);
 
         // validate the authorize request
-        if (!$s->validateAuthorizeRequest($request, $response)) {
+        if (!$server->validateAuthorizeRequest($request, $response)) {
             $response->send();
             killme();
         }
 
         // print the authorization code if the user has authorized your client
         $is_authorized = ($_POST['authorize'] === 'allow');
-        $s->handleAuthorizeRequest($request, $response, $is_authorized, $user_id);
+        $server->handleAuthorizeRequest($request, $response, $is_authorized, $user_id);
         if ($is_authorized) {
             $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
             logger('Authorization Code: ' . $code);
