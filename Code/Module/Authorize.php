@@ -99,7 +99,12 @@ class Authorize extends Controller
         $client = $storage->getClientDetails($client_id);
 
         logger('client: ' . print_r($client, true), LOGGER_DATA);
-
+        logger('user_id: ' . $user_id);
+        if (!$channel || !$user_id) {
+            // This is fatal, but let it fall through and send a response.
+            // Log it to have a record of the reason why it's going to die.
+            logger('not logged in');
+        }
         if ($client) {
             if (intval($client['user_id']) === 0 || intval($client['user_id']) === intval($user_id)) {
                 $client_found = true;
@@ -111,7 +116,6 @@ class Authorize extends Controller
                 }
                 $grant_types = $client['grant_types'];
                 // Client apps are registered per channel
-
 
                 logger('client_id: ' . $client_id);
                 logger('client_secret: ' . $client_secret);
@@ -133,6 +137,7 @@ class Authorize extends Controller
 
         // validate the authorize request
         if (!$server->validateAuthorizeRequest($request, $response)) {
+            logger('oauth2 authorize validation failed');
             $response->send();
             killme();
         }
