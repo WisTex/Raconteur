@@ -27,7 +27,7 @@ class Vote extends Controller
 
         $fetch = null;
         $id = argv(1);
-        $response = $_REQUEST['answer'];
+        $response = trim($_REQUEST['answer']);
 
         if ($id) {
             $fetch = q(
@@ -49,7 +49,7 @@ class Vote extends Controller
             foreach ($obj['oneOf'] as $selection) {
                       // logger('selection: ' . '"' . $selection['name'] . '"');
                       // logger('response: ' . '"' . $response . '"');
-                if ($selection['name'] && trim($selection['name']) === trim($response)) {
+                if ($selection['name'] && trim($selection['name']) === $response) {
                     $valid = true;
                 }
             }
@@ -58,7 +58,7 @@ class Vote extends Controller
         $choices = [];
         if ($obj['anyOf']) {
             foreach ($obj['anyOf'] as $selection) {
-                $choices[] = $selection['name'];
+                $choices[] = trim($selection['name']);
             }
             foreach ($response as $res) {
                 if (!in_array($res, $choices)) {

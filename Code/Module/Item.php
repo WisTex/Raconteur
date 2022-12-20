@@ -2043,7 +2043,7 @@ class Item extends Controller
 
         foreach ($answers as $answer) {
             if (trim($answer)) {
-                $ptr[] = ['name' => escape_tags($answer), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+                $ptr[] = ['name' => escape_tags(trim($answer)), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
             }
         }
 

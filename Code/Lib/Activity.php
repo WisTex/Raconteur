@@ -2623,7 +2623,7 @@ class Activity
 
         $multi = false;
         $mid = $post['mid'];
-        $content = $post['title'];
+        $content = trim($post['title']);
 
         if (!$item) {
             return false;
@@ -2645,7 +2645,7 @@ class Activity
         if ($r) {
             if ($multi) {
                 foreach ($r as $rv) {
-                    if ($rv['title'] === $content && $rv['mid'] !== $mid) {
+                    if (trim($rv['title']) === $content && $rv['mid'] !== $mid) {
                         return false;
                     }
                 }
@@ -2662,7 +2662,7 @@ class Activity
         $found = false;
         if ($multi) {
             for ($c = 0; $c < count($o['anyOf']); $c++) {
-                if ($o['anyOf'][$c]['name'] === $content) {
+                if (trim($o['anyOf'][$c]['name']) === $content) {
                     $answer_found = true;
                     if (is_array($o['anyOf'][$c]['replies'])) {
                         foreach ($o['anyOf'][$c]['replies'] as $reply) {
@@ -2680,7 +2680,7 @@ class Activity
             }
         } else {
             for ($c = 0; $c < count($o['oneOf']); $c++) {
-                if ($o['oneOf'][$c]['name'] === $content) {
+                if (trim($o['oneOf'][$c]['name']) === $content) {
                     $answer_found = true;
                     if (is_array($o['oneOf'][$c]['replies'])) {
                         foreach ($o['oneOf'][$c]['replies'] as $reply) {
