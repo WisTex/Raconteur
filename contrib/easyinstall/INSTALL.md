@@ -2,7 +2,7 @@
 
 ## Disclaimer
 
-- This script does work with Debian 10 or 11 only.
+- This script does work with Debian 11 only.
 - This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to install more than one website on the same computer as long as you use a single webserver.
 
 ## First step: setting up your system
