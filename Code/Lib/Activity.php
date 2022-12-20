@@ -1180,7 +1180,7 @@ class Activity
 
         if ($item['mid'] !== $item['parent_mid']) {
             if ($item['approved']) {
-                $activity['replyApproval'] = $item['approved'];
+                $activity['approval'] = $item['approved'];
             }
             $activity['inReplyTo'] = $item['thr_parent'];
             $cnv = get_iconfig($item['parent'], 'activitypub', 'context');
@@ -4584,7 +4584,7 @@ class Activity
             'acceptsJoins' => 'litepub:acceptsJoins',
             'Hashtag' => 'as:Hashtag',
             'canReply' => 'toot:canReply',
-            'replyApproval' => 'toot:replyApproval',
+            'approval' => 'toot:approval',
             'Identity' => 'nomad:Identity',
         ];
     }

@@ -107,7 +107,7 @@ class CommentApproval
     }
 
     /**
-     * To be considered valid, the Accept activity referenced in replyApproval MUST
+     * To be considered valid, the Accept activity referenced in approval MUST
      * satisfy the following properties:
      *
      * its actor property is the authority
@@ -115,7 +115,7 @@ class CommentApproval
      * its object property is the reply under consideration
      * its inReplyTo property matches that of the reply under consideration
      *
-     * In addition, if the reply is considered valid, but has no valid replyApproval
+     * In addition, if the reply is considered valid, but has no valid approval
      * despite the object it is in reply to having a canReply property, the recipient MAY hide
      * the reply from certain views.
      */
