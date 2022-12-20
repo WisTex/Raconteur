@@ -4491,7 +4491,7 @@ class Activity
             'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
             'sm' => 'http://smithereen.software/ns#',
-            'fep' => 'https://codeberg.org/fediverse/fep#',
+ //           'fep' => 'https://codeberg.org/fediverse/fep#',
             'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
@@ -4516,7 +4516,7 @@ class Activity
             'Hashtag' => 'as:Hashtag',
             'canReply' => 'toot:canReply',
             'replyApproval' => 'toot:replyApproval',
-            'Identity' => 'fep:Identity',
+            'Identity' => 'nomad:Identity',
         ];
     }
 
