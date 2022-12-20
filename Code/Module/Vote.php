@@ -47,9 +47,9 @@ class Vote extends Controller
 
         if ($obj['oneOf']) {
             foreach ($obj['oneOf'] as $selection) {
-                //      logger('selection: ' . $selection);
-                //      logger('response: ' . $response);
-                if ($selection['name'] && $selection['name'] === $response) {
+                      // logger('selection: ' . '"' . $selection['name'] . '"');
+                      // logger('response: ' . '"' . $response . '"');
+                if ($selection['name'] && trim($selection['name']) === trim($response)) {
                     $valid = true;
                 }
             }
