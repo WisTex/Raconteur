@@ -927,13 +927,10 @@ class Item extends Controller
         if (!$mimetype) {
             $mimetype = 'text/x-multicode';
         }
-    
-        $execflag = ((intval($uid) == intval($profile_uid)
-            && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
 
         if ($preview) {
-            $summary = z_input_filter($summary, $mimetype, $execflag);
-            $body = z_input_filter($body, $mimetype, $execflag);
+            $summary = z_input_filter($summary, $mimetype);
+            $body = z_input_filter($body, $mimetype);
         }
 
 
@@ -1621,7 +1618,7 @@ class Item extends Controller
         if ($orig_post) {
             $datarray['id'] = $post_id;
 
-            $x = item_store_update($datarray, $execflag);
+            $x = item_store_update($datarray);
 
             if ($x['success']) {
                 Hook::call('after_item_store', $x['item']);
@@ -1661,7 +1658,7 @@ class Item extends Controller
             $post_id = 0;
         }
 
-        $post = item_store($datarray, $execflag);
+        $post = item_store($datarray);
 
         if ($post['success']) {
             Hook::call('after_item_store', $post['item']);

@@ -503,12 +503,12 @@ function photo_upload($channel, $observer, $args)
                 if (($item['edited'] > $r[0]['edited']) || $force) {
                     $item['id'] = $r[0]['id'];
                     $item['uid'] = $channel['channel_id'];
-                    item_store_update($item, false, $deliver);
+                    item_store_update($item, $deliver);
                 }
             } else {
                 $item['aid'] = $channel['channel_account_id'];
                 $item['uid'] = $channel['channel_id'];
-                item_store($item, false, $deliver);
+                item_store($item, $deliver);
             }
         }
     } else {
@@ -564,7 +564,7 @@ function photo_upload($channel, $observer, $args)
             $arr['lon'] = floatval($lon);
         }
 
-        $result = item_store($arr, false, $deliver);
+        $result = item_store($arr, $deliver);
         $item_id = $result['item_id'];
 
         if ($visible && $deliver) {

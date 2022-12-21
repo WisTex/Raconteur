@@ -124,7 +124,7 @@ function escape_tags($string)
 }
 
 
-function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false)
+function z_input_filter($s, $type = 'text/x-multicode')
 {
 
     if (in_array($type, [ 'text/bbcode', 'text/x-multicode' ])) {
@@ -138,13 +138,6 @@ function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false)
     }
 
     if (App::$is_sys) {
-        return $s;
-    }
-
-    if ($allow_code) {
-        if ($type === 'text/markdown') {
-            return htmlspecialchars($s, ENT_QUOTES);
-        }
         return $s;
     }
 
