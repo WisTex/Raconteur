@@ -163,10 +163,6 @@ class Impel extends Controller
                 $pagetitle = strtolower(URLify::transliterate($j['pagetitle']));
             }
 
-            // Verify ability to use html or php!!!
-
-            $execflag = ((intval($channel['channel_id']) == intval(local_channel()) && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
-
             $i = q(
                 "select id, edited, item_deleted from item where mid = '%s' and uid = %d limit 1",
                 dbesc($arr['mid']),
@@ -179,7 +175,7 @@ class Impel extends Controller
                 $arr['id'] = $i[0]['id'];
                 // don't update if it has the same timestamp as the original
                 if ($arr['edited'] > $i[0]['edited']) {
-                    $x = item_store_update($arr, $execflag);
+                    $x = item_store_update($arr);
                 }
             } else {
                 if (($i) && (intval($i[0]['item_deleted']))) {
@@ -190,7 +186,7 @@ class Impel extends Controller
                         intval(local_channel())
                     );
                 } else {
-                    $x = item_store($arr, $execflag);
+                    $x = item_store($arr);
                 }
             }
 
