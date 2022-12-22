@@ -157,7 +157,7 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 
     // don't provide a connect button for transient or one-way identities
 
-    if (in_array($xchan['xchan_network'], [ 'rss','anon','token','unknown' ])) {
+    if (in_array($xchan['xchan_network'], ['rss', 'anon', 'token', 'unknown' ])) {
         $connect = false;
     }
 
@@ -184,13 +184,9 @@ function vcard_from_xchan($xchan, $observer = null, $mode = '')
 				. '&to='
 				. urlencode($xchan['xchan_hash'])
 				. '&body='
-				. urlencode('@!{' . $xchan['xchan_addr'] ? $xchan['xchan_addr'] : $xchan['xchan_url'] . '}');
+				. urlencode('@!{' . ($xchan['xchan_addr'] ?: $xchan['xchan_url']) . '}' );
 		}
 	}
-
-
-
-
 
     return replace_macros(Theme::get_template('xchan_vcard.tpl'), [
         '$name'    => $xchan['xchan_name'],
@@ -287,7 +283,7 @@ function mark_orphan_hubsxchans()
 
 
 	$r = q("update hubloc set hubloc_deleted = 1 where hubloc_deleted = 0 
-		and hubloc_network in ('nomad','zot6') and hubloc_connected < %s - interval %s",
+		and hubloc_network in ('nomad','zot6') and hubloc_connected != '0001-01-01 00:00:00' hubloc_connected < %s - interval %s",
 		db_utcnow(), db_quoteinterval('36 day')
 	);
 

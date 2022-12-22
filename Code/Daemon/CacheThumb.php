@@ -7,9 +7,9 @@ use Code\Lib\Resizer;
 
 require_once('include/photos.php');
 
-class CacheThumb
+class CacheThumb implements DaemonInterface
 {
-    public function run($argc, $argv)
+    public function run(int $argc, array $argv): void
     {
         if ($argc != 2) {
             return;

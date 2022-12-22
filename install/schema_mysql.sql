@@ -557,6 +557,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `owner_xchan` varchar(255) NOT NULL DEFAULT '',
   `author_xchan` varchar(255) NOT NULL DEFAULT '',
   `source_xchan` varchar(255) NOT NULL DEFAULT '',
+  `approved` varchar(255) NOT NULL DEFAULT '',
   `mimetype` varchar(255) NOT NULL DEFAULT '',
   `replyto` text NOT NULL,
   `title` text NOT NULL,
@@ -1444,27 +1445,6 @@ CREATE TABLE if not exists users (
     digesta1 VARBINARY(32),
     UNIQUE(username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE if not exists calendarinstances (
-    id INTEGER UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    calendarid INTEGER UNSIGNED NOT NULL,
-    principaluri VARBINARY(100),
-    access tinyint NOT NULL DEFAULT '1' COMMENT '1 = owner, 2 = read, 3 = readwrite',
-    displayname VARCHAR(100),
-    uri VARBINARY(200),
-    description TEXT,
-    calendarorder int UNSIGNED NOT NULL DEFAULT '0',
-    calendarcolor VARBINARY(10),
-    timezone TEXT,
-    transparent tinyint NOT NULL DEFAULT '0',
-    share_href VARBINARY(100),
-    share_displayname VARCHAR(100),
-    share_invitestatus tinyint NOT NULL DEFAULT '2' COMMENT '1 = noresponse, 2 = accepted, 3 = declined, 4 = invalid',
-    UNIQUE(principaluri, uri),
-    UNIQUE(calendarid, principaluri),
-    UNIQUE(calendarid, share_href)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 
 CREATE TABLE if not exists oauth_clients (
   client_id             VARCHAR(80)   NOT NULL,

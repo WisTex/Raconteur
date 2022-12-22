@@ -98,7 +98,7 @@ function get_feed_for($channel, $observer_hash, $params)
 
     $feed_author = '';
 
-    $atom .= replace_macros($feed_template, array(
+    $atom .= replace_macros($feed_template, [
         '$version'       => xmlify(Code\Lib\System::get_project_version()),
         '$generator'     => xmlify(Code\Lib\System::get_project_name()),
         '$generator_uri' => z_root(),
@@ -107,7 +107,7 @@ function get_feed_for($channel, $observer_hash, $params)
         '$feed_updated'  => xmlify(datetime_convert('UTC', 'UTC', 'now', ATOM_TIME)),
         '$author'        => $feed_author,
         '$profile_page'  => xmlify($channel['xchan_url']),
-    ));
+    ]);
 
 
     $x = [
@@ -161,7 +161,7 @@ function get_feed_for($channel, $observer_hash, $params)
                 continue;
             }
 
-            $atom .= atom_entry($item, $type, null, $owner, true, '', $params['compat']);
+            $atom .= atom_entry($item, $type, null, $owner, true, '');
         }
     }
 
@@ -287,18 +287,17 @@ function compat_photos_list($s)
 /**
  * @brief Create an item for the Atom feed.
  *
- * @see get_feed_for()
- *
  * @param array $item
  * @param string $type
- * @param array $author
+ * @param array|null $author
  * @param array $owner
  * @param string $comment default false
  * @param number $cid default 0
- * @param bool $compat default false
  * @return void|string
+ *@see get_feed_for()
+ *
  */
-function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0, $compat = false)
+function atom_entry($item, $type, $author, $owner, $comment = false, $cid = 0)
 {
 
     if (! $item['parent']) {

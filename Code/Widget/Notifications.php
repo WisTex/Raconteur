@@ -146,7 +146,7 @@ class Notifications implements WidgetInterface
             ];
         }
 
-        $o = replace_macros(Theme::get_template('notifications_widget.tpl'), [
+        return replace_macros(Theme::get_template('notifications_widget.tpl'), [
             '$module' => App::$module,
             '$notifications' => $notifications,
 			'$notifications_label' => t('Notifications'),
@@ -155,6 +155,5 @@ class Notifications implements WidgetInterface
             '$startpage' => get_pconfig(local_channel(), 'system', 'startpage')
         ]);
 
-        return $o;
     }
 }

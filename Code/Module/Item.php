@@ -303,11 +303,7 @@ class Item extends Controller
             if (!$i) {
                 http_status_exit(404, 'Not found');
             }
-            $x = array_merge(['@context' => [
-                ACTIVITYSTREAMS_JSONLD_REV,
-                'https://w3id.org/security/v1',
-                Activity::ap_schema()
-            ]], $i);
+            $x = array_merge(Activity::ap_context(), $i);
 
             $headers = [];
             $headers['Content-Type'] = 'application/x-nomad+json';
@@ -491,6 +487,7 @@ class Item extends Controller
         $plink = ((x($_REQUEST, 'permalink')) ? escape_tags($_REQUEST['permalink']) : '');
         $obj_type = ((x($_REQUEST, 'obj_type')) ? escape_tags($_REQUEST['obj_type']) : ACTIVITY_OBJ_NOTE);
         $checkin = ((x($_REQUEST, 'checkin')) ? 1 : 0);
+        $checkout = ((x($_REQUEST, 'checkout')) ? 1 : 0);
 
         $item_unpublished = ((isset($_REQUEST['draft'])) ? intval($_REQUEST['draft']) : 0);
 
@@ -882,9 +879,8 @@ class Item extends Controller
             $body = ((isset($_REQUEST['body'])) ? trim($_REQUEST['body']) : EMPTY_STR);
             $body .= ((isset($_REQUEST['attachment'])) ? trim($_REQUEST['attachment']) : EMPTY_STR);
             $postopts = '';
-
-            $allow_empty = ((array_key_exists('allow_empty', $_REQUEST)) ? intval($_REQUEST['allow_empty']) : 0);
-
+            $haslocation = $lat || $lon;
+            $allow_empty = ((($checkin || $checkout) && $haslocation) || $_REQUEST['allow_empty']);
             $private = ((isset($private) && $private) ? $private : intval($acl->is_private() || ($public_policy)));
 
             // If this is a comment, set the permissions from the parent.
@@ -931,13 +927,10 @@ class Item extends Controller
         if (!$mimetype) {
             $mimetype = 'text/x-multicode';
         }
-    
-        $execflag = ((intval($uid) == intval($profile_uid)
-            && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
 
         if ($preview) {
-            $summary = z_input_filter($summary, $mimetype, $execflag);
-            $body = z_input_filter($body, $mimetype, $execflag);
+            $summary = z_input_filter($summary, $mimetype);
+            $body = z_input_filter($body, $mimetype);
         }
 
 
@@ -978,6 +971,9 @@ class Item extends Controller
         }
         if ($checkin) {
             $verb = 'Arrive';
+        }
+        if ($checkout) {
+            $verb = 'Leave';
         }
 
         if (in_array($mimetype, [ 'text/bbcode', 'text/x-multicode' ])) {
@@ -1182,7 +1178,13 @@ class Item extends Controller
             }
         }
 
-        if ($verb ===  'Arrive') {
+        $hook_args = ['location' => $location, 'latitude' => $lat, 'longitude' => $lon];
+        Hook::call('post_location', $hook_args);
+        $location = $hook_args['location'];
+        $lat = $hook_args['latitude'];
+        $lon = $hook_args['longitude'];
+
+        if (in_array($verb, ['Arrive', 'Leave'])) {
             $body = preg_replace('/\[map=(.*?)\]/','', $body);
             $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
 
@@ -1616,7 +1618,7 @@ class Item extends Controller
         if ($orig_post) {
             $datarray['id'] = $post_id;
 
-            $x = item_store_update($datarray, $execflag);
+            $x = item_store_update($datarray);
 
             if ($x['success']) {
                 Hook::call('after_item_store', $x['item']);
@@ -1656,7 +1658,7 @@ class Item extends Controller
             $post_id = 0;
         }
 
-        $post = item_store($datarray, $execflag);
+        $post = item_store($datarray);
 
         if ($post['success']) {
             Hook::call('after_item_store', $post['item']);
@@ -2038,7 +2040,7 @@ class Item extends Controller
 
         foreach ($answers as $answer) {
             if (trim($answer)) {
-                $ptr[] = ['name' => escape_tags($answer), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+                $ptr[] = ['name' => escape_tags(trim($answer)), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
             }
         }
 

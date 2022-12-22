@@ -306,8 +306,6 @@ function can_comment_on_post($observer_xchan, $item)
     }
 
     switch ($item['comment_policy']) {
-        case 'self':
-            break;
         case 'public':
         case 'authenticated':
             // Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
@@ -326,6 +324,7 @@ function can_comment_on_post($observer_xchan, $item)
                 return true;
             }
             break;
+        case 'self':
         default:
             break;
     }
@@ -370,14 +369,14 @@ function absolutely_no_comments($item) {
  * or other processing is performed.
  *
  * @param array $arr
- * @param boolean $allow_code (optional) default false
  * @param boolean $deliver (optional) default true
  * @returns array
  *  * \e boolean \b success true or false
  *  * \e array \b activity the resulting activity if successful
  */
-function post_activity_item($arr, $allow_code = false, $deliver = true) {
-
+function post_activity_item($arr, $deliver = true, $channel = null, $observer = null) {
+    
+    logger('input: ' . print_r($arr,true),  LOGGER_DATA);
     $ret = [ 'success' => false ];
 
     $is_comment = false;
@@ -394,13 +393,17 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
         $arr['item_thread_top'] = 1;
     }
 
-    $channel  = App::get_channel();
-    $observer = App::get_observer();
+    if (!$channel) {
+        $channel = App::get_channel();
+    }
+    if (!$observer) {
+        $observer = App::get_observer();
+    }
 
     $arr['aid'] = ((isset($arr['aid'])) ? $arr['aid'] : $channel['channel_account_id']);
     $arr['uid'] = ((isset($arr['uid'])) ? $arr['uid'] : $channel['channel_id']);
 
-    if (! perm_is_allowed($arr['uid'],$observer['xchan_hash'],(($is_comment) ? 'post_comments' : 'post_wall'))) {
+    if (! perm_is_allowed($arr['uid'], $observer['xchan_hash'], (($is_comment) ? 'post_comments' : 'post_wall'))) {
         $ret['message'] = t('Permission denied');
         return $ret;
     }
@@ -433,8 +436,8 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
 
     $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
-    if ((! $arr['plink']) && (intval($arr['item_thread_top']))) {
-        $arr['plink'] = substr(z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']),0,190);
+    if (empty($arr['plink'])) {
+        $arr['plink'] = $arr['mid'];
     }
 
     // for the benefit of plugins, we will behave as if this is an API call rather than a normal online post
@@ -452,7 +455,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
         return $ret;
     }
 
-    $post = item_store($arr,$allow_code,$deliver);
+    $post = item_store($arr,$deliver);
     $post_id = 0;
 
     if($post['success']) {
@@ -498,7 +501,7 @@ function validate_item_elements($message,$arr) {
 }
 
 
-function get_item_elements($x,$allow_code = false) {
+function get_item_elements($x) {
 
     $arr = [];
 
@@ -542,6 +545,7 @@ function get_item_elements($x,$allow_code = false) {
     $arr['mid']          = (($x['message_id'])     ? htmlspecialchars($x['message_id'],     ENT_COMPAT,'UTF-8',false) : '');
     $arr['parent_mid']   = (($x['message_top'])    ? htmlspecialchars($x['message_top'],    ENT_COMPAT,'UTF-8',false) : '');
     $arr['thr_parent']   = (($x['message_parent']) ? htmlspecialchars($x['message_parent'], ENT_COMPAT,'UTF-8',false) : '');
+    $arr['approved']     = (($x['approved'])       ? htmlspecialchars($x['approved'],       ENT_COMPAT,'UTF-8',false) : '');
 
     $arr['plink']        = (($x['permalink'])      ? htmlspecialchars($x['permalink'],      ENT_COMPAT,'UTF-8',false) : '');
     $arr['location']     = (($x['location'])       ? htmlspecialchars($x['location'],       ENT_COMPAT,'UTF-8',false) : '');
@@ -567,7 +571,7 @@ function get_item_elements($x,$allow_code = false) {
     $arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
     $arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
-
+    $arr['approved'] = (($x['appproved']) ? htmlspecialchars($x['approved'],  ENT_COMPAT,'UTF-8',false) : '');
     // fix old-style signatures imported from hubzilla via polling and zot_feed
     // so they verify. 
 
@@ -698,7 +702,6 @@ function get_item_elements($x,$allow_code = false) {
     if ($mirror) {
 
         // extended export encoding
-
         $arr['revision'] = $x['revision'];
         $arr['allow_cid'] = $x['allow_cid'];
         $arr['allow_gid'] = $x['allow_gid'];
@@ -953,6 +956,7 @@ function encode_item($item,$mirror = false) {
 
     $x['uuid']            = $item['uuid'];
     $x['message_id']      = $item['mid'];
+    $x['approved']        = $item['approved'];
     $x['message_top']     = $item['parent_mid'];
     $x['message_parent']  = $item['thr_parent'];
     $x['created']         = $item['created'];
@@ -1073,7 +1077,10 @@ function encode_item_xchan($xchan) {
     $ret['address']  = $xchan['xchan_addr'];
     $ret['url']      = $xchan['xchan_url'];
     $ret['network']  = $xchan['xchan_network'];
-    $ret['photo']    = [ 'mimetype' => $xchan['xchan_photo_mimetype'], 'src' => $xchan['xchan_photo_m'] ];
+    $ret['photo']    = [
+        'mimetype' => $xchan['xchan_photo_mimetype'],
+        'src' => $xchan['xchan_photo_m']
+    ];
     $ret['id']       = $xchan['xchan_guid'];
     $ret['id_sig']   = $xchan['xchan_guid_sig'];
     $ret['key']      = $xchan['xchan_pubkey'];
@@ -1132,7 +1139,8 @@ function decode_item_meta($meta) {
  * @return string
  */
 function termtype($t) {
-    $types = ['unknown','hashtag','mention','category','personal_category','file','search','thing','bookmark', 'hierarchy', 'communitytag', 'forum'];
+    $types = ['unknown', 'hashtag', 'mention', 'category', 'personal_category', 'file',
+        'search', 'thing', 'bookmark', 'hierarchy', 'communitytag', 'forum'];
 
     return(($types[$t]) ?: 'unknown');
 }
@@ -1395,28 +1403,24 @@ function item_json_encapsulate($arr,$k)  {
  * @brief Stores an item type record.
  *
  * @param array $arr
- * @param boolean $allow_exec (optional) default false
  * @param boolean $deliver (optional) default true
  *
  * @return array
  *   * \e boolean \b success
  *   * \e int \b item_id
  */
-function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) {
+function item_store($arr, $deliver = true) {
 
     $d = [
             'item' => $arr,
-            'allow_exec' => $allow_exec
     ];
     /**
      * @hooks item_store_before
      *   Called when item_store() stores a record of type item.
      *   * \e array \b item
-     *   * \e boolean \b allow_exec
      */
     Hook::call('item_store_before', $d);
     $arr = $d['item'];
-    $allow_exec = $d['allow_exec'];
 
     $ret = ['success' => false, 'item_id' => 0];
 
@@ -1453,12 +1457,6 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
     $arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/x-multicode');
 
-    if(($arr['mimetype'] == 'application/x-php') && (! $allow_exec)) {
-        logger('item_store: php mimetype but allow_exec is denied.');
-        $ret['message'] = 'exec denied.';
-        return $ret;
-    }
-
     $arr['title']   = ((array_key_exists('title',$arr)   && strlen($arr['title']))    ? trim(escape_tags($arr['title']))   : '');
     $arr['summary'] = ((array_key_exists('summary',$arr) && strlen($arr['summary']))  ? trim($arr['summary']) : '');
     $arr['body']    = ((array_key_exists('body',$arr)    && strlen($arr['body']))     ? trim($arr['body'])    : '');
@@ -1469,6 +1467,7 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
     $arr['deny_gid']      = ((x($arr,'deny_gid'))      ? trim($arr['deny_gid'])              : '');
     $arr['postopts']      = ((x($arr,'postopts'))      ? trim($arr['postopts'])              : '');
     $arr['uuid']          = ((x($arr,'uuid'))          ? trim($arr['uuid'])                  : '');
+    $arr['approved']      = ((x($arr,'approved'))      ? trim($arr['approved'])              : '');
     $arr['item_private']  = ((x($arr,'item_private'))  ? intval($arr['item_private'])        : 0 );
     $arr['item_wall']     = ((x($arr,'item_wall'))     ? intval($arr['item_wall'])           : 0 );
     $arr['item_type']     = ((x($arr,'item_type'))     ? intval($arr['item_type'])           : 0 );
@@ -1485,8 +1484,8 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
 
     // apply the input filter here
 
-    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype'],$allow_exec));
-    $arr['body'] = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
+    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype']));
+    $arr['body'] = trim(z_input_filter($arr['body'],$arr['mimetype']));
 
     item_sign($arr);
 
@@ -1919,26 +1918,22 @@ function item_store($arr, $allow_exec = false, $deliver = true, $linkid = true) 
  * @brief Update a stored item.
  *
  * @param array $arr an item
- * @param boolean $allow_exec (optional) default false
  * @param boolean $deliver (optional) default true
  * @return array
  */
-function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid = true) {
+function item_store_update($arr, $deliver = true) {
 
     $d = [
             'item' => $arr,
-            'allow_exec' => $allow_exec
     ];
     /**
      * @hooks item_store_update_before
      *   Called when item_store_update() is called to update a stored item. It
-     *   overwrites the function's parameters $arr and $allow_exec.
+     *   overwrites the function's parameters $arr
      *   * \e array \b item
-     *   * \e boolean \b allow_exec
      */
     Hook::call('item_store_update_before', $d);
     $arr = $d['item'];
-    $allow_exec = $d['allow_exec'];
 
     $ret = ['success' => false, 'item_id' => 0];
 
@@ -1985,12 +1980,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
     $arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/x-multicode');
 
-    if(($arr['mimetype'] == 'application/x-php') && (! $allow_exec)) {
-        logger('item_store: php mimetype but allow_exec is denied.');
-        $ret['message'] = 'exec denied.';
-        return $ret;
-    }
-
     $languagetext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
     $languagetext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $languagetext : $languagetext);
 
@@ -1999,8 +1988,8 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
     // apply the input filter here
 
-    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype'],$allow_exec));
-    $arr['body']    = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
+    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype']));
+    $arr['body']    = trim(z_input_filter($arr['body'],$arr['mimetype']));
 
     item_sign($arr);
 
@@ -2094,6 +2083,7 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
     $arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
     $arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
+    $arr['approved']      = ((x($arr,'approved'))      ? notags(trim($arr['approved']))      : $orig[0]['approved']);
     $arr['lat']           = ((x($arr,'lat'))           ? floatval($arr['lat'])               : $orig[0]['lat']);
     $arr['lon']           = ((x($arr,'lon'))           ? floatval($arr['lon'])               : $orig[0]['lon']);
     $arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : $orig[0]['verb']);
@@ -2251,13 +2241,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true, $linkid =
 
     $ret['success'] = true;
     $ret['item_id'] = $orig_post_id;
-
-//    if($linkid) {
-//        $li = [ $ret['item'] ];
-//        xchan_query($li);
-//        $sync_item = fetch_post_tags($li);
-//        Libsync::build_link_packet($arr['uid'],[ 'item' => [ encode_item($sync_item[0],true) ] ]);
-//    }
 
     return $ret;
 }
@@ -2497,7 +2480,7 @@ function tag_deliver($uid, $item_id) {
     if ($is_group && intval($item['item_private']) === 2 && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
         // group delivery via DM - use post_wall permission since send_stream is probably turned off
         // and this will be turned into an embedded wall-to-wall post
-        if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+        if(perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
             logger('group DM delivery for ' . $u['channel_address']);
             start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
             q("update item set item_blocked = %d where id = %d",
@@ -2526,7 +2509,7 @@ function tag_deliver($uid, $item_id) {
                 $id = $a['id'];
             }
             if ($id == z_root() . '/outbox/' . $u['channel_address']) {
-                if(perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+                if(perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
                     logger('group collection delivery for ' . $u['channel_address']);
                     start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
@@ -2681,7 +2664,7 @@ function tag_deliver($uid, $item_id) {
              */
 
             if ($is_group && intval($item['item_thread_top']) && (! intval($item['item_wall']))) {
-                if ((intval($term['ttype']) === TERM_FORUM || get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated']))) && perm_is_allowed($uid,$item['author_xchan'],'post_wall')) {
+                if ((intval($term['ttype']) === TERM_FORUM || get_pconfig($uid,'system','post_via_mentions',in_array($role,['forum','forum_moderated']))) && perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
                     logger('group mention delivery for ' . $u['channel_address']);
                     start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
@@ -2728,7 +2711,7 @@ function tag_deliver($uid, $item_id) {
 
             // ptagged - keep going, next check permissions
 
-            if ((! perm_is_allowed($uid,$item['author_xchan'],'write_collection')) && ($item['author_xchan'] !== $u['channel_parent'])) {
+            if ((! perm_is_allowed($uid, $item['author_xchan'], 'write_collection')) && ($item['author_xchan'] !== $u['channel_parent'])) {
                 logger('tag_delivery denied for uid ' . $uid . ' and xchan ' . $item['author_xchan']);
                 continue;
             }
@@ -2839,7 +2822,7 @@ function tgroup_check($uid, $item) {
     }
 
 
-    if (($is_collection) && (perm_is_allowed($uid,$item['author_xchan'],'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
+    if (($is_collection) && (perm_is_allowed($uid, $item['author_xchan'], 'write_collection') || $item['author_xchan'] === $u['channel_parent'])) {
         return true;
     }
 
@@ -3117,6 +3100,9 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
         $merge = (($item['attach']) ? $item['attach'] : []);
+        if (is_string($merge)) {
+            $merge = json_decode($merge, true);
+        }
         $arr['attach'] = array_merge($merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
 
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
@@ -4077,7 +4063,7 @@ function zot_feed($uid, $observer_hash, $arr) {
     if($message_id)
         logger('message_id: ' . $message_id,LOGGER_DEBUG);
 
-    if(! perm_is_allowed($uid,$observer_hash,'view_stream')) {
+    if(! perm_is_allowed($uid, $observer_hash, 'view_stream')) {
         logger('zot_feed: permission denied.');
         return $result;
     }

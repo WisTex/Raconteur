@@ -572,6 +572,7 @@ CREATE TABLE "item" (
   "author_xchan" text NOT NULL DEFAULT '',
   "source_xchan" text NOT NULL DEFAULT '',
   "mimetype" text NOT NULL DEFAULT '',
+  "approved" text NOT NULL DEFAULT '',
   "replyto" text NOT NULL,
   "title" text NOT NULL,
   "summary" text NOT NULL,

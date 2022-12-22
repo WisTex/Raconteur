@@ -364,7 +364,7 @@ function hubloc_id_addr_query($s, $limit = 0) {
     if ($limit) {
         $qlimit = 'limit ' . intval($limit);
     }
-    $r = q("select * from hubloc where (hubloc_id_url = '%s' or hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 $qlimit",
+    $r = q("select * from hubloc where (hubloc_id_url = '%s' or hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 order by hubloc_id desc $qlimit",
         dbesc($s),
         dbesc($s),
         dbesc(str_replace('acct:' , '', $s))
@@ -377,7 +377,7 @@ function hublocx_id_addr_query($s, $limit = 0) {
     if ($limit) {
         $qlimit = 'limit ' . intval($limit);
     }
-    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 $qlimit",
+    $r = q("select * from hubloc left join xchan on hubloc_hash = xchan_hash where (hubloc_id_url = '%s' or hubloc_hash = '%s' or hubloc_addr = '%s') and hubloc_deleted = 0 order by hubloc_id desc $qlimit",
         dbesc($s),
         dbesc($s),
         dbesc(str_replace('acct:' , '', $s))

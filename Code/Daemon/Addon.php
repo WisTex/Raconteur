@@ -4,16 +4,16 @@ namespace Code\Daemon;
 
 use Code\Extend\Hook;
 
-class Addon
+class Addon implements DaemonInterface
 {
 
     /**
-     * @param $argc
-     * @param $argv
+     * @param int $argc
+     * @param array $argv
      * @return void
      * @noinspection PhpUnusedParameterInspection
      */
-    public function run($argc, $argv): void
+    public function run(int $argc, array $argv): void
     {
         Hook::call('daemon_addon', $argv);
     }

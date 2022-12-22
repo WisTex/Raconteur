@@ -96,7 +96,7 @@ class Editpost extends Controller
         $mentions = get_terms_oftype($item['term'], TERM_MENTION);
         if ($mentions) {
             foreach ($mentions as $mention) {
-                if (strlen($hidden_mentions) && strpos($item['body'], $mention['url']) === false ) {
+                if (strlen($hidden_mentions) && !str_contains($item['body'], $mention['url'])) {
                     $hidden_mentions .= ', ';
                 }
                 $hidden_mentions .= '@{' . $mention['url'] . '}';
@@ -146,7 +146,7 @@ class Editpost extends Controller
             'hide_voting' => true,
             'hide_future' => true,
             'hide_location' => true,
-            'is_draft' => ((intval($item['item_unpublished'])) ? true : false),
+            'is_draft' => (bool)intval($item['item_unpublished']),
             'parent' => (($item['mid'] === $item['parent_mid']) ? 0 : $item['parent']),
             'mimetype' => $item['mimetype'],
             'ptyp' => $item['obj_type'],
@@ -157,7 +157,7 @@ class Editpost extends Controller
             'title' => htmlspecialchars_decode($item['title'], ENT_COMPAT),
             'category' => $category,
             'hidden_mentions' => $hidden_mentions,
-            'showacl' => ((intval($item['item_unpublished'])) ? true : false),
+            'showacl' => (bool)intval($item['item_unpublished']),
             'lockstate' => (($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) ? 'lock' : 'unlock'),
             'acl' => Libacl::populate($item, true, PermissionDescription::fromGlobalPermission('view_stream'), Libacl::get_post_aclDialogDescription(), 'acl_dialog_post'),
             'bang' => EMPTY_STR,
@@ -167,7 +167,9 @@ class Editpost extends Controller
             'collections' => $collections,
             'jotnets' => true,
             'hide_expire' => true,
-            'bbcode' => true
+            'bbcode' => true,
+            'checkin' => ($item['verb'] === 'Arrive'),
+            'checkout' => ($item['verb'] === 'Leave'),
         ];
 
         $editor = status_editor($x);

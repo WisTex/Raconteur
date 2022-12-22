@@ -191,7 +191,7 @@ function localize_item(&$item)
         }
 
         // we can't have a translation string with three positions but no distinguishable text
-        // So here is the translate string.
+        // So here is the translation string.
 
         $txt = t('%1$s poked %2$s');
 
@@ -260,7 +260,7 @@ function count_descendants($item)
  */
 function visible_activity($item)
 {
-    $hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Undo' ];
+    $hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Undo', 'Accept' ];
 
     if (intval($item['item_notshown'])) {
         return false;
@@ -340,7 +340,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         if (!$update) {
             // The special div is needed for liveUpdate to kick in for this page.
             // We only launch liveUpdate if you aren't filtering in some incompatible
-            // way and also you aren't writing a comment (discovered in javascript).
+            // way, and also you aren't writing a comment (discovered in javascript).
 
             $live_update_div = '<div id="live-stream"></div>' . "\r\n"
                 . "<script> let profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
@@ -470,16 +470,10 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     }
                 }
 
-                $sp = false;
-//              $profile_link = best_link_url($item,$sp);
-//              if($sp)
-//                  $sparkle = ' sparkle';
-//              else
-//                  $profile_link = zid($profile_link);
-
                 $profile_name = $item['author']['xchan_name'];
                 $profile_link = $item['author']['xchan_url'];
                 $profile_avatar = $item['author']['xchan_photo_m'];
+                $large_avatar = $item['author']['xchan_photo_l'];
 
                 if ($item['mid'] === $item['parent_mid'] && $item['author_xchan'] !== $item['owner_xchan']) {
                     $owner_name = $item['owner']['xchan_name'];
@@ -540,6 +534,12 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
                 $pinned = ! empty($pinned_items) && in_array($item['mid'], $pinned_items);
 
+                $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-sign-in"></i>&nbsp' : '';
+                if (!$locicon) {
+                    $locicon = ($item['verb'] === 'Leave') ? '<i class="fa fa-fw fa-sign-out"></i>&nbsp' : '';
+                }
+
+
                 $tmp_item = [
                     'template' => $tpl,
                     'toplevel' => 'toplevel_item',
@@ -558,7 +558,8 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'lock' => $lock,
                     'locktype' => $locktype,
                     'thumb' => $profile_avatar,
-                    'title' => $item['title'],
+                    'large_avatar' => $large_avatar,
+                    'title' => $locicon . $item['title'],
                     'body' => $body['html'],
                     'event' => $body['event'],
                     'photo' => $body['photo'],
@@ -1043,8 +1044,16 @@ function z_status_editor($x, $popup = false)
         $feature_markup = false;
     }
 
+    $body = ((x($x, 'body')) ? htmlspecialchars($x['body'], ENT_COMPAT, 'UTF-8') : '');
+    
     $feature_checkin = true;
-
+    $checkin_checked = isset($x['checkin']) ? intval($x['checkin']): 0;
+    $feature_checkout = true;
+    $checkout_checked = isset($x['checkout']) ? intval($x['checkout']): 0;
+    if ($checkin_checked || $checkout_checked) {
+        $body = preg_replace('/\[map=(.*?)\]/','', $body);
+        $body = preg_replace('/\[map\](.*?)\[\/map\]/','', $body);
+    }
     $lat = '';
     $lon = '';
     $geotag = (($x['allow_location']) ? replace_macros(Theme::get_template('jot_geotag.tpl'), []) : '');
@@ -1208,7 +1217,7 @@ function z_status_editor($x, $popup = false)
             $options[$opt[1]] = $opt[0];
         }
         if ($k === 'post_comments') {
-            $comment_perms = [ $k, t('Accept delivery of comments and likes on this post from'), $limits[$k],'',$options ];
+            $comment_perms = [ $k, t('Accept delivery of comments on this post from'), $limits[$k],'',$options ];
         } else {
             $permiss[] = [$k,$perm,$limits[$k],'',$options];
         }
@@ -1238,7 +1247,9 @@ function z_status_editor($x, $popup = false)
 
     $sharebutton = (x($x, 'button') ? $x['button'] : t('Share'));
     $placeholdtext = (x($x, 'content_label') ? $x['content_label'] : $sharebutton);
-    
+
+
+
     $o .= replace_macros($tpl, [
         '$return_path' => ((x($x, 'return_path')) ? $x['return_path'] : App::$query_string),
         '$action' =>  z_root() . '/item',
@@ -1294,7 +1305,7 @@ function z_status_editor($x, $popup = false)
         '$placeholdercategory' => t('Categories (optional, comma-separated list)'),
         '$permset' => t('Permission settings'),
         '$ptyp' => ((x($x, 'ptyp')) ? $x['ptyp'] : ''),
-        '$content' => ((x($x, 'body')) ? htmlspecialchars($x['body'], ENT_COMPAT, 'UTF-8') : ''),
+        '$content' => $body, 
         '$attachment' => ((x($x, 'attachment')) ? $x['attachment'] : ''),
         '$post_id' => ((x($x, 'post_id')) ? $x['post_id'] : ''),
         '$defloc' => $x['default_location'],
@@ -1320,15 +1331,17 @@ function z_status_editor($x, $popup = false)
         '$defexpire' => $defexpire,
         '$feature_expire' => $feature_expire,
         '$feature_checkin' => $feature_checkin,
+        '$feature_checkout' => $feature_checkout,
         '$checkin' => t('Check In'),
+        '$checkout' => t('Check Out'),
         '$expires' => t('Set expiration date'),
         '$save' => $permanent_draft,
-        '$is_draft' => ((array_key_exists('is_draft', $x) && intval($x['is_draft'])) ? true : false),
+        '$is_draft' => array_key_exists('is_draft', $x) && intval($x['is_draft']),
         '$defpublish' => $defpublish,
         '$feature_future' => $feature_future,
         '$future_txt' => t('Set publish date'),
         '$feature_markup' => $feature_markup,
-        '$feature_encrypt' => ((Apps::system_app_installed($x['profile_uid'], 'Secrets')) ? true : false),
+        '$feature_encrypt' => Apps::system_app_installed($x['profile_uid'], 'Secrets'),
         '$encrypt' => t('Encrypt text'),
         '$cipher' => $cipher,
         '$expiryModalOK' => t('OK'),
@@ -1347,7 +1360,9 @@ function z_status_editor($x, $popup = false)
         '$discombed' => t('Load remote media players'),
         '$discombed2' => t('This <em>may</em> subject viewers of this post to behaviour tracking'),
         '$embedchecked' => ((get_pconfig($x['profile_uid'], 'system', 'linkinfo_embed', true)) ? ' checked ' : ''),
-        '$disczot' => t('Find shareable objects (Zot)'),
+        '$disczot' => t('Find shareable objects'),
+        '$checkin_checked' => $checkin_checked,
+        '$checkout_checked' => $checkout_checked,
         '$reset' => $reset
     ]);
 
@@ -1531,7 +1546,19 @@ function conv_sort($arr, $order)
                     }
                 }
             }
-
+            if ($item['obj']) {
+                $local = json_decode($item['obj'],true);
+                if (!empty($local['source']) && !empty($local['source']['mediaType']) && !empty($local['source']['content'])) {
+                    $cnt = preg_match_all("/\[share(.*?)portable_id='(.*?)'(.*?)]/ism", $local['source']['content'], $matches, PREG_SET_ORDER);
+                    if ($cnt) {
+                        foreach ($matches as $match) {
+                            if (LibBlock::fetch_by_entity(local_channel(), $match[2])) {
+                                $found = true;
+                            }
+                        }
+                    }
+                }
+            }
             if ($found) {
                 continue;
             }
@@ -1809,7 +1836,7 @@ function get_responses($conv_responses, $response_verbs, $ob, $item)
 
     $count = 0;
     foreach ($ret as $key) {
-        if ($key['count'] == true) {
+        if ($key['count']) {
             $count++;
         }
     }

@@ -103,6 +103,10 @@ class Enotify
         $additional_mail_header = "";
 
         if (array_key_exists('item', $params)) {
+            if (in_array($params['item']['verb'], ['Approve', 'Reject'])) {
+                pop_lang();
+                return;
+            }
             require_once('include/conversation.php');
             // if it's a normal item...
             if (array_key_exists('verb', $params['item'])) {

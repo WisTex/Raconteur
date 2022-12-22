@@ -1304,7 +1304,7 @@ class Libzot
                     "select hubloc_hash, hubloc_network, hubloc_url from hubloc where hubloc_id_url = '%s' and hubloc_deleted = 0",
                     dbesc($AS->actor['id'])
                 );
-                if (! $r) {
+                if (!$r) {
                     // Author is unknown to this site. Perform channel discovery and try again.
                     $z = discover_resource($AS->actor['id']);
                     if ($z) {
@@ -1382,19 +1382,21 @@ class Libzot
                 $relay = (($env['type'] === 'response') ? true : false);
 
                 $result = self::process_delivery($env['sender'], $AS, $arr, $deliveries, $relay, false, $message_request);
-            } elseif ($env['type'] === 'sync') {
-                $arr = json_decode($data, true);
-
-                logger('Channel sync received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
-                logger('Channel sync recipients: ' . print_r($deliveries, true), LOGGER_DATA, LOG_DEBUG);
-
-                if ($env['encoding'] === 'red') {
-                    $result = Libsync::process_channel_sync_delivery($env['sender'], $arr, $deliveries);
-                } else {
-                    logger('unsupported sync packet encoding ignored.');
-                }
             }
         }
+        elseif ($env['type'] === 'sync') {
+            $arr = json_decode($data, true);
+
+            logger('Channel sync received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);
+            logger('Channel sync recipients: ' . print_r($deliveries, true), LOGGER_DATA, LOG_DEBUG);
+
+            if ($env['encoding'] === 'red') {
+                $result = Libsync::process_channel_sync_delivery($env['sender'], $arr, $deliveries);
+            } else {
+                logger('unsupported sync packet encoding ignored.');
+            }
+        }
+
         if ($result) {
             $return = array_merge($return, $result);
         }
@@ -1597,6 +1599,7 @@ class Libzot
     {
 
         $result = [];
+        $commentApproval = null;
 
         // logger('msg_arr: ' . print_r($msg_arr,true),LOGGER_ALL);
 
@@ -1722,13 +1725,33 @@ class Libzot
                 }
             }
 
+            if (in_array($arr['verb'], ['Accept', 'Reject'])) {
+                if (CommentApproval::doVerify($arr, $channel, $act)) {
+                    continue;
+                }
+            }
+
             // perform pre-storage check to see if it's "likely" that this is a group or collection post
 
             $tag_delivery = tgroup_check($channel['channel_id'], $arr);
 
             $perm = 'send_stream';
-            if (($arr['mid'] !== $arr['parent_mid']) && ($relay)) {
-                $perm = 'post_comments';
+            if ($arr['mid'] !== $arr['parent_mid'])  {
+                if ($arr['approved']) {
+                    $valid = CommentApproval::verify($arr, $channel);
+                    if (!$valid) {
+                        logger('commentApproval failed');
+                        continue;
+                    }
+                }
+
+                if ($relay) {
+                    $perm = 'post_comments';
+
+                    if (!$arr['approved'] && $arr['author_xchan'] !== $channel['channel_hash']) {
+                        $commentApproval = new CommentApproval($channel, $arr);
+                    }
+                }
             }
 
             // This is our own post, possibly coming from a channel clone
@@ -1814,7 +1837,16 @@ class Libzot
                     }
                 }
 
+                if($arr['mid'] !== $arr['parent_mid'] && !$arr['approved'] && !$arr['item_wall'] && $arr['author_xchan'] !== $d && !$relay) {
+                    $allowed = !Config::Get('system', 'use_fep5624');
+                }
+
                 if (!$allowed) {
+                    if ($arr['mid'] !== $arr['parent_mid']) {
+                        if ($commentApproval) {
+                            $commentApproval->Reject();
+                        }
+                    }
                     logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
                     $DR->update('permission denied');
                     $result[] = $DR->get();
@@ -1827,28 +1859,15 @@ class Libzot
                     $arr['item_blocked'] = ITEM_MODERATED;
                 }
 
-                // check source route.
-                // We are only going to accept comments from this sender if the comment has the same route as the top-level-post,
-                // this is so that permissions mismatches between senders apply to the entire conversation
-                // As a side effect we will also do a preliminary check that we have the top-level-post, otherwise
-                // processing it is pointless.
-
-                // The original author won't have a token in their copy of the message
-
-                $prnt = ((str_contains($arr['parent_mid'], 'token=')) ? substr($arr['parent_mid'], 0, strpos($arr['parent_mid'], '?')) : '');
+                if ($commentApproval) {
+                    $commentApproval->Accept();
+                }
 
                 $r = q(
                     "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
                     dbesc($arr['parent_mid']),
                     intval($channel['channel_id'])
                 );
-                if (!$r) {
-                    $r = q(
-                        "select id, parent_mid, mid, owner_xchan, item_private, obj_type from item where mid = '%s' and uid = %d limit 1",
-                        dbesc($prnt),
-                        intval($channel['channel_id'])
-                    );
-                }
 
                 if ($r) {
                     // if this is a multi-threaded conversation, preserve the threading information
@@ -1967,10 +1986,11 @@ class Libzot
 
                     continue;
                 } // Maybe it has been edited?
-                elseif ($arr['edited'] > $r[0]['edited']) {
+                elseif ($arr['edited'] > $r[0]['edited'] || $arr['approved'] !== $r[0]['approved']) {
                     $arr['id'] = $r[0]['id'];
                     $arr['uid'] = $channel['channel_id'];
                     if (post_is_importable($channel['channel_id'], $arr, $abook)) {
+                        // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
@@ -2025,7 +2045,7 @@ class Libzot
                     if (str_contains($arr['body'], "#^[")) {
                         $arr['body'] = str_replace("#^[", "[", $arr['body']);
                     }
-
+                    // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
                     $item_result = item_store($arr);
                     if ($item_result['success']) {
                         $item_id = $item_result['item_id'];
@@ -2990,7 +3010,7 @@ class Libzot
             $ret['follow_url'] = z_root() . '/follow?f=&url=%s';
         }
 
-        $permissions = get_all_perms($e['channel_id'], $ztarget_hash, false);
+        $permissions = get_all_perms($e['channel_id'], $ztarget_hash);
 
         if ($ztarget_hash) {
             $permissions['connected'] = false;

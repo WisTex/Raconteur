@@ -163,6 +163,10 @@ class Accounts
 
         if ($users) {
             for ($x = 0; $x < count($users); $x++) {
+                $users[$x]['account_lastlog'] = datetime_convert(to: date_default_timezone_get(), datetime: $users[$x]['account_lastlog']);
+                $users[$x]['account_created'] = datetime_convert(to: date_default_timezone_get(), datetime: $users[$x]['account_created']);
+                $users[$x]['account_expires'] = datetime_convert(to: date_default_timezone_get(), datetime: $users[$x]['account_expires']);
+
                 $channel_arr = explode(' ', $users[$x]['channels']);
                 if ($channel_arr) {
                     $linked = [];

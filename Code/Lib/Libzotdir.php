@@ -3,10 +3,7 @@
 namespace Code\Lib;
 
 use App;
-use Code\Lib\Libzot;
-use Code\Lib\Webfinger;
-use Code\Lib\Zotfinger;
-use Code\Lib\Channel;
+
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
@@ -89,12 +86,12 @@ class Libzotdir
         $o = replace_macros(Theme::get_template('dir_sort_links.tpl'), [
             '$header' => t('Directory Options'),
             '$forumsurl' => $forumsurl,
-            '$safemode' => array('safemode', t('Safe Mode'), $safe_mode, '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''),
-            '$pubforums' => array('pubforums', t('Groups Only'), (($pubforums == 1) ? true : false), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 1 : 0)\''),
+            '$safemode' => ['safemode', t('Safe Mode'), $safe_mode, '', [t('No'), t('Yes')], ' onchange=\'window.location.href="' . $forumsurl . '&safe="+(this.checked ? 1 : 0)\''],
+            '$pubforums' => ['pubforums', t('Groups Only'), (($pubforums == 1) ? true : false), '', [t('No'), t('Yes')], ' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 1 : 0)\''],
 //          '$collections' => array('collections', t('Collections Only'),(($pubforums == 2) ? true : false),'',array(t('No'), t('Yes')),' onchange=\'window.location.href="' . $forumsurl . '&type="+(this.checked ? 2 : 0)\''),
             '$hide_local' => $hide_local,
-            '$globaldir' => array('globaldir', t('This Website Only'), 1 - intval($globaldir), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''),
-            '$activedir' => array('activedir', t('Recently Updated'), intval($activedir), '', array(t('No'), t('Yes')), ' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''),
+            '$globaldir' => ['globaldir', t('This Website Only'), 1 - intval($globaldir), '', [t('No'), t('Yes')], ' onchange=\'window.location.href="' . $forumsurl . '&global="+(this.checked ? 0 : 1)\''],
+            '$activedir' => ['activedir', t('Recently Updated'), intval($activedir), '', [t('No'), t('Yes')], ' onchange=\'window.location.href="' . $forumsurl . '&active="+(this.checked ? 1 : 0)\''],
             '$covers' => (Config::Get('system','remote_cover_photos')) ? [ 'covers', t('Show cover photos'), intval($covers), t('May slow page loading'), [ t('No'), t('Yes')], ' onchange=\'window.location.href="' . $forumsurl . '&covers="+(this.checked ? 1 : 0)\''] : '',
         ]);
 

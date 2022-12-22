@@ -2,7 +2,6 @@
 
 namespace Code\Widget;
 
-use App;
 use Code\Render\Theme;
 
 
@@ -11,7 +10,6 @@ class Sblock implements WidgetInterface
 
     public function widget(array $arguments): string
     {
-
         if (!local_channel()) {
             return EMPTY_STR;
         }

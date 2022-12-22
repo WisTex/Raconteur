@@ -24,6 +24,9 @@ class Security
         $use_hs2019 = ((x($_POST, 'use_hs2019')) ? intval($_POST['use_hs2019']) : 0);
         set_config('system', 'use_hs2019', $use_hs2019);
 
+        $use_fep5624 = ((x($_POST, 'use_fep5624')) ? intval($_POST['use_fep5624']) : 0);
+        set_config('system', 'use_fep5624', $use_fep5624);
+
         $block_public_search = ((x($_POST, 'block_public_search')) ? 1 : 0);
         set_config('system', 'block_public_search', $block_public_search);
 
@@ -144,6 +147,7 @@ class Security
             '$cloud_noroot' => ['cloud_noroot', t('Provide a cloud root directory'), 1 - intval(get_config('system', 'cloud_disable_siteroot', true)), t('The cloud root directory lists all channel names which provide public files. Otherwise only the names of connections are shown.')],
             '$cloud_disksize' => ['cloud_disksize', t('Show total disk space available to cloud uploads'), intval(get_config('system', 'cloud_report_disksize')), ''],
             '$use_hs2019' => ['use_hs2019', t('Use hs2019 HTTP-Signature specification'), intval(get_config('system', 'use_hs2019', false)), t('This is not yet supported by many fediverse servers.')],
+            '$use_fep5624' => ['use_fep5624', t('Require FEP-5624 comment approvals'), intval(get_config('system', 'use_fep5624', false)), t('This is not yet supported by many fediverse servers.')],
             '$thumbnail_security' => ['thumbnail_security', t("Allow SVG thumbnails in file browser"), get_config('system', 'thumbnail_security', 0), t("WARNING: SVG images may contain malicious code.")],
 
             '$inline_pdf' => ['inline_pdf', t("Allow embedded (inline) PDF files"), get_config('system', 'inline_pdf', 0), ''],

@@ -30,11 +30,11 @@ use Symfony\Component\Uid\Uuid;
  *
  * @return string substituted string
  */
-function replace_macros($s, $r)
+function replace_macros($template, $map)
 {
     $arr = [
-        'template' => $s,
-        'params' => $r
+        'template' => $template,
+        'params' => $map,
     ];
 
     /**
@@ -124,7 +124,7 @@ function escape_tags($string)
 }
 
 
-function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false)
+function z_input_filter($s, $type = 'text/x-multicode')
 {
 
     if (in_array($type, [ 'text/bbcode', 'text/x-multicode' ])) {
@@ -138,13 +138,6 @@ function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false)
     }
 
     if (App::$is_sys) {
-        return $s;
-    }
-
-    if ($allow_code) {
-        if ($type === 'text/markdown') {
-            return htmlspecialchars($s, ENT_QUOTES);
-        }
         return $s;
     }
 
@@ -170,7 +163,7 @@ function z_input_filter($s, $type = 'text/x-multicode', $allow_code = false)
  * @see HTMLPurifier
  *
  * @param string $s raw HTML
- * @param bool $allow_position allow CSS position
+ * @param array $opts
  * @return string standards compliant filtered HTML
  */
 function purify_html($s, $opts = [])
@@ -1738,8 +1731,7 @@ function generate_map($lat, $lon, $zoom = 16)
      *   * \e string \b html the parsed HTML to return
      */
     Hook::call('generate_map', $arr);
-
-    return (($arr['html']) ?? 'geo:' . $lat . ',' . $lon . '&z=' . $zoom);
+    return (strlen($arr['html'])) ? $arr['html'] : 'geo:' . $lat . ',' . $lon . '&z=' . $zoom;
 }
 
 function generate_named_map($location)
@@ -3920,11 +3912,11 @@ function unpack_link_id($mid)
 }
 
 function safe_param($s) {
-    return str_replace( ['?', '&', '<', '>', '=', '"', '\''], [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], $s);
+    return str_replace( ['?', '&', '<', '>', '=', '"', '\'', '%20' ], [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ,  '{20}'], $s);
 }
 
 function decode_safe_param($s) {
-    return str_replace( [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}' ], ['?', '&', '<', '>', '=', '"', '\''], $s);
+    return str_replace( [ '{3F}', '{26}', '{3C}', '{3E}', '{3D}', '{22}', '{27}', '{20}' ], ['?', '&', '<', '>', '=', '"', '\'', '%20' ], $s);
 }
 
 // callback for array_walk

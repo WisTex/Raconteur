@@ -21,24 +21,21 @@ class Sitesearch implements WidgetInterface
         $srchurl = str_replace(['?f=', '&f='], ['', ''], $srchurl);
 
 
-        $hasq = ((str_contains($srchurl, '?')) ? true : false);
-        $hasamp = ((str_contains($srchurl, '&')) ? true : false);
+        $hasq = str_contains($srchurl, '?');
+        $hasamp = str_contains($srchurl, '&');
 
         if (($hasamp) && (!$hasq)) {
             $srchurl = substr($srchurl, 0, strpos($srchurl, '&')) . '?f=&' . substr($srchurl, strpos($srchurl, '&') + 1);
         }
 
-        $o = '';
-
         $saved = [];
 
         $tpl = Theme::get_template("sitesearch.tpl");
-        $o = replace_macros($tpl, [
+        return replace_macros($tpl, [
             '$title' => t('Search'),
-            '$searchbox' => searchbox($search, 'netsearch-box', $srchurl . (($hasq) ? '' : '?f='), false),
+            '$searchbox' => searchbox($search, 'netsearch-box', $srchurl . (($hasq) ? '' : '?f=')),
             '$saved' => $saved,
         ]);
 
-        return $o;
     }
 }

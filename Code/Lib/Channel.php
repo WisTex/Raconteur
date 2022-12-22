@@ -280,7 +280,7 @@ class Channel
     public static function create($arr)
     {
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         if (! $arr['account_id']) {
             $ret['message'] = t('No account identifier');
@@ -313,7 +313,7 @@ class Channel
             return $ret;
         }
 
-        if (check_webbie(array($nick)) !== $nick) {
+        if (check_webbie([$nick]) !== $nick) {
             $ret['message'] = t('Nickname has unsupported characters or is already being used on this site.');
             return $ret;
         }
@@ -352,7 +352,7 @@ class Channel
         }
 
         $xchannel_type = XCHAN_TYPE_PERSON ;
-        if (strpos($arr['permissions_role'], 'forum') !== false || strpos($arr['permissions_role'], 'group') !== false) {
+        if (str_contains($arr['permissions_role'], 'forum') || str_contains($arr['permissions_role'], 'group')) {
             $xchannel_type = XCHAN_TYPE_GROUP ;
         }
         if ($system) {
@@ -589,7 +589,7 @@ class Channel
             $accts = get_config('system', 'auto_follow');
             if (($accts) && (! $total_identities)) {
                 if (! is_array($accts)) {
-                    $accts = array($accts);
+                    $accts = [$accts];
                 }
 
                 foreach ($accts as $acct) {
@@ -636,7 +636,7 @@ class Channel
         if ($f['success']) {
             $clone = [];
             foreach ($f['abook'] as $k => $v) {
-                if (strpos($k, 'abook_') === 0) {
+                if (str_starts_with($k, 'abook_')) {
                     $clone[$k] = $v;
                 }
             }
@@ -659,7 +659,7 @@ class Channel
     public static function change_channel_keys($channel)
     {
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         $stored = [];
 
@@ -756,7 +756,7 @@ class Channel
             );
         }
 
-        xchan_change_key($oldxchan, $newxchan, $stored);
+        xchan_change_key($oldxchan, $newxchan);
 
         Run::Summon([ 'Notifier', 'keychange', $channel['channel_id'] ]);
 
@@ -767,7 +767,7 @@ class Channel
     public static function change_address($channel, $new_address)
     {
 
-        $ret = array('success' => false);
+        $ret = ['success' => false];
 
         $old_address = $channel['channel_address'];
 
@@ -776,7 +776,7 @@ class Channel
             return $ret;
         }
 
-        if (check_webbie(array($new_address)) !== $new_address) {
+        if (check_webbie([$new_address]) !== $new_address) {
             $ret['message'] = t('Nickname has unsupported characters or is already being used on this site.');
             return $ret;
         }
@@ -1423,7 +1423,7 @@ class Channel
 
             if (! local_channel()) {
                 $r = q(
-                    "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_connected desc limit 1",
+                    "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                     dbesc($tmp_str)
                 );
                 if (! $r) {
@@ -1436,9 +1436,9 @@ class Channel
                 logger('Not authenticated. Invoking reverse magic-auth for ' . $tmp_str);
                 // try to avoid recursion - but send them home to do a proper magic auth
                 $query = App::$query_string;
-                $query = str_replace(array('?zid=','&zid='), array('?rzid=','&rzid='), $query);
+                $query = str_replace(['?zid=','&zid='], ['?rzid=','&rzid='], $query);
                 $dest = '/' . $query;
-                if ($r && ($r[0]['hubloc_url'] != z_root()) && (! strstr($dest, '/magic')) && (! strstr($dest, '/rmagic'))) {
+                if ($r && ($r[0]['hubloc_url'] != z_root()) && (!str_contains($dest, '/magic')) && (!str_contains($dest, '/rmagic'))) {
                     goaway($r[0]['hubloc_url'] . '/magic' . '?f=&rev=1&owa=1&bdest=' . bin2hex(z_root() . $dest));
                 } else {
                     logger(sprintf('No hubloc found for \'%s\'.', $tmp_str));
@@ -1575,7 +1575,7 @@ class Channel
     public static function get_online_status($nick)
     {
 
-        $ret = array('result' => false);
+        $ret = ['result' => false];
 
         $r = q(
             "select channel_id, channel_hash from channel where channel_address = '%s' limit 1",
@@ -1610,7 +1610,7 @@ class Channel
 
         $result = false;
         $r = q(
-            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
+            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
             dbesc($webbie)
         );
         if (! $r) {
@@ -1643,10 +1643,10 @@ class Channel
                 intval(get_account_id())
             );
             if ($r && count($r) > 1) {
-                $o = replace_macros(Theme::get_template('channel_id_select.tpl'), array(
+                $o = replace_macros(Theme::get_template('channel_id_select.tpl'), [
                     '$channels' => $r,
                     '$selected' => local_channel()
-                ));
+                ]);
 
                 return $o;
             }
@@ -1679,7 +1679,7 @@ class Channel
         $profile_fields_basic = (($filter == 0) ? get_config('system', 'profile_fields_basic') : null);
 
         if (! $profile_fields_basic) {
-            $profile_fields_basic = array('fullname','pdesc','chandesc','basic_gender','pronouns','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact');
+            $profile_fields_basic = ['fullname','pdesc','chandesc','basic_gender','pronouns','dob','dob_tz','region','country_name','marital','sexual','homepage','hometown','keywords','about','contact'];
         }
 
         $x = [];
@@ -1698,7 +1698,7 @@ class Channel
         $basic = self::get_profile_fields_basic($filter);
         $profile_fields_advanced = (($filter == 0) ? get_config('system', 'profile_fields_advanced') : null);
         if (! $profile_fields_advanced) {
-            $profile_fields_advanced = array('comms', 'address','locality','postal_code','advanced_gender', 'partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education');
+            $profile_fields_advanced = ['comms', 'address','locality','postal_code','advanced_gender', 'partner','howlong','politic','religion','likes','dislikes','interest','channels','music','book','film','tv','romance','employment','education'];
         }
         $x = [];
         if ($basic) {
@@ -1780,7 +1780,7 @@ class Channel
         );
         if ($r) {
             if ($send) {
-                Libsync::build_sync_packet($channel_id, array('profile' => $r));
+                Libsync::build_sync_packet($channel_id, ['profile' => $r]);
             } else {
                 return $r;
             }
@@ -1830,7 +1830,7 @@ class Channel
             $arr['nickname'] = $arr['nickname'] . mt_rand(1000, 9999);
         }
 
-        $arr['nickname'] = check_webbie(array($arr['nickname'], $arr['nickname'] . mt_rand(1000, 9999)));
+        $arr['nickname'] = check_webbie([$arr['nickname'], $arr['nickname'] . mt_rand(1000, 9999)]);
 
         return self::create($arr);
     }
@@ -1861,13 +1861,13 @@ class Channel
                 break;
             case 'array':
             default:
-                $output = array(
+                $output = [
                     'width' => $r[0]['width'],
                     'height' => $r[0]['height'],
                     'type' => $r[0]['mimetype'],
                     'updated' => $r[0]['edited'],
                     'url' => $url
-                );
+                ];
                 break;
         }
 
@@ -1901,19 +1901,19 @@ class Channel
             $cover_width = 425;
             $size = 'hz_small';
             $cover_size = PHOTO_RES_COVER_425;
-            $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 80 , 'height' => 80, 'href' => $channel['xchan_photo_m'] . '?rev=' . strtotime($channel['xchan_photo_date']));
+            $pphoto = ['mimetype' => $channel['xchan_photo_mimetype'], 'width' => 80 , 'height' => 80, 'href' => $channel['xchan_photo_m'] . '?rev=' . strtotime($channel['xchan_photo_date'])];
         } elseif ($maxwidth <= 900) {
             $width = 900;
             $cover_width = 850;
             $size = 'hz_medium';
             $cover_size = PHOTO_RES_COVER_850;
-            $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 160 , 'height' => 160, 'href' => $channel['xchan_photo_l'] . '?rev=' . strtotime($channel['xchan_photo_date']));
+            $pphoto = ['mimetype' => $channel['xchan_photo_mimetype'], 'width' => 160 , 'height' => 160, 'href' => $channel['xchan_photo_l'] . '?rev=' . strtotime($channel['xchan_photo_date'])];
         } elseif ($maxwidth <= 1200) {
             $width = 1200;
             $cover_width = 1200;
             $size = 'hz_large';
             $cover_size = PHOTO_RES_COVER_1200;
-            $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'], 'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l'] . '?rev=' . strtotime($channel['xchan_photo_date']));
+            $pphoto = ['mimetype' => $channel['xchan_photo_mimetype'], 'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l'] . '?rev=' . strtotime($channel['xchan_photo_date'])];
         }
 
         //  $scale = (float) $maxwidth / $width;
@@ -1922,7 +1922,7 @@ class Channel
         $translate = 0;
 
         $channel['channel_addr'] = self::get_webfinger($channel);
-        $zcard = array('chan' => $channel);
+        $zcard = ['chan' => $channel];
 
         $r = q(
             "select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
@@ -1938,7 +1938,7 @@ class Channel
             $cover = [ 'href' => z_root() . '/' . self::get_default_cover_photo($cover_width) ];
         }
 
-        $o = replace_macros(Theme::get_template('zcard.tpl'), array(
+        $o = replace_macros(Theme::get_template('zcard.tpl'), [
             '$maxwidth' => $maxwidth,
             '$scale' => $scale,
             '$translate' => $translate,
@@ -1946,7 +1946,7 @@ class Channel
             '$cover' => $cover,
             '$pphoto' => $pphoto,
             '$zcard' => $zcard
-        ));
+        ]);
 
         return $o;
     }
@@ -1978,23 +1978,23 @@ class Channel
             $cover_width = 425;
             $size = 'hz_small';
             $cover_size = PHOTO_RES_COVER_425;
-            $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'],  'width' => 80 , 'height' => 80, 'href' => $channel['xchan_photo_m']);
+            $pphoto = ['mimetype' => $channel['xchan_photo_mimetype'],  'width' => 80 , 'height' => 80, 'href' => $channel['xchan_photo_m']];
         } elseif ($maxwidth <= 900) {
             $width = 900;
             $cover_width = 850;
             $size = 'hz_medium';
             $cover_size = PHOTO_RES_COVER_850;
-            $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'],  'width' => 160 , 'height' => 160, 'href' => $channel['xchan_photo_l']);
+            $pphoto = ['mimetype' => $channel['xchan_photo_mimetype'],  'width' => 160 , 'height' => 160, 'href' => $channel['xchan_photo_l']];
         } elseif ($maxwidth <= 1200) {
             $width = 1200;
             $cover_width = 1200;
             $size = 'hz_large';
             $cover_size = PHOTO_RES_COVER_1200;
-            $pphoto = array('mimetype' => $channel['xchan_photo_mimetype'],  'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l']);
+            $pphoto = ['mimetype' => $channel['xchan_photo_mimetype'],  'width' => 300 , 'height' => 300, 'href' => $channel['xchan_photo_l']];
         }
 
         $channel['channel_addr'] = self::get_webfinger($channel);
-        $zcard = array('chan' => $channel);
+        $zcard = ['chan' => $channel];
 
         $r = q(
             "select height, width, resource_id, imgscale, mimetype from photo where uid = %d and imgscale = %d and photo_usage = %d",
@@ -2158,11 +2158,11 @@ class Channel
      */
     public static function remote_login()
     {
-        $o = replace_macros(Theme::get_template('remote_login.tpl'), array(
+        $o = replace_macros(Theme::get_template('remote_login.tpl'), [
             '$title' => t('Remote Authentication'),
             '$desc' => t('Enter your channel address (e.g. channel@example.com)'),
             '$submit' => t('Authenticate')
-        ));
+        ]);
 
         return $o;
     }

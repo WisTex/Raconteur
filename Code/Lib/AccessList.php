@@ -229,11 +229,11 @@ class AccessList
     }
 
 
-    public static function members($uid, $gid, $total = false, $start = 0, $records = 0): mixed
+    public static function members($uid, $gid, $total = false, $start = 0, $records = 0, $sqlExtra = ''): mixed
     {
         $ret = [];
         $pager_sql = '';
-        $sql_extra = '';
+        $sql_extra = $sqlExtra;
 
         if ($records) {
             $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval($records), intval($start));
@@ -263,7 +263,8 @@ class AccessList
 
             $r = q(
                 "SELECT * FROM abook left join xchan on xchan_hash = abook_xchan
-                WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
+                WHERE abook_channel = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 
+                  and abook_pending = 0 $sql_extra ORDER BY xchan_name ASC $pager_sql",
                 intval($uid)
             );
             if ($r) {
@@ -280,7 +281,7 @@ class AccessList
                     "SELECT count(xchan) as total FROM pgrp_member
                     LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
                     WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0
-                    and abook_blocked = 0 and abook_pending = 0",
+                    and abook_blocked = 0 and abook_pending = 0 $sqlExtra",
                     intval($gid),
                     intval($uid),
                     intval($uid)
@@ -293,7 +294,7 @@ class AccessList
             $r = q(
                 "SELECT * FROM pgrp_member
                 LEFT JOIN abook ON abook_xchan = pgrp_member.xchan left join xchan on xchan_hash = abook_xchan
-                WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 ORDER BY xchan_name ASC $pager_sql",
+                WHERE gid = %d AND abook_channel = %d and pgrp_member.uid = %d and xchan_deleted = 0 and abook_self = 0 and abook_blocked = 0 and abook_pending = 0 $sqlExtra ORDER BY xchan_name ASC $pager_sql",
                 intval($gid),
                 intval($uid),
                 intval($uid)

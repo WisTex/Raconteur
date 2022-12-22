@@ -47,13 +47,12 @@ class Lists extends Controller
                     http_status_exit(403, 'Permission denied');
                 }
                 observer_auth($portable_id);
-            } elseif (Config::Get('system', 'require_authenticated_fetch', false)) {
+            } elseif (Config::Get('system', 'require_authenticated_fetch')) {
                 http_status_exit(403, 'Permission denied');
             }
 
-            if (!perm_is_allowed($group['uid'], get_observer_hash(), 'view_contacts')) {
-                http_status_exit(403, 'Permission denied');
-            }
+            $observer_hash = get_observer_hash();
+            $hasPermission = perm_is_allowed($group['uid'], $observer_hash, 'view_contacts');
 
             $channel = Channel::from_id($group['uid']);
 
@@ -61,13 +60,20 @@ class Lists extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            if (!$group['visible']) {
-                if ($channel['channel_hash'] !== get_observer_hash()) {
+            $sqlExtra = '';
+            if (!$group['visible'] || !$hasPermission) {
+                if ($observer_hash) {
+                    if ($observer_hash !== $channel['channel_hash']) {
+                        $sqlExtra = " AND xchan_hash = '" . dbesc(get_observer_hash()) . "' ";
+                    }
+                }
+                else {
                     http_status_exit(403, 'Permission denied');
                 }
             }
 
-            $total = AccessList::members($group['uid'], $group['id'], true);
+
+            $total = AccessList::members($group['uid'], $group['id'], true, sqlExtra: $sqlExtra);
             if ($total) {
                 App::set_pager_total($total);
                 App::set_pager_itemspage(100);
@@ -75,14 +81,15 @@ class Lists extends Controller
 
             if (App::$pager['unset'] && $total > 100) {
                 $ret = Activity::paged_collection_init($total, App::$query_string);
-                $ret['name'] = $group['gname'];
-                $ret['attributedTo'] = Channel::url($channel);
             } else {
-                $members = AccessList::members($group['uid'], $group['id'], false, App::$pager['start'], App::$pager['itemspage']);
+                $members = AccessList::members($group['uid'], $group['id'], false, App::$pager['start'],
+                    App::$pager['itemspage'], sqlExtra: $sqlExtra);
                 $ret = Activity::encode_follow_collection($members, App::$query_string, 'OrderedCollection', $total);
-                $ret['name'] = $group['gname'];
-                $ret['attributedTo'] = Channel::url($channel);
             }
+            if (! $sqlExtra) {
+                $ret['name'] = $group['gname'];
+            }
+            $ret['attributedTo'] = Channel::url($channel);
 
             as_return_and_die($ret, $channel);
         }
@@ -157,7 +164,6 @@ class Lists extends Controller
 
             goaway(z_root() . '/lists/' . argv(1) . '/' . argv(2));
         }
-        return;
     }
 
     public function get()
@@ -193,7 +199,7 @@ class Lists extends Controller
             }
 
             $tpl = Theme::get_template('privacy_groups.tpl');
-            $o = replace_macros($tpl, [
+            return replace_macros($tpl, [
                 '$title' => t('Access Lists'),
                 '$add_new_label' => t('Create access list'),
                 '$new' => $new,
@@ -209,8 +215,6 @@ class Lists extends Controller
                 '$count_label' => t('Members'),
                 '$entries' => $entries
             ]);
-
-            return $o;
         }
 
         $context = ['$submit' => t('Submit')];
@@ -300,11 +304,10 @@ class Lists extends Controller
                         $members[] = micropro($member, true, 'mpgroup', 'card');
                     }
                 }
-                $o = replace_macros(Theme::get_template('listmembers.tpl'), [
+                return replace_macros(Theme::get_template('listmembers.tpl'), [
                     '$title' => t('List members'),
                     '$members' => $members
                 ]);
-                return $o;
 			}
 
             $members = AccessList::members(local_channel(), $group['id']);

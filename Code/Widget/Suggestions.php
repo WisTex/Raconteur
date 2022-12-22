@@ -27,7 +27,7 @@ class Suggestions implements WidgetInterface
 
         // Get two random entries from the top 20 returned.
         // We'll grab the first one and the one immediately following.
-        // This will throw some entropy into the situation so you won't
+        // This will throw some entropy into the situation, so you won't
         // be looking at the same two mug shots every time the widget runs
 
         $index = ((count($r) > 2) ? mt_rand(0, count($r) - 2) : 0);
@@ -52,12 +52,10 @@ class Suggestions implements WidgetInterface
             ];
         }
 
-        $o = replace_macros(Theme::get_template('suggest_widget.tpl'), [
+        return replace_macros(Theme::get_template('suggest_widget.tpl'), [
             '$title' => t('Suggestions'),
             '$more' => t('See more...'),
             '$entries' => $arguments
         ]);
-
-        return $o;
     }
 }

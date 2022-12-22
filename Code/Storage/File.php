@@ -54,10 +54,10 @@ class File extends DAV\Node implements DAV\IFile {
 	 *
 	 * @param string $name
 	 * @param array $data from attach table
-	 * @param &$auth
+	 * @param $auth
 	 */
 
-	public function __construct($name, $data, &$auth) {
+	public function __construct($name, $data, $auth) {
 		$this->name = $name;
 		$this->data = $data;
 		$this->auth = $auth;
@@ -89,6 +89,8 @@ class File extends DAV\Node implements DAV\IFile {
 			throw new DAV\Exception\Forbidden('Permission denied.');
 		}
 
+        // attach_move($channel_id, $resource_id, $new_folder_hash, $newname = '')
+
 		$newName = str_replace('/', '%2F', $newName);
 
 		$r = q("UPDATE attach SET filename = '%s' WHERE hash = '%s' AND id = %d",
@@ -99,7 +101,7 @@ class File extends DAV\Node implements DAV\IFile {
 
 		$x = attach_syspaths($this->auth->owner_id,$this->data['hash']);
 
-		$y = q("update attach set display_path = '%s where hash = '%s' and uid = %d",
+		$y = q("update attach set display_path = '%s' where hash = '%s' and uid = %d",
 			dbesc($x['path']),
 			dbesc($this->data['hash']),
 			intval($this->auth->owner_id)
