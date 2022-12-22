@@ -303,11 +303,7 @@ class Item extends Controller
             if (!$i) {
                 http_status_exit(404, 'Not found');
             }
-            $x = array_merge(['@context' => [
-                ACTIVITYSTREAMS_JSONLD_REV,
-                'https://w3id.org/security/v1',
-                Activity::ap_schema()
-            ]], $i);
+            $x = array_merge(Activity::ap_context(), $i);
 
             $headers = [];
             $headers['Content-Type'] = 'application/x-nomad+json';
@@ -931,13 +927,10 @@ class Item extends Controller
         if (!$mimetype) {
             $mimetype = 'text/x-multicode';
         }
-    
-        $execflag = ((intval($uid) == intval($profile_uid)
-            && ($channel['channel_pageflags'] & PAGE_ALLOWCODE)) ? true : false);
 
         if ($preview) {
-            $summary = z_input_filter($summary, $mimetype, $execflag);
-            $body = z_input_filter($body, $mimetype, $execflag);
+            $summary = z_input_filter($summary, $mimetype);
+            $body = z_input_filter($body, $mimetype);
         }
 
 
@@ -1625,7 +1618,7 @@ class Item extends Controller
         if ($orig_post) {
             $datarray['id'] = $post_id;
 
-            $x = item_store_update($datarray, $execflag);
+            $x = item_store_update($datarray);
 
             if ($x['success']) {
                 Hook::call('after_item_store', $x['item']);
@@ -1665,7 +1658,7 @@ class Item extends Controller
             $post_id = 0;
         }
 
-        $post = item_store($datarray, $execflag);
+        $post = item_store($datarray);
 
         if ($post['success']) {
             Hook::call('after_item_store', $post['item']);
@@ -2047,7 +2040,7 @@ class Item extends Controller
 
         foreach ($answers as $answer) {
             if (trim($answer)) {
-                $ptr[] = ['name' => escape_tags($answer), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
+                $ptr[] = ['name' => escape_tags(trim($answer)), 'type' => 'Note', 'replies' => ['type' => 'Collection', 'totalItems' => 0]];
             }
         }
 

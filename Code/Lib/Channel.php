@@ -1423,7 +1423,7 @@ class Channel
 
             if (! local_channel()) {
                 $r = q(
-                    "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_connected desc limit 1",
+                    "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                     dbesc($tmp_str)
                 );
                 if (! $r) {
@@ -1610,7 +1610,7 @@ class Channel
 
         $result = false;
         $r = q(
-            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
+            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
             dbesc($webbie)
         );
         if (! $r) {

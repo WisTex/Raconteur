@@ -40,16 +40,6 @@ class Channels
             }
             notice(sprintf(tt("%s channel censored/uncensored", "%s channels censored/uncensored", count($channels)), count($channels)));
         }
-        if (x($_POST, 'page_channels_code')) {
-            foreach ($channels as $uid) {
-                q(
-                    "UPDATE channel SET channel_pageflags = ( channel_pageflags $xor %d ) where channel_id = %d",
-                    intval(PAGE_ALLOWCODE),
-                    intval($uid)
-                );
-            }
-            notice(sprintf(tt("%s channel code allowed/disallowed", "%s channels code allowed/disallowed", count($channels)), count($channels)));
-        }
         if (x($_POST, 'page_channels_delete')) {
             foreach ($channels as $uid) {
                 Channel::channel_remove($uid, true);
@@ -105,20 +95,6 @@ class Channels
                 }
                     break;
 
-                case "code":
-                    {
-                        check_form_security_token_redirectOnErr('/admin/channels', 'admin_channels', 't');
-                        $pflags = $channel[0]['channel_pageflags'] ^ PAGE_ALLOWCODE;
-                        q(
-                            "UPDATE channel SET channel_pageflags = %d where channel_id = %d",
-                            intval($pflags),
-                            intval($uid)
-                        );
-
-                        notice(sprintf((($pflags & PAGE_ALLOWCODE) ? t("Channel '%s' code allowed") : t("Channel '%s' code disallowed")), $channel[0]['channel_name'] . ' (' . $channel[0]['channel_address'] . ')') . EOL);
-                }
-                    break;
-
                 default:
                     break;
             }
@@ -156,12 +132,6 @@ class Channels
                     $channels[$x]['blocked'] = false;
                 }
 
-                if ($channels[$x]['channel_pageflags'] & PAGE_ALLOWCODE) {
-                    $channels[$x]['allowcode'] = true;
-                } else {
-                    $channels[$x]['allowcode'] = false;
-                }
-
                 $channels[$x]['channel_link'] = z_root() . '/channel/' . $channels[$x]['channel_address'];
             }
         }
@@ -177,8 +147,6 @@ class Channels
             '$delete' => t('Delete'),
             '$block' => t('Censor'),
             '$unblock' => t('Uncensor'),
-            '$code' => t('Allow Code'),
-            '$uncode' => t('Disallow Code'),
             '$h_channels' => t('Channel'),
             '$base' => $base,
             '$odir' => $odir,

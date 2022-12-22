@@ -145,6 +145,7 @@ class OAuth2Storage extends Pdo
 
     public function setClientDetails($client_id, $client_secret = null, $redirect_uri = null, $grant_types = null, $scope = null, $user_id = null, $client_name = null): bool
     {
+
         // if it exists, update it.
         if ($this->getClientDetails($client_id)) {
             $stmt = $this->db->prepare(sprintf('UPDATE %s SET client_secret=:client_secret, redirect_uri=:redirect_uri, grant_types=:grant_types, scope=:scope, user_id=:user_id, client_name=:client_name where client_id=:client_id', $this->config['client_table']));

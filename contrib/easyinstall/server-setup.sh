@@ -25,7 +25,7 @@
 # under Debian Linux. It will:
 # - install
 #        * apache or nginx webserver,
-#        * php (adding sury repository to get php 8.* on Debian 11 or 10),
+#        * php (adding sury repository to get php 8.* on Debian 11),
 #        * composer
 #        * mariadb - the database your website,
 #        * adminer,
@@ -91,9 +91,9 @@ function check_sanity {
     then
         die "Debian is supported only"
     fi
-    if [ -z "$(grep 'Linux 10\|Linux 11' /etc/issue)" ]
+    if [ -z "$(grep 'Linux 11' /etc/issue)" ]
     then
-        die "Debian 11 (bullseye) or Debian 10 (buster) are supported only"
+        die "Debian 11 (bullseye) is supported only"
     fi
 }
 

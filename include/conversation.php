@@ -191,7 +191,7 @@ function localize_item(&$item)
         }
 
         // we can't have a translation string with three positions but no distinguishable text
-        // So here is the translate string.
+        // So here is the translation string.
 
         $txt = t('%1$s poked %2$s');
 
@@ -340,7 +340,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         if (!$update) {
             // The special div is needed for liveUpdate to kick in for this page.
             // We only launch liveUpdate if you aren't filtering in some incompatible
-            // way and also you aren't writing a comment (discovered in javascript).
+            // way, and also you aren't writing a comment (discovered in javascript).
 
             $live_update_div = '<div id="live-stream"></div>' . "\r\n"
                 . "<script> let profile_uid = " . ((isset($_SESSION['uid'])) ? intval($_SESSION['uid']) : 0)
@@ -534,7 +534,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                 $pinned_items = ($allowed_type ? get_pconfig($item['uid'], 'pinned', $item['item_type'], []) : []);
                 $pinned = ! empty($pinned_items) && in_array($item['mid'], $pinned_items);
 
-                $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-map-marker"></i>&nbsp' : '';
+                $locicon = ($item['verb'] === 'Arrive') ? '<i class="fa fa-fw fa-sign-in"></i>&nbsp' : '';
                 if (!$locicon) {
                     $locicon = ($item['verb'] === 'Leave') ? '<i class="fa fa-fw fa-sign-out"></i>&nbsp' : '';
                 }
@@ -1336,12 +1336,12 @@ function z_status_editor($x, $popup = false)
         '$checkout' => t('Check Out'),
         '$expires' => t('Set expiration date'),
         '$save' => $permanent_draft,
-        '$is_draft' => ((array_key_exists('is_draft', $x) && intval($x['is_draft'])) ? true : false),
+        '$is_draft' => array_key_exists('is_draft', $x) && intval($x['is_draft']),
         '$defpublish' => $defpublish,
         '$feature_future' => $feature_future,
         '$future_txt' => t('Set publish date'),
         '$feature_markup' => $feature_markup,
-        '$feature_encrypt' => ((Apps::system_app_installed($x['profile_uid'], 'Secrets')) ? true : false),
+        '$feature_encrypt' => Apps::system_app_installed($x['profile_uid'], 'Secrets'),
         '$encrypt' => t('Encrypt text'),
         '$cipher' => $cipher,
         '$expiryModalOK' => t('OK'),
@@ -1836,7 +1836,7 @@ function get_responses($conv_responses, $response_verbs, $ob, $item)
 
     $count = 0;
     foreach ($ret as $key) {
-        if ($key['count'] == true) {
+        if ($key['count']) {
             $count++;
         }
     }

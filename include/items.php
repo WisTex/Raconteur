@@ -369,13 +369,12 @@ function absolutely_no_comments($item) {
  * or other processing is performed.
  *
  * @param array $arr
- * @param boolean $allow_code (optional) default false
  * @param boolean $deliver (optional) default true
  * @returns array
  *  * \e boolean \b success true or false
  *  * \e array \b activity the resulting activity if successful
  */
-function post_activity_item($arr, $allow_code = false, $deliver = true) {
+function post_activity_item($arr, $deliver = true) {
 
     $ret = [ 'success' => false ];
 
@@ -451,7 +450,7 @@ function post_activity_item($arr, $allow_code = false, $deliver = true) {
         return $ret;
     }
 
-    $post = item_store($arr,$allow_code,$deliver);
+    $post = item_store($arr,$deliver);
     $post_id = 0;
 
     if($post['success']) {
@@ -497,7 +496,7 @@ function validate_item_elements($message,$arr) {
 }
 
 
-function get_item_elements($x,$allow_code = false) {
+function get_item_elements($x) {
 
     $arr = [];
 
@@ -1398,28 +1397,24 @@ function item_json_encapsulate($arr,$k)  {
  * @brief Stores an item type record.
  *
  * @param array $arr
- * @param boolean $allow_exec (optional) default false
  * @param boolean $deliver (optional) default true
  *
  * @return array
  *   * \e boolean \b success
  *   * \e int \b item_id
  */
-function item_store($arr, $allow_exec = false, $deliver = true) {
+function item_store($arr, $deliver = true) {
 
     $d = [
             'item' => $arr,
-            'allow_exec' => $allow_exec
     ];
     /**
      * @hooks item_store_before
      *   Called when item_store() stores a record of type item.
      *   * \e array \b item
-     *   * \e boolean \b allow_exec
      */
     Hook::call('item_store_before', $d);
     $arr = $d['item'];
-    $allow_exec = $d['allow_exec'];
 
     $ret = ['success' => false, 'item_id' => 0];
 
@@ -1456,12 +1451,6 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 
     $arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/x-multicode');
 
-    if(($arr['mimetype'] == 'application/x-php') && (! $allow_exec)) {
-        logger('item_store: php mimetype but allow_exec is denied.');
-        $ret['message'] = 'exec denied.';
-        return $ret;
-    }
-
     $arr['title']   = ((array_key_exists('title',$arr)   && strlen($arr['title']))    ? trim(escape_tags($arr['title']))   : '');
     $arr['summary'] = ((array_key_exists('summary',$arr) && strlen($arr['summary']))  ? trim($arr['summary']) : '');
     $arr['body']    = ((array_key_exists('body',$arr)    && strlen($arr['body']))     ? trim($arr['body'])    : '');
@@ -1488,8 +1477,8 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
 
     // apply the input filter here
 
-    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype'],$allow_exec));
-    $arr['body'] = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
+    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype']));
+    $arr['body'] = trim(z_input_filter($arr['body'],$arr['mimetype']));
 
     item_sign($arr);
 
@@ -1922,26 +1911,22 @@ function item_store($arr, $allow_exec = false, $deliver = true) {
  * @brief Update a stored item.
  *
  * @param array $arr an item
- * @param boolean $allow_exec (optional) default false
  * @param boolean $deliver (optional) default true
  * @return array
  */
-function item_store_update($arr, $allow_exec = false, $deliver = true) {
+function item_store_update($arr, $deliver = true) {
 
     $d = [
             'item' => $arr,
-            'allow_exec' => $allow_exec
     ];
     /**
      * @hooks item_store_update_before
      *   Called when item_store_update() is called to update a stored item. It
-     *   overwrites the function's parameters $arr and $allow_exec.
+     *   overwrites the function's parameters $arr
      *   * \e array \b item
-     *   * \e boolean \b allow_exec
      */
     Hook::call('item_store_update_before', $d);
     $arr = $d['item'];
-    $allow_exec = $d['allow_exec'];
 
     $ret = ['success' => false, 'item_id' => 0];
 
@@ -1988,12 +1973,6 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
     $arr['mimetype']      = ((x($arr,'mimetype'))      ? notags(trim($arr['mimetype']))      : 'text/x-multicode');
 
-    if(($arr['mimetype'] == 'application/x-php') && (! $allow_exec)) {
-        logger('item_store: php mimetype but allow_exec is denied.');
-        $ret['message'] = 'exec denied.';
-        return $ret;
-    }
-
     $languagetext = prepare_text($arr['body'],((isset($arr['mimetype'])) ? $arr['mimetype'] : 'text/x-multicode'));
     $languagetext = html2plain((isset($arr['title']) && $arr['title']) ? $arr['title'] . ' ' . $languagetext : $languagetext);
 
@@ -2002,8 +1981,8 @@ function item_store_update($arr, $allow_exec = false, $deliver = true) {
 
     // apply the input filter here
 
-    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype'],$allow_exec));
-    $arr['body']    = trim(z_input_filter($arr['body'],$arr['mimetype'],$allow_exec));
+    $arr['summary'] = trim(z_input_filter($arr['summary'],$arr['mimetype']));
+    $arr['body']    = trim(z_input_filter($arr['body'],$arr['mimetype']));
 
     item_sign($arr);
 
@@ -3113,6 +3092,9 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
         $merge = (($item['attach']) ? $item['attach'] : []);
+        if (is_string($merge)) {
+            $merge = json_decode($merge, true);
+        }
         $arr['attach'] = array_merge($merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
 
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];

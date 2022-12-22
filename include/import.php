@@ -998,13 +998,11 @@ function import_items($channel, $items, $sync = false, $relocate = null)
 {
 
     if ($channel && $items) {
-        $allow_code = Channel::codeallowed($channel['channel_id']);
-
         $deliver = false; // Don't deliver any messages or notifications when importing
 
         foreach ($items as $i) {
             $item_result = false;
-            $item = get_item_elements($i, $allow_code);
+            $item = get_item_elements($i);
 
             if (! $item) {
                 continue;
@@ -1026,12 +1024,12 @@ function import_items($channel, $items, $sync = false, $relocate = null)
                 if ($item['edited'] >= $r[0]['edited']) {
                     $item['id'] = $r[0]['id'];
                     $item['uid'] = $channel['channel_id'];
-                    $item_result = item_store_update($item, $allow_code, $deliver);
+                    $item_result = item_store_update($item, $deliver);
                 }
             } else {
                 $item['aid'] = $channel['channel_account_id'];
                 $item['uid'] = $channel['channel_id'];
-                $item_result = item_store($item, $allow_code, $deliver);
+                $item_result = item_store($item, $deliver);
             }
 
             // preserve conversations you've been involved in from being expired
@@ -1967,10 +1965,6 @@ function import_webpage_element($element, $channel, $type)
         $arr['mimetype'] = 'text/x-multicode';
     }
 
-    // Verify ability to use html or php!!!
-
-    $execflag = Channel::codeallowed(local_channel());
-
     $i = q(
         "select id, edited, item_deleted from item where mid = '%s' and uid = %d limit 1",
         dbesc($arr['mid']),
@@ -1983,11 +1977,11 @@ function import_webpage_element($element, $channel, $type)
         $arr['id'] = $i[0]['id'];
         // don't update if it has the same timestamp as the original
         if ($arr['edited'] > $i[0]['edited']) {
-            $x = item_store_update($arr, $execflag);
+            $x = item_store_update($arr);
         }
     }
     else {
-        $x = item_store($arr, $execflag);
+        $x = item_store($arr);
     }
 
     if ($x && $x['success']) {

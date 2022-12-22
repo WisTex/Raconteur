@@ -2623,7 +2623,7 @@ class Activity
 
         $multi = false;
         $mid = $post['mid'];
-        $content = $post['title'];
+        $content = trim($post['title']);
 
         if (!$item) {
             return false;
@@ -2645,7 +2645,7 @@ class Activity
         if ($r) {
             if ($multi) {
                 foreach ($r as $rv) {
-                    if ($rv['title'] === $content && $rv['mid'] !== $mid) {
+                    if (trim($rv['title']) === $content && $rv['mid'] !== $mid) {
                         return false;
                     }
                 }
@@ -2662,7 +2662,7 @@ class Activity
         $found = false;
         if ($multi) {
             for ($c = 0; $c < count($o['anyOf']); $c++) {
-                if ($o['anyOf'][$c]['name'] === $content) {
+                if (trim($o['anyOf'][$c]['name']) === $content) {
                     $answer_found = true;
                     if (is_array($o['anyOf'][$c]['replies'])) {
                         foreach ($o['anyOf'][$c]['replies'] as $reply) {
@@ -2680,7 +2680,7 @@ class Activity
             }
         } else {
             for ($c = 0; $c < count($o['oneOf']); $c++) {
-                if ($o['oneOf'][$c]['name'] === $content) {
+                if (trim($o['oneOf'][$c]['name']) === $content) {
                     $answer_found = true;
                     if (is_array($o['oneOf'][$c]['replies'])) {
                         foreach ($o['oneOf'][$c]['replies'] as $reply) {
@@ -4358,12 +4358,7 @@ class Activity
             'object' => $item['mid']
         ];
 
-        $msg = array_merge(['@context' => [
-            ACTIVITYSTREAMS_JSONLD_REV,
-            'https://w3id.org/security/v1',
-            self::ap_schema()
-        ]], $arr);
-
+        $msg = array_merge(self::ap_context(), $arr);
         $queue_id = ActivityPub::queue_message(json_encode($msg, JSON_UNESCAPED_SLASHES), $channel, $recip[0]);
         do_delivery([$queue_id]);
     }
@@ -4476,6 +4471,17 @@ class Activity
         return $ret;
     }
 
+    public static function ap_context(): array
+    {
+        return ['@context' => [
+            ACTIVITYSTREAMS_JSONLD_REV,
+            'https://w3id.org/security/v1',
+            'https://www.w3.org/ns/did/v1',
+            'https://w3id.org/security/data-integrity/v1',
+            self::ap_schema()
+        ]];
+    }
+
     public static function ap_schema()
     {
 
@@ -4485,6 +4491,7 @@ class Activity
             'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
             'sm' => 'http://smithereen.software/ns#',
+ //           'fep' => 'https://codeberg.org/fediverse/fep#',
             'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
@@ -4509,6 +4516,7 @@ class Activity
             'Hashtag' => 'as:Hashtag',
             'canReply' => 'toot:canReply',
             'replyApproval' => 'toot:replyApproval',
+            'Identity' => 'nomad:Identity',
         ];
     }
 
