@@ -60,6 +60,8 @@ class Ping extends Controller
 
         $item_normal = item_normal();
 
+        $approvals = " AND NOT verb in ('Accept','Reject') ";
+    
         if (local_channel()) {
             $vnotify = get_pconfig(local_channel(), 'system', 'vnotify');
             $evdays = intval(get_pconfig(local_channel(), 'system', 'evdays'));
@@ -169,6 +171,7 @@ class Ping extends Controller
 				WHERE uid = %d
 				AND created > '%s'
 				$seenstr
+                $approvals
 				$item_normal
 				$sql_extra",
                 intval($sys['channel_id']),
@@ -195,6 +198,7 @@ class Ping extends Controller
 				AND author_xchan != '%s'
 				AND created > '%s'
 				$seenstr
+                $approvals
 				$item_normal
 				$sql_extra
 				ORDER BY created DESC
@@ -353,6 +357,7 @@ class Ping extends Controller
 				AND author_xchan != '%s'
 				AND edited > '%s'
 				$seenstr
+                $approvals
 				$item_normal_moderate
 				$sql_extra
 				ORDER BY created DESC
@@ -390,6 +395,7 @@ class Ping extends Controller
 				AND author_xchan != '%s'
 				AND edited > '%s'
 				$seenstr
+                $approvals
 				$item_normal_moderate
 				$sql_extra
 				ORDER BY created DESC
@@ -604,6 +610,7 @@ class Ping extends Controller
                 "SELECT id, author_xchan FROM item 
 				WHERE uid = %d and edited > '%s' 
 				$seenstr
+                $approvals
 				$item_normal
 				$sql_extra ",
                 intval(local_channel()),
@@ -632,7 +639,8 @@ class Ping extends Controller
             $r = q(
                 "SELECT id, author_xchan FROM item 
 				WHERE item_wall = 1 and uid = %d and edited > '%s'
-				$seenstr 
+				$seenstr
+                $approvals 
 				$item_normal
 				$sql_extra ",
                 intval(local_channel()),
