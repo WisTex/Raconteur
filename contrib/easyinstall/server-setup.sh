@@ -292,8 +292,9 @@ function install_sury_repo {
     if [ ! -f /etc/apt/sources.list.d/sury-php.list ]
     then
         print_info "installing installing sury-php repository..."
-        echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/sury-php.list
-        wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
+        apt-get -y install apt-transport-https
+        curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+        sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/sury-php.list'
         apt-get update -y
     else
         print_info "sury-php repository is already installed."
