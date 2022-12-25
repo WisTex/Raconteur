@@ -292,10 +292,27 @@ class CommentApproval
 
     protected function get_parent()
     {
-        $result = q("select parent_mid from item where mid = '%s'",
+        $result = q("select mid, replyto from item where mid = '%s'",
             dbesc($this->item['parent_mid'])
         );
-        return $result ? $result[0]['parent_mid'] : '';
+        if ($result) {
+            $item = array_shift($result);
+            if($item['replyto']) {
+                // Not a Twitter-like platform. Use the conversation parent
+                return $item['mid'];
+            }
+            else {
+                $result = q("select mid from item where mid = '%s'",
+                    dbesc($this->item['thr_parent'])
+                );
+                if ($result) {
+                    // Twitter-like platform. Use the immediate parent
+                    $item = array_shift($result);
+                    return $item['mid'];
+                }
+            }
+        }
+        return '';
     }
 
 }
