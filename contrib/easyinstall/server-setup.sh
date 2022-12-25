@@ -181,13 +181,21 @@ function check_install {
 }
 
 function nocheck_install {
-    # export DEBIAN_FRONTEND=noninteractive ... answers from the package configuration database
-    # - q ... without progress information
-    # - y ... answer interactive questions with "yes"
-    # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
-    # DEBIAN_FRONTEND=noninteractive apt-get --install-suggests -q -y install $1
-    DEBIAN_FRONTEND=noninteractive apt-get -q -y install $1
-    print_info "installed $1"
+    declare DRYRUN=$(DEBIAN_FRONTEND=noninteractive apt-get install --dry-run $1 | grep Remv | sed 's/Remv /- /g')
+    if [ -z "$DRYRUN" ]
+    then
+        # export DEBIAN_FRONTEND=noninteractive ... answers from the package configuration database
+        # - q ... without progress information
+        # - y ... answer interactive questions with "yes"
+        # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
+        # DEBIAN_FRONTEND=noninteractive apt-get --install-suggests -q -y install $1
+        DEBIAN_FRONTEND=noninteractive apt-get -q -y install $1
+        print_info "installed $1"
+    else
+        print_info "Did not install $1 as it would require removing the following:"
+        print_info "$DRYRUN"
+        die "It seems you are not running this script on a fresh Debian install. Please consider another installation method."
+    fi
 }
 
 
