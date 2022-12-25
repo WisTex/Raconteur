@@ -1,6 +1,6 @@
 # Easy install setup script
     
-## This installation script was provided by the community and is untested and officially unsupported. Use at your own risk. Complaints have been made that it provides the wrong PHP version for the Streams repository, which requires PHP 8.0 or above. In case of difficulty, this would be the first thing to check. If you manage to fix the issue, please submit back to the repository so we can remove this warning.   
+## This installation script was provided by the community and is officially unsupported. Use at your own risk. Only use with a fresh install of Debian stable. If you have a server that has Apache, PHP, MySQL, SSL, etc. already installed this will break your server. 
 
 Here you will find a quick and easy way to set up a website capable of joining the fediverse, using software from the Streams repository. All you have to do is run the setup script, enter some information and the magic will happen. Check the [INSTALL.md](INSTALL.md) file for step-by-step instructions.
 
