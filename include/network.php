@@ -36,7 +36,9 @@ function json_return_and_die($x, $content_type = 'application/json', $debug = fa
 function as_return_and_die($obj, $channel)
 {
 
-    $x = array_merge(Activity::ap_context(), $obj);
+    if(is_array($obj)) {
+        $x = array_merge(Activity::ap_context(), $obj);
+    }
 
     $headers = [];
     $headers['Content-Type'] = 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"' ;

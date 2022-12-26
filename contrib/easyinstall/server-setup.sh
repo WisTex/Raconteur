@@ -181,13 +181,21 @@ function check_install {
 }
 
 function nocheck_install {
-    # export DEBIAN_FRONTEND=noninteractive ... answers from the package configuration database
-    # - q ... without progress information
-    # - y ... answer interactive questions with "yes"
-    # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
-    # DEBIAN_FRONTEND=noninteractive apt-get --install-suggests -q -y install $1
-    DEBIAN_FRONTEND=noninteractive apt-get -q -y install $1
-    print_info "installed $1"
+    declare DRYRUN=$(DEBIAN_FRONTEND=noninteractive apt-get install --dry-run $1 | grep Remv | sed 's/Remv /- /g')
+    if [ -z "$DRYRUN" ]
+    then
+        # export DEBIAN_FRONTEND=noninteractive ... answers from the package configuration database
+        # - q ... without progress information
+        # - y ... answer interactive questions with "yes"
+        # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
+        # DEBIAN_FRONTEND=noninteractive apt-get --install-suggests -q -y install $1
+        DEBIAN_FRONTEND=noninteractive apt-get -q -y install $1
+        print_info "installed $1"
+    else
+        print_info "Did not install $1 as it would require removing the following:"
+        print_info "$DRYRUN"
+        die "It seems you are not running this script on a fresh Debian install. Please consider another installation method."
+    fi
 }
 
 
@@ -295,6 +303,12 @@ function install_sury_repo {
 function php_version {
     # We need to be able to find php version and use  it with install_php
     phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
+    minPHPversion=8.0
+    is_min_php=`echo "$minPHPversion >= $phpversion" | bc`
+    echo $is_min_php
+    if [ $is_min_php -eq 0 ]; then 
+	    die "min php version $minPHPversion >= $phpversion"
+    fi 
 }
 
 function install_php {
@@ -328,7 +342,7 @@ function install_composer {
         then
             >&2 echo 'ERROR: Invalid installer checksum'
             rm composer-setup.php
-            exit 1
+            die 'ERROR: Invalid installer checksum'
         fi
         php composer-setup.php --quiet
         RESULT=$?
@@ -686,7 +700,7 @@ function configure_cron_daily {
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
-#check_sanity
+check_sanity
 
 repo_name
 print_info "We're installing a website using the $repository repository"
@@ -776,6 +790,7 @@ then
         add_vhost
     fi
 fi
+php_version
 install_composer
 install_mysql
 install_adminer

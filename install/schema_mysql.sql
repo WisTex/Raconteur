@@ -557,6 +557,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   `owner_xchan` varchar(255) NOT NULL DEFAULT '',
   `author_xchan` varchar(255) NOT NULL DEFAULT '',
   `source_xchan` varchar(255) NOT NULL DEFAULT '',
+  `approved` varchar(255) NOT NULL DEFAULT '',
   `mimetype` varchar(255) NOT NULL DEFAULT '',
   `replyto` text NOT NULL,
   `title` text NOT NULL,

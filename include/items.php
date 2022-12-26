@@ -374,8 +374,9 @@ function absolutely_no_comments($item) {
  *  * \e boolean \b success true or false
  *  * \e array \b activity the resulting activity if successful
  */
-function post_activity_item($arr, $deliver = true) {
-
+function post_activity_item($arr, $deliver = true, $channel = null, $observer = null) {
+    
+    logger('input: ' . print_r($arr,true),  LOGGER_DATA);
     $ret = [ 'success' => false ];
 
     $is_comment = false;
@@ -392,8 +393,12 @@ function post_activity_item($arr, $deliver = true) {
         $arr['item_thread_top'] = 1;
     }
 
-    $channel  = App::get_channel();
-    $observer = App::get_observer();
+    if (!$channel) {
+        $channel = App::get_channel();
+    }
+    if (!$observer) {
+        $observer = App::get_observer();
+    }
 
     $arr['aid'] = ((isset($arr['aid'])) ? $arr['aid'] : $channel['channel_account_id']);
     $arr['uid'] = ((isset($arr['uid'])) ? $arr['uid'] : $channel['channel_id']);
@@ -431,8 +436,8 @@ function post_activity_item($arr, $deliver = true) {
 
     $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
-    if ((! $arr['plink']) && (intval($arr['item_thread_top']))) {
-        $arr['plink'] = substr(z_root() . '/channel/' . $channel['channel_address'] . '/?f=&mid=' . urlencode($arr['mid']),0,190);
+    if (empty($arr['plink'])) {
+        $arr['plink'] = $arr['mid'];
     }
 
     // for the benefit of plugins, we will behave as if this is an API call rather than a normal online post
@@ -540,6 +545,7 @@ function get_item_elements($x) {
     $arr['mid']          = (($x['message_id'])     ? htmlspecialchars($x['message_id'],     ENT_COMPAT,'UTF-8',false) : '');
     $arr['parent_mid']   = (($x['message_top'])    ? htmlspecialchars($x['message_top'],    ENT_COMPAT,'UTF-8',false) : '');
     $arr['thr_parent']   = (($x['message_parent']) ? htmlspecialchars($x['message_parent'], ENT_COMPAT,'UTF-8',false) : '');
+    $arr['approved']     = (($x['approved'])       ? htmlspecialchars($x['approved'],       ENT_COMPAT,'UTF-8',false) : '');
 
     $arr['plink']        = (($x['permalink'])      ? htmlspecialchars($x['permalink'],      ENT_COMPAT,'UTF-8',false) : '');
     $arr['location']     = (($x['location'])       ? htmlspecialchars($x['location'],       ENT_COMPAT,'UTF-8',false) : '');
@@ -565,7 +571,7 @@ function get_item_elements($x) {
     $arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
     $arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
-
+    $arr['approved'] = (($x['appproved']) ? htmlspecialchars($x['approved'],  ENT_COMPAT,'UTF-8',false) : '');
     // fix old-style signatures imported from hubzilla via polling and zot_feed
     // so they verify. 
 
@@ -696,7 +702,6 @@ function get_item_elements($x) {
     if ($mirror) {
 
         // extended export encoding
-
         $arr['revision'] = $x['revision'];
         $arr['allow_cid'] = $x['allow_cid'];
         $arr['allow_gid'] = $x['allow_gid'];
@@ -951,6 +956,7 @@ function encode_item($item,$mirror = false) {
 
     $x['uuid']            = $item['uuid'];
     $x['message_id']      = $item['mid'];
+    $x['approved']        = $item['approved'];
     $x['message_top']     = $item['parent_mid'];
     $x['message_parent']  = $item['thr_parent'];
     $x['created']         = $item['created'];
@@ -1461,6 +1467,7 @@ function item_store($arr, $deliver = true) {
     $arr['deny_gid']      = ((x($arr,'deny_gid'))      ? trim($arr['deny_gid'])              : '');
     $arr['postopts']      = ((x($arr,'postopts'))      ? trim($arr['postopts'])              : '');
     $arr['uuid']          = ((x($arr,'uuid'))          ? trim($arr['uuid'])                  : '');
+    $arr['approved']      = ((x($arr,'approved'))      ? trim($arr['approved'])              : '');
     $arr['item_private']  = ((x($arr,'item_private'))  ? intval($arr['item_private'])        : 0 );
     $arr['item_wall']     = ((x($arr,'item_wall'))     ? intval($arr['item_wall'])           : 0 );
     $arr['item_type']     = ((x($arr,'item_type'))     ? intval($arr['item_type'])           : 0 );
@@ -2076,6 +2083,7 @@ function item_store_update($arr, $deliver = true) {
 
     $arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
     $arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
+    $arr['approved']      = ((x($arr,'approved'))      ? notags(trim($arr['approved']))      : $orig[0]['approved']);
     $arr['lat']           = ((x($arr,'lat'))           ? floatval($arr['lat'])               : $orig[0]['lat']);
     $arr['lon']           = ((x($arr,'lon'))           ? floatval($arr['lon'])               : $orig[0]['lon']);
     $arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : $orig[0]['verb']);
