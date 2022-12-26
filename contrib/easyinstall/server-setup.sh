@@ -291,7 +291,7 @@ function install_sury_repo {
     # With Debian 11 (bullseye) we need an extra repo to install php 8.*
     if [ ! -f /etc/apt/sources.list.d/sury-php.list ]
     then
-        print_info "installing installing sury-php repository..."
+        print_info "installing sury-php repository..."
         apt-get -y install apt-transport-https
         curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
         sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/sury-php.list'
@@ -302,14 +302,15 @@ function install_sury_repo {
 }
 
 function php_version {
-    # We need to be able to find php version and use  it with install_php
-    phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
-    minPHPversion=8.0
-    is_min_php=`echo "$minPHPversion >= $phpversion" | bc`
-    echo $is_min_php
-    if [ $is_min_php -eq 0 ]; then 
-	    die "min php version $minPHPversion >= $phpversion"
-    fi 
+    # Before installing PHP, we check that we can install the required version (8.*)
+    print_info "checking that we can install the required PHP version (8.*)..."
+    check_php=$(apt-cache show php | grep php8.)
+    if [ ! -z "$check_php" ]
+    then
+        print _info "we're good!"
+    else
+        die "something  went wrong, we can't install the required PHP version."
+    fi
 }
 
 function install_php {
@@ -767,6 +768,7 @@ fi
 
 install_sendmail
 install_sury_repo
+php_version
 if [ $webserver = "nginx" ]
 then
     install_nginx
@@ -791,7 +793,6 @@ then
         add_vhost
     fi
 fi
-php_version
 install_composer
 install_mysql
 install_adminer
