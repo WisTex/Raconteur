@@ -307,7 +307,7 @@ function php_version {
     check_php=$(apt-cache show php | grep php8.)
     if [ ! -z "$check_php" ]
     then
-        print _info "we're good!"
+        print_info "we're good!"
     else
         die "something  went wrong, we can't install the required PHP version."
     fi
