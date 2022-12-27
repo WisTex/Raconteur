@@ -319,14 +319,14 @@ function install_php {
     if [ $webserver = "nginx" ]
     then
         nocheck_install "php-fpm php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
-        php_version
+        phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/fpm/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/fpm/php.ini
         systemctl reload php${phpversion}-fpm
     elif [ $webserver = "apache" ]
     then
         nocheck_install "libapache2-mod-php php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
-        php_version
+        phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/apache2/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/apache2/php.ini
     fi
