@@ -364,7 +364,7 @@ function install_mysql {
     then
         die "mysqlpass not set in $configfile"
     fi
-        if type mysql
+        if [ ! -z $(which mysql) ]
         then
             echo "mysql is already installed"
         else
