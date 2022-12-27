@@ -22,7 +22,7 @@ This first creates the directory where your web server will find the install fol
 
 This will download all the software you need in /var/www/mywebsite. You can replace "mywebsite" with any name you like (which you'll have to do if you plan to have more than one website running on your system)
 
-    cd website/.easyinstall
+    cd website/contrib/easyinstall
 
 This brings you to the subfolder where the tools are available, i.e. the setup script.
 

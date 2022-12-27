@@ -706,7 +706,7 @@ check_sanity
 
 repo_name
 print_info "We're installing a website using the $repository repository"
-install_path="$(dirname "$(pwd)")"
+install_path="$(dirname $(dirname "$(pwd)"))"
 install_folder="$(basename $install_path)"
 domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
 local_regex="^([a-zA-Z0-9]){2,25}$"
