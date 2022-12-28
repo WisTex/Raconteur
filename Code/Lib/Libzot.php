@@ -1368,10 +1368,11 @@ class Libzot
                     $arr['comment_policy'] = 'authenticated';
                 }
                 if (isset($AS->meta['signed_data'])) {
-                    IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
+                    ObjCache::Set($arr['mid'] . '.nomad', $AS->meta['signed_data']);
+                    // IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
                     $j = json_decode($AS->meta['signed_data'], true);
                     if ($j) {
-                        ObjCache::Set($arr['mid'], json_encode(JSalmon::unpack($j['data'])));
+                        ObjCache::Set($arr['mid'], json_encode(JSalmon::unpack($j['data'])), false);
                         // IConfig::Set($arr, 'activitypub', 'rawmsg', json_encode(JSalmon::unpack($j['data'])), false);
                     }
                 }
@@ -1967,7 +1968,6 @@ class Libzot
 
             // reactions such as like and dislike could have an mid with /activity/ in it.
             // Check for both forms in order to prevent duplicates.
-
             $r = q(
                 "select * from item where mid in ('%s','%s') and uid = %d limit 1",
                 dbesc($arr['mid']),
@@ -1986,11 +1986,13 @@ class Libzot
 
                     continue;
                 } // Maybe it has been edited?
-                elseif ($arr['edited'] > $r[0]['edited'] || $arr['approved'] !== $r[0]['approved']) {
+                elseif ($arr['edited'] > $r[0]['edited'] || ($arr['edited'] === $r[0]['edited'] && $arr['approved'] !== $r[0]['approved'])) {
                     $arr['id'] = $r[0]['id'];
                     $arr['uid'] = $channel['channel_id'];
+
                     if (post_is_importable($channel['channel_id'], $arr, $abook)) {
-                        // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
+                        // IConfig::Set($arr, 'activitypub', 'signed_data', $act->meta['signed_data'], false);
+                        ObjCache::Set($arr['mid'] . '.nomad', $act->meta['signed_data']);
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
                         $result[] = $DR->get();
@@ -2045,7 +2047,8 @@ class Libzot
                     if (str_contains($arr['body'], "#^[")) {
                         $arr['body'] = str_replace("#^[", "[", $arr['body']);
                     }
-                    // ObjCache::Set($arr['mid'], $act->meta['signed_data']);
+                    // IConfig::Set($arr, 'activitypub', 'signed_data', $act->meta['signed_data'], false);
+                    ObjCache::Set($arr['mid'] . '.nomad', $act->meta['signed_data']);
                     $item_result = item_store($arr);
                     if ($item_result['success']) {
                         $item_id = $item_result['item_id'];
@@ -2213,7 +2216,8 @@ class Libzot
             }
 
             if (isset($AS->meta) && isset($AS->meta['signed_data']) && $AS->meta['signed_data']) {
-                IConfig::Set($arr, 'activitystreams', 'signed_data', $AS->meta['signed_data'], false);
+             //   IConfig::Set($arr, 'activitypub', 'signed_data', $AS->meta['signed_data'], false);
+                ObjCache::Set($arr['mid'] . '.nomad', $AS->meta['signed_data']);
             }
 
             logger('FOF Activity received: ' . print_r($arr, true), LOGGER_DATA, LOG_DEBUG);

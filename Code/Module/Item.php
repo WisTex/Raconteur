@@ -1618,6 +1618,13 @@ class Item extends Controller
         if ($orig_post) {
             $datarray['id'] = $post_id;
 
+            q("delete from item where verb in ('Accept', 'Reject') and obj = '%s' and uid = %d",
+                dbesc('"', $datarray['mid'] . '"'),
+                intval($this->channel['channel_id'])
+            );
+            unset($datarray['approved']);
+
+
             $x = item_store_update($datarray);
 
             if ($x['success']) {
