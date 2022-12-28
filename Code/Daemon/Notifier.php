@@ -5,6 +5,7 @@ namespace Code\Daemon;
 use Code\Lib\Config;
 use Code\Lib\IConfig;
 use Code\Lib\Libzot;
+use Code\Lib\ObjCache;
 use Code\Lib\Queue;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
@@ -343,16 +344,18 @@ class Notifier implements DaemonInterface
                 return;
             }
 
-            $m = get_iconfig($target_item, 'activitypub', 'signed_data');
+   //         $m = get_iconfig($target_item, 'activitypub', 'signed_data');
+            $m = ($cmd === 'edit_post') ? '' : ObjCache::Get($target_item['mid'] . '.nomad');
+
+
             // Re-use existing signature unless the activity type changed to a Tombstone, which won't verify.
             if ($m && (! intval($target_item['item_deleted']))) {
                 self::$encoded_item = json_decode($m, true);
+
             } else {
                 self::$encoded_item = array_merge(Activity::ap_context(), Activity::encode_activity($target_item, true));
                 self::$encoded_item['signature'] = LDSignatures::sign(self::$encoded_item, self::$channel);
             }
-
-
             logger('target_item: ' . print_r($target_item, true), LOGGER_DEBUG);
             logger('encoded: ' . print_r(self::$encoded_item, true), LOGGER_DEBUG);
         

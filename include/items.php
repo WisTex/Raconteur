@@ -571,7 +571,7 @@ function get_item_elements($x) {
     $arr['comment_policy'] = (($x['comment_scope']) ? htmlspecialchars($x['comment_scope'], ENT_COMPAT,'UTF-8',false) : 'contacts');
 
     $arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
-    $arr['approved'] = (($x['appproved']) ? htmlspecialchars($x['approved'],  ENT_COMPAT,'UTF-8',false) : '');
+
     // fix old-style signatures imported from hubzilla via polling and zot_feed
     // so they verify. 
 
@@ -2083,7 +2083,7 @@ function item_store_update($arr, $deliver = true) {
 
     $arr['location']      = ((x($arr,'location'))      ? notags(trim($arr['location']))      : $orig[0]['location']);
     $arr['uuid']          = ((x($arr,'uuid'))          ? notags(trim($arr['uuid']))          : $orig[0]['uuid']);
-    $arr['approved']      = ((x($arr,'approved'))      ? notags(trim($arr['approved']))      : $orig[0]['approved']);
+    $arr['approved']      = ((x($arr,'approved'))      ? notags(trim($arr['approved']))      : '');
     $arr['lat']           = ((x($arr,'lat'))           ? floatval($arr['lat'])               : $orig[0]['lat']);
     $arr['lon']           = ((x($arr,'lon'))           ? floatval($arr['lon'])               : $orig[0]['lon']);
     $arr['verb']          = ((x($arr,'verb'))          ? notags(trim($arr['verb']))          : $orig[0]['verb']);
