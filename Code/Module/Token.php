@@ -44,6 +44,9 @@ class Token extends Controller
         $server->addGrantType(new GrantType\ClientCredentials($storage));
         // Add the "Authorization Code" grant type (this is where the oauth magic happens)
         $server->addGrantType(new GrantType\AuthorizationCode($storage));
+        // Add the "Refresh Token" grant type
+        $server->addGrantType(new GrantType\RefreshToken($storage));
+
         $request = Request::createFromGlobals();
         $response = $server->handleTokenRequest($request);
         $response->send();
