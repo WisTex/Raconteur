@@ -291,9 +291,10 @@ function install_sury_repo {
     # With Debian 11 (bullseye) we need an extra repo to install php 8.*
     if [ ! -f /etc/apt/sources.list.d/sury-php.list ]
     then
-        print_info "installing installing sury-php repository..."
-        echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/sury-php.list
-        wget -qO - https://packages.sury.org/php/apt.gpg | apt-key add -
+        print_info "installing sury-php repository..."
+        apt-get -y install apt-transport-https
+        curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+        sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/sury-php.list'
         apt-get update -y
     else
         print_info "sury-php repository is already installed."
@@ -301,14 +302,15 @@ function install_sury_repo {
 }
 
 function php_version {
-    # We need to be able to find php version and use  it with install_php
-    phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
-    minPHPversion=8.0
-    is_min_php=`echo "$minPHPversion >= $phpversion" | bc`
-    echo $is_min_php
-    if [ $is_min_php -eq 0 ]; then 
-	    die "min php version $minPHPversion >= $phpversion"
-    fi 
+    # Before installing PHP, we check that we can install the required version (8.*)
+    print_info "checking that we can install the required PHP version (8.*)..."
+    check_php=$(apt-cache show php | grep php8.)
+    if [ ! -z "$check_php" ]
+    then
+        print_info "we're good!"
+    else
+        die "something  went wrong, we can't install the required PHP version."
+    fi
 }
 
 function install_php {
@@ -317,14 +319,14 @@ function install_php {
     if [ $webserver = "nginx" ]
     then
         nocheck_install "php-fpm php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
-        php_version
+        phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/fpm/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/fpm/php.ini
         systemctl reload php${phpversion}-fpm
     elif [ $webserver = "apache" ]
     then
         nocheck_install "libapache2-mod-php php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
-        php_version
+        phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
         sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/apache2/php.ini
         sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/apache2/php.ini
     fi
@@ -362,7 +364,7 @@ function install_mysql {
     then
         die "mysqlpass not set in $configfile"
     fi
-        if type mysql
+        if [ ! -z $(which mysql) ]
         then
             echo "mysql is already installed"
         else
@@ -704,7 +706,7 @@ check_sanity
 
 repo_name
 print_info "We're installing a website using the $repository repository"
-install_path="$(dirname "$(pwd)")"
+install_path="$(dirname $(dirname "$(pwd)"))"
 install_folder="$(basename $install_path)"
 domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
 local_regex="^([a-zA-Z0-9]){2,25}$"
@@ -766,6 +768,7 @@ fi
 
 install_sendmail
 install_sury_repo
+php_version
 if [ $webserver = "nginx" ]
 then
     install_nginx
@@ -790,7 +793,6 @@ then
         add_vhost
     fi
 fi
-php_version
 install_composer
 install_mysql
 install_adminer
