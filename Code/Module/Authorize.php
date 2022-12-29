@@ -8,6 +8,7 @@ use Code\Lib\Channel;
 use Code\Web\Controller;
 use Code\Identity\OAuth2Server;
 use Code\Identity\OAuth2Storage;
+use OAuth2\GrantType\RefreshToken;
 use OAuth2\Request;
 use OAuth2\Response;
 use OAuth2\GrantType;
@@ -61,7 +62,8 @@ class Authorize extends Controller
         $server->addGrantType(new GrantType\ClientCredentials($storage));
         // Add the "Authorization Code" grant type (this is where the oauth magic happens)
         $server->addGrantType(new GrantType\AuthorizationCode($storage));
-
+        // Add the "Refresh Token" grant type
+        $server->addGrantType(new GrantType\RefreshToken($storage));
 
         // TODO: The automatic client registration protocol below should adhere more
         // closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
