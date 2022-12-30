@@ -58,12 +58,6 @@ class Authorize extends Controller
 
         $storage = new OAuth2Storage(DBA::$dba->db);
         $server = new OAuth2Server($storage);
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new GrantType\ClientCredentials($storage));
-        // Add the "Authorization Code" grant type (this is where the oauth magic happens)
-        $server->addGrantType(new GrantType\AuthorizationCode($storage));
-        // Add the "Refresh Token" grant type
-        $server->addGrantType(new GrantType\RefreshToken($storage));
 
         // TODO: The automatic client registration protocol below should adhere more
         // closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
