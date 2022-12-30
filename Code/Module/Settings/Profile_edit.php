@@ -597,7 +597,7 @@ class Profile_edit
                 '$addthing' => t('Add profile things'),
                 '$personal' => t('Personal'),
                 '$location' => t('Location'),
-                '$relation' => t('Relationship'),
+                '$relation' => t('Gender and Relationship'),
                 '$miscellaneous' => t('Miscellaneous'),
                 '$exportable' => Features::enabled(local_channel(), 'profile_export'),
                 '$lbl_import' => t('Import profile from file'),
@@ -789,7 +789,7 @@ class Profile_edit
     public static function gender_selector_min($current = "", $suffix = "")
     {
         $o = '';
-        $select = ['', t('Male'), t('Female'), t('Other')];
+        $select = ['', t('Male'), t('Female'), t('Intersex'), t('Agender'), t('Genderfluid'), t('It\'s complicated'), t('Other')];
 
         Hook::call('gender_selector_min', $select);
 
@@ -839,7 +839,7 @@ class Profile_edit
     public static function sexpref_selector($current = "", $suffix = "")
     {
         $o = '';
-        $select = ['', t('Males'), t('Females'), t('Gay'), t('Lesbian'), t('No Preference'), t('Bisexual'), t('Autosexual'), t('Abstinent'), t('Virgin'), t('Deviant'), t('Fetish'), t('Oodles'), t('Nonsexual')];
+        $select = ['', t('Males'), t('Females'), t('Bisexual'), t('Autosexual'), t('Abstinent'), t('Virgin'), t('Asexual'),  t('It\'s complicated'),t('Other')];
 
 
         Hook::call('sexpref_selector', $select);
