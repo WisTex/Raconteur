@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 22.12.26\n"
+"Project-Id-Version: 22.12.31\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-25 21:18-0800\n"
+"POT-Creation-Date: 2022-12-30 14:35-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,10 +82,10 @@ msgstr ""
 
 #: Code/Lib/Channel.php:555 Code/Lib/Channel.php:557
 #: Code/Module/Connedit.php:688 Code/Module/Affinity.php:66
-#: Code/Module/Settings/Profile_edit.php:881
 #: Code/Module/Settings/Channel.php:620 Code/Module/Settings/Channel.php:623
 #: Code/Module/Settings/Channel.php:624 Code/Module/Settings/Channel.php:628
-#: Code/Module/Settings/Channel.php:639 Code/Widget/Affinity.php:31
+#: Code/Module/Settings/Channel.php:639
+#: Code/Module/Settings/Profile_edit.php:881 Code/Widget/Affinity.php:31
 #: Code/Import/Friendica.php:237 Code/Import/Friendica.php:238
 #: Code/Import/Friendica.php:246
 msgid "Friends"
@@ -236,8 +236,8 @@ msgstr ""
 #: Code/Module/Mitem.php:191 Code/Module/Mitem.php:192
 #: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
 #: Code/Module/Dev/Zot_probe.php:22 Code/Module/Dev/Ap_probe.php:24
-#: Code/Module/Settings/Display.php:118 Code/Module/Settings/Permcats.php:117
-#: Code/Module/Settings/Channel.php:236 Code/Module/Sources.php:132
+#: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Channel.php:236
+#: Code/Module/Settings/Display.php:118 Code/Module/Sources.php:132
 #: Code/Module/Sources.php:168 Code/Storage/Browser.php:435 boot.php:1108
 #: extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
@@ -259,8 +259,8 @@ msgstr ""
 #: Code/Module/Mitem.php:191 Code/Module/Mitem.php:192
 #: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
 #: Code/Module/Dev/Zot_probe.php:22 Code/Module/Dev/Ap_probe.php:24
-#: Code/Module/Settings/Display.php:118 Code/Module/Settings/Permcats.php:117
-#: Code/Module/Settings/Channel.php:236 Code/Module/Sources.php:132
+#: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Channel.php:236
+#: Code/Module/Settings/Display.php:118 Code/Module/Sources.php:132
 #: Code/Module/Sources.php:168 Code/Storage/Browser.php:435 boot.php:1108
 #: extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
@@ -989,7 +989,7 @@ msgid "View all"
 msgstr ""
 
 #: Code/Lib/ThreadItem.php:241 Code/Module/Photos.php:1223
-#: include/conversation.php:1856 include/taxonomy.php:743
+#: include/taxonomy.php:743 include/conversation.php:1856
 msgctxt "noun"
 msgid "Like"
 msgid_plural "Likes"
@@ -1210,10 +1210,10 @@ msgstr ""
 #: Code/Module/Dev/Xchan.php:18 Code/Module/Dev/Ap_probe.php:25
 #: Code/Module/Settings/Oauth2.php:115 Code/Module/Settings/Oauth.php:98
 #: Code/Module/Settings/Features.php:66 Code/Module/Settings/Featured.php:63
-#: Code/Module/Settings/Display.php:209 Code/Module/Settings/Account.php:117
-#: Code/Module/Settings/Permcats.php:146 Code/Module/Settings/Tokens.php:315
-#: Code/Module/Settings/Profile_edit.php:588
-#: Code/Module/Settings/Channel.php:430 Code/Module/Cal.php:354
+#: Code/Module/Settings/Account.php:117 Code/Module/Settings/Permcats.php:146
+#: Code/Module/Settings/Tokens.php:315 Code/Module/Settings/Channel.php:430
+#: Code/Module/Settings/Display.php:209
+#: Code/Module/Settings/Profile_edit.php:588 Code/Module/Cal.php:354
 #: Code/Module/Thing.php:364 Code/Module/Thing.php:419
 #: Code/Module/Sources.php:133 Code/Module/Sources.php:171
 #: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
@@ -1337,7 +1337,7 @@ msgstr ""
 #: Code/Module/Page.php:42 Code/Module/Page.php:147 Code/Module/Mood.php:136
 #: Code/Module/New_channel.php:123 Code/Module/New_channel.php:146
 #: Code/Module/Notifications.php:19 Code/Module/Item.php:621
-#: Code/Module/Item.php:643 Code/Module/Item.php:655 Code/Module/Item.php:1862
+#: Code/Module/Item.php:643 Code/Module/Item.php:655 Code/Module/Item.php:1869
 #: Code/Module/Poke.php:118 Code/Module/Api.php:31
 #: Code/Module/Profile_photo.php:348 Code/Module/Profile_photo.php:362
 #: Code/Module/Chat.php:115 Code/Module/Chat.php:120 Code/Module/Regmod.php:25
@@ -3753,7 +3753,7 @@ msgstr ""
 msgid "Approve"
 msgstr ""
 
-#: Code/Module/Admin/Accounts.php:191 Code/Module/Authorize.php:43
+#: Code/Module/Admin/Accounts.php:191 Code/Module/Authorize.php:41
 msgid "Deny"
 msgstr ""
 
@@ -4539,6 +4539,7 @@ msgstr ""
 #: Code/Module/Settings/Profile_edit.php:663
 #: Code/Module/Settings/Profile_edit.php:774
 #: Code/Module/Settings/Profile_edit.php:792
+#: Code/Module/Settings/Profile_edit.php:842
 #: Code/Module/Settings/Profile_edit.php:862
 #: Code/Module/Settings/Profile_edit.php:899 include/connections.php:835
 #: include/connections.php:841 include/event.php:1521 include/event.php:1527
@@ -4779,20 +4780,20 @@ msgstr ""
 msgid "Default Addressbook"
 msgstr ""
 
-#: Code/Module/Authorize.php:27
+#: Code/Module/Authorize.php:25
 msgid "Unknown App"
 msgstr ""
 
-#: Code/Module/Authorize.php:39
+#: Code/Module/Authorize.php:37
 msgid "Authorize"
 msgstr ""
 
-#: Code/Module/Authorize.php:40
+#: Code/Module/Authorize.php:38
 #, php-format
 msgid "Do you authorize the app %s to access your channel data?"
 msgstr ""
 
-#: Code/Module/Authorize.php:42
+#: Code/Module/Authorize.php:40
 msgid "Allow"
 msgstr ""
 
@@ -5521,7 +5522,7 @@ msgid ""
 "access your channel."
 msgstr ""
 
-#: Code/Module/Cloud.php:132 Code/Module/Item.php:1812
+#: Code/Module/Cloud.php:132 Code/Module/Item.php:1819
 msgid "Not found"
 msgstr ""
 
@@ -7701,28 +7702,28 @@ msgid ""
 "editing."
 msgstr ""
 
-#: Code/Module/Item.php:1668
+#: Code/Module/Item.php:1675
 msgid "Your comment has been posted."
 msgstr ""
 
-#: Code/Module/Item.php:1737
+#: Code/Module/Item.php:1744
 msgid "System error. Post not saved."
 msgstr ""
 
-#: Code/Module/Item.php:1779
+#: Code/Module/Item.php:1786
 msgid "Your post/comment is awaiting approval."
 msgstr ""
 
-#: Code/Module/Item.php:1951
+#: Code/Module/Item.php:1958
 msgid "Unable to obtain post information from database."
 msgstr ""
 
-#: Code/Module/Item.php:1959
+#: Code/Module/Item.php:1966
 #, php-format
 msgid "You have reached your limit of %1$.0f top level posts."
 msgstr ""
 
-#: Code/Module/Item.php:1965
+#: Code/Module/Item.php:1972
 #, php-format
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr ""
@@ -7840,31 +7841,31 @@ msgid ""
 "or restore these in date order (oldest first)."
 msgstr ""
 
-#: Code/Module/Ping.php:440
+#: Code/Module/Ping.php:442
 msgid "added your channel"
 msgstr ""
 
-#: Code/Module/Ping.php:465
+#: Code/Module/Ping.php:467
 msgid "requires approval"
 msgstr ""
 
-#: Code/Module/Ping.php:474
-msgid "g A l F d"
+#: Code/Module/Ping.php:476
+msgid "g A l, F d"
 msgstr ""
 
-#: Code/Module/Ping.php:492
+#: Code/Module/Ping.php:494
 msgid "[today]"
 msgstr ""
 
-#: Code/Module/Ping.php:502
+#: Code/Module/Ping.php:504
 msgid "posted an event"
 msgstr ""
 
-#: Code/Module/Ping.php:536
+#: Code/Module/Ping.php:538
 msgid "shared a file with you"
 msgstr ""
 
-#: Code/Module/Ping.php:564
+#: Code/Module/Ping.php:566
 msgid "reported content"
 msgstr ""
 
@@ -8296,101 +8297,6 @@ msgstr ""
 msgid "Please save/submit changes to any panel before opening another."
 msgstr ""
 
-#: Code/Module/Settings/Display.php:161
-#, php-format
-msgid "%s - (Experimental)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:204
-msgid "Display Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:205
-msgid "Theme Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:206
-msgid "Custom Theme Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:207
-msgid "Content Settings"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:213
-msgid "Display Theme:"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:214
-msgid "Select scheme"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:216
-msgid "Preload images before rendering the page"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:216
-msgid ""
-"The subjective page load time will be longer but the page will be ready when "
-"displayed"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:217
-msgid "Enable user zoom on mobile devices"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:218
-msgid "Update notifications every xx seconds"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:218
-msgid "Minimum of 15 seconds, no maximum"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:219
-msgid "Maximum number of conversations to load at any time:"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:219
-msgid "Maximum of 100 items"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:220
-msgid "Show emoticons (smilies) as images"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:221
-msgid "Provide channel menu in navigation bar"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:221
-msgid "Default: channel menu located in app menu"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:222
-msgid "System Page Layout Editor - (advanced)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:225
-msgid "Channel page max height of content (in pixels)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:225 Code/Module/Settings/Display.php:226
-msgid "click to expand content exceeding this height"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:226
-msgid "Stream page max height of content (in pixels)"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:227
-msgid "Indent threaded comments this many pixels from the parent"
-msgstr ""
-
-#: Code/Module/Settings/Display.php:227
-msgid "0-20"
-msgstr ""
-
 #: Code/Module/Settings/Account.php:26
 msgid "Not valid email."
 msgstr ""
@@ -8521,506 +8427,6 @@ msgid ""
 "Some permissions may be inherited from your channel's <a href=\"settings"
 "\"><strong>privacy settings</strong></a>, which have higher priority than "
 "individual settings. You can <strong>not</strong> change those settings here."
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:34
-msgid "Profile unavailable to export."
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:58
-#: Code/Module/Settings/Profile_edit.php:109
-#: Code/Module/Settings/Profile_edit.php:535
-msgid "Profile not found."
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:118
-msgid "Profile Name is required."
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:335
-msgid "Marital Status"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:339
-msgid "Romantic Partner"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:343
-#: Code/Module/Settings/Profile_edit.php:640
-msgid "Likes"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:347
-#: Code/Module/Settings/Profile_edit.php:641
-msgid "Dislikes"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:351
-#: Code/Module/Settings/Profile_edit.php:648
-msgid "Work/Employment"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:354
-msgid "Religion"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:358
-msgid "Political Views"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:362
-msgid "Gender"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:366
-msgid "Sexual Preference"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:370
-msgid "Homepage"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:374
-msgid "Interests"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:474
-msgid "Profile updated."
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:587
-msgid "Edit Profile Details"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:589
-msgid "View this profile"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:591
-msgid "Profile Tools"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:592
-msgid "Change cover photo"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:594
-msgid "Create a new profile using these settings"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:595
-msgid "Clone this profile"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:596
-msgid "Delete this profile"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:597
-msgid "Add profile things"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:598
-msgid "Personal"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:600
-msgid "Relationship"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:601
-#: Code/Module/Settings/Channel.php:537 Code/Widget/Newmember.php:55
-#: include/datetime.php:73
-msgid "Miscellaneous"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:603
-msgid "Import profile from file"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:604
-msgid "Export profile to file"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:605
-msgid "Your gender"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:606
-msgid "Marital status"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:607
-msgid "Sexual preference"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:608
-msgid "Pronouns"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:611
-msgid "Profile name"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:615
-msgid "Your full name"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:616
-msgid "Title/Description"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:618
-msgid "Street address"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:619
-msgid "Locality/City"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:620
-msgid "Region/State"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:621
-msgid "Postal/Zip code"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:628
-msgid "Who (if applicable)"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:628
-msgid "Examples: cathy123, Cathy Williams, cathy@example.com"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:629
-msgid "Since (date)"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:634
-msgid "Tell us about yourself"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:635
-msgid "Homepage URL"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:636
-msgid "Hometown"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:637
-msgid "Political views"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:638
-msgid "Religious views"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:639
-msgid "Keywords used in directory listings"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:639
-msgid "Example: fishing photography software"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:642
-msgid "Musical interests"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:643
-msgid "Books, literature"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:644
-msgid "Television"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:645
-msgid "Film/Dance/Culture/Entertainment"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:646
-msgid "Hobbies/Interests"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:647
-msgid "Love/Romance"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:649
-msgid "School/Education"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:650
-msgid "Contact information and social networks"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:651
-msgid "My other channels"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:653
-msgid "Communications"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:722
-msgid " and "
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:724
-msgid ", "
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:731
-msgid "public profile"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:741
-#, php-format
-msgid "%1$s changed %2$s to &ldquo;%3$s&rdquo;"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:742
-#, php-format
-msgid "Visit %1$s's %2$s"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:744
-#, php-format
-msgid "%1$s has an updated %2$s, changing %3$s."
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Currently Male"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Currently Female"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Mostly Male"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Mostly Female"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Transgender"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Intersex"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Transsexual"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Hermaphrodite"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:774
-msgid "Undecided"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:810
-msgid "He/Him"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:810
-msgid "She/Her"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:810
-msgid "They/Them"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-#: Code/Module/Settings/Profile_edit.php:862
-msgid "Males"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-#: Code/Module/Settings/Profile_edit.php:862
-msgid "Females"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Gay"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Lesbian"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "No Preference"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Bisexual"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Autosexual"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Abstinent"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Virgin"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Deviant"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Fetish"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Oodles"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:842
-msgid "Nonsexual"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Single"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Lonely"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Available"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Unavailable"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Has crush"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Infatuated"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Dating"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Unfaithful"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Sex Addict"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Friends/Benefits"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Casual"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Engaged"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Married"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Imaginarily married"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Partners"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Cohabiting"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Common law"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Happy"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Not looking"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Swinger"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Betrayed"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Separated"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Unstable"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Divorced"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Imaginarily divorced"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "Widowed"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Uncertain"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Profile_edit.php:899
-msgid "It's complicated"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Don't care"
-msgstr ""
-
-#: Code/Module/Settings/Profile_edit.php:881
-msgid "Ask me"
 msgstr ""
 
 #: Code/Module/Settings/Channel.php:253 include/conversation.php:1202
@@ -9432,6 +8838,12 @@ msgstr ""
 msgid "Change the behaviour of this account for special situations"
 msgstr ""
 
+#: Code/Module/Settings/Channel.php:537
+#: Code/Module/Settings/Profile_edit.php:601 Code/Widget/Newmember.php:55
+#: include/datetime.php:73
+msgid "Miscellaneous"
+msgstr ""
+
 #: Code/Module/Settings/Channel.php:538
 msgid "Default photo upload folder name"
 msgstr ""
@@ -9484,6 +8896,582 @@ msgstr ""
 
 #: Code/Module/Settings/Channel.php:552
 msgid "This varies by country/culture"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:161
+#, php-format
+msgid "%s - (Experimental)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:204
+msgid "Display Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:205
+msgid "Theme Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:206
+msgid "Custom Theme Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:207
+msgid "Content Settings"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:213
+msgid "Display Theme:"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:214
+msgid "Select scheme"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:216
+msgid "Preload images before rendering the page"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:216
+msgid ""
+"The subjective page load time will be longer but the page will be ready when "
+"displayed"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:217
+msgid "Enable user zoom on mobile devices"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:218
+msgid "Update notifications every xx seconds"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:218
+msgid "Minimum of 15 seconds, no maximum"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:219
+msgid "Maximum number of conversations to load at any time:"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:219
+msgid "Maximum of 100 items"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:220
+msgid "Show emoticons (smilies) as images"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:221
+msgid "Provide channel menu in navigation bar"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:221
+msgid "Default: channel menu located in app menu"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:222
+msgid "System Page Layout Editor - (advanced)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:225
+msgid "Channel page max height of content (in pixels)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:225 Code/Module/Settings/Display.php:226
+msgid "click to expand content exceeding this height"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:226
+msgid "Stream page max height of content (in pixels)"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:227
+msgid "Indent threaded comments this many pixels from the parent"
+msgstr ""
+
+#: Code/Module/Settings/Display.php:227
+msgid "0-20"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:34
+msgid "Profile unavailable to export."
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:58
+#: Code/Module/Settings/Profile_edit.php:109
+#: Code/Module/Settings/Profile_edit.php:535
+msgid "Profile not found."
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:118
+msgid "Profile Name is required."
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:335
+msgid "Marital Status"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:339
+msgid "Romantic Partner"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:343
+#: Code/Module/Settings/Profile_edit.php:640
+msgid "Likes"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:347
+#: Code/Module/Settings/Profile_edit.php:641
+msgid "Dislikes"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:351
+#: Code/Module/Settings/Profile_edit.php:648
+msgid "Work/Employment"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:354
+msgid "Religion"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:358
+msgid "Political Views"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:362
+msgid "Gender"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:366
+msgid "Sexual Preference"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:370
+msgid "Homepage"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:374
+msgid "Interests"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:474
+msgid "Profile updated."
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:587
+msgid "Edit Profile Details"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:589
+msgid "View this profile"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:591
+msgid "Profile Tools"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:592
+msgid "Change cover photo"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:594
+msgid "Create a new profile using these settings"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:595
+msgid "Clone this profile"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:596
+msgid "Delete this profile"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:597
+msgid "Add profile things"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:598
+msgid "Personal"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:600
+msgid "Gender and Relationship"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:603
+msgid "Import profile from file"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:604
+msgid "Export profile to file"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:605
+msgid "Your gender"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:606
+msgid "Marital status"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:607
+msgid "Sexual preference"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:608
+msgid "Pronouns"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:611
+msgid "Profile name"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:615
+msgid "Your full name"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:616
+msgid "Title/Description"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:618
+msgid "Street address"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:619
+msgid "Locality/City"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:620
+msgid "Region/State"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:621
+msgid "Postal/Zip code"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:628
+msgid "Who (if applicable)"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:628
+msgid "Examples: cathy123, Cathy Williams, cathy@example.com"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:629
+msgid "Since (date)"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:634
+msgid "Tell us about yourself"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:635
+msgid "Homepage URL"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:636
+msgid "Hometown"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:637
+msgid "Political views"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:638
+msgid "Religious views"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:639
+msgid "Keywords used in directory listings"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:639
+msgid "Example: fishing photography software"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:642
+msgid "Musical interests"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:643
+msgid "Books, literature"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:644
+msgid "Television"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:645
+msgid "Film/Dance/Culture/Entertainment"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:646
+msgid "Hobbies/Interests"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:647
+msgid "Love/Romance"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:649
+msgid "School/Education"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:650
+msgid "Contact information and social networks"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:651
+msgid "My other channels"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:653
+msgid "Communications"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:722
+msgid " and "
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:724
+msgid ", "
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:731
+msgid "public profile"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:741
+#, php-format
+msgid "%1$s changed %2$s to &ldquo;%3$s&rdquo;"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:742
+#, php-format
+msgid "Visit %1$s's %2$s"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:744
+#, php-format
+msgid "%1$s has an updated %2$s, changing %3$s."
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Currently Male"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Currently Female"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Mostly Male"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Mostly Female"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Transgender"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Intersex"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Transsexual"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Hermaphrodite"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:774
+msgid "Undecided"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Agender"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Genderfluid"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:792
+#: Code/Module/Settings/Profile_edit.php:842
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "It's complicated"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:810
+msgid "He/Him"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:810
+msgid "She/Her"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:810
+msgid "They/Them"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+#: Code/Module/Settings/Profile_edit.php:862
+msgid "Males"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+#: Code/Module/Settings/Profile_edit.php:862
+msgid "Females"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+msgid "Bisexual"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+msgid "Autosexual"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+msgid "Abstinent"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+msgid "Virgin"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:842
+msgid "Asexual"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Single"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Lonely"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Available"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Unavailable"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Has crush"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Infatuated"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Dating"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Unfaithful"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Sex Addict"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Friends/Benefits"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Casual"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Engaged"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Married"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Imaginarily married"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Partners"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Cohabiting"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Common law"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Happy"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Not looking"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Swinger"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Betrayed"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Separated"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Unstable"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Divorced"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Imaginarily divorced"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Profile_edit.php:899
+msgid "Widowed"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Uncertain"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Don't care"
+msgstr ""
+
+#: Code/Module/Settings/Profile_edit.php:881
+msgid "Ask me"
 msgstr ""
 
 #: Code/Module/Editblock.php:128 Code/Module/Blocks.php:106
@@ -11493,8 +11481,59 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: include/api_auth.php:165
+#: include/api_auth.php:162
 msgid "This API method requires authentication."
+msgstr ""
+
+#: include/taxonomy.php:366
+msgid "Popular Tags"
+msgstr ""
+
+#: include/taxonomy.php:628
+msgid "Keywords"
+msgstr ""
+
+#: include/taxonomy.php:650
+msgid "have"
+msgstr ""
+
+#: include/taxonomy.php:650
+msgid "has"
+msgstr ""
+
+#: include/taxonomy.php:651
+msgid "want"
+msgstr ""
+
+#: include/taxonomy.php:651
+msgid "wants"
+msgstr ""
+
+#: include/taxonomy.php:652
+msgid "like"
+msgstr ""
+
+#: include/taxonomy.php:652
+msgid "likes"
+msgstr ""
+
+#: include/taxonomy.php:653
+msgid "dislike"
+msgstr ""
+
+#: include/taxonomy.php:653
+msgid "dislikes"
+msgstr ""
+
+#: include/security.php:646
+msgid ""
+"The form security token was not correct. This probably happened because the "
+"form has been opened for too long (>3 hours) before submitting it."
+msgstr ""
+
+#: include/zid.php:406
+#, php-format
+msgid "OpenWebAuth: %1$s welcomes %2$s"
 msgstr ""
 
 #: include/conversation.php:109
@@ -11782,55 +11821,16 @@ msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/taxonomy.php:366
-msgid "Popular Tags"
+#: include/network.php:1116
+msgid "RSS/Atom"
 msgstr ""
 
-#: include/taxonomy.php:628
-msgid "Keywords"
+#: include/network.php:1118
+msgid "Diaspora"
 msgstr ""
 
-#: include/taxonomy.php:650
-msgid "have"
-msgstr ""
-
-#: include/taxonomy.php:650
-msgid "has"
-msgstr ""
-
-#: include/taxonomy.php:651
-msgid "want"
-msgstr ""
-
-#: include/taxonomy.php:651
-msgid "wants"
-msgstr ""
-
-#: include/taxonomy.php:652
-msgid "like"
-msgstr ""
-
-#: include/taxonomy.php:652
-msgid "likes"
-msgstr ""
-
-#: include/taxonomy.php:653
-msgid "dislike"
-msgstr ""
-
-#: include/taxonomy.php:653
-msgid "dislikes"
-msgstr ""
-
-#: include/security.php:646
-msgid ""
-"The form security token was not correct. This probably happened because the "
-"form has been opened for too long (>3 hours) before submitting it."
-msgstr ""
-
-#: include/zid.php:406
-#, php-format
-msgid "OpenWebAuth: %1$s welcomes %2$s"
+#: include/network.php:1120
+msgid "Zot6"
 msgstr ""
 
 #: include/items.php:878
@@ -11895,18 +11895,6 @@ msgstr ""
 
 #: include/language.php:377
 msgid "Select an alternate language"
-msgstr ""
-
-#: include/network.php:1116
-msgid "RSS/Atom"
-msgstr ""
-
-#: include/network.php:1118
-msgid "Diaspora"
-msgstr ""
-
-#: include/network.php:1120
-msgid "Zot6"
 msgstr ""
 
 #: include/datetime.php:166
