@@ -53,26 +53,18 @@
                             {{include file="field_input.tpl" field=$pdesc}}
                             {{/if}}
 
-                            {{if $fields.basic_gender || $fields.advanced_gender || $fields.gender || $fields.pronouns}}
-                            <div id="profile-edit-gender-wrapper" class="form-group field select" >
-                            <label id="profile-edit-gender-label" for="gender-select" >{{$lbl_gender}}</label>
-                            {{if ($advanced && $fields.gender) || $fields.advanced_gender}}
-                            {{if $gender_text}}{{$gender_text}}{{else}}{{$gender}}{{/if}}
-                            {{else}}
-                            {{$gender_min}}
-                            {{/if}}
-                            </div>
-                            <div class="clear"></div>
-                            {{/if}}
-
-
                             {{if $fields.pronouns}}
-                            <div id="profile-edit-pronouns-wrapper" class="form-group field" >
-                            <label id="profile-edit-pronouns-label" for="pronouns-select" >{{$lbl_pronouns}}</label>
-                            {{$pronouns}}
-                            </div>
-                            <div class="clear"></div>
+                                <div id="profile-edit-pronouns-wrapper" class="form-group field" >
+                                    <label id="profile-edit-pronouns-label" for="pronouns-select" >{{$lbl_pronouns}}</label>
+                                    {{$pronouns}}
+                                </div>
+                                <div class="clear"></div>
                             {{/if}}
+
+                            {{if $fields.about}}
+                                {{include file="field_textarea.tpl" field=$about}}
+                            {{/if}}
+
 
                             {{if $fields.dob}}
                             {{$dob}}
@@ -252,7 +244,7 @@
 
                 {{/if}}
 
-                {{if $fields.marital || $fields.sexual}}
+                {{if $fields.marital || $fields.sexual || $fields.basic_gender || $fields.advanced_gender || $fields.gender }}
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="relation">
                         <h3>
@@ -263,6 +255,21 @@
                     </div>
                     <div id="relation-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="relation">
                         <div class="section-content-tools-wrapper">
+
+                            {{if $fields.basic_gender || $fields.advanced_gender || $fields.gender}}
+                                <div id="profile-edit-gender-wrapper" class="form-group field select" >
+                                    <label id="profile-edit-gender-label" for="gender-select" >{{$lbl_gender}}</label>
+                                    {{if ($advanced && $fields.gender) || $fields.advanced_gender}}
+                                        {{if $gender_text}}{{$gender_text}}{{else}}{{$gender}}{{/if}}
+                                    {{else}}
+                                        {{$gender_min}}
+                                    {{/if}}
+                                </div>
+                                <div class="clear"></div>
+                            {{/if}}
+
+
+
                             {{if $fields.marital }}
                             <div id="profile-edit-marital-wrapper" class="form-group field" >
                             <label id="profile-edit-marital-label" for="profile-edit-marital" ><span class="heart"><i class="fa fa-heart"></i>&nbsp;</span>{{$lbl_marital}}</label>
@@ -328,9 +335,6 @@
                             {{include file="field_input.tpl" field=$religion}}
                             {{/if}}
 
-                            {{if $fields.about}}
-                            {{include file="field_textarea.tpl" field=$about}}
-                            {{/if}}
 
                             {{if $fields.contact}}
                             {{include file="field_textarea.tpl" field=$contact}}

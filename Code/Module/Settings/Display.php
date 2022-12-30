@@ -115,7 +115,7 @@ class Display
     public function get()
     {
 
-        $yes_no = array(t('No'), t('Yes'));
+        $yes_no = [t('No'), t('Yes')];
 
         $default_theme = get_config('system', 'theme');
         if (!$default_theme) {
@@ -200,7 +200,7 @@ class Display
         // logger('schemas: ' . print_r($schemas,true));
 
         $tpl = Theme::get_template("settings_display.tpl");
-        $o = replace_macros($tpl, array(
+        $o = replace_macros($tpl, [
             '$ptitle' => t('Display Settings'),
             '$d_tset' => t('Theme Settings'),
             '$d_ctset' => t('Custom Theme Settings'),
@@ -210,23 +210,23 @@ class Display
             '$baseurl' => z_root(),
             '$uid' => local_channel(),
 
-            '$theme' => (($themes) ? array('theme', t('Display Theme:'), $theme_selected, '', $themes, 'preview') : false),
-            '$schema' => array('schema', t('Select scheme'), $existing_schema, '', $schemas),
+            '$theme' => (($themes) ? ['theme', t('Display Theme:'), $theme_selected, '', $themes, 'preview'] : false),
+            '$schema' => ['schema', t('Select scheme'), $existing_schema, '', $schemas],
 
-            '$preload_images' => array('preload_images', t("Preload images before rendering the page"), $preload_images, t("The subjective page load time will be longer but the page will be ready when displayed"), $yes_no),
-            '$user_scalable' => array('user_scalable', t("Enable user zoom on mobile devices"), $user_scalable, '', $yes_no),
-            '$ajaxint' => array('browser_update', t("Update notifications every xx seconds"), $browser_update, t('Minimum of 15 seconds, no maximum')),
-            '$itemspage' => array('itemspage', t("Maximum number of conversations to load at any time:"), $itemspage, t('Maximum of 100 items')),
-            '$nosmile' => array('nosmile', t("Show emoticons (smilies) as images"), 1 - intval($nosmile), '', $yes_no),
+            '$preload_images' => ['preload_images', t("Preload images before rendering the page"), $preload_images, t("The subjective page load time will be longer but the page will be ready when displayed"), $yes_no],
+            '$user_scalable' => ['user_scalable', t("Enable user zoom on mobile devices"), $user_scalable, '', $yes_no],
+            '$ajaxint' => ['browser_update', t("Update notifications every xx seconds"), $browser_update, t('Minimum of 15 seconds, no maximum')],
+            '$itemspage' => ['itemspage', t("Maximum number of conversations to load at any time:"), $itemspage, t('Maximum of 100 items')],
+            '$nosmile' => ['nosmile', t("Show emoticons (smilies) as images"), 1 - intval($nosmile), '', $yes_no],
             '$channel_menu' => ['channel_menu', t('Provide channel menu in navigation bar'), get_pconfig(local_channel(), 'system', 'channel_menu', get_config('system', 'channel_menu', 0)), t('Default: channel menu located in app menu'), $yes_no],
             '$layout_editor' => t('System Page Layout Editor - (advanced)'),
             '$theme_config' => $theme_config,
             '$expert' => Features::enabled(local_channel(), 'advanced_theming'),
-            '$channel_divmore_height' => array('channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(), 'system', 'channel_divmore_height')) ? get_pconfig(local_channel(), 'system', 'channel_divmore_height') : 400), t('click to expand content exceeding this height')),
-            '$stream_divmore_height' => array('stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(), 'system', 'stream_divmore_height')) ? get_pconfig(local_channel(), 'system', 'stream_divmore_height') : 400), t('click to expand content exceeding this height')),
+            '$channel_divmore_height' => ['channel_divmore_height', t('Channel page max height of content (in pixels)'), ((get_pconfig(local_channel(), 'system', 'channel_divmore_height')) ? get_pconfig(local_channel(), 'system', 'channel_divmore_height') : 400), t('click to expand content exceeding this height')],
+            '$stream_divmore_height' => ['stream_divmore_height', t('Stream page max height of content (in pixels)'), ((get_pconfig(local_channel(), 'system', 'stream_divmore_height')) ? get_pconfig(local_channel(), 'system', 'stream_divmore_height') : 400), t('click to expand content exceeding this height')],
             '$indentpx' => ['indentpx', t('Indent threaded comments this many pixels from the parent'), intval(get_pconfig(local_channel(), 'system', 'thread_indent_px', get_config('system', 'thread_indent_px', 0))), t('0-20')],
 
-        ));
+        ]);
 
         Hook::call('display_settings', $o);
         return $o;

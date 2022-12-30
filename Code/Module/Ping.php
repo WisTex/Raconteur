@@ -67,6 +67,9 @@ class Ping extends Controller
             $evdays = intval(get_pconfig(local_channel(), 'system', 'evdays'));
             $ob_hash = get_observer_hash();
         }
+        else {
+            $ob_hash = '';
+        }
 
         // if unset show all visual notification types
         if ($vnotify === false) {
@@ -79,8 +82,8 @@ class Ping extends Controller
         /**
          * If you have several windows open to this site and switch to a different channel
          * in one of them, the others may get into a confused state showing you a page or options
-         * on that page which were only valid under the old identity. You session has changed.
-         * Therefore we send a notification of this fact back to the browser where it is picked up
+         * on that page which were only valid under the old identity. Your session has changed.
+         * We will send a notification of this fact back to the browser where it is picked up
          * in javascript and which reloads the page it is on so that it is valid under the context
          * of the now current channel.
          */
@@ -382,7 +385,6 @@ class Ping extends Controller
 
         if (argc() > 1 && (argv(1) === 'home')) {
             $local_result = [];
-            $item_normal_moderate = $item_normal;
 
             $sql_extra .= " and item_wall = 1 ";
             $item_normal_moderate = item_normal_moderate();
@@ -471,7 +473,7 @@ class Ping extends Controller
         }
 
         if (argc() > 1 && (argv(1) === 'all_events')) {
-            $bd_format = t('g A l F d'); // 8 AM Friday January 18
+            $bd_format = t('g A l, F d'); // 8 AM Friday, January 18
 
             $result = [];
 
@@ -488,7 +490,7 @@ class Ping extends Controller
             if ($r) {
                 foreach ($r as $rr) {
                     $strt = datetime_convert('UTC', (($rr['adjust']) ? date_default_timezone_get() : 'UTC'), $rr['dtstart']);
-                    $today = ((substr($strt, 0, 10) === datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y-m-d')) ? true : false);
+                    $today = substr($strt, 0, 10) === datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y-m-d');
                     $when = day_translate(datetime_convert('UTC', (($rr['adjust']) ? date_default_timezone_get() : 'UTC'), $rr['dtstart'], $bd_format)) . (($today) ? ' ' . t('[today]') : '');
 
                     $result[] = [
@@ -542,7 +544,7 @@ class Ping extends Controller
         }
 
         if (argc() > 1 && (argv(1) === 'reports') && is_site_admin()) {
-            $local_result = [];
+            $result = [];
 
             $r = q(
                 "SELECT item.created, xchan.xchan_name, xchan.xchan_addr, xchan.xchan_url, xchan.xchan_photo_s FROM item 
@@ -673,9 +675,6 @@ class Ping extends Controller
             }
         }
 
-
-        $channel = App::get_channel();
-
         if ($vnotify & VNOTIFY_REGISTER) {
             if (App::$config['system']['register_policy'] == REGISTER_APPROVE && is_site_admin()) {
                 $regs = q(
@@ -797,7 +796,7 @@ class Ping extends Controller
             }
         }
 */
-        // Mark all of the stream notifications seen if all three of them are caught up.
+        // Mark all stream notifications seen if all three of them are caught up.
         // This also resets the pconfig storage for items_seen
 
         if ((!$my_activity) && (!(intval($result['home']) + intval($result['stream']) + intval($result['pubs'])))) {

@@ -6,6 +6,7 @@ use Code\Lib\System;
 use OAuth2\Server;
 use OAuth2\Storage\Memory;
 use OAuth2\GrantType\ClientCredentials;
+use OAuth2\GrantType\RefreshToken;
 use OAuth2\OpenID\GrantType\AuthorizationCode;
 
 class OAuth2Server extends Server
@@ -32,6 +33,9 @@ class OAuth2Server extends Server
         // Need to use OpenID\GrantType to return id_token
         // (see:https://github.com/bshaffer/oauth2-server-php/issues/443)
         $this->addGrantType(new AuthorizationCode($storage));
+
+        // Add the "Refresh Token" grant type
+        $this->addGrantType(new RefreshToken($storage));
 
         $keyStorage = new Memory([
             'keys' => [

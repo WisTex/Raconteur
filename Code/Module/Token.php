@@ -40,10 +40,6 @@ class Token extends Controller
 
         $storage = new OAuth2Storage(DBA::$dba->db);
         $server = new OAuth2Server($storage);
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new GrantType\ClientCredentials($storage));
-        // Add the "Authorization Code" grant type (this is where the oauth magic happens)
-        $server->addGrantType(new GrantType\AuthorizationCode($storage));
         $request = Request::createFromGlobals();
         $response = $server->handleTokenRequest($request);
         $response->send();
