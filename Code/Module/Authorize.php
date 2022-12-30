@@ -2,16 +2,13 @@
 
 namespace Code\Module;
 
-use App;
 use DBA;
 use Code\Lib\Channel;
 use Code\Web\Controller;
 use Code\Identity\OAuth2Server;
 use Code\Identity\OAuth2Storage;
-use OAuth2\GrantType\RefreshToken;
 use OAuth2\Request;
 use OAuth2\Response;
-use OAuth2\GrantType;
 use Code\Render\Theme;
 
 
@@ -36,7 +33,7 @@ class Authorize extends Controller
 
             $link = (($app['url']) ? '<a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> ' : $app['name']);
 
-            $o = replace_macros(Theme::get_template('oauth_authorize.tpl'), [
+            return replace_macros(Theme::get_template('oauth_authorize.tpl'), [
                 '$title' => t('Authorize'),
                 '$authorize' => sprintf(t('Do you authorize the app %s to access your channel data?'), $link),
                 '$app' => $app,
@@ -46,7 +43,6 @@ class Authorize extends Controller
                 '$redirect_uri' => (x($_REQUEST, 'redirect_uri') ? $_REQUEST['redirect_uri'] : ''),
                 '$state' => (x($_REQUEST, 'state') ? $_REQUEST['state'] : ''),
             ]);
-            return $o;
         }
     }
 

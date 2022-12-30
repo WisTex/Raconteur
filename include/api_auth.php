@@ -1,7 +1,6 @@
 <?php
 
 use OAuth2\Request;
-use OAuth2\GrantType;
 use Code\Identity\OAuth2Storage;
 use Code\Identity\OAuth2Server;
 use Code\Lib\Libzot;
@@ -22,7 +21,6 @@ require_once('include/security.php');
 
 function api_login()
 {
-
     $record = null;
 
     if (array_key_exists('REDIRECT_REMOTE_USER', $_SERVER) && (! array_key_exists('HTTP_AUTHORIZATION', $_SERVER))) {
