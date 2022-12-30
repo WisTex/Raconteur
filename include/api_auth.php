@@ -1,7 +1,6 @@
 <?php
 
 use OAuth2\Request;
-use OAuth2\GrantType;
 use Code\Identity\OAuth2Storage;
 use Code\Identity\OAuth2Server;
 use Code\Lib\Libzot;
@@ -16,14 +15,13 @@ require_once('include/security.php');
 
 /**
  * API Login via basic-auth, OpenWebAuth, or OAuth2
+ * This function returns true or exits with a 401 and WWW-Authenticate header.
+ * @noinspection PhpInconsistentReturnPointsInspection
  */
 
 function api_login()
 {
-
     $record = null;
-    $remote_auth = false;
-    $sigblock = null;
 
     if (array_key_exists('REDIRECT_REMOTE_USER', $_SERVER) && (! array_key_exists('HTTP_AUTHORIZATION', $_SERVER))) {
         $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_REMOTE_USER'];
@@ -35,12 +33,6 @@ function api_login()
         // OAuth 2.0
         $storage = new OAuth2Storage(DBA::$dba->db);
         $server = new OAuth2Server($storage);
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new GrantType\ClientCredentials($storage));
-        // Add the "Authorization Code" grant type (this is where the oauth magic happens)
-        $server->addGrantType(new GrantType\AuthorizationCode($storage));
-        // Add the "Refresh Token" grant type
-        $server->addGrantType(new GrantType\RefreshToken($storage));
 
         $request = Request::createFromGlobals();
         if ($server->verifyResourceRequest($request)) {
@@ -69,11 +61,13 @@ function api_login()
                 authenticate_success($x[0], false, true, false, true, true);
                 $_SESSION['allow_api'] = true;
                 Hook::call('logged_in', App::$user);
-                return;
+                return true;
             }
         }
 
     } catch (Exception $e) {
+        // Just log the exception. Most of the time it will be because
+        // a different identity mechanism is being used and no oauth2 parameters were found.
         logger($e->getMessage());
     }
 
@@ -132,7 +126,6 @@ function api_login()
         }
     }
 
-
     // process normal login request
 
     if (isset($_SERVER['PHP_AUTH_USER']) && (! $record)) {
@@ -158,6 +151,7 @@ function api_login()
         log_failed_login('API login failure');
         retry_basic_auth();
     }
+
 }
 
 

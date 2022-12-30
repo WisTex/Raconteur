@@ -33,8 +33,10 @@ class OAuth2Server extends Server
         // Need to use OpenID\GrantType to return id_token
         // (see:https://github.com/bshaffer/oauth2-server-php/issues/443)
         $this->addGrantType(new AuthorizationCode($storage));
+
         // Add the "Refresh Token" grant type
         $this->addGrantType(new RefreshToken($storage));
+
         $keyStorage = new Memory([
             'keys' => [
                 'public_key'  => get_config('system', 'pubkey'),

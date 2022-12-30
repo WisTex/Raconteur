@@ -2,16 +2,13 @@
 
 namespace Code\Module;
 
-use App;
 use DBA;
 use Code\Lib\Channel;
 use Code\Web\Controller;
 use Code\Identity\OAuth2Server;
 use Code\Identity\OAuth2Storage;
-use OAuth2\GrantType\RefreshToken;
 use OAuth2\Request;
 use OAuth2\Response;
-use OAuth2\GrantType;
 use Code\Render\Theme;
 
 
@@ -36,7 +33,7 @@ class Authorize extends Controller
 
             $link = (($app['url']) ? '<a style="float: none;" href="' . $app['url'] . '">' . $app['name'] . '</a> ' : $app['name']);
 
-            $o = replace_macros(Theme::get_template('oauth_authorize.tpl'), [
+            return replace_macros(Theme::get_template('oauth_authorize.tpl'), [
                 '$title' => t('Authorize'),
                 '$authorize' => sprintf(t('Do you authorize the app %s to access your channel data?'), $link),
                 '$app' => $app,
@@ -46,7 +43,6 @@ class Authorize extends Controller
                 '$redirect_uri' => (x($_REQUEST, 'redirect_uri') ? $_REQUEST['redirect_uri'] : ''),
                 '$state' => (x($_REQUEST, 'state') ? $_REQUEST['state'] : ''),
             ]);
-            return $o;
         }
     }
 
@@ -58,12 +54,6 @@ class Authorize extends Controller
 
         $storage = new OAuth2Storage(DBA::$dba->db);
         $server = new OAuth2Server($storage);
-        // Add the "Client Credentials" grant type (it is the simplest of the grant types)
-        $server->addGrantType(new GrantType\ClientCredentials($storage));
-        // Add the "Authorization Code" grant type (this is where the oauth magic happens)
-        $server->addGrantType(new GrantType\AuthorizationCode($storage));
-        // Add the "Refresh Token" grant type
-        $server->addGrantType(new GrantType\RefreshToken($storage));
 
         // TODO: The automatic client registration protocol below should adhere more
         // closely to "OAuth 2.0 Dynamic Client Registration Protocol" defined
