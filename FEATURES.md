@@ -1,10 +1,14 @@
+Federated Single Sign-on : Makes private/protected resources on external sites as accessible as on local sites.
+
+Federated Access Control : Works with Federated Single Sign-on to provide private/protected media and web resources to anybody, including those visiting from different sites. 
+
 Groups : Public, private, and moderated. These work across nearly all fediverse platforms.
 
 Events : Calendar and attendance; automatic timezone adjusted birthday notifications for friends using this feature.
 
 Permissions : Because not everybody wishes to converse with and share intimate facets of their life with random strangers.
 
-Cloud storage : Built-in network file storage integrated with social networking access/permissions. Available over WebDAV.
+Cloud storage : Built-in network file storage integrated with federated access control and social networking access/permissions. Available over WebDAV.
 
 Editor : Supports markdown, html, and bbcode. Use any or all of these in any post to create a media rich experience. Post editing and preview are supported.
 
