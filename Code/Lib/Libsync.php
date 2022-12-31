@@ -1169,7 +1169,8 @@ class Libsync
 
                 if ($location['primary']) {
                     $result = q(
-                        "select * from hubloc where hubloc_addr = '%s' and hubloc_sitekey = '%s' limit 1",
+                        "select * from hubloc where hubloc_addr = '%s' and hubloc_sitekey = '%s' 
+                            order by hubloc_id desc limit 1",
                         dbesc($location['address']),
                         dbesc($location['sitekey'])
                     );
