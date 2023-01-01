@@ -85,12 +85,6 @@ let postSaveTimer = null;
 		$('#id_mimetype').on('load', jotSetMime);
 		$('#id_mimetype').on('change', jotSetMime);
 
-		{{if $webpage === 8}}
-		$("#jot-pagetitle").name_autocomplete(baseurl + '/acloader', 'm', false, function(data) {
-			$("#recip-complete").val(data.xid);
-		});
-		{{/if}}
-
 		$("input[name='link_style']").change(function() {
 			let radioValue = $("input[name='link_style']:checked"). val();
 			if(radioValue == '0') {
@@ -152,7 +146,6 @@ let postSaveTimer = null;
 			dropZone: $(),
 			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
-
 				let tmpStr = $("#comment-edit-text-" + activeCommentID).val();
 				if(tmpStr == activeCommentText) {
 					tmpStr = "";
@@ -253,7 +246,6 @@ let postSaveTimer = null;
 				return true;
 			}
 		}
-	
 		$('#linkModal').modal('show');
 		$('#id_link_url').focus();
 		$('#link-modal-OKButton').on('click',jotgetlinkmodal);
