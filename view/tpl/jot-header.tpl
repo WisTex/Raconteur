@@ -256,12 +256,16 @@ let activeCommentText = '';
 					    $('#jot-lat').val(position.coords.latitude);
                         $('#jot-lon').val(position.coords.longitude);
                         jotLocateStatus();
+	                    jotCheckinStatus();
+	                    jotCheckoutStatus();
 				    });
 			    }
 			}
 			else {
 		        $('#jot-location').val(reply);
 		        jotLocateStatus();
+		        jotCheckinStatus();
+	            jotCheckoutStatus();
 			}
 		}
 	}
@@ -355,6 +359,11 @@ let activeCommentText = '';
         else {
             $('#profile-checkin-wrapper').removeClass('_orange');
         }
+        if ($('#jot-lat').val() && $('#jot-lon').val()) {
+            $('#profile-checkin-wrapper').show();
+        } else {
+            $('#profile-checkin-wrapper').hide();
+        }
     }
 
     function jotCheckout() {
@@ -375,6 +384,11 @@ let activeCommentText = '';
         }
         else {
             $('#profile-checkout-wrapper').removeClass('_orange');
+        }
+        if ($('#jot-lat').val() && $('#jot-lon').val()) {
+            $('#profile-checkout-wrapper').show();
+        } else {
+            $('#profile-checkout-wrapper').hide();
         }
     }
 
@@ -553,6 +567,8 @@ let activeCommentText = '';
 		$('#jot-lon').val('');
 		$('#jot-location').val('');
 		jotLocateStatus();
+	    jotCheckinStatus();
+	    jotCheckoutStatus();
 	}
 
 
