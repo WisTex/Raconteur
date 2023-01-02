@@ -933,6 +933,11 @@ class Activity
 
         $t = self::encode_taxonomy($item);
         if ($t) {
+            foreach($t as $tag) {
+                if (strcasecmp($tag['name'], '#nfsw') === 0) {
+                    $activity['sensitive'] = true;
+                }
+            }
             $activity['tag'] = $t;
         }
 
@@ -1297,6 +1302,11 @@ class Activity
 
         $t = self::encode_taxonomy($item);
         if ($t) {
+            foreach($t as $tag) {
+                if (strcasecmp($tag['name'], '#nfsw') === 0) {
+                    $activity['sensitive'] = true;
+                }
+            }
             $activity['tag'] = $t;
         }
 
@@ -4558,7 +4568,7 @@ class Activity
             'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
             'sm' => 'http://smithereen.software/ns#',
- //           'fep' => 'https://codeberg.org/fediverse/fep#',
+            'fep' => 'https://codeberg.org/fediverse/fep#',
             'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
@@ -4583,7 +4593,7 @@ class Activity
             'Hashtag' => 'as:Hashtag',
             'canReply' => 'toot:canReply',
             'approval' => 'toot:approval',
-            'Identity' => 'nomad:Identity',
+            'Identity' => 'fep:Identity',
         ];
     }
 
