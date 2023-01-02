@@ -40,7 +40,7 @@ class Inbox extends Controller
             http_status_exit(404, 'Not found');
         }
 
-        $sys_disabled = ((intval(Config::Get('system', 'public_stream_mode')) !== PUBLIC_STREAM_FULL) ? true : false);
+        $sys_disabled = intval(Config::Get('system', 'public_stream_mode')) !== PUBLIC_STREAM_FULL;
 
         logger('inbox_args: ' . print_r(App::$argv, true));
 
@@ -92,7 +92,7 @@ class Inbox extends Controller
                     logger('removing deleted actor');
                     remove_all_xchan_resources($hsig['portable_id']);
                 } else {
-                    logger('ignoring deleted actor', LOGGER_DEBUG, LOG_INFO);
+                    logger('ignoring deleted actor', LOGGER_DEBUG);
                 }
             }
             return;
@@ -124,6 +124,7 @@ class Inbox extends Controller
             // if the sender has the ability to send messages over zot/nomad, ignore messages sent via activitypub
             // as observer aware features and client side markup will be unavailable
 
+            /** @noinspection PhpRedundantOptionalArgumentInspection */
             $test = Activity::get_actor_hublocs($hsig['portable_id'], 'all,not_deleted');
             if ($test) {
                 foreach ($test as $t) {
@@ -251,7 +252,7 @@ class Inbox extends Controller
             }
 
             if (in_array(ACTIVITY_PUBLIC_INBOX, $AS->recips) || in_array('Public', $AS->recips) || in_array('as:Public', $AS->recips)) {
-                // look for channels with send_stream = PERMS_PUBLIC (accept posts from anybody on the internet)
+                // look for channels with send_stream = PERMS_PUBLIC "accept posts from anybody on the internet"
 
                 $r = q("select * from channel where channel_id in (select uid from pconfig where cat = 'perm_limits' and k = 'send_stream' and v = '1' ) and channel_removed = 0 ");
                 if ($r) {
@@ -273,7 +274,7 @@ class Inbox extends Controller
         }
 
         // $channels represents all "potential" recipients. If they are not in this array, they will not receive the activity.
-        // If they are in this array, we will decide whether or not to deliver on a case-by-case basis.
+        // If they are in this array, we will decide whether to deliver on a case-by-case basis.
 
         if (!$channels) {
             logger('no deliveries on this site');
@@ -315,7 +316,7 @@ class Inbox extends Controller
                     break;
 
                 case 'Accept':
-                    // Activitypub for wordpress sends lowercase 'follow' on accept.
+                    // Activitypub for WordPress sends lowercase 'follow' on accept.
                     // https://github.com/pfefferle/wordpress-activitypub/issues/97
                     // Mobilizon sends Accept/"Member" (not in vocabulary) in response to Join/Group
                     if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && in_array($AS->obj['type'], ['Follow', 'follow', 'Member'])) {
@@ -342,7 +343,7 @@ class Inbox extends Controller
                 if (!is_array($AS->obj)) {
                     // The initial object fetch failed using the sys channel credentials.
                     // Try again using the delivery channel credentials.
-                    // We will also need to re-parse the $item array,
+                    // We will also need to reparse the $item array,
                     // but preserve any values that were set during anonymous parsing.
 
                     $o = Activity::fetch($AS->obj, $channel);
