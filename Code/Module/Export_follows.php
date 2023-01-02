@@ -1,11 +1,9 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace Code\Module;
 
 // Mastodon compatible "export follows"
 
-
-use Code\Lib\Activity;
 use Code\Web\Controller;
 use Code\Lib\AbConfig;
 
@@ -48,5 +46,6 @@ class Export_follows extends Controller
         if (!local_channel()) {
             return login();
         }
+        return '';
     }
 }

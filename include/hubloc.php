@@ -372,6 +372,7 @@ function hubloc_id_addr_query($s, $limit = 0) {
     return $r;
 }
 
+/** @noinspection PhpUnused */
 function hublocx_id_addr_query($s, $limit = 0) {
 
     if ($limit) {

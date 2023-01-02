@@ -339,14 +339,14 @@ class Inbox extends Controller
                         Activity::actor_store($AS->obj['id'], $AS->obj, true /* force cache refresh */);
                         break;
                     }
-                case 'Accept':
-                    if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
-                        break;
-                    }
                 case 'Undo':
                     if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
                         // do unfollow activity
                         Activity::unfollow($channel, $AS);
+                        break;
+                    }
+                case 'Accept':
+                    if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
                         break;
                     }
                 case 'Leave':
