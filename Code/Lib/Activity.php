@@ -934,7 +934,7 @@ class Activity
         $t = self::encode_taxonomy($item);
         if ($t) {
             foreach($t as $tag) {
-                if (strcasecmp($tag['name'], '#nfsw') === 0) {
+                if (strcasecmp($tag['name'], '#nsfw') === 0) {
                     $activity['sensitive'] = true;
                 }
             }
@@ -1303,7 +1303,7 @@ class Activity
         $t = self::encode_taxonomy($item);
         if ($t) {
             foreach($t as $tag) {
-                if (strcasecmp($tag['name'], '#nfsw') === 0) {
+                if (strcasecmp($tag['name'], '#nsfw') === 0) {
                     $activity['sensitive'] = true;
                 }
             }
