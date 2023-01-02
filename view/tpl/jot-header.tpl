@@ -1,61 +1,81 @@
-
+<script src="vendor/blueimp/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
+<script src="vendor/blueimp/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+<script src="vendor/blueimp/jquery-file-upload/js/jquery.fileupload.js"></script>
 <script type="text/javascript">
 
 let editor = false;
 let plaintext = '{{$editselect}}';
 let pretext = '{{$pretext}}';
 
-function initEditor(cb){
-	if(editor == false){
-		$("#profile-jot-text-loading").show();
-		$("#profile-jot-reset").removeClass('d-none');
-		{{$geotag}}
-		if(plaintext == 'none') {
-			$("#profile-jot-text-loading").hide();
-			$(".jothidden").show();
-			$("#profile-jot-text").addClass('jot-expanded');
-			$("#profile-jot-summary").addClass('jot-expanded');
-			{{if $bbco_autocomplete}}
-			$("#profile-jot-text").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
-			$("#profile-jot-summary").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
-			{{/if}}
-			{{if $editor_autocomplete}}
-			if(typeof channelId === 'undefined') {
-				$("#profile-jot-text").editor_autocomplete(baseurl+"/acloader");
-				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acloader");
-			}
-			else {
-				$("#profile-jot-text").editor_autocomplete(baseurl+"/acloader",[channelId]); // Also gives suggestions from current channel's connections
-				$("#profile-jot-summary").editor_autocomplete(baseurl+"/acloader",[channelId]); // Also gives suggestions from current channel's connections
-			}
-			{{/if}}
-			editor = true;
-			if (typeof cb!="undefined") cb();
-			if(pretext.length)
-				addeditortext(pretext);
-			return;
-		}
-			editor = true;
-	} else {
-		if (typeof cb!="undefined") cb();
-	}
-}
-
-function enableOnUser(){
-	if(editor)
-		return;
-
-	initEditor();
-}
-</script>
-
-<script src="vendor/blueimp/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
-<script src="vendor/blueimp/jquery-file-upload/js/jquery.iframe-transport.js"></script>
-<script src="vendor/blueimp/jquery-file-upload/js/jquery.fileupload.js"></script>
-
-<script>
 let activeCommentID = 0;
 let activeCommentText = '';
+let postSaveTimer = null;
+
+    $(document).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-delete-link,.block-delete-link", function(e) {
+        let link = $(this).attr("href"); // "get" the intended link in a let
+
+        if (typeof(eval($.fn.modal)) === 'function'){
+            e.preventDefault();
+            bootbox.confirm("<h4>{{$confirmdelete}}</h4>",function(result) {
+                if (result) {
+                    document.location.href = link;
+                }
+            });
+        } else {
+            return confirm("{{$confirmdelete}}");
+        }
+    });
+
+    $(document).ready(function() {
+
+		let cleaned = false;
+
+		if({{$auto_save_draft}}) {
+			let doctype = $('#jot-webpage').val();
+			let postid = '-' + doctype + '-' + $('#jot-postid').val();
+			let postTitle = localStorage.getItem("post_title" + postid);
+			let postBody = localStorage.getItem("post_body" + postid);
+			let postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category" + postid) : '');
+			let openEditor = false;
+
+			if(postTitle) {
+				$('#jot-title').val(postTitle);
+				openEditor = true;
+			}
+			if(postBody) {
+				$('#profile-jot-text').val(postBody);
+				openEditor = true;
+			}
+			if(postCategory) {
+				let categories = postCategory.split(',');
+				categories.forEach(function(cat) {
+					$('#jot-category').tagsinput('add', cat);
+				});
+				openEditor = true;
+			}
+			if(openEditor) {
+				enableOnUser();
+			}
+		} else {
+			postSaveChanges('clean');
+		}
+
+		$(document).on('submit', '#profile-jot-form', function() {
+			postSaveChanges('clean');
+			cleaned = true;
+		});
+
+		$(document).on('focusout',"#profile-jot-wrapper",function(e){
+			if(! cleaned)
+				postSaveChanges('stop');
+		});
+
+		$(document).on('focusin',"#profile-jot-wrapper",function(e){
+			postSaveTimer = setTimeout(function () {
+				postSaveChanges('start');
+			},10000);
+		});
+	});
 
 	$(document).ready(function() {
 	
@@ -64,12 +84,6 @@ let activeCommentText = '';
 
 		$('#id_mimetype').on('load', jotSetMime);
 		$('#id_mimetype').on('change', jotSetMime);
-
-		{{if $webpage === 8}}
-		$("#jot-pagetitle").name_autocomplete(baseurl + '/acloader', 'm', false, function(data) {
-			$("#recip-complete").val(data.xid);
-		});
-		{{/if}}
 
 		$("input[name='link_style']").change(function() {
 			let radioValue = $("input[name='link_style']:checked"). val();
@@ -132,7 +146,6 @@ let activeCommentText = '';
 			dropZone: $(),
 			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
-
 				let tmpStr = $("#comment-edit-text-" + activeCommentID).val();
 				if(tmpStr == activeCommentText) {
 					tmpStr = "";
@@ -158,6 +171,49 @@ let activeCommentText = '';
 		});
 
 	});
+
+    function initEditor(cb){
+        if(editor == false){
+            $("#profile-jot-text-loading").show();
+            $("#profile-jot-reset").removeClass('d-none');
+            {{$geotag}}
+            if(plaintext == 'none') {
+                $("#profile-jot-text-loading").hide();
+                $(".jothidden").show();
+                $("#profile-jot-text").addClass('jot-expanded');
+                $("#profile-jot-summary").addClass('jot-expanded');
+                {{if $bbco_autocomplete}}
+                $("#profile-jot-text").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
+                $("#profile-jot-summary").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
+                {{/if}}
+                {{if $editor_autocomplete}}
+                if(typeof channelId === 'undefined') {
+                    $("#profile-jot-text").editor_autocomplete(baseurl+"/acloader");
+                    $("#profile-jot-summary").editor_autocomplete(baseurl+"/acloader");
+                }
+                else {
+                    $("#profile-jot-text").editor_autocomplete(baseurl+"/acloader",[channelId]); // Also gives suggestions from current channel's connections
+                    $("#profile-jot-summary").editor_autocomplete(baseurl+"/acloader",[channelId]); // Also gives suggestions from current channel's connections
+                }
+                {{/if}}
+                editor = true;
+                if (typeof cb!="undefined") cb();
+                if(pretext.length)
+                    addeditortext(pretext);
+                return;
+            }
+                editor = true;
+        } else {
+            if (typeof cb!="undefined") cb();
+        }
+    }
+
+    function enableOnUser(){
+        if(editor)
+            return;
+
+        initEditor();
+    }
 
 	function deleteCheckedItems() {
 		let checkedstr = '';
@@ -190,7 +246,6 @@ let activeCommentText = '';
 				return true;
 			}
 		}
-	
 		$('#linkModal').modal('show');
 		$('#id_link_url').focus();
 		$('#link-modal-OKButton').on('click',jotgetlinkmodal);
@@ -256,12 +311,16 @@ let activeCommentText = '';
 					    $('#jot-lat').val(position.coords.latitude);
                         $('#jot-lon').val(position.coords.longitude);
                         jotLocateStatus();
+	                    jotCheckinStatus();
+	                    jotCheckoutStatus();
 				    });
 			    }
 			}
 			else {
 		        $('#jot-location').val(reply);
 		        jotLocateStatus();
+		        jotCheckinStatus();
+	            jotCheckoutStatus();
 			}
 		}
 	}
@@ -355,6 +414,11 @@ let activeCommentText = '';
         else {
             $('#profile-checkin-wrapper').removeClass('_orange');
         }
+        if ($('#jot-lat').val() && $('#jot-lon').val()) {
+            $('#profile-checkin-wrapper').show();
+        } else {
+            $('#profile-checkin-wrapper').hide();
+        }
     }
 
     function jotCheckout() {
@@ -375,6 +439,11 @@ let activeCommentText = '';
         }
         else {
             $('#profile-checkout-wrapper').removeClass('_orange');
+        }
+        if ($('#jot-lat').val() && $('#jot-lon').val()) {
+            $('#profile-checkout-wrapper').show();
+        } else {
+            $('#profile-checkout-wrapper').hide();
         }
     }
 
@@ -553,6 +622,8 @@ let activeCommentText = '';
 		$('#jot-lon').val('');
 		$('#jot-location').val('');
 		jotLocateStatus();
+	    jotCheckinStatus();
+	    jotCheckoutStatus();
 	}
 
 
@@ -697,29 +768,6 @@ let activeCommentText = '';
 		$(this).closest('.jot-ingredient').remove();
 	}
 
-</script>
-
-<script>
-$( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-delete-link,.block-delete-link", function(e) {
-	let link = $(this).attr("href"); // "get" the intended link in a let
-
-	if (typeof(eval($.fn.modal)) === 'function'){
-		e.preventDefault();
-		bootbox.confirm("<h4>{{$confirmdelete}}</h4>",function(result) {
-			if (result) {
-				document.location.href = link;
-			}
-		});
-	} else {
-		return confirm("{{$confirmdelete}}");
-	}
-});
-</script>
-
-
-<script>
-	let postSaveTimer = null;
-
 	function postSaveChanges(action) {
 		if({{$auto_save_draft}}) {
 
@@ -751,60 +799,8 @@ $( document ).on( "click", ".wall-item-delete-link,.page-delete-link,.layout-del
 				localStorage.removeItem("post_body" + postid);
 				localStorage.removeItem("post_category" + postid);
 			}
-		} 
-
+		}
 	}
 
-	$(document).ready(function() {
 
-		let cleaned = false;
-
-		if({{$auto_save_draft}}) {
-			let doctype = $('#jot-webpage').val();
-			let postid = '-' + doctype + '-' + $('#jot-postid').val();
-			let postTitle = localStorage.getItem("post_title" + postid);
-			let postBody = localStorage.getItem("post_body" + postid);
-			let postCategory = (($("#jot-category").length) ? localStorage.getItem("post_category" + postid) : '');
-			let openEditor = false;
-
-			if(postTitle) {
-				$('#jot-title').val(postTitle);
-				openEditor = true;
-			}
-			if(postBody) {
-				$('#profile-jot-text').val(postBody);
-				openEditor = true;
-			}
-			if(postCategory) {
-				let categories = postCategory.split(',');
-				categories.forEach(function(cat) {
-					$('#jot-category').tagsinput('add', cat);
-				});
-				openEditor = true;
-			}
-			if(openEditor) {
-				enableOnUser();
-			}
-		} else {
-			postSaveChanges('clean');
-		}
-
-		$(document).on('submit', '#profile-jot-form', function() {
-			postSaveChanges('clean');
-			cleaned = true;
-		});
-
-		$(document).on('focusout',"#profile-jot-wrapper",function(e){
-			if(! cleaned)
-				postSaveChanges('stop');
-		});
-
-		$(document).on('focusin',"#profile-jot-wrapper",function(e){
-			postSaveTimer = setTimeout(function () {
-				postSaveChanges('start');
-			},10000);
-		});
-
-
-	});
 </script>

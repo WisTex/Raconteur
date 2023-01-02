@@ -235,7 +235,7 @@ class Register extends Controller
             if ($r && $r[0]['total'] >= $max_dailies) {
                 logger('max daily registrations exceeded.');
                 notice(t('This site has exceeded the number of allowed daily account registrations. Please try again tomorrow.') . EOL);
-                return;
+                return '';
             }
         }
 

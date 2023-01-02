@@ -530,7 +530,7 @@ class Stream extends Controller
             $page_mode = 'client';
         }
 
-        $simple_update = (($this->updating) ? " and item_changed >  = '" . $_SESSION['loadtime_stream'] . "' " : '');
+        $simple_update = (($this->updating) ? " and item.changed > '" . $_SESSION['loadtime_stream'] . "' " : '');
 
         $parents_str = '';
         $update_unseen = '';

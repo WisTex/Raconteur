@@ -1517,16 +1517,15 @@ function item_store($arr, $deliver = true) {
         }
         $arr = $translate['item'];
     }
-
-    if(x($arr,'obj')) {
+    if(isset($arr['obj'])) {
         $arr['obj'] = item_json_encapsulate($arr,'obj');
     }
 
-    if(x($arr,'target')) {
+    if(isset($arr['target'])) {
         $arr['target'] = item_json_encapsulate($arr,'target');
     }
 
-    if(x($arr,'attach')) {
+    if(isset($arr['attach'])) {
         $arr['attach'] = item_json_encapsulate($arr,'attach');
     }
 
@@ -2020,15 +2019,15 @@ function item_store_update($arr, $deliver = true) {
     }
 
 
-    if(x($arr,'obj')) {
+    if(isset($arr['obj'])) {
         $arr['obj'] = item_json_encapsulate($arr,'obj');
     }
 
-    if(x($arr,'target')) {
+    if(isset($arr['target'])) {
         $arr['target'] = item_json_encapsulate($arr,'target');
     }
 
-    if(x($arr,'attach')) {
+    if(isset($arr['attach'])) {
         $arr['attach'] = item_json_encapsulate($arr,'attach');
     }
 

@@ -28,7 +28,7 @@ class Gprobe implements DaemonInterface
         }
 
         $r = q(
-            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0",
+            "select * from hubloc where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
             dbesc($address)
         );
 

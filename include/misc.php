@@ -3082,7 +3082,7 @@ function handle_tag(&$body, &$str_tags, $profile_uid, $tag, $in_network = true)
             if ((! $r) && strpos($newname, '@')) {
                 $r = q(
                     "SELECT * FROM xchan left join hubloc on xchan_hash = hubloc_hash
-					WHERE hubloc_addr = '%s' and hubloc_deleted = 0",
+					WHERE hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc",
                     dbesc($newname)
                 );
             }

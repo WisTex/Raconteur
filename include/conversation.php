@@ -260,7 +260,7 @@ function count_descendants($item)
  */
 function visible_activity($item)
 {
-    $hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Undo', 'Accept' ];
+    $hidden_activities = [ ACTIVITY_LIKE, ACTIVITY_DISLIKE, 'Undo', 'Accept', 'Reject' ];
 
     if (intval($item['item_notshown'])) {
         return false;

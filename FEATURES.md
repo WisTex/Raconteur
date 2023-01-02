@@ -1,10 +1,14 @@
+Federated Single Sign-on : Makes private/protected resources on external sites as accessible as on local sites.
+
+Federated Access Control : Works with Federated Single Sign-on to provide private/protected media and web resources to anybody, including those visiting from different sites. 
+
 Groups : Public, private, and moderated. These work across nearly all fediverse platforms.
 
 Events : Calendar and attendance; automatic timezone adjusted birthday notifications for friends using this feature.
 
 Permissions : Because not everybody wishes to converse with and share intimate facets of their life with random strangers.
 
-Cloud storage : Built-in network file storage integrated with social networking access/permissions. Available over WebDAV.
+Cloud storage : Built-in network file storage integrated with federated access control and social networking access/permissions. Available over WebDAV.
 
 Editor : Supports markdown, html, and bbcode. Use any or all of these in any post to create a media rich experience. Post editing and preview are supported.
 
@@ -22,6 +26,6 @@ Location Services: Check-in, check-out, and search by distance
 
 Delivery Reports: In a decentralised multi-platform world, stuff happens. Sites and networks sometimes go down. Project developers sometimes introduce bugs and incompatibilities. This allows you to determine what happened to your post or comment and where it actually went once you published it.
 
-Failsafe: Because the best time to have a current backup of your data is 10 seconds ago. Clone your online identity and content to multiple sites using the Nomad protocol and mirror any changes in near realtime. Then if your chosen site goes down (either temporarily or permanently) or you get booted off of it for some reason, your online life doesn't have to come to an end or force you to start over. All your friends and all your content are available on any of your cloned instances - at any time.
+Failsafe: Because the best time to have a current backup of your data is 10 seconds ago. Clone your online identity and content to multiple sites using the Nomad protocol and mirror any changes in near realtime. Then, if your chosen site goes down (either temporarily or permanently) or you get booted off of it for some reason, your online life doesn't have to come to an end or force you to start over. All your friends and all your content are available on any of your cloned instances - at any time.
 
 Provides the ActivityPub "Client to Server" API for use with external apps. 

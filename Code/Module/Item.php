@@ -1063,7 +1063,7 @@ class Item extends Controller
             if (array_key_exists('collections', $_REQUEST) && is_array($_REQUEST['collections']) && count($_REQUEST['collections'])) {
                 foreach ($_REQUEST['collections'] as $clct) {
                     $r = q(
-                        "select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' and hubloc_deleted = 0 limit 1",
+                        "select xchan_url, xchan_hash from xchan left join hubloc on hubloc_hash = xchan_hash where hubloc_addr = '%s' and hubloc_deleted = 0 order by hubloc_id desc limit 1",
                         dbesc($clct)
                     );
                     if ($r) {

@@ -3683,9 +3683,7 @@ class Activity
                     logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
                     logger('rejected: ' . print_r($item, true), LOGGER_DATA);
                     // let the sender know we received their comment, but we don't permit spam here.
-                    if ($commentApproval) {
-                        $commentApproval->Reject();
-                    }
+                    $commentApproval?->Reject();
                     return;
                 }
 
