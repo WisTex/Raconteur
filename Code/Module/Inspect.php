@@ -6,22 +6,17 @@ use App;
 use Code\Lib\ObjCache;
 use Code\Web\Controller;
 use Code\Lib\Activity;
-use Code\Lib\Channel;
 
 class Inspect extends Controller
 {
-
     public function get()
     {
-
         $output = EMPTY_STR;
 
         if (!is_site_admin()) {
             notice(t('Permission denied.') . EOL);
             return $output;
         }
-
-        $sys = Channel::get_system();
 
         if (argc() > 2) {
             $item_type = argv(1);
@@ -87,8 +82,7 @@ class Inspect extends Controller
                 $output .= '<pre>' . print_array($item) . '</pre>' . EOL . EOL;
             }
         }
-
-
+        
         return $output;
     }
 }
