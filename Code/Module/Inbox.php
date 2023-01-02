@@ -9,6 +9,7 @@ use App;
 use Code\Web\HTTPSig;
 use Code\Lib\ActivityStreams;
 use Code\Lib\Activity;
+use Code\Lib\ActivityPub;
 use Code\Web\Controller;
 use Code\Lib\Config;
 use Code\Lib\PConfig;
@@ -16,9 +17,12 @@ use Code\Lib\Channel;
 
 class Inbox extends Controller
 {
+    public $item = null;
 
     public function post()
     {
+
+        $observer_hash = '';
 
         // This SHOULD be handled by the webserver, but in the RFC it is only indicated as
         // a SHOULD and not a MUST, so some webservers fail to reject appropriately.
@@ -303,17 +307,13 @@ class Inbox extends Controller
                     }
                     break;
                 case 'Invite':
-                    if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-                        // do follow activity
-                        Activity::follow($channel, $AS);
-                    }
-                    break;
                 case 'Join':
                     if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
                         // do follow activity
                         Activity::follow($channel, $AS);
                     }
                     break;
+
                 case 'Accept':
                     // Activitypub for wordpress sends lowercase 'follow' on accept.
                     // https://github.com/pfefferle/wordpress-activitypub/issues/97
@@ -329,102 +329,16 @@ class Inbox extends Controller
                     break;
             }
 
-            // These activities require permissions
-
-            $item = null;
-
-            switch ($AS->type) {
-                case 'Update':
-                    if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
-                        Activity::actor_store($AS->obj['id'], $AS->obj, true /* force cache refresh */);
-                        break;
-                    }
-                case 'Undo':
-                    if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
-                        // do unfollow activity
-                        Activity::unfollow($channel, $AS);
-                        break;
-                    }
-                case 'Accept':
-                    if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
-                        break;
-                    }
-                case 'Leave':
-                    if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
-                        // do unfollow activity
-                        Activity::unfollow($channel, $AS);
-                        break;
-                    }
-                case 'Tombstone':
-                case 'Delete':
-                    Activity::drop($channel, $observer_hash, $AS);
-                    break;
-                case 'Copy':
-                    if (
-                        $observer_hash && $observer_hash === $AS->actor
-                        && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
-                        && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])
-                    ) {
-                        ActivityPub::copy($AS->obj, $AS->tgt);
-                        break;
-                    }
-                case 'Move':
-                    if (
-                        $observer_hash && $observer_hash === $AS->actor
-                        && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStream::is_an_actor($AS->obj['type'])
-                        && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStream::is_an_actor($AS->tgt['type'])
-                    ) {
-                        ActivityPub::move($AS->obj, $AS->tgt);
-                        break;
-                    }
-                case 'Add':
-                case 'Remove':
-                    // for writeable collections as target, it's best to provide an array and include both the type and the id in the target element.
-                    // If it's just a string id, we'll try to fetch the collection when we receive it and that's wasteful since we don't actually need
-                    // the contents.
-                    if (is_array($AS->obj) && isset($AS->tgt)) {
-                        // The boolean flag enables html cache of the item
-                        $item = Activity::decode_note($AS, true);
-                        break;
-                    }
-
-                case 'Create':
-                case 'Like':
-                case 'Dislike':
-                case 'Announce':
-                case 'Reject':
-                case 'TentativeAccept':
-                case 'TentativeReject':
-                case 'Add':
-                case 'Arrive':
-                case 'Block':
-                case 'Flag':
-                case 'Ignore':
-                case 'Invite':
-                case 'Listen':
-                case 'Move':
-                case 'Offer':
-                case 'Question':
-                case 'Read':
-                case 'Travel':
-                case 'View':
-                case 'emojiReaction':
-                case 'EmojiReaction':
-                case 'EmojiReact':
-                    // These require a resolvable object structure
-                    if (is_array($AS->obj)) {
-                        // The boolean flag enables html cache of the item
-                        $item = Activity::decode_note($AS, true);
-                    } else {
-                        logger('unresolved object: ' . print_r($AS->obj, true));
-                    }
-                    break;
-                default:
-                    break;
+            if (! $this->APDispatch($channel, $observer_hash, $AS)) {
+                if (is_array($AS->obj)) {
+                    // The boolean flag enables html cache of the item
+                    $this->item = Activity::decode_note($AS, true);
+                } else {
+                    logger('unresolved object: ' . print_r($AS->obj, true));
+                }
             }
 
-            if ($item) {
-
+            if ($this->item) {
                 if (!is_array($AS->obj)) {
                     // The initial object fetch failed using the sys channel credentials.
                     // Try again using the delivery channel credentials.
@@ -434,12 +348,12 @@ class Inbox extends Controller
                     $o = Activity::fetch($AS->obj, $channel);
                     if ($o) {
                         $AS->obj = $o;
-                        $item = array_merge(Activity::decode_note($AS), $item);
+                        $this->item = array_merge(Activity::decode_note($AS), $this->item);
                     }
                 }
 
-                logger('parsed_item: ' . print_r($item, true), LOGGER_DATA);
-                Activity::store($channel, $observer_hash, $AS, $item);
+                logger('parsed_item: ' . print_r($this->item, true), LOGGER_DATA);
+                Activity::store($channel, $observer_hash, $AS, $this->item);
             }
         }
 
@@ -448,5 +362,70 @@ class Inbox extends Controller
 
     public function get()
     {
+    }
+
+    public function APDispatch($channel, $observer_hash, $AS)
+    {
+        if ($AS->type === 'Update') {
+            if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])) {
+                Activity::actor_store($AS->obj['id'], $AS->obj, true /* force cache refresh */);
+                return true;
+            }
+        }
+        if ($AS->type === 'Undo') {
+            if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Follow') {
+                // do unfollow activity
+                Activity::unfollow($channel, $AS);
+                return true;
+            }
+        }
+        if ($AS->type === 'Accept') {
+            if (is_array($AS->obj) && array_key_exists('type', $AS->obj) && (ActivityStreams::is_an_actor($AS->obj['type']) || $AS->obj['type'] === 'Member')) {
+                return true;
+            }
+        }
+        if ($AS->type === 'Leave') {
+            if ($AS->obj && is_array($AS->obj) && array_key_exists('type', $AS->obj) && $AS->obj['type'] === 'Group') {
+                // do unfollow activity
+                Activity::unfollow($channel, $AS);
+                return true;
+            }
+        }
+        if (in_array($AS->type, ['Tombstone', 'Delete'])) {
+            Activity::drop($channel, $observer_hash, $AS);
+            return true;
+        }
+
+        if ($AS->type === 'Copy') {
+            if (
+                $observer_hash && $observer_hash === $AS->actor
+                && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])
+                && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStreams::is_an_actor($AS->tgt['type'])
+            ) {
+                ActivityPub::copy($AS->obj, $AS->tgt);
+                return true;
+            }
+        }
+        if ($AS->type === 'Move') {
+            if (
+                $observer_hash && $observer_hash === $AS->actor
+                && is_array($AS->obj) && array_key_exists('type', $AS->obj) && ActivityStreams::is_an_actor($AS->obj['type'])
+                && is_array($AS->tgt) && array_key_exists('type', $AS->tgt) && ActivityStreams::is_an_actor($AS->tgt['type'])
+            ) {
+                ActivityPub::move($AS->obj, $AS->tgt);
+                return true;
+            }
+        }
+        if (in_array($AS->type, ['Add', 'Remove'])) {
+            // for writeable collections as target, it's best to provide an array and include both the type and the id in the target element.
+            // If it's just a string id, we'll try to fetch the collection when we receive it and that's wasteful since we don't actually need
+            // the contents.
+            if (is_array($AS->obj) && isset($AS->tgt)) {
+                // The boolean flag enables html cache of the item
+                $this->item = Activity::decode_note($AS, true);
+                return true;
+            }
+        }
+        return false;
     }
 }
