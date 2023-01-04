@@ -54,6 +54,22 @@ class Notifications implements WidgetInterface
             ];
 
             $notifications[] = [
+                'type' => 'moderate',
+                'icon' => 'home',
+                'severity' => 'danger',
+                'label' => t('New Moderated Entries'),
+                'title' => t('New Moderated Activities'),
+                'viewall' => [
+                    'url' => 'moderate',
+                    'label' => t('View moderation queue')
+                ],
+                'markall' => [
+                    'label' => t('Mark all notifications seen')
+                ]
+            ];
+
+
+            $notifications[] = [
                 'type' => 'all_events',
                 'icon' => 'calendar',
                 'severity' => 'secondary',
