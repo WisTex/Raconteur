@@ -447,6 +447,45 @@ class Ping extends Controller
             json_return_and_die(['notify' => $local_result]);
         }
 
+        if (argc() > 1 && (argv(1) === 'moderate')) {
+            $local_result = [];
+
+            $sql_extra .= " and item_wall = 1 ";
+            $item_normal_moderate = item_normal_moderate();
+
+            $loadtime = get_loadtime('channel');
+
+            $r = q(
+                "SELECT * FROM item 
+				WHERE uid = %d
+				AND author_xchan != '%s'
+				$seenstr
+                $approvals
+				$item_normal_moderate
+				$sql_extra
+				AND item_blocked = 4
+				ORDER BY created DESC
+				LIMIT 300",
+                intval(local_channel()),
+                dbesc($ob_hash)
+            );
+            if ($r) {
+                xchan_query($r);
+                foreach ($r as $item) {
+                    $z = Enotify::format($item);
+
+                    if ($z) {
+                        $z['notify_link'] = str_replace('/display/','/moderate/', $z['notify_link']);
+                        $local_result[] = $z;
+                    }
+                }
+            }
+
+            json_return_and_die(['notify' => $local_result]);
+        }
+
+
+
         if ((argc() > 1 && (argv(1) === 'register')) && is_site_admin()) {
             $result = [];
 
@@ -663,6 +702,15 @@ class Ping extends Controller
             $result['home'] = 0;
         }
 
+        if ($vnotify & VNOTIFY_MODERATE) {
+            $mods = q("SELECT COUNT(id) AS total from item where uid = %d and item_blocked = %d",
+                intval(local_channel()),
+                intval(ITEM_MODERATED)
+            );
+            if ($mods) {
+                $result['moderate'] = intval($mods[0]['total']);
+            }
+        }
 
         if ($vnotify & VNOTIFY_INTRO) {
             $intr = q(

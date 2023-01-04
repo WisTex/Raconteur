@@ -621,7 +621,7 @@ function notificationsUpdate(cached_data) {
 }
 					  
 function handleNotifications(data) {
-	if(data.stream || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums) {
+	if(data.stream || data.home || data.intros || data.register || data.mail || data.all_events || data.notify || data.files || data.pubs || data.forums || data.moderate) {
 		$('.notifications-btn').css('opacity', 1);
 		$('#no_notifications').hide();
         $('#notifications_wrapper').show();
@@ -635,11 +635,11 @@ function handleNotifications(data) {
 
 	}
 
-	if(data.home || data.intros || data.register || data.mail || data.notify || data.files) {
+	if(data.home || data.intros || data.register || data.mail || data.notify || data.files || data.moderate) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-circle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-triangle');        
 	}
-	if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files) {
+	if(!data.home && !data.intros && !data.register && !data.mail && !data.notify && !data.files && !data.moderate) {
 		$('.notifications-btn-icon').removeClass('fa-exclamation-triangle');
 		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
 	}
