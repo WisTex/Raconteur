@@ -6,17 +6,22 @@ use Code\Daemon\Run;
 
 class CommentApproval
 {
-    protected $channel;
-    protected $item;
+    protected $channel = null;
+    protected $item = null;
 
     public function __construct($channel, $item)
     {
-        $this->channel = $channel;
-        $this->item = $item;
+        if (Config::Get('system', 'use_fep5624')) {
+            $this->channel = $channel;
+            $this->item = $item;
+        }
     }
 
     public function Accept()
     {
+        if (!$this->item) {
+            return;
+        }
         $obj = $this->item['obj'];
         if (! is_array($obj)) {
             $obj = json_decode($obj, true);
@@ -63,6 +68,9 @@ class CommentApproval
 
     public function Reject()
     {
+        if (!$this->item) {
+            return;
+        }
         $obj = $this->item['obj'];
         if (! is_array($obj)) {
             $obj = json_decode($obj, true);

@@ -127,7 +127,7 @@ class Channel
                 $notify += intval($_POST['notify' . $x]);
             }
         }
-        for ($x = 1; $x <= 16; $x++) {
+        for ($x = 1; $x <= 17; $x++) {
             if(isset($_POST['vnotify' . $x])) {
                 $vnotify += intval($_POST['vnotify' . $x]);
             }
@@ -518,6 +518,7 @@ class Channel
             '$vnotify14' => ['vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no],
             '$vnotify15' => ['vnotify15', t('Unseen group posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no],
             '$vnotify16' => ((is_site_admin()) ? ['vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no] : []),
+            '$vnotify17' => ['vnotify17', t('Moderated Activities'), ($vnotify & VNOTIFY_MODERATE), VNOTIFY_MODERATE, t('Recommended'), $yes_no],
             '$desktop_notifications_info' => t('Desktop notifications are unavailable because the required browser permission has not been granted'),
             '$desktop_notifications_request' => t('Grant permission'),
             '$mailhost' => ['mailhost', t('Email notifications sent from (hostname)'), get_pconfig(local_channel(), 'system', 'email_notify_host', App::get_hostname()), sprintf(t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'), App::get_hostname())],
