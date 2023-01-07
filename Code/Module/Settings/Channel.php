@@ -25,7 +25,7 @@ use Code\Render\Theme;
 class Channel
 {
 
-    protected $autoperms = 0;
+    protected $autoperms;
     protected $publish = 0;
 
     public function post()
