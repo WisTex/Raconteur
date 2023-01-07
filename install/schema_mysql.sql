@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS `channel` (
   `channel_startpage` varchar(255) NOT NULL DEFAULT '',
   `channel_pubkey` text NOT NULL,
   `channel_prvkey` text NOT NULL,
-  `channel_notifyflags` int unsigned NOT NULL DEFAULT 65535,
+  `channel_notifyflags` int unsigned NOT NULL DEFAULT 1073741823,
   `channel_pageflags` int unsigned NOT NULL DEFAULT 0 ,
   `channel_dirdate` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
   `channel_lastpost` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
