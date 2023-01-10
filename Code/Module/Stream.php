@@ -313,9 +313,9 @@ class Stream extends Controller
             }
 
             if ($x || $vg) {
-                $title = replace_macros(Theme::get_template("section_title.tpl"), array(
+                $title = replace_macros(Theme::get_template("section_title.tpl"), [
                     '$title' => sprintf(t('Access list: %s'), (($vg) ?: $x['gname']))
-                ));
+                ]);
             }
 
             $o = $title . $status_editor;
@@ -667,7 +667,7 @@ class Stream extends Controller
             }
         }
 
-        if ($update_unseen && (!(isset($_SESSION['sudo']) && $_SESSION['sudo']))) {
+        if ($update_unseen && empty($_SESSION['sudo'])) {
             $x = ['channel_id' => local_channel(), 'update' => 'unset'];
             Hook::call('update_unseen', $x);
             if ($x['update'] === 'unset' || intval($x['update'])) {
