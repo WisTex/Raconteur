@@ -583,6 +583,9 @@ class Stream extends Controller
             } else {
                 $ordering = 'commented';
             }
+
+            $null_distance = ($distance) ? " and lat != 0.0 AND lon != 0.0" : "";
+
             $base_query = ($distance)
                 ?  "SELECT item.parent AS item_id, 
                     (6371 * acos(cos(radians(lat) )
@@ -596,10 +599,11 @@ class Stream extends Controller
             if ($this->loading) {
                 // Fetch a page full of parent items for this page
 
+
                 $r = q("$base_query 
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
-					WHERE true $uids $item_thread_top $item_normal
+					WHERE true $uids $item_thread_top $item_normal $null_distance
 					AND item.mid = item.parent_mid
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets
@@ -611,7 +615,7 @@ class Stream extends Controller
                 $r = q("$base_query
 					left join abook on ( item.owner_xchan = abook.abook_xchan $abook_uids )
 					$net_query
-					WHERE true $uids $item_normal_update $simple_update
+					WHERE true $uids $item_normal_update $simple_update $null_distance
 					and (abook.abook_blocked = 0 or abook.abook_flags is null)
 					$sql_extra3 $sql_extra $sql_options $sql_nets $net_query2");
             }
