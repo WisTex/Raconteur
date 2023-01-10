@@ -1666,8 +1666,12 @@ function loadText(textRegion,data) {
 
 function addeditortext(data) {
 	if(plaintext == 'none') {
-		let currentText = $("#profile-jot-text").val();
-		$("#profile-jot-text").val(currentText + data);
+		let textarea = document.getElementById('profile-jot-text');
+		if (textarea) {
+			textarea.value = currentText + data
+			let evt = new CustomEvent('input');
+			textarea.dispatchEvent(evt);
+		}
 	}
 }
 

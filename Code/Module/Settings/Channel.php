@@ -112,6 +112,9 @@ class Channel
                 PConfig::Set(local_channel(),'system', 'set_location', $lat . ',' . $lon);
             }
         }
+        else {
+            PConfig::Set(local_channel(),'system', 'set_location', '');
+        }
 
         $pageflags = $channel['channel_pageflags'];
         $existing_adult = (($pageflags & PAGE_ADULT) ? 1 : 0);
