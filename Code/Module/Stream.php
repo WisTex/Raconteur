@@ -584,7 +584,7 @@ class Stream extends Controller
                 $ordering = 'commented';
             }
 
-            $null_distance = ($distance) ? " and lat != 0.0 AND lon != 0.0" : "";
+            $null_distance = ($distance) ? " AND lat != 0.0 AND lon != 0.0 " : "";
 
             $base_query = ($distance)
                 ?  "SELECT item.parent AS item_id, 
