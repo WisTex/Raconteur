@@ -25,7 +25,7 @@ use Code\Render\Theme;
 class Channel
 {
 
-    protected $autoperms = 0;
+    protected $autoperms;
     protected $publish = 0;
 
     public function post()
@@ -111,6 +111,9 @@ class Channel
             if ($valid) {
                 PConfig::Set(local_channel(),'system', 'set_location', $lat . ',' . $lon);
             }
+        }
+        else {
+            PConfig::Set(local_channel(),'system', 'set_location', '');
         }
 
         $pageflags = $channel['channel_pageflags'];

@@ -183,13 +183,15 @@ let postSaveTimer = null;
                 $("#profile-jot-text").addClass('jot-expanded');
                 $("#profile-jot-summary").addClass('jot-expanded');
 
- //               let bodytextarea = document.querySelector('#profile-jot-text');
- //               if (typeof bodytextarea != "undefined") {
- //                   bodytextarea.addEventListener('input', function handlechange(event) {
- //                       imagewatcher(event)
- //                   });
- //               }
-
+                /*
+                let bodytextarea = document.querySelector('#profile-jot-text');
+                if (typeof bodytextarea != "undefined") {
+                    bodytextarea.addEventListener('input', function handlechange(event) {
+                        imagewatcher(event)
+                    });
+                }
+                */
+                
                 {{if $bbco_autocomplete}}
                 $("#profile-jot-text").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
                 $("#profile-jot-summary").bbco_autocomplete('{{$bbco_autocomplete}}'); // autocomplete bbcode
@@ -217,7 +219,8 @@ let postSaveTimer = null;
     }
 
     function imagewatcher(event) {
-        console.log(event.target.value);
+        let imgfind = /\[[iz]mg.*?alt="(.*?)".*?](.*?)\[/.exec(event.target.value)
+        console.log(imgfind);
     }
     function enableOnUser(){
         if(editor)

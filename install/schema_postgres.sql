@@ -262,7 +262,7 @@ CREATE TABLE "channel" (
   "channel_startpage" text NOT NULL DEFAULT '',
   "channel_pubkey" text NOT NULL,
   "channel_prvkey" text NOT NULL,
-  "channel_notifyflags" bigint  NOT NULL DEFAULT '65535',
+  "channel_notifyflags" bigint  NOT NULL DEFAULT '1073741823',
   "channel_pageflags" bigint  NOT NULL DEFAULT '0',
   "channel_dirdate" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
   "channel_lastpost" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
