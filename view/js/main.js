@@ -1668,7 +1668,7 @@ function addeditortext(data) {
 	if(plaintext == 'none') {
 		let textarea = document.getElementById('profile-jot-text');
 		if (textarea) {
-			textarea.value = currentText + data
+			textarea.value = textarea.value + data
 			let evt = new CustomEvent('input');
 			textarea.dispatchEvent(evt);
 		}
