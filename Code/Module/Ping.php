@@ -453,8 +453,6 @@ class Ping extends Controller
             $sql_extra .= " and item_wall = 1 ";
             $item_normal_moderate = item_normal_moderate();
 
-            $loadtime = get_loadtime('channel');
-
             $r = q(
                 "SELECT * FROM item 
 				WHERE uid = %d
@@ -483,8 +481,6 @@ class Ping extends Controller
 
             json_return_and_die(['notify' => $local_result]);
         }
-
-
 
         if ((argc() > 1 && (argv(1) === 'register')) && is_site_admin()) {
             $result = [];
@@ -794,58 +790,8 @@ class Ping extends Controller
             $result['birthdays'] = 0;
         }
 
-/*
-        if ($vnotify & VNOTIFY_FORUMS) {
-            $forums = get_forum_channels(local_channel());
-
-            if ($forums) {
-                $perms_sql = item_permissions_sql(local_channel()) . item_normal();
-                $fcount = count($forums);
-                $forums['total'] = 0;
-
-                for ($x = 0; $x < $fcount; $x++) {
-                    $ttype = TERM_FORUM;
-                    $p = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . protect_sprintf(dbesc($forums[$x]['xchan_name'])) . "'");
-
-                    $p = ids_to_querystr($p, 'parent');
-                    $pquery = (($p) ? "OR parent IN ( $p )" : '');
-
-                    $r = q(
-                        "select sum(item_unseen) as unseen from item 
-						where uid = %d and ( owner_xchan = '%s' $pquery ) and item_unseen = 1 $perms_sql ",
-                        intval(local_channel()),
-                        dbesc($forums[$x]['xchan_hash'])
-                    );
-                    if ($r[0]['unseen']) {
-                        $forums[$x]['notify_link'] = (($forums[$x]['private_forum']) ? $forums[$x]['xchan_url'] : z_root() . '/stream/?f=&pf=1&cid=' . $forums[$x]['abook_id']);
-                        $forums[$x]['name'] = $forums[$x]['xchan_name'];
-                        $forums[$x]['addr'] = $forums[$x]['xchan_addr'];
-                        $forums[$x]['url'] = $forums[$x]['xchan_url'];
-                        $forums[$x]['photo'] = $forums[$x]['xchan_photo_s'];
-                        $forums[$x]['unseen'] = $r[0]['unseen'];
-                        $forums[$x]['private_forum'] = (($forums[$x]['private_forum']) ? 'lock' : '');
-                        $forums[$x]['message'] = (($forums[$x]['private_forum']) ? t('Private group') : t('Public group'));
-
-                        $forums['total'] = $forums['total'] + $r[0]['unseen'];
-
-                        unset($forums[$x]['abook_id']);
-                        unset($forums[$x]['xchan_hash']);
-                        unset($forums[$x]['xchan_name']);
-                        unset($forums[$x]['xchan_url']);
-                        unset($forums[$x]['xchan_photo_s']);
-                    } else {
-                        unset($forums[$x]);
-                    }
-                }
-                $result['forums'] = $forums['total'];
-                unset($forums['total']);
-
-                $result['forums_sub'] = $forums;
-            }
-        }
-*/
         // Mark all stream notifications seen if all three of them are caught up.
-        // This also resets the pconfig storage for items_seen
+        // This also resets the pconfig storage for seen_items
 
         if ((!$my_activity) && (!(intval($result['home']) + intval($result['stream']) + intval($result['pubs'])))) {
             PConfig::Delete(local_channel(), 'system', 'seen_items');
