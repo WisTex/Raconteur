@@ -168,7 +168,7 @@ class Enotify
             $action = t('commented on');
 
             if (array_key_exists('item', $params) && in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
-                if (!$vnotify & VNOTIFY_LIKE) {
+                if (!($vnotify & VNOTIFY_LIKE)) {
                     pop_lang();
                     return;
                 }
