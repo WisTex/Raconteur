@@ -3,7 +3,7 @@ Put your webserver to sleep.
 ----
 
 cd [zapdir]
-mysqldump -u [username] –p [password]  --no-create-info [zap-dbname] > /backupdir/dump.sql
+mysqldump -u [username] -p [password]  --no-create-info [zap-dbname] > /backupdir/dump.sql
 cp -rp cache store .htconfig.php /backupdir
 cd ..
 git clone git@codeberg.org:streams/streams
