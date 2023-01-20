@@ -135,7 +135,7 @@ class Channel extends Controller
 
         // handle zot6 channel discovery
 
-        if (Libzot::is_zot_request()) {
+        if (Libzot::is_nomad_request()) {
             $sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 
             if ($sigdata && $sigdata['signer'] && $sigdata['header_valid']) {

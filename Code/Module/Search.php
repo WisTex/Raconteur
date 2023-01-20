@@ -55,7 +55,7 @@ class Search extends Controller
         Navbar::set_selected('Search');
 
         $format = (($_REQUEST['module_format']) ?: '');
-        if (ActivityStreams::is_as_request() || Libzot::is_zot_request()) {
+        if (ActivityStreams::is_as_request() || Libzot::is_nomad_request()) {
             $format = 'json';
         }
         if ($format !== '') {

@@ -186,7 +186,7 @@ class Item extends Controller
             as_return_and_die($i, $chan);
         }
 
-        if (Libzot::is_zot_request()) {
+        if (Libzot::is_nomad_request()) {
             $item_uuid = argv(1);
 
             if (!$item_uuid) {
