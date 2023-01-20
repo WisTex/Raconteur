@@ -453,10 +453,6 @@ class Activity
                         $ret[] = ['ttype' => TERM_HASHTAG, 'url' => $t['href'], 'term' => escape_tags((str_starts_with($t['name'], '#')) ? substr($t['name'], 1) : $t['name'])];
                         break;
 
-                    case 'topicalCollection':
-                        $ret[] = ['ttype' => TERM_PCATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name'])];
-                        break;
-
                     case 'Category':
                         $ret[] = ['ttype' => TERM_CATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name'])];
                         break;
@@ -502,12 +498,6 @@ class Activity
                         // An id is required so if there is no url in the taxonomy, ignore it and keep going.
                         if ($t['url']) {
                             $ret[] = ['id' => $t['url'], 'name' => '#' . $t['term']];
-                        }
-                        break;
-
-                    case TERM_PCATEGORY:
-                        if ($t['url'] && $t['term']) {
-                            $ret[] = ['type' => 'topicalCollection', 'href' => $t['url'], 'name' => $t['term']];
                         }
                         break;
 
@@ -801,8 +791,10 @@ class Activity
             }
         }
 
-        if ($item['mid'] !== $item['parent_mid']) {
-
+        if ($item['mid'] === $item['parent_mid']) {
+            $activity['isContainedConversation'] = true;
+        }
+        else {
             // inReplyTo needs to be set in the activity for followup actions (Like, Dislike, Announce, etc.),
             // but *not* for comments and RSVPs, where it should only be present in the object
 
@@ -827,11 +819,12 @@ class Activity
                 $cnv = $item['parent_mid'];
             }
         }
-        if (isset($cnv) && $cnv) {
+        if (!empty($cnv)) {
             if (is_string($cnv) && str_starts_with($cnv, z_root())) {
                 $cnv = str_replace(['/item/', '/activity/'], ['/conversation/', '/conversation/'], $cnv);
             }
             $activity['context'] = $cnv;
+            $activity['conversation'] = $cnv;
         }
 
         if (intval($item['item_private']) === 2) {
@@ -1174,6 +1167,7 @@ class Activity
         $activity['attributedTo'] = self::encode_person($item['author'],false);
 
         if ($item['mid'] === $item['parent_mid']) {
+            $activity['isContainedConversation'] = true;
             if (in_array($activity['commentPolicy'], ['public', 'authenticated'])) {
                 $activity['canReply'] = ACTIVITY_PUBLIC_INBOX;
             } elseif (in_array($activity['commentPolicy'], ['contacts', 'specific'])) {
@@ -1199,11 +1193,12 @@ class Activity
                 $cnv = $item['parent_mid'];
             }
         }
-        if (isset($cnv) && $cnv) {
+        if (!empty($cnv)) {
             if (is_string($cnv) && str_starts_with($cnv, z_root())) {
                 $cnv = str_replace(['/item/', '/activity/'], ['/conversation/', '/conversation/'], $cnv);
             }
             $activity['context'] = $cnv;
+            $activity['conversation'] = $cnv;
         }
 
         // provide ocap access token for private media.
@@ -4573,17 +4568,8 @@ class Activity
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
             'movedTo' => 'as:movedTo',
-            'copiedTo' => 'as:copiedTo',
             'alsoKnownAs' => 'as:alsoKnownAs',
             'EmojiReact' => 'as:EmojiReact',
-            'commentPolicy' => 'nomad:commentPolicy',
-            'topicalCollection' => 'nomad:topicalCollection',
-            'eventRepeat' => 'nomad:eventRepeat',
-            'emojiReaction' => 'nomad:emojiReaction',
-            'expires' => 'nomad:expires',
-            'directMessage' => 'nomad:directMessage',
-            'Category' => 'nomad:Category',
-            'replyTo' => 'nomad:replyTo',
             'PropertyValue' => 'schema:PropertyValue',
             'value' => 'schema:value',
             'discoverable' => 'toot:discoverable',
@@ -4594,6 +4580,16 @@ class Activity
             'canReply' => 'toot:canReply',
             'approval' => 'toot:approval',
             'Identity' => 'fep:Identity',
+            'isContainedConversation' => 'nomad:isContainedConversation',
+            'conversation' => 'nomad:conversation',
+            'commentPolicy' => 'nomad:commentPolicy',
+            'eventRepeat' => 'nomad:eventRepeat',
+            'emojiReaction' => 'nomad:emojiReaction',
+            'expires' => 'nomad:expires',
+            'directMessage' => 'nomad:directMessage',
+            'Category' => 'nomad:Category',
+            'replyTo' => 'nomad:replyTo',
+            'copiedTo' => 'as:copiedTo',
         ];
     }
 

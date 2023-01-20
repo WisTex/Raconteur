@@ -53,11 +53,13 @@ class Search extends Controller
         }
         Navbar::set_selected('Search');
 
-        $format = (($_REQUEST['module_format']) ? $_REQUEST['module_format'] : '');
+        $format = (($_REQUEST['module_format']) ?: '');
+        if (ActivityStreams::is_as_request()) {
+            $format = 'json';
+        }
         if ($format !== '') {
             $this->updating = $this->loading = 1;
         }
-
         $observer = App::get_observer();
         $observer_hash = (($observer) ? $observer['xchan_hash'] : '');
 
