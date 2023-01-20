@@ -3,6 +3,7 @@
 namespace Code\Module;
 
 use App;
+use Code\Lib\Libzot;
 use Code\Web\Controller;
 use Code\Lib\Activity;
 use Code\Lib\ActivityStreams;
@@ -54,7 +55,7 @@ class Search extends Controller
         Navbar::set_selected('Search');
 
         $format = (($_REQUEST['module_format']) ?: '');
-        if (ActivityStreams::is_as_request()) {
+        if (ActivityStreams::is_as_request() || Libzot::is_zot_request()) {
             $format = 'json';
         }
         if ($format !== '') {
