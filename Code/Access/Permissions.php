@@ -60,6 +60,7 @@ class Permissions
 
         $perms = [
             'view_stream'    => t('Grant viewing access to your channel stream and posts'),
+            'search_stream'  => t('Grant search access to your channel stream and posts'),
             'deliver_stream' => t('Will send them your posts and conversations'),
             'view_profile'   => t('Grant viewing access to your profile'),
             'view_contacts'  => t('Grant viewing access to your address book (connections)'),
