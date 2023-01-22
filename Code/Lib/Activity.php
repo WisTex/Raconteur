@@ -1172,7 +1172,7 @@ class Activity
                 $activity['canReply'] = ACTIVITY_PUBLIC_INBOX;
             } elseif (in_array($activity['commentPolicy'], ['contacts', 'specific'])) {
                 $activity['canReply'] = z_root() . '/followers/' . substr($item['author']['xchan_addr'], 0, strpos($item['author']['xchan_addr'], '@'));
-            } elseif (in_array($activity['commentPolicy'], ['self', 'none']) || $item['item_nocomment'] || datetime_convert('UTC', 'UTC', $item['comments_closed']) <= datetime_convert('UTC', 'UTC', 'now')) {
+            } elseif (in_array($activity['commentPolicy'], ['self', 'none']) || $item['item_nocomment'] || datetime_convert('UTC', 'UTC', $item['comments_closed']) <= datetime_convert()) {
                 $activity['canReply'] = [];
             }
         }
@@ -2334,7 +2334,12 @@ class Activity
         if (array_path_exists('endpoints/sharedInbox', $person_obj) && is_string($person_obj['endpoints']['sharedInbox'])) {
             $collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
         }
-
+        if (array_path_exists('endpoints/searchContent', $person_obj) && is_string($person_obj['endpoints']['searchContent'])) {
+            $collections['searchContent'] = $person_obj['endpoints']['searchContent'];
+        }
+        if (array_path_exists('endpoints/searchTags', $person_obj) && is_string($person_obj['endpoints']['searchTags'])) {
+            $collections['searchTags'] = $person_obj['endpoints']['searchTags'];
+        }
         if (isset($person_obj['publicKey']['publicKeyPem'])) {
             if ($person_obj['id'] === $person_obj['publicKey']['owner']) {
                 $pubkey = $person_obj['publicKey']['publicKeyPem'];
