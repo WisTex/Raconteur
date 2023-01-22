@@ -864,7 +864,7 @@ function thread_author_menu($item, $mode = '')
         ];
     }
 
-    if (local_channel()) {
+    if ($local_channel && $item['author_xchan'] !== $channel['channel_hash']) {
         $menu[] = [
             'menu'   => 'superblocksite',
             'title'  => t('Block author\'s site'),
