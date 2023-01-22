@@ -4625,9 +4625,8 @@ class Activity
                 }
 
                 if ($z) {
-                // do not allow somebody to embed a post that was blocked by the site admin
-                // We *will* let them over-rule any blocks they created themselves
-
+                    // do not allow somebody to embed a post that was blocked by the site admin
+                    // We *will* let them over-rule any blocks they created themselves
                     if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                         $s = new Zlib\Share($z);
                         $item['body'] .= "\n\n" . $s->bbcode();
