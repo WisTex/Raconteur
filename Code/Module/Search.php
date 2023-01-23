@@ -36,6 +36,10 @@ class Search extends Controller
         if (x($_REQUEST, 'search')) {
             App::$data['search'] = escape_tags($_REQUEST['search']);
         }
+
+        $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
+        $this->profile_uid = $channel ? $channel['channel_id'] : 0;
+
     }
 
 
@@ -48,6 +52,7 @@ class Search extends Controller
                 return;
             }
         }
+
 
         if ($this->loading) {
             $_SESSION['loadtime'] = datetime_convert();
