@@ -36,6 +36,10 @@ class Search extends Controller
         if (x($_REQUEST, 'search')) {
             App::$data['search'] = escape_tags($_REQUEST['search']);
         }
+
+        $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
+        $this->profile_uid = $channel ? $channel['channel_id'] : 0;
+
     }
 
 
@@ -48,6 +52,7 @@ class Search extends Controller
                 return;
             }
         }
+
 
         if ($this->loading) {
             $_SESSION['loadtime'] = datetime_convert();
@@ -89,7 +94,7 @@ class Search extends Controller
 
         // ActivityStreams object fetches from the navbar
 
-        if (local_channel() && strpos($search, 'https://') === 0 && (!$this->updating) && (!$this->loading)) {
+        if (local_channel() && str_starts_with($search, 'https://') && (!$this->updating) && (!$this->loading)) {
             logger('searching for ActivityPub');
             if (($pos = strpos($search,'b64.')) !== false) {
                 $search = substr($search,$pos + 4);
@@ -112,7 +117,7 @@ class Search extends Controller
                 if ($AS->is_valid() && isset($AS->data['type'])) {
                     if (is_array($AS->obj)) {
                         // matches Collection and orderedCollection
-                        if (isset($AS->obj['type']) && strpos($AS->obj['type'], 'Collection') !== false) {
+                        if (isset($AS->obj['type']) && str_contains($AS->obj['type'], 'Collection')) {
                             // Collections are awkward to process because they can be huge.
                             // Our strategy is to limit a navbar search to 100 Collection items
                             // and only fetch the first 10 conversations in the foreground.
@@ -205,25 +210,25 @@ class Search extends Controller
             }
         }
 
-        if (strpos($search, '#') === 0) {
+        if (str_starts_with($search, '#')) {
             $tag = true;
             $search = substr($search, 1);
         }
-        if (strpos($search, '@') === 0 && $format === '') {
+        if (str_starts_with($search, '@') && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
-        if (strpos($search, '!') === 0 && $format === '') {
+        if (str_starts_with($search, '!') && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
-        if (strpos($search, '?') === 0 && $format === '') {
+        if (str_starts_with($search, '?') && $format === '') {
             $search = substr($search, 1);
             goaway(z_root() . '/help' . '?f=1&navsearch=1&search=' . $search);
         }
 
         // look for a naked webbie
-        if (strpos($search, '@') !== false && strpos($search, 'http') !== 0 && $format === '') {
+        if (str_contains($search, '@') && !str_starts_with($search, 'http') && $format === '') {
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
 
@@ -300,9 +305,7 @@ class Search extends Controller
 
         $item_normal = item_normal_search();
         $pub_sql = item_permissions_sql(0, $observer_hash);
-
-        $sys = Channel::get_system();
-
+        
         if (($this->updating) && ($this->loading)) {
             $itemspage = get_pconfig(local_channel(), 'system', 'itemspage');
             App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
