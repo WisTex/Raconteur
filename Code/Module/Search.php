@@ -325,6 +325,9 @@ class Search extends Controller
                     && perm_is_allowed($oneChannel['channel_id'], get_observer_hash(), 'search_stream')) {
                         $searchables[] = $oneChannel['channel_id'];
                 }
+                if (local_channel()) {
+                    $searchables[] = local_channel();
+                }
             }
             if ($searchables) {
                 $searchIds = implode(',', $searchables);
@@ -347,16 +350,15 @@ class Search extends Controller
                 // Ideally these results would be merged but this can be difficult
                 // and results in lots of duplicated content and/or messed up pagination
 
-                if ($search_channel) {
+                if (!Channel::is_system($search_channel['channel_id'])) {
                     $r = q(
                         "SELECT mid, MAX(id) as item_id from item where uid = %d
-                        and author_xchan = '%s'
+                        and item_wall = 1
                         $pub_sql 
                         $item_normal
                         $sql_extra
                         group by mid, created order by created desc $pager_sql ",
-                        intval($search_channel['channel_id']),
-                        dbesc($search_channel['channel_hash'])
+                        intval($search_channel['channel_id'])
                     );
                 }
                 if (!$r) {
