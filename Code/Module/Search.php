@@ -3,6 +3,7 @@
 namespace Code\Module;
 
 use App;
+use Code\Lib\Libprofile;
 use Code\Lib\Libzot;
 use Code\Web\Controller;
 use Code\Lib\Activity;
@@ -39,7 +40,7 @@ class Search extends Controller
 
         $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
         $this->profile_uid = $channel ? $channel['channel_id'] : 0;
-
+        Libprofile::load($channel['channel_address'], 0);
     }
 
 
@@ -49,10 +50,21 @@ class Search extends Controller
         if (get_config('system', 'block_public_search', 1)) {
             if ((!local_channel()) && (!remote_channel())) {
                 notice(t('Public access denied.') . EOL);
-                return;
+                return '';
             }
         }
 
+        if ($this->profile_uid) {
+            $search_channel = Channel::from_id($this->profile_uid);
+            if ($search_channel) {
+                if (! Channel::is_system($search_channel['channel_id'])) {
+                    if (!perm_is_allowed($search_channel['channel_id'], get_observer_hash(), 'view_stream')
+                        && !perm_is_allowed($search_channel['channel_id'], get_observer_hash(), 'search_stream')) {
+                            http_status_exit(403, 'Permission denied.');
+                    }
+                }
+            }
+        }
 
         if ($this->loading) {
             $_SESSION['loadtime'] = datetime_convert();
@@ -319,21 +331,23 @@ class Search extends Controller
                 // Ideally these results would be merged but this can be difficult
                 // and results in lots of duplicated content and/or messed up pagination
 
-                if (local_channel()) {
+                if ($search_channel) {
                     $r = q(
                         "SELECT mid, MAX(id) as item_id from item where uid = %d
+                        and author_xchan = '%s' 
                         $item_normal
                         $sql_extra
                         group by mid, created order by created desc $pager_sql ",
-                        intval(local_channel())
+                        intval($search_channel['channel_id']),
+                        dbesc($search_channel['channel_hash'])
                     );
                 }
-                if (!$r) {
-                    $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
-                        $item_normal
-                        $sql_extra
-                        group by mid, created order by created desc $pager_sql");
-                }
+//                if (!$r) {
+//                    $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
+//                        $item_normal
+//                        $sql_extra
+//                        group by mid, created order by created desc $pager_sql");
+//                }
                 if ($r) {
                     $str = ids_to_querystr($r, 'item_id');
                     $r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
