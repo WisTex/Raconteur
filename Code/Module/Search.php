@@ -317,6 +317,22 @@ class Search extends Controller
 
         $item_normal = item_normal_search();
         $pub_sql = item_permissions_sql(0, $observer_hash);
+        $searchables = [];
+        $allChannels = q("select channel_id from channel where channel_removed = 0");
+        if ($allChannels) {
+            foreach ($allChannels as $oneChannel) {
+                if (perm_is_allowed($oneChannel['channel_id'], get_observer_hash(), 'view_stream')
+                    && perm_is_allowed($oneChannel['channel_id'], get_observer_hash(), 'search_stream')) {
+                        $searchables[] = $oneChannel['channel_id'];
+                }
+            }
+            if ($searchables) {
+                $searchIds = implode(',', $searchables);
+            }
+            else {
+                $searchIds = 0;
+            }
+        }
         
         if (($this->updating) && ($this->loading)) {
             $itemspage = get_pconfig(local_channel(), 'system', 'itemspage');
@@ -334,7 +350,8 @@ class Search extends Controller
                 if ($search_channel) {
                     $r = q(
                         "SELECT mid, MAX(id) as item_id from item where uid = %d
-                        and author_xchan = '%s' 
+                        and author_xchan = '%s'
+                        $pub_sql 
                         $item_normal
                         $sql_extra
                         group by mid, created order by created desc $pager_sql ",
@@ -342,12 +359,14 @@ class Search extends Controller
                         dbesc($search_channel['channel_hash'])
                     );
                 }
-//                if (!$r) {
-//                    $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
-//                        $item_normal
-//                        $sql_extra
-//                        group by mid, created order by created desc $pager_sql");
-//                }
+                if (!$r) {
+                    $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
+                        $item_normal
+                        $sql_extra
+                        and uid in ($searchIds)
+                        group by mid, created order by created desc $pager_sql");
+                }
+
                 if ($r) {
                     $str = ids_to_querystr($r, 'item_id');
                     $r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
