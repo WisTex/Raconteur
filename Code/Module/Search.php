@@ -38,15 +38,6 @@ class Search extends Controller
         if (x($_REQUEST, 'search')) {
             App::$data['search'] = escape_tags($_REQUEST['search']);
         }
-
-
-        else {
-            $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
-            if ($channel) {
-                $this->search_channel = $channel;
-                Libprofile::load($channel['channel_address'], 0);
-            }
-        }
     }
 
 
@@ -62,6 +53,14 @@ class Search extends Controller
 
         if ($this->profile_uid) {
             $this->search_channel = Channel::from_id($this->profile_uid);
+        }
+
+        if (! $this->search_channel) {
+            $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
+            if ($channel) {
+                $this->search_channel = $channel;
+                Libprofile::load($channel['channel_address'], 0);
+            }
         }
 
         if ($this->search_channel) {
@@ -105,7 +104,7 @@ class Search extends Controller
             $saved_id = 'tag=' . urlencode($_GET['tag']);
         }
 
-        $output .= search($search, 'search-box', '/search', (bool)local_channel());
+        $output .= search($search, 'search-box', '/search' . ((argc() > 1) ? '/' . argv(1) : ''), (bool)local_channel());
 
         // ActivityStreams object fetches from the navbar
 
