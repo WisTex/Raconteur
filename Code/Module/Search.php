@@ -65,9 +65,9 @@ class Search extends Controller
 
         if ($this->search_channel) {
             if (! Channel::is_system($this->search_channel['channel_id'])) {
-                if (!perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'view_stream')
-                    && !perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'search_stream')) {
-                        http_status_exit(403, 'Permission denied.');
+                if (!(perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'view_stream')
+                      && perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'search_stream'))) {
+                    http_status_exit(403, 'Permission denied.');
                 }
             }
         }
@@ -109,119 +109,7 @@ class Search extends Controller
         // ActivityStreams object fetches from the navbar
 
         if (local_channel() && str_starts_with($search, 'https://') && (!$this->updating) && (!$this->loading)) {
-            logger('searching for ActivityPub');
-            if (($pos = strpos($search,'b64.')) !== false) {
-                $search = substr($search,$pos + 4);
-                if (($pos2 = strpos($search,'?')) !== false) {
-                    $search = substr($search,0,$pos2);
-                }
-                $search = base64_decode($search);
-            }
-            logger('Search: ' . $search);
-            $url = htmlspecialchars_decode($search);
-            $channel = App::get_channel();
-            $hash = EMPTY_STR;
-            $j = Activity::fetch($url, $channel);
-            if ($j) {
-                if (isset($j['type']) && ActivityStreams::is_an_actor($j['type'])) {
-                    Activity::actor_store($j['id'], $j, true);
-                    goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
-                }
-                $AS = new ActivityStreams($j, null, true);
-                if ($AS->is_valid() && isset($AS->data['type'])) {
-                    if (is_array($AS->obj)) {
-                        // matches Collection and orderedCollection
-                        if (isset($AS->obj['type']) && str_contains($AS->obj['type'], 'Collection')) {
-                            // Collections are awkward to process because they can be huge.
-                            // Our strategy is to limit a navbar search to 100 Collection items
-                            // and only fetch the first 10 conversations in the foreground.
-                            // We'll queue the rest, and then send you to a page where
-                            // you can see something we've imported.
-                            // You should start to see notifications as other conversations
-                            // are fetched in the background while you're looking at the first ones.
-
-                            $max = intval(get_config('system', 'max_imported_search_collection', 100));
-
-                            if (intval($max)) {
-                                $obj = new ASCollection($url, $channel, 0, $max);
-                                $messages = $obj->get();
-                                // logger('received: ' . print_r($messages,true));
-                                $author = null;
-                                if ($messages) {
-                                    logger('received ' . count($messages) . ' items from collection.', LOGGER_DEBUG);
-                                    $processed = 0;
-                                    foreach ($messages as $message) {
-                                        $processed++;
-                                        // only process the first several items in the foreground and
-                                        // queue the remainder.
-                                        if ($processed > 10) {
-                                            $fetch_url = ((is_string($message)) ? $message : EMPTY_STR);
-                                            $fetch_url = ((is_array($message) && array_key_exists('id', $message)) ? $message['id'] : $fetch_url);
-
-                                            if (!$fetch_url) {
-                                                continue;
-                                            }
-
-                                            $hash = new_uuid();
-                                            Queue::insert(
-                                                [
-                                                    'hash' => $hash,
-                                                    'account_id' => $channel['channel_account_id'],
-                                                    'channel_id' => $channel['channel_id'],
-                                                    'posturl' => $fetch_url,
-                                                    'notify' => EMPTY_STR,
-                                                    'msg' => EMPTY_STR,
-                                                    'driver' => 'asfetch'
-                                                ]
-                                            );
-                                            continue;
-                                        }
-
-                                        if (is_string($message)) {
-                                            $message = Activity::fetch($message, App::get_channel());
-                                        }
-                                        $AS = new ActivityStreams($message, null, true);
-                                        if ($AS->is_valid() && is_array($AS->obj)) {
-                                            $item = Activity::decode_note($AS, true);
-                                        }
-                                        if ($item) {
-                                            if (!$author) {
-                                                $author = $item['author_xchan'];
-                                            }
-                                            Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
-                                        }
-                                    }
-                                    if ($hash) {
-                                        Run::Summon(['Deliver', $hash]);
-                                    }
-                                }
-
-                                // This will go to the right place most but not all the time.
-                                // It will go to a relevant place all the time, so we'll use it.
-
-                                if ($author) {
-                                    goaway(z_root() . '/stream/?xchan=' . urlencode($author));
-                                }
-                                goaway(z_root() . '/stream');
-                            }
-                        } else {
-                            // It wasn't a Collection object and wasn't an Actor object,
-                            // so let's see if it decodes. The boolean flag enables html
-                            // cache of the item
-                            $item = Activity::decode_note($AS, true);
-
-                            if ($item) {
-                                Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
-                                goaway(z_root() . '/display/?mid=' . gen_link_id($item['mid']));
-                            }
-                            else {
-                                notice( t('Item not found.') . EOL);
-                                return EMPTY_STR;
-                            }
-                        }
-                    }
-                }
-            }
+            self::apsearch($search);
         }
 
         if (str_starts_with($search, '#')) {
@@ -351,16 +239,16 @@ class Search extends Controller
             // and results in lots of duplicated content and/or messed up pagination
 
             if (Channel::is_system($this->search_channel['channel_id'])) {
-                $r = q("SELECT mid, MAX(id) as item_id from item WHERE item_wall = 1
+                $r = q("SELECT mid, MAX(id) as item_id from item WHERE true
                     $pub_sql
                     $item_normal
                     $sql_extra
                     and uid in ($searchIds)
                     group by mid, created order by created desc $pager_sql");
-            } else {
+            }
+            else {
                 $r = q(
                     "SELECT mid, MAX(id) as item_id from item where uid = %d
-                    and item_wall = 1
                     $pub_sql 
                     $item_normal
                     $sql_extra
@@ -378,7 +266,8 @@ class Search extends Controller
         if ($r) {
             xchan_query($r);
             $items = fetch_post_tags($r);
-        } else {
+        }
+        else {
             $items = [];
         }
 
@@ -404,7 +293,8 @@ class Search extends Controller
 
         if ($tag) {
             $output .= '<h2>' . sprintf(t('Items tagged with: %s'), $search) . '</h2>';
-        } else {
+        }
+        else {
             $output .= '<h2>' . sprintf(t('Search results for: %s'), $search) . '</h2>';
         }
 
@@ -413,5 +303,123 @@ class Search extends Controller
         $output .= '</div>';
 
         return $output;
+    }
+
+    public static function apsearch($search) {
+        logger('searching for ActivityPub');
+        if (($pos = strpos($search,'b64.')) !== false) {
+            $search = substr($search,$pos + 4);
+            if (($pos2 = strpos($search,'?')) !== false) {
+                $search = substr($search,0,$pos2);
+            }
+            $search = base64_decode($search);
+        }
+        logger('Search: ' . $search);
+        $url = htmlspecialchars_decode($search);
+        $channel = App::get_channel();
+        $hash = EMPTY_STR;
+        $j = Activity::fetch($url, $channel);
+        if ($j) {
+            if (isset($j['type']) && ActivityStreams::is_an_actor($j['type'])) {
+                Activity::actor_store($j['id'], $j, true);
+                goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
+            }
+            $AS = new ActivityStreams($j, null, true);
+            if ($AS->is_valid() && isset($AS->data['type'])) {
+                if (is_array($AS->obj)) {
+                    // matches Collection and orderedCollection
+                    if (isset($AS->obj['type']) && str_contains($AS->obj['type'], 'Collection')) {
+                        // Collections are awkward to process because they can be huge.
+                        // Our strategy is to limit a navbar search to 100 Collection items
+                        // and only fetch the first 10 conversations in the foreground.
+                        // We'll queue the rest, and then send you to a page where
+                        // you can see something we've imported.
+                        // You should start to see notifications as other conversations
+                        // are fetched in the background while you're looking at the first ones.
+
+                        $max = intval(get_config('system', 'max_imported_search_collection', 100));
+
+                        if (intval($max)) {
+                            $obj = new ASCollection($url, $channel, 0, $max);
+                            $messages = $obj->get();
+                            // logger('received: ' . print_r($messages,true));
+                            $author = null;
+                            if ($messages) {
+                                logger('received ' . count($messages) . ' items from collection.', LOGGER_DEBUG);
+                                $processed = 0;
+                                foreach ($messages as $message) {
+                                    $processed++;
+                                    // only process the first several items in the foreground and
+                                    // queue the remainder.
+                                    if ($processed > 10) {
+                                        $fetch_url = ((is_string($message)) ? $message : EMPTY_STR);
+                                        $fetch_url = ((is_array($message) && array_key_exists('id', $message)) ? $message['id'] : $fetch_url);
+
+                                        if (!$fetch_url) {
+                                            continue;
+                                        }
+
+                                        $hash = new_uuid();
+                                        Queue::insert(
+                                            [
+                                                'hash' => $hash,
+                                                'account_id' => $channel['channel_account_id'],
+                                                'channel_id' => $channel['channel_id'],
+                                                'posturl' => $fetch_url,
+                                                'notify' => EMPTY_STR,
+                                                'msg' => EMPTY_STR,
+                                                'driver' => 'asfetch'
+                                            ]
+                                        );
+                                        continue;
+                                    }
+
+                                    if (is_string($message)) {
+                                        $message = Activity::fetch($message, App::get_channel());
+                                    }
+                                    $AS = new ActivityStreams($message, null, true);
+                                    if ($AS->is_valid() && is_array($AS->obj)) {
+                                        $item = Activity::decode_note($AS, true);
+                                    }
+                                    if ($item) {
+                                        if (!$author) {
+                                            $author = $item['author_xchan'];
+                                        }
+                                        Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
+                                    }
+                                }
+                                if ($hash) {
+                                    Run::Summon(['Deliver', $hash]);
+                                }
+                            }
+
+                            // This will go to the right place most but not all the time.
+                            // It will go to a relevant place all the time, so we'll use it.
+
+                            if ($author) {
+                                goaway(z_root() . '/stream/?xchan=' . urlencode($author));
+                            }
+                            goaway(z_root() . '/stream');
+                        }
+                    }
+                    else {
+                        // It wasn't a Collection object and wasn't an Actor object,
+                        // so let's see if it decodes. The boolean flag enables html
+                        // cache of the item
+                        $item = Activity::decode_note($AS, true);
+
+                        if ($item) {
+                            Activity::store(App::get_channel(), get_observer_hash(), $AS, $item, true, true);
+                            goaway(z_root() . '/display/?mid=' . gen_link_id($item['mid']));
+                        }
+                        else {
+                            notice( t('Item not found.') . EOL);
+                            return '';
+                        }
+                    }
+                }
+            }
+        }
+        return '';
     }
 }
