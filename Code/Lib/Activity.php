@@ -497,7 +497,7 @@ class Activity
                     case TERM_HASHTAG:
                         // An id is required so if there is no url in the taxonomy, ignore it and keep going.
                         if ($t['url']) {
-                            $ret[] = ['id' => $t['url'], 'name' => '#' . $t['term']];
+                            $ret[] = [ 'type' => 'Hashtag', id' => $t['url'], 'name' => '#' . $t['term']];
                         }
                         break;
 
