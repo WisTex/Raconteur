@@ -31,6 +31,7 @@ class Search extends Controller
     public $loading = 0;
     public $updating = 0;
 
+    public $search_channel =  null;
 
     public function init()
     {
@@ -39,8 +40,10 @@ class Search extends Controller
         }
 
         $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
-        $this->profile_uid = $channel ? $channel['channel_id'] : 0;
-        Libprofile::load($channel['channel_address'], 0);
+        if ($channel) {
+            $this->search_channel = $channel;
+            Libprofile::load($channel['channel_address'], 0);
+        }
     }
 
 
@@ -54,14 +57,11 @@ class Search extends Controller
             }
         }
 
-        if ($this->profile_uid) {
-            $search_channel = Channel::from_id($this->profile_uid);
-            if ($search_channel) {
-                if (! Channel::is_system($search_channel['channel_id'])) {
-                    if (!perm_is_allowed($search_channel['channel_id'], get_observer_hash(), 'view_stream')
-                        && !perm_is_allowed($search_channel['channel_id'], get_observer_hash(), 'search_stream')) {
-                            http_status_exit(403, 'Permission denied.');
-                    }
+        if ($this->search_channel) {
+            if (! Channel::is_system($this->search_channel['channel_id'])) {
+                if (!perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'view_stream')
+                    && !perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'search_stream')) {
+                        http_status_exit(403, 'Permission denied.');
                 }
             }
         }
@@ -81,17 +81,16 @@ class Search extends Controller
         $observer = App::get_observer();
         $observer_hash = (($observer) ? $observer['xchan_hash'] : '');
 
-        $o = '<div id="live-search"></div>' . "\r\n";
-        $o .= '<div class="generic-content-wrapper-styled">' . "\r\n";
-        $o .= '<h3>' . t('Search') . '</h3>';
+        $output = '<div id="live-search"></div>' . "\r\n";
+        $output .= '<div class="generic-content-wrapper-styled">' . "\r\n";
+        $output .= '<h3>' . t('Search') . '</h3>';
 
-        if (x(App::$data, 'search')) {
+        if (!empty(App::$data['search'])) {
             $search = trim(App::$data['search']);
-            $saved_id = 'search=' . urlencode($_GET['search']);
         } else {
             $search = ((x($_GET, 'search')) ? trim(escape_tags(rawurldecode($_GET['search']))) : '');
-            $saved_id = 'search=' . urlencode($_GET['search']);
         }
+        $saved_id = 'search=' . urlencode($_GET['search']);
         $tag = false;
         if (x($_GET, 'tag')) {
             $tag = true;
@@ -99,10 +98,7 @@ class Search extends Controller
             $saved_id = 'tag=' . urlencode($_GET['tag']);
         }
 
-
-        $static = ((array_key_exists('static', $_REQUEST)) ? intval($_REQUEST['static']) : 0);
-
-        $o .= search($search, 'search-box', '/search', ((local_channel()) ? true : false));
+        $output .= search($search, 'search-box', '/search', (bool)local_channel());
 
         // ActivityStreams object fetches from the navbar
 
@@ -135,7 +131,7 @@ class Search extends Controller
                             // and only fetch the first 10 conversations in the foreground.
                             // We'll queue the rest, and then send you to a page where
                             // you can see something we've imported.
-                            // In theory you'll start to see notifications as other conversations
+                            // You should start to see notifications as other conversations
                             // are fetched in the background while you're looking at the first ones.
 
                             $max = intval(get_config('system', 'max_imported_search_collection', 100));
@@ -194,8 +190,8 @@ class Search extends Controller
                                     }
                                 }
 
-                                // This will go to the right place most but not all of the time.
-                                // It will go to a relevant place all of the time, so we'll use it.
+                                // This will go to the right place most but not all the time.
+                                // It will go to a relevant place all the time, so we'll use it.
 
                                 if ($author) {
                                     goaway(z_root() . '/stream/?xchan=' . urlencode($author));
@@ -245,7 +241,7 @@ class Search extends Controller
         }
 
         if (!$search) {
-            return $o;
+            return $output;
         }
 
         if ($tag) {
@@ -271,18 +267,17 @@ class Search extends Controller
         if ((!$this->updating) && (!$this->loading)) {
             $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 0);
 
-
             // This is ugly, but we can't pass the profile_uid through the session to the ajax updater,
             // because browser prefetching might change it on us. We have to deliver it with the page.
 
-            $o .= '<div id="live-search"></div>' . "\r\n";
-            $o .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
+            $output .= '<div id="live-search"></div>' . "\r\n";
+            $output .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 
             App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'search',
-                '$uid' => ((App::$profile['profile_uid']) ? App::$profile['profile_uid'] : '0'),
+                '$uid' => ((App::$profile['profile_uid']) ?: '0'),
                 '$gid' => '0',
                 '$cid' => '0',
                 '$cmin' => '(-1)',
@@ -321,12 +316,12 @@ class Search extends Controller
         $allChannels = q("select channel_id from channel where channel_removed = 0");
         if ($allChannels) {
             foreach ($allChannels as $oneChannel) {
-                if (perm_is_allowed($oneChannel['channel_id'], get_observer_hash(), 'view_stream')
-                    && perm_is_allowed($oneChannel['channel_id'], get_observer_hash(), 'search_stream')) {
-                        $searchables[] = $oneChannel['channel_id'];
+                if (Channel::is_system($oneChannel['channel_id'])) {
+                    continue;
                 }
-                if (local_channel()) {
-                    $searchables[] = local_channel();
+                if (perm_is_allowed($oneChannel['channel_id'], $observer_hash(), 'view_stream')
+                    && perm_is_allowed($oneChannel['channel_id'], $observer_hash(), 'search_stream')) {
+                        $searchables[] = $oneChannel['channel_id'];
                 }
             }
             if ($searchables) {
@@ -336,45 +331,41 @@ class Search extends Controller
                 $searchIds = 0;
             }
         }
-        
+
+        $r = null;
+
         if (($this->updating) && ($this->loading)) {
             $itemspage = get_pconfig(local_channel(), 'system', 'itemspage');
             App::set_pager_itemspage(((intval($itemspage)) ? $itemspage : 20));
             $pager_sql = sprintf(" LIMIT %d OFFSET %d ", intval(App::$pager['itemspage']), intval(App::$pager['start']));
 
-            if ($this->loading) {
-                $r = null;
+            // if logged in locally, first look in the items you own
+            // and if this returns zero results, resort to searching elsewhere on the site.
+            // Ideally these results would be merged but this can be difficult
+            // and results in lots of duplicated content and/or messed up pagination
 
-                // if logged in locally, first look in the items you own
-                // and if this returns zero results, resort to searching elsewhere on the site.
-                // Ideally these results would be merged but this can be difficult
-                // and results in lots of duplicated content and/or messed up pagination
-
-                if (!Channel::is_system($search_channel['channel_id'])) {
-                    $r = q(
-                        "SELECT mid, MAX(id) as item_id from item where uid = %d
-                        and item_wall = 1
-                        $pub_sql 
-                        $item_normal
-                        $sql_extra
-                        group by mid, created order by created desc $pager_sql ",
-                        intval($search_channel['channel_id'])
-                    );
-                }
-                if (!$r) {
-                    $r = q("SELECT mid, MAX(id) as item_id from item WHERE true $pub_sql
-                        $item_normal
-                        $sql_extra
-                        and uid in ($searchIds)
-                        group by mid, created order by created desc $pager_sql");
-                }
-
-                if ($r) {
-                    $str = ids_to_querystr($r, 'item_id');
-                    $r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
-                }
+            if (Channel::is_system($this->search_channel['channel_id'])) {
+                $r = q("SELECT mid, MAX(id) as item_id from item WHERE item_wall = 1
+                    $pub_sql
+                    $item_normal
+                    $sql_extra
+                    and uid in ($searchIds)
+                    group by mid, created order by created desc $pager_sql");
             } else {
-                $r = [];
+                $r = q(
+                    "SELECT mid, MAX(id) as item_id from item where uid = %d
+                    and item_wall = 1
+                    $pub_sql 
+                    $item_normal
+                    $sql_extra
+                    group by mid, created order by created desc $pager_sql ",
+                    intval($this->search_channel['channel_id'])
+                );
+            }
+
+            if ($r) {
+                $str = ids_to_querystr($r, 'item_id');
+                $r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
             }
         }
 
@@ -406,15 +397,15 @@ class Search extends Controller
         }
 
         if ($tag) {
-            $o .= '<h2>' . sprintf(t('Items tagged with: %s'), $search) . '</h2>';
+            $output .= '<h2>' . sprintf(t('Items tagged with: %s'), $search) . '</h2>';
         } else {
-            $o .= '<h2>' . sprintf(t('Search results for: %s'), $search) . '</h2>';
+            $output .= '<h2>' . sprintf(t('Search results for: %s'), $search) . '</h2>';
         }
 
-        $o .= conversation($items, 'search', $this->updating, 'client');
+        $output .= conversation($items, 'search', $this->updating, 'client');
 
-        $o .= '</div>';
+        $output .= '</div>';
 
-        return $o;
+        return $output;
     }
 }
