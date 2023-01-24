@@ -39,10 +39,13 @@ class Search extends Controller
             App::$data['search'] = escape_tags($_REQUEST['search']);
         }
 
-        $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
-        if ($channel) {
-            $this->search_channel = $channel;
-            Libprofile::load($channel['channel_address'], 0);
+
+        else {
+            $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
+            if ($channel) {
+                $this->search_channel = $channel;
+                Libprofile::load($channel['channel_address'], 0);
+            }
         }
     }
 
@@ -55,6 +58,10 @@ class Search extends Controller
                 notice(t('Public access denied.') . EOL);
                 return '';
             }
+        }
+
+        if ($this->profile_uid) {
+            $this->search_channel = Channel::from_id($this->profile_uid);
         }
 
         if ($this->search_channel) {
@@ -271,13 +278,13 @@ class Search extends Controller
             // because browser prefetching might change it on us. We have to deliver it with the page.
 
             $output .= '<div id="live-search"></div>' . "\r\n";
-            $output .= "<script> var profile_uid = " . ((intval(local_channel())) ? local_channel() : (-1))
+            $output .= "<script> var profile_uid = " . intval($this->search_channel['channel_id'])
                 . "; var netargs = '?f='; var profile_page = " . App::$pager['page'] . "; </script>\r\n";
 
             App::$page['htmlhead'] .= replace_macros(Theme::get_template("build_query.tpl"), [
                 '$baseurl' => z_root(),
                 '$pgtype' => 'search',
-                '$uid' => ((App::$profile['profile_uid']) ?: '0'),
+                '$uid' => (($this->search_channel['channel_id']) ?: '0'),
                 '$gid' => '0',
                 '$cid' => '0',
                 '$cmin' => '(-1)',
@@ -319,8 +326,8 @@ class Search extends Controller
                 if (Channel::is_system($oneChannel['channel_id'])) {
                     continue;
                 }
-                if (perm_is_allowed($oneChannel['channel_id'], $observer_hash(), 'view_stream')
-                    && perm_is_allowed($oneChannel['channel_id'], $observer_hash(), 'search_stream')) {
+                if (perm_is_allowed($oneChannel['channel_id'], $observer_hash, 'view_stream')
+                    && perm_is_allowed($oneChannel['channel_id'], $observer_hash, 'search_stream')) {
                         $searchables[] = $oneChannel['channel_id'];
                 }
             }
@@ -343,7 +350,7 @@ class Search extends Controller
             // and if this returns zero results, resort to searching elsewhere on the site.
             // Ideally these results would be merged but this can be difficult
             // and results in lots of duplicated content and/or messed up pagination
-
+dbg(2);
             if (Channel::is_system($this->search_channel['channel_id'])) {
                 $r = q("SELECT mid, MAX(id) as item_id from item WHERE item_wall = 1
                     $pub_sql
@@ -362,7 +369,7 @@ class Search extends Controller
                     intval($this->search_channel['channel_id'])
                 );
             }
-
+dbg(0);
             if ($r) {
                 $str = ids_to_querystr($r, 'item_id');
                 $r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
