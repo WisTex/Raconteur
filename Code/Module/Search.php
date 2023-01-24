@@ -349,7 +349,7 @@ class Search extends Controller
             // and if this returns zero results, resort to searching elsewhere on the site.
             // Ideally these results would be merged but this can be difficult
             // and results in lots of duplicated content and/or messed up pagination
-dbg(2);
+
             if (Channel::is_system($this->search_channel['channel_id'])) {
                 $r = q("SELECT mid, MAX(id) as item_id from item WHERE item_wall = 1
                     $pub_sql
@@ -368,7 +368,7 @@ dbg(2);
                     intval($this->search_channel['channel_id'])
                 );
             }
-dbg(0);
+
             if ($r) {
                 $str = ids_to_querystr($r, 'item_id');
                 $r = q("select *, id as item_id from item where id in ( " . $str . ") order by created desc ");
