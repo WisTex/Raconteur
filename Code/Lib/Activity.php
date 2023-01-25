@@ -3,6 +3,7 @@
 namespace Code\Lib;
 
 use App;
+use Code\Access\PermissionLimits;
 use Code\Web\HTTPSig;
 use Code\Access\Permissions;
 use Code\Access\PermissionRoles;
@@ -1640,15 +1641,23 @@ class Activity
                     'sharedInbox' => z_root() . '/inbox',
                     'oauthRegistrationEndpoint' => z_root() . '/api/client/register',
                     'oauthAuthorizationEndpoint' => z_root() . '/authorize',
-                    'oauthTokenEndpoint' => z_root() . '/token'
+                    'oauthTokenEndpoint' => z_root() . '/token',
+                    'searchContent' => z_root() . '/search/' . $c['channel_address'] . '/?search={}',
+                    'searchTags' => z_root() . '/search/' . $c['channel_address'] . '/?tag={}',
                 ];
                 $ret['discoverable'] = (bool)((1 - intval($p['xchan_hidden'])));
 
-                if ($ret['discoverable'] && perm_is_allowed($c['channel_id'],'', 'view_stream' )
-                        && perm_is_allowed($c['channel_id'], '', 'search_stream')) {
-                    $ret['endpoints']['searchContent'] = z_root() . '/search/' . $c['channel_address'] . '/?search={}';
-                    $ret['endpoints']['searchTags'] = z_root() . '/search/' . $c['channel_address'] . '/?tag={}';
+                $searchPerm = PermissionLimits::Get($c['channel_id'], 'search_stream');
+                if ($searchPerm === PERMS_PUBLIC) {
+                        $ret['canSearch'] = ACTIVITY_PUBLIC_INBOX;
                 }
+                elseif (in_array($searchPerm, [ PERMS_SPECIFIC, PERMS_CONTACTS])) {
+                    $ret['canSearch'] = z_root() . '/followers/' . $c['channel_address'];
+                }
+                else {
+                    $ret['canSearch'] = [];
+                }
+
 
                 $ret['publicKey'] = [
                     'id' => $current_url . '?operation=getkey',
@@ -1785,9 +1794,11 @@ class Activity
             'url' => System::get_site_icon(),
         ];
 
-        if (!Config::Get('system','block_public_search', 1)) {
-            $ret['endpoints']['searchContent'] = z_root() . '/search' . '?search={}';
-            $ret['endpoints']['searchTags'] = z_root() . '/search' . '?tag={}';
+        if (Config::Get('system','block_public_search', 1)) {
+                $ret['canSearch'] = ACTIVITY_PUBLIC_INBOX;
+        }
+        else {
+            $ret['canSearch'] = [];
         }
 
         $ret['generator'] = ['type' => 'Application', 'name' => System::get_project_name()];
@@ -4606,6 +4617,7 @@ class Activity
             'Category' => 'nomad:Category',
             'replyTo' => 'nomad:replyTo',
             'copiedTo' => 'nomad:copiedTo',
+            'canSearch' => 'nomad:canSearch',
             'searchContent' => 'nomad:searchContent',
             'searchTags' => 'nomad:searchTags',
         ];
