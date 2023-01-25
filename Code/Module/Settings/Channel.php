@@ -57,6 +57,10 @@ class Channel
         $post_mail = array_key_exists('post_mail', $_POST) ? intval($_POST['post_mail']) : PERMS_SPECIFIC;
         PermissionLimits::Set(local_channel(), 'post_mail', $post_mail);
 
+        $search_stream = array_key_exists('search_stream', $_POST) ? intval($_POST['search_stream']) : PERMS_SPECIFIC;
+        PermissionLimits::Set(local_channel(), 'search_stream', $search_stream);
+
+
         $default_view_contacts = ($role === 'social_restricted') ? PERMS_SPECIFIC : PERMS_PUBLIC;  
         $view_contacts = array_key_exists('view_contacts', $_POST) ? intval($_POST['view_contacts']) : $default_view_contacts;
         PermissionLimits::Set(local_channel(), 'view_contacts', $view_contacts);
@@ -253,9 +257,9 @@ class Channel
         $permiss = [];
 
         $perm_opts = [
-            [t('Restricted - from connections only'), PERMS_SPECIFIC],
-            [t('Semi-public - from anybody that can be identified'), PERMS_AUTHED],
-            [t('Public - from anybody on the internet'), PERMS_PUBLIC]
+            [t('Restricted - connections only'), PERMS_SPECIFIC],
+            [t('Semi-public - anybody that can be identified'), PERMS_AUTHED],
+            [t('Public - anybody on the internet'), PERMS_PUBLIC]
         ];
 
         $limits = PermissionLimits::Get(local_channel());
@@ -263,7 +267,7 @@ class Channel
 
         foreach ($global_perms as $k => $perm) {
             $options = [];
-            $can_be_public = strstr($k, 'view') || ($k === 'post_comments' && $anon_comments);
+            $can_be_public = strstr($k, 'view') || ($k === 'search_stream') || ($k === 'post_comments' && $anon_comments);
             foreach ($perm_opts as $opt) {
                 if ($opt[1] == PERMS_PUBLIC && (!$can_be_public)) {
                     continue;
@@ -276,6 +280,8 @@ class Channel
                 $mail_perms = [$k, $perm, $limits[$k], '', $options];
             } elseif ($k === 'view_contacts') {
                 $view_contact_perms = [$k, $perm, $limits[$k], '', $options];
+            } elseif ($k === 'search_stream') {
+                $search_perms = [$k, $perm, $limits[$k], '', $options];
             } else {
                 $permiss[] = [$k, $perm, $limits[$k], '', $options];
             }
@@ -453,6 +459,7 @@ class Channel
             '$comment_perms' => $comment_perms,
             '$mail_perms' => $mail_perms,
             '$view_contact_perms' => $view_contact_perms,
+            '$search_perms' => $search_perms,
             '$noindex' => ['noindex', t('Forbid indexing of your public channel content by search engines'), get_pconfig($channel['channel_id'], 'system', 'noindex'), '', $yes_no],
             '$close_comments' => ['close_comments', t('Disable acceptance of comments on your posts after this many days'), ((intval(get_pconfig(local_channel(), 'system', 'close_comments'))) ? intval(get_pconfig(local_channel(), 'system', 'close_comments')) : EMPTY_STR), t('Leave unset or enter 0 to allow comments indefinitely')],
             '$blocktags' => ['blocktags', t('Allow others to tag your posts'), 1 - $blocktags, t('Often used by the community to retro-actively flag inappropriate content'), $yes_no],

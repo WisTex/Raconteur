@@ -1172,7 +1172,7 @@ class Activity
                 $activity['canReply'] = ACTIVITY_PUBLIC_INBOX;
             } elseif (in_array($activity['commentPolicy'], ['contacts', 'specific'])) {
                 $activity['canReply'] = z_root() . '/followers/' . substr($item['author']['xchan_addr'], 0, strpos($item['author']['xchan_addr'], '@'));
-            } elseif (in_array($activity['commentPolicy'], ['self', 'none']) || $item['item_nocomment'] || datetime_convert('UTC', 'UTC', $item['comments_closed']) <= datetime_convert('UTC', 'UTC', 'now')) {
+            } elseif (in_array($activity['commentPolicy'], ['self', 'none']) || $item['item_nocomment'] || datetime_convert('UTC', 'UTC', $item['comments_closed']) <= datetime_convert()) {
                 $activity['canReply'] = [];
             }
         }
@@ -1642,8 +1642,15 @@ class Activity
                     'oauthAuthorizationEndpoint' => z_root() . '/authorize',
                     'oauthTokenEndpoint' => z_root() . '/token'
                 ];
-
                 $ret['discoverable'] = (bool)((1 - intval($p['xchan_hidden'])));
+
+                if ($ret['discoverable'] && !Config::Get('system','block_public_search', 1)
+                        && perm_is_allowed($c['channel_id'],'', 'view_stream' ) &&
+                        perm_is_allowed($c['channel_id'], '', 'search_stream')) {
+                    $ret['endpoints']['searchContent'] = z_root() . '/search/' . $c['channel_address'] . '/?search={}';
+                    $ret['endpoints']['searchTags'] = z_root() . '/search/' . $c['channel_address'] . '/?tag={}';
+                }
+
                 $ret['publicKey'] = [
                     'id' => $current_url . '?operation=getkey',
                     'owner' => $current_url,
@@ -1778,6 +1785,11 @@ class Activity
             'type' => 'Image',
             'url' => System::get_site_icon(),
         ];
+
+        if (!Config::Get('system','block_public_search', 1)) {
+            $ret['endpoints']['searchContent'] = z_root() . '/search' . '?search={}';
+            $ret['endpoints']['searchTags'] = z_root() . '/search' . '?tag={}';
+        }
 
         $ret['generator'] = ['type' => 'Application', 'name' => System::get_project_name()];
 
@@ -2322,7 +2334,12 @@ class Activity
         if (array_path_exists('endpoints/sharedInbox', $person_obj) && is_string($person_obj['endpoints']['sharedInbox'])) {
             $collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
         }
-
+        if (array_path_exists('endpoints/searchContent', $person_obj) && is_string($person_obj['endpoints']['searchContent'])) {
+            $collections['searchContent'] = $person_obj['endpoints']['searchContent'];
+        }
+        if (array_path_exists('endpoints/searchTags', $person_obj) && is_string($person_obj['endpoints']['searchTags'])) {
+            $collections['searchTags'] = $person_obj['endpoints']['searchTags'];
+        }
         if (isset($person_obj['publicKey']['publicKeyPem'])) {
             if ($person_obj['id'] === $person_obj['publicKey']['owner']) {
                 $pubkey = $person_obj['publicKey']['publicKeyPem'];
@@ -4589,7 +4606,9 @@ class Activity
             'directMessage' => 'nomad:directMessage',
             'Category' => 'nomad:Category',
             'replyTo' => 'nomad:replyTo',
-            'copiedTo' => 'as:copiedTo',
+            'copiedTo' => 'nomad:copiedTo',
+            'searchContent' => 'nomad:searchContent',
+            'searchTags' => 'nomad:searchTags',
         ];
     }
 
@@ -4611,9 +4630,8 @@ class Activity
                 }
 
                 if ($z) {
-                // do not allow somebody to embed a post that was blocked by the site admin
-                // We *will* let them over-rule any blocks they created themselves
-
+                    // do not allow somebody to embed a post that was blocked by the site admin
+                    // We *will* let them over-rule any blocks they created themselves
                     if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                         $s = new Zlib\Share($z);
                         $item['body'] .= "\n\n" . $s->bbcode();
