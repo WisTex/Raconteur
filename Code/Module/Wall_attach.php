@@ -167,6 +167,17 @@ class Wall_attach extends Controller
             }
         }
 
+        if (in_array($r['data']['filetype'], ['text/x-multicode', 'text/bbcode', 'text/markdown', 'text/html'])) {
+            $content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            if ($content) {
+                $text = z_input_filter($content, $r['data']['filetype']);
+                if ($text) {
+                    $s .= "\n\n" . $text . "\n\n";
+                }
+            }
+        }
+
+
         $s .= "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 
 
