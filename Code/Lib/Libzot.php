@@ -833,6 +833,12 @@ class Libzot
             if (isset($arr['primary_location']['wall'])) {
                 $collections['wall'] = $arr['primary_location']['wall'];
             }
+            if (isset($arr['primary_location']['searchContent'])) {
+                $collections['searchContent'] = $arr['primary_location']['searchContent'];
+            }
+            if (isset($arr['primary_location']['searchTags'])) {
+                $collections['searchTags'] = $arr['primary_location']['searchTags'];
+            }
             if ($collections) {
                 set_xconfig($xchan_hash, 'activitypub', 'collections', $collections);
             }
@@ -2961,7 +2967,9 @@ class Libzot
             'follow_url' => $e['xchan_follow'],
             'wall' => z_root() . '/outbox/' . $e['channel_address'],
             'followers' => z_root() . '/followers/' . $e['channel_address'],
-            'following' => z_root() . '/following/' . $e['channel_address']
+            'following' => z_root() . '/following/' . $e['channel_address'],
+            'searchContent' => z_root() . '/search/' . $e['channel_address'] . '?search={}',
+            'searchTags' => z_root() . '/search/' . $e['channel_address'] . '?tags={}',
         ];
 
         $ret['public_key'] = $e['xchan_pubkey'];

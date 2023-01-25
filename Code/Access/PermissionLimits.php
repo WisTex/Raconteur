@@ -46,11 +46,7 @@ class PermissionLimits
         $perms = Permissions::Perms();
 
         foreach ($perms as $k => $v) {
-            if (str_starts_with($k, 'view')) {
-                $limits[$k] = PERMS_PUBLIC;
-            } else {
-                $limits[$k] = PERMS_SPECIFIC;
-            }
+            $limits[$k] = (str_starts_with($k, 'view')) ? PERMS_PUBLIC : PERMS_SPECIFIC;
         }
 
         return $limits;
