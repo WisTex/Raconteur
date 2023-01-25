@@ -44,10 +44,25 @@ class Search extends Controller
     public function get()
     {
 
-        if (get_config('system', 'block_public_search', 1)) {
-            if ((!local_channel()) && (!remote_channel())) {
-                notice(t('Public access denied.') . EOL);
-                return '';
+        $format = (($_REQUEST['module_format']) ?: '');
+        if (ActivityStreams::is_as_request() || Libzot::is_nomad_request()) {
+            $format = 'json';
+        }
+        if ($format !== '') {
+            $this->updating = $this->loading = 1;
+        }
+
+        if ($format === 'json') {
+            $sigdata = HTTPSig::verify(EMPTY_STR);
+            if ($sigdata['portable_id'] && $sigdata['header_valid']) {
+                $portable_id = $sigdata['portable_id'];
+                if (!check_channelallowed($portable_id)) {
+                    http_status_exit(403, 'Permission denied');
+                }
+                if (!check_siteallowed($sigdata['signer'])) {
+                    http_status_exit(403, 'Permission denied');
+                }
+                observer_auth($portable_id);
             }
         }
 
@@ -64,12 +79,27 @@ class Search extends Controller
         }
 
         if ($this->search_channel) {
-            if (! Channel::is_system($this->search_channel['channel_id'])) {
+            if (Channel::is_system($this->search_channel['channel_id'])) {
+                if (get_config('system', 'block_public_search', 1)) {
+                    // Local channels and clones of local channels are permitted when
+                    // public search is disabled.
+                    $clone = null;
+                    if (remote_channel() && !local_channel()) {
+                        $clone = Channel::from_hash(get_observer_hash());
+                    }
+                    if (!$clone && !local_channel()) {
+                        http_status_exit(403, 'Permission denied.');
+                    }
+                }
+            }
+            else {
+                // This is a channel search, not a site search. 
                 if (!(perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'view_stream')
                       && perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'search_stream'))) {
                     http_status_exit(403, 'Permission denied.');
                 }
             }
+
         }
 
         if ($this->loading) {
@@ -77,13 +107,7 @@ class Search extends Controller
         }
         Navbar::set_selected('Search');
 
-        $format = (($_REQUEST['module_format']) ?: '');
-        if (ActivityStreams::is_as_request() || Libzot::is_nomad_request()) {
-            $format = 'json';
-        }
-        if ($format !== '') {
-            $this->updating = $this->loading = 1;
-        }
+
         $observer = App::get_observer();
         $observer_hash = (($observer) ? $observer['xchan_hash'] : '');
 
@@ -152,12 +176,6 @@ class Search extends Controller
             $sql_extra = sprintf(" AND (item.title $regstr '%s' OR item.body $regstr '%s') ", dbesc(protect_sprintf(preg_quote($search))), dbesc(protect_sprintf(preg_quote($search))));
         }
 
-        // Here is the way permissions work in the search module...
-        // Only public posts can be shown
-        // OR your own posts if you are a logged in member
-        // No items will be shown if the member has a blocked profile wall.
-
-
         if ((!$this->updating) && (!$this->loading)) {
             $static = ((local_channel()) ? Channel::manual_conv_update(local_channel()) : 0);
 
@@ -206,23 +224,30 @@ class Search extends Controller
 
         $item_normal = item_normal_search();
         $pub_sql = item_permissions_sql(0, $observer_hash);
-        $searchables = [];
-        $allChannels = q("select channel_id from channel where channel_removed = 0");
-        if ($allChannels) {
-            foreach ($allChannels as $oneChannel) {
-                if (Channel::is_system($oneChannel['channel_id'])) {
-                    continue;
-                }
-                if (perm_is_allowed($oneChannel['channel_id'], $observer_hash, 'view_stream')
-                    && perm_is_allowed($oneChannel['channel_id'], $observer_hash, 'search_stream')) {
+
+        if (Channel::is_system($this->search_channel['channel_id'])) {
+            $searchables = [];
+            $allChannels = q("select channel_id from channel where channel_removed = 0");
+            if ($allChannels) {
+                foreach ($allChannels as $oneChannel) {
+                    if (Channel::is_system($oneChannel['channel_id'])) {
+                        continue;
+                    }
+                    if (perm_is_allowed($oneChannel['channel_id'], $observer_hash, 'view_stream')
+                        && perm_is_allowed($oneChannel['channel_id'], $observer_hash, 'search_stream')) {
                         $searchables[] = $oneChannel['channel_id'];
+                    }
+                }
+                if ($searchables) {
+                    $searchIds = implode(',', $searchables);
+                } else {
+                    $searchIds = 0;
                 }
             }
-            if ($searchables) {
-                $searchIds = implode(',', $searchables);
-            }
-            else {
-                $searchIds = 0;
+            // We might arrive at this point if public search is allowed, but nobody on this site
+            // has made content available either to the public or to the requestor.
+            if (!$searchIds) {
+                http_status_exit(403, 'Permission denied.');
             }
         }
 
