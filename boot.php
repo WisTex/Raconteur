@@ -24,9 +24,8 @@ use Code\Lib\Url;
  * @brief This file defines some global constants and includes the central App class.
  */
 
-
 const REPOSITORY_ID = 'streams';
-const DB_UPDATE_VERSION = 1265;
+const DB_UPDATE_VERSION = 1266;
 const PROJECT_BASE = __DIR__;
 const ACTIVITYPUB_ENABLED = true;
 const NOMAD_PROTOCOL_VERSION = '11.0';
