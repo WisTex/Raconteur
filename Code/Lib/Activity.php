@@ -1644,9 +1644,8 @@ class Activity
                 ];
                 $ret['discoverable'] = (bool)((1 - intval($p['xchan_hidden'])));
 
-                if ($ret['discoverable'] && !Config::Get('system','block_public_search', 1)
-                        && perm_is_allowed($c['channel_id'],'', 'view_stream' ) &&
-                        perm_is_allowed($c['channel_id'], '', 'search_stream')) {
+                if ($ret['discoverable'] && perm_is_allowed($c['channel_id'],'', 'view_stream' )
+                        && perm_is_allowed($c['channel_id'], '', 'search_stream')) {
                     $ret['endpoints']['searchContent'] = z_root() . '/search/' . $c['channel_address'] . '/?search={}';
                     $ret['endpoints']['searchTags'] = z_root() . '/search/' . $c['channel_address'] . '/?tag={}';
                 }
