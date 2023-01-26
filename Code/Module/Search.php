@@ -158,22 +158,28 @@ class Search extends Controller
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
 
-        if (!$search) {
-            return $output;
-        }
+        if ($search) {
+            if ($tag) {
+                $wildtag = str_replace('*', '%', $search);
+                $sql_extra = sprintf(
+                    " AND item.id IN (select oid from term where otype = %d and ttype in ( %d , %d) and term like '%s') ",
+                    intval(TERM_OBJ_POST),
+                    intval(TERM_HASHTAG),
+                    intval(TERM_COMMUNITYTAG),
+                    dbesc(protect_sprintf($wildtag))
+                );
+            } else {
+                $regstr = db_getfunc('REGEXP');
+                $sql_extra = sprintf(" AND (item.title $regstr '%s' OR item.body $regstr '%s') ", dbesc(protect_sprintf(preg_quote($search))), dbesc(protect_sprintf(preg_quote($search))));
+            }
 
-        if ($tag) {
-            $wildtag = str_replace('*', '%', $search);
-            $sql_extra = sprintf(
-                " AND item.id IN (select oid from term where otype = %d and ttype in ( %d , %d) and term like '%s') ",
-                intval(TERM_OBJ_POST),
-                intval(TERM_HASHTAG),
-                intval(TERM_COMMUNITYTAG),
-                dbesc(protect_sprintf($wildtag))
-            );
-        } else {
-            $regstr = db_getfunc('REGEXP');
-            $sql_extra = sprintf(" AND (item.title $regstr '%s' OR item.body $regstr '%s') ", dbesc(protect_sprintf(preg_quote($search))), dbesc(protect_sprintf(preg_quote($search))));
+        }
+        else {
+            if ($format === '') {
+                return $output;
+            }
+            // An empty JSON query should return an empty result set.
+            $sql_extra = " AND item.id = 0 ";
         }
 
         if ((!$this->updating) && (!$this->loading)) {
