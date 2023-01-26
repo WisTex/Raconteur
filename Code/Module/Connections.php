@@ -8,6 +8,8 @@ use Code\Lib\LibBlock;
 use Code\Lib\Navbar;
 use Code\Render\Theme;
 
+require_once "include/conversation.php";
+
 class Connections extends Controller
 {
 
@@ -324,6 +326,8 @@ class Connections extends Controller
                         'link' => z_root() . '/connedit/' . $rr['abook_id'],
                         'deletelink' => z_root() . '/connedit/' . intval($rr['abook_id']) . '/drop',
                         'delete' => t('Delete'),
+                        'author_menu' => thread_author_menu(['author_xchan' => $rr['xchan_hash']]),
+                        'large_avatar' => $rr['xchan_photo_l'],
                         'url' => chanlink_hash($rr['xchan_hash']),
                         'webbie_label' => t('Channel address'),
                         'webbie' => $rr['xchan_addr'],

@@ -20,9 +20,21 @@
 	</div>
 	<div class="section-content-tools-wrapper">
 		<div class="contact-photo-wrapper" >
-			<a href="{{$contact.url}}" title="{{$contact.img_hover}}" >
-				<img class="directory-photo-img {{if $contact.classes}}{{$contact.classes}}{{/if}}" src="{{$contact.thumb}}" alt="{{$contact.name}}" />
-			</a>
+			<!--a href="{{$contact.url}}" title="{{$contact.img_hover}}" -->
+				<img class="directory-photo-img contact-photo-img fakelink {{if $contact.classes}}{{$contact.classes}}{{/if}}" src="{{$contact.thumb}}" alt="{{$contact.name}}" data-toggle="dropdown" />
+				{{if $contact.author_menu}}
+					<i class="fa fa-caret-down contact-photo-caret cursor-pointer" data-toggle="dropdown"></i>
+					<div class="dropdown-menu">
+						<img src="{{$contact.large_avatar}}" style="width: 200px; height: 200px;" id="wall-item-popup-photo-{{$contact.id}}" alt="{{$contact.name}}" />
+						<div style="margin-top: 20px;">
+							<hr>
+							{{foreach $contact.author_menu as $mitem}}
+								<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
+							{{/foreach}}
+						</div>
+					</div>
+				{{/if}}
+			<!--/a -->
 			{{if $contact.oneway}}
 			<i class="fa fa-fw fa-minus-circle oneway-overlay text-danger"></i>
 			{{/if}}

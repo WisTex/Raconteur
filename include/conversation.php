@@ -753,7 +753,7 @@ function thread_author_menu($item, $mode = '')
     $local_channel = local_channel();
 
     if ($local_channel) {
-        if (! count(App::$contacts)) {
+        if (empty(App::$contacts)) {
             load_contact_links($local_channel);
         }
         $channel = App::get_channel();
@@ -779,7 +779,7 @@ function thread_author_menu($item, $mode = '')
         if (their_perms_contains($local_channel, $contact['xchan_hash'], 'search_stream')) {
             $collections = XConfig::Get($contact['xchan_hash'],'activitypub','collections');
             if ($collections && $collections['searchContent']) {
-                $search_url = str_replace('{}', '', $collections['searchContent']);
+                $search_url = zid(str_replace('{}', '', $collections['searchContent']));
             }
         }
         if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {

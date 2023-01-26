@@ -62,36 +62,38 @@ class Dav extends Controller
                 if ($sigblock) {
                     $keyId = str_replace('acct:', '', $sigblock['keyId']);
                     if ($keyId) {
-                        $r = hubloc_id_addr_query($keyId, 1);
+                        $r = hubloc_id_addr_query($keyId);
                         if ($r) {
-                            $c = Channel::from_hash($r[0]['hubloc_hash']);
-                            if ($c) {
-                                $a = q(
-                                    "select * from account where account_id = %d limit 1",
-                                    intval($c['channel_account_id'])
-                                );
-                                if ($a) {
-                                    $record = ['channel' => $c, 'account' => $a[0]];
-                                    $channel_login = $c['channel_id'];
+                            foreach ($r as $rv) {
+                                $c = Channel::from_hash($rv['hubloc_hash']);
+                                if ($c) {
+                                    $a = q(
+                                        "select * from account where account_id = %d limit 1",
+                                        intval($c['channel_account_id'])
+                                    );
+                                    if ($a) {
+                                        $record = ['channel' => $c, 'account' => $a[0]];
+                                        $channel_login = $c['channel_id'];
+                                    }
                                 }
                             }
-                        }
-                        if (!$record) {
-                            continue;
-                        }
+                            if (!$record) {
+                                continue;
+                            }
 
-                        if ($record) {
-                            $verified = HTTPSig::verify('', $record['channel']['channel_pubkey']);
-                            if (!($verified && $verified['header_signed'] && $verified['header_valid'])) {
-                                $record = null;
-                            }
-                            if ($record['account']) {
-                                authenticate_success($record['account']);
-                                if ($channel_login) {
-                                    change_channel($channel_login);
+                            if ($record) {
+                                $verified = HTTPSig::verify('', $record['channel']['channel_pubkey']);
+                                if (!($verified && $verified['header_signed'] && $verified['header_valid'])) {
+                                    $record = null;
                                 }
+                                if ($record['account']) {
+                                    authenticate_success($record['account']);
+                                    if ($channel_login) {
+                                        change_channel($channel_login);
+                                    }
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }

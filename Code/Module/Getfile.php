@@ -65,9 +65,14 @@ class Getfile extends Controller
 
                 $verified = HTTPSig::verify('');
                 if ($verified && $verified['header_signed'] && $verified['header_valid']) {
-                    $r = hubloc_id_addr_query($verified['signer'], 1);
-                    if ($r && $r[0]['hubloc_hash'] === $hash) {
-                        $header_verified = true;
+                    $r = hubloc_id_addr_query($verified['signer']);
+                    if ($r) {
+                        foreach($r as $hub) {
+                            if ($hub['hubloc_hash'] === $hash) {
+                                $header_verified = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
