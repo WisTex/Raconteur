@@ -1971,3 +1971,20 @@ dl.bb-dl > dd > li {
 .screenshot img {
     max-width: 100%;
 }
+
+.contact-photo-caret {
+	position: absolute;
+	left: 3px;
+	bottom: 0px;
+	color: #fff;
+	text-shadow: 1px 1px 3px rgba(0, 0, 0, .5);
+	display: none;
+}
+
+.contact-photo-wrapper {
+    position: relative;
+}
+
+.contact-photo-wrapper:hover .contact-photo-caret {
+	display: block;
+}

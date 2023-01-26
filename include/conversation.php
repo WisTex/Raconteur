@@ -753,7 +753,7 @@ function thread_author_menu($item, $mode = '')
     $local_channel = local_channel();
 
     if ($local_channel) {
-        if (! count(App::$contacts)) {
+        if (empty(App::$contacts)) {
             load_contact_links($local_channel);
         }
         $channel = App::get_channel();

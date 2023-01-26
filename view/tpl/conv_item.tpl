@@ -5,7 +5,7 @@
 {{/if}}
 	<div id="thread-wrapper-{{$item.id}}" class="thread-wrapper{{if $item.toplevel}} {{$item.toplevel}} generic-content-wrapper h-entry {{else}} u-comment h-cite {{/if}} item_{{$item.submid}}">
 		{{if $item.authors}}<span id="thread-authors-{{$item.id}}" style="display: none;">{{foreach $item.authors as $a}}@&#123;{{$a}}&#125; {{/foreach}}</span>{{/if}}
-		<a name="item_{{$item.id}}" ></a>
+		<a id="item_{{$item.id}}" ></a>
 		{{if $item.collapsed}}
 		<div id="collapsed-comments-{{$item.id}}" class="collapsed-comments-{{$item.parent}}" style="display: {{if $item.mod_display}}block{{else}}none{{/if}};">
 		{{/if}}
