@@ -154,17 +154,18 @@ class Permcat
 
         $permcats = [
             [ 'follower', t('follower', 'permcat'),
-                [ 'view_stream','view_profile','view_contacts','view_storage','view_pages','view_wiki',
-                  'post_like' ], 1
+                [ 'view_stream','search_stream','deliver_stream','view_profile','view_contacts','view_storage',
+                    'view_pages','view_wiki', 'post_like' ], 1
             ],
             [ 'contributor', t('contributor', 'permcat'),
-                [ 'view_stream','view_profile','view_contacts','view_storage','view_pages','view_wiki',
-                  'post_wall','post_comments','write_wiki','post_like','tag_deliver','chat' ], 1
+                [ 'view_stream','search_stream','deliver_stream','view_profile','view_contacts','view_storage',
+                    'view_pages','view_wiki', 'post_wall','post_comments','write_wiki','post_like','tag_deliver',
+                    'chat' ], 1
             ],
             [ 'publisher', t('publisher', 'permcat'),
-                [ 'view_stream','view_profile','view_contacts','view_storage','view_pages',
-                  'write_storage','post_wall','write_pages','write_wiki','post_comments','post_like','tag_deliver',
-                  'chat', 'republish' ], 1
+                [ 'view_stream','search_stream','deliver_stream','view_profile','view_contacts','view_storage',
+                    'view_pages', 'write_storage','post_wall','write_pages','write_wiki','post_comments','post_like',
+                    'tag_deliver', 'chat', 'republish' ], 1
             ]
         ];
 

@@ -93,7 +93,7 @@ class Search extends Controller
                 }
             }
             else {
-                // This is a channel search, not a site search. 
+                // This is a channel search, not a site search.
                 if (!(perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'view_stream')
                       && perm_is_allowed($this->search_channel['channel_id'], get_observer_hash(), 'search_stream'))) {
                     http_status_exit(403, 'Permission denied.');

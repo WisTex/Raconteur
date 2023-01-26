@@ -106,6 +106,8 @@ function connectFullShare() {
 			$(this).removeAttr('checked');
 	});
 	$('#id_perms_view_stream').attr('checked','checked');
+	$('#id_perms_search_stream').attr('checked','checked');
+	$('#id_perms_deliver_stream').attr('checked','checked');
 	$('#id_perms_view_profile').attr('checked','checked');
 	$('#id_perms_view_contacts').attr('checked','checked');
 	$('#id_perms_view_storage').attr('checked','checked');
