@@ -110,7 +110,7 @@ class Activity extends Controller
             as_return_and_die(ZlibActivity::encode_activity($items[0], true), $channel);
         }
 
-        if (Libzot::is_zot_request()) {
+        if (Libzot::is_nomad_request()) {
             $item_id = argv(1);
 
             if (!$item_id) {

@@ -11,6 +11,7 @@ use Code\Lib\Features;
 use Code\Extend\Hook;
 use Code\Access\Permissions;
 use Code\Access\PermissionLimits;
+use Code\Lib\XConfig;
 use Code\Render\Theme;
 
 /**
@@ -325,7 +326,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
     }
 
     $profile_owner   = 0;
-    $page_writeable  = false;
     $live_update_div = '';
     $jsreload        = '';
 
@@ -335,7 +335,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
     if (in_array($mode, [ 'stream', 'pubstream'])) {
         $profile_owner = local_channel();
-        $page_writeable = (bool)local_channel();
 
         if (!$update) {
             // The special div is needed for liveUpdate to kick in for this page.
@@ -364,7 +363,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         }
     } elseif ($mode === 'channel') {
         $profile_owner = App::$profile['profile_uid'];
-        $page_writeable = ($profile_owner == local_channel());
 
         if (!$update) {
             $tab = notags(trim($_GET['tab']));
@@ -379,11 +377,9 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         }
     } elseif ($mode === 'display') {
         $profile_owner = local_channel();
-        $page_writeable = false;
         $live_update_div = '<div id="live-display"></div>' . "\r\n";
     } elseif ($mode === 'page') {
         $profile_owner = App::$profile['uid'];
-        $page_writeable = ($profile_owner == local_channel());
         $live_update_div = '<div id="live-page"></div>' . "\r\n";
     } elseif ($mode === 'search') {
         $live_update_div = '<div id="live-search"></div>' . "\r\n";
@@ -391,7 +387,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         $profile_owner = local_channel();
     } elseif ($mode === 'photos') {
         $profile_owner = App::$profile['profile_uid'];
-        $page_writeable = ($profile_owner == local_channel());
         $live_update_div = '<div id="live-photos"></div>' . "\r\n";
         // for photos we've already formatted the top-level item (the photo)
         $content_html = App::$data['photo_html'];
@@ -500,7 +495,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
 
                 $star = [
                     'toggle' => t("Toggle Star Status"),
-                    'isstarred' => ((intval($item['item_starred'])) ? true : false),
+                    'isstarred' => (bool)intval($item['item_starred']),
                 ];
 
                 $lock = t('Public visibility');
@@ -679,15 +674,6 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
         $threads = null;
     }
 
-//  if($page_mode === 'preview')
-//      logger('preview: ' . print_r($threads,true));
-
-//  Do not un-comment if smarty3 is in use
-//  logger('page_template: ' . $page_template);
-
-//  logger('nouveau: ' . print_r($threads,true));
-
-// logger('page_template: ' . print_r($page_template,true));
     $o .= replace_macros($page_template, [
         '$baseurl' => z_root(),
         '$photo_item' => $content_html,
@@ -781,14 +767,21 @@ function thread_author_menu($item, $mode = '')
             $contact = App::$contacts[$item['author_xchan']];
         } else {
             if ($local_channel && (! in_array($item['author']['xchan_network'], [ 'rss', 'anon','token','unknown' ]))) {
-                $follow_url = z_root() . '/follow/?f=&url=' . urlencode(($item['author']['xchan_addr']) ? $item['author']['xchan_addr'] : $item['author']['xchan_url']) . '&interactive=0';
+                $follow_url = z_root() . '/follow/?f=&url=' . urlencode(($item['author']['xchan_addr']) ?: $item['author']['xchan_url']) . '&interactive=0';
             }
         }
     }
 
+
     $poke_label = ucfirst(t(get_pconfig($local_channel, 'system', 'pokeverb', 'poke')));
 
     if ($contact) {
+        if (their_perms_contains($local_channel, $contact['xchan_hash'], 'search_stream')) {
+            $collections = XConfig::Get($contact['xchan_hash'],'activitypub','collections');
+            if ($collections && $collections['searchContent']) {
+                $search_url = str_replace('{}', '', $collections['searchContent']);
+            }
+        }
         if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {
             $contact_url = z_root() . '/connedit/' . $contact['abook_id'];
         }
@@ -819,7 +812,7 @@ function thread_author_menu($item, $mode = '')
         ];
     }
 
-    if (local_channel() && ($item['lat'] || $item['lon'])) {
+    if ($local_channel && ($item['lat'] || $item['lon'])) {
         $menu[] = [
             'menu' => 'distance_search',
             'title' => t('Nearby'),
@@ -838,6 +831,16 @@ function thread_author_menu($item, $mode = '')
             'href' => $posts_link
         ];
     }
+    if (isset($search_url) && $search_url) {
+        $menu[] = [
+            'menu' => 'search_posts',
+            'title' => t('Remote Search'),
+            'icon' => 'fw',
+            'action' => '',
+            'href' => $search_url
+        ];
+    }
+
 
     if (isset($follow_url) && $follow_url) {
         $menu[] = [
@@ -879,7 +882,7 @@ function thread_author_menu($item, $mode = '')
         ];
     }
 
-    if (local_channel()) {
+    if ($local_channel && $item['author_xchan'] !== $channel['channel_hash']) {
         $menu[] = [
             'menu'   => 'superblocksite',
             'title'  => t('Block author\'s site'),

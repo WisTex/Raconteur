@@ -31,7 +31,7 @@ class Id extends Controller
     public function init()
     {
 
-        if (Libzot::is_zot_request()) {
+        if (Libzot::is_nomad_request()) {
             $conversation = false;
 
             $request_portable_id = argv(1);

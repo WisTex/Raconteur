@@ -45,7 +45,7 @@ class Home extends Controller
             killme();
         }
 
-        if (Libzot::is_zot_request()) {
+        if (Libzot::is_nomad_request()) {
             $channel = Channel::get_system();
             $sigdata = HTTPSig::verify(file_get_contents('php://input'), EMPTY_STR, 'zot6');
 

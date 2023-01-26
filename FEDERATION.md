@@ -19,7 +19,7 @@ The URL endpoints are:
     
 Direct Messages
 
-Direct Messages (DM) are differentiated from other private messaging using the zot:directMessage flag (boolean). This is compatible with the same facility provided by other projects in other namespaces and is not prefixed within activities so that these may potentially be aggregated.
+Direct Messages (DM) are differentiated from other private messaging using the nomad:directMessage flag (boolean). This is compatible with the same facility provided by other projects in other namespaces and is not prefixed within activities so that these may potentially be aggregated.
 
 Events
 

@@ -4,7 +4,6 @@ namespace Code\Module;
 
 use App;
 use Code\Web\Controller;
-use Code\Lib\Libsync;
 use Code\Lib\Channel;
 use Code\Lib\Addon;
     
@@ -24,10 +23,12 @@ class Wall_attach extends Controller
     }
 
 
+    /** @noinspection PhpInconsistentReturnPointsInspection */
     public function post()
     {
 
         $using_api = false;
+        $channel = null;
 
         $result = [];
 
@@ -54,7 +55,7 @@ class Wall_attach extends Controller
         $partial = false;
 
         if (array_key_exists('HTTP_CONTENT_RANGE', $_SERVER)) {
-            $pm = preg_match('/bytes (\d*)\-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
+            $pm = preg_match('/bytes (\d*)-(\d*)\/(\d*)/', $_SERVER['HTTP_CONTENT_RANGE'], $matches);
             if ($pm) {
                 // logger('Content-Range: ' . print_r($matches,true));
                 $partial = true;
@@ -117,14 +118,13 @@ class Wall_attach extends Controller
 
         $url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
 
-        if (strpos($r['data']['filetype'], 'video') === 0) {
+        if (str_starts_with($r['data']['filetype'], 'video')) {
             for ($n = 0; $n < 15; $n++) {
                 $thumb = Linkinfo::get_video_poster($url);
                 if ($thumb) {
                     break;
                 }
                 sleep(1);
-                continue;
             }
 
             if ($thumb) {
@@ -133,7 +133,7 @@ class Wall_attach extends Controller
                 $s .= "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
             }
         }
-        if (strpos($r['data']['filetype'], 'audio') === 0) {
+        if (str_starts_with($r['data']['filetype'], 'audio')) {
             $s .= "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
         }
         if ($r['data']['filetype'] === 'image/svg+xml') {
@@ -167,8 +167,17 @@ class Wall_attach extends Controller
             }
         }
 
-        $s .= "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
+        if (in_array($r['data']['filetype'], ['text/x-multicode', 'text/bbcode', 'text/markdown', 'text/html'])) {
+            $content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            if ($content) {
+                $text = z_input_filter($content, $r['data']['filetype']);
+                if ($text) {
+                    $s .= "\n\n" . $text . "\n\n";
+                }
+            }
+        }
 
+        $s .= "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
 
         if ($using_api) {
             return $s;

@@ -893,22 +893,22 @@ function get_tags($s)
 
     // ignore anything in a code or svg block or HTML tag
 
-    $s = preg_replace('/\[code(.*?)\](.*?)\[\/code\]/sm', '', $s);
-    $s = preg_replace('/\<(.*?)\>/sm', '', $s);
-    $s = preg_replace('/\[svg(.*?)\](.*?)\[\/svg\]/sm', '', $s);
+    $s = preg_replace('/\[code(.*?)](.*?)\[\/code]/sm', '', $s);
+    $s = preg_replace('/<(.*?)>/sm', '', $s);
+    $s = preg_replace('/\[svg(.*?)](.*?)\[\/svg]/sm', '', $s);
 
     // ignore anything in [style= ]
-    $s = preg_replace('/\[style=(.*?)\]/sm', '', $s);
+    $s = preg_replace('/\[style=(.*?)]/sm', '', $s);
 
     // ignore anything in [color= ], because it may contain color codes which are mistaken for tags
-    $s = preg_replace('/\[color=(.*?)\]/sm', '', $s);
+    $s = preg_replace('/\[color=(.*?)]/sm', '', $s);
 
     // skip anchors in URL
-    $s = preg_replace('/\[url=(.*?)\]/sm', '', $s);
+    $s = preg_replace('/\[url=(.*?)]/sm', '', $s);
 
     // match any double quoted tags
 
-    if (preg_match_all('/([@#\!]\&quot\;.*?\&quot\;)/', $s, $match)) {
+    if (preg_match_all('/([@#!]&quot;.*?&quot;)/', $s, $match)) {
         foreach ($match[1] as $mtch) {
             $ret[] = $mtch;
         }
@@ -916,7 +916,7 @@ function get_tags($s)
 
     // match any unescaped double quoted tags (rare)
 
-    if (preg_match_all('/([@#\!]\".*?\")/', $s, $match)) {
+    if (preg_match_all('/([@#!]\".*?\")/', $s, $match)) {
         foreach ($match[1] as $mtch) {
             $ret[] = $mtch;
         }
@@ -924,7 +924,7 @@ function get_tags($s)
 
     // match bracket mentions
 
-    if (preg_match_all('/([@!]\!?\{.*?\})/', $s, $match)) {
+    if (preg_match_all('/([@!]!?\{.*?})/', $s, $match)) {
         foreach ($match[1] as $mtch) {
             $ret[] = $mtch;
         }
@@ -933,7 +933,7 @@ function get_tags($s)
     // Pull out single word tags. These can be @nickname, @first_last
     // and #hash tags.
 
-    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/\?\;\#])([@#\!]\!?[^ \x0D\x0A,;:\?\[\{\&]+)/u', $s, $match)) {
+    if (preg_match_all('/(?<![a-zA-Z0-9=\pL\/?;#])([@#!]!?[^ \x0D\x0A,;:?\[{&]+)/u', $s, $match)) {
         foreach ($match[1] as $mtch) {
             // Cleanup/ignore false positives
 
@@ -1052,8 +1052,8 @@ function linkify($s, $me = false)
     if ($me) {
         $rel .= ' me';
     }
-    $s = preg_replace("/(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\@\~\#\'\%\$\!\+\,]*)/u", '<a href="$1" rel="' . $rel . '" >$1</a>', $s);
-    $s = preg_replace("/\<(.*?)(src|href)=(.*?)\&amp\;(.*?)\>/ism", '<$1$2=$3&$4>', $s);
+    $s = preg_replace("/(https?:\/\/[a-zA-Z0-9\pL:\/\-?&;.=_@~#'%\$!+,]*)/u", '<a href="$1" rel="' . $rel . '" >$1</a>', $s);
+    $s = preg_replace("/<(.*?)(src|href)=(.*?)&amp;(.*?)>/ism", '<$1$2=$3&$4>', $s);
 
     return($s);
 }
@@ -1090,7 +1090,7 @@ function sslify($s, $cache_enable = true)
 
         // we'll only sslify img tags because media files will probably choke.
 
-        $pattern = "/\<img(.*?)src=\"(http\:.*?)\"(.*?)\>/";
+        $pattern = "/<img(.*?)src=\"(http:.*?)\"(.*?)>/";
 
         $matches = null;
         $cnt = preg_match_all($pattern, $s, $matches, PREG_SET_ORDER);
@@ -1103,7 +1103,7 @@ function sslify($s, $cache_enable = true)
         return $s;
     }
 
-    $pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
+    $pattern = "/<img(.*?)src=\"(https?:.*?)\"(.*?)>/ism";
 
     $matches = null;
     $cnt = preg_match_all($pattern, $s, $matches, PREG_SET_ORDER);
@@ -1129,7 +1129,7 @@ function sslify($s, $cache_enable = true)
 function uncache($s)
 {
 
-    $pattern = "/\<img(.*?)src=\"(https?\:.*?)\"(.*?)\>/ism";
+    $pattern = "/<img(.*?)src=\"(https?:.*?)\"(.*?)>/ism";
 
     $matches = null;
     $cnt = preg_match_all($pattern, $s, $matches, PREG_SET_ORDER);
@@ -2137,7 +2137,7 @@ function prepare_text($text, $content_type = 'text/x-multicode', $opts = false)
             require_once('include/bbcode.php');
 
             if (stristr($text, '[nosmile]')) {
-                $s = bbcode($text, [ 'cache' => $cache ]);
+                $s = bbcode($text, ((is_array($opts)) ? $opts : [] ));
             } else {
                 $s = smilies(bbcode($text, ((is_array($opts)) ? $opts : [] )));
             }
@@ -2193,6 +2193,7 @@ function get_plink($item, $conversation_mode = true)
 
 function layout_select($channel_id, $current = '')
 {
+    $options = '';
     $r = q(
         "select mid, v from item left join iconfig on iconfig.iid = item.id
 		where iconfig.cat = 'system' and iconfig.k = 'PDL' and item.uid = %d and item_type = %d ",

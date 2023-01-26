@@ -39,7 +39,7 @@ class PermissionRoles
                 $ret['directory_publish'] = true;
                 $ret['online'] = true;
                 $ret['perms_connect'] = [
-                    'view_stream', 'deliver_stream', 'view_profile', 'view_contacts', 'view_storage',
+                    'view_stream', 'search_stream', 'deliver_stream', 'view_profile', 'view_contacts', 'view_storage',
                     'view_pages', 'send_stream', 'post_mail', 'post_wall', 'post_comments'
                 ];
                 $ret['limits'] = PermissionLimits::Std_Limits();
@@ -64,7 +64,7 @@ class PermissionRoles
                 $ret['directory_publish'] = true;
                 $ret['online'] = false;
                 $ret['perms_connect'] = [
-                    'view_stream', 'deliver_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
+                    'view_stream', 'search_stream', 'deliver_stream', 'view_profile', 'view_contacts', 'view_storage', 'write_storage',
                     'view_pages', 'post_mail', 'post_wall', 'post_comments'
                 ];
                 $ret['limits'] = PermissionLimits::Std_Limits();
@@ -79,7 +79,7 @@ class PermissionRoles
                 $ret['directory_publish'] = true;
                 $ret['online'] = false;
                 $ret['perms_connect'] = [
-                    'view_stream', 'deliver_stream', 'view_profile', 'view_contacts', 'view_storage',
+                    'view_stream', 'search_stream', 'deliver_stream', 'view_profile', 'view_contacts', 'view_storage',
                     'view_pages', 'post_mail', 'post_wall', 'post_comments', 'moderated'
                 ];
                 $ret['limits'] = PermissionLimits::Std_Limits();

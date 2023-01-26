@@ -3,6 +3,7 @@
 namespace Code\Lib;
 
 use App;
+use Code\Access\PermissionLimits;
 use Code\Web\HTTPSig;
 use Code\Access\Permissions;
 use Code\Access\PermissionRoles;
@@ -453,10 +454,6 @@ class Activity
                         $ret[] = ['ttype' => TERM_HASHTAG, 'url' => $t['href'], 'term' => escape_tags((str_starts_with($t['name'], '#')) ? substr($t['name'], 1) : $t['name'])];
                         break;
 
-                    case 'topicalCollection':
-                        $ret[] = ['ttype' => TERM_PCATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name'])];
-                        break;
-
                     case 'Category':
                         $ret[] = ['ttype' => TERM_CATEGORY, 'url' => $t['href'], 'term' => escape_tags($t['name'])];
                         break;
@@ -501,13 +498,7 @@ class Activity
                     case TERM_HASHTAG:
                         // An id is required so if there is no url in the taxonomy, ignore it and keep going.
                         if ($t['url']) {
-                            $ret[] = ['id' => $t['url'], 'name' => '#' . $t['term']];
-                        }
-                        break;
-
-                    case TERM_PCATEGORY:
-                        if ($t['url'] && $t['term']) {
-                            $ret[] = ['type' => 'topicalCollection', 'href' => $t['url'], 'name' => $t['term']];
+                            $ret[] = [ 'type' => 'Hashtag', 'id' => $t['url'], 'name' => '#' . $t['term']];
                         }
                         break;
 
@@ -801,8 +792,10 @@ class Activity
             }
         }
 
-        if ($item['mid'] !== $item['parent_mid']) {
-
+        if ($item['mid'] === $item['parent_mid']) {
+            $activity['isContainedConversation'] = true;
+        }
+        else {
             // inReplyTo needs to be set in the activity for followup actions (Like, Dislike, Announce, etc.),
             // but *not* for comments and RSVPs, where it should only be present in the object
 
@@ -827,11 +820,12 @@ class Activity
                 $cnv = $item['parent_mid'];
             }
         }
-        if (isset($cnv) && $cnv) {
+        if (!empty($cnv)) {
             if (is_string($cnv) && str_starts_with($cnv, z_root())) {
                 $cnv = str_replace(['/item/', '/activity/'], ['/conversation/', '/conversation/'], $cnv);
             }
             $activity['context'] = $cnv;
+            $activity['conversation'] = $cnv;
         }
 
         if (intval($item['item_private']) === 2) {
@@ -1174,11 +1168,12 @@ class Activity
         $activity['attributedTo'] = self::encode_person($item['author'],false);
 
         if ($item['mid'] === $item['parent_mid']) {
+            $activity['isContainedConversation'] = true;
             if (in_array($activity['commentPolicy'], ['public', 'authenticated'])) {
                 $activity['canReply'] = ACTIVITY_PUBLIC_INBOX;
             } elseif (in_array($activity['commentPolicy'], ['contacts', 'specific'])) {
                 $activity['canReply'] = z_root() . '/followers/' . substr($item['author']['xchan_addr'], 0, strpos($item['author']['xchan_addr'], '@'));
-            } elseif (in_array($activity['commentPolicy'], ['self', 'none']) || $item['item_nocomment'] || datetime_convert('UTC', 'UTC', $item['comments_closed']) <= datetime_convert('UTC', 'UTC', 'now')) {
+            } elseif (in_array($activity['commentPolicy'], ['self', 'none']) || $item['item_nocomment'] || datetime_convert('UTC', 'UTC', $item['comments_closed']) <= datetime_convert()) {
                 $activity['canReply'] = [];
             }
         }
@@ -1199,11 +1194,12 @@ class Activity
                 $cnv = $item['parent_mid'];
             }
         }
-        if (isset($cnv) && $cnv) {
+        if (!empty($cnv)) {
             if (is_string($cnv) && str_starts_with($cnv, z_root())) {
                 $cnv = str_replace(['/item/', '/activity/'], ['/conversation/', '/conversation/'], $cnv);
             }
             $activity['context'] = $cnv;
+            $activity['conversation'] = $cnv;
         }
 
         // provide ocap access token for private media.
@@ -1645,10 +1641,24 @@ class Activity
                     'sharedInbox' => z_root() . '/inbox',
                     'oauthRegistrationEndpoint' => z_root() . '/api/client/register',
                     'oauthAuthorizationEndpoint' => z_root() . '/authorize',
-                    'oauthTokenEndpoint' => z_root() . '/token'
+                    'oauthTokenEndpoint' => z_root() . '/token',
+                    'searchContent' => z_root() . '/search/' . $c['channel_address'] . '/?search={}',
+                    'searchTags' => z_root() . '/search/' . $c['channel_address'] . '/?tag={}',
                 ];
-
                 $ret['discoverable'] = (bool)((1 - intval($p['xchan_hidden'])));
+
+                $searchPerm = PermissionLimits::Get($c['channel_id'], 'search_stream');
+                if ($searchPerm === PERMS_PUBLIC) {
+                        $ret['canSearch'] = ACTIVITY_PUBLIC_INBOX;
+                }
+                elseif (in_array($searchPerm, [ PERMS_SPECIFIC, PERMS_CONTACTS])) {
+                    $ret['canSearch'] = z_root() . '/followers/' . $c['channel_address'];
+                }
+                else {
+                    $ret['canSearch'] = [];
+                }
+
+
                 $ret['publicKey'] = [
                     'id' => $current_url . '?operation=getkey',
                     'owner' => $current_url,
@@ -1783,6 +1793,13 @@ class Activity
             'type' => 'Image',
             'url' => System::get_site_icon(),
         ];
+
+        if (Config::Get('system','block_public_search', 1)) {
+                $ret['canSearch'] = ACTIVITY_PUBLIC_INBOX;
+        }
+        else {
+            $ret['canSearch'] = [];
+        }
 
         $ret['generator'] = ['type' => 'Application', 'name' => System::get_project_name()];
 
@@ -2327,7 +2344,12 @@ class Activity
         if (array_path_exists('endpoints/sharedInbox', $person_obj) && is_string($person_obj['endpoints']['sharedInbox'])) {
             $collections['sharedInbox'] = $person_obj['endpoints']['sharedInbox'];
         }
-
+        if (array_path_exists('endpoints/searchContent', $person_obj) && is_string($person_obj['endpoints']['searchContent'])) {
+            $collections['searchContent'] = $person_obj['endpoints']['searchContent'];
+        }
+        if (array_path_exists('endpoints/searchTags', $person_obj) && is_string($person_obj['endpoints']['searchTags'])) {
+            $collections['searchTags'] = $person_obj['endpoints']['searchTags'];
+        }
         if (isset($person_obj['publicKey']['publicKeyPem'])) {
             if ($person_obj['id'] === $person_obj['publicKey']['owner']) {
                 $pubkey = $person_obj['publicKey']['publicKeyPem'];
@@ -4573,17 +4595,8 @@ class Activity
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
             'movedTo' => 'as:movedTo',
-            'copiedTo' => 'as:copiedTo',
             'alsoKnownAs' => 'as:alsoKnownAs',
             'EmojiReact' => 'as:EmojiReact',
-            'commentPolicy' => 'nomad:commentPolicy',
-            'topicalCollection' => 'nomad:topicalCollection',
-            'eventRepeat' => 'nomad:eventRepeat',
-            'emojiReaction' => 'nomad:emojiReaction',
-            'expires' => 'nomad:expires',
-            'directMessage' => 'nomad:directMessage',
-            'Category' => 'nomad:Category',
-            'replyTo' => 'nomad:replyTo',
             'PropertyValue' => 'schema:PropertyValue',
             'value' => 'schema:value',
             'discoverable' => 'toot:discoverable',
@@ -4594,6 +4607,19 @@ class Activity
             'canReply' => 'toot:canReply',
             'approval' => 'toot:approval',
             'Identity' => 'fep:Identity',
+            'isContainedConversation' => 'nomad:isContainedConversation',
+            'conversation' => 'nomad:conversation',
+            'commentPolicy' => 'nomad:commentPolicy',
+            'eventRepeat' => 'nomad:eventRepeat',
+            'emojiReaction' => 'nomad:emojiReaction',
+            'expires' => 'nomad:expires',
+            'directMessage' => 'nomad:directMessage',
+            'Category' => 'nomad:Category',
+            'replyTo' => 'nomad:replyTo',
+            'copiedTo' => 'nomad:copiedTo',
+            'canSearch' => 'nomad:canSearch',
+            'searchContent' => 'nomad:searchContent',
+            'searchTags' => 'nomad:searchTags',
         ];
     }
 
@@ -4615,9 +4641,8 @@ class Activity
                 }
 
                 if ($z) {
-                // do not allow somebody to embed a post that was blocked by the site admin
-                // We *will* let them over-rule any blocks they created themselves
-
+                    // do not allow somebody to embed a post that was blocked by the site admin
+                    // We *will* let them over-rule any blocks they created themselves
                     if (check_siteallowed($r['hubloc_id_url']) && check_channelallowed($z['author_xchan'])) {
                         $s = new Zlib\Share($z);
                         $item['body'] .= "\n\n" . $s->bbcode();
