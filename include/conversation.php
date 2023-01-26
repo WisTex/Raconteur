@@ -11,6 +11,7 @@ use Code\Lib\Features;
 use Code\Extend\Hook;
 use Code\Access\Permissions;
 use Code\Access\PermissionLimits;
+use Code\Lib\XConfig;
 use Code\Render\Theme;
 
 /**
@@ -771,9 +772,16 @@ function thread_author_menu($item, $mode = '')
         }
     }
 
+
     $poke_label = ucfirst(t(get_pconfig($local_channel, 'system', 'pokeverb', 'poke')));
 
     if ($contact) {
+        if (their_perms_contains($local_channel, $contact['xchan_hash'], 'search_stream')) {
+            $collections = XConfig::Get($contact['xchan_hash'],'activitypub','collections');
+            if ($collections && $collections['searchContent']) {
+                $search_url = str_replace('{}', '', $collections['searchContent']);
+            }
+        }
         if (! (isset($contact['abook_self']) && intval($contact['abook_self']))) {
             $contact_url = z_root() . '/connedit/' . $contact['abook_id'];
         }
@@ -823,6 +831,16 @@ function thread_author_menu($item, $mode = '')
             'href' => $posts_link
         ];
     }
+    if (isset($search_url) && $search_url) {
+        $menu[] = [
+            'menu' => 'search_posts',
+            'title' => t('Remote Search'),
+            'icon' => 'fw',
+            'action' => '',
+            'href' => $search_url
+        ];
+    }
+
 
     if (isset($follow_url) && $follow_url) {
         $menu[] = [
