@@ -36,10 +36,10 @@
 				{{/if}}
 				<div class="p-2 clearfix wall-item-head{{if $item.is_new && !$item.title && !$item.event && !$item.is_comment}} wall-item-head-new rounded-top{{/if}}">
 					{{if $item.pinned}}
-					    <span class="float-right wall-item-pinned" title="{{$item.pinned}}" id="wall-item-pinned-{{$item.id}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
+					    <span class="float-end wall-item-pinned" title="{{$item.pinned}}" id="wall-item-pinned-{{$item.id}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
 					{{/if}}
 					{{if $item.isdraft}}
-					    <span class="float-right wall-item-draft" title="{{$item.draft_txt}}" id="wall-item-draft-{{$item.id}}"><a href="editpost/{{$item.id}}"><i class="fa fa-floppy-o">&nbsp;</i></a></span>
+					    <span class="float-end wall-item-draft" title="{{$item.draft_txt}}" id="wall-item-draft-{{$item.id}}"><a href="editpost/{{$item.id}}"><i class="fa fa-floppy-o">&nbsp;</i></a></span>
 					{{/if}}
 
 					<div class="wall-item-info " id="wall-item-info-{{$item.id}}" >
@@ -53,7 +53,7 @@
                                 <hr>
 								{{foreach $item.thread_author_menu as $mitem}}
                                 {{if $mitem.input}}
-                                <input style="margin-left: 5px; width: 75%;" id="cti-{{$mitem.id}}" class="pull-left" type="text" ><button style="margin-left: 3px;" class="btn btn-sm pull-left" onclick="window.location.href='{{$mitem.href}}'.replace('{}',encodeURIComponent($('#cti-{{$mitem.id}}').val()));"><i class="fa fa-fw fa-search" ></i></button>
+                                <input style="margin-left: 5px; width: 75%;" id="cti-{{$mitem.id}}" class="float-start" type="text" ><button style="margin-left: 3px;" class="btn btn-sm float-start" onclick="window.location.href='{{$mitem.href}}'.replace('{}',encodeURIComponent($('#cti-{{$mitem.id}}').val()));"><i class="fa fa-fw fa-search" ></i></button>
                                 {{else}}
 								<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
                                 {{/if}}
@@ -94,7 +94,7 @@
 				</div>
 				{{/if}}
 				<div class="p-2 clearfix wall-item-tools">
-					<div class="float-right wall-item-tools-right">
+					<div class="float-end wall-item-tools-right">
 						<div class="btn-group">
 							<div id="like-rotator-{{$item.id}}" class="spinner-wrapper">
 								<div class="spinner s"></div>

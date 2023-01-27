@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		{{if $table == 'item'}}
-		<div class="dropdown pull-right">
+		<div class="dropdown float-end">
 			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$options}}">
 				<i class="fa fa-sort-desc"></i>
 			</button>

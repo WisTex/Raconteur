@@ -24,7 +24,7 @@
 			<i class="fa fa-link jot-icons"></i>
 		</button>
 	</div>
-	<div id="attach-edit-perms" class="btn-group pull-right">
+	<div id="attach-edit-perms" class="btn-group float-end">
 		<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" title="{{$permset}}" type="button">
 			<i id="jot-perms-icon" class="fa fa-{{$lockstate}} jot-icons"></i>
 		</button>

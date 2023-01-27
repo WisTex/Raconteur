@@ -1,6 +1,6 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="pull-right">
+		<div class="float-end">
 			{{if $cancel}}
 			<button id="dbtn-cancel" class="btn btn-warning btn-sm" onclick="itemCancel(); return false;">{{$cancel}}</button>
 			{{/if}}

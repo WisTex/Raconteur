@@ -12,8 +12,8 @@
 			</datalist>
 		</div>
 		<div class="form-group">
-			<button id="photo-album-edit-submit" type="submit" name="submit" class="btn btn-primary btn-sm pull-right" />{{$submit}}</button>
-			<button id="photo-album-edit-drop" type="submit" name="dropalbum" value="{{$dropsubmit}}" class="btn btn-danger btn-sm pull-left" onclick="return confirmDelete();" />{{$dropsubmit}}</button>
+			<button id="photo-album-edit-submit" type="submit" name="submit" class="btn btn-primary btn-sm float-end" />{{$submit}}</button>
+			<button id="photo-album-edit-drop" type="submit" name="dropalbum" value="{{$dropsubmit}}" class="btn btn-danger btn-sm float-start" onclick="return confirmDelete();" />{{$dropsubmit}}</button>
 		</div>
 	</form>
 	<div id="photo-album-edit-end" class="clear"></div>

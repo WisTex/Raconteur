@@ -8,7 +8,7 @@
 			<button type="submit" name="submit" class="btn btn-block btn-primary">{{$login}}</button>
 		</div>
 		<div id="login-extra-links">
-			{{if $register}}<a href="{{$register.link}}" title="{{$register.title}}" id="register-link" class="pull-right">{{$register.desc}}</a>{{/if}}
+			{{if $register}}<a href="{{$register.link}}" title="{{$register.title}}" id="register-link" class="float-end">{{$register.desc}}</a>{{/if}}
 			<a href="lostpass" title="{{$lostpass}}" id="lost-password-link" >{{$lostlink}}</a>
 		</div>
 		<hr>

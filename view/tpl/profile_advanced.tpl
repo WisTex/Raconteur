@@ -1,6 +1,6 @@
 <div id="profile-content-wrapper" class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="float-right">
+		<div class="float-end">
 			{{if $profile.like_count}}
 			<div class="btn-group">
 				<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="profile-like">{{$profile.like_count}} {{$profile.like_button_label}}</button>

@@ -10,7 +10,7 @@
 	{{/if}}
 	{{if ! $zcard}}
 	{{if $editmenu.multi}}
-	<div class="dropdown float-right">
+	<div class="dropdown float-end">
 		<a class="dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-pencil" title="{{$editmenu.edit.1}}"></i></a>
 		<div class="dropdown-menu dropdown-menu-right" role="menu">
 			{{foreach $editmenu.menu.entries as $e}}

@@ -19,7 +19,7 @@
 			{{include file="field_input.tpl" field=$caption}}
 			{{include file="field_input.tpl" field=$title}}
             <input type="hidden" name="visible" value="0" />
-			<div class="pull-right btn-group">
+			<div class="float-end btn-group">
 				<div class="btn-group">
 					{{if $lockstate}}
 					<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
@@ -37,13 +37,13 @@
 			{{include file="field_input.tpl" field=$caption}}
 			{{include file="field_input.tpl" field=$title}}
 			<input type="hidden" name="visible" value="0" />
-			<div id="photos-upload-perms" class="btn-group pull-right">
+			<div id="photos-upload-perms" class="btn-group float-end">
 				{{if $lockstate}}
 				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
 					<i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i>
 				</button>
 				{{/if}}
-				<div class="pull-right">
+				<div class="float-end">
 					{{$uploader}}
 				</div>
 			</div>

@@ -1,5 +1,5 @@
 <div class="generic-content-wrapper">
-<div class="section-title-wrapper"><a title="{{$new}}" class="btn btn-primary btn-sm pull-right" href="admin/profs/new"><i class="fa fa-plus-circle"></i>&nbsp;{{$new}}</a><h2>{{$title}}</h2>
+<div class="section-title-wrapper"><a title="{{$new}}" class="btn btn-primary btn-sm float-end" href="admin/profs/new"><i class="fa fa-plus-circle"></i>&nbsp;{{$new}}</a><h2>{{$title}}</h2>
 <div class="clear"></div>
 </div>
 

@@ -74,7 +74,7 @@
 				</div>
 				{{/if}}
 				<div class="p-2 clearfix wall-item-tools">
-					<div class="float-right wall-item-tools-right">
+					<div class="float-end wall-item-tools-right">
 						{{if $item.toplevel && $item.emojis && $item.reactions}}
 						<div class="btn-group">
 							<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="wall-item-react-{{$item.id}}">

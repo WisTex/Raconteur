@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		{{if $notself}}
-		<div class="pull-right">
+		<div class="float-end">
 			<div class="btn-group">
 				<button id="connection-dropdown" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
@@ -208,7 +208,7 @@
 						</div>
 
 						{{if $permcat_enable}}
-						<a href="settings/permcats" class="pull-right"><i class="fa fa-plus"></i>&nbsp;{{$permcat_new}}</a>
+						<a href="settings/permcats" class="float-end"><i class="fa fa-plus"></i>&nbsp;{{$permcat_new}}</a>
 						{{include file="field_select.tpl" field=$permcat}}
 						{{/if}}
 

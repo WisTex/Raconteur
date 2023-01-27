@@ -79,7 +79,7 @@
 						<i class="fa fa-plus"></i> {{$poll_add_option_label}}
 					</button>
 				</div>
-				<div id="poll-tools-right" class="float-right">
+				<div id="poll-tools-right" class="float-end">
 					<div class="input-group">
 						<input type="text" name="poll_expire_value" class="form-control" value="10" size="3">
 						<select class="form-control" id="duration-select" name="poll_expire_unit">
@@ -226,7 +226,7 @@
 					</div>
 				</div>
 			</div>
-			<div id="profile-jot-submit-right" class="btn-group float-right">
+			<div id="profile-jot-submit-right" class="btn-group float-end">
 				{{if $preview}}
 				<button class="btn btn-outline-secondary btn-sm" onclick="preview_post();return false;" title="{{$preview}}">
 					<i class="fa fa-eye jot-icons" ></i>
@@ -255,7 +255,7 @@
 				<button id="dbtn-submit" class="btn btn-primary btn-sm" type="submit" tabindex="3" name="button-submit">{{$share}}</button>
 			</div>
 			{{if $reset}}
-			<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm float-right" title="{{$reset}}" onclick="itemCancel(); return false;">
+			<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm float-end" title="{{$reset}}" onclick="itemCancel(); return false;">
 				<i class="fa fa-close"></i>
 			</button>
 			{{/if}}
@@ -433,12 +433,12 @@
 					<div id="linkmodaldiscover" style="margin-top: 10px;">
 						<div class="clearfix form-group">
 							<label for="id_oembed">{{$discombed}}</label>
-							<div class="float-right"><input type="checkbox" name='oembed' id='id_oembed' value="1" {{$embedchecked}} ></div>
+							<div class="float-end"><input type="checkbox" name='oembed' id='id_oembed' value="1" {{$embedchecked}} ></div>
 							<div class="descriptive-text">{{$discombed2}}</div>
 						</div>
 						<!--div class="clearfix form-group">
 							<label for="id_zotobj">{{$disczot}}</label>
-							<div class="float-right"><input type="checkbox" name='zotobj' id='id_zotobj' value="1" checked ></div>
+							<div class="float-end"><input type="checkbox" name='zotobj' id='id_zotobj' value="1" checked ></div>
 						</div -->
 					</div>
 			</div>

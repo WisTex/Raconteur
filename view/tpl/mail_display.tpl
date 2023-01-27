@@ -1,6 +1,6 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="pull-right">
+		<div class="float-end">
 			<button id="fullscreen-btn" type="button" class="btn btn-outline-secondary btn-sm" onclick="makeFullScreen();"><i class="fa fa-expand"></i></button>
 			<button id="inline-btn" type="button" class="btn btn-outline-secondary btn-sm" onclick="makeFullScreen(false);"><i class="fa fa-compress"></i></button>
 			{{if $mailbox == 'combined'}}

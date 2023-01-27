@@ -4,7 +4,7 @@
 	<div id="calendar-{{$calendar.calendarid}}">
 		<div class="ml-3{{if !$calendar@last}} form-group{{/if}}">
 			<i id="calendar-btn-{{$calendar.calendarid}}" class="fa {{if $calendar.switch}}fa-calendar-check-o{{else}}fa-calendar-o{{/if}} generic-icons fakelink" onclick="add_remove_json_source('{{$calendar.json_source}}', '{{$calendar.color}}', {{$calendar.editable}})" style="color: {{$calendar.color}};"></i>{{$calendar.displayname}}
-			<div class="float-right">
+			<div class="float-end">
 				<a href="#" onclick="exportDate(); return false;"><i id="download-icon" class="fa fa-cloud-download fakelink generic-icons-right"></i></a>
 			</div>
 		</div>
@@ -19,7 +19,7 @@
 	<div id="calendar-{{$calendar.calendarid}}">
 		<div class="ml-3{{if !$calendar@last}} form-group{{/if}}">
 			<i id="calendar-btn-{{$calendar.calendarid}}" class="fa {{if $calendar.switch}}fa-calendar-check-o{{else}}fa-calendar-o{{/if}} generic-icons fakelink" onclick="add_remove_json_source('{{$calendar.json_source}}', '{{$calendar.color}}', {{$calendar.editable}})" style="color: {{$calendar.color}};"></i>{{$calendar.displayname}}
-			<div class="float-right">
+			<div class="float-end">
 				<i id="edit-icon" class="fa fa-pencil fakelink generic-icons" onclick="openClose('edit-calendar-{{$calendar.calendarid}}')"></i>
 				<a href="/cdav/calendars/{{$calendar.ownernick}}/{{$calendar.uri}}/?export"><i id="download-icon" class="fa fa-cloud-download fakelink generic-icons"></i></a>
 				<i id="share-icon" class="fa fa-share-alt fakelink generic-icons" onclick="openClose('share-calendar-{{$calendar.calendarid}}')"></i>
@@ -30,7 +30,7 @@
 				{{foreach $calendar.sharees as $sharee}}
 				<div id="sharee-{{$calendar.calendarid}}-{{$sharee@iteration}}" class="form-group">
 					<i class="fa fa-share generic-icons"></i>{{$sharee.name}}&nbsp;{{$sharee.access}}
-					<div class="pull-right">
+					<div class="float-end">
 						<a href="#" onclick="dropItem('/cdav/calendar/dropsharee/{{$calendar.calendarid}}/{{$calendar.instanceid}}/{{$sharee.hash}}', '#sharee-{{$calendar.calendarid}}-{{$sharee@iteration}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a>
 					</div>
 				</div>
@@ -83,7 +83,7 @@
 	{{foreach $shared_calendars as $calendar}}
 	<div id="shared-calendar-{{$calendar.calendarid}}" class="ml-3{{if !$calendar@last}} form-group{{/if}}">
 		<i id="calendar-btn-{{$calendar.calendarid}}" class="fa {{if $calendar.switch}}{{if $calendar.access == 'read-write'}}fa-calendar-check-o{{else}}fa-calendar-times-o{{/if}}{{else}}fa-calendar-o{{/if}} generic-icons fakelink" onclick="add_remove_json_source('{{$calendar.json_source}}', '{{$calendar.color}}', {{$calendar.editable}}, {{if $calendar.access == 'read-write'}}'fa-calendar-check-o'{{else}}'fa-calendar-times-o'{{/if}})"  style="color: {{$calendar.color}};"></i>{{$calendar.displayname}} ({{$calendar.sharer}})
-		<div class="pull-right">
+		<div class="float-end">
 			<a href="/cdav/calendars/{{$calendar.ownernick}}/{{$calendar.uri}}/?export"><i id="download-icon" class="fa fa-cloud-download fakelink generic-icons"></i></a>
 			<a href="#" onclick="var drop = dropItem('/cdav/calendar/drop/{{$calendar.calendarid}}/{{$calendar.instanceid}}', '#shared-calendar-{{$calendar.calendarid}}'); if(drop) { add_remove_json_source('{{$calendar.json_source}}', '{{$calendar.color}}', {{$calendar.editable}}, 'drop'); } return false;"><i class="fa fa-trash-o drop-icons"></i></a>
 		</div>

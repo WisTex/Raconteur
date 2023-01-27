@@ -19,7 +19,7 @@
 			<div class="dropdown-menu" role="menu" aria-labelledby="attachment-menu-{{$item.id}}">{{$mail.attachments}}</div>
 		</div>
 		{{/if}}
-		<div class="float-right dropdown">
+		<div class="float-end dropdown">
 			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="mail-item-menu-{{$mail.id}}">
 				<i class="fa fa-cog"></i>
 			</button>

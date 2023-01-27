@@ -1,7 +1,7 @@
 <div id="live-photos"></div>
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="pull-right">
+		<div class="float-end">
 			{{if $tools || $map || $edit}}
 			<div class="btn-group">
 				<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
@@ -82,10 +82,10 @@
 			</div>
 			{{/if}}
 
-			<div class="form-group pull-left">
+			<div class="form-group float-start">
 				<button class="btn btn-danger btn-sm" id="photo-edit-delete-button" type="submit" name="delete" value="{{$edit.delete}}" onclick="return confirmDelete();" />{{$edit.delete}}</button>
 			</div>
-			<div class="form-group btn-group pull-right">
+			<div class="form-group btn-group float-end">
 				{{if $edit.aclselect}}
 				<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
 					<i id="jot-perms-icon" class="fa fa-{{$edit.lockstate}}"></i>
@@ -110,7 +110,7 @@
 		{{/if}}
 		<div class="photo-item-tools">
 			{{if $responses.count }}
-			<div class="photo-item-tools-left pull-left">
+			<div class="photo-item-tools-left float-start">
 				<div class="{{if $responses.count > 1}}btn-group{{/if}}">
 				{{foreach $responses as $verb=>$response}}
 					{{if $response.count}}
@@ -146,7 +146,7 @@
 			</div>
 			{{/if}}
 			{{if $likebuttons}}
-			<div class="photo-item-tools-right btn-group pull-right">
+			<div class="photo-item-tools-right btn-group float-end">
 				<button type="button" title="{{if $likebuttons.ilike}}{{$likebuttons.unlikethis}}{{else}}{{$likebuttons.likethis}}{{/if}}" class="btn btn-outline-secondary btn-sm" onclick="dolike({{$likebuttons.id}},{{if $likebuttons.ilike}} 'Undo/' + {{/if}} 'Like' ); return false;">
 					<i class="fa fa-thumbs-o-up item-tool{{if $likebuttons.ilike}} ivoted{{/if}}" ></i>
 				</button>
@@ -154,7 +154,7 @@
 					<i class="fa fa-thumbs-o-down item-tool{{if $likebuttons.inolike}} ivoted{{/if}}" ></i>
 				</button>
 			</div>
-			<div id="like-rotator-{{$likebuttons.id}}" class="photo-like-rotator pull-right"></div>
+			<div id="like-rotator-{{$likebuttons.id}}" class="photo-like-rotator float-end"></div>
 			{{/if}}
 			<div class="clear"></div>
 		</div>

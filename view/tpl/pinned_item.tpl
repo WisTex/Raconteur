@@ -30,7 +30,7 @@
 				{{/if}}
 			{{/if}}
 			<div class="p-2 clearfix wall-item-head{{if !$title && !$event && !$photo}} rounded-top{{/if}}{{if $is_new && !$event}} wall-item-head-new{{/if}}">
-				<span class="float-right wall-item-pinned" title="{{$pinned}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
+				<span class="float-end wall-item-pinned" title="{{$pinned}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
 				<div class="wall-item-info" id="pinned-item-info-{{$id}}" >
 					<div class="wall-item-photo-wrapper{{if $owner_url}} wwfrom{{/if}} h-card p-author" id="pinned-item-photo-wrapper-{{$id}}">
 						<img src="{{$thumb}}" class="fakelink wall-item-photo u-photo p-name" id="pinned-item-photo-{{$id}}" alt="{{$name}}" data-toggle="dropdown" />
@@ -73,7 +73,7 @@
 				</div>
 			{{/if}}
 				<div class="p-2 clearfix wall-item-tools">
-					<div class="float-right wall-item-tools-right">
+					<div class="float-end wall-item-tools-right">
 						<div class="btn-group">
 							<div id="pinned-rotator-{{$id}}" class="spinner-wrapper">
 								<div class="spinner s"></div>

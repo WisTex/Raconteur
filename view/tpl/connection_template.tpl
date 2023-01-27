@@ -1,6 +1,6 @@
 <div id="contact-entry-wrapper-{{$contact.id}}" class="directory-item">
 	<div class="section-subtitle-wrapper clearfix">
-		<div class="pull-right">
+		<div class="float-end">
 			{{if $contact.approve && $contact.ignore}}
 			<form action="connedit/{{$contact.id}}" method="post" >
 			<button type="submit" class="btn btn-success btn-sm" name="pending" value="1" title="{{$contact.approve_hover}}"><i class="fa fa-check"></i> {{$contact.approve}}</button>
@@ -30,7 +30,7 @@
 							<hr>
 							{{foreach $contact.author_menu as $mitem}}
                                 {{if $mitem.input}}
-                                <input style="margin-left: 5px; width: 75%;" id="cti-{{$mitem.id}}" class="pull-left" type="text" ><button style="margin-left: 3px;" class="btn btn-sm pull-left" onclick="window.location.href='{{$mitem.href}}'.replace('{}',encodeURIComponent($('#cti-{{$mitem.id}}').val()));"><i class="fa fa-fw fa-search" ></i></button>
+                                <input style="margin-left: 5px; width: 75%;" id="cti-{{$mitem.id}}" class="float-start" type="text" ><button style="margin-left: 3px;" class="btn btn-sm float-start" onclick="window.location.href='{{$mitem.href}}'.replace('{}',encodeURIComponent($('#cti-{{$mitem.id}}').val()));"><i class="fa fa-fw fa-search" ></i></button>
                                 {{else}}
 								<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
                                 {{/if}}

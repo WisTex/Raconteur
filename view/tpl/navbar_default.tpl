@@ -18,7 +18,7 @@
 {{/if}}
 {{if $userinfo}}
 <div class="dropdown">
-	<div class="fakelink usermenu" data-toggle="dropdown">
+	<div class="fakelink usermenu" data-bs-toggle="dropdown">
 		<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
 		<i class="fa fa-caret-down"></i>
 	</div>
@@ -137,7 +137,7 @@
 		{{/if}}
 		{{if $channel_menu && $channel_apps.0}}
 		<li class="nav-item dropdown" id="channel-menu">
-			<a class="nav-link" href="#" data-toggle="dropdown"><img src="{{$channel_thumb}}" style="height:14px; width:14px;position:relative; top:-2px;" /></a>
+			<a class="nav-link" href="#" data-bs-toggle="dropdown"><img src="{{$channel_thumb}}" style="height:14px; width:14px;position:relative; top:-2px;" /></a>
 			<div id="dropdown-menu" class="dropdown-menu dropdown-menu-right">
 				{{foreach $channel_apps as $channel_app}}
 				{{$channel_app}}
@@ -153,7 +153,7 @@
 		{{/foreach}}
 		{{/if}}
 		<li class="nav-item dropdown" id="app-menu">
-			<a class="nav-link" href="#" data-toggle="dropdown" title="{{$appstitle}}"><i class="fa fa-fw fa-bars"></i></a>
+			<a class="nav-link" href="#" data-bs-toggle="dropdown" title="{{$appstitle}}"><i class="fa fa-fw fa-bars"></i></a>
 			<div id="dropdown-menu" class="dropdown-menu dropdown-menu-right">
 				{{if $channel_apps.0 && ! $channel_menu}}
 				{{foreach $channel_apps as $channel_app}}
@@ -211,7 +211,7 @@
 {{if $nav.help.6}}
 <div id="contextual-help-content" class="contextual-help-content">
 	{{$nav.help.5}}
-	<div class="float-right">
+	<div class="float-end">
 		<a class="btn btn-primary btn-sm" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}"><i class="fa fa-question"></i>&nbsp;{{$fulldocs}}</a>
 		<a class="contextual-help-tool" href="#" onclick="contextualHelp(); return false;"><i class="fa fa-times"></i></a>
 	</div>

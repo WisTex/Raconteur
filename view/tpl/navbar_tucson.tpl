@@ -215,7 +215,7 @@
 {{if $nav.help.6}}
 <div id="contextual-help-content" class="contextual-help-content">
 	{{$nav.help.5}}
-	<div class="float-right">
+	<div class="float-end">
 		<a class="btn btn-primary btn-sm" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}"><i class="fa fa-question"></i>&nbsp;{{$fulldocs}}</a>
 		<a class="contextual-help-tool" href="#" onclick="contextualHelp(); return false;"><i class="fa fa-times"></i></a>
 	</div>

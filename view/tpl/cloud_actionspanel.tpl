@@ -6,14 +6,14 @@
 		<input type="hidden" name="channick" value="{{$channick}}" />
 		<input type="hidden" name="return_url" value="{{$return_url}}" />
 		<input id="files-mkdir" type="text" name="filename" class="form-control form-group">
-		<div class="pull-right btn-group">
+		<div class="float-end btn-group">
 			<div class="btn-group">
 				{{if $lockstate && $aclselect}}
 				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" type="button">
 					<i class="jot-perms-icon fa fa-{{$lockstate}}"></i>
 				</button>
 				{{/if}}
-				<button class="btn btn-primary btn-sm pull-right" type="submit" value="{{$folder_submit}}">{{$folder_submit}}</button>
+				<button class="btn btn-primary btn-sm float-end" type="submit" value="{{$folder_submit}}">{{$folder_submit}}</button>
 			</div>
 		</div>
 	</form>
@@ -26,16 +26,16 @@
 		<input type="hidden" name="channick" value="{{$channick}}" />
 		<input type="hidden" name="return_url" value="{{$return_url}}" />
 		<!--label for="files-upload">{{$upload_header}}</label>
-		<input class="form-group pull-left" id="files-upload" type="file" name="files[]" multiple -->
+		<input class="form-group float-start" id="files-upload" type="file" name="files[]" multiple -->
 		{{*include file="field_checkbox.tpl" field=$notify*}}
-		<div class="pull-right btn-group">
+		<div class="float-end btn-group">
 			<div class="btn-group">
 				{{if $lockstate && $aclselect}}
 				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" type="button">
 					<i class="jot-perms-icon fa fa-{{$lockstate}}"></i>
 				</button>
 				{{/if}}
-				<button id="upload-submit" class="btn btn-primary btn-sm pull-right">{{$upload_submit}}</button>
+				<button id="upload-submit" class="btn btn-primary btn-sm float-end">{{$upload_submit}}</button>
 			</div>
 		</div>
 	</form>

@@ -165,13 +165,13 @@ $(document).ready(function() {
 
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<button type="button" class="btn btn-success btn-sm float-right" onclick="openClose('create_form')"><i class="fa fa-plus-circle"></i> {{$add_card}}</button>
+		<button type="button" class="btn btn-success btn-sm float-end" onclick="openClose('create_form')"><i class="fa fa-plus-circle"></i> {{$add_card}}</button>
 		<h2>{{$displayname}}</h2>
 	</div>
 	<div id="create_form" class="section-content-tools-wrapper">
 		<form id="card_form_new" method="post" action="">
 			<input type="hidden" name="target" value="{{$id}}">
-			<div class="dropdown pull-right">
+			<div class="dropdown float-end">
 				<button data-toggle="dropdown" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"><i class="fa fa-plus"></i> {{$add_field}}</button>
 				<div class="dropdown-menu dropdown-menu-right">
 					<a class="dropdown-item add-vcard-org add-field" style="display: none" href="#" data-add="vcard-org" data-id="new">{{$org_label}}</a>
@@ -261,7 +261,7 @@ $(document).ready(function() {
 				</div>
 			</div>
 
-			<button type="submit" name="create" value="create_card" class="btn btn-primary btn-sm pull-right">{{$create}}</button>
+			<button type="submit" name="create" value="create_card" class="btn btn-primary btn-sm float-end">{{$create}}</button>
 			<button type="button" class="btn btn-outline-secondary btn-sm" onclick="openClose('create_form')">{{$cancel}}</button>
 			<div class="clear"></div>
 		</form>
@@ -273,7 +273,7 @@ $(document).ready(function() {
 		<input type="hidden" name="uri" value="{{$card.uri}}">
 		<div class="section-content-wrapper-np">
 			<div id="vcard-cancel-{{$card.id}}" class="vcard-cancel vcard-cancel-btn" data-id="{{$card.id}}" data-action="cancel"><i class="fa fa-close"></i></div>
-			<div id="vcard-add-field-{{$card.id}}" class="dropdown pull-right vcard-add-field">
+			<div id="vcard-add-field-{{$card.id}}" class="dropdown float-end vcard-add-field">
 				<button data-toggle="dropdown" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"><i class="fa fa-plus"></i> {{$add_field}}</button>
 				<div class="dropdown-menu dropdown-menu-right">
 					<a class="dropdown-item add-vcard-org add-field"{{if $card.org}} style="display: none"{{/if}} href="#" data-add="vcard-org" data-id="{{$card.id}}">{{$org_label}}</a>
@@ -452,7 +452,7 @@ $(document).ready(function() {
 			</div>
 
 
-			<button type="submit" name="update" value="update_card" class="btn btn-primary btn-sm pull-right">{{$update}}</button>
+			<button type="submit" name="update" value="update_card" class="btn btn-primary btn-sm float-end">{{$update}}</button>
 			<button type="submit" name="delete" value="delete_card" class="btn btn-danger btn-sm">{{$delete}}</button>
 			<button type="button" class="btn btn-outline-secondary btn-sm vcard-cancel-btn" data-id="{{$card.id}}" data-action="cancel">{{$cancel}}</button>
 			<div class="clear"></div>

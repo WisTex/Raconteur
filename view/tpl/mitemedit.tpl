@@ -22,7 +22,7 @@
 			{{include file="field_input.tpl" field=$mitem_order}}
 			{{include file="field_checkbox.tpl" field=$usezid}}
 			{{include file="field_checkbox.tpl" field=$newwin}}
-			<div class="pull-right form-group">
+			<div class="float-end form-group">
 				<div class="btn-group">
 					<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
 						<i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i>

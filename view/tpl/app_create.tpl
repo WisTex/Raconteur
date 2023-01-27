@@ -33,7 +33,7 @@
 		{{include file="field_textarea.tpl" field=$embed}}
 		{{/if}}
 
-		<button class="btn btn-primary float-right" type="submit" name="submit" value="{{$submit}}">{{$submit}}</button>
+		<button class="btn btn-primary float-end" type="submit" name="submit" value="{{$submit}}">{{$submit}}</button>
 
 		</form>
 	</div>

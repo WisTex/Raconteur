@@ -1,6 +1,6 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="pull-right">
+		<div class="float-end">
 			{{if $is_owner}}
 			<form id="chat-destroy" method="post" action="chat">
 				<input type="hidden" name="room_name" value="{{$room_name}}" />
@@ -29,7 +29,7 @@
 					<textarea id="chatText" name="chat_text" class="form-control"></textarea>
 				</div>
 				<div id="chat-submit-wrapper" class="clearfix">
-					<div id="chat-submit" class="dropup pull-right">
+					<div id="chat-submit" class="dropup float-end">
 						<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-cog"></i></button>
 						<button class="btn btn-primary btn-sm" type="submit" id="chat-submit" name="submit" value="{{$submit}}">{{$submit}}</button>
 						<div class="dropdown-menu dropdown-menu-right">

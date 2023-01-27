@@ -91,7 +91,7 @@ $(document).ready(function() {
 
 			if(event.extendedProps.plink) {
 				if(! $('#l2s').length)
-					$('#id_title_wrapper').prepend('<span id="l2s" class="float-right"></span>');
+					$('#id_title_wrapper').prepend('<span id="l2s" class="float-end"></span>');
 
 				$('#l2s').html('<a href="' + event.extendedProps.plink[0] + '" target="_blank"><i class="fa fa-external-link"></i> ' + event.extendedProps.plink[1] + '</a>');
 			}
@@ -320,7 +320,7 @@ $(document).ready(function() {
 	if(resource !== null) {
 		$('.section-content-tools-wrapper, #event_form_wrapper').show();
 
-		$('#id_title_wrapper').prepend('<span id="l2s" class="float-right"></span>');
+		$('#id_title_wrapper').prepend('<span id="l2s" class="float-end"></span>');
 		$('#l2s').html('<a href="' + resource.plink[0] + '" target="_blank"><i class="fa fa-external-link"></i> ' + resource.plink[1] + '</a>');
 
 		event_id = resource.id;
@@ -519,7 +519,7 @@ function exportDate() {
 
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="float-right">
+		<div class="float-end">
 			<div class="dropdown">
 				<button id="view_selector" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown"></button>
 				<div class="dropdown-menu">
@@ -582,7 +582,7 @@ function exportDate() {
 					{{include file="field_textarea.tpl" field=$location}}
 				</div>
 				<div class="form-group">
-					<div class="pull-right">
+					<div class="float-end">
 						<button id="event_more" type="button" class="btn btn-outline-secondary btn-sm"><i class="fa fa-caret-down"></i> {{$more}}</button>
 						<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm d-none" type="button" data-toggle="modal" data-target="#aclModal"><i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i></button>
 						<button id="event_submit" type="button" value="" class="btn btn-primary btn-sm"></button>
