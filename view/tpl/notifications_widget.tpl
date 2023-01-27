@@ -144,7 +144,7 @@
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
 		<a class="list-group-item clearfix notification notification-forum" href="{0}" title="{4}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
-			<span class="float-end badge badge-{{$notification.severity}}">{10}</span>
+			<span class="float-end badge bg-{{$notification.severity}}">{10}</span>
 			<img class="menu-img-1" src="{1}">
 			<span class="">{2}</span>
 			<i class="fa fa-{11} text-muted"></i> 
@@ -155,7 +155,7 @@
 		<div class="collapse {{$notification.type}}-button">
 			<a class="list-group-item notification-link" href="#" title="{{$notification.title}}" data-target="#nav-{{$notification.type}}-sub" data-toggle="collapse" data-type="{{$notification.type}}">
 				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
-				<span class="float-end badge badge-{{$notification.severity}} {{$notification.type}}-update"></span>
+				<span class="float-end badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
 			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content" data-parent="#notifications" data-type="{{$notification.type}}">
 				{{if $notification.viewall}}
