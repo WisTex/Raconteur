@@ -206,7 +206,7 @@ class Share
 
         $special_object = in_array($this->item['obj_type'], [ ACTIVITY_OBJ_PHOTO, 'Event', 'Question' ]);
         if ($special_object) {
-            $object = json_decode($this->item['obj'], true);
+            $object = is_array($this->item['obj']) ? $this->item['obj'] : json_decode($this->item['obj'], true);
             $special = (($object['source']) ? $object['source']['content'] : $object['body']);
         }
 
