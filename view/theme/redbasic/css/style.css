@@ -155,7 +155,9 @@ a:focus,
 .navbar-nav .dropdown-menu {
 	left: -200px;
 }
-
+.navbar-collapse {
+	margin-right: 10px;
+}
 .list-group-item {
 	position: relative;
 	display: block;
