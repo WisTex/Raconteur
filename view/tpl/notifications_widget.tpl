@@ -136,14 +136,14 @@
 		{{$no_notifications}}<span class="jumping-dots"><span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span></span>
 	</div>
 	<div id="nav-notifications-template" rel="template">
-		<a class="list-group-item clearfix notification {6}" href="{0}" title="{2}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
+		<a class="list-group-item list-group-item-action clearfix notification {6}" href="{0}" title="{2}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
 			<img class="menu-img-3" data-src="{1}">
 			<span class="contactname">{2}</span>
 			<span class="dropdown-sub-text">{4}<br>{5}</span>
 		</a>
 	</div>
 	<div id="nav-notifications-forums-template" rel="template">
-		<a class="list-group-item clearfix notification notification-forum" href="{0}" title="{4}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
+		<a class="list-group-item list-group-item-action clearfix notification notification-forum" href="{0}" title="{4}" data-b64mid="{7}" data-notify_id="{8}" data-thread_top="{9}" data-contact_name="{2}" data-contact_addr="{3}">
 			<span class="float-end badge bg-{{$notification.severity}}">{10}</span>
 			<img class="menu-img-1" src="{1}">
 			<span class="">{2}</span>
@@ -153,29 +153,29 @@
 	<div id="notifications" class="navbar-nav">
 		{{foreach $notifications as $notification}}
 		<div class="collapse {{$notification.type}}-button">
-			<a class="list-group-item notification-link" href="#" title="{{$notification.title}}" data-target="#nav-{{$notification.type}}-sub" data-toggle="collapse" data-type="{{$notification.type}}">
+			<a class="list-group-item list-group-item-action notification-link" href="#" title="{{$notification.title}}" data-target="#nav-{{$notification.type}}-sub" data-toggle="collapse" data-type="{{$notification.type}}">
 				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
 				<span class="float-end badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
 			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content" data-parent="#notifications" data-type="{{$notification.type}}">
 				{{if $notification.viewall}}
-				<a class="list-group-item text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
+				<a class="list-group-item list-group-item-action text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
 					<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}
 				</a>
 				{{/if}}
 				{{if $notification.markall}}
-				<div class="list-group-item cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
+				<div class="list-group-item list-group-item-action cursor-pointer" id="nav-{{$notification.type}}-mark-all" onclick="markRead('{{$notification.type}}'); return false;">
 					<i class="fa fa-fw fa-check"></i> {{$notification.markall.label}}
 				</div>
 				{{/if}}
 				{{if $notification.filter}}
 				{{if $notification.filter.posts_label}}
-				<div class="list-group-item cursor-pointer" id="tt-{{$notification.type}}-only">
+				<div class="list-group-item list-group-item-action cursor-pointer" id="tt-{{$notification.type}}-only">
 					<i class="fa fa-fw fa-filter"></i> {{$notification.filter.posts_label}}
 				</div>
 				{{/if}}
 				{{if $notification.filter.name_label}}
-				<div class="list-group-item clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
+				<div class="list-group-item list-group-item-action clearfix notifications-textinput" id="cn-{{$notification.type}}-only">
 					<div class="text-muted notifications-textinput-filter"><i class="fa fa-fw fa-filter"></i></div>
 					<input id="cn-{{$notification.type}}-input" type="text" class="form-control form-control-sm" placeholder="{{$notification.filter.name_label}}">
 					<div id="cn-{{$notification.type}}-input-clear" class="text-muted notifications-textinput-clear d-none"><i class="fa fa-times"></i></div>
