@@ -41,7 +41,7 @@
 				</td>
 				<td class="webpage-list-tool dropdown">
 					{{if $item.lockstate=='lock'}}
-					<i class="fa fa-lock lockview" data-toggle="dropdown" onclick="lockview('item',{{$item.url}});" ></i>
+					<i class="fa fa-lock lockview" data-bs-toggle="dropdown" onclick="lockview('item',{{$item.url}});" ></i>
 					<ul id="panel-{{$item.url}}" class="lockview-panel dropdown-menu"></ul>
 					{{/if}}
 				</td>

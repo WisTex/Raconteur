@@ -21,9 +21,9 @@
 	<div class="section-content-tools-wrapper">
 		<div class="contact-photo-wrapper" >
 			<!--a href="{{$contact.url}}" title="{{$contact.img_hover}}" -->
-				<img class="directory-photo-img contact-photo-img fakelink {{if $contact.classes}}{{$contact.classes}}{{/if}}" src="{{$contact.thumb}}" alt="{{$contact.name}}" data-toggle="dropdown" />
+				<img class="directory-photo-img contact-photo-img fakelink {{if $contact.classes}}{{$contact.classes}}{{/if}}" src="{{$contact.thumb}}" alt="{{$contact.name}}" data-bs-toggle="dropdown" />
 				{{if $contact.author_menu}}
-					<i class="fa fa-caret-down contact-photo-caret cursor-pointer" data-toggle="dropdown"></i>
+					<i class="fa fa-caret-down contact-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
 					<div class="dropdown-menu">
 						<img src="{{$contact.large_avatar}}" style="width: 200px; height: 200px;" id="wall-item-popup-photo-{{$contact.id}}" alt="{{$contact.name}}" />
 						<div style="margin-top: 20px;">

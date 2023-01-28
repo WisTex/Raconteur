@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
     <div class="section-title-wrapper">
         <div class="dropdown float-end" id="profile-edit-links">
-            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
             </button>
             <div class="dropdown-menu dropdown-menu-right">
@@ -114,7 +114,7 @@
                 <div class="section-content-wrapper-np">
                     <div id="vcard-cancel-{{$vcard.id}}" class="vcard-cancel vcard-cancel-btn" data-id="{{$vcard.id}}" data-action="cancel"><i class="fa fa-close"></i></div>
                     <div id="vcard-add-field-{{$vcard.id}}" class="dropdown float-end vcard-add-field">
-                        <button data-toggle="dropdown" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"><i class="fa fa-plus"></i> {{$add_field}}</button>
+                        <button data-bs-toggle="dropdown" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"><i class="fa fa-plus"></i> {{$add_field}}</button>
                         <ul class="dropdown-menu">
                             <li class="add-vcard-tel"><a href="#" data-add="vcard-tel" data-id="{{$vcard.id}}" class="add-field" onclick="return false;">{{$tel_label}}</a></li>
                             <li class="add-vcard-email"><a href="#" data-add="vcard-email" data-id="{{$vcard.id}}" class="add-field" onclick="return false;">{{$email_label}}</a></li>

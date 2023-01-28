@@ -4,7 +4,7 @@
 		<div class="float-end">
 			{{if $tools || $map || $edit}}
 			<div class="btn-group">
-				<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+				<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
 					<i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
 				</button>
 				<div class="dropdown-menu dropdown-menu-right flex-column">
@@ -23,7 +23,7 @@
 			{{/if}}
 			{{if $lock}}
 			<div class="btn-group">
-				<button id="lockview" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" title="{{$lock}}" onclick="lockview('photo',{{$id}});" ><i class="fa fa-lock"></i></button>
+				<button id="lockview" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="{{$lock}}" onclick="lockview('photo',{{$id}});" ><i class="fa fa-lock"></i></button>
 				<ul id="panel-{{$id}}" class="lockview-panel dropdown-menu dropdown-menu-right"></ul>
 			</div>
 			{{/if}}
@@ -115,7 +115,7 @@
 				{{foreach $responses as $verb=>$response}}
 					{{if $response.count}}
 					<div class="btn-group">
-						<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="wall-item-{{$verb}}-{{$id}}">{{$response.button}}</button>
+						<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-bs-toggle="dropdown" id="wall-item-{{$verb}}-{{$id}}">{{$response.button}}</button>
 						{{if $response.list_part}}
 						<ul class="dropdown-menu" role="menu" aria-labelledby="wall-item-{{$verb}}-{{$id}}">{{foreach $response.list_part as $liker}}<li role="presentation">{{$liker}}</li>{{/foreach}}</ul>
 						{{else}}

@@ -521,7 +521,7 @@ function exportDate() {
 	<div class="section-title-wrapper">
 		<div class="float-end">
 			<div class="dropdown">
-				<button id="view_selector" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown"></button>
+				<button id="view_selector" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown"></button>
 				<div class="dropdown-menu">
 					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'dayGridMonth'); return false;">{{$month}}</a></li>
 					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'timeGridWeek'); return false;">{{$week}}</a></li>

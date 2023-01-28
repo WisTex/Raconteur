@@ -3,7 +3,7 @@
 		{{if $notself}}
 		<div class="float-end">
 			<div class="btn-group">
-				<button id="connection-dropdown" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button id="connection-dropdown" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
 				</button>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
@@ -23,7 +23,7 @@
 			<div class="btn-group">
 				<a href="connedit/{{$abook_prev}}{{if $section}}?f=&section={{$section}}{{/if}}" class="btn btn-outline-secondary btn-sm{{if ! $abook_prev}} disabled{{/if}}" ><i class="fa fa-backward"></i></a>
 				<div class="btn-group" >
-					<button class="btn btn-outline-secondary btn-sm{{if $is_pending}} disabled{{/if}}" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></button>
+					<button class="btn btn-outline-secondary btn-sm{{if $is_pending}} disabled{{/if}}" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></button>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
 						{{foreach $sections as $s}}
 						<a class="dropdown-item" href="{{$s.url}}" title="{{$s.title}}">{{$s.label}}</a>

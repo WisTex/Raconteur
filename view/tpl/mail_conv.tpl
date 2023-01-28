@@ -15,12 +15,12 @@
 		</div>
 		{{if $mail.attachments}}
 		<div class="dropdown float-left">
-			<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-fw fa-paperclip"></i></button>
+			<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-bs-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-fw fa-paperclip"></i></button>
 			<div class="dropdown-menu" role="menu" aria-labelledby="attachment-menu-{{$item.id}}">{{$mail.attachments}}</div>
 		</div>
 		{{/if}}
 		<div class="float-end dropdown">
-			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="mail-item-menu-{{$mail.id}}">
+			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="mail-item-menu-{{$mail.id}}">
 				<i class="fa fa-cog"></i>
 			</button>
 			<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="mail-item-menu-{{$mail.id}}">

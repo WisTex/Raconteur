@@ -26,9 +26,9 @@
 				{{/if}}
 				<div class="wall-item-info" id="wall-item-info-{{$item.id}}" >
 					<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}}" id="wall-item-photo-wrapper-{{$item.id}}">
-						<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" data-toggle="dropdown" />
+						<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" data-bs-toggle="dropdown" />
 						{{if $item.thread_author_menu}}
-						<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-toggle="dropdown"></i>
+						<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
 						<div class="dropdown-menu">
 							<img src="{{$item.large_avatar}}" style="width: 200px; height: 200px;" id="wall-item-popup-photo-{{$item.id}}" alt="{{$item.name}}" />
 							<div style="margin-top: 20px;">
@@ -46,7 +46,7 @@
 					</div>
 				</div>
 				<div class="wall-item-lock dropdown">
-					<i class="fa {{if $item.locktype == 2}}fa-envelope{{elseif $item.locktype == 1}}fa-lock dimmer{{else}}fa-globe dimmer{{/if}} lockview{{if $item.privacy_warning}} text-warning{{/if}}" data-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
+					<i class="fa {{if $item.locktype == 2}}fa-envelope{{elseif $item.locktype == 1}}fa-lock dimmer{{else}}fa-globe dimmer{{/if}} lockview{{if $item.privacy_warning}} text-warning{{/if}}" data-bs-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
 					<div id="panel-{{$item.id}}" class="dropdown-menu"></div>
 				</div>
 				<div class="wall-item-author">
@@ -82,7 +82,7 @@
 						</div>
 					</div>
 					<div class="btn-group">
-						<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown">
+						<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
 							<i class="fa fa-cog"></i>
 						</button>
 						<div class="dropdown-menu dropdown-menu-right">
@@ -110,7 +110,7 @@
 				{{/if}}
 				{{if $item.attachments}}
 				<div class="wall-item-tools-left btn-group">
-					<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>
+					<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-bs-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>
 					<div class="dropdown-menu">{{$item.attachments}}</div>
 				</div>
 				{{/if}}

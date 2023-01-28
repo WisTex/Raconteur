@@ -77,7 +77,7 @@
 						</div>
 						{{/if}}
 						<div class="btn-group d-lg-none">
-							<button type="button" id="more-tools" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<button type="button" id="more-tools" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 								<i id="more-tools-icon" class="fa fa-cog jot-icons"></i>
 							</button>
 							<div class="dropdown-menu dropdown-menu-right" role="menu">
