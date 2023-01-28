@@ -137,6 +137,7 @@ abbr {
 a,
 .fakelink {
   color: $link_colour;
+	text-decoration: none;
 }
 
 a:hover,
