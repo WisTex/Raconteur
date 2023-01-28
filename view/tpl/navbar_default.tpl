@@ -84,7 +84,7 @@
 		<i class="fa fa-bars"></i>
 	</button>
 </div>
-<div class="collapse navbar-collapse" id="navbar-collapse-1">
+<div class="collapse navbar-collapse flex-row-reverse" id="navbar-collapse-1">
 	<ul class="navbar-nav mr-auto">
 		{{if $nav.login && !$userinfo}}
 		<li class="nav-item d-lg-flex">
@@ -203,8 +203,9 @@
 		{{/if}}
 		{{if $is_owner}}
 		<div class="dropdown-divider"></div>
-		<a class="nav-link" href="/apps"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
-		<a class="nav-link" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
+		<a class="dropdown-item" href="/apps"><i class="generic-icons-nav fa fa-fw fa-asterisk"></i>{{$manageapps}}</a>
+		<a class="dropdown-item" href="/apps/available"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
+		<a class="dropdown-item" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
 		{{/if}}
 	</div>
 </div>

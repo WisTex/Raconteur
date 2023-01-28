@@ -152,6 +152,10 @@ a:focus,
 	cursor: pointer;
 }
 
+.navbar-nav .dropdown-menu {
+	left: -200px;
+}
+
 .list-group-item {
 	position: relative;
 	display: block;
