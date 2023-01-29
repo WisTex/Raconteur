@@ -20,7 +20,7 @@ class _1266
         $r = q("SELECT * from abook where abook_self = 0");
         if ($r) {
             foreach ($r as $rv) {
-                $perms = AbConfig::Get($rv['abook_channel'], $rv['abook_xchan'], 'system', 'my_perms', [] );
+                $perms = AbConfig::Get($rv['abook_channel'], $rv['abook_xchan'], 'system', 'my_perms', '' );
                 $s = explode(',', $perms);
                 if (in_array('view_stream', $s) && (! in_array('search_stream', $s))) {
                     $s[] = 'search_stream';
