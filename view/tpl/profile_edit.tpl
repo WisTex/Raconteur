@@ -34,7 +34,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="personal">
                         <h3>
-                            <a data-toggle="collapse" data-target="#personal-collapse" href="#" aria-expanded="true" aria-controls="personal-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#personal-collapse" href="#" aria-expanded="true" aria-controls="personal-collapse">
                                 {{$personal}}
                             </a>
                         </h3>
@@ -203,7 +203,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="location">
                         <h3>
-                            <a data-toggle="collapse" data-target="#location-collapse" href="#" aria-expanded="true" aria-controls="location-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#location-collapse" href="#" aria-expanded="true" aria-controls="location-collapse">
                                 {{$location}}
                             </a>
                         </h3>
@@ -248,7 +248,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="relation">
                         <h3>
-                            <a data-toggle="collapse" data-target="#relation-collapse" href="#" aria-expanded="true" aria-controls="relation-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#relation-collapse" href="#" aria-expanded="true" aria-controls="relation-collapse">
                                 {{$relation}}
                             </a>
                         </h3>
@@ -312,7 +312,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="miscellaneous">
                         <h3>
-                            <a data-toggle="collapse" data-target="#miscellaneous-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#miscellaneous-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-collapse">
                                 {{$miscellaneous}}
                             </a>
                         </h3>

@@ -22,7 +22,7 @@
 			<div class="float-end btn-group">
 				<div class="btn-group">
 					{{if $lockstate}}
-					<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
+					<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#aclModal" onclick="return false;">
 						<i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i>
 					</button>
 					{{/if}}
@@ -39,7 +39,7 @@
 			<input type="hidden" name="visible" value="0" />
 			<div id="photos-upload-perms" class="btn-group float-end">
 				{{if $lockstate}}
-				<button class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
+				<button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#aclModal" onclick="return false;">
 					<i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i>
 				</button>
 				{{/if}}

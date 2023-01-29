@@ -24,6 +24,10 @@ html {
 	text-decoration: none;
 }
 
+.usermenu #avatar {
+	margin-left: 3px;
+}
+
 a.zrl:hover {
 	font-weight:bold;
 }

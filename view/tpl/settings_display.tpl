@@ -10,7 +10,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="theme-settings-title">
 					<h3>
-						<a data-toggle="collapse" data-target="#theme-settings-content" href="#" aria-expanded="true" aria-controls="theme-settings-content">
+						<a data-bs-toggle="collapse" data-bs-target="#theme-settings-content" href="#" aria-expanded="true" aria-controls="theme-settings-content">
 							{{$d_tset}}
 						</a>
 					</h3>
@@ -33,7 +33,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="custom-settings-title">
 					<h3>
-						<a data-toggle="collapse" data-target="#custom-settings-content" href="" aria-expanded="true" aria-controls="custom-settings-content">
+						<a data-bs-toggle="collapse" data-bs-target="#custom-settings-content" href="" aria-expanded="true" aria-controls="custom-settings-content">
 							{{$d_ctset}}
 						</a>
 					</h3>
@@ -49,7 +49,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="content-settings-title">
 					<h3>
-						<a data-toggle="collapse" data-target="#content-settings-content" href="" aria-expanded="true" aria-controls="content-settings-content">
+						<a data-bs-toggle="collapse" data-bs-target="#content-settings-content" href="" aria-expanded="true" aria-controls="content-settings-content">
 							{{$d_cset}}
 						</a>
 					</h3>

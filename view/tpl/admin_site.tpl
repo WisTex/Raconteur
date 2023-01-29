@@ -47,7 +47,7 @@
         <div class="panel">
             <div class="section-subtitle-wrapper" role="tab" id="basic-settings">
                 <h3>
-                <a data-toggle="collapse" data-target="#basic-settings-collapse" href="#">
+                <a data-bs-toggle="collapse" data-bs-target="#basic-settings-collapse" href="#">
                 {{$h_basic}}
                 </a>
                 </h3>
@@ -74,7 +74,7 @@
         <div class="panel">
             <div class="section-subtitle-wrapper" role="tab" id="reg-settings">
                 <h3>
-                <a data-toggle="collapse" data-target="#reg-settings-collapse" href="#">
+                <a data-bs-toggle="collapse" data-bs-target="#reg-settings-collapse" href="#">
                 {{$registration}}
                 </a>
                 </h3>
@@ -100,7 +100,7 @@
         <div class="panel">
             <div class="section-subtitle-wrapper" role="tab" id="corp-settings">
                 <h3>
-                <a data-toggle="collapse" data-target="#corp-settings-collapse" href="#">
+                <a data-bs-toggle="collapse" data-bs-target="#corp-settings-collapse" href="#">
                 {{$corporate}}
                 </a>
                 </h3>
@@ -125,7 +125,7 @@
         <div class="panel">
             <div class="section-subtitle-wrapper" role="tab" id="adv-settings">
                 <h3>
-                <a data-toggle="collapse" data-target="#adv-settings-collapse" href="#">
+                <a data-bs-toggle="collapse" data-bs-target="#adv-settings-collapse" href="#">
                 {{$advanced}}
                 </a>
                 </h3>

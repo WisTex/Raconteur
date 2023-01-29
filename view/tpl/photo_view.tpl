@@ -87,7 +87,7 @@
 			</div>
 			<div class="form-group btn-group float-end">
 				{{if $edit.aclselect}}
-				<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-toggle="modal" data-target="#aclModal" onclick="return false;">
+				<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#aclModal" onclick="return false;">
 					<i id="jot-perms-icon" class="fa fa-{{$edit.lockstate}}"></i>
 				</button>
 				{{/if}}

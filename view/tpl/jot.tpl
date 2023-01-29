@@ -238,17 +238,17 @@
 					</button>
 					{{/if}}
 					{{if $jotnets}}
-					<button id="dbtn-jotnets" class="btn btn-outline-secondary btn-sm p-2" data-toggle="modal" data-target="#jotnetsModal" type="button" title="{{$jotnets_label}}" style="{{if $lockstate == 'lock'}}display: none;{{/if}}">
+					<button id="dbtn-jotnets" class="btn btn-outline-secondary btn-sm p-2" data-bs-toggle="modal" data-bs-target="#jotnetsModal" type="button" title="{{$jotnets_label}}" style="{{if $lockstate == 'lock'}}display: none;{{/if}}">
 						<i class="fa fa-share-alt jot-icons"></i>
 					</button>
 					{{/if}}
 					{{if $jotcoll}}
-					<button id="dbtn-jotcoll" class="btn btn-outline-secondary btn-sm p-2" data-toggle="modal" data-target="#jotcollModal" type="button" title="{{$jotcoll_label}}">
+					<button id="dbtn-jotcoll" class="btn btn-outline-secondary btn-sm p-2" data-bs-toggle="modal" data-bs-target="#jotcollModal" type="button" title="{{$jotcoll_label}}">
 						<i class="fa fa-tags jot-icons"></i>
 					</button>
 					{{/if}}
 					{{if $showacl}}
-					<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm p-2" data-toggle="modal" data-target="#aclModal" title="{{$permset}}" type="button" data-form_id="profile-jot-form">
+					<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm p-2" data-bs-toggle="modal" data-bs-target="#aclModal" title="{{$permset}}" type="button" data-form_id="profile-jot-form">
 						<i id="jot-perms-icon" class="fa fa-{{$lockstate}} jot-icons{{if $bang}} jot-lock-warn{{/if}}"></i>
 					</button>
 					{{/if}}

@@ -584,7 +584,7 @@ function exportDate() {
 				<div class="form-group">
 					<div class="float-end">
 						<button id="event_more" type="button" class="btn btn-outline-secondary btn-sm"><i class="fa fa-caret-down"></i> {{$more}}</button>
-						<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm d-none" type="button" data-toggle="modal" data-target="#aclModal"><i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i></button>
+						<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm d-none" type="button" data-bs-toggle="modal" data-bs-target="#aclModal"><i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i></button>
 						<button id="event_submit" type="button" value="" class="btn btn-primary btn-sm"></button>
 
 					</div>

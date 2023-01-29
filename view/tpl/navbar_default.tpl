@@ -1,7 +1,7 @@
 {{if $nav.login && !$userinfo}}
 <div class="d-lg-none pt-1 pb-1">
 	{{if $nav.loginmenu.1.4}}
-	<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-toggle="modal" data-target="#nav-login">
+	<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-bs-toggle="modal" data-bs-target="#nav-login">
 		{{$nav.loginmenu.1.1}}
 	</a>
 	{{else}}
@@ -72,7 +72,7 @@
 		<i class="fa fa-question-circle"></i>
 	</button>
 	{{/if}}
-	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1" title="{{$asidetitle}}">
+	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-bs-toggle="offcanvas" data-bs-target="#region_1" title="{{$asidetitle}}">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
 	{{if $localuser || $nav.pubs}}
@@ -80,7 +80,7 @@
 		<i id="notifications-btn-icon-1" class="fa fa-exclamation-circle notifications-btn-icon"></i>
 	</button>
 	{{/if}}
-	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar-collapse-2" title="{{$appstitle}}">
+	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-2" title="{{$appstitle}}">
 		<i class="fa fa-bars"></i>
 	</button>
 </div>
@@ -89,7 +89,7 @@
 		{{if $nav.login && !$userinfo}}
 		<li class="nav-item d-lg-flex">
 			{{if $nav.loginmenu.1.4}}
-			<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}" data-toggle="modal" data-target="#nav-login">
+			<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}" data-bs-toggle="modal" data-bs-target="#nav-login">
 			{{$nav.loginmenu.1.1}}
 			</a>
 			{{else}}
