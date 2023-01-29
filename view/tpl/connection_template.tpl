@@ -29,7 +29,11 @@
 						<div style="margin-top: 20px;">
 							<hr>
 							{{foreach $contact.author_menu as $mitem}}
+                                {{if $mitem.input}}
+                                <input style="margin-left: 5px; width: 75%;" id="cti-{{$mitem.id}}" class="pull-left" type="text" ><button style="margin-left: 3px;" class="btn btn-sm pull-left" onclick="window.location.href='{{$mitem.href}}'.replace('{}',encodeURIComponent($('#cti-{{$mitem.id}}').val()));"><i class="fa fa-fw fa-search" ></i></button>
+                                {{else}}
 								<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} >{{$mitem.title}}</a>
+                                {{/if}}
 							{{/foreach}}
 						</div>
 					</div>

@@ -111,11 +111,16 @@ class Cdav extends Controller
                                             change_channel($channel_login);
                                         }
                                     }
-                                    break;
+                                    if ($verified && $verified['header_signed'] && $verified['header_valid'] && $record) {
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
+                }
+                if ($verified && $verified['header_signed'] && $verified['header_valid'] && $record['account']) {
+                    break;
                 }
             }
 
