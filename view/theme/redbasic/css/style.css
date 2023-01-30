@@ -36,6 +36,10 @@ a.zrl:hover {
 	margin-right: 0.1rem;
 }
 
+.login-button {
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
 .thread-separator {
 	margin-top: 0px;
 	margin-bottom: 2px;
@@ -544,6 +548,7 @@ footer {
 
 .connect-btn-wrapper, .profdm-btn-wrapper {
 	margin-bottom: 10px;
+    white-space: nowrap;
 
 }
 

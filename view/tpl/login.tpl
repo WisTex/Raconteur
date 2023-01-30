@@ -5,14 +5,14 @@
 			{{include file="field_input.tpl" field=$lname}}
 			{{include file="field_password.tpl" field=$lpassword}}
 			{{include file="field_checkbox.tpl" field=$remember_me}}
-			<button type="submit" name="submit" class="btn btn-block btn-primary">{{$login}}</button>
+			<button type="submit" name="submit" class="btn login-button form-control btn-primary">{{$login}}</button>
 		</div>
 		<div id="login-extra-links">
 			{{if $register}}<a href="{{$register.link}}" title="{{$register.title}}" id="register-link" class="float-end">{{$register.desc}}</a>{{/if}}
 			<a href="lostpass" title="{{$lostpass}}" id="lost-password-link" >{{$lostlink}}</a>
 		</div>
 		<hr>
-		<a href="rmagic" class="btn btn-block btn-outline-success rmagic-button">{{$remote_login}}</a>
+		<a href="rmagic" class="btn d-grid gap-2 btn-outline-success rmagic-button">{{$remote_login}}</a>
 	</div>
 	{{foreach $hiddens as $k=>$v}}
 		<input type="hidden" name="{{$k}}" value="{{$v}}" />
