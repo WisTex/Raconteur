@@ -593,11 +593,15 @@ class Activity
             if ($atts) {
                 foreach ($atts as $att) {
                     if (isset($att['type']) && str_contains($att['type'], 'image')) {
-                        if (!empty($arr['href'])) {
+                        if (!empty($att['href'])) {
+                            $name = ($att['title']) ?? '';
+                            if (! $name) {
+                                $name = ($att['name']) ?? '';
+                            }
                             $ret[] = [
                                 'type' => 'Image',
-                                'url' => $arr['href'],
-                                'name' => ($arr['name']) ?: '',
+                                'url' => $att['href'],
+                                'name' => $name,
                             ];
                         }
                     } else {
