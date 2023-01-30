@@ -4,7 +4,7 @@
 			<img src="{{$entry.photo}}" alt="{{$entry.name}}" width="80" height="80" title="{{$entry.name}} [{{$entry.profile}}]" />
 		</a>
 	</div>
-	<!--a href="{{$entry.ignlnk}}" title="{{$entry.ignore}}" class="profile-match-ignore" onclick="return confirmDelete();" ><i class="fa fa-times drop-icons btn btn-outline-secondary"></i></a-->
+	<!--a href="{{$entry.ignlnk}}" title="{{$entry.ignore}}" class="profile-match-ignore" onclick="return confirmDelete();" ><i class="fa fa-close drop-icons btn btn-outline-secondary"></i></a-->
 	<div class="profile-match-break"></div>
 	<div class="profile-match-name">
 		<a href="{{$entry.url}}" title="{{$entry.name}}">{{$entry.name}}</a>

@@ -234,7 +234,7 @@
 			<div class="btn-toolbar  float-start" style="margin-left:3rem;">
 				<div class="btn-group ">
 				<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm" title="{{$reset}}" onclick="itemCancel(); return false;">
-					<i class="fa fa-close"></i>
+					<i class="fa fa-close drop-icons"></i>
 				</button>
 				</div>
 			</div>
