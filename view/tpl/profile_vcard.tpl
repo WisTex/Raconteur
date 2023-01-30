@@ -3,10 +3,10 @@
 	<div id="profile-photo-wrapper">{{if $editmenu}}<a href="profile_photo" title="{{$change_photo}}">{{/if}}<img class="photo u-photo" src="{{$profile.photo}}?rev={{$profile.picdate}}" alt="{{$profile.fullname}}">{{if $editmenu}}</a>{{/if}}</div>
 	{{/if}}
 	{{if $connect}}
-	<div class="connect-btn-wrapper"><a href="{{$connect_url}}" class="btn d-grid gap-2 btn-success btn-sm"><i class="fa fa-plus"></i>&nbsp;{{$connect}}</a></div>
+	<div class="connect-btn-wrapper"><a href="{{$connect_url}}" class="btn form-control btn-success btn-sm"><i class="fa fa-plus"></i>&nbsp;{{$connect}}</a></div>
 	{{/if}}
 	{{if $profdm}}
-	<div class="profdm-btn-wrapper"><a href="{{$profdm_url}}" class="btn d-grid gap-2 btn-success btn-sm"><i class="fa fa-envelope"></i>&nbsp;{{$profdm}}</a></div>
+	<div class="profdm-btn-wrapper"><a href="{{$profdm_url}}" class="btn form-control btn-success btn-sm"><i class="fa fa-envelope"></i>&nbsp;{{$profdm}}</a></div>
 	{{/if}}
 	{{if ! $zcard}}
 	{{if $editmenu.multi}}

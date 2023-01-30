@@ -548,6 +548,7 @@ footer {
 
 .connect-btn-wrapper, .profdm-btn-wrapper {
 	margin-bottom: 10px;
+    white-space: nowrap;
 
 }
 
