@@ -21,7 +21,7 @@
 		</div>
 		{{if $drop}}
 		<div class="p-2 clearfix wall-item-tools" id="wall-item-tools-{{$id}}" >
-			<div class="wall-item-tools-right pull-right">
+			<div class="wall-item-tools-right float-end">
 				{{$drop}}
 			</div>
 		</div>

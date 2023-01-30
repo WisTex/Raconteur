@@ -2,14 +2,14 @@
 		<form action="" method="post" autocomplete="on" >
 		<input type="hidden" name="action" value="importselected">
 		<div class="section-title-wrapper">
-			<div class="pull-right">				
+			<div class="float-end">				
 					<button class="btn btn-md btn-success" type="submit" name="submit" value="{{$importbtn}}">{{$importbtn}}</button>
 			</div>
 			<h2>{{$title}}</h2>
 			<div class="clear"></div>
 		</div>
 		<div id="import-website-content-wrapper" class="section-content-wrapper">
-						<div class="pull-left">
+						<div class="float-start">
 								<button id="toggle-select-all" class="btn btn-sm btn-primary" onclick="checkedAll(window.isChecked); return false;"><i class="fa fa-check"></i>&nbsp;Toggle Select All</button>
 						</div>
 						<div class="clear"></div>

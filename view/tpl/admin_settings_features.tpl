@@ -10,7 +10,7 @@
 		<div class="panel">
 			<div class="section-subtitle-wrapper" role="tab" id="{{$g}}-settings-title">
 				<h3>
-					<a data-toggle="collapse" data-target="#{{$g}}-settings-content" href="#" aria-expanded="true" aria-controls="{{$g}}-settings-collapse">
+					<a data-bs-toggle="collapse" data-bs-target="#{{$g}}-settings-content" href="#" aria-expanded="true" aria-controls="{{$g}}-settings-collapse">
 						{{$f.0}}
 					</a>
 				</h3>

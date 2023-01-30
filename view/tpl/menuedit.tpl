@@ -2,7 +2,7 @@
 <div class="generic-content-wrapper">
 <div class="section-title-wrapper">
 	{{if $menu_edit_link}}
-	<div class="pull-right">
+	<div class="float-end">
 		<a href="{{$menu_edit_link}}" title="{{$hintedit}}" class="btn btn-sm btn-success"><i class="fa fa-pencil-square-o"></i>&nbsp;{{$editcontents}}</a>
 	</div>
 	{{/if}}
@@ -22,7 +22,7 @@
 		{{include file="field_input.tpl" field=$menu_desc}}
 
 		{{include file="field_checkbox.tpl" field=$menu_bookmark}}
-		<div class="menuedit-submit-wrapper form-group pull-right" >
+		<div class="menuedit-submit-wrapper form-group float-end" >
 			<button type="submit" name="submit" class="btn btn-primary">{{$submit}}&nbsp;<i class="fa fa-caret-right"></i></button>
 		</div>
 		<div class="clear"></div>

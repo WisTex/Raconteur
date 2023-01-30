@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		{{if $editor}}
-		<div class="pull-right">
+		<div class="float-end">
 			<button id="webpage-create-btn" class="btn btn-sm btn-success acl-form-trigger" onclick="openClose('webpage-editor');" data-form_id="profile-jot-form"><i class="fa fa-pencil-square-o"></i>&nbsp;{{$create}}</button>
 		</div>
 		{{/if}}
@@ -41,7 +41,7 @@
 				</td>
 				<td class="webpage-list-tool dropdown">
 					{{if $item.lockstate=='lock'}}
-					<i class="fa fa-lock lockview" data-toggle="dropdown" onclick="lockview('item',{{$item.url}});" ></i>
+					<i class="fa fa-lock lockview" data-bs-toggle="dropdown" onclick="lockview('item',{{$item.url}});" ></i>
 					<ul id="panel-{{$item.url}}" class="lockview-panel dropdown-menu"></ul>
 					{{/if}}
 				</td>

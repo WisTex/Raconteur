@@ -1,6 +1,6 @@
 <div class="generic-content-wrapper">
     <div class="section-title-wrapper">
-        <a title="{{$removechannel}}" class="btn btn-danger btn-sm pull-right" href="removeme"><i class="fa fa-trash-o"></i>&nbsp;{{$removeme}}</a>
+        <a title="{{$removechannel}}" class="btn btn-danger btn-sm float-end" href="removeme"><i class="fa fa-trash-o"></i>&nbsp;{{$removeme}}</a>
         <h2>{{$ptitle}}</h2>
         <div class="clear"></div>
     </div>
@@ -11,7 +11,7 @@
             <div class="panel">
                 <div class="section-subtitle-wrapper" role="tab" id="basic-settings">
                     <h3>
-                        <a data-toggle="collapse" data-target="#basic-settings-collapse" href="#">
+                        <a data-bs-toggle="collapse" data-bs-target="#basic-settings-collapse" href="#">
                             {{$h_basic}}
                         </a>
                     </h3>
@@ -37,7 +37,7 @@
             <div class="panel">
                 <div class="section-subtitle-wrapper" role="tab" id="privacy-settings">
                     <h3>
-                        <a data-toggle="collapse" data-target="#privacy-settings-collapse" href="#">
+                        <a data-bs-toggle="collapse" data-bs-target="#privacy-settings-collapse" href="#">
                             {{$h_prv}}
                         </a>
                     </h3>
@@ -65,7 +65,7 @@
 
                         <div id="advanced-perm" style="display:{{if $permissions_set}}none{{else}}block{{/if}};">
                             <div class="form-group">
-                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#apsModal">{{$lbl_p2macro}}</button>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#apsModal">{{$lbl_p2macro}}</button>
                             </div>
                             <div class="modal" id="apsModal">
                                 <div class="modal-dialog">
@@ -87,7 +87,7 @@
                             </div><!-- /.modal -->
 
                             <div id="settings-default-perms" class="form-group" >
-                                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#aclModal"><i id="jot-perms-icon" class="fa"></i>&nbsp;{{$permissions}}</button>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#aclModal"><i id="jot-perms-icon" class="fa"></i>&nbsp;{{$permissions}}</button>
                             </div>
                             {{$group_select}}
                             {{include file="field_checkbox.tpl" field=$hide_presence}}
@@ -116,7 +116,7 @@
             <div class="panel">
                 <div class="section-subtitle-wrapper" role="tab" id="notification-settings">
                     <h3>
-                        <a data-toggle="collapse" data-target="#notification-settings-collapse" href="#">
+                        <a data-bs-toggle="collapse" data-bs-target="#notification-settings-collapse" href="#">
                             {{$h_not}}
                         </a>
                     </h3>
@@ -191,7 +191,7 @@
             <div class="panel">
                 <div class="section-subtitle-wrapper" role="tab" id="time-settings">
                     <h3>
-                        <a data-toggle="collapse" data-target="#time-settings-collapse" href="#" aria-expanded="true" aria-controls="time-settings-collapse">
+                        <a data-bs-toggle="collapse" data-bs-target="#time-settings-collapse" href="#" aria-expanded="true" aria-controls="time-settings-collapse">
                             {{$lbl_time}}
                         </a>
                     </h3>
@@ -215,7 +215,7 @@
             <div class="panel">
                 <div class="section-subtitle-wrapper" role="tab" id="miscellaneous-settings">
                     <h3>
-                        <a data-toggle="collapse" data-target="#miscellaneous-settings-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-settings-collapse">
+                        <a data-bs-toggle="collapse" data-bs-target="#miscellaneous-settings-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-settings-collapse">
                             {{$lbl_misc}}
                         </a>
                     </h3>

@@ -1,8 +1,8 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper clearfix">
 		{{if $order}}
-		<div class="dropdown pull-right">
-			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sortorder}}">
+		<div class="dropdown float-end">
+			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sortorder}}">
 				<i class="fa fa-sort"></i>
 			</button>
 			<div class="dropdown-menu dropdown-menu-right">
@@ -12,11 +12,11 @@
 			</div>
 		</div>
 		{{/if}}
-		<div class="dropdown pull-right">
+		<div class="dropdown float-end">
 			<button type="button" class="btn btn-primary btn-sm" onclick="openClose('contacts-search-form'); $('#contacts-search').focus();">
 				<i class="fa fa-search"></i>&nbsp;{{$label}}
 			</button>
-			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
+			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
 				<i class="fa fa-filter"></i>
 			</button>
 			<div class="dropdown-menu dropdown-menu-right">

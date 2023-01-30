@@ -59,7 +59,7 @@ class Activity implements WidgetInterface
             $o .= '<h3>' . t('Activity', 'widget') . '</h3><ul class="nav nav-pills flex-column">';
 
             foreach ($tmpArray as $value) {
-                $o .= '<li class="nav-item"><a class="nav-link" href="stream?f=&xchan=' . urlencode($value['author_xchan']) . '" ><span class="badge badge-secondary float-right">' . ((intval($value['total'])) ? intval($value['total']) : '') . '</span><img src="' . $value['author']['xchan_photo_s'] . '" class="menu-img-1" /> ' . $value['author']['xchan_name'] . '</a></li>';
+                $o .= '<li class="nav-item"><a class="nav-link" href="stream?f=&xchan=' . urlencode($value['author_xchan']) . '" ><span class="badge badge-secondary float-end">' . ((intval($value['total'])) ? intval($value['total']) : '') . '</span><img src="' . $value['author']['xchan_photo_s'] . '" class="menu-img-1" /> ' . $value['author']['xchan_name'] . '</a></li>';
             }
             $o .= '</ul></div>';
         }

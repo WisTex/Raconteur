@@ -24,6 +24,10 @@ html {
 	text-decoration: none;
 }
 
+.usermenu #avatar {
+	margin-left: 3px;
+}
+
 a.zrl:hover {
 	font-weight:bold;
 }
@@ -137,6 +141,7 @@ abbr {
 a,
 .fakelink {
   color: $link_colour;
+	text-decoration: none;
 }
 
 a:hover,
@@ -149,6 +154,21 @@ a:focus,
 .fakelink,
 .cursor-pointer {
 	cursor: pointer;
+}
+
+.navbar-nav .dropdown-menu {
+	left: -200px;
+}
+.navbar-collapse {
+	margin-right: 10px;
+}
+.list-group-item {
+	position: relative;
+	display: block;
+	padding: .75rem 1.25rem;
+	margin-bottom: 0px;
+	background-color: #fff;
+	border: 1px solid rgba(0,0,0,.125);
 }
 
 ._aqua {

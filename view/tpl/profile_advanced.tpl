@@ -1,9 +1,9 @@
 <div id="profile-content-wrapper" class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="float-right">
+		<div class="float-end">
 			{{if $profile.like_count}}
 			<div class="btn-group">
-				<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="profile-like">{{$profile.like_count}} {{$profile.like_button_label}}</button>
+				<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="profile-like">{{$profile.like_count}} {{$profile.like_button_label}}</button>
 				{{if $profile.likers}}
 				<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="profile-like">{{foreach $profile.likers as $liker}}<li role="presentation"><a href="{{$liker.url}}"><img class="menu-img-1" src="{{$liker.photo}}" alt="{{$liker.name}}" /> {{$liker.name}}</a></li>{{/foreach}}</ul>
 				{{/if}}
@@ -18,7 +18,7 @@
 			{{/if}}
 			{{if $editmenu.multi}}
 			<div class="btn-group">
-				<a class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" href="#" ><i class="fa fa-pencil"></i>&nbsp;{{$editmenu.edit.3}}</a>
+				<a class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" href="#" ><i class="fa fa-pencil"></i>&nbsp;{{$editmenu.edit.3}}</a>
 				<div class="dropdown-menu dropdown-menu-right">
 					{{foreach $editmenu.menu.entries as $e}}
 					<a class="dropdown-item" href="profiles/{{$e.id}}"><img class="dropdown-menu-img-xs" src='{{$e.photo}}'> {{$e.profile_name}}</a>
@@ -334,7 +334,7 @@
 		{{/if}}
 		{{if $item.like_count}}
 		<div class="btn-group">
-		<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="thing-like-{{$item.term_hash}}">{{$item.like_count}} {{$item.like_label}}</button>
+		<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="thing-like-{{$item.term_hash}}">{{$item.like_count}} {{$item.like_label}}</button>
 		{{if $item.likes}}
 		<ul class="dropdown-menu" role="menu" aria-labelledby="thing-like-{{$item.term_hash}}">{{foreach $item.likes as $liker}}<li role="presentation"><a href="{{$liker.xchan_url}}"><img class="dropdown-menu-img-xs" src="{{$liker.xchan_photo_s}}" alt="{{$liker.name}}" /> {{$liker.xchan_name}}</a></li>{{/foreach}}</ul>
 		{{/if}}

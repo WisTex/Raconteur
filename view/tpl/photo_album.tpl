@@ -1,9 +1,9 @@
 <div class="{{if !$no_fullscreen_btn}}generic-content-wrapper{{/if}}">
 	<div class="section-title-wrapper">
-		<div class="pull-right">
+		<div class="float-end">
 			<a href="{{$files_path}}" title="{{$file_view}}"><i class="fa fa-folder btn btn-outline-secondary btn-sm" title="{{$file_view}}"></i></a>
 			{{if $order}}
-			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
+			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
 				<i class="fa fa-sort-amount-up"></i>
 			</button>
 			<div class="dropdown-menu dropdown-menu-right">

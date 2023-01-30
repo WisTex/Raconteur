@@ -9,7 +9,7 @@
 {{foreach $entries as $e}}
 <li>
 <div>
-<a class="pull-right" href="superblock?f=&unblock={{$e.encoded_hash}}&sectok={{$token}}" title="{{$remove}}"><i class="fa fa-trash"></i></a>
+<a class="float-end" href="superblock?f=&unblock={{$e.encoded_hash}}&sectok={{$token}}" title="{{$remove}}"><i class="fa fa-trash"></i></a>
 <a class="zid" href="{{$e.xchan_url}}"><img src="{{$e.xchan_photo_s}}" alt="{{$e.encoded_hash}}">&nbsp;{{$e.xchan_name}}</a>
 </div>
 </li>

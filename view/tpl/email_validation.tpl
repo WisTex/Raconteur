@@ -5,7 +5,7 @@
 <form action="email_validation/{{$email}}" method="post">
 {{include file="field_input.tpl" field=$token}}
 
-<div class="pull-right submit-wrapper">
+<div class="float-end submit-wrapper">
 	<button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
 </div>
 <div class="resend-email" >

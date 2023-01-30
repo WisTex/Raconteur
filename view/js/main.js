@@ -645,10 +645,10 @@ function handleNotifications(data) {
 	}
 	if(data.all_events_today) {
 		$('.all_events-update').removeClass('badge-secondary');
-		$('.all_events-update').addClass('badge-danger');
+		$('.all_events-update').addClass('badge').addClass('bg-danger');;
 	}
 	else {
-		$('.all_events-update').removeClass('badge-danger');
+		$('.all_events-update').removeClass('badge').removeClass('bg-danger');
 		$('.all_events-update').addClass('badge-secondary');
 	}
 
