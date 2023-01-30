@@ -116,10 +116,10 @@
 	<div class="clear"></div>
 
 	<button type="button" class="btn btn-outline-secondary btn-sm" onclick="openClose('advanced');">{{$advanced}}</button>
-	<div class="btn-group float-right">
+	<div class="btn-group float-end">
 		<button id="event-edit-preview-btn" class="btn btn-outline-secondary btn-sm" type="button" title="{{$preview}}" onclick="doEventPreview();"><i class="fa fa-eye" ></i></button>
 		{{if ! $eid}}
-		<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" type="button" data-toggle="modal" data-target="#aclModal" title="{{$perms_label}}"><i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i></button>
+		<button id="dbtn-acl" class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#aclModal" title="{{$perms_label}}"><i id="jot-perms-icon" class="fa fa-{{$lockstate}}"></i></button>
 		{{/if}}
 		<button id="event-submit" class="btn btn-primary btn-sm" type="submit" name="submit">{{$submit}}</button>
 	</div>

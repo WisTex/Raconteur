@@ -1,6 +1,6 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
-		<div class="pull-right">
+		<div class="float-end">
 			{{if $is_owner}}
 			<form id="chat-destroy" method="post" action="chat">
 				<input type="hidden" name="room_name" value="{{$room_name}}" />
@@ -29,8 +29,8 @@
 					<textarea id="chatText" name="chat_text" class="form-control"></textarea>
 				</div>
 				<div id="chat-submit-wrapper" class="clearfix">
-					<div id="chat-submit" class="dropup pull-right">
-						<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-cog"></i></button>
+					<div id="chat-submit" class="dropup float-end">
+						<button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"><i class="fa fa-cog"></i></button>
 						<button class="btn btn-primary btn-sm" type="submit" id="chat-submit" name="submit" value="{{$submit}}">{{$submit}}</button>
 						<div class="dropdown-menu dropdown-menu-right">
 							<a class="dropdown-item" href="{{$baseurl}}/chatsvc?f=&room_id={{$room_id}}&status=online"><i class="fa fa-circle online"></i>&nbsp;{{$online}}</a>
@@ -76,7 +76,7 @@
 						</div>
 						{{/if}}
 						<div class="btn-group dropup d-md-none">
-							<button type="button" id="more-tools" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<button type="button" id="more-tools" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 								<i id="more-tools-icon" class="fa fa-cog jot-icons"></i>
 							</button>
 							<div class="dropdown-menu">

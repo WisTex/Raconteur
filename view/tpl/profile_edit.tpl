@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
     <div class="section-title-wrapper">
-        <div class="dropdown float-right" id="profile-edit-links">
-            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="dropdown float-end" id="profile-edit-links">
+            <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
             </button>
             <div class="dropdown-menu dropdown-menu-right">
@@ -34,7 +34,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="personal">
                         <h3>
-                            <a data-toggle="collapse" data-target="#personal-collapse" href="#" aria-expanded="true" aria-controls="personal-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#personal-collapse" href="#" aria-expanded="true" aria-controls="personal-collapse">
                                 {{$personal}}
                             </a>
                         </h3>
@@ -113,8 +113,8 @@
 
                 <div class="section-content-wrapper-np">
                     <div id="vcard-cancel-{{$vcard.id}}" class="vcard-cancel vcard-cancel-btn" data-id="{{$vcard.id}}" data-action="cancel"><i class="fa fa-close"></i></div>
-                    <div id="vcard-add-field-{{$vcard.id}}" class="dropdown pull-right vcard-add-field">
-                        <button data-toggle="dropdown" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"><i class="fa fa-plus"></i> {{$add_field}}</button>
+                    <div id="vcard-add-field-{{$vcard.id}}" class="dropdown float-end vcard-add-field">
+                        <button data-bs-toggle="dropdown" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"><i class="fa fa-plus"></i> {{$add_field}}</button>
                         <ul class="dropdown-menu">
                             <li class="add-vcard-tel"><a href="#" data-add="vcard-tel" data-id="{{$vcard.id}}" class="add-field" onclick="return false;">{{$tel_label}}</a></li>
                             <li class="add-vcard-email"><a href="#" data-add="vcard-email" data-id="{{$vcard.id}}" class="add-field" onclick="return false;">{{$email_label}}</a></li>
@@ -203,7 +203,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="location">
                         <h3>
-                            <a data-toggle="collapse" data-target="#location-collapse" href="#" aria-expanded="true" aria-controls="location-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#location-collapse" href="#" aria-expanded="true" aria-controls="location-collapse">
                                 {{$location}}
                             </a>
                         </h3>
@@ -248,7 +248,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="relation">
                         <h3>
-                            <a data-toggle="collapse" data-target="#relation-collapse" href="#" aria-expanded="true" aria-controls="relation-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#relation-collapse" href="#" aria-expanded="true" aria-controls="relation-collapse">
                                 {{$relation}}
                             </a>
                         </h3>
@@ -312,7 +312,7 @@
                 <div class="panel">
                     <div class="section-subtitle-wrapper" role="tab" id="miscellaneous">
                         <h3>
-                            <a data-toggle="collapse" data-target="#miscellaneous-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-collapse">
+                            <a data-bs-toggle="collapse" data-bs-target="#miscellaneous-collapse" href="#" aria-expanded="true" aria-controls="miscellaneous-collapse">
                                 {{$miscellaneous}}
                             </a>
                         </h3>

@@ -1,6 +1,6 @@
 <div class="mb-4 notif-item">
 	{{if ! $item_seen}}
-	<span class="float-right badge badge-pill badge-success text-uppercase">{{$new}}</span>
+	<span class="float-end badge badge-pill badge-success text-uppercase">{{$new}}</span>
 	{{/if}}
 	<a href="{{$item_link}}">
 		<img src="{{$item_image}}" class="menu-img-3">

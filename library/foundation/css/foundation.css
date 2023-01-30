@@ -3560,7 +3560,7 @@ table.hover tr:nth-of-type(even):hover {
 .float-left {
   float: left !important; }
 
-.float-right {
+.float-end {
   float: right !important; }
 
 .float-center {

@@ -1,7 +1,7 @@
 {{if $nav.login && !$userinfo}}
 <div class="d-lg-none pt-1 pb-1">
 	{{if $nav.loginmenu.1.4}}
-	<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-toggle="modal" data-target="#nav-login">
+	<a class="btn btn-primary btn-sm text-white" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}_collapse" data-bs-toggle="modal" data-bs-target="#nav-login">
 		{{$nav.loginmenu.1.1}}
 	</a>
 	{{else}}
@@ -18,7 +18,7 @@
 {{/if}}
 {{if $userinfo}}
 <div class="dropdown">
-	<div class="fakelink usermenu" data-toggle="dropdown">
+	<div class="fakelink usermenu" data-bs-toggle="dropdown">
 		<img id="avatar" src="{{$userinfo.icon}}" alt="{{$userinfo.name}}">
 		<i class="fa fa-caret-down"></i>
 	</div>
@@ -72,7 +72,7 @@
 		<i class="fa fa-question-circle"></i>
 	</button>
 	{{/if}}
-	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-toggle="offcanvas" data-target="#region_1" title="{{$asidetitle}}">
+	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-bs-toggle="offcanvas" data-bs-target="#region_1" title="{{$asidetitle}}">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
 	{{if $localuser || $nav.pubs}}
@@ -80,16 +80,16 @@
 		<i id="notifications-btn-icon-1" class="fa fa-exclamation-circle notifications-btn-icon"></i>
 	</button>
 	{{/if}}
-	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbar-collapse-2" title="{{$appstitle}}">
+	<button id="menu-btn" class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-2" title="{{$appstitle}}">
 		<i class="fa fa-bars"></i>
 	</button>
 </div>
-<div class="collapse navbar-collapse" id="navbar-collapse-1">
+<div class="collapse navbar-collapse flex-row-reverse" id="navbar-collapse-1">
 	<ul class="navbar-nav mr-auto">
 		{{if $nav.login && !$userinfo}}
 		<li class="nav-item d-lg-flex">
 			{{if $nav.loginmenu.1.4}}
-			<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}" data-toggle="modal" data-target="#nav-login">
+			<a class="nav-link" href="#" title="{{$nav.loginmenu.1.3}}" id="{{$nav.loginmenu.1.4}}" data-bs-toggle="modal" data-bs-target="#nav-login">
 			{{$nav.loginmenu.1.1}}
 			</a>
 			{{else}}
@@ -137,7 +137,7 @@
 		{{/if}}
 		{{if $channel_menu && $channel_apps.0}}
 		<li class="nav-item dropdown" id="channel-menu">
-			<a class="nav-link" href="#" data-toggle="dropdown"><img src="{{$channel_thumb}}" style="height:14px; width:14px;position:relative; top:-2px;" /></a>
+			<a class="nav-link" href="#" data-bs-toggle="dropdown"><img src="{{$channel_thumb}}" style="height:14px; width:14px;position:relative; top:-2px;" /></a>
 			<div id="dropdown-menu" class="dropdown-menu dropdown-menu-right">
 				{{foreach $channel_apps as $channel_app}}
 				{{$channel_app}}
@@ -153,7 +153,7 @@
 		{{/foreach}}
 		{{/if}}
 		<li class="nav-item dropdown" id="app-menu">
-			<a class="nav-link" href="#" data-toggle="dropdown" title="{{$appstitle}}"><i class="fa fa-fw fa-bars"></i></a>
+			<a class="nav-link" href="#" data-bs-toggle="dropdown" title="{{$appstitle}}"><i class="fa fa-fw fa-bars"></i></a>
 			<div id="dropdown-menu" class="dropdown-menu dropdown-menu-right">
 				{{if $channel_apps.0 && ! $channel_menu}}
 				{{foreach $channel_apps as $channel_app}}
@@ -203,15 +203,16 @@
 		{{/if}}
 		{{if $is_owner}}
 		<div class="dropdown-divider"></div>
-		<a class="nav-link" href="/apps"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
-		<a class="nav-link" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
+		<a class="dropdown-item" href="/apps"><i class="generic-icons-nav fa fa-fw fa-asterisk"></i>{{$manageapps}}</a>
+		<a class="dropdown-item" href="/apps/available"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
+		<a class="dropdown-item" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
 		{{/if}}
 	</div>
 </div>
 {{if $nav.help.6}}
 <div id="contextual-help-content" class="contextual-help-content">
 	{{$nav.help.5}}
-	<div class="float-right">
+	<div class="float-end">
 		<a class="btn btn-primary btn-sm" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}"><i class="fa fa-question"></i>&nbsp;{{$fulldocs}}</a>
 		<a class="contextual-help-tool" href="#" onclick="contextualHelp(); return false;"><i class="fa fa-times"></i></a>
 	</div>

@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper clearfix">
 		{{if $is_owner}}
-		<button type="button" class="btn btn-success btn-sm pull-right acl-form-trigger" onclick="openClose('chatroom-new');" data-form_id="chatroom-new-form"><i class="fa fa-plus-circle"></i>&nbsp;{{$newroom}}</button>
+		<button type="button" class="btn btn-success btn-sm float-end acl-form-trigger" onclick="openClose('chatroom-new');" data-form_id="chatroom-new-form"><i class="fa fa-plus-circle"></i>&nbsp;{{$newroom}}</button>
 		{{/if}}
 		<h2>{{$header}}</h2>
 	</div>
@@ -21,9 +21,9 @@
 			<tr class="chatroom-index-row">
 				<td><a href="{{$baseurl}}/chat/{{$nickname}}/{{$room.cr_id}}">{{$room.cr_name}}</a></td>
 				<td>{{$room.cr_expire}}&nbsp;min</td>
-				<td class="chatrooms-index-tool{{if $room.allow_cid || $room.allow_gid || $room.deny_cid || $room.deny_gid}} dropdown float-right{{/if}}">
+				<td class="chatrooms-index-tool{{if $room.allow_cid || $room.allow_gid || $room.deny_cid || $room.deny_gid}} dropdown float-end{{/if}}">
 					{{if $room.allow_cid || $room.allow_gid || $room.deny_cid || $room.deny_gid}}
-					<i class="fa fa-lock lockview" data-toggle="dropdown" onclick="lockview('chatroom',{{$room.cr_id}});"></i>
+					<i class="fa fa-lock lockview" data-bs-toggle="dropdown" onclick="lockview('chatroom',{{$room.cr_id}});"></i>
 					<ul id="panel-{{$room.cr_id}}" class="lockview-panel dropdown-menu"></ul>
 					{{/if}}
 				</td>

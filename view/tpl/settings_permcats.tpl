@@ -20,7 +20,7 @@
 	<div class="panel">
 		<div class="section-subtitle-wrapper" role="tab" id="perms-tool">
 			<h3>
-				<a data-toggle="collapse" data-target="#perms-tool-collapse" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
+				<a data-bs-toggle="collapse" data-bs-target="#perms-tool-collapse" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
 				{{$permlbl}}
 				</a>
 			</h3>

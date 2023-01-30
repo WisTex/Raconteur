@@ -29,9 +29,9 @@
 				<div class="p-2 clearfix wall-item-head{{if $item.is_new && !$item.title && !$item.event && !$item.is_comment}} wall-item-head-new rounded-top{{/if}}">
 					<div class="wall-item-info" id="wall-item-info-{{$item.id}}" >
 						<div class="wall-item-photo-wrapper{{if $item.owner_url}} wwfrom{{/if}} h-card p-author" id="wall-item-photo-wrapper-{{$item.id}}">
-							<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" data-toggle="dropdown" /></a>
+							<img src="{{$item.thumb}}" class="fakelink wall-item-photo{{$item.sparkle}} u-photo p-name" id="wall-item-photo-{{$item.id}}" alt="{{$item.name}}" data-bs-toggle="dropdown" /></a>
 							{{if $item.thread_author_menu}}
-							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-toggle="dropdown"></i>
+							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
 							<div class="dropdown-menu">
 								<img src="{{$item.large_avatar}}" style="width: 200px; height: 200px;" id="wall-item-popup-photo-{{$item.id}}" alt="{{$item.name}}" />
 								<div style="margin-top: 20px;">
@@ -46,7 +46,7 @@
 					</div>
 					{{if $item.lock}}
 					<div class="wall-item-lock dropdown">
-						<i class="fa fa-lock lockview" data-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
+						<i class="fa fa-lock lockview" data-bs-toggle="dropdown" title="{{$item.lock}}" onclick="lockview('item',{{$item.id}});" ></i>&nbsp;
 						<div id="panel-{{$item.id}}" class="dropdown-menu"></div>
 					</div>
 					{{/if}}
@@ -74,10 +74,10 @@
 				</div>
 				{{/if}}
 				<div class="p-2 clearfix wall-item-tools">
-					<div class="float-right wall-item-tools-right">
+					<div class="float-end wall-item-tools-right">
 						{{if $item.toplevel && $item.emojis && $item.reactions}}
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="wall-item-react-{{$item.id}}">
+							<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="wall-item-react-{{$item.id}}">
 								<i class="fa fa-smile-o"></i>
 							</button>
 							<div class="dropdown-menu dropdown-menu-right">
@@ -100,7 +100,7 @@
 							{{/if}}
 							{{if $item.isevent}}
 							<div class="btn-group">
-								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="wall-item-attend-menu-{{$item.id}}" title="{{$item.attend_title}}">
+								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="wall-item-attend-menu-{{$item.id}}" title="{{$item.attend_title}}">
 									<i class="fa fa-calendar-check-o"></i>
 								</button>
 								<div class="dropdown-menu">
@@ -117,7 +117,7 @@
 							</div>
 							{{/if}}
 							<div class="btn-group">
-								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="wall-item-menu-{{$item.id}}">
+								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="wall-item-menu-{{$item.id}}">
 									<i class="fa fa-cog"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="wall-item-menu-{{$item.id}}">
@@ -170,7 +170,7 @@
 						{{/if}}
 						{{if $item.attachments}}
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>
+							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-bs-toggle="dropdown" id="attachment-menu-{{$item.id}}"><i class="fa fa-paperclip"></i></button>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="attachment-menu-{{$item.id}}">{{$item.attachments}}</ul>
 						</div>
 						{{/if}}
@@ -190,7 +190,7 @@
 						{{foreach $item.responses as $verb=>$response}}
 						{{if $response.count}}
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-toggle="modal" data-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.button}}</button>
+							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle"{{if $response.modal}} data-bs-toggle="modal" data-bs-target="#{{$verb}}Modal-{{$item.id}}"{{else}} data-bs-toggle="dropdown"{{/if}} id="wall-item-{{$verb}}-{{$item.id}}">{{$response.button}}</button>
 							{{if $response.modal}}
 							<div class="modal" id="{{$verb}}Modal-{{$item.id}}">
 								<div class="modal-dialog">

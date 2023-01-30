@@ -1,9 +1,9 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		{{if $notself}}
-		<div class="pull-right">
+		<div class="float-end">
 			<div class="btn-group">
-				<button id="connection-dropdown" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<button id="connection-dropdown" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					<i class="fa fa-cog"></i>&nbsp;{{$tools_label}}
 				</button>
 				<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
@@ -23,7 +23,7 @@
 			<div class="btn-group">
 				<a href="connedit/{{$abook_prev}}{{if $section}}?f=&section={{$section}}{{/if}}" class="btn btn-outline-secondary btn-sm{{if ! $abook_prev}} disabled{{/if}}" ><i class="fa fa-backward"></i></a>
 				<div class="btn-group" >
-					<button class="btn btn-outline-secondary btn-sm{{if $is_pending}} disabled{{/if}}" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></button>
+					<button class="btn btn-outline-secondary btn-sm{{if $is_pending}} disabled{{/if}}" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars"></i></button>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="dLabel">
 						{{foreach $sections as $s}}
 						<a class="dropdown-item" href="{{$s.url}}" title="{{$s.title}}">{{$s.label}}</a>
@@ -81,7 +81,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="alias-tool">
 					<h3>
-						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#alias-tool-collapse" aria-expanded="true" aria-controls="alias-tool-collapse">
+						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#alias-tool-collapse" aria-expanded="true" aria-controls="alias-tool-collapse">
 							{{$alias_label}}
 						</a>
 					</h3>
@@ -102,7 +102,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="pending-tool">
 					<h3>
-						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#pending-tool-collapse" aria-expanded="true" aria-controls="pending-tool-collapse">
+						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#pending-tool-collapse" aria-expanded="true" aria-controls="pending-tool-collapse">
 							{{$pending_label}}
 						</a>
 					</h3>
@@ -122,7 +122,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="affinity-tool">
 					<h3>
-						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#affinity-tool-collapse" aria-expanded="true" aria-controls="affinity-tool-collapse">
+						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#affinity-tool-collapse" aria-expanded="true" aria-controls="affinity-tool-collapse">
 							{{$affinity}}
 						</a>
 					</h3>
@@ -166,7 +166,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="fitert-tool">
 					<h3>
-						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#fitert-tool-collapse" aria-expanded="true" aria-controls="fitert-tool-collapse">
+						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#fitert-tool-collapse" aria-expanded="true" aria-controls="fitert-tool-collapse">
 							{{$connfilter_label}}
 						</a>
 					</h3>
@@ -193,7 +193,7 @@
 				{{if $notself}}
 				<div class="section-subtitle-wrapper" role="tab" id="perms-tool">
 					<h3>
-						<a data-toggle="collapse" data-parent="#contact-edit-tools" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
+						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
 							{{$permlbl}}
 						</a>
 					</h3>
@@ -208,7 +208,7 @@
 						</div>
 
 						{{if $permcat_enable}}
-						<a href="settings/permcats" class="pull-right"><i class="fa fa-plus"></i>&nbsp;{{$permcat_new}}</a>
+						<a href="settings/permcats" class="float-end"><i class="fa fa-plus"></i>&nbsp;{{$permcat_new}}</a>
 						{{include file="field_select.tpl" field=$permcat}}
 						{{/if}}
 

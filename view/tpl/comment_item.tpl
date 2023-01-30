@@ -25,7 +25,7 @@
 				{{/if}}
 				<textarea id="comment-edit-text-{{$id}}" class="comment-edit-text  {{if $top}}toplevel{{/if}}" placeholder="{{$comment}}" name="body" ondragenter="linkdropper(event);" ondragleave="linkdropexit(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);" ></textarea>
 				<div id="comment-tools-{{$id}}" class="pt-2 comment-tools">
-					<div id="comment-edit-bb-{{$id}}" class="btn-toolbar pull-left">
+					<div id="comment-edit-bb-{{$id}}" class="btn-toolbar float-start">
 						{{if $feature_markup}}
 						<div class="btn-group mr-2">
 							<button class="btn btn-outline-secondary btn-sm" title="{{$edbold}}" onclick="insertbbcomment('{{$comment}}','b', {{$id}}); return false;">
@@ -64,7 +64,7 @@
 						{{/if}}
 						{{$comment_buttons}}
 					</div>
-					<div class="btn-group float-right" id="comment-edit-submit-wrapper-{{$id}}">
+					<div class="btn-group float-end" id="comment-edit-submit-wrapper-{{$id}}">
 						{{if $preview}}
 						<button id="comment-edit-presubmit-{{$id}}" class="btn btn-outline-secondary btn-sm" onclick="preview_comment({{$id}}); return false;" title="{{$preview}}">
 							<i class="fa fa-eye comment-icon" ></i>
@@ -78,7 +78,7 @@
 						<button id="comment-edit-submit-{{$id}}" class="btn btn-primary btn-sm" type="submit" name="button-submit" onclick="post_comment({{$id}}); return false;">{{$submit}}</button>
 					</div>
 					{{if $reset}}
-					<div class="btn-group float-right" id="comment-edit-reset-wrapper-{{$id}}">
+					<div class="btn-group float-end" id="comment-edit-reset-wrapper-{{$id}}">
 						<button id="comment-reset-{{$id}}" class="btn btn-outline-secondary btn-sm comment-reset" title="{{$reset}}" onclick="commentCancel({{$id}}); return false;"><i class="fa fa-close fa-fw"></i></button>
 					</div>
 					{{/if}}

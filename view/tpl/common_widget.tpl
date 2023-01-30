@@ -6,7 +6,7 @@
     	$('#{{$content_id}}-chevron').removeClass('fa-chevron-up').addClass('fa-chevron-down');
 	} return false;" >
 	{{$title}}
-    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink pull-right"></i>
+    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink float-end"></i>
     </div>
 	</h3>
     <div id="{{$content_id}}" style="display:none;">

@@ -4,7 +4,7 @@
 	<div id="addressbook-{{$addressbook.id}}" class="ml-3">
 		<div class="form-group">
 			<i class="fa fa-user generic-icons"></i><a href="/cdav/addressbook/{{$addressbook.id}}">{{$addressbook.displayname}}</a>
-			<div class="float-right">
+			<div class="float-end">
 				<i id="edit-icon" class="fa fa-pencil fakelink generic-icons" onclick="openClose('edit-addressbook-{{$addressbook.id}}')"></i>
 				<a href="/cdav/addressbooks/{{$addressbook.ownernick}}/{{$addressbook.uri}}/?export"><i id="download-icon" class="fa fa-cloud-download fakelink generic-icons"></i></a>
 				<a href="#" onclick="dropItem('/cdav/addressbook/drop/{{$addressbook.id}}', '#addressbook-{{$addressbook.id}}'); return false;"><i class="fa fa-trash-o drop-icons"></i></a>

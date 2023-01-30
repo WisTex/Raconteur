@@ -17,7 +17,7 @@
 						<p>{{$permnote_self}}</p>
 						</div>
 						{{if $permcat_enable}}
-						<a href="settings/permcats" class="pull-right"><i class="fa fa-plus"></i>&nbsp;{{$permcat_new}}</a>
+						<a href="settings/permcats" class="float-end"><i class="fa fa-plus"></i>&nbsp;{{$permcat_new}}</a>
 						{{include file="field_select.tpl" field=$permcat}}
 						{{/if}}
 

@@ -1,5 +1,5 @@
 <div class="section-subtitle-wrapper">
-	<div class="pull-right">
+	<div class="float-end">
 		{{if $channel.default_links}}
 		{{/if}}
 		{{if $channel.delegate}}
@@ -22,7 +22,7 @@
 	<div class="clear"></div>
 </div>
 <div class="section-content-wrapper">
-	<div class="pull-left" style="width: 75%;">
+	<div class="float-start" style="width: 75%;">
 	<div class="channel-photo-wrapper">
 		{{if $selected != $channel.channel_id}}<a href="{{$channel.link}}" class="channel-selection-photo-link" title="{{$channel.channel_name}}">{{/if}}
 			<img class="channel-photo{{if $selected == $channel.channel_id}} channel-active{{/if}}" src="{{$channel.xchan_photo_m}}" alt="{{$channel.channel_name}}" />
@@ -38,7 +38,7 @@
 	</div>
 	</div>
 	{{if $channel.default_links}}
-	<div class="pull-left">
+	<div class="float-start">
 		{{if $channel.default}}
 		<a href="manage/{{$channel.channel_id}}/noop" class="make-default-link">
 			<i class="fa fa-check-square-o"></i>&nbsp;{{$msg_default}}

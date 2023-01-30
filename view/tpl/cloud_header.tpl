@@ -1,5 +1,5 @@
 <div class="section-title-wrapper">
-	<div class="pull-right">
+	<div class="float-end">
 		{{if $photo_view}}
 		<a href="{{$photos_path}}" title="{{$photo_view}}"><i class="fa fa-image btn btn-outline-secondary btn-sm" title="{{$photo_view}}"></i></a>
 		{{/if}}

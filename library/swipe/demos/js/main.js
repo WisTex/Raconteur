@@ -175,7 +175,7 @@ function getPageName( file ) {
 function getTitle() {
 	var html =  "<h2><a href=\"http://labs.rampinteractive.co.uk/touchSwipe/\">TouchSwipe</a> Demo</h2>";
         html += "<h3>to be viewed on touch based devices</h3>";
-        html += "<h1>"+getPageName()+"<span class='navigation_menu pull-right'></span></h1>";
+        html += "<h1>"+getPageName()+"<span class='navigation_menu float-end'></span></h1>";
 
     return html;
 }
@@ -188,11 +188,11 @@ function getNavigation() {
 	var html ="<div class='pagination'>";
 
 	if(index>0) {
-		html += "<a class='pull-left btn' href='"+fileList[index-1]+"'><< "+getPageName(fileList[index-1])+"</a>";
+		html += "<a class='float-start btn' href='"+fileList[index-1]+"'><< "+getPageName(fileList[index-1])+"</a>";
 	}
 
 	if(index<fileList.length-1) {
-		html += "<a class='pull-right btn' href='"+fileList[index+1]+"'>"+getPageName(fileList[index+1])+" >></a>";
+		html += "<a class='float-end btn' href='"+fileList[index+1]+"'>"+getPageName(fileList[index+1])+" >></a>";
 	}
 
 	html += "</div><div class='clear'></div>"

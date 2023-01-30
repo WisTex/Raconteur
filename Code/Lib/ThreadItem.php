@@ -233,7 +233,7 @@ class ThreadItem
         $like_list = ((x($conv_responses['like'], $item['mid'])) ? $conv_responses['like'][$item['mid'] . '-l'] : '');
         if (($like_list) && (count($like_list) > MAX_LIKERS)) {
             $like_list_part = array_slice($like_list, 0, MAX_LIKERS);
-            array_push($like_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#likeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
+            array_push($like_list_part, '<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#likeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
         } else {
             $like_list_part = '';
         }
@@ -253,7 +253,7 @@ class ThreadItem
 
         if (($dislike_list) && (count($dislike_list) > MAX_LIKERS)) {
             $dislike_list_part = array_slice($dislike_list, 0, MAX_LIKERS);
-            array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
+            array_push($dislike_list_part, '<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#dislikeModal-' . $this->get_id() . '"><b>' . t('View all') . '</b></a>');
         } else {
             $dislike_list_part = '';
         }

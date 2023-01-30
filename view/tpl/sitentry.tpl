@@ -1,6 +1,6 @@
 <div class="directory-item{{if $entry.safe}} safe{{/if}}" id="directory-item-{{$entry.hash}}" >
 	<div class="section-subtitle-wrapper clearfix">
-		<div class="pull-right">
+		<div class="float-end">
 			{{if $entry.ignlink}}
 			<a class="directory-ignore btn btn-warning btn-sm" href="{{$entry.ignlink}}"> {{$entry.ignore_label}}</a>
 			{{/if}}

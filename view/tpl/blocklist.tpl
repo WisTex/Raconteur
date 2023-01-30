@@ -1,7 +1,7 @@
 <div class="generic-content-wrapper">
 	<div class="section-title-wrapper">
 		{{if $editor}}
-		<div class="pull-right">
+		<div class="float-end">
 			<button id="webpage-create-btn" class="btn btn-sm btn-success" onclick="openClose('block-editor');"><i class="fa fa-pencil-square-o"></i>&nbsp;{{$create}}</button>
 		</div>
 		{{/if}}

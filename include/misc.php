@@ -255,7 +255,7 @@ function purify_html($s, $opts = [])
     //interchange - potentially dangerous since it can load content
 
     //toggler
-    $def->info_global_attr['data-toggler'] = new HTMLPurifier_AttrDef_Text();
+    $def->info_global_attr['data-bs-toggler'] = new HTMLPurifier_AttrDef_Text();
 
     //sticky
     $def->info_global_attr['data-sticky'] = new HTMLPurifier_AttrDef_Text();
@@ -264,7 +264,7 @@ function purify_html($s, $opts = [])
     // f6 common
 
     $def->info_global_attr['data-options'] = new HTMLPurifier_AttrDef_Text();
-    $def->info_global_attr['data-toggle'] = new HTMLPurifier_AttrDef_Text();
+    $def->info_global_attr['data-bs-toggle'] = new HTMLPurifier_AttrDef_Text();
     $def->info_global_attr['data-close'] = new HTMLPurifier_AttrDef_Text();
     $def->info_global_attr['data-open'] = new HTMLPurifier_AttrDef_Text();
     $def->info_global_attr['data-position'] = new HTMLPurifier_AttrDef_Text();
@@ -272,8 +272,8 @@ function purify_html($s, $opts = [])
 
     //data- attributes used by the bootstrap library
     $def->info_global_attr['data-dismiss'] = new HTMLPurifier_AttrDef_Text();
-    $def->info_global_attr['data-target'] = new HTMLPurifier_AttrDef_Text();
-    $def->info_global_attr['data-toggle'] = new HTMLPurifier_AttrDef_Text();
+    $def->info_global_attr['data-bs-target'] = new HTMLPurifier_AttrDef_Text();
+    $def->info_global_attr['data-bs-toggle'] = new HTMLPurifier_AttrDef_Text();
     $def->info_global_attr['data-backdrop'] = new HTMLPurifier_AttrDef_Text();
     $def->info_global_attr['data-keyboard'] = new HTMLPurifier_AttrDef_Text();
     $def->info_global_attr['data-show'] = new HTMLPurifier_AttrDef_Text();

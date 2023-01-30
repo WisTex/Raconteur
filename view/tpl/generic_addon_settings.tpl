@@ -1,7 +1,7 @@
 <div class="panel">
 	<div class="section-subtitle-wrapper" role="tab" id="{{$addon.0}}-settings">
 		<h3>
-			<a title="{{$addon.2}}" data-toggle="collapse" data-target="#{{$addon.0}}-settings-content" href="#" aria-controls="{{$addon.0}}-settings-content">
+			<a title="{{$addon.2}}" data-bs-toggle="collapse" data-bs-target="#{{$addon.0}}-settings-content" href="#" aria-controls="{{$addon.0}}-settings-content">
 				{{if $addon.1|substr:0:1 === '<'}}
 				{{$addon.1}}
 				{{else}}

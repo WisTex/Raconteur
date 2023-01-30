@@ -30,12 +30,12 @@
 				{{/if}}
 			{{/if}}
 			<div class="p-2 clearfix wall-item-head{{if !$title && !$event && !$photo}} rounded-top{{/if}}{{if $is_new && !$event}} wall-item-head-new{{/if}}">
-				<span class="float-right wall-item-pinned" title="{{$pinned}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
+				<span class="float-end wall-item-pinned" title="{{$pinned}}"><i class="fa fa-thumb-tack">&nbsp;</i></span>
 				<div class="wall-item-info" id="pinned-item-info-{{$id}}" >
 					<div class="wall-item-photo-wrapper{{if $owner_url}} wwfrom{{/if}} h-card p-author" id="pinned-item-photo-wrapper-{{$id}}">
-						<img src="{{$thumb}}" class="fakelink wall-item-photo u-photo p-name" id="pinned-item-photo-{{$id}}" alt="{{$name}}" data-toggle="dropdown" />
+						<img src="{{$thumb}}" class="fakelink wall-item-photo u-photo p-name" id="pinned-item-photo-{{$id}}" alt="{{$name}}" data-bs-toggle="dropdown" />
 						{{if $thread_author_menu}}
-							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-toggle="dropdown"></i>
+							<i class="fa fa-caret-down wall-item-photo-caret cursor-pointer" data-bs-toggle="dropdown"></i>
 							<div class="dropdown-menu">
 								<img src="{{$item.large_avatar}}" style="width: 200px; height: 200px;" id="wall-item-popup-photo-{{$item.id}}" alt="{{$item.name}}" />
 								<div style="margin-top: 20px;">
@@ -73,7 +73,7 @@
 				</div>
 			{{/if}}
 				<div class="p-2 clearfix wall-item-tools">
-					<div class="float-right wall-item-tools-right">
+					<div class="float-end wall-item-tools-right">
 						<div class="btn-group">
 							<div id="pinned-rotator-{{$id}}" class="spinner-wrapper">
 								<div class="spinner s"></div>
@@ -82,7 +82,7 @@
 						<div class="btn-group">
 						{{if $isevent}}
 							<div class="btn-group">
-								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="pinned-item-attend-menu-{{$id}}" title="{{$attend_title}}">
+								<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="pinned-item-attend-menu-{{$id}}" title="{{$attend_title}}">
 									<i class="fa fa-calendar-check-o"></i>
 								</button>
 								<div class="dropdown-menu dropdown-menu-right">
@@ -99,7 +99,7 @@
 							</div>
 						{{/if}}
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" id="pinned-item-menu-{{$id}}">
+							<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" id="pinned-item-menu-{{$id}}">
 								<i class="fa fa-cog"></i>
 							</button>
 							<div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="wall-item-menu-{{$id}}">
@@ -119,7 +119,7 @@
 				{{if $attachments}}
 					<div class="wall-item-tools-left btn-group" id="pinned-item-tools-left-{{$id}}">
 						<div class="btn-group">
-							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-toggle="dropdown" id="pinned-attachment-menu-{{$id}}">
+							<button type="button" class="btn btn-outline-secondary btn-sm wall-item-like dropdown-toggle" data-bs-toggle="dropdown" id="pinned-attachment-menu-{{$id}}">
 								<i class="fa fa-paperclip"></i>
 							</button>
 							<div class="dropdown-menu">{{$attachments}}</div>

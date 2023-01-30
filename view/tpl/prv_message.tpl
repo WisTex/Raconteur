@@ -32,7 +32,7 @@
 					<textarea class="form-control" id="prvmail-text" name="body"{{if $new}} style="height: 10em;"{{/if}}>{{$text}}</textarea>
 				</div>
 				<div id="prvmail-submit-wrapper" class="form-group clearfix">
-					<div id="prvmail-submit" class="float-right btn-group">
+					<div id="prvmail-submit" class="float-end btn-group">
 						<button class="btn btn-outline-secondary btn-sm" id="prvmail-preview" title="{{$preview}}" onclick="preview_mail(); return false;"><i class="fa fa-eye"></i></button>
 						<button class="btn btn-primary btn-sm" type="submit" id="prvmail-submit" name="submit" value="{{$submit}}">{{$submit}}</button>
 					</div>
@@ -77,7 +77,7 @@
 						</div>
 						{{/if}}
 						<div class="btn-group d-lg-none">
-							<button type="button" id="more-tools" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+							<button type="button" id="more-tools" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 								<i id="more-tools-icon" class="fa fa-cog jot-icons"></i>
 							</button>
 							<div class="dropdown-menu dropdown-menu-right" role="menu">

@@ -8,7 +8,7 @@
 		{{$title}}
 		</div>
 		{{if ! $reset}}
-	    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink pull-right" onclick="openClose('{{$content_id}}'); if ($('#{{$content_id}}').is(':visible')) {
+	    <i id="{{$content_id}}-chevron" class="fa fa-fw fa-chevron-down fakelink float-end" onclick="openClose('{{$content_id}}'); if ($('#{{$content_id}}').is(':visible')) {
 	    $('#{{$content_id}}-chevron').removeClass('fa-chevron-down').addClass('fa-chevron-up');
         } else {
 	    $('#{{$content_id}}-chevron').removeClass('fa-chevron-up').addClass('fa-chevron-down');
