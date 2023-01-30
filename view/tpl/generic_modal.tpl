@@ -3,11 +3,11 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title" id="generic-modal-title-{{$id}}">{{$title}}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
       </div>
       <div class="modal-body" id="generic-modal-body-{{$id}}"></div>
       <div class="modal-footer">
-        <button id="generic-modal-cancel-{{$id}}" type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$cancel}}</button>
+        <button id="generic-modal-cancel-{{$id}}" type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{$cancel}}</button>
 	{{if $ok}}
         <button id="generic-modal-ok-{{$id}}" type="button" class="btn btn-primary">{{$ok}}</button>
 	{{/if}}

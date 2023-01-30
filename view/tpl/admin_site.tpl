@@ -52,7 +52,7 @@
                 </a>
                 </h3>
             </div>
-            <div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-parent="#settings">
+            <div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-bs-parent="#settings">
                 <div class="section-content-tools-wrapper">
                     {{include file="field_input.tpl" field=$sitename}}
                     {{include file="field_textarea.tpl" field=$siteinfo}}
@@ -79,7 +79,7 @@
                 </a>
                 </h3>
             </div>
-            <div id="reg-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="reg-settings" data-parent="#settings">
+            <div id="reg-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="reg-settings" data-bs-parent="#settings">
                 <div class="section-content-tools-wrapper">
                     {{include file="field_select.tpl" field=$register_policy}}
                     {{if $invite_working}}{{include file="field_checkbox.tpl" field=$invite_only}}{{/if}}
@@ -105,7 +105,7 @@
                 </a>
                 </h3>
             </div>
-            <div id="corp-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="corp-settings" data-parent="#settings">
+            <div id="corp-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="corp-settings" data-bs-parent="#settings">
                 <div class="section-content-tools-wrapper">
                     {{include file="field_checkbox.tpl" field=$verify_email}}
                     {{include file="field_checkbox.tpl" field=$show_like_counts}}
@@ -130,7 +130,7 @@
                 </a>
                 </h3>
             </div>
-            <div id="adv-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="adv-settings" data-parent="#settings">
+            <div id="adv-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="adv-settings" data-bs-parent="#settings">
                 <div class="section-content-tools-wrapper">
                     {{include file="field_input.tpl" field=$imagick_path}}
                     {{include file="field_checkbox.tpl" field=$cache_images}}

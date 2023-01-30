@@ -81,7 +81,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="alias-tool">
 					<h3>
-						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#alias-tool-collapse" aria-expanded="true" aria-controls="alias-tool-collapse">
+						<a data-bs-toggle="collapse" data-bs-parent="#contact-edit-tools" href="#alias-tool-collapse" aria-expanded="true" aria-controls="alias-tool-collapse">
 							{{$alias_label}}
 						</a>
 					</h3>
@@ -102,7 +102,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="pending-tool">
 					<h3>
-						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#pending-tool-collapse" aria-expanded="true" aria-controls="pending-tool-collapse">
+						<a data-bs-toggle="collapse" data-bs-parent="#contact-edit-tools" href="#pending-tool-collapse" aria-expanded="true" aria-controls="pending-tool-collapse">
 							{{$pending_label}}
 						</a>
 					</h3>
@@ -122,7 +122,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="affinity-tool">
 					<h3>
-						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#affinity-tool-collapse" aria-expanded="true" aria-controls="affinity-tool-collapse">
+						<a data-bs-toggle="collapse" data-bs-parent="#contact-edit-tools" href="#affinity-tool-collapse" aria-expanded="true" aria-controls="affinity-tool-collapse">
 							{{$affinity}}
 						</a>
 					</h3>
@@ -166,7 +166,7 @@
 			<div class="panel">
 				<div class="section-subtitle-wrapper" role="tab" id="fitert-tool">
 					<h3>
-						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#fitert-tool-collapse" aria-expanded="true" aria-controls="fitert-tool-collapse">
+						<a data-bs-toggle="collapse" data-bs-parent="#contact-edit-tools" href="#fitert-tool-collapse" aria-expanded="true" aria-controls="fitert-tool-collapse">
 							{{$connfilter_label}}
 						</a>
 					</h3>
@@ -193,7 +193,7 @@
 				{{if $notself}}
 				<div class="section-subtitle-wrapper" role="tab" id="perms-tool">
 					<h3>
-						<a data-bs-toggle="collapse" data-parent="#contact-edit-tools" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
+						<a data-bs-toggle="collapse" data-bs-parent="#contact-edit-tools" href="#perms-tool-collapse" aria-expanded="true" aria-controls="perms-tool-collapse">
 							{{$permlbl}}
 						</a>
 					</h3>

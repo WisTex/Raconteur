@@ -16,7 +16,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-parent="#settings">
+                <div id="basic-settings-collapse" class="collapse show" role="tabpanel" aria-labelledby="basic-settings" data-bs-parent="#settings">
                     <div class="section-content-tools-wrapper">
                         {{include file="field_input.tpl" field=$channel_name}}
                         {{include file="field_input.tpl" field=$defloc}}
@@ -42,7 +42,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="privacy-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="privacy-settings" data-parent="#settings">
+                <div id="privacy-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="privacy-settings" data-bs-parent="#settings">
                     <div class="section-content-tools-wrapper">
                         {{if $can_change_role}}
                             {{include file="field_select_grouped.tpl" field=$role}}
@@ -72,7 +72,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h4 class="modal-title">{{$lbl_p2macro}}</h4>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="{{$close}}"><span aria-hidden="true">&times;</span></button>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="{{$close}}"><span aria-hidden="true">&times;</span></button>
                                         </div>
                                         <div class="modal-body">
                                             {{foreach $permiss_arr as $permit}}
@@ -80,7 +80,7 @@
                                             {{/foreach}}
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$close}}</button>
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{$close}}</button>
                                         </div>
                                     </div><!-- /.modal-content -->
                                 </div><!-- /.modal-dialog -->
@@ -121,7 +121,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="notification-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="notification-settings" data-parent="#settings">
+                <div id="notification-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="notification-settings" data-bs-parent="#settings">
                     <div class="section-content-tools-wrapper">
                         <div id="settings-notifications">
 
@@ -196,7 +196,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="time-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="time-settings" data-parent="#settings" >
+                <div id="time-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="time-settings" data-bs-parent="#settings" >
                     <div class="section-content-tools-wrapper">
 
                         {{include file="field_select_grouped.tpl" field=$timezone}}
@@ -220,7 +220,7 @@
                         </a>
                     </h3>
                 </div>
-                <div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings" data-parent="#settings" >
+                <div id="miscellaneous-settings-collapse" class="collapse" role="tabpanel" aria-labelledby="miscellaneous-settings" data-bs-parent="#settings" >
                     <div class="section-content-tools-wrapper">
 
                         {{$activitypub}}

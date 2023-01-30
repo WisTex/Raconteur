@@ -157,7 +157,7 @@
 				<i class="fa fa-fw fa-{{$notification.icon}}"></i> {{$notification.label}}
 				<span class="float-end badge bg-{{$notification.severity}} {{$notification.type}}-update"></span>
 			</a>
-			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content" data-parent="#notifications" data-type="{{$notification.type}}">
+			<div id="nav-{{$notification.type}}-sub" class="collapse notification-content" data-bs-parent="#notifications" data-type="{{$notification.type}}">
 				{{if $notification.viewall}}
 				<a class="list-group-item list-group-item-action text-dark" id="nav-{{$notification.type}}-see-all" href="{{$notification.viewall.url}}">
 					<i class="fa fa-fw fa-external-link"></i> {{$notification.viewall.label}}

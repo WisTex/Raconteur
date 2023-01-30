@@ -126,14 +126,14 @@
 							<div class="modal-dialog">
 								<div class="modal-content">
 									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+										<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
 										<h4 class="modal-title">{{$response.title}}</h4>
 									</div>
 									<div class="modal-body">
 										<ul>{{foreach $response.list as $liker}}<li role="presentation">{{$liker}}</li>{{/foreach}}</ul>
 									</div>
 									<div class="modal-footer clear">
-										<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{$modal_dismiss}}</button>
+										<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">{{$modal_dismiss}}</button>
 									</div>
 								</div><!-- /.modal-content -->
 							</div><!-- /.modal-dialog -->
