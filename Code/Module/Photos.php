@@ -612,6 +612,9 @@ class Photos extends Controller
             $cmd = 'view';
         }
 
+
+        $safetoview = ($unsafe) ? "" : " and is_nsfw = 0 ";
+
         //
         // Setup permissions structures
         //
@@ -775,9 +778,11 @@ class Photos extends Controller
                 $order = 'created DESC';
             }
 
+
+
             $r = q(
                 "SELECT p.resource_id, p.id, p.filename, p.mimetype, p.imgscale, p.description, p.created FROM photo p INNER JOIN
-					(SELECT resource_id, max(imgscale) imgscale FROM photo left join attach on folder = '%s' and photo.resource_id = attach.hash WHERE attach.uid = %d AND imgscale <= 4 AND photo_usage IN ( %d, %d, %d ) and is_nsfw = %d $sql_extra GROUP BY resource_id) ph 
+					(SELECT resource_id, max(imgscale) imgscale FROM photo left join attach on folder = '%s' and photo.resource_id = attach.hash WHERE attach.uid = %d AND imgscale <= 4 AND photo_usage IN ( %d, %d, %d ) $safetoview $sql_extra GROUP BY resource_id) ph 
 					ON (p.resource_id = ph.resource_id AND p.imgscale = ph.imgscale)
 				ORDER BY $order LIMIT %d OFFSET %d",
                 dbesc($x['hash']),
@@ -785,7 +790,6 @@ class Photos extends Controller
                 intval(PHOTO_NORMAL),
                 intval(PHOTO_PROFILE),
                 intval(PHOTO_COVER),
-                intval($unsafe),
                 intval(App::$pager['itemspage']),
                 intval(App::$pager['start'])
             );
@@ -1357,12 +1361,11 @@ class Photos extends Controller
         $r = q(
             "SELECT p.resource_id, p.id, p.filename, p.mimetype, p.album, p.imgscale, p.created, p.display_path FROM photo p 
 			INNER JOIN ( SELECT resource_id, max(imgscale) imgscale FROM photo WHERE photo.uid = %d AND photo_usage IN ( %d, %d ) 
-			AND is_nsfw = %d $sql_extra group by resource_id ) ph ON (p.resource_id = ph.resource_id and p.imgscale = ph.imgscale) 
+            $safetoview $sql_extra group by resource_id ) ph ON (p.resource_id = ph.resource_id and p.imgscale = ph.imgscale) 
 			ORDER by p.created DESC LIMIT %d OFFSET %d",
             intval(App::$data['channel']['channel_id']),
             intval(PHOTO_NORMAL),
             intval(PHOTO_PROFILE),
-            intval($unsafe),
             intval(App::$pager['itemspage']),
             intval(App::$pager['start'])
         );
