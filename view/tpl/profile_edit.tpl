@@ -39,7 +39,7 @@
                             </a>
                         </h3>
                     </div>
-                    <div id="personal-collapse" class="panel-collapse collapse show" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="personal">
+                    <div id="personal-collapse" class="panel-collapse collapse show" data-bs-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="personal">
                         <div class="section-content-tools-wrapper">
                             {{if $multi_profiles}}
                             {{include file="field_input.tpl" field=$profile_name}}
@@ -208,7 +208,7 @@
                             </a>
                         </h3>
                     </div>
-                    <div id="location-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="location">
+                    <div id="location-collapse" class="panel-collapse collapse" data-bs-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="location">
                         <div class="section-content-tools-wrapper">
                             {{if $fields.address}}
                             {{include file="field_input.tpl" field=$address}}
@@ -253,7 +253,7 @@
                             </a>
                         </h3>
                     </div>
-                    <div id="relation-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="relation">
+                    <div id="relation-collapse" class="panel-collapse collapse" data-bs-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="relation">
                         <div class="section-content-tools-wrapper">
 
                             {{if $fields.basic_gender || $fields.advanced_gender || $fields.gender}}
@@ -317,7 +317,7 @@
                             </a>
                         </h3>
                     </div>
-                    <div id="miscellaneous-collapse" class="panel-collapse collapse" data-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="miscellaneous">
+                    <div id="miscellaneous-collapse" class="panel-collapse collapse" data-bs-parent="#profile-edit-wrapper" role="tabpanel" aria-labelledby="miscellaneous">
                         <div class="section-content-tools-wrapper">
                             {{if $fields.homepage}}
                             {{include file="field_input.tpl" field=$homepage}}

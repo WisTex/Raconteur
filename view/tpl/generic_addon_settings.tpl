@@ -10,7 +10,7 @@
 			</a>
 		</h3>
 	</div>
-	<div id="{{$addon.0}}-settings-content" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{$addon.0}}-settings" data-parent="#settings">
+	<div id="{{$addon.0}}-settings-content" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{$addon.0}}-settings" data-bs-parent="#settings">
 		<div class="section-content-tools-wrapper">
 			{{$content}}
 			{{if $addon.0}}

@@ -15,7 +15,7 @@
 						</a>
 					</h3>
 				</div>
-				<div id="theme-settings-content" class="collapse show" role="tabpanel" aria-labelledby="theme-settings" data-parent="#settings" >
+				<div id="theme-settings-content" class="collapse show" role="tabpanel" aria-labelledby="theme-settings" data-bs-parent="#settings" >
 					<div class="section-content-tools-wrapper">
 						{{if $theme}}
 							{{include file="field_themeselect.tpl" field=$theme}}
@@ -38,7 +38,7 @@
 						</a>
 					</h3>
 				</div>
-				<div id="custom-settings-content" class="collapse{{if !$theme}} in{{/if}}" role="tabpanel" aria-labelledby="custom-settings" data-parent="#settings" >
+				<div id="custom-settings-content" class="collapse{{if !$theme}} in{{/if}}" role="tabpanel" aria-labelledby="custom-settings" data-bs-parent="#settings" >
 					<div class="section-content-tools-wrapper">
 						{{if $theme_config}}
 							{{$theme_config}}
@@ -54,7 +54,7 @@
 						</a>
 					</h3>
 				</div>
-				<div id="content-settings-content" class="collapse{{if !$theme && !$theme_config}} in{{/if}}" role="tabpanel" aria-labelledby="content-settings" data-parent="#settings">
+				<div id="content-settings-content" class="collapse{{if !$theme && !$theme_config}} in{{/if}}" role="tabpanel" aria-labelledby="content-settings" data-bs-parent="#settings">
 					<div class="section-content-wrapper">
 						{{include file="field_input.tpl" field=$ajaxint}}
 						{{include file="field_input.tpl" field=$itemspage}}

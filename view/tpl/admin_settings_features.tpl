@@ -15,7 +15,7 @@
 					</a>
 				</h3>
 			</div>
-			<div id="{{$g}}-settings-content" class="panel-collapse collapse{{if $g == 'general'}} show{{/if}}" data-parent="#settings" role="tabpanel" aria-labelledby="{{$g}}-settings-title">
+			<div id="{{$g}}-settings-content" class="panel-collapse collapse{{if $g == 'general'}} show{{/if}}" data-bs-parent="#settings" role="tabpanel" aria-labelledby="{{$g}}-settings-title">
 				<div class="section-content-tools-wrapper">
 					{{foreach $f.1 as $fcat}}
 						{{include file="field_checkbox.tpl" field=$fcat.0}}
