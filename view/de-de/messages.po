@@ -2986,16 +2986,6 @@ msgid ""
 "been configured."
 msgstr "Zeigt Besuchern der Homepage eine Anmeldemaske, falls keine anderen Inhalte konfiguriert wurden."
 
-#: ../../Code/Module/Admin/Site.php:334
-msgid "Enable context help"
-msgstr "Kontext-Hilfe aktivieren"
-
-#: ../../Code/Module/Admin/Site.php:334
-msgid ""
-"Display contextual help for the current page when the help button is "
-"pressed."
-msgstr "Zeigt Kontext-sensitive Hilfe für die aktuelle Seite an, wenn der Hilfe-Knopf geklickt wird."
-
 #: ../../Code/Module/Admin/Site.php:336
 msgid "Reply-to email address for system generated email."
 msgstr "Antwortadresse (reply-to) für Emails, die vom System generiert wurden."

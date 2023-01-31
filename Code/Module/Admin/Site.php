@@ -64,7 +64,6 @@ class Site
         $public_stream_mode = ((x($_POST, 'public_stream_mode')) ? intval($_POST['public_stream_mode']) : PUBLIC_STREAM_NONE);
         $animations = ((x($_POST, 'animations')) ? true : false);
         $login_on_homepage = ((x($_POST, 'login_on_homepage')) ? true : false);
-        $enable_context_help = ((x($_POST, 'enable_context_help')) ? true : false);
         $no_community_page = !((x($_POST, 'no_community_page')) ? true : false);
         $default_expire_days = ((array_key_exists('default_expire_days', $_POST)) ? intval($_POST['default_expire_days']) : 0);
         $active_expire_days = ((array_key_exists('active_expire_days', $_POST)) ? intval($_POST['active_expire_days']) : 7);
@@ -109,7 +108,6 @@ class Site
         set_config('system', 'mirror_frontpage', $mirror_frontpage);
         set_config('system', 'sitename', $sitename);
         set_config('system', 'login_on_homepage', $login_on_homepage);
-        set_config('system', 'enable_context_help', $enable_context_help);
         set_config('system', 'verify_email', $verify_email);
         set_config('system', 'default_expire_days', $default_expire_days);
         set_config('system', 'active_expire_days', $active_expire_days);
@@ -267,8 +265,7 @@ class Site
         }
 
         $homelogin = get_config('system', 'login_on_homepage');
-        $enable_context_help = get_config('system', 'enable_context_help');
-
+        
         return replace_macros(Theme::get_template('admin_site.tpl'), [
             '$title' => t('Administration'),
             '$page' => t('Site'),
@@ -316,7 +313,6 @@ class Site
             '$excl' => ['pub_excl', t('Do not import Public stream posts with this text'), get_config('system', 'pubstream_excl'), t('words one per line or #tags or /patterns/ or lang=xx, leave blank to import all posts')],
             '$max_imported_follow' => ['max_imported_follow', t('Maximum number of imported friends of friends'), get_config('system', 'max_imported_follow', MAX_IMPORTED_FOLLOW), t('Warning: higher numbers will improve the quality of friend suggestions and directory results but can exponentially increase resource usage')],
             '$login_on_homepage' => ['login_on_homepage', t("Login on Homepage"), ((intval($homelogin) || $homelogin === false) ? 1 : ''), t("Present a login box to visitors on the home page if no other content has been configured.")],
-            '$enable_context_help' => ['enable_context_help', t("Enable context help"), ((intval($enable_context_help) === 1 || $enable_context_help === false) ? 1 : 0), t("Display contextual help for the current page when the help button is pressed.")],
             '$reply_address' => ['reply_address', t('Reply-to email address for system generated email.'), get_config('system', 'reply_address', 'noreply@' . App::get_hostname()), ''],
             '$from_email' => ['from_email', t('Sender (From) email address for system generated email.'), get_config('system', 'from_email', 'Administrator@' . App::get_hostname()), ''],
             '$from_email_name' => ['from_email_name', t('Display name of email sender for system generated email.'), get_config('system', 'from_email_name', System::get_site_name()), ''],

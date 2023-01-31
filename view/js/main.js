@@ -703,43 +703,6 @@ function handleNotificationsItems(notifyType, data) {
 	}
 }
 
-function contextualHelp() {
-	let container = $("#contextual-help-content");
-
-	if(container.hasClass('contextual-help-content-open')) {
-		container.removeClass('contextual-help-content-open');
-		$('main').css('margin-top', '')
-	}
-	else {
-		container.addClass('contextual-help-content-open');
-		let mainTop = container.outerHeight(true);
-		$('main').css('margin-top', mainTop + 'px');
-	}
-}
-
-function contextualHelpFocus(target, openSidePanel) {
-        if($(target).length) {
-            if (openSidePanel) {
-                    $("main").addClass('region_1-on');  // Open the side panel to highlight element
-            }
-            else {
-                    $("main").removeClass('region_1-on');
-            }
-
-	    let css_position = $(target).parent().css('position');
-	    if (css_position === 'fixed') {
-	            $(target).parent().css('position', 'static');
-	    }
-
-            $('html,body').animate({ scrollTop: $(target).offset().top - $('nav').outerHeight(true) - $('#contextual-help-content').outerHeight(true)}, 'slow');
-            for (i = 0; i < 3; i++) {
-                    $(target).fadeTo('slow', 0.1).fadeTo('slow', 1.0);
-            }
-
-	    $(target).parent().css('position', css_position);
-        }
-}
-
 function updatePageItems(mode, data) {
 
 	if(mode === 'append') {

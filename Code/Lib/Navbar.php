@@ -164,22 +164,7 @@ class Navbar {
             $nav['register'] = ['register',t('Register'), "", t('Create an account'),'register_nav_btn'];
         }
 
-        if (! get_config('system', 'hide_help', true)) {
-            $help_url = z_root() . '/help?f=&cmd=' . App::$cmd;
-            $context_help = '';
-            $enable_context_help = ((intval(get_config('system', 'enable_context_help')) === 1 || get_config('system', 'enable_context_help') === false) ? true : false);
-            if ($enable_context_help === true) {
-                require_once('include/help.php');
-                $context_help = load_context_help();
-                //point directly to /help if $context_help is empty - this can be removed once we have context help for all modules
-                $enable_context_help = (($context_help) ? true : false);
-            }
-            $nav['help'] = [$help_url, t('Help'), "", t('Help and documentation'), 'help_nav_btn', $context_help, $enable_context_help];
-        }
-
-
         $search_form_action = 'search';
-
 
         $nav['search'] = ['search', t('Search'), "", t('Search site @name, #tag, ?doc, content'), $search_form_action];
 

@@ -33,7 +33,6 @@ custom/
 cache/
 # site apps
 apps/
-!doc/context/*/apps
 doc/site
 # default startpage
 home.html

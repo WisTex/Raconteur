@@ -11730,15 +11730,6 @@ msgid ""
 "been configured."
 msgstr "Предоставлять форму входа для посетителей на домашней странице если другого содержимого не настроено."
 
-#: ../../Code/Module/Admin/Site.php:352
-msgid "Enable context help"
-msgstr "Включить контекстную помощь"
-
-#: ../../Code/Module/Admin/Site.php:352
-msgid ""
-"Display contextual help for the current page when the help button is pressed."
-msgstr "Показывать контекстную помощь для текущей странице при нажатии на кнопку \"Помощь\"."
-
 #: ../../Code/Module/Admin/Site.php:354
 msgid "Reply-to email address for system generated email."
 msgstr "Адрес email Reply-to для генерируемых системой сообщений."

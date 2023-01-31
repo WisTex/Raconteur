@@ -71,11 +71,6 @@
 {{/if}}
 {{/if}}
 <div class="navbar-toggler-right">
-	{{if $nav.help.6}}
-	<button id="context-help-btn" class="navbar-toggler border-0" type="button" onclick="contextualHelp(); return false;">
-		<i class="fa fa-question-circle"></i>
-	</button>
-	{{/if}}
 	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-bs-toggle="offcanvas" data-bs-target="#region_1">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
@@ -129,11 +124,6 @@
 		<li class="nav-item" id="nav-search-btn">
 			<a class="nav-link" href="#nav-search" title="{{$nav.search.3}}" onclick="openMenu('nav-search'); closeMenu('nav-search-btn'); $('#nav-search-text').focus(); return false;"><i class="fa fa-fw fa-search"></i></a>
 		</li>
-		{{if $nav.help.6}}
-		<li class="nav-item dropdown {{$sel.help}}">
-			<a class="nav-link {{$nav.help.2}}" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}" id="{{$nav.help.4}}" onclick="contextualHelp(); return false;"><i class="fa fa-fw fa-question-circle"></i></a>
-		</li>
-		{{/if}}
 		{{if $localuser || $nav.pubs}}
 		<li id="notifications-btn" class="nav-item d-xl-none">
 			<a class="nav-link text-white notifications-btn" href="#"><i id="notifications-btn-icon" class="fa fa-exclamation-circle  notifications-btn-icon"></i></a>
@@ -212,12 +202,3 @@
 		{{/if}}
 	</div>
 </div>
-{{if $nav.help.6}}
-<div id="contextual-help-content" class="contextual-help-content">
-	{{$nav.help.5}}
-	<div class="float-end">
-		<a class="btn btn-primary btn-sm" target="hubzilla-help" href="{{$nav.help.0}}" title="{{$nav.help.3}}"><i class="fa fa-question"></i>&nbsp;{{$fulldocs}}</a>
-		<a class="contextual-help-tool" href="#" onclick="contextualHelp(); return false;"><i class="fa fa-times"></i></a>
-	</div>
-</div>
-{{/if}}
