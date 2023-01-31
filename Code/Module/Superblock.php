@@ -169,10 +169,10 @@ class Superblock extends Controller
         }
 
         $type = BLOCKTYPE_SERVER;
-        $blocked = trim($_REQUEST['blocksite']);
-        if ($blocked) {
+        $blockedsite = trim($_REQUEST['blocksite']);
+        if ($blockedsite) {
             $handled = true;
-            $servers = Activity::get_actor_hublocs($blocked);
+            $servers = Activity::get_actor_hublocs($blockedsite);
             if ($servers) {
                 foreach ($servers as $server) {
                     $m = parse_url($server['hubloc_url']);
@@ -184,10 +184,10 @@ class Superblock extends Controller
                             }
                             killme();
                         }
-                        $blocked = $m['host'];
+                        $blockedsite = $m['host'];
                         $bl = [
                             'block_channel_id' => local_channel(),
-                            'block_entity' => $blocked,
+                            'block_entity' => $blockedsite,
                             'block_type' => $type,
                             'block_comment' => t('Added by Superblock')
                         ];
@@ -196,23 +196,23 @@ class Superblock extends Controller
 
                         $sync = [];
 
-                        $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blocked)];
+                        $sync['block'] = [LibBlock::fetch_by_entity(local_channel(), $blockedsite)];
                         Libsync::build_sync_packet(0, $sync);
                     }
                 }
             }
         }
-        $unblocked = trim($_REQUEST['unblocksite']);
-        if ($unblocked) {
+        $unblockedsite = trim($_REQUEST['unblocksite']);
+        if ($unblockedsite) {
             $handled = true;
             if (check_form_security_token('superblock', 'sectok')) {
-                $r = LibBlock::fetch_by_entity(local_channel(), $unblocked);
+                $r = LibBlock::fetch_by_entity(local_channel(), $unblockedsite);
                 if ($r) {
-                    LibBlock::remove(local_channel(), $unblocked);
+                    LibBlock::remove(local_channel(), $unblockedsite);
                     $sync = [];
                     $sync['block'] = [[
                         'block_channel_id' => local_channel(),
-                        'block_entity' => $unblocked,
+                        'block_entity' => $unblockedsite,
                         'block_type' => $type,
                         'deleted' => true,
                     ]];
