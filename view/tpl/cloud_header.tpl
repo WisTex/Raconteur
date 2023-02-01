@@ -1,7 +1,7 @@
 <div class="section-title-wrapper">
 	<div class="float-end">
 		{{if $photo_view}}
-		<a href="{{$photos_path}}" title="{{$photo_view}}"><i class="fa fa-image btn btn-outline-secondary btn-sm" title="{{$photo_view}}"></i></a>
+		<a href="{{$photos_path}}" title="{{$photo_view}}" class="btn btn-sm btn-outline-secondary"><i class="fa fa-fw fa-image" title="{{$photo_view}}"></i></a>
 		{{/if}}
 		<a href="cloud_tiles/{{$cpath}}" class="btn btn-sm btn-outline-secondary"><i class="fa fa-fw {{if $tiles}}fa-list-ul{{else}}fa-table{{/if}}"></i></a>
 		{{if $actionspanel}}
