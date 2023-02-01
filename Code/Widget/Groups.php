@@ -128,7 +128,7 @@ class Groups implements WidgetInterface
                 }
 
 
-                $output .= '<li class="nav-item"><a class="nav-link" href="' . $link . '" ><span class="badge badge-secondary float-end">' . ((intval($rr['unseen'])) ? intval($rr['unseen']) : '') . '</span><img class ="menu-img-1" src="' . $rr['xchan_photo_s'] . '" /> ' . $rr['xchan_name'] . '</a></li>';
+                $output .= '<li class="nav-item"><a class="nav-link" href="' . $link . '" ><span class="badge bg-secondary float-end">' . ((intval($rr['unseen'])) ? intval($rr['unseen']) : '') . '</span><img class ="menu-img-1" src="' . $rr['xchan_photo_s'] . '" /> ' . $rr['xchan_name'] . '</a></li>';
             }
             $output .= '</ul></div>';
         }
