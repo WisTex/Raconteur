@@ -88,6 +88,7 @@ class Help extends Controller
             if ($files) {
                 usort($files, [ 'self','usort_basename']);
                 foreach ($files as $file) {
+
                     if (! str_contains(z_mime_content_type($file), 'text')) {
                         continue;
                     }
@@ -106,11 +107,12 @@ class Help extends Controller
                         $language = '';
                     }
 
-                    $link = str_replace(['doc/', '.mc'], ['help/', ''], $file);
+                    $link = str_replace(['doc/', '.mc', '.txt'], ['help/', '', ''], $file);
+                    $displayName = str_replace('_',' ', $link);
                     if (str_contains($link, '/global/') || str_contains($link, '/media/')) {
                         continue;
                     }
-                    $content .= '<div class="nav-pills"><a href="' . $link . '">' . ucfirst(basename($link)) . '</a></div>' . (($language) ? " [$language]" : '') . EOL;
+                    $content .= '<div class="nav-pills"><a href="' . $link . '">' . ucfirst(basename($displayName)) . '</a>' . (($language) ? " [$language]" : '') . '</div>' . EOL;
                 }
             }
         } else {
