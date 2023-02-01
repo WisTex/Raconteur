@@ -1614,6 +1614,7 @@ main.fullscreen .section-content-wrapper-np {
 	border-radius: $radius;
 }
 
+
 .rounded-top {
 	border-top-left-radius: $radius !important;
 	border-top-right-radius: $radius !important;
@@ -1781,6 +1782,9 @@ dl.bb-dl > dd > li {
 	background-image: none !important;
 }
 
+.form-group {
+    margin: 10px;
+}
 
 /* Turn checkboxes into switches */
 .form-group.checkbox > div {
