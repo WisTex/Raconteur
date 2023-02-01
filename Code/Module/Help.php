@@ -86,7 +86,11 @@ class Help extends Controller
             $files = self::listdir('doc');
 
             if ($files) {
+                usort($files, [ 'self','usort_basename']);
                 foreach ($files as $file) {
+                    if (! str_contains(z_mime_content_type($file), 'text')) {
+                        continue;
+                    }
                     if ((!strpos($file, '/site/')) && file_exists(str_replace('doc/', 'doc/site/', $file))) {
                         continue;
                     }
@@ -121,6 +125,10 @@ class Help extends Controller
             '$heading' => $heading,
             '$language' => $language
         ]);
+    }
+
+    public static function usort_basename($a,$b) {
+        return strcasecmp(basename($a), basename($b));
     }
 
     public static function listdir($path)
