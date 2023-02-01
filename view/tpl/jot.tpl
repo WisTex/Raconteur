@@ -10,7 +10,7 @@
 	{{/if}}
 	<div class="mb-4" id="profile-jot-wrapper">
 
-		{{if $parent}}
+		{{iemacs f $parent}}
 		<input type="hidden" name="parent" value="{{$parent}}" />
 		{{/if}}
 		<input type="hidden" name="obj_type" value="{{$ptyp}}" />
