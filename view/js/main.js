@@ -644,12 +644,12 @@ function handleNotifications(data) {
 		$('.notifications-btn-icon').addClass('fa-exclamation-circle');
 	}
 	if(data.all_events_today) {
-		$('.all_events-update').removeClass('badge-secondary');
+		$('.all_events-update').removeClass('badge').removeClass('bg-secondary');
 		$('.all_events-update').addClass('badge').addClass('bg-danger');;
 	}
 	else {
 		$('.all_events-update').removeClass('badge').removeClass('bg-danger');
-		$('.all_events-update').addClass('badge-secondary');
+		$('.all_events-update').addClass('badge').addClass('bg-secondary');
 	}
 
 	
