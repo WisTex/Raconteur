@@ -1,2 +1,2 @@
 <?php
-define ('STD_VERSION', '23.01.31');
+define ('STD_VERSION', '23.02.01');

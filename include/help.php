@@ -225,6 +225,13 @@ function store_doc_file($s)
         return;
     }
 
+    if (! str_contains($s,'.mc')) {
+        // Bugfix to remove bad records for photos.
+
+
+        return;
+    }
+
     $item = [];
     $sys = Channel::get_system();
 
