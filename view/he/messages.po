@@ -3911,16 +3911,6 @@ msgid ""
 "been configured."
 msgstr ""
 
-#: ../../Code/Module/Admin.php:523
-msgid "Enable context help"
-msgstr ""
-
-#: ../../Code/Module/Admin.php:523
-msgid ""
-"Display contextual help for the current page when the help button is "
-"pressed."
-msgstr ""
-
 #: ../../Code/Module/Admin.php:525
 msgid "Directory Server URL"
 msgstr ""

@@ -325,51 +325,6 @@ nav {
 
 .nav-channel-select { margin-left: 8px; }
 
-/* contextual help */
-.contextual-help-content {
-	display: none;
-
-}
-
-.contextual-help-content-open {
-	display: block;
-	position: fixed;
-	top: 3.35rem;
-	left: 0px;
-	width: 100%;
-	max-height: 50%;
-	background: $comment_item_colour;
-	padding: 1rem;
-	border-bottom: #ccc 1px solid;
-	overflow: auto;
-	-moz-box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
-	-webkit-box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
-	box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
-}
-
-.contextual-help-content dd {
-	margin-bottom: 1em;
-}
-
-.contextual-help-tool {
-	padding: 7px;
-	filter: alpha(opacity=20);
-	opacity: .5;
-}
-
-.contextual-help-tool:hover {
-	filter: alpha(opacity=50);
-	opacity: 1;
-	text-decoration: none;
-}
-
-.contextual-help-tool i {
-	color: $font_colour;
-	font-size: 1.05rem;
-}
-
-/* contextual help end */
-
 /* spinner */
 
 .spinner-wrapper {
