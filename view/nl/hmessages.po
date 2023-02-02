@@ -2969,16 +2969,6 @@ msgid ""
 "been configured."
 msgstr "Toon een inlogformulier voor bezoekers op de homepagina wanneer geen andere inhoud is geconfigureerd. "
 
-#: ../../Code/Module/Admin/Site.php:334
-msgid "Enable context help"
-msgstr "Schakel contextuele hulp in"
-
-#: ../../Code/Module/Admin/Site.php:334
-msgid ""
-"Display contextual help for the current page when the help button is "
-"pressed."
-msgstr "Toon hulp en documentatie voor de op dat moment getoonde pagina, wanneer op de hulp-knop wordt geklikt."
-
 #: ../../Code/Module/Admin/Site.php:336
 msgid "Reply-to email address for system generated email."
 msgstr "Antwoordadres voor door de hub verzonden e-mail."

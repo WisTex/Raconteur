@@ -2948,16 +2948,6 @@ msgid ""
 "been configured."
 msgstr "Presenta una casella d'identificació a la pàgina d'inici als visitants si no s'ha configurat altre contingut."
 
-#: ../../Code/Module/Admin/Site.php:352
-msgid "Enable context help"
-msgstr "Activar l'ajuda contextual"
-
-#: ../../Code/Module/Admin/Site.php:352
-msgid ""
-"Display contextual help for the current page when the help button is "
-"pressed."
-msgstr "Mostra l'ajuda contextual per la pàgina actual quan el botó d'ajuda es pressionat."
-
 #: ../../Code/Module/Admin/Site.php:354
 msgid "Reply-to email address for system generated email."
 msgstr "Adreça de correu de resposta per als correus generats."

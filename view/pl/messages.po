@@ -3288,17 +3288,6 @@ msgstr ""
 "Wyświetlaj formularz logowania odwiedzającym na stronie głównej, jeśli nie "
 "skonfigurowano żadnych innych treści."
 
-#: Code/Module/Admin/Site.php:356
-msgid "Enable context help"
-msgstr "Włącz pomoc kontekstową"
-
-#: Code/Module/Admin/Site.php:356
-msgid ""
-"Display contextual help for the current page when the help button is pressed."
-msgstr ""
-"Wyświetlanie pomocy kontekstowej dla bieżącej strony po naciśnięciu "
-"przycisku pomocy."
-
 #: Code/Module/Admin/Site.php:357
 msgid "Reply-to email address for system generated email."
 msgstr "Zwrotny adres e-mail dla wiadomości wygenerowanych przez system."
