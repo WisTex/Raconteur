@@ -443,25 +443,6 @@ pre {
   	box-shadow: 0px 3px 3px #222;
 }
 
-.contextual-help-content-open {
-	background: $nav_bg;
-	border-bottom: #555 1px solid;
-	box-shadow: 0px 3px 3px rgba(85,85,85,0.2);
-}
-
-.contextual-help-tool {
-	opacity: 0.5;
-}
-
-.contextual-help-tool:hover {
-	opacity: 1;
-}
-
-.contextual-help-tool i {
-	color: $link_colour;
-}
-
-
 .profile-match-wrapper {
 	width: 150px;
 	height: 120px;

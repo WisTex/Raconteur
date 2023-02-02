@@ -271,7 +271,6 @@
 					<i id="jot-perms-icon" class="fa fa-{{$lockstate}} jot-icons{{if $bang}} jot-lock-warn{{/if}}"></i>
 				</button>
 				{{/if}}
-					&nbsp;
 				<button id="dbtn-submit" class="btn btn-primary btn-sm" type="submit" tabindex="3" name="button-submit">{{$share}}</button>
 				</div>
 			</div>

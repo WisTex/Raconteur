@@ -3162,15 +3162,6 @@ msgid ""
 "been configured."
 msgstr ""
 
-#: Code/Module/Admin/Site.php:356
-msgid "Enable context help"
-msgstr ""
-
-#: Code/Module/Admin/Site.php:356
-msgid ""
-"Display contextual help for the current page when the help button is pressed."
-msgstr ""
-
 #: Code/Module/Admin/Site.php:357
 msgid "Reply-to email address for system generated email."
 msgstr ""
