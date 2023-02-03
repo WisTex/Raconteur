@@ -47,8 +47,8 @@
 			{{if $reset}}
 			<div class="btn-toolbar  float-end">
 				<div class="btn-group ">
-					<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm m-1" title="{{$reset}}" onclick="itemCancel(); return false;">
-						<i class="fa fa-close drop-icons"></i>
+					<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm m-1 drop-buttons" title="{{$reset}}" onclick="itemCancel(); return false;">
+						<i class="fa fa-close"></i>
 					</button>
 				</div>
 			</div>
