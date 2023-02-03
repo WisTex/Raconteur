@@ -34,7 +34,7 @@ class HTTPSig
     public static function generate_digest_header($body, $alg = 'sha256')
     {
 
-        $digest = base64_encode(hash($alg, $body, true));
+        $digest = base64_encode(hash($alg, $body ?? '', true));
         switch ($alg) {
             case 'sha512':
                 return 'SHA-512=' . $digest;
