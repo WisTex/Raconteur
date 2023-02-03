@@ -43,7 +43,7 @@
 		</div>
 		{{/if}}
 		<div id="jot-title-wrap" class="jothidden">
-			<input class="w-100 border-0" name="title" id="jot-title" type="text" placeholder="{{$placeholdertitle}}" tabindex="1" value="{{$title}}">
+			<input class="float-start border-0" name="title" id="jot-title" type="text" placeholder="{{$placeholdertitle}}" tabindex="1" value="{{$title}}">
 			{{if $reset}}
 			<div class="btn-toolbar  float-end">
 				<div class="btn-group ">
@@ -52,6 +52,7 @@
 					</button>
 				</div>
 			</div>
+			<div class="clear"></div>
 			{{/if}}
 		</div>
 		{{if $catsenabled}}
