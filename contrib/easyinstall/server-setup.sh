@@ -88,47 +88,6 @@ function check_config {
     then
         die "le_domain not set in $configfile"
     fi
-    # backup is important and should be checked
-	if [ -n "$backup_device_name" ]
-	then
-		if [ ! -d "$backup_mount_point" ]
-		then
-			mkdir "$backup_mount_point"
-		fi
-		device_mounted=0
-		if fdisk -l | grep -i "$backup_device_name.*linux"
-		then
-		    print_info "ok - filesystem of external device is linux"
-	        if [ -n "$backup_device_pass" ]
-	        then
-	            echo "$backup_device_pass" | cryptsetup luksOpen $backup_device_name cryptobackup
-	            if mount /dev/mapper/cryptobackup /media/server_backup
-	            then
-                    device_mounted=1
-	                print_info "ok - could encrypt and mount external backup device"
-                	umount /media/server_backup
-	            else
-            		print_warn "backup to external device will fail because encryption failed"
-	            fi
-                cryptsetup luksClose cryptobackup
-            else
-	            if mount $backup_device_name /media/server_backup
-	            then
-                    device_mounted=1
-	                print_info "ok - could mount external backup device"
-                	umount /media/server_backup
-	            else
-            		print_warn "backup to external device will fail because mount failed"
-	            fi
-            fi
-		else
-        	print_warn "backup to external device will fail because filesystem is either not linux or 'backup_device_name' is not correct in $configfile"
-		fi
-        if [ $device_mounted == 0 ]
-        then
-            die "backup device not ready"
-        fi
-	fi
 }
 
 function die {
@@ -540,16 +499,6 @@ function install_website {
     print_info "installed addons"
 }
 
-function install_rsync {
-    print_info "installing rsync..."
-    nocheck_install "rsync"
-}
-
-function install_cryptosetup {
-    print_info "installing cryptsetup..."
-    nocheck_install "cryptsetup"
-}
-
 function configure_daily_update {
     echo "#!/bin/sh" >> /var/www/$daily_update
     echo "#" >> /var/www/$daily_update
@@ -733,9 +682,6 @@ if [[ "$le_domain" =~ $domain_regex ]]
 then
     install_letsencrypt
     check_https
-
-    install_cryptosetup
-    install_rsync
 else
     print_info "Local domain is used - skipped https configuration, and installation of cryptosetup"
 fi
