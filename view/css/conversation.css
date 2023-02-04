@@ -41,6 +41,9 @@
 	position: relative;
 }
 
+#jot-title {
+	width: 95%;
+}
 .comment-reset {
 	margin-right: 0.5rem;
 }

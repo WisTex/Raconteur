@@ -79,7 +79,7 @@
 					</div>
 					{{if $reset}}
 					<div class="btn-group float-end" id="comment-edit-reset-wrapper-{{$id}}">
-						<button id="comment-reset-{{$id}}" class="btn btn-outline-secondary btn-sm comment-reset" title="{{$reset}}" onclick="commentCancel({{$id}}); return false;"><i class="fa fa-close fa-fw drop-icons"></i></button>
+						<button id="comment-reset-{{$id}}" class="btn btn-outline-secondary btn-sm comment-reset drop-buttons" title="{{$reset}}" onclick="commentCancel({{$id}}); return false;"><i class="fa fa-close fa-fw"></i></button>
 					</div>
 					{{/if}}
 				</div>

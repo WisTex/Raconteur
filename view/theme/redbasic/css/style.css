@@ -1071,8 +1071,15 @@ a .drop-icons {
 }
 
 .drop-icons:hover,
+
 a .drop-icons:hover {
 	color: #FF0000;
+}
+
+
+.drop-buttons:hover,
+a .drop-buttons:hover {
+	background-color: #FF0000;
 }
 
 .lockview,

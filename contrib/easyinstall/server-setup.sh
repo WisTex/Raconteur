@@ -34,7 +34,6 @@
 #        * "Run.php" for regular background processes of your website
 #        * "apt-get update" and "apt-get dist-upgrade" and "apt-get autoremove" to keep linux up-to-date
 #        * optionally run command to keep the IP up-to-date > DynDNS provided by selfHOST.de or freedns.afraid.org
-#        * optionally backup your server's database and files (rsync)
 # - run letsencrypt to create, register and use a certifacte for https
 #
 #
@@ -44,25 +43,6 @@
 # Security - password  is the same for mysql-server, phpmyadmin and your hub/instance db
 # - The script runs into installation errors for phpmyadmin if it uses
 #   different passwords. For the sake of simplicity one single password.
-#
-# Daily backup
-# ------------
-#
-# The installation
-# - writes a shell script in /var/www/
-# - creates a daily cron that runs this script
-#
-# The script makes a (daily) backup of all relevant files
-# - /var/lib/mysql/ > database
-# - /var/www/ > your websites
-# - /etc/letsencrypt/ > certificates
-#
-# The backup will be written on an external disk compatible to LUKS+ext4 (see server-config.txt)
-#
-# How to restore from backup
-# --------------------------
-#
-# (Some explanations here would certainly be useful)
 #
 #
 # Credits
@@ -108,47 +88,6 @@ function check_config {
     then
         die "le_domain not set in $configfile"
     fi
-    # backup is important and should be checked
-	if [ -n "$backup_device_name" ]
-	then
-		if [ ! -d "$backup_mount_point" ]
-		then
-			mkdir "$backup_mount_point"
-		fi
-		device_mounted=0
-		if fdisk -l | grep -i "$backup_device_name.*linux"
-		then
-		    print_info "ok - filesystem of external device is linux"
-	        if [ -n "$backup_device_pass" ]
-	        then
-	            echo "$backup_device_pass" | cryptsetup luksOpen $backup_device_name cryptobackup
-	            if mount /dev/mapper/cryptobackup /media/server_backup
-	            then
-                    device_mounted=1
-	                print_info "ok - could encrypt and mount external backup device"
-                	umount /media/server_backup
-	            else
-            		print_warn "backup to external device will fail because encryption failed"
-	            fi
-                cryptsetup luksClose cryptobackup
-            else
-	            if mount $backup_device_name /media/server_backup
-	            then
-                    device_mounted=1
-	                print_info "ok - could mount external backup device"
-                	umount /media/server_backup
-	            else
-            		print_warn "backup to external device will fail because mount failed"
-	            fi
-            fi
-		else
-        	print_warn "backup to external device will fail because filesystem is either not linux or 'backup_device_name' is not correct in $configfile"
-		fi
-        if [ $device_mounted == 0 ]
-        then
-            die "backup device not ready"
-        fi
-	fi
 }
 
 function die {
@@ -560,16 +499,6 @@ function install_website {
     print_info "installed addons"
 }
 
-function install_rsync {
-    print_info "installing rsync..."
-    nocheck_install "rsync"
-}
-
-function install_cryptosetup {
-    print_info "installing cryptsetup..."
-    nocheck_install "cryptsetup"
-}
-
 function configure_daily_update {
     echo "#!/bin/sh" >> /var/www/$daily_update
     echo "#" >> /var/www/$daily_update
@@ -596,7 +525,6 @@ function configure_cron_daily {
     # Run external script daily at 05:30
     # - stop apache/nginx and mysql-server
     # - renew the certificate of letsencrypt
-    # - backup db, files ($install_path), certificates if letsencrypt
     # - update repository core and addon
     # - update and upgrade linux
     # - reboot is done by "shutdown -h now" because "reboot" hangs sometimes depending on the system
@@ -618,59 +546,6 @@ function configure_cron_daily {
     echo "echo \"\$(date) - renew certificate...\"" >> /var/www/$cron_job
     echo "certbot renew --noninteractive" >> /var/www/$cron_job
     echo "#" >> /var/www/$cron_job
-    echo "# backup" >> /var/www/$cron_job
-    echo "echo \"\$(date) - try to mount external device for backup...\"" >> /var/www/$cron_job
-    echo "backup_device_name=$backup_device_name" >> /var/www/$cron_job
-    echo "backup_device_pass=$backup_device_pass" >> /var/www/$cron_job
-    echo "backup_mount_point=$backup_mount_point" >> /var/www/$cron_job
-    echo "device_mounted=0" >> /var/www/$cron_job
-    echo "if [ -n \"\$backup_device_name\" ]" >> /var/www/$cron_job
-    echo "then" >> /var/www/$cron_job
-    echo "    if blkid | grep $backup_device_name" >> /var/www/$cron_job
-    echo "    then" >> /var/www/$cron_job
-    if [ -n "$backup_device_pass" ]
-    then
-        echo "        echo \"decrypting backup device...\"" >> /var/www/$cron_job
-        echo "        echo "\"$backup_device_pass\"" | cryptsetup luksOpen $backup_device_name cryptobackup" >> /var/www/$cron_job
-    fi
-    echo "        if [ ! -d $backup_mount_point ]" >> /var/www/$cron_job
-    echo "        then" >> /var/www/$cron_job
-    echo "            mkdir $backup_mount_point" >> /var/www/$cron_job
-    echo "        fi" >> /var/www/$cron_job
-    echo "        echo \"mounting backup device...\"" >> /var/www/$cron_job
-    if [ -n "$backup_device_pass" ]
-    then
-        echo "        if mount /dev/mapper/cryptobackup $backup_mount_point" >> /var/www/$cron_job
-    else
-        echo "        if mount $backup_device_name $backup_mount_point" >> /var/www/$cron_job
-    fi
-    echo "        then" >> /var/www/$cron_job
-    echo "            device_mounted=1" >> /var/www/$cron_job
-    echo "            echo \"device $backup_device_name is now mounted. Starting backup...\"" >> /var/www/$cron_job
-    echo "            rsync -a --delete /var/lib/mysql/ /media/repository_backup/mysql" >> /var/www/$cron_job
-    echo "            rsync -a --delete /var/www/ /media/repository_backup/www" >> /var/www/$cron_job
-    echo "            rsync -a --delete /etc/letsencrypt/ /media/repository_backup/letsencrypt" >> /var/www/$cron_job
-    echo "            echo \"\$(date) - disk sizes...\"" >> /var/www/$cron_job
-    echo "            df -h" >> /var/www/$cron_job
-    echo "            echo \"\$(date) - db size...\"" >> /var/www/$cron_job
-    echo "            du -h $backup_mount_point | grep mysql/repository" >> /var/www/$cron_job
-    echo "            echo \"unmounting backup device...\"" >> /var/www/$cron_job
-    echo "            umount $backup_mount_point" >> /var/www/$cron_job
-    echo "        else" >> /var/www/$cron_job
-    echo "            echo \"failed to mount device $backup_device_name\"" >> /var/www/$cron_job
-    echo "        fi" >> /var/www/$cron_job
-    if [ -n "$backup_device_pass" ]
-    then
-        echo "        echo \"closing decrypted backup device...\"" >> /var/www/$cron_job
-        echo "        cryptsetup luksClose cryptobackup" >> /var/www/$cron_job
-    fi
-    echo "    fi" >> /var/www/$cron_job
-    echo "fi" >> /var/www/$cron_job
-    echo "if [ \$device_mounted == 0 ]" >> /var/www/$cron_job
-    echo "then" >> /var/www/$cron_job
-    echo "    echo \"device could not be mounted $backup_device_name. No backup written.\"" >> /var/www/$cron_job
-    echo "fi" >> /var/www/$cron_job
-    echo "#" >> /var/www/$cron_job
     echo "echo \"\$(date) - db size...\"" >> /var/www/$cron_job
     echo "du -h /var/lib/mysql/ | grep mysql/" >> /var/www/$cron_job
     echo "#" >> /var/www/$cron_job
@@ -678,7 +553,7 @@ function configure_cron_daily {
     echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$cron_job
     echo "echo \"\$(date) - updating linux...\"" >> /var/www/$cron_job
     echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$cron_job
-    echo "echo \"\$(date) - Backup and update finished. Rebooting...\"" >> /var/www/$cron_job
+    echo "echo \"\$(date) - Update finished. Rebooting...\"" >> /var/www/$cron_job
     echo "#" >> /var/www/$cron_job
     echo "shutdown -r now" >> /var/www/$cron_job
 
@@ -727,7 +602,6 @@ selfhostdir=/etc/selfhost
 selfhostscript=selfhost-updater.sh
 cron_job="cron_job.sh"
 daily_update="${le_domain}-daily.sh"
-backup_mount_point="/media/repository_backup"
 
 #set -x    # activate debugging from here
 
@@ -808,9 +682,6 @@ if [[ "$le_domain" =~ $domain_regex ]]
 then
     install_letsencrypt
     check_https
-
-    install_cryptosetup
-    install_rsync
 else
     print_info "Local domain is used - skipped https configuration, and installation of cryptosetup"
 fi
