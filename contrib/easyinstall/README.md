@@ -18,7 +18,6 @@ Before you start, make sure you have the following:
 + Create a database for your website
 + Run certbot to have a secure connection (http*s*)
 + Create a script for daily maintenance:
-  - backup to external disk (certificates, database, /var/www/) - Optional
   - renew certfificate (Let’s Encrypt)
   - update of your website software (git)
   - update of your Debian operating system
@@ -39,12 +38,6 @@ If you plan to run your website on a computer at home, you may have to deal with
 - Gandi.net is a french domain name registrar that has a nice API for DDNS (Gandi LiveDNS). If you buy a domain there, you can generate an API key for your account that can be used during install.
 
 - selfHOST.de is a german (and german speaking only) registrar. If you have an account and buy a domain there, you will need to provide an ID & password to use the setup script’s DDNS configuration.
-
-### USB drive backup
-
-As of April 2022, this is the only automated backup system you can configure with the setup-script. It is only accessible if you use the manually edited config file method (hopefully it should soon be available in the beginner-friendly interface).
-
-This only works if you have physical access to the machine where your website is running, you can not use this backup system with a distant computer/server. A solution for distant backups would certainly be a good idea, feel free to work on this if you have the skills to do so.
 
 ### Note on Rasperry Pi install
 
