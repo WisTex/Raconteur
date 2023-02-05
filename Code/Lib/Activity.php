@@ -592,11 +592,14 @@ class Activity
             $atts = ((is_array($item['attach'])) ? $item['attach'] : json_decode($item['attach'], true));
             if ($atts) {
                 foreach ($atts as $att) {
+                    $name = '';
                     if (isset($att['type']) && str_contains($att['type'], 'image')) {
                         if (!empty($att['href'])) {
-                            $name = ($att['title']) ?? '';
+                            if ($att['name']) {
+                                $name = $att['name'];
+                            }
                             if (! $name) {
-                                $name = ($att['name']) ?? '';
+                                $name = $att['title'];
                             }
                             $ret[] = [
                                 'type' => 'Image',
@@ -939,11 +942,15 @@ class Activity
             $activity['tag'] = $t;
         }
 
-        $a = self::encode_attachment($item);
-        if ($a) {
-            $activity['attachment'] = $a;
+        if ($obj && $obj['attachment']) {
+            $activity['attachment'] = $obj['attachment'];
         }
-
+        else {
+            $a = self::encode_attachment($item);
+            if ($a) {
+                $activity['attachment'] = $a;
+            }
+        }
 
         // addressing madness
 
