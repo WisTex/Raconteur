@@ -575,6 +575,7 @@ function photo_upload($channel, $observer, $args)
     $ret['success'] = true;
     $ret['item'] = $arr;
     $ret['body'] = $obj_body;
+    $ret['filename'] = $url[1]['href'];
     $ret['resource_id'] = $photo_hash;
     $ret['photoitem_id'] = $item_id;
 
@@ -1048,6 +1049,21 @@ function profile_photo_set_profile_perms($uid, $profileid = 0)
         }
     }
 }
+
+function photoExtensionFromType($type)
+{
+
+    $t = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
+        'image/webp' => 'webp',
+    ];
+
+    return ($t[$type]) ?? '';
+
+}
+
 
 function fetch_image_from_url($url, &$mimetype)
 {

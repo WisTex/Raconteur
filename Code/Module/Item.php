@@ -44,6 +44,7 @@ use App;
 use URLify;
 
 require_once('include/attach.php');
+require_once('include/photos.php');
 require_once('include/bbcode.php');
 require_once('include/security.php');
 
@@ -1143,8 +1144,15 @@ class Item extends Controller
                     else {
                         $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
                         if ($r['success']) {
+                            $href = z_root() . '/attach/' . $r['data']['hash'];
+                            if ($r['data']['is_photo']) {
+                                $href = z_root() . '/photo/' . $r['data']['hash'] . '-1.' . photoExtensionFromType($r['data']['filetype']);
+                                if ($token) {
+                                    $href .= '?token=' . $token;
+                                }
+                            }
                             $attachments[] = [
-                                'href' => z_root() . '/attach/' . $r['data']['hash'],
+                                'href' => $href,
                                 'length' => $r['data']['filesize'],
                                 'type' => $r['data']['filetype'],
                                 'title' => urlencode($r['data']['filename']),
