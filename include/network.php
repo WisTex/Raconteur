@@ -799,7 +799,7 @@ function do_delivery($deliveries, $force = false)
     // catch any stragglers
 
     if ($deliver) {
-        Run::Summon([ 'Deliver',$deliver ]);
+        Run::Summon(['Deliver', $deliver]);
     }
 }
 

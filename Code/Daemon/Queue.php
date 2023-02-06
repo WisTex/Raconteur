@@ -34,6 +34,8 @@ class Queue implements DaemonInterface
             }
         }
 
+        logger('Removing ' . count($oldqItems) . ' old queue entries');
+        logger('Removing ' . count($oldqItems) . ' old queue entries');
         q("DELETE FROM outq WHERE outq_created < %s - INTERVAL %s",
             db_utcnow(),
             db_quoteinterval('3 DAY')
@@ -43,6 +45,7 @@ class Queue implements DaemonInterface
             $qItems = q("SELECT * FROM outq WHERE outq_hash = '%s' LIMIT 1",
                 dbesc($queue_id)
             );
+            logger('queue deliver: ' . $qItems[0]['outq_hash'] . ' to ' . $qItems[0]['outq_posturl'], LOGGER_DEBUG);
             Zlib\Queue::deliver(array_shift($qItems));
         }
         else {
@@ -52,6 +55,7 @@ class Queue implements DaemonInterface
                     db_utcnow()
                 );
                 if ($qItems) {
+                    logger('queue deliver: ' . $qItems[0]['outq_hash'] . ' to ' . $qItems[0]['outq_posturl'], LOGGER_DEBUG);
                     Zlib\Queue::deliver(array_shift($qItems));
                 }
             } while ($qItems);
