@@ -34,7 +34,7 @@ Options:
 Example: 
 
     [baseurl]/api/z/1.0/channel/export/basic?f=&posts=true  
-    [baseurl]/api/z/1.0/channel/export/basic?f=&sections=config,apps  
+    [baseurl]/api/z/1.0/channel/export/basic?f=&amp;sections=config,apps  
 
 ### channel/stream
 
