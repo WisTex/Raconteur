@@ -40,6 +40,8 @@ class Queue implements DaemonInterface
             db_quoteinterval('3 DAY')
         );
 
+        $deliveries = [];
+
         if ($queue_id) {
             $qItems = q("SELECT * FROM outq WHERE outq_hash = '%s' LIMIT 1",
                 dbesc($queue_id)
@@ -48,16 +50,15 @@ class Queue implements DaemonInterface
             Zlib\Queue::deliver(array_shift($qItems));
         }
         else {
-            do {
-                $qItems = q(
-                    "SELECT * FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s limit 1",
-                    db_utcnow()
-                );
-                if ($qItems) {
-                    logger('queue deliver: ' . $qItems[0]['outq_hash'] . ' to ' . $qItems[0]['outq_posturl'], LOGGER_DEBUG);
-                    Zlib\Queue::deliver(array_shift($qItems));
+            $qItems = q("SELECT * FROM outq WHERE outq_delivered = 0 and outq_scheduled < %s ",
+                db_utcnow()
+            );
+            if ($qItems) {
+                foreach ($qItems as $qItem) {
+                    $deliveries[] = $qItem['outq_hash'];
                 }
-            } while ($qItems);
+                do_delivery($deliveries);
+            }
          }
     }
 }
