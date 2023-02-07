@@ -43,7 +43,17 @@
 		</div>
 		{{/if}}
 		<div id="jot-title-wrap" class="jothidden">
-			<input class="w-100 border-0" name="title" id="jot-title" type="text" placeholder="{{$placeholdertitle}}" tabindex="1" value="{{$title}}">
+			<input class="float-start border-0" name="title" id="jot-title" type="text" placeholder="{{$placeholdertitle}}" tabindex="1" value="{{$title}}">
+			{{if $reset}}
+			<div class="btn-toolbar  float-end">
+				<div class="btn-group ">
+					<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm m-1 drop-buttons" title="{{$reset}}" onclick="itemCancel(); return false;">
+						<i class="fa fa-close"></i>
+					</button>
+				</div>
+			</div>
+			<div class="clear"></div>
+			{{/if}}
 		</div>
 		{{if $catsenabled}}
 		<div id="jot-category-wrap" class="jothidden">
@@ -230,15 +240,6 @@
 				</div>
 
 			</div>
-			{{if $reset}}
-			<div class="btn-toolbar  float-start" style="margin-left:3rem;">
-				<div class="btn-group ">
-				<button id="profile-jot-reset" class="btn btn-outline-secondary btn-sm" title="{{$reset}}" onclick="itemCancel(); return false;">
-					<i class="fa fa-close drop-icons"></i>
-				</button>
-				</div>
-			</div>
-			{{/if}}
 			<div id="profile-jot-submit-right" class="btn-group  float-end">
 				<div class="btn-group ">
 				{{if $preview}}

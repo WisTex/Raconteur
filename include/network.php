@@ -770,9 +770,7 @@ function do_delivery($deliveries, $force = false)
         return;
     }
 
-    $interval = ((get_config('system', 'delivery_interval') !== false)
-            ? intval(get_config('system', 'delivery_interval')) : 2 );
-
+    $interval = intval(get_config('system', 'delivery_interval',2));
     $deliveries_per_process = intval(get_config('system', 'delivery_batch_count'));
 
     if ($deliveries_per_process <= 0) {
@@ -799,7 +797,7 @@ function do_delivery($deliveries, $force = false)
     // catch any stragglers
 
     if ($deliver) {
-        Run::Summon([ 'Deliver',$deliver ]);
+        Run::Summon(['Deliver', $deliver]);
     }
 }
 

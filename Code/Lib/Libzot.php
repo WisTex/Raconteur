@@ -1132,8 +1132,8 @@ class Libzot
                 );
             }
         }
-        // update the timestamp for this site
 
+        // update the timestamp for this site
         q(
             "update site set site_dead = 0, site_update = '%s' where site_url = '%s'",
             dbesc(datetime_convert()),

@@ -41,11 +41,8 @@
 	position: relative;
 }
 
-#profile-jot-reset {
-	margin-right: 0.5rem;
-/*	position: absolute;
-	top: 0px;
-	right: 0px; */
+#jot-title {
+	width: 95%;
 }
 .comment-reset {
 	margin-right: 0.5rem;
