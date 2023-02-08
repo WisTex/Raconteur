@@ -41,7 +41,7 @@ class Hashpath
      */
     public static function path(string $url, string $prefix = '.', int $depth = 1, bool $mkdir = true): string
     {
-        $hash = hash('sha256', $url);
+        $hash = hash('sha256', $url ?? '');
         $start = 0;
         $slice = 2;
         if ($depth < 1) {
