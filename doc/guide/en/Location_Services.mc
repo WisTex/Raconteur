@@ -3,7 +3,7 @@ Location Services
 
 Location services are tools to use location information in fediverse posts. There are a number of different tools.
 
-An important location tool is a *Map Provider addon*, which displays embedded maps for location targets. Currently one Map Provider addon is provided - "openstreetmap". Only one Map Provider addon can be installed/active on the system at any time, so if somebody creates a Google Map Provider addon and you wish to use that on your site, the openstreetmap addon must be disabled.
+An important location tool is a *Map Provider addon*, which displays embedded maps for location targets. Currently, one Map Provider addon is provided - "openstreetmap". Only one Map Provider addon can be installed/active on the system at any time, so if somebody creates a Google Map Provider addon and you wish to use that on your site, the openstreetmap addon must be disabled.
 
 Location data may be represented by a text string "49 Main street, Oakvale" or geographic coordinates such as "-32.683,147.78". It is important to know that text locations may be ambiguous, as there is a  "Santa Cruz" in California, USA and also Bolivia. As a result, many of this software's location services require the use of geographic coordinates - due to their precision. Maps can be displayed for text locations, but please use coordinates to obtain full access to the available location tools. If something resembling map coordinates are present in the text location field, an attempt will be made to extract them. 
 
@@ -11,7 +11,7 @@ Location data may be represented by a text string "49 Main street, Oakvale" or g
 
 Location settings are on the main Settings page. First select Settings from the main menu ("hamburger menu" at the top right of the page).
 
-![screenshot showing location settings]([baseurl]/doc/en/locationsettings.png)
+![screenshot showing location settings]([baseurl]/doc/guide/en/locationsettings.png)
 
 The available settings are as follows:
 
@@ -28,7 +28,7 @@ This setting is often used on desktop computers, allowing you to over-ride the b
 ## Using location in posts
 Location services make use of several buttons in the post editor. These are show in the following diagram:
 
-![diagram showing location service buttons in post editor]([baseurl]/doc/en/locationwitheditor.png)
+![diagram showing location service buttons in post editor]([baseurl]/doc/guide/en/locationwitheditor.png)
 
 Some or all of these buttons may be missing and will only be available if a coordinate-based location has already been provided.
 
@@ -38,9 +38,9 @@ Some or all of these buttons may be missing and will only be available if a coor
 
 3. The next two buttons display any time geographic location is available in the post. They are "enter" and "leave" icons and are used here to to turn the current post into a "checkin" (Arrive) network activity or a "checkout" (Leave) activity. When either of these options are selected, the icon will change colour to indicate that the post is now a checkin/checkout activity and a map will be inserted into the post. You may add additional text or basically any content. Use the preview ("eye" icon) button to view the results without publishing or click 'Share' to share the post. Clicking one of these buttons a second time undoes the action and turns it back into a normal post.
 
-![example post preview of a checkin activity]([baseurl]/doc/en/checkin.png)
+![example post preview of a checkin activity]([baseurl]/doc/guide/en/checkin.png)
 
 ## Distance search
 Any post which contains geographic coordinates can be used to search by distance. This allows you to quickly see (for instance) restaurant reviews by performing a distance search on any post near that restaurant. To perform a distance search, click on the avatar or photo of the post author. This opens a popup mini-panel with a number of options. If the post contains coordinates, one of these options will be "Nearby", which performs a distance search based on that post.
 
-![screenshot showing how to navigate to distance search]([baseurl]/doc/en/nearby.png)
+![screenshot showing how to navigate to distance search]([baseurl]/doc/guide/en/nearby.png)

@@ -32,20 +32,19 @@ Once the new channel is created you may setup the profile photo, cover photo and
 Joining a Group
 ===============
 
-You join a group in the same way as you connect with any channel in the network. If the option to connect isn't provided, open your Connections app and put the web address or url into the text input provided under "Add New Connection". For public groups you may be automatically approved at the discretion of the group administrator. 
+Join a group in the same way as you connect with any channel in the network. If the option to connect isn't provided, open your Connections app and put the web address or url into the text input provided under "Add New Connection". For public groups you may be automatically approved at the discretion of the group administrator. 
 
 Leaving a Group
 ===============
 
-You leave a group by deleting the connection from within the Connections app.
+Leave a group by deleting the connection from within the Connections app.
 
 
 
 Posting to a Group
 ==================
 
-
-You can post to a group in several ways.
+ There are several ways to post to a group.
 
 1) Compose a post on your own site and use the access dialog (click the lock icon located immediately beneath the post editor) to select the group as a destination. This is the preferred method as it attempts to smooth over any differences communicating with groups provided by other applications.
 
@@ -60,4 +59,5 @@ Group members using other software (Mastodon, MoodleNet, etc.) will need to use 
 Posting comments to a Group
 ===========================
 
-No special action is necessary. Just reply to the conversation as you would any other conversation. 
+No special action is necessary. Reply to the conversation in the comment box provided as you would any other conversation. 
+
