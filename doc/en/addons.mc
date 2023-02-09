@@ -81,7 +81,7 @@ Allow unfiltered access to embeds from top media providers (currently YouTube, S
 
 ### Stream Order
 
-Provides an app to switch the post ordering
+Provides a widget to switch the post ordering
 
 ### Sudo
 

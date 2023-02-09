@@ -5,7 +5,7 @@ Location services are tools to use location information in fediverse posts. Ther
 
 An important location tool is a *Map Provider addon*, which displays embedded maps for location targets. Currently one Map Provider addon is provided - "openstreetmap". Only one Map Provider addon can be installed/active on the system at any time, so if somebody creates a Google Map Provider addon and you wish to use that on your site, the openstreetmap addon must be disabled.
 
-Location data may be represented by a text string "49 Main street, Oakvale" or geographic coordinates such as "-32.683,147.78". It is important to know that text locations may be ambiguous, as there is a  "Santa Cruz" in California, USA and also Bolivia. As a result, many of this software's location services require the use of geographic coordinates - due to their precision. Maps can be displayed for text locations, but please use coordinates to obtain full access to the available location tools.
+Location data may be represented by a text string "49 Main street, Oakvale" or geographic coordinates such as "-32.683,147.78". It is important to know that text locations may be ambiguous, as there is a  "Santa Cruz" in California, USA and also Bolivia. As a result, many of this software's location services require the use of geographic coordinates - due to their precision. Maps can be displayed for text locations, but please use coordinates to obtain full access to the available location tools. If something resembling map coordinates are present in the text location field, an attempt will be made to extract them. 
 
 ## Setting location
 
