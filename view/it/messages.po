@@ -12372,7 +12372,7 @@ msgid "Connect/Follow"
 msgstr "Aggiungi"
 
 #: ../../include/contact_widgets.php:22
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr "Per esempio: Mario Rossi, Pesca"
 
 #: ../../include/contact_widgets.php:26

@@ -1,4 +1,4 @@
-<div id="group" class="list-group float-left w-50 pr-2">
+<div id="group" class="list-group float-start w-50 pr-2">
 	<h3>{{$groupeditor.label_members}}</h3>
 	<div id="group-members" class="contact_list">
 	{{foreach $groupeditor.members as $c}} {{$c}} {{/foreach}}

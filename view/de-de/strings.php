@@ -2867,7 +2867,7 @@ App::$strings["%d invitation available"] = array(
 App::$strings["Find Channels"] = "Finde Kanäle";
 App::$strings["Enter name or interest"] = "Name oder Interessen eingeben";
 App::$strings["Connect/Follow"] = "Verbinden/Folgen";
-App::$strings["Examples: Robert Morgenstein, Fishing"] = "Beispiele: Robert Morgenstein, Angeln";
+App::$strings["Examples: Robert Walsh, Fishing"] = "Beispiele: Robert Walsh, Angeln";
 App::$strings["Random Profile"] = "Zufallsprofil";
 App::$strings["Invite Friends"] = "Lade Freunde ein";
 App::$strings["Advanced example: name=fred and country=iceland"] = "Fortgeschrittenes Beispiel: name=fred and country=iceland";

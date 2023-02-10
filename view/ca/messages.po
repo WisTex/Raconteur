@@ -13153,7 +13153,7 @@ msgid "Connect/Follow"
 msgstr "Conecta/Segueix"
 
 #: ../../include/contact_widgets.php:22
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr "Exemples: Lionel Messi, Futbolista"
 
 #: ../../include/contact_widgets.php:26

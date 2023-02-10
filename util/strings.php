@@ -2059,7 +2059,7 @@ App::$strings['%d invitation available'] = [
 App::$strings['Find Channels'] = '';
 App::$strings['Enter name or interest'] = '';
 App::$strings['Connect/Follow'] = '';
-App::$strings['Examples: Robert Morgenstein, Fishing'] = '';
+App::$strings['Examples: Robert Walsh, Fishing'] = '';
 App::$strings['Advanced example: name=fred and country=iceland'] = '';
 App::$strings['Friend zoom in/out'] = '';
 App::$strings['Ignore/Hide'] = '';

@@ -2213,7 +2213,7 @@ App::$strings["%d invitation available"] = [
 App::$strings["Find Channels"] = "Encontrar canales";
 App::$strings["Enter name or interest"] = "Introducir nombre o interés";
 App::$strings["Connect/Follow"] = "Conectar/Seguir";
-App::$strings["Examples: Robert Morgenstein, Fishing"] = "Ejemplos: José Fernández, Pesca";
+App::$strings["Examples: Robert Walsh, Fishing"] = "Ejemplos: José Fernández, Pesca";
 App::$strings["Affiliated sites"] = "Sitios afiliados";
 App::$strings["Advanced example: name=fred and country=iceland"] = "Ejemplo avanzado: nombre=juan y país=españa";
 App::$strings["photo/image"] = "foto/imagen";

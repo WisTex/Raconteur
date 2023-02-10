@@ -2485,8 +2485,8 @@ msgid "Connect/Follow"
 msgstr "Ta kontakt/följ"
 
 #: ../../include/contact_widgets.php:25
-msgid "Examples: Robert Morgenstein, Fishing"
-msgstr "Exempel: Robert Morgenstein, Fiske"
+msgid "Examples: Robert Walsh, Fishing"
+msgstr "Exempel: Robert Walsh, Fiske"
 
 #: ../../include/contact_widgets.php:26 ../../mod/connections.php:413
 #: ../../mod/directory.php:330 ../../mod/directory.php:335

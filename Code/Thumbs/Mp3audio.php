@@ -2,11 +2,7 @@
 
 namespace Code\Thumbs;
 
-require_once('library/php-id3/PhpId3/Id3TagsReader.php');
-require_once('library/php-id3/PhpId3/BinaryFileReader.php');
-require_once('library/php-id3/PhpId3/Id3Tags.php');
-
-use PhpId3\Id3TagsReader;
+use wapmorgan\Mp3Info\Mp3Info;
 
 class Mp3audio
 {
@@ -19,19 +15,12 @@ class Mp3audio
     public function Thumb($attach, $preview_style, $height = 300, $width = 300)
     {
 
-        $fh = @fopen(dbunescbin($attach['content']), 'rb');
-        if ($fh === false) {
+        $audio = new Mp3Info($attach['content'], true);
+        if (! $audio->hasCover) {
             return;
         }
-        $id3 = new Id3TagsReader($fh);
-        $id3->readAllTags();
 
-        $image = $id3->getImage();
-        if (is_array($image)) {
-            $photo = $image[1];
-        }
-
-        fclose($fh);
+        $photo = $audio->getCover();
 
         if ($photo) {
             $image = imagecreatefromstring($photo);

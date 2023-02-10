@@ -4,7 +4,7 @@
 	</div>
 	<div class="section-content-wrapper clearfix">
 		{{foreach $items as $item}}
-		<div class="float-left mr-4">
+		<div class="float-start mr-4">
 			<a href="{{$item.url}}">
 				<img class="contact-block-img" src="{{$item.photo}}" alt="{{$item.name}}" title="{{$item.name}} [{{$item.url}}]" />
 			</a>

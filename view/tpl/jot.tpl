@@ -84,7 +84,7 @@
 			</div>
 			{{include file="field_checkbox.tpl" field=$multiple_answers}}
 			<div id="jot-poll-tools" class="clearfix">
-				<div id="poll-tools-left" class="float-left">
+				<div id="poll-tools-left" class="float-start">
 					<button id="jot-add-option" class="btn btn-outline-secondary btn-sm" type="button">
 						<i class="fa fa-plus"></i> {{$poll_add_option_label}}
 					</button>
