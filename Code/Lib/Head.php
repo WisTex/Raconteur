@@ -86,7 +86,7 @@ class Head {
             }
         } else {
             // It's a file from the theme
-            $path = '/' . Theme::include($script);
+            $path = (Theme::include($script)) ? '/' . Theme::include($script) : '';
         }
 
         if ($path) {
