@@ -5634,7 +5634,7 @@ msgid "Connect/Follow"
 msgstr "Подключить / отслеживать"
 
 #: ../../include/contact_widgets.php:22
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr "Примеры: Владимир Ильич, Революционер"
 
 #: ../../include/contact_widgets.php:23

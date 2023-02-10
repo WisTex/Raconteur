@@ -2952,7 +2952,7 @@ App::$strings["%d invitation available"] = array(
 App::$strings["Find Channels"] = "Troba Canals";
 App::$strings["Enter name or interest"] = "Entra un nom o interes";
 App::$strings["Connect/Follow"] = "Conecta/Segueix";
-App::$strings["Examples: Robert Morgenstein, Fishing"] = "Exemples: Lionel Messi, Futbolista";
+App::$strings["Examples: Robert Walsh, Fishing"] = "Exemples: Lionel Messi, Futbolista";
 App::$strings["Random Profile"] = "Perfil Aleatori";
 App::$strings["Invite Friends"] = "Convida Amics";
 App::$strings["Advanced example: name=fred and country=iceland"] = "Exemple avançat: nom=pep i pais=eire";

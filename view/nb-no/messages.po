@@ -7770,7 +7770,7 @@ msgid "Connect/Follow"
 msgstr "Forbindelse/Følg"
 
 #: ../../include/contact_widgets.php:22
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr "Eksempler: Ola Nordmann, fisking"
 
 #: ../../include/contact_widgets.php:26

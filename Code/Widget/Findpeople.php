@@ -32,7 +32,7 @@ class Findpeople implements WidgetInterface
             '$findpeople' => t('Find Channels'),
             '$desc' => t('Enter name or interest'),
             '$label' => t('Connect/Follow'),
-            '$hint' => t('Examples: Robert Morgenstein, Fishing'),
+            '$hint' => t('Examples: Robert Walsh, Fishing'),
             '$findthem' => t('Find'),
             '$suggest' => t('Channel Suggestions'),
             '$similar' => '', // FIXME and uncomment when mod/match working // t('Similar Interests'),

@@ -1,6 +1,6 @@
 <div id="peoplefind-sidebar" class="widget">
 	<h3>{{$findpeople}}</h3>
-	<form action="directory" method="post" />
+	<form action="directory" method="post">
 		<div class="input-group form-group">
 			<input class="form-control" type="text" name="search" title="{{$hint}}{{if $advanced_search}}{{$advanced_hint}}{{/if}}" placeholder="{{$desc}}" />
 			<div class="input-group-append">

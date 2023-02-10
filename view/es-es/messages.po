@@ -10455,7 +10455,7 @@ msgid "Connect/Follow"
 msgstr "Conectar/Seguir"
 
 #: Code/Widget/Findpeople.php:32
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr "Ejemplos: José Fernández, Pesca"
 
 #: Code/Widget/Findpeople.php:37

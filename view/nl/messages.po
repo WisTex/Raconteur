@@ -3172,8 +3172,8 @@ msgid "Connect/Follow"
 msgstr "Verbinden/volgen"
 
 #: ../../include/contact_widgets.php:25
-msgid "Examples: Robert Morgenstein, Fishing"
-msgstr "Voorbeeld: Robert Morgenstein, vissen"
+msgid "Examples: Robert Walsh, Fishing"
+msgstr "Voorbeeld: Robert Walsh, vissen"
 
 #: ../../include/contact_widgets.php:26 ../../mod/directory.php:379
 #: ../../mod/directory.php:384 ../../mod/connections.php:273

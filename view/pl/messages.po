@@ -10320,8 +10320,8 @@ msgid "Connect/Follow"
 msgstr "Połącz/Obserwuj"
 
 #: Code/Widget/Findpeople.php:32
-msgid "Examples: Robert Morgenstein, Fishing"
-msgstr "Przykłady: Robert Morgenstein, łowienie ryb"
+msgid "Examples: Robert Walsh, Fishing"
+msgstr "Przykłady: Robert Walsh, łowienie ryb"
 
 #: Code/Widget/Findpeople.php:37
 msgid "Affiliated sites"

@@ -7815,7 +7815,7 @@ msgid "Connect/Follow"
 msgstr "התחבר/עקוב"
 
 #: ../../include/contact_widgets.php:22
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr ""
 
 #: ../../include/contact_widgets.php:26

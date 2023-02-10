@@ -1797,7 +1797,7 @@ App::$strings["%d invitation available"] = array(
 App::$strings["Find Channels"] = "מצא ערוצים";
 App::$strings["Enter name or interest"] = "הזן שם או עניין";
 App::$strings["Connect/Follow"] = "התחבר/עקוב";
-App::$strings["Examples: Robert Morgenstein, Fishing"] = "";
+App::$strings["Examples: Robert Walsh, Fishing"] = "";
 App::$strings["Random Profile"] = "פרופיל אקראי";
 App::$strings["Invite Friends"] = "הזמן חברים";
 App::$strings["Advanced example: name=fred and country=iceland"] = "דוגמא מתקדמת: name=פרד וגם country=איסלנד";

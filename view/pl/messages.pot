@@ -9819,7 +9819,7 @@ msgid "Connect/Follow"
 msgstr ""
 
 #: Code/Widget/Findpeople.php:32
-msgid "Examples: Robert Morgenstein, Fishing"
+msgid "Examples: Robert Walsh, Fishing"
 msgstr ""
 
 #: Code/Widget/Findpeople.php:37

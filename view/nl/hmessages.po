@@ -12739,8 +12739,8 @@ msgid "Connect/Follow"
 msgstr "Verbinden/volgen"
 
 #: ../../include/contact_widgets.php:22
-msgid "Examples: Robert Morgenstein, Fishing"
-msgstr "Voorbeeld: Robert Morgenstein, vissen"
+msgid "Examples: Robert Walsh, Fishing"
+msgstr "Voorbeeld: Robert Walsh, vissen"
 
 #: ../../include/contact_widgets.php:26
 msgid "Random Profile"
