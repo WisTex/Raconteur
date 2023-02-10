@@ -39,7 +39,8 @@
 	        "ext-json": "*",
 		"symfony/yaml": "^5.4",
 		"symfony/uid": "^5.4",
-		"symfony/mailer": "^5.4"
+		"symfony/mailer": "^5.4",
+		"wapmorgan/mp3info": "^0.0.8"
         },
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
