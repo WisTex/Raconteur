@@ -39,55 +39,15 @@ require_once('include/photo_factory.php');
  * @param bool $include_groups
  * @return array containing the recipients
  */
-function collect_recipients($item, &$private_envelope,$include_groups = true) {
+function collect_recipients($item, &$private_envelope) {
 
 
     $private_envelope = (bool)intval($item['item_private']);
     $recipients = [];
 
     if ($item['allow_cid'] || $item['allow_gid'] || $item['deny_cid'] || $item['deny_gid']) {
-
         // it is private
-
-        $allow_people = expand_acl($item['allow_cid']);
-
-        if ($include_groups) {
-            $allow_groups = AccessList::expand(expand_acl($item['allow_gid']));
-        }
-        else {
-            $allow_groups = [];
-        }
-
-        $recipients = array_values(array_unique(array_merge($allow_people,$allow_groups)));
-
-        // if you specifically deny somebody but haven't allowed anybody, we'll allow everybody in your
-        // address book minus the denied connections. The post is still private and can't be seen publicly
-        // as that would allow the denied person to see the post by logging out.
-
-        if ((! $item['allow_cid']) && (! $item['allow_gid'])) {
-            $r = q("select * from abook where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
-                intval($item['uid'])
-            );
-
-            if ($r) {
-                foreach ($r as $rr) {
-                    $recipients[] = $rr['abook_xchan'];
-                }
-            }
-        }
-
-        $deny_people  = expand_acl($item['deny_cid']);
-        $deny_groups  = AccessList::expand(expand_acl($item['deny_gid']));
-
-        $deny = array_values(array_unique(array_merge($deny_people,$deny_groups)));
-
-        // Don't deny anybody if nobody was allowed (e.g. they were all filtered out)
-        // That would lead to array_diff doing the wrong thing.
-        // This will result in a private post that won't be delivered to anybody.
-
-        if ($recipients && $deny) {
-            $recipients = array_diff($recipients,$deny);
-        }
+        $recipients = item_get_recipients($item);
         $private_envelope = true;
     }
     else {
@@ -145,7 +105,7 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
         // This is specifically designed to forward wall-to-wall posts to the original author,
         // in case they aren't a connection but have permission to write on our wall.
         // This is important for issue tracker channels. It should be a no-op for most channels.
-        // Whether or not they will accept the delivery is not determined here, but should
+        // Whether they will accept the delivery is not determined here, but should
         // be taken into account by zot:process_delivery()
 
         $r = q("select author_xchan from item where parent = %d",
@@ -174,6 +134,44 @@ function collect_recipients($item, &$private_envelope,$include_groups = true) {
         $recipients[] = $item['owner_xchan'];
     }
 
+    return $recipients;
+}
+
+function item_get_recipients($item) {
+
+    $allow_people = expand_acl($item['allow_cid']);
+    $allow_groups = AccessList::expand(expand_acl($item['allow_gid']));
+
+    $recipients = array_values(array_unique(array_merge($allow_people,$allow_groups)));
+
+    // if you specifically deny somebody but haven't allowed anybody, we'll allow everybody in your
+    // address book minus the denied connections. The post is still private and can't be seen publicly
+    // as that would allow the denied person to see the post by logging out.
+
+    if ((! $item['allow_cid']) && (! $item['allow_gid'])) {
+        $r = q("select * from abook where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 ",
+            intval($item['uid'])
+        );
+
+        if ($r) {
+            foreach ($r as $rr) {
+                $recipients[] = $rr['abook_xchan'];
+            }
+        }
+    }
+
+    $deny_people  = expand_acl($item['deny_cid']);
+    $deny_groups  = AccessList::expand(expand_acl($item['deny_gid']));
+
+    $deny = array_values(array_unique(array_merge($deny_people,$deny_groups)));
+
+    // Don't deny anybody if nobody was allowed (e.g. they were all filtered out)
+    // That would lead to array_diff doing the wrong thing.
+    // This will result in a private post that won't be delivered to anybody.
+
+    if ($recipients && $deny) {
+        $recipients = array_diff($recipients,$deny);
+    }
     return $recipients;
 }
 
@@ -281,7 +279,7 @@ function can_comment_on_post($observer_xchan, $item)
 
     /**
      * @hooks can_comment_on_post
-     *   Called when deciding whether or not to present a comment box for a post.
+     *   Called when deciding whether to present a comment box for a post.
      *   * \e string \b observer_hash
      *   * \e array \b item
      *   * \e boolean \b allowed - return value
@@ -306,10 +304,12 @@ function can_comment_on_post($observer_xchan, $item)
     }
 
     switch ($item['comment_policy']) {
+        case 'network: red':
+        case 'network: activitypub':
         case 'public':
         case 'authenticated':
             // Anonymous folks won't ever reach this point (as $observer_xchan will be empty).
-            // This means the viewer has an xchan and we can identify them.
+            // This means we can identify the viewer.
             return true;
         case 'any connections':
         case 'specific':
@@ -327,13 +327,6 @@ function can_comment_on_post($observer_xchan, $item)
         case 'self':
         default:
             break;
-    }
-    if (strstr($item['comment_policy'], 'network:') && strstr($item['comment_policy'], 'red')) {
-        return true;
-    }
-
-    if (strstr($item['comment_policy'], 'network:') && strstr($item['comment_policy'], 'activitypub')) {
-        return true;
     }
 
     if (strstr($item['comment_policy'], 'site:') && strstr($item['comment_policy'], App::get_hostname())) {
@@ -572,8 +565,7 @@ function get_item_elements($x) {
 
     $arr['sig']          = (($x['signature']) ? htmlspecialchars($x['signature'],  ENT_COMPAT,'UTF-8',false) : '');
 
-    // fix old-style signatures imported from hubzilla via polling and zot_feed
-    // so they verify. 
+    // fix old-style signatures imported from hubzilla
 
     if($arr['sig'] && (! strpos($arr['sig'],'.'))) {
         $arr['sig'] = 'sha256.' . $arr['sig'];
@@ -672,7 +664,7 @@ function get_item_elements($x) {
             }
             else {
 
-                // If we don't have a public key, strip the signature so it won't show as invalid.
+                // If we don't have a public key, strip the signature, so that it won't show as invalid.
                 // This won't happen in normal use, but could happen if import_author_xchan()
                 // failed to load the zot-info packet due to a server failure and had
                 // to create an alternate xchan with network 'unknown'
@@ -912,7 +904,7 @@ function encode_item($item,$mirror = false) {
     $x['type'] = 'activity';
     $x['encoding'] = 'zot';
 
-    // If we're trying to backup an item so that it's recoverable or for export/imprt,
+    // If we're trying to back up an item so that it's recoverable or for export/imprt,
     // add all the attributes we need to recover it
 
     if($mirror) {
@@ -1262,7 +1254,7 @@ function activity_sanitise($arr) {
                 if(is_array($x))
                     $ret[$k] = activity_sanitise($x);
                 else
-                    $ret[$k] = htmlspecialchars((isset($x) ? $x : ''), ENT_COMPAT, 'UTF-8', false);
+                    $ret[$k] = htmlspecialchars(($x ?? ''), ENT_COMPAT, 'UTF-8', false);
             }
             return $ret;
         }
@@ -1373,7 +1365,7 @@ function item_sign(&$item) {
 
 // packs  json data for storage.
 // if it is a string, check if it is already json encoded.
-// Otherwise json encode it
+// Otherwise, json encode it
 // If it is an array, sanitise it and  then json_encode it.
 
 
@@ -1716,9 +1708,9 @@ function item_store($arr, $deliver = true) {
                 $arr['item_private'] = $parent_item['item_private'];
             }
 
-            // Edge case. We host a public forum that was originally posted to privately.
+            // Edge case. We host a public forum that was originally posted privately.
             // The original author commented, but as this is a comment, the permissions
-            // weren't fixed up so it will still show the comment as private unless we fix it here.
+            // weren't fixed up and will still show the comment as private unless we fix it here.
 
             if(intval($parent_item['item_uplink']) && (! $parent_item['item_private']))
                 $arr['item_private'] = 0;
@@ -1818,7 +1810,7 @@ function item_store($arr, $deliver = true) {
     );
 
     if($r) {
-        // This will gives us a fresh copy of what's now in the DB and undo the db escaping,
+        // This will give us a fresh copy of what's now in the DB and undo the db escaping,
         // which really messes up the notifications
 
         $current_post = $r[0]['id'];
@@ -2715,7 +2707,7 @@ function tag_deliver($uid, $item_id) {
                 continue;
             }
 
-            // tgroup delivery - setup a second delivery chain
+            // tgroup delivery - set up a second delivery chain
             // prevent delivery looping - only proceed
             // if the message originated elsewhere and is a top-level post
 
@@ -2762,10 +2754,10 @@ function tgroup_check($uid, $item) {
 
     $role = get_pconfig($uid,'system','permissions_role');
     $rolesettings = PermissionRoles::role_perms($role);
-    $channel_type = isset($rolesettings['channel_type']) ? $rolesettings['channel_type'] : 'normal';
+    $channel_type = $rolesettings['channel_type'] ?? 'normal';
 
-    $is_group = (($channel_type === 'group') ? true : false);
-    $is_collection = (($channel_type === 'collection') ? true : false);
+    $is_group = $channel_type === 'group';
+    $is_collection = $channel_type === 'collection';
 
     // If a comment, check if we have already accepted the top level post as an uplink
     // Applies to collections only at this time
@@ -2825,7 +2817,7 @@ function tgroup_check($uid, $item) {
         return true;
     }
 
-    // return true if we are mentioned and we permit delivery of mentions from strangers
+    // return true if we are mentioned, and we permit delivery of mentions from strangers
 
     if (PConfig::Get($uid, 'system','permit_all_mentions') && i_am_mentioned($u,$item)) {
         return true;
@@ -2915,7 +2907,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
     if ($sourced) {
         $r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
             intval($channel['channel_id']),
-            dbesc(($item['source_xchan']) ?  $item['source_xchan'] : $item['owner_xchan'])
+            dbesc(($item['source_xchan']) ?: $item['owner_xchan'])
         );
         if ($r && ! $edit) {
             $t = trim($r[0]['src_tag']);
@@ -3074,7 +3066,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         }
 
         // Add a mention for the author.
-        $arr['term'] = ($item['term']) ? $item['term'] : [];
+        $arr['term'] = ($item['term']) ?: [];
         $arr['term'][] = [
             'uid' => $channel['channel_id'],
             'ttype' => TERM_MENTION,
@@ -3098,7 +3090,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         $arr['deny_gid']  = $channel['channel_deny_gid'];
         $arr['comment_policy'] = map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'));
 
-        $merge = (($item['attach']) ? $item['attach'] : []);
+        $merge = (($item['attach']) ?: []);
         if (is_string($merge)) {
             $merge = json_decode($merge, true);
         }
@@ -3354,8 +3346,8 @@ function post_is_importable($channel_id, $item, $abook) {
     $text = prepare_text($item['body'],((isset($item['mimetype'])) ? $item['mimetype'] : 'text/x-multicode'));
     $text = html2plain((isset($item['title']) && $item['title']) ? $item['title'] . ' ' . $text : $text);
 
-    $incl = PConfig::get($channel_id, 'system', 'message_filter_incl', EMPTY_STR);
-    $excl = PConfig::get($channel_id, 'system', 'message_filter_excl', EMPTY_STR);
+    $incl = PConfig::Get($channel_id, 'system', 'message_filter_incl', EMPTY_STR);
+    $excl = PConfig::Get($channel_id, 'system', 'message_filter_excl', EMPTY_STR);
     if ($incl || $excl) {
         $x = MessageFilter::evaluate($item, $incl, $excl, ['plaintext' => $text]);
         if (! $x) {
@@ -3387,14 +3379,8 @@ function post_is_importable($channel_id, $item, $abook) {
 
 
 function has_permissions($obj) {
-    if((isset($ob['allow_cid']) && $obj['allow_cid'] != '')
-        || (isset($obj['allow_gid']) && $obj['allow_gid'] != '')
-        || (isset($obj['deny_cid']) && $obj['deny_cid'] != '')
-        || (isset($obj['deny_gid']) && $obj['deny_gid'] != '')) {
-        return true;
-    }
-
-    return false;
+    return (! (empty($obj['allow_cid']) && empty($obj['allow_gid'])
+        && empty($obj['deny_cid']) && empty($obj['deny_gid'])));
 }
 
 function compare_permissions($obj1,$obj2) {
@@ -3435,60 +3421,6 @@ function enumerate_permissions($obj) {
     $recipients   = array_diff($recipients,$deny);
 
     return $recipients;
-}
-
-function item_getfeedtags($item) {
-
-    $ret = [];
-    if (! (isset($item['term']) && is_array($item['term']))) {
-        return $ret;
-    }
-
-    $terms = get_terms_oftype($item['term'], [TERM_HASHTAG,TERM_MENTION,TERM_COMMUNITYTAG]);
-
-    if (count($terms)) {
-        foreach ($terms as $term) {
-            if (($term['ttype'] == TERM_HASHTAG) || ($term['ttype'] == TERM_COMMUNITYTAG)) {
-                $ret[] = ['#',$term['url'],$term['term']];
-            }
-            else {
-                $ret[] = ['@',$term['url'],$term['term']];
-            }
-        }
-    }
-
-    return $ret;
-}
-
-
-// generates an Atom feed representation of any attachmments to this item
-
-function item_getfeedattach($item) {
-
-    $ret = EMPTY_STR;
-
-    if (! isset($item['attach'])) {
-        return $ret;
-    }
-    $arr = explode(',',$item['attach']);
-    if ($arr && count($arr)) {
-        foreach ($arr as $r) {
-            $matches = false;
-            $cnt = preg_match('|\[attach]href=\"(.*?)\" length=\"(.*?)\" type=\"(.*?)\" title=\"(.*?)\"\[/attach]|',$r,$matches);
-            if ($cnt) {
-                $ret .= '<link rel="enclosure" href="' . xmlify($matches[1]) . '" type="' . xmlify($matches[3]) . '" ';
-                if (intval($matches[2])) {
-                    $ret .= 'length="' . intval($matches[2]) . '" ';
-                }
-                if($matches[4] !== ' ') {
-                    $ret .= 'title="' . xmlify(trim($matches[4])) . '" ';
-                }
-                $ret .= ' />' . "\r\n";
-            }
-        }
-    }
-
-    return $ret;
 }
 
 
@@ -3705,40 +3637,30 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0) {
  *
  * @param array $item
  * @param int $stage
- * @param boolean $force
- * @return boolean
+ * @param bool $force
+ * @return bool
  */
 function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
 
 
     logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . ($force) ? 'true' : 'false', LOGGER_DATA);
 
-    switch($stage) {
-        case DROPITEM_PHASE2:
-            $r = q("UPDATE item SET item_pending_remove = 1, body = '', title = '',
+    match ($stage) {
+        DROPITEM_PHASE2 => q("UPDATE item SET item_pending_remove = 1, body = '', title = '',
                 changed = '%s', edited = '%s'  WHERE id = %d",
-                dbesc(datetime_convert()),
-                dbesc(datetime_convert()),
-                intval($item['id'])
-            );
-            break;
-
-        case DROPITEM_PHASE1:
-            $r = q("UPDATE item set item_deleted = 1, changed = '%s', edited = '%s' where id = %d",
-                dbesc(datetime_convert()),
-                dbesc(datetime_convert()),
-                intval($item['id'])
-            );
-
-            break;
-
-        case DROPITEM_NORMAL:
-        default:
-            $r = q("DELETE FROM item WHERE id = %d",
-                intval($item['id'])
-            );
-            break;
-    }
+            dbesc(datetime_convert()),
+            dbesc(datetime_convert()),
+            intval($item['id'])
+        ),
+        DROPITEM_PHASE1 => q("UPDATE item set item_deleted = 1, changed = '%s', edited = '%s' where id = %d",
+            dbesc(datetime_convert()),
+            dbesc(datetime_convert()),
+            intval($item['id'])
+        ),
+        default => q("DELETE FROM item WHERE id = %d",
+            intval($item['id'])
+        ),
+    };
 
     // immediately remove any undesired profile likes.
 
@@ -4315,7 +4237,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
         if (($arr['cmin'] != 0) || ($arr['cmax'] != 99)) {
 
             // Not everybody who shows up in the stream will be in your address book.
-            // By default those that aren't are assumed to have closeness = 99; but this isn't
+            // By default, those that aren't are assumed to have closeness = 99; but this isn't
             // recorded anywhere. So if cmax is 99, we'll open the search up to anybody in
             // the stream with a NULL address book entry.
 
@@ -4439,13 +4361,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
         else {
             $items = [];
         }
-
-        if (isset($parents_str) && $parents_str && isset($arr['mark_seen']) && $arr['mark_seen']) {
-            $update_unseen = ' AND parent IN ( ' . dbesc($parents_str) . ' )';
-            /** @FIXME finish mark unseen sql */
-        }
     }
-
     return $items;
 }
 
@@ -4499,7 +4415,7 @@ function update_remote_id($channel,$post_id,$webpage,$pagetitle,$namespace,$remo
             $post_id,
             'system',
             $page_type,
-            ($pagetitle) ? $pagetitle : substr($mid,0,16),
+            ($pagetitle) ?: substr($mid,0,16),
             false
         );
     }

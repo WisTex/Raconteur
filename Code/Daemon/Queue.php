@@ -57,7 +57,7 @@ class Queue implements DaemonInterface
                 foreach ($qItems as $qItem) {
                     $deliveries[] = $qItem['outq_hash'];
                 }
-                do_delivery($deliveries);
+                do_delivery($deliveries, true);
             }
          }
     }
