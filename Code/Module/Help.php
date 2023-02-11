@@ -150,7 +150,7 @@ class Help extends Controller
             return $results;
         }
         if ($path === 'doc') {
-            return ['doc/guide', 'doc/develop'];
+            return ['doc/guide', 'doc/develop', 'doc/site'];
         }
         while (false !== ($file = readdir($handle))) {
             if ($file === '.' || $file === '..') {
