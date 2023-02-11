@@ -756,7 +756,7 @@ function rpost_callback($match)
     }
 }
 
-fun($match)
+function bb_map_latlon($match)
 {
     return str_replace($match[0], '<div class="map">'
         . generate_map(floatval($match[1]),floatval($match[2]))
@@ -1855,15 +1855,8 @@ function bbcode($Text, $options = [])
             $Text = preg_replace("/\[map\/\]/", '<div class="map"></div>', $Text);
             $Text = preg_replace("/\[map\]/", '<div class="map"></div>', $Text);
         }
-
-        // provide a map for naked geo: links
-        $Text = preg_replace_callback(
-            '/geo:([-+]?(?:[1-8]?\d(?:\.\d+)?|90(?:\.0+)?)),\s*([-+]?(?:180(?:\.0+)?|(?:(?:1[0-7]\d)|(?:[1-9]?\d))(?:\.\d+)?))(?!\d)/',
-            'bb_map_latlon', $Text);
-
     }
-
-
+    
     // Check for bold text
     if (str_contains($Text, '[b]')) {
         $Text = preg_replace("(\[b\](.*?)\[\/b\])ism", '<strong>$1</strong>', $Text);
