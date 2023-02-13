@@ -17,13 +17,13 @@ class Queue
 
         $expert = 1; // ((array_key_exists('expert', $_REQUEST)) ? intval($_REQUEST['expert']) : 0);
 
-        if ($_REQUEST['drophub']) {
-            hubloc_mark_as_down($_REQUEST['drophub']);
-            ZQueue::remove_by_posturl($_REQUEST['drophub']);
+        if ($_REQUEST['dropsite']) {
+            hubloc_mark_as_down($_REQUEST['dropsite']);
+            ZQueue::remove_by_posturl($_REQUEST['dropsite']);
         }
 
-        if ($_REQUEST['emptyhub']) {
-            ZQueue::remove_by_posturl($_REQUEST['emptyhub']);
+        if ($_REQUEST['emptysite']) {
+            ZQueue::remove_by_posturl($_REQUEST['emptysite']);
         }
 
         if ($_REQUEST['details']) {
@@ -53,8 +53,8 @@ class Queue
             '$numentries' => t('Total Entries'),
             '$priority' => t('Priority'),
             '$desturl' => t('Destination URL'),
-            '$nukehub' => t('Mark hub permanently offline'),
-            '$empty' => t('Empty queue for this hub'),
+            '$nukesite' => t('Mark site permanently offline'),
+            '$empty' => t('Empty queue for this site'),
             '$examine' => t('Examine delivery logs'),
             '$lastconn' => t('Last known contact'),
             '$hasentries' => ((count($r)) ? true : false),
