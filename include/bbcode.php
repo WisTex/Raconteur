@@ -1199,6 +1199,17 @@ function multicode_purify($s)
     return bb_code_unprotect($s);
 }
 
+function bb_mdlink_protect($matches)
+{
+    if ($matches[1] === $matches[3]) {
+        return '[' . $matches[1]  . ']' . html_entity_decode('&#8203;')
+            . '(' . $matches[2] . ')[/' . $matches[3] . ']';
+    }
+    else {
+        return $matches[0];
+    }
+}
+
 function bb_code_preprotect($matches)
 {
     return '[code' . $matches[1] . ']' . 'b64.^8e%.' . base64_encode(str_replace('<br>', '|+br+|', $matches[2])) . '.b64.$8e%' . '[/code]';
@@ -1659,11 +1670,10 @@ function bbcode($Text, $options = [])
     if ($bbonly) {
         $Text = purify_html($Text);
     } else {
-        // escape some frequently encountered false positives with a zero-width space
-
+        
         // Here we are catching things like [quote](something)[/quote] and [b](something)[/b] and preventing them from turning into broken markdown links [text](url)
         // We'll do this with a zero-width space between ] and (
-        $Text = preg_replace("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", '[$1]' . html_entity_decode('&#8203;') . '($2)[/$3]', $Text);
+        $Text = preg_replace_callback("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", 'bb_mdlink_protect', $Text);
 
         // save code blocks from being interpreted as markdown
 
