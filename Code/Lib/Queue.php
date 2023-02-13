@@ -218,7 +218,10 @@ class Queue
                 dbesc($base)
             );
             if ($y) {
-                if (intval($y[0]['site_dead'])) {
+                // Don't bother delivering if the site is dead.
+                // And if we haven't heard from the site in over a month - let them through but 3 strikes you're out.
+                if (intval($y[0]['site_dead']) || ($y[0]['site_update'] < datetime_convert('UTC', 'UTC', 'now - 1 month')
+                    && $outq['outq_priority'] > 20 )) {
                     q(
                         "update dreport set dreport_result = '%s' where dreport_queue = '%s'",
                         dbesc('site dead'),
@@ -227,16 +230,6 @@ class Queue
 
                     self::remove_by_posturl($outq['outq_posturl']);
                     logger('dead site ignored ' . $base);
-                    return;
-                }
-                if ($y[0]['site_update'] < datetime_convert('UTC', 'UTC', 'now - 1 month')) {
-                    q(
-                        "update dreport set dreport_log = '%s' where dreport_queue = '%s'",
-                        dbesc('site deferred'),
-                        dbesc($outq['outq_hash'])
-                    );
-                    self::update($outq['outq_hash'], 'Delivery deferred', 10);
-                    logger('immediate delivery deferred for site ' . $base);
                     return;
                 }
             } else {

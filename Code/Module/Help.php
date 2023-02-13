@@ -156,10 +156,11 @@ class Help extends Controller
             if ($file === '.' || $file === '..') {
                 continue;
             }
-            if (is_dir($path . '/' . $file)) {
-                $results = array_merge($results, self::listdir($path . '/' . $file));
+            $fileName = $path . '/' . $file;
+            if (is_dir($fileName)) {
+                $results = array_merge($results, self::listdir($fileName));
             } else {
-                $results[] = $path . '/' . $file;
+                $results[] = $fileName;
             }
         }
         closedir($handle);
