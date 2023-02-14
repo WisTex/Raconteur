@@ -67,7 +67,7 @@
 {{/if}}
 {{/if}}
 <div class="navbar-toggler-right">
-	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" data-bs-toggle="offcanvas" data-bs-target="#region_1" title="{{$asidetitle}}">
+	<button id="expand-aside" type="button" class="d-lg-none navbar-toggler border-0" title="{{$asidetitle}}">
 		<i class="fa fa-arrow-circle-right" id="expand-aside-icon"></i>
 	</button>
 	{{if $localuser || $nav.pubs}}

@@ -1670,7 +1670,6 @@ function bbcode($Text, $options = [])
     if ($bbonly) {
         $Text = purify_html($Text);
     } else {
-        
         // Here we are catching things like [quote](something)[/quote] and [b](something)[/b] and preventing them from turning into broken markdown links [text](url)
         // We'll do this with a zero-width space between ] and (
         $Text = preg_replace_callback("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", 'bb_mdlink_protect', $Text);
