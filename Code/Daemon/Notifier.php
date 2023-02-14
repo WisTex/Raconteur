@@ -96,7 +96,7 @@ class Notifier implements DaemonInterface
             return;
         }
 
-        logger('notifier: invoked: ' . print_r($argv, true), LOGGER_DEBUG, LOG_INFO);
+        logger('notifier: invoked: ' . print_r($argv, true), LOGGER_DEBUG);
 
         $cmd = $argv[1];
 
@@ -334,8 +334,8 @@ class Notifier implements DaemonInterface
         
                 $parent_item = array_shift($r);
                 $top_level_post = false;
-                $thread_is_public = ((intval($parent_item['item_private'])) ? false : true) ;
-                $question = ($parent_item['verb'] === 'Question') ? true : false;
+                $thread_is_public = !intval($parent_item['item_private']);
+                $question = $parent_item['verb'] === 'Question';
             }
 
             // avoid looping of discover items 12/4/2014
@@ -368,7 +368,7 @@ class Notifier implements DaemonInterface
             // flag on comments for an extended period. So we'll also call comment_local_origin() which looks at
             // the hostname in the message_id and provides a second (fallback) opinion.
 
-            $relay_to_owner = (((! $top_level_post) && (intval($target_item['item_origin'])) && comment_local_origin($target_item) && $cmd !== 'hyper') ? true : false);
+            $relay_to_owner = (! $top_level_post) && (intval($target_item['item_origin'])) && comment_local_origin($target_item) && $cmd !== 'hyper';
 
             $uplink = false;
 
@@ -463,9 +463,15 @@ class Notifier implements DaemonInterface
 
 
                 if ($thread_is_public && $target_item['approved'] && $cmd === 'hyper') {
+                    // Add hyperdrive (friend-of-friend recipients for public activities.
+                    // Don't add Hubzilla (zot6) connections, since that software doesn't support
+                    // hyperdrive and this would just clutter the airwaves with rejected deliveries.
                     self::$recipients = [];
                     $r = q(
-                        "select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 and not abook_xchan in ( '%s', '%s', '%s' ) ",
+                        "select abook_xchan, xchan_network from abook left join xchan on abook_xchan = xchan_hash 
+                            where abook_channel = %d and abook_self = 0 and abook_pending = 0 and abook_archived = 0 
+                            and xchan_network != 'zot6'  
+                            and not abook_xchan in ( '%s', '%s', '%s' ) ",
                         intval($target_item['uid']),
                         dbesc($target_item['author_xchan']),
                         dbesc($target_item['owner_xchan']),
@@ -506,7 +512,7 @@ class Notifier implements DaemonInterface
 		// This addresses an issue that crossposting addons weren't being called if the sender had no friends
 		// and only wanted to crosspost. 
 		
-		$crossposting = (isset($target_item['postopts']) && $target_item['postopts']) ? true : false;
+		$crossposting = isset($target_item['postopts']) && $target_item['postopts'];
 
 		stringify_array_elms(self::$recipients);
 		if ( (! self::$recipients && ! $crossposting)) {
@@ -552,7 +558,7 @@ class Notifier implements DaemonInterface
             'relay_to_owner' => $relay_to_owner,
             'uplink'         => $uplink,
             'cmd'            => $cmd,
-            'single'         => (($cmd === 'single_activity') ? true : false),
+            'single'         => $cmd === 'single_activity',
             'normal_mode'    => $normal_mode,
             'packet_type'    => self::$packet_type,
             'queued'         => []
@@ -686,7 +692,7 @@ class Notifier implements DaemonInterface
                     'relay_to_owner' => $relay_to_owner,
                     'uplink'         => $uplink,
                     'cmd'            => $cmd,
-                    'single'         => (($cmd === 'single_activity') ? true : false),
+                    'single'         => $cmd === 'single_activity',
                     'normal_mode'    => $normal_mode,
                     'packet_type'    => self::$packet_type,
                     'queued'         => []

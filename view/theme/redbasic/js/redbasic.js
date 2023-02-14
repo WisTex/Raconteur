@@ -111,18 +111,10 @@ function toggleAside() {
 	$('#expand-aside-icon').toggleClass('fa-arrow-circle-right').toggleClass('fa-arrow-circle-left');
 	if($('main').hasClass('region_1-on')){
 		$('html, body').css('overflow-x', '');
-		$('main').removeClass('region_1-on')
-		$('#overlay').remove();
-	//	$('#left_aside_wrapper').trigger("sticky_kit:detach");
+		$('main').removeClass('region_1-on');
 	}
 	else {
 		$('html, body').css('overflow-x', 'hidden');
 		$('main').addClass('region_1-on')
-		$('<div id="overlay"></div>').appendTo('section');
-	//	$('#left_aside_wrapper').stick_in_parent({
-	//		offset_top: parseInt($('aside').css('padding-top')),
-	//		parent: 'main',
-	//		spacer: '.aside_spacer'
-	//	});
 	}
 }

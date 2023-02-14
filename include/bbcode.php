@@ -756,6 +756,15 @@ function rpost_callback($match)
     }
 }
 
+function bb_map_latlon($match)
+{
+    return str_replace($match[0], '<div class="map">'
+        . generate_map(floatval($match[1]),floatval($match[2]))
+        . '</div>',
+        $match[0]);
+}
+
+
 function bb_map_coords($match)
 {
     $x = str_replace(['/', ','], [' ', ' '], $match[1]);
@@ -1188,6 +1197,17 @@ function multicode_purify($s)
     }
 
     return bb_code_unprotect($s);
+}
+
+function bb_mdlink_protect($matches)
+{
+    if ($matches[1] === $matches[3]) {
+        return '[' . $matches[1]  . ']' . html_entity_decode('&#8203;')
+            . '(' . $matches[2] . ')[/' . $matches[3] . ']';
+    }
+    else {
+        return $matches[0];
+    }
 }
 
 function bb_code_preprotect($matches)
@@ -1650,11 +1670,9 @@ function bbcode($Text, $options = [])
     if ($bbonly) {
         $Text = purify_html($Text);
     } else {
-        // escape some frequently encountered false positives with a zero-width space
-
         // Here we are catching things like [quote](something)[/quote] and [b](something)[/b] and preventing them from turning into broken markdown links [text](url)
         // We'll do this with a zero-width space between ] and (
-        $Text = preg_replace("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", '[$1]' . html_entity_decode('&#8203;') . '($2)[/$3]', $Text);
+        $Text = preg_replace_callback("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", 'bb_mdlink_protect', $Text);
 
         // save code blocks from being interpreted as markdown
 
@@ -1847,7 +1865,7 @@ function bbcode($Text, $options = [])
             $Text = preg_replace("/\[map\]/", '<div class="map"></div>', $Text);
         }
     }
-
+    
     // Check for bold text
     if (str_contains($Text, '[b]')) {
         $Text = preg_replace("(\[b\](.*?)\[\/b\])ism", '<strong>$1</strong>', $Text);
