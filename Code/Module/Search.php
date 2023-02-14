@@ -74,7 +74,10 @@ class Search extends Controller
             $channel = (argc() > 1) ? Channel::from_username(argv(1)) : Channel::get_system();
             if ($channel) {
                 $this->search_channel = $channel;
-                Libprofile::load($channel['channel_address'], 0);
+                // Don't load the profile unless this is a channel search. 
+                if (argc() > 1) {
+                    Libprofile::load($channel['channel_address'], 0);
+                }
             }
         }
 
