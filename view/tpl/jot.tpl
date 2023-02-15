@@ -485,7 +485,7 @@
       		</div>
       		<div class="modal-body">
 			  	{{if $writefiles}}
-				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-upload jot-icons me-1">Upload</i>
+				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-upload jot-icons me-1"></i>Upload
 				</button>
 				{{/if}}
 				
@@ -495,8 +495,7 @@
       		</div>
       		<div class="modal-footer">
         		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        		<button type="button" class="btn btn-primary">Save changes</button>
-      		</div>
+        	</div>
     	</div>
   	</div>
 </div>
