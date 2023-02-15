@@ -640,6 +640,22 @@ let postSaveTimer = null;
 	    jotCheckoutStatus();
 	}
 
+	/* start new function */
+
+	let initializeEmbedPhotoOrFileDialog = function () {
+    /*	
+		$('.embed-photo-selected-photo').each(function (index) {
+            $(this).removeClass('embed-photo-selected-photo');
+        });
+        getPhotoAlbumList();
+        $('#embedPhotoModalBodyAlbumDialog').off('click');
+	*/
+
+        $('#exampleModal').modal('show');
+    };
+
+
+	/* end new function */
 
 	let initializeEmbedPhotoDialog = function () {
         $('.embed-photo-selected-photo').each(function (index) {
