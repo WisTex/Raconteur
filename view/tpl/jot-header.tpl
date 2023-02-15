@@ -110,6 +110,25 @@ let postSaveTimer = null;
 				$('#profile-jot-submit-left').hide();
 		}
 
+		/**
+		 * uses the jQuery file upload plugin to upload files.
+		 * It is initialized on an element with an ID of "invisible-wall-file-upload" using the .fileupload() method.
+		 * It is configured with several options passed as an object to the .fileupload() method:
+		 * url: specifies the server endpoint to which the uploaded file will be sent. It includes a PHP variable $nickname in the URL path.
+		 * dataType: specifies the expected format of the response from the server, which is JSON in this case.
+		 * dropZone: specifies the element that is used as the drop zone for the file upload. In this case, it's the element with an ID of "profile-jot-text".
+		 * maxChunkSize: specifies the maximum chunk size for chunked file uploads. It's set to 2 megabytes in this case.
+		 * add: specifies a callback function to be executed when a file is added to the queue.
+		 * In this case, the function shows a rotating icon to indicate that the upload is in progress and submits the file for uploading.
+		 * done: specifies a callback function to be executed when the upload is complete.
+		 * In this case, the function appends the file's URL to a text area with an ID of "jot-media" 
+		 * and adds the file's URL to the text editor by calling a function named addeditortext().
+		 * stop: specifies a callback function to be executed when the upload is stopped, 
+		 * either because it's completed or because it was cancelled. 
+		 * In this case, the function hides the rotating icon and calls a function named preview_post(), which previews the uploaded file in the user's post.
+		 *  
+		 */
+
 		$('#invisible-wall-file-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
@@ -395,7 +414,14 @@ let postSaveTimer = null;
 		})
 	}
 
-
+	/**
+	 *  opens a modal window with an ID of "createdModal" 
+	 *  and listens for a click event on a button with an ID of "created-modal-OKButton". 
+	 *  When the button is clicked, it retrieves the value of an input field with an ID of "created-date" 
+	 *  and if it is not empty, it sets the value of an input field with an ID of "jot-created" 
+	 *  to the retrieved value and hides the modal window.
+	 */
+	
 	function jotGetPubDate() {
 		$('#createdModal').modal('show');
 		$('#created-modal-OKButton').on('click', function() {
