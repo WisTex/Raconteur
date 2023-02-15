@@ -490,7 +490,7 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary">Save changes</button>
 		{{if $embedPhotos}}
-			<button class="dropdown-item" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-image-o jot-icons"></i>&nbsp;{{$embedPhotos}}</button>
+			<button class="dropdown-item btn btn-success" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-image-o jot-icons"></i>&nbsp;{{$embedPhotos}}</button>
 		{{/if}}
       </div>
     </div>
