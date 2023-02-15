@@ -143,7 +143,7 @@
 
 					<!-- new test button -->
 					{{if $embedPhotos || $writefiles}}
-						<button id="new-embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedPhotos}}" onclick="initializeEmbedPhotoDialog();return false;">
+						<button id="new-embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedPhotos}} or {{$attach}} " onclick="initializeEmbedPhotoDialog();return false;">
 							<i id="new-embed-photo" class="fa fa-file-o jot-icons"></i>
 						</button>
 					{{/if}}
