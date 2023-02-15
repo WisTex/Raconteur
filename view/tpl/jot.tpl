@@ -477,24 +477,28 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Select File</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        new post
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-		{{if $embedPhotos}}
-			<button class="btn btn-labeled btn-success" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-o jot-icons me-1"></i>Embed an existing File</button>
-		{{/if}}
-      </div>
-    </div>
-  </div>
+  	<div class="modal-dialog">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<h1 class="modal-title fs-5" id="exampleModalLabel">Select File</h1>
+        		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      		</div>
+      		<div class="modal-body">
+			  	{{if $writefiles}}
+				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-upload jot-icons me-1">Upload</i>
+				</button>
+				{{/if}}
+				
+	  			{{if $embedPhotos}}
+				<button class="btn btn-labeled btn-success" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-o jot-icons me-1"></i>Embed an existing File</button>
+				{{/if}}
+      		</div>
+      		<div class="modal-footer">
+        		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        		<button type="button" class="btn btn-primary">Save changes</button>
+      		</div>
+    	</div>
+  	</div>
 </div>
 
 
