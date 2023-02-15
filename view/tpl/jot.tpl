@@ -490,7 +490,7 @@
 				{{/if}}
 				
 	  			{{if $embedPhotos}}
-				<button class="btn btn-labeled btn-success" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-o jot-icons me-1"></i>Embed an existing File</button>
+				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-o jot-icons me-1"></i>Embed an existing File</button>
 				{{/if}}
       		</div>
       		<div class="modal-footer">
