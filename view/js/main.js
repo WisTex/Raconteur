@@ -1419,6 +1419,10 @@ function preview_post() {
 				$("#jot-preview-content").html(data.preview);
 				$("#jot-preview-content .autotime").timeago();
 				$("#jot-preview-content" + " a").click(function() { return false; });
+/* playing */
+				$("#profile-jot-form").html(data.preview);
+				$("#profile-jot-form .autotime").timeago();
+				$("#profile-jot-form" + " a").click(function() { return false; });
 			}
 		},
 		"json"
