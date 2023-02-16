@@ -1408,6 +1408,8 @@ function importElement(elem) {
 	return false;
 }
 
+
+
 function preview_post() {
 	$("#jot-preview").val("1");
 	$("#jot-preview-content").show();
@@ -1419,6 +1421,9 @@ function preview_post() {
 				$("#jot-preview-content").html(data.preview);
 				$("#jot-preview-content .autotime").timeago();
 				$("#jot-preview-content" + " a").click(function() { return false; });
+				/* start */
+				$("#profile-jot-text").html().append(data.preview);
+				/* stop */
 			}
 		},
 		"json"
