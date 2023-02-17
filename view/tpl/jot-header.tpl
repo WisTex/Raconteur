@@ -675,18 +675,16 @@ let postSaveTimer = null;
 
 	/* start new function */
 
-	let initializeEmbedPhotoOrFileDialog = function () {
-    /*	
+	let initializeEmbedFileDialog = function () {
+    	
 		$('.embed-photo-selected-photo').each(function (index) {
             $(this).removeClass('embed-photo-selected-photo');
         });
         getPhotoAlbumList();
         $('#embedPhotoModalBodyAlbumDialog').off('click');
-	*/
-
+	
         $('#exampleModal').modal('show');
     };
-
 
 	/* end new function */
 
