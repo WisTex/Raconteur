@@ -300,7 +300,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" id="jotnetsModalLabel">{{$jotnets_label}}</h4>
-					<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 					{{$jotnets}}
@@ -338,7 +338,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="commModalLabel">{{$commctrl}}</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body form-group" >
 				{{include file="field_checkbox.tpl" field=$comments_allowed}}				
@@ -370,7 +370,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="expiryModalLabel">{{$expires}}</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body form-group" style="width:90%">
 				<div class="date">
@@ -399,7 +399,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="createdModalLabel">{{$future_txt}}</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body form-group" style="width:90%">
 				<div class="date">
@@ -426,7 +426,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="embedPhotoModalLabel">{{$embedPhotosModalTitle}}</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body" id="embedPhotoModalBody" >
 				<div id="embedPhotoModalBodyAlbumListDialog" class="d-none">
@@ -445,7 +445,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" id="linkModalLabel">{{$linkurl}}</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body form-group" style="width:100%">
 					<input type="text" name="link_url" id="id_link_url" class="form-control" >
