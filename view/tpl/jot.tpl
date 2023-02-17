@@ -471,7 +471,7 @@
       		</div>
       		<div class="modal-body">
 			  	{{if $writefiles}}
-				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-upload jot-icons me-1"></i>Upload</button>
+				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-cloud-upload jot-icons me-1"></i>from Device</button>
 				{{/if}}
 				
 	  			{{if $embedPhotos}}
