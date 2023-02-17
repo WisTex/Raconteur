@@ -126,27 +126,11 @@
 				&nbsp;
 				<div class="btn-group mr-2 ">
 
-				{{* what happens when we comment out the old buttons ?
-					{{if $writefiles}}
-					<button id="wall-file-upload" class="btn btn-outline-secondary btn-sm" title="{{$attach}}" >
-						<i id="wall-file-upload-icon" class="fa fa-paperclip jot-icons"></i>
-					</button>
-					{{/if}}
-				*}}
-
 					{{if $weblink}}
 					<button id="profile-link-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$weblink}}" ondragenter="linkdropper(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);"  onclick="jotGetLink(); return false;">
 						<i id="profile-link" class="fa fa-link jot-icons"></i>
 					</button>
 					{{/if}}
-
-				{{* what happens when we comment out the old buttons ?	
-					{{if $embedPhotos}}
-					<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedPhotos}}" onclick="initializeEmbedPhotoDialog();return false;">
-						<i id="embed-photo" class="fa fa-file-image-o jot-icons"></i>
-					</button>
-					{{/if}}
-				*}}
 
 					<!-- new test button -->
 					{{if $embedPhotos || $writefiles}}
@@ -478,8 +462,6 @@
 {{/if}}
 
 <!-- start the new modal here -->
-
-<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   	<div class="modal-dialog">
     	<div class="modal-content">
@@ -489,12 +471,11 @@
       		</div>
       		<div class="modal-body">
 			  	{{if $writefiles}}
-				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-upload jot-icons me-1"></i>Upload
-				</button>
+				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-upload jot-icons me-1"></i>Upload</button>
 				{{/if}}
 				
 	  			{{if $embedPhotos}}
-				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-file-o jot-icons me-1"></i>Embed an existing File</button>
+				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud-icons me-1"></i>from the Cloud</button>
 				{{/if}}
       		</div>
       		<div class="modal-footer">
@@ -503,9 +484,6 @@
     	</div>
   	</div>
 </div>
-
-
-
 <!-- end the new modal here -->
 
 {{if $content || $attachment || $expanded}}
