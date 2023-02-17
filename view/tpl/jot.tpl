@@ -466,16 +466,16 @@
   	<div class="modal-dialog">
     	<div class="modal-content">
       		<div class="modal-header">
-        		<h1 class="modal-title fs-5" id="exampleModalLabel">Insert File</h1>
+        		<h1 class="modal-title fs-5" id="exampleModalLabel">{{$insertFile}}</h1>
         		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       		</div>
       		<div class="modal-body">
 			  	{{if $writefiles}}
-				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-cloud-upload jot-icons me-1"></i>from Device</button>
+				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-cloud-upload jot-icons me-1"></i>{{$fromDevice}}</button>
 				{{/if}}
 				
 	  			{{if $embedPhotos}}
-				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud jot-icons me-1"></i>from the Cloud</button>
+				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud jot-icons me-1"></i>{{$fromCloud}}</button>
 				{{/if}}
       		</div>
       		<div class="modal-footer">
