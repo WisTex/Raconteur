@@ -1094,6 +1094,8 @@ function z_status_editor($x, $popup = false)
     }
 
     $embedPhotos = t('Embed (existing) photo from your photo albums');
+    $embedFiles = t('Embed a File');
+
 
     $writefiles = (($mimetype === 'text/x-multicode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
     if (x($x, 'hide_attach')) {
