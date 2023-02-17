@@ -698,11 +698,11 @@ function attribute_contains($attr, $s)
 }
 
 /**
- * @brief Logging function for Streams.
+ * @brief Create a log message.
  *
- * Logging output is configured through Streams system config. The log file
- * is set in system logfile, log level in system loglevel and to enable logging
- * set system debugging.
+ * Logging is configured through the site config. The log file
+ * is set in system.logfile, log level in system.loglevel and to enable logging
+ * set system.debugging.
  *
  * Available constants for log level are LOGGER_NORMAL, LOGGER_TRACE, LOGGER_DEBUG,
  * LOGGER_DATA and LOGGER_ALL.
