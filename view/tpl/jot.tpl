@@ -475,7 +475,7 @@
 				{{/if}}
 				
 	  			{{if $embedPhotos}}
-				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud-icons me-1"></i>from the Cloud</button>
+				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud jot-icons me-1"></i>from the Cloud</button>
 				{{/if}}
       		</div>
       		<div class="modal-footer">
