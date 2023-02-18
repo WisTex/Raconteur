@@ -684,8 +684,7 @@ let postSaveTimer = null;
         $('#embedPhotoModalBodyAlbumDialog').off('click');
 	
         $('#embedFileModal').modal('show');
-		alert('made it to here');
-    };
+	};
 
 	/* end new function */
 
@@ -773,6 +772,7 @@ let postSaveTimer = null;
 	{{* start new getFileDirList *}}
 
 	let getFileDirList = function () {
+		alert('made it to here');
         $.post("embedphotos/albumlist", {},
             function(data) {
 				if (data['status']) {
