@@ -773,7 +773,7 @@ let postSaveTimer = null;
 
 	let getFileDirList = function () {
 		alert('made it to here');
-		$.post("embedfiles/albumlist", {},
+		$.post("embedphotos/albumlist", {},
             function(data) {
 				alert(JSON.stringify(data));
 				if (data['status']) {
