@@ -31,11 +31,20 @@ class Embedfiles extends Controller
 
         /* start add new */
 
-        if (local_channel()) {
-            $channel = App::get_channel();
+        
             $observer = App::get_observer();
+
+            $arr = get_defined_vars();
+
+	print("<pre>".print_r($arr,true)."</pre>");
+
+    exit;
+
+
+
+
         $result = attach_list_files($channel_id, $observer);
-        json_return_and_die(['status' => true, 'content' => $channel]);
+        json_return_and_die(['status' => true, 'content' => $result]);
 
         /* end add new */ 
 
