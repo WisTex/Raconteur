@@ -31,7 +31,7 @@ class Embedfiles extends Controller
 
         /* start add new */
 
-        $channel = get_channel();
+        $channel = App::get_channel();
         $observer = App::get_observer();
         $result = attach_list_files($channel_id, $observer);
         json_return_and_die(['status' => true, 'content' => $channel]);
