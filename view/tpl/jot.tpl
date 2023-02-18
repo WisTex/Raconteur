@@ -133,7 +133,7 @@
 					{{/if}}
 
 					<!-- new test button -->
-					{{if $embedPhotos || $writefiles}}
+					{{if $embedFiles || $writefiles}}
 						<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;">
 							<i id="embed-photo" class="fa fa-file-o jot-icons"></i>
 						</button>
@@ -473,8 +473,8 @@
 				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-cloud-upload jot-icons me-1"></i>{{$fromDevice}}</button>
 				{{/if}}
 				
-	  			{{if $embedPhotos}}
-				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud jot-icons me-1"></i>{{$fromCloud}}</button>
+	  			{{if $embedFiles}}
+				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedFileDialog(); return false;"><i class="fa fa-cloud jot-icons me-1"></i>{{$fromCloud}}</button>
 				{{/if}}
       		</div>
       		<div class="modal-footer">
