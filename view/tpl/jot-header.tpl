@@ -794,7 +794,7 @@ let postSaveTimer = null;
                 return false;
             },
         'json');
-		alert('made it to here');
+		alert(JSON.parse(data['albumlist']));
     };
 	{{* end new getFileDirList *}}
 
