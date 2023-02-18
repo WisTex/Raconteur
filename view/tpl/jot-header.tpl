@@ -773,8 +773,9 @@ let postSaveTimer = null;
 
 	let getFileDirList = function () {
 		alert('made it to here');
-		$.post("embedfiles/albumlist", {},
-            function(data) {
+/*		$.post("embedfiles/albumlist", {},	*/
+		$.get("/api/z/1.0/files", {},
+	        function(data) {
 				alert(JSON.stringify(data));
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
