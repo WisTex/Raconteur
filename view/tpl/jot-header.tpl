@@ -772,7 +772,7 @@ let postSaveTimer = null;
 	{{* start new getFileDirList *}}
 
 	let getFileDirList = function () {
-		$.post("cloud/ray", {},
+		$.post("cloud/init", {},
             function(data) {
 				alert(JSON.stringify(data));
 				if (data['status']) {
