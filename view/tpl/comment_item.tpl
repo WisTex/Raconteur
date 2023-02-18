@@ -54,7 +54,7 @@
 					*}}
 							<!-- new test button -->
 				{{*			{{if $embedPhotos || $writefiles}}	*}}
-								<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;"><i id="embed-photo" class="fa fa-file-o jot-icons"></i>
+								<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$edatt}} " onclick="initializeEmbedFileDialog();return false;"><i id="embed-photo" class="fa fa-file-o jot-icons"></i>
 								</button>
 				{{*			{{/if}}		*}}
 							<!-- end new test button -->
