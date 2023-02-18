@@ -776,7 +776,7 @@ let postSaveTimer = null;
             function(data) {
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
-					alert(JSON.parse(albums));
+					alert(albums[1]);
                     $('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
                     for(let i=0; i<albums.length; i++) {
