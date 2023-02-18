@@ -680,7 +680,7 @@ let postSaveTimer = null;
 		$('.embed-file-selected-file').each(function (index) {
             $(this).removeClass('embed-file-selected-file');
         });
-        getPhotoAlbumList();
+        getFileDirList();
         $('#embedPhotoModalBodyAlbumDialog').off('click');
 	
         $('#embedFileModal').modal('show');
@@ -768,6 +768,34 @@ let postSaveTimer = null;
             },
         'json');
     };
+
+	{{* start new getFileDirList *}}
+
+	let getFileDirList = function () {
+        $.post("embedphotos/albumlist", {},
+            function(data) {
+                if (data['status']) {
+                    let albums = data['albumlist']; //JSON.parse(data['albumlist']);
+                    $('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
+                    $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
+                    for(let i=0; i<albums.length; i++) {
+                        let albumName = albums[i].text;
+			let jsAlbumName = albums[i].jstext;
+			let albumLink = '<li class="nav-item">';
+			albumLink += '<a class="nav-link" href="#" onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">' + albumName + '</a>';
+                        albumLink += '</li>';
+                        $('#embedPhotoModalBodyAlbumList').find('ul').append(albumLink);
+                    }
+                    $('#embedPhotoModalBodyAlbumDialog').addClass('d-none');
+                    $('#embedPhotoModalBodyAlbumListDialog').removeClass('d-none');
+                } else {
+                    window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']);
+                }
+                return false;
+            },
+        'json');
+    };
+	{{* end new getFileDirList *}}
 
     //
     // initialize drag-drop
