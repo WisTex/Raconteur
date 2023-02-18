@@ -772,7 +772,8 @@ let postSaveTimer = null;
 	{{* start new getFileDirList *}}
 
 	let getFileDirList = function () {
-		$.post("cloud/init", {},
+/*		$.post("embedphotos/albumlist", {},	*/
+		$.get("cloud", {},
             function(data) {
 				alert(JSON.stringify(data));
 				if (data['status']) {
