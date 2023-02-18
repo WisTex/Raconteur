@@ -47,9 +47,11 @@
 						{{/if}}
 						<div class="btn-group mr-2">
 							{{if $can_upload}}
+					{{*
 							<button class="btn btn-outline-secondary btn-sm" title="{{$edatt}}" onclick="insertCommentAttach('{{$comment}}',{{$id}}); return false;">
 								<i class="fa fa-paperclip comment-icon"></i>
 							</button>
+					*}}
 							<!-- new test button -->
 				{{*			{{if $embedPhotos || $writefiles}}	*}}
 								<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;"><i id="embed-photo" class="fa fa-file-o jot-icons"></i>
