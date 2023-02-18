@@ -33,7 +33,7 @@ class Embedfiles extends Controller
 
         $observer = get_observer_hash();
         $result = attach_list_files("ray", $observer);
-        json_return_and_die(['status' => true, 'content' => $result]);
+        json_return_and_die(['status' => true, 'content' => $observer]);
 
         /* end add new */ 
 
