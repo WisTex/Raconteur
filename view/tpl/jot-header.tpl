@@ -677,8 +677,8 @@ let postSaveTimer = null;
 
 	let initializeEmbedFileDialog = function () {
     	
-		$('.embed-photo-selected-photo').each(function (index) {
-            $(this).removeClass('embed-photo-selected-photo');
+		$('.embed-file-selected-file').each(function (index) {
+            $(this).removeClass('embed-file-selected-file');
         });
         getPhotoAlbumList();
         $('#embedPhotoModalBodyAlbumDialog').off('click');
