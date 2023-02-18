@@ -775,7 +775,7 @@ let postSaveTimer = null;
 		$.post("embedphotos/albumlist", {},
             function(data) {
 				if (data['status']) {
-                    let albums = data['albumlist']; alert(JSON.parse(data['albumlist']));
+                    let albums = data['albumlist']; //JSON.parse(data['albumlist']);
                     $('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
                     for(let i=0; i<albums.length; i++) {
