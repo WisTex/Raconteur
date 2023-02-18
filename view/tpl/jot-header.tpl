@@ -772,8 +772,7 @@ let postSaveTimer = null;
 	{{* start new getFileDirList *}}
 
 	let getFileDirList = function () {
-		alert('made it to here');
-        $.post("embedphotos/albumlist", {},
+		$.post("embedphotos/albumlist", {},
             function(data) {
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
@@ -795,6 +794,7 @@ let postSaveTimer = null;
                 return false;
             },
         'json');
+		alert('made it to here');
     };
 	{{* end new getFileDirList *}}
 
