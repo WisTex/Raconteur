@@ -31,8 +31,8 @@ class Embedfiles extends Controller
 
         /* start add new */
 
-        $observer = App::get_observer();
-        $result = attach_list_files("ray", "ray");
+        $observer = get_observer_hash();
+        $result = attach_list_files("ray", $observer);
         json_return_and_die(['status' => true, 'content' => $result]);
 
         /* end add new */ 
