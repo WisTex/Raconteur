@@ -684,6 +684,7 @@ let postSaveTimer = null;
         $('#embedPhotoModalBodyAlbumDialog').off('click');
 	
         $('#embedFileModal').modal('show');
+		alert('made it to here');
     };
 
 	/* end new function */
