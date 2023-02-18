@@ -774,8 +774,7 @@ let postSaveTimer = null;
 	let getFileDirList = function () {
         $.post("embedphotos/albumlist", {},
             function(data) {
-				alert(JSON.parse(data));
-                if (data['status']) {
+				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
                     $('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
