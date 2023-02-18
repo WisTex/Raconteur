@@ -1831,8 +1831,6 @@ dl.bb-dl > dd > li {
 
 }
 
-
-
 .help-searchlist {
 	list-style-type: none;
 }
@@ -1842,6 +1840,12 @@ dl.bb-dl > dd > li {
 }
 
 .embed-photo-selected-photo {
+	border-color: blue;
+	border-style: solid;
+	border-width: 5px;
+}
+
+.embed-file-selected-file {
 	border-color: blue;
 	border-style: solid;
 	border-width: 5px;
