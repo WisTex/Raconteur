@@ -134,11 +134,10 @@
 
 					<!-- new test button -->
 					{{if $embedPhotos || $writefiles}}
-						<button id="new-embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;">
-							<i id="new-embed-photo" class="fa fa-file-o jot-icons"></i>
+						<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;">
+							<i id="embed-photo" class="fa fa-file-o jot-icons"></i>
 						</button>
 					{{/if}}
-
 					<!-- end new test button -->
 
 					<button type="button" id="profile-poll-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$poll}}" onclick="initPoll();">
