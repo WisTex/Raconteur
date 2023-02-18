@@ -14,11 +14,8 @@ require_once('include/photos.php');
 class Embedfiles extends Controller
 {
 
-    /**
-     *
-     * This is the POST destination for the embedfiles button
-     *
-     */
+    /** This is the POST destination for the embedfiles button */
+
     public function post()
     {
 
@@ -31,6 +28,17 @@ class Embedfiles extends Controller
         } else {
             $channel_id = local_channel();
         }
+
+        /* start add new */
+
+        $observer = App::get_observer();
+        $result = attach_list_files($channel_id, $observer);
+        json_return_and_die(['status' => true, 'content' => $result]);
+
+        /* end add new */ 
+
+
+
         if (argc() > 1 && argv(1) === 'album') {
             // API: /embedphotos/album
             $name = (x($_POST, 'name') ? $_POST['name'] : null);
