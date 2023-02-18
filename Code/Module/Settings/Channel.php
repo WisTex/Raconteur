@@ -444,7 +444,7 @@ class Channel
             '$h_basic' => t('Basic Settings'),
             '$channel_name' => ['channel_name', t('Full name'), $channel_name, ''],
             '$timezone' => ['timezone_select', t('Your timezone'), $timezone, t('This is important for showing the correct time on shared events'), get_timezones()],
-            '$defloc' => ['defloc', t('Default post location'), $defloc, t('Optional geographical location to display on your posts')],
+            '$defloc' => ['defloc', t('Default post location (place name)'), $defloc, t('Optional geographical location to display on your posts')],
             '$allowloc' => ['allow_location', t('Obtain post location from your web browser or device'), ((get_pconfig(local_channel(), 'system', 'use_browser_location')) ? 1 : ''), '', $yes_no],
             '$set_location' => [ 'set_location', t('Over-ride your web browser or device and use these coordinates (latitude,longitude)'), get_pconfig(local_channel(),'system','set_location')],
             '$adult' => ['adult', t('Adult content'), $adult_flag, t('Enable to indicate if this channel frequently or regularly publishes adult content. (Please also tag any adult material and/or nudity with #NSFW)'), $yes_no],
