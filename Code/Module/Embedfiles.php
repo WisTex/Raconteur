@@ -31,7 +31,7 @@ class Embedfiles extends Controller
 
         /* start add new */
 
-       // $channel_id = ((isset(self::$profile) && is_array(self::$profile) && array_key_exists('uid',self::$profile)) ? self::$profile['uid'] : '');
+        $channel_id = local_channel();
 
         $observer = App::get_observer();
         $result = attach_list_files($channel_id, $observer);
