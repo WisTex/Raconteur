@@ -11,12 +11,12 @@ use Code\Render\Theme;
 require_once('include/attach.php');
 require_once('include/photos.php');
 
-class Embedphotos extends Controller
+class Embedfiles extends Controller
 {
 
     /**
      *
-     * This is the POST destination for the embedphotos button
+     * This is the POST destination for the embedfiles button
      *
      */
     public function post()
