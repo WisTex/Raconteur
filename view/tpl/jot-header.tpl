@@ -676,14 +676,9 @@ let postSaveTimer = null;
 	/* start new function */
 
 	let initializeEmbedFileDialog = function () {
-    	
-		$('.embed-file-selected-file').each(function (index) {
-            $(this).removeClass('embed-file-selected-file');
-        });
+    			
         getFileDirList();
-    /*    $('#embedFileDirModal').off('click'); */
-	
-        $('#embedFileModal').modal('show');
+    	$('#embedFileModal').modal('show');
 	};
 
 	/* end new function */
