@@ -774,12 +774,10 @@ let postSaveTimer = null;
 	let getFileDirList = function () {
 		alert('made it to here');
 /*		$.post("embedfiles", {},	*/
-		$.post("cloud", {},
+		$.post("cloud/#region_2", {},
 		        function(data) {
 	/*			alert(JSON.stringify(data));	*/
-	let $data = $(data);
-	let result = $data.find("#region_2").html();
-				alert(result);
+				alert(data);
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
