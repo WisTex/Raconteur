@@ -772,7 +772,7 @@ let postSaveTimer = null;
 		$.post("cloud", {},
 		        function(data) {
 	let $data = $(data);
-	let result = $(data).html();
+	let result = $data.getElementById("region_2").html();
 				alert(result);
 				$('#embedFileDirModalBody').html(result);
 				if (data['status']) {
