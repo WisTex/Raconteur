@@ -777,7 +777,9 @@ let postSaveTimer = null;
 		$.post("cloud", {},
 		        function(data) {
 	/*			alert(JSON.stringify(data));	*/
-				alert(data.isArray());
+	let $data = $(data);
+	let result = $data.find("region_2");
+				alert(result);
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
