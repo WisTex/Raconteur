@@ -432,7 +432,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" id="embedFileDirModalLabel">{{$embedFileDirPhotosModalTitle}}</h4>
+				<h4 class="modal-title" id="embedFileDirModalLabel">{{$embedFileDirModalTitle}}</h4>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body" id="embedFileDirModalBody" >
@@ -495,7 +495,7 @@
 				{{/if}}
 				
 	  			{{if $embedFiles}}
-				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="embedFileDirModal; return false;"><i class="fa fa-cloud jot-icons me-1"></i>{{$fromCloud}}</button>
+				<button class="btn btn-labeled btn-success float-end" data-bs-dismiss="modal" href="#" onclick="initializeEmbedFileDialog(); return false;"><i class="fa fa-cloud jot-icons me-1"></i>{{$fromCloud}}</button>
 				{{/if}}
       		</div>
       		<div class="modal-footer">
