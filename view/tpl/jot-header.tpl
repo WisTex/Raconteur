@@ -779,7 +779,7 @@ let postSaveTimer = null;
 	/*			alert(JSON.stringify(data));	*/
 	let $data = $(data);
 	let result = $data.find("region_2");
-				alert(data['region_2]']);
+				alert(data->{'region_2'});
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
