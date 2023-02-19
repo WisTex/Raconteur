@@ -681,7 +681,7 @@ let postSaveTimer = null;
             $(this).removeClass('embed-file-selected-file');
         });
         getFileDirList();
-        $('#embedFileDirModal').off('click');
+    /*    $('#embedFileDirModal').off('click'); */
 	
         $('#embedFileModal').modal('show');
 	};
