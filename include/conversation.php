@@ -1286,6 +1286,7 @@ function z_status_editor($x, $popup = false)
         '$insertFile' => $insertFile,
         '$fromDevice' => $fromDevice,
         '$fromCloud' => $fromCloud,
+        '$embedFileDirModalTitle' => t('Embed a file from your cloud'),
         '$embedPhotos' => $embedPhotos,
         '$embedPhotosModalTitle' => t('Embed an image from your albums'),
         '$embedPhotosModalCancel' => t('Cancel'),
