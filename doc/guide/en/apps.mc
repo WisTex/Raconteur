@@ -1,3 +1,11 @@
+Apps
+====
+
+Apps are the primary method of interaction with this software. Every channel is provided a collection of "System apps" which perfom specific and important functions. There are more apps available on the "Available apps" page which provide additional functionality and options. Once an app is installed, its functionality is available for you to use. 
+
+In the [Apps page]([baseurl]/apps), you can view and manage your app collection. Buttons are also available to add the app to the main app menu as well as the top bar of the application if you find that you use them regularly.
+
+
 Available apps
 ===============
 
@@ -15,7 +23,7 @@ This app allows you to create and manage Oauth2 access credentials, which are ty
 
 ### Comment Control
 
-This app lets you control the ability to comment on your posts. You can choose to disable comments, disable comments after a specific date/time, and select different audiences who are given comment permission. For example 'anybody' or 'just my friends'. Disallowed comments will be rejected by your website/instance. Whether or not the sender is notified of these rejections is dependent on their own software capabilities.
+This app lets you control the ability to comment on your posts. You can choose to disable comments, disable comments after a specific date/time, and select different audiences who are given comment permission. For example 'anybody' or 'just my friends'. Incoming comments will be rejected by your website/instance if they are not allowed. Whether or not the sender is notified of these rejections is dependent on their own software capabilities.
 
 ### Connections
 

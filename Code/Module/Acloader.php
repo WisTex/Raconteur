@@ -166,6 +166,7 @@ class Acloader extends Controller
                 if ($r2) {
                     $r = array_merge($r, $r2);
                     $r = unique_multidim_array($r, 'hash');
+                    $r = unique_multidim_array($r, 'nick');
                 }
             }
         } elseif ($type == 'm') {
