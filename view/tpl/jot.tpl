@@ -435,11 +435,8 @@
 				<h4 class="modal-title" id="embedFileDirModalLabel">{{$embedFileDirModalTitle}}</h4>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-			<div class="modal-body" id="embedFileDirModalBody" > "hello world"
-				<div id="embedFileDirModalBodyDirListDialog" class="d-none">
-						<div id="embedFileDirModalBodyDirList"></div>
-				</div>
-				<div id="embedFileDirModalBodyDirDialog" class="d-none"></div>
+			<div class="modal-body" id="embedFileDirModalBody" >
+				"hello world"
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
