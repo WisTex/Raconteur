@@ -770,7 +770,7 @@ let postSaveTimer = null;
 		alert('made it to here');
 		$.post("embedfiles", {},
 		        function(data) {
-				alert(JSON.Stringify(data));
+				alert(JSON.stringify(data));
 				$('#embedFileDirModalBody').html(JSON.Stringify(data));
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
