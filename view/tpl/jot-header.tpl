@@ -773,7 +773,7 @@ let postSaveTimer = null;
 		        function(data) {
 	/*			alert(JSON.stringify(data));	*/
 	let $data = $(data);
-	let result = $data.find("#main").html();
+	let result = $data.find("#region_2").html();
 				alert(result);
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
