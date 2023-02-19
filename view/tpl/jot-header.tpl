@@ -768,14 +768,11 @@ let postSaveTimer = null;
 
 	let getFileDirList = function () {
 		alert('made it to here');
-/*		$.post("embedfiles", {},	*/
+		$.post("embedfiles", {},
 		$.post("cloud", {},
 		        function(data) {
-	let $data = $(data);
-	let result = $(data).html();
-	let htm = result.getElementById("region_2");
-				alert(htm);
-				$('#embedFileDirModalBody').html(result);
+				alert(JSON.Stringify(data));
+				$('#embedFileDirModalBody').html(JSON.Stringify(data));
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
@@ -795,8 +792,7 @@ let postSaveTimer = null;
                 }
                 return false;
             },
- /*       'json');	*/
-		'html');
+        'json');
 	};
 	{{* end new getFileDirList *}}
 
