@@ -776,7 +776,8 @@ let postSaveTimer = null;
 /*		$.post("embedfiles", {},	*/
 		$.post("cloud", {},
 		        function(data) {
-				alert(JSON.stringify(data));
+	/*			alert(JSON.stringify(data));	*/
+				alert(data);
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
@@ -796,7 +797,8 @@ let postSaveTimer = null;
                 }
                 return false;
             },
-        'json');
+ /*       'json');	*/
+		'html');
 	};
 	{{* end new getFileDirList *}}
 
