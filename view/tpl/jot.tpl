@@ -426,6 +426,27 @@
 </div><!-- /.modal -->
 {{/if}}
 
+{{* start new embedFileDirModal *}}
+{{if $embedFiles}}
+<div class="modal" id="embedFileDirModal" tabindex="-1" role="dialog" aria-labelledby="embedFileDirModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="embedFileDirModalLabel">{{$embedPhotosModalTitle}}</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="embedFileDirModalBody" >
+				<div id="embedFileDirModalBodyDirListDialog" class="d-none">
+						<div id="embedFileDirModalBodyDirList"></div>
+				</div>
+				<div id="embedFileDirModalBodyDirDialog" class="d-none"></div>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{{/if}}
+{{* end new embedFileDirModal *}}
+
 {{if $weblink}}
 <div class="modal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
