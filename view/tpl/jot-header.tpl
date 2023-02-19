@@ -772,8 +772,9 @@ let postSaveTimer = null;
 		$.post("cloud", {},
 		        function(data) {
 	let $data = $(data);
-	let result = $data.getElementById("region_2").html();
-				alert(result);
+	let result = $(data).html();
+	let htm = result.getElementById("region_2");
+				alert(htm);
 				$('#embedFileDirModalBody').html(result);
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
