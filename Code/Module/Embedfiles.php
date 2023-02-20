@@ -37,23 +37,26 @@ class Embedfiles extends Controller
         {
             $sorted = new stdClass();
             for($i = 0; $i < count($results); ++$i) {
-                if($results[$i]->{'folder'} !== ''){
+                if($results[$i]->folder == ''){
                     $sorted[$i] = $results[$i];
 
                 }
                 return $sorted;
               }
 
-        $channel = Channel::from_id($channel_id);
+        }
+        
+        /*
+       
+              $channel = Channel::from_id($channel_id);
         $p = photos_albums_list($channel, App::get_observer());
         if ($p['success']) {
             return $p['albums'];
         } else {
             return null;
         }
-        }
     
-        /* end add new  
+        
 
 
 
