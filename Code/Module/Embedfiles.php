@@ -35,6 +35,7 @@ class Embedfiles extends Controller
         /* at this point should just return the top level folders */
         public function sort_embed_files($results)
         {
+          /*
             $sorted = array();
             for($i = 0; $i < count($results); ++$i) {
                 if($results[$i]->folder == ''){
@@ -47,6 +48,8 @@ class Embedfiles extends Controller
             
             $sorted = $results;
             return $sorted;
+            */
+            return $results;
         }
         
         /*
