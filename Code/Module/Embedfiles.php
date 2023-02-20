@@ -37,7 +37,7 @@ class Embedfiles extends Controller
         {
             $sorted = new stdClass();
             for($i = 0; $i < count($results); ++$i) {
-                if($results[$i]->folder == ''){
+                if($results[$i]->folder !== ''){
                     $sorted[$i] = $results[$i];
 
                 }
