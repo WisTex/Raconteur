@@ -771,7 +771,10 @@ let postSaveTimer = null;
 		$.post("embedfiles", {},
 		        function(data) {
 				alert(JSON.stringify(data));
-				$('#embedFileDirModalBody').html(JSON.Stringify(data));
+
+
+
+				$('#embedFileDirModalBody').html(`<div> ${JSON.Stringify(data)} </div>`);
 				if (data['status']) {
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
