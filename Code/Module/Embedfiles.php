@@ -27,9 +27,33 @@ class Embedfiles extends Controller
         $orderby = 'folder asc';
         /* $result = attach_list_files($channel_id, $observer, $orderby); */
         $result = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
+        sort_embedfiles($result);
         json_return_and_die(['status' => true, 'content' => $result]);
 
-        /* end add new */ 
+    }
+
+        /* at this point should just return the top level folders */
+        public function sort_embedfiles($result)
+        {
+            $sorted = new stdClass();
+            foreach ($result as $sort) {
+                if($sort->folder = ''){
+                    $sorted->$sort = $sort;
+
+                }
+                return $sorted;
+              }
+
+        $channel = Channel::from_id($channel_id);
+        $p = photos_albums_list($channel, App::get_observer());
+        if ($p['success']) {
+            return $p['albums'];
+        } else {
+            return null;
+        }
+        }
+    
+        /* end add new  
 
 
 
