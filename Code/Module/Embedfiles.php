@@ -25,7 +25,8 @@ class Embedfiles extends Controller
         $channel_id = $channel['channel_id'];
         $observer = get_observer_hash();
         $orderby = 'folder asc';
-        $result = attach_list_files($channel_id, $observer, $orderby);
+        /* $result = attach_list_files($channel_id, $observer, $orderby); */
+        $result = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
         json_return_and_die(['status' => true, 'content' => $result]);
 
         /* end add new */ 
