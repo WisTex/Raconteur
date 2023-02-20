@@ -27,7 +27,7 @@ class Embedfiles extends Controller
         $orderby = 'folder asc';
         
         $results = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
-        $results = sort_embed_files($result);
+        $results = sort_embed_files($results);
         json_return_and_die(['status' => true, 'content' => $results]);
 
     }
@@ -38,7 +38,7 @@ class Embedfiles extends Controller
             $sorted = new stdClass();
             for($i = 0; $i < count($results); ++$i) {
                 if($results[$i]->folder = ''){
-                    $sorted[$i] = $result;
+                    $sorted[$i] = $results[$i];
 
                 }
                 return $sorted;
