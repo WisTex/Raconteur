@@ -39,11 +39,11 @@ class Embedfiles extends Controller
             for($i = 0; $i < count($results); ++$i) {
                 if($results[$i]->folder == ''){
                     $sorted[$i] = $results[$i];
+                    $sorted[$i] = 'testing 123';
 
                 }
                 
               }
-            $sorted = 'testing 123';
             return $sorted;
         }
         
