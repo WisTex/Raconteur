@@ -25,20 +25,20 @@ class Embedfiles extends Controller
         $channel_id = $channel['channel_id'];
         $observer = get_observer_hash();
         $orderby = 'folder asc';
-        /* $result = attach_list_files($channel_id, $observer, $orderby); */
-        $result = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
-        $result = sort_embedfiles($result);
-        json_return_and_die(['status' => true, 'content' => $result]);
+        
+        $results = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
+        $results = sort_embed_files($result);
+        json_return_and_die(['status' => true, 'content' => $results]);
 
     }
 
         /* at this point should just return the top level folders */
-        public function sort_embedfiles($result)
+        public function sort_embed_files($results)
         {
             $sorted = new stdClass();
-            foreach ($result as $sort) {
-                if($sort->folder = ''){
-                    $sorted->$sort = $sort;
+            for($i = 0; $i < count($results); ++$i) {
+                if($results[$i]->folder = ''){
+                    $sorted[$i] = $result;
 
                 }
                 return $sorted;
