@@ -772,7 +772,7 @@ let postSaveTimer = null;
 		        function(data) {
 				alert(JSON.stringify(data));
 
-				let result = data['content']['results']['2']['display_path'];
+				let result = data['content']['results']['12']['display_path'];
 
 
 				$('#embedFileDirModalBody').html('<div>' + result + '</div>');
