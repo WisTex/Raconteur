@@ -44,7 +44,8 @@ class Embedfiles extends Controller
                 }
                 
               }
-            $sorted[0] = 'testing 123';
+            
+            $sorted = $results;
             return $sorted;
         }
         
