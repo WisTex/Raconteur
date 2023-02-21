@@ -55,16 +55,8 @@ class Embedfiles extends Controller
                         }
                         
                     }
-                    /*
-                    $this->get_embed_files($results, $sorted, $i);
-                    $i = $return[$i];
-                    $sorted = $return[$sorted];
-                    $this->get_embed_subfolders($results, $sorted, $i);
-                    $i = $return[$i];
-                    $sorted = $return[$sorted];
-                    */
                 }
-                $i = count($sorted);
+               // $i = count($sorted);
             }
             return $sorted;
         }
