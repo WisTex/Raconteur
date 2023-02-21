@@ -47,8 +47,10 @@ class Embedfiles extends Controller
                     $sorted[$i] = $result;
                     $this->get_embed_files($results, $sorted, $i);
                     $i = $return[$i];
+                    $sorted = $return[$sorted];
                     $this->get_embed_subfolders($results, $sorted, $i);
                     $i = $return[$i];
+                    $sorted = $return[$sorted];
                 }
                 
                 /* elseif ($result['folder'] !== "" && $result['is_dir'] == 1) {
