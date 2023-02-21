@@ -43,7 +43,7 @@ class Embedfiles extends Controller
             foreach ($results as $result) {
                 
                 
-                    $sorted[$i] = is_object($result);
+                    $sorted[$i] = is_array($result);
                 
                 $i++;
             }
