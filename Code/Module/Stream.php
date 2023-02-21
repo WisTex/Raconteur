@@ -677,12 +677,8 @@ class Stream extends Controller
             }
 
             $ids = ids_to_array($items, 'item_id');
-            $seen = PConfig::Get(local_channel(), 'system', 'seen_items');
-            if (!$seen) {
-                $seen = [];
-            }
-            $seen = array_merge($ids, $seen);
-            PConfig::Set(local_channel(), 'system', 'seen_items', $seen);
+            $seen = PConfig::Get(local_channel(), 'system', 'seen_items', []);
+            PConfig::Set(local_channel(), 'system', 'seen_items', array_merge($ids, $seen));
         }
 
         $mode = (($nouveau) ? 'stream-new' : 'stream');

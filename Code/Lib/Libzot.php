@@ -1292,7 +1292,7 @@ class Libzot
             $deliveries = self::public_recips($env, $AS);
         }
 
-        $deliveries = array_unique($deliveries);
+        $deliveries = array_values(array_unique($deliveries));
 
         if (!$deliveries) {
             logger('No deliveries on this site');
