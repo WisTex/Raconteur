@@ -30,13 +30,13 @@ class Embedfiles extends Controller
         $success = $results['success'];
         $results = $results['results'];
         $count = count($results);
-        $sorted = $this->sort_embed_files($results);
+        $sorted = $this->get_embed_folders($results);
         json_return_and_die(['success' => $success, 'content' => $sorted]);
 
     }
 
         /* at this point should just return the top level folders */
-        public function sort_embed_files($results)
+        public function get_embed_folders($results)
         {
             $sorted = array();
             $i = 0;
@@ -52,21 +52,25 @@ class Embedfiles extends Controller
                     foreach($sorted as $parent) {
 
                         if($result['folder'] === $parent['hash']) {
-                    
-                        /*  $sorted[$i]['subfolder'][$sf] = $result;    */
-                        $sorted[$i] = $result;
-
-                                            
+                            $sorted[$i] = $result;
                         }
                         $sf++;
                     }
                     
-                } else {
+                }else {
                     
                 }
                 $i++;
             }
             return $sorted;
+        }
+
+        public function get_embed_files($results) {
+            return;
+        }
+
+        public function get_embed_subfolders($results) {
+            return;
         }
     
         
