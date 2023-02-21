@@ -50,7 +50,20 @@ class Embedfiles extends Controller
                         if($result['folder'] === $sorted[$i]['hash']) {
                             $i++;
                             $sorted[$i] = $result;
-                            unset($result);
+
+                            if($result['is_dir'] == 1) {
+
+                                foreach($results as $result) {
+                                    if($result['folder'] === $sorted[$i]['hash']) {
+                                        $i++;
+                                        $sorted[$i] = $result;
+
+                                    }
+
+                                }
+
+                            }
+                            // unset($result);
                         }
                         
                     }
@@ -63,7 +76,7 @@ class Embedfiles extends Controller
                     $sorted = $return[$sorted];
                     */
                 }
-                $i = count($sorted) - 1;
+                $i = count($sorted);
             }
             return $sorted;
         }
