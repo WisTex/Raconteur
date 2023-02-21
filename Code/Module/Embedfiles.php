@@ -42,7 +42,7 @@ class Embedfiles extends Controller
             $i = 0;
             foreach ($results as $result) {
                 
-                if($result->is_dir == 1) {
+                if($result->is_dir == "1") {
                     $sorted[$i] = $result;
                 }
                 $i++;
