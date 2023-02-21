@@ -44,7 +44,14 @@ class Embedfiles extends Controller
             foreach ($results as $result) {
                 
                 if($result['folder'] == "") {
-                    array_push($sorted, $result);
+                    $sorted[$i] = $result;
+                    foreach ($results as $result) {
+                        if($result['folder'] === $sorted[$i]['hash']) {
+                            $i++;
+                            $sorted[$i] = $result;
+                        }
+                        
+                    }
                     /*
                     $this->get_embed_files($results, $sorted, $i);
                     $i = $return[$i];
@@ -54,7 +61,7 @@ class Embedfiles extends Controller
                     $sorted = $return[$sorted];
                     */
                 }
-                $i++;
+               // $i++;
             }
             return $sorted;
         }
