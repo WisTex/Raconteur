@@ -45,6 +45,8 @@ class Embedfiles extends Controller
                 
                 if($result['folder'] == "") {
                     $sorted[$i] = $result;
+                    $this->get_embed_files($results);
+                    $this->get_embed_subfolders($results);
                 }elseif ($result['folder'] !== "" && $result['is_dir'] == 1) {
                         /*  $sorted[2][$sf] = $result;  */
                 
