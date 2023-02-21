@@ -24,7 +24,7 @@ class Embedfiles extends Controller
         $channel = App::get_channel();
         $channel_id = $channel['channel_id'];
         $observer = get_observer_hash();
-        $orderby = 'folder asc';
+        $orderby = 'is_dir desc';
         
         $results = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
         $success = $results['success'];
@@ -41,10 +41,11 @@ class Embedfiles extends Controller
             $sorted = array();
             $i = 0;
             foreach ($results as $result) {
-              
+                
+                if($result->folder == "") {
                     $sorted[$i] = $result;
                     $i++;
-                
+                }
             }
             return $sorted;
         }
