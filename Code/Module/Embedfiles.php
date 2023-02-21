@@ -37,14 +37,14 @@ class Embedfiles extends Controller
         function sort_embed_files($results)
         {
             $sorted = array();
-            for($i = 0; $i < $results; ++$i) {
-                if($results[$i]->folder == ''){
-                    $sorted[$i] = $results[$i];
+            $i = 0;
+            foreach ($results as $result) {
+                if($result->folder == ''){
+                    $sorted[$i] = $result;
+                    $i++;
                 }
-                
-              }
-            $sorted = $results;
-        
+            }
+            return $sorted;
         }
         
         /*
