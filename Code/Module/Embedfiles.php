@@ -61,7 +61,7 @@ class Embedfiles extends Controller
                     $sorted = $return[$sorted];
                     */
                 }
-               // $i++;
+                $i++;
             }
             return $sorted;
         }
