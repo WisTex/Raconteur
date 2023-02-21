@@ -49,11 +49,11 @@ class Embedfiles extends Controller
                         /*  $sorted[2][$sf] = $result;  */
                 
                     
-                    foreach($sorted as $parent) {
+                    foreach($sorted[$sf] as $parent) {
 
                         if($result['folder'] === $parent['hash']) {
                     
-                        $sorted[$parent]['subfolder'][$sf] = $result;
+                        $sorted[$sf]['subfolder'][$sf] = $result;
 
                                             
                         }
