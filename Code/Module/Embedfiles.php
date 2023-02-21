@@ -28,7 +28,7 @@ class Embedfiles extends Controller
         
         $results = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
         $sorted = $this->sort_embed_files($results);
-        json_return_and_die(['status' => true, 'content' => $results]);
+        json_return_and_die(['status' => true, 'content' => $results['results']]);
 
     }
 
