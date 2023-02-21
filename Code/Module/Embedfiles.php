@@ -43,8 +43,7 @@ class Embedfiles extends Controller
             $sf = 0;
             foreach ($results as $result) {
                 
-        //        if($result['folder'] == "") {
-                if($result['is_dir'] == 1) {
+                if($result['folder'] == "") {
                     $sorted[$i] = $result;
                     // unset($result);
                     foreach ($results as $result) {
@@ -57,7 +56,7 @@ class Embedfiles extends Controller
                         
                     }
                 }
-               // $i = count($sorted);
+                $i = count($sorted);
             }
             return $sorted;
         }
