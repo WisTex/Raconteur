@@ -31,7 +31,7 @@ class Embedfiles extends Controller
         $results = $results['results'];
         $count = count($results);
         $sorted = $this->sort_embed_files($results);
-        json_return_and_die(['success' => $success, 'content' => $count]);
+        json_return_and_die(['success' => $success, 'content' => $sorted]);
 
     }
 
