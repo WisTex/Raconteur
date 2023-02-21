@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 23.02.15\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-14 11:26-0800\n"
+"POT-Creation-Date: 2023-02-17 19:01-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -469,7 +469,7 @@ msgid "Create an account"
 msgstr ""
 
 #: Code/Lib/Navbar.php:169 Code/Lib/Libacl.php:134 Code/Lib/Apps.php:406
-#: Code/Module/Connections.php:378 Code/Module/Search.php:116
+#: Code/Module/Connections.php:378 Code/Module/Search.php:119
 #: Code/Widget/Sitesearch.php:35 include/misc.php:1024 include/misc.php:1036
 msgid "Search"
 msgstr ""
@@ -2933,7 +2933,7 @@ msgstr ""
 #: Code/Module/Admin/Themes.php:79 Code/Module/Admin/Addons.php:265
 #: Code/Module/Display.php:59 Code/Module/Display.php:508
 #: Code/Module/Admin.php:100 Code/Module/Inspect.php:31
-#: Code/Module/Filestorage.php:41 Code/Module/Search.php:447
+#: Code/Module/Filestorage.php:41 Code/Module/Search.php:450
 #: Code/Module/Viewsrc.php:29 Code/Module/Thing.php:110 Code/Module/Dev.php:61
 #: extend/addon/a/flashcards/Mod_Flashcards.php:285
 #: extend/addon/a/flashcards/Mod_Flashcards.php:286
@@ -7301,12 +7301,12 @@ msgstr ""
 msgid "No entries (some entries may be hidden)."
 msgstr ""
 
-#: Code/Module/Search.php:326
+#: Code/Module/Search.php:329
 #, php-format
 msgid "Items tagged with: %s"
 msgstr ""
 
-#: Code/Module/Search.php:329
+#: Code/Module/Search.php:332
 #, php-format
 msgid "Search results for: %s"
 msgstr ""
@@ -8042,7 +8042,7 @@ msgstr ""
 msgid "ActivityPub Probe Diagnostic"
 msgstr ""
 
-#: Code/Module/Acloader.php:259
+#: Code/Module/Acloader.php:260
 msgid "network"
 msgstr ""
 
@@ -9082,7 +9082,7 @@ msgid "This is important for showing the correct time on shared events"
 msgstr ""
 
 #: Code/Module/Settings/Channel.php:447
-msgid "Default post location"
+msgid "Default post location (place name)"
 msgstr ""
 
 #: Code/Module/Settings/Channel.php:447

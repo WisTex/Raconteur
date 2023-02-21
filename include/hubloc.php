@@ -359,6 +359,14 @@ function hublocx_id_query($s, $limit = 0) {
     return $r;
 }
 
+function get_hubloc_id_urls_by_portable_id($xchan) {
+    $r = q("SELECT hubloc_id_url FROM hubloc WHERE hubloc_deleted = 0 AND hubloc_hash = '%s' order by hubloc_primary desc",
+        dbesc($xchan)
+    );
+    return flatten_array_recursive($r);
+}
+
+
 function hubloc_id_addr_query($s, $limit = 0) {
 
     if ($limit) {

@@ -698,22 +698,22 @@ function attribute_contains($attr, $s)
 }
 
 /**
- * @brief Logging function for Hubzilla.
+ * @brief Create a log message.
  *
- * Logging output is configured through Hubzilla's system config. The log file
- * is set in system logfile, log level in system loglevel and to enable logging
- * set system debugging.
+ * Logging is configured through the site config. The log file
+ * is set in system.logfile, log level in system.loglevel and to enable logging
+ * set system.debugging.
  *
  * Available constants for log level are LOGGER_NORMAL, LOGGER_TRACE, LOGGER_DEBUG,
  * LOGGER_DATA and LOGGER_ALL.
  *
- * Since PHP5.4 we get the file, function and line automatically where the logger
- * was called, so no need to add it to the message anymore.
  *
  * @param string $msg Message to log
  * @param int $level A log level
  * @param int $priority - compatible with syslog
  */
+
+
 function logger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
 {
 
@@ -731,6 +731,7 @@ function logger($msg, $level = LOGGER_NORMAL, $priority = LOG_INFO)
         return;
     }
 
+    // Get a backtrace to report the calling function.
     $stack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
     $where = basename($stack[0]['file']) . ':' . $stack[0]['line'] . ':' . $stack[1]['function'] . ': ';
 
