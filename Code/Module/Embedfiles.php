@@ -48,9 +48,9 @@ class Embedfiles extends Controller
                     // unset($result);
                     foreach ($results as $result) {
                         if($result['folder'] === $sorted[$i]['hash']) {
-                            $i++;
-                            $sorted[$i] = $result;
-
+                            //$i++;
+                            //$sorted[$i] = $result;
+                            array_push($sorted, $result);
                             // unset($result);
                         }
                         
