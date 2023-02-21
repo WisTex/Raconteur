@@ -54,7 +54,7 @@ class Embedfiles extends Controller
                         if($result['folder'] === $parent['hash']) {
                     
                         /*  $parent[$sf] = $result; */
-                        $parent['subfolder'][$sf] = $result;
+                        $parent->subfolder->$sf = $result;
 
                                             
                         }
