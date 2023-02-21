@@ -31,7 +31,7 @@ class Embedfiles extends Controller
         $results = sort_embed_files($results);
         json_return_and_die(['status' => true, 'count' => $arr_length, 'content' => $results,]);
 
-    }
+    
 
         /* at this point should just return the top level folders */
         function sort_embed_files($results)
@@ -46,6 +46,7 @@ class Embedfiles extends Controller
             }
             return $sorted;
         }
+    }
         
         /*
        
