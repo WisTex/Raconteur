@@ -53,7 +53,7 @@ class Embedfiles extends Controller
 
                         if($result['folder'] === $parent['hash']) {
                     
-                        $sorted[$i]['subfolder'][$sf] = $result;
+                        $sorted[$parent]['subfolder'][$sf] = $result;
 
                                             
                         }
