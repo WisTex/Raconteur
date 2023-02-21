@@ -47,17 +47,18 @@ class Embedfiles extends Controller
                     $sorted[$i] = $result;
                 }elseif ($result['folder'] !== "" && $result['is_dir'] == 1) {
                     $sorted[$i] = $result;
-                /*
+                
                     foreach($sorted as $parent) {
 
                         if($result['folder'] === $parent->hash) {
                     
-                        $parent->$sf = $result;
+                    /*    $parent->$sf = $result;   */
+                        $parent = $result;
                     
                         }
                         $sf++;
                     }
-                */
+                
                 } else {
                     
                 }
