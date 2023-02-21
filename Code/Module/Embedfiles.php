@@ -40,7 +40,7 @@ class Embedfiles extends Controller
             $i = 0;
             foreach ($results as $result) {
               
-                    $sorted[$i] = $result->$id;
+                    $sorted[$i] = $result;
                     $i++;
                 
             }
