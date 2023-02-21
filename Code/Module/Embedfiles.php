@@ -57,10 +57,10 @@ class Embedfiles extends Controller
                         }
                         $sf++;
                     }
+                */
                 } else {
                     
                 }
-                */
                 $i++;
             }
             return $sorted;
