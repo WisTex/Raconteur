@@ -46,7 +46,7 @@ class Embedfiles extends Controller
                 if($result['folder'] == "") {
                     $sorted[$i] = $result;
                     $this->get_embed_files($results, $sorted, $i);
-                    $this->get_embed_subfolders($results);
+                    $this->get_embed_subfolders($results, $sorted, $i);
                 }elseif ($result['folder'] !== "" && $result['is_dir'] == 1) {
                         /*  $sorted[2][$sf] = $result;  */
                 
@@ -77,8 +77,14 @@ class Embedfiles extends Controller
             }
         }
 
-        public function get_embed_subfolders($results) {
-            return;
+        public function get_embed_subfolders($results, $sorted, $i) {
+            foreach ($results as $result) {
+                if($result['folder'] === $sorted[$i]['hash'] && $result['is_dir'] == 1) {
+                    $i++;
+                    $sorted[$i] = $result;
+                }
+                return $sorted[$i];
+            }
         }
     
         
