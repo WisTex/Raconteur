@@ -773,7 +773,7 @@ let postSaveTimer = null;
 				
 				let success = data.success;
 				let results = data.content;
-				let path = results['0'].display_path;
+				let path = results[0].display_path;
 				
 				alert(`Success: ${success}`);
 				alert(results);
@@ -781,7 +781,7 @@ let postSaveTimer = null;
 
 				if (data.success) {
 					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
-					
+
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
