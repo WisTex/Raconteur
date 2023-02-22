@@ -768,7 +768,7 @@ let postSaveTimer = null;
 
 	let getFileDirList = function () {
 		$.post("embedfiles", {},
-		        function(data) {
+		    function(data) {
 				alert(JSON.stringify(data));
 				
 				let success = data.success;
@@ -796,7 +796,7 @@ let postSaveTimer = null;
                     $('#embedPhotoModalBodyAlbumDialog').addClass('d-none');
                     $('#embedPhotoModalBodyAlbumListDialog').removeClass('d-none');
                 } else {
-                    window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']);
+                    window.console.log(`{{$modalerrorlist}} : data['errormsg']`);
                 }
                 return false;
             },
