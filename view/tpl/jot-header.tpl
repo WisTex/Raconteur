@@ -781,14 +781,14 @@ let postSaveTimer = null;
 
 				if (data.success) {
 					
-					let content;
+					let content = '';
 					alert(`Content length: ${content.length}`);
 
 
 					for(let i=0; i<results.length; i++) {
 
-						let content = results[i].is_dir === '1' ? 'directory' : 'file';
-						alert(content);
+					//	let content = results[i].is_dir === '1' ? 'directory' : 'file';
+					//	alert(content);
 
 					}
 
