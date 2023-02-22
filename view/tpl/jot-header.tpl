@@ -772,7 +772,7 @@ let postSaveTimer = null;
 				alert(JSON.stringify(data));
 				console.log(JSON.stringify(data));
 
-				let result = data['content'][0][display_path];
+				let result = data['content'][0]['display_path'];
 				let results = JSON.parse(data.content.0.display_path);
 				let success = JSON.parse(data.success);
 				alert(`Success: ${success}`);
