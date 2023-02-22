@@ -771,18 +771,17 @@ let postSaveTimer = null;
 		        function(data) {
 				alert(JSON.stringify(data));
 				
-				// let $data = data;
-
+				let success = data.success;
 				let results = data.content;
 				let path = results['0'].display_path;
-				let success = data.success;
+				
 				alert(`Success: ${success}`);
 				alert(results);
 				alert(path);
 
-
-				$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
-				if (data['status']) {
+				if (data.success) {
+					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
+					
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
