@@ -784,7 +784,7 @@ let postSaveTimer = null;
 
 					for(let i=0; i<results.length; i++) {
 
-						let content = (results[0].is_dir) ? 'directory' : 'file';
+						let content = (results[i].is_dir) ? 'directory' : 'file';
 						alert(content);
 
 					}
@@ -792,7 +792,7 @@ let postSaveTimer = null;
 					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
 					// end new loop
 				}
-				
+
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
