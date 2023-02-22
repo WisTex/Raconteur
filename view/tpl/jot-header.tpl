@@ -775,7 +775,7 @@ let postSaveTimer = null;
 				$data = data;
 
 				let results = JSON.stringify($data["content"]);
-				let path = results[0][display_path];
+				let path = results[0]["display_path"];
 				let success = JSON.stringify($data["success"]);
 				alert(`Success: ${success}`);
 
