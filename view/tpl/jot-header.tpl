@@ -784,7 +784,7 @@ let postSaveTimer = null;
 
 					for(let i=0; i<results.length; i++) {
 
-						let content = (results[i].is_dir) ? 'directory' : 'file';
+						let content = results[i].is_dir ? 'directory' : 'file';
 						alert(content);
 
 					}
