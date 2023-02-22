@@ -33,7 +33,7 @@ class Embedfiles extends Controller
 
     }
 
-        /* at this point should just return the top level folders */
+        /* returns sorted files and folders */
         public function get_embed_folders($results)
         {
             $sorted = array();
