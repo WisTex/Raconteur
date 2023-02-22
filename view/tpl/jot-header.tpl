@@ -773,7 +773,7 @@ let postSaveTimer = null;
 				console.log(JSON.stringify(data));
 
 				let results = JSON.parse(data.content);
-				let path = results[0]["display_path"];
+				let path = results[0].display_path;
 				let success = JSON.parse(data.success);
 				alert(`Success: ${success}`);
 
