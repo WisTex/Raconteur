@@ -769,7 +769,7 @@ let postSaveTimer = null;
 	let getFileDirList = function () {
 		$.post("embedfiles", {},
 		    function(data) {
-				alert(JSON.stringify(data));
+				// alert(JSON.stringify(data));
 				
 				let success = data.success;
 				let results = data.content;
@@ -780,13 +780,19 @@ let postSaveTimer = null;
 				alert(path);
 
 				if (data.success) {
-					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
+					
 
 					for(let i=0; i<results.length; i++) {
 
-					}
-					// end new loop
+						let content = (results[0].is_dir) ? 'directory' : 'file';
+						alert(content);
 
+					}
+
+					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
+					// end new loop
+				}
+				
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
