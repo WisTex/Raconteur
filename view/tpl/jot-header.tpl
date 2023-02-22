@@ -802,6 +802,8 @@ let postSaveTimer = null;
 					`<li>${results[i].display_path}</li>`
 					
 					; // ternary end
+
+					content = content.replace(</li><button, </li></ul><button);
 					
 
 					}
