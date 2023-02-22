@@ -55,31 +55,7 @@ class Embedfiles extends Controller
             return $sorted;
         }
 
-        /* new comment  
-        public function get_embed_files($results, $sorted, $i) {
-            foreach ($results as $result) {
-                if($result['folder'] === $sorted[$i]['hash']) {
-                    $i++;
-                    $sorted[$i] = $result;
-
-                    $return = array($sorted, $i);
-                }
-                return $return;
-            }
-        }
-
-        public function get_embed_subfolders($results, $sorted, $i) {
-            foreach ($results as $result) {
-                if($result['folder'] === $sorted[$i]['hash'] && $result['is_dir'] == 1) {
-                    $i++;
-                    $sorted[$i] = $result;
-                    $return = array($sorted, $i);
-                }
-                return $return;
-            }
-        }
-    end new comment */
-        
+    
         /*
        
               $channel = Channel::from_id($channel_id);
@@ -90,10 +66,6 @@ class Embedfiles extends Controller
             return null;
         }
     
-        
-
-
-
         if (argc() > 1 && argv(1) === 'album') {
             // API: /embedphotos/album
             $name = (x($_POST, 'name') ? $_POST['name'] : null);
