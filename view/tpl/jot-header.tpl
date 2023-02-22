@@ -773,6 +773,8 @@ let postSaveTimer = null;
 				console.log(JSON.stringify(data));
 
 				let result = data['content']['results'];
+				let success = JSON.parse(data.success);
+				alert(`Success: ${success}`);
 
 
 				$('#embedFileDirModalBody').html(`<div> ${result['12']['display_path']} </div>`);
