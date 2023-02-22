@@ -776,11 +776,16 @@ let postSaveTimer = null;
 				let path = results[0].display_path;
 				
 				alert(`Success: ${success}`);
-				alert(results);
+				alert(results.length);
 				alert(path);
 
 				if (data.success) {
 					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
+
+					for(let i=0; i<results.length; i++) {
+
+					}
+					// end new loop
 
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
