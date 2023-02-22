@@ -781,6 +781,9 @@ let postSaveTimer = null;
 
 				if (data.success) {
 					
+					let content;
+					alert(`Content length: ${content.length}`);
+
 
 					for(let i=0; i<results.length; i++) {
 
