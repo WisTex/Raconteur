@@ -791,7 +791,7 @@ let postSaveTimer = null;
 
 					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
 					// end new loop
-				}
+				
 
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
 					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
