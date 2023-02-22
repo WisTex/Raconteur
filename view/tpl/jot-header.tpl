@@ -791,11 +791,11 @@ let postSaveTimer = null;
 					
 					// ternary start
 					// if it's a folder do this
-					'directory'
-					<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-`[i]`" aria-expanded="false" aria-controls="myList">
+					
+					`<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="myList">
 					Toggle List
 					</button>
-					<ul class="collapse" id="#embedDir-`[i]`">
+					<ul class="collapse" id="#embedDir-${i}">`
 					: // ternary middle
 					
 					// if it's a file do this
