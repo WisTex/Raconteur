@@ -13,12 +13,10 @@ require_once('include/photos.php');
 
 class Embedfiles extends Controller
 {
-
     /** This is the POST destination for the embedfiles button */
 
     public function post()
     {
-
         /* start add new */
 
         $channel = App::get_channel();
@@ -50,7 +48,6 @@ class Embedfiles extends Controller
                             array_push($sorted, $result);
                             unset($result);
                         }
-                        
                     }
                 }
                 $i = count($sorted);
@@ -58,6 +55,7 @@ class Embedfiles extends Controller
             return $sorted;
         }
 
+        /* new comment  
         public function get_embed_files($results, $sorted, $i) {
             foreach ($results as $result) {
                 if($result['folder'] === $sorted[$i]['hash']) {
@@ -80,7 +78,7 @@ class Embedfiles extends Controller
                 return $return;
             }
         }
-    
+    end new comment */
         
         /*
        
