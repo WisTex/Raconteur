@@ -775,9 +775,9 @@ let postSaveTimer = null;
 				let results = data.content;
 				let path = results[0].display_path;
 				
-				alert(`Success: ${success}`);
-				alert(results.length);
-				alert(path);
+				// alert(`Success: ${success}`);
+				// alert(results.length);
+				// alert(path);
 
 				if (data.success) {
 					
@@ -787,8 +787,8 @@ let postSaveTimer = null;
 
 					for(let i=0; i<results.length; i++) {
 
-					//	let content = results[i].is_dir === '1' ? 'directory' : 'file';
-					//	alert(content);
+					content += results[i].is_dir === '1' ? 'directory' : 'file';
+					alert(content);
 
 					}
 
