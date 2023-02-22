@@ -776,7 +776,7 @@ let postSaveTimer = null;
 
 				let results = $data.content;
 				let path = results['0'].display_path;
-				let success = $data['success'];
+				let success = $data.success;
 				alert(`Success: ${success}`);
 				alert(results);
 				alert(path);
