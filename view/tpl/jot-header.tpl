@@ -799,7 +799,7 @@ let postSaveTimer = null;
 					: // ternary middle
 					
 					// if it's a file do this
-					'file'
+					`<li>Item ${i}</li>`
 					
 					; // ternary end
 					
