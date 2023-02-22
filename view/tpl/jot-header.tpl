@@ -803,13 +803,12 @@ let postSaveTimer = null;
 					
 					; // ternary end
 
-					content.replaceAll('</li><button', '</li></ul><button');
+					} // end new loop
+
+					let newcontent = content.replaceAll('</li><button', '</li></ul><button');
+
+					$('#embedFileDirModalBody').html( `<div> ${newcontent} </div>`);
 					
-
-					}
-
-					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
-					// end new loop
 				
 
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
