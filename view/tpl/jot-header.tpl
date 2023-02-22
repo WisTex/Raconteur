@@ -775,10 +775,11 @@ let postSaveTimer = null;
 				$data = data;
 
 				let results = JSON.stringify($data["content"]);
-				let path = results["0"]["display_path"];
+				let path = JSON.stringify(results["0"]["display_path"]);
 				let success = JSON.stringify($data["success"]);
 				alert(`Success: ${success}`);
 				alert(results);
+				alert(path);
 
 
 				$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
