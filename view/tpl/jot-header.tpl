@@ -803,7 +803,7 @@ let postSaveTimer = null;
 					
 					; // ternary end
 
-					content.replace(</li><button, </li></ul><button);
+					content.replace('</li><button', '</li></ul><button');
 					
 
 					}
