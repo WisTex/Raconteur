@@ -788,11 +788,11 @@ let postSaveTimer = null;
 					for(let i=0; i<results.length; i++) {
 
 					content += results[i].is_dir === '1' ? 'directory' : 'file';
-					alert(content);
+					// alert(content);
 
 					}
 
-					$('#embedFileDirModalBody').html( `<div> ${path} </div>`);
+					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					// end new loop
 				
 
