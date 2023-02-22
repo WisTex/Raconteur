@@ -771,11 +771,11 @@ let postSaveTimer = null;
 		        function(data) {
 				alert(JSON.stringify(data));
 				
-				let $data = data;
+				// let $data = data;
 
 				let results = data.content;
 				let path = results['0'].display_path;
-				let success = $data.success;
+				let success = data.success;
 				alert(`Success: ${success}`);
 				alert(results);
 				alert(path);
