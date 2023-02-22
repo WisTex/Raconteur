@@ -787,8 +787,22 @@ let postSaveTimer = null;
 
 					for(let i=0; i<results.length; i++) {
 
-					content += results[i].is_dir === '1' ? 'directory' : 'file';
-					// alert(content);
+					content += results[i].is_dir === '1' ? 
+					
+					// ternary start
+					// if it's a folder do this
+					'directory'
+					<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-`[i]`" aria-expanded="false" aria-controls="myList">
+					Toggle List
+					</button>
+					<ul class="collapse" id="#embedDir-`[i]`">
+					: // ternary middle
+					
+					// if it's a file do this
+					'file'
+					
+					; // ternary end
+					
 
 					}
 
