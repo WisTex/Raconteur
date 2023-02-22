@@ -436,7 +436,21 @@
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body" id="embedFileDirModalBody" >
-				"hello world"
+				<!-- testing a bootstrap collapse -->
+
+				<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#myList" aria-expanded="false" aria-controls="myList">
+					Toggle List
+				</button>
+
+				<ul class="collapse" id="myList">
+  					<li>Item 1</li>
+  					<li>Item 2</li>
+  					<li>Item 3</li>
+				</ul>
+
+
+				<!-- end  testing a bootstrap collapse -->
+
 			</div>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
