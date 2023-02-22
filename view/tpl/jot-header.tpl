@@ -767,7 +767,6 @@ let postSaveTimer = null;
 	{{* start new getFileDirList *}}
 
 	let getFileDirList = function () {
-		// alert('made it to here');
 		$.post("embedfiles", {},
 		        function(data) {
 				alert(JSON.stringify(data));
