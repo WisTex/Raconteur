@@ -805,9 +805,9 @@ let postSaveTimer = null;
 
 					} // end new loop
 
-					content.replaceAll('</li><button', '</li></ul><button');
+					let newcontent = content.replaceAll('</li><button', '</li></ul><button');
 
-					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
+					$('#embedFileDirModalBody').html( `<div> ${newcontent} </div>`);
 					
 				
 
