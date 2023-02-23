@@ -40,7 +40,8 @@ class Embedfiles extends Controller
             $i = 0;
             foreach ($results as $result) {
                 
-                if($result['is_dir'] == 1) {
+                // if($result['is_dir'] == 1) {
+                if($result['is_dir'] == 1 && $result['folder'] === '' ) {  // get the top level folders
                     $sorted[$i] = $result;
                     unset($result);
                     foreach ($results as $result) {
