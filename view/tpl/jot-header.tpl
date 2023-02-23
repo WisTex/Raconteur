@@ -778,7 +778,7 @@ let postSaveTimer = null;
 				// alert(`Success: ${success}`);
 				// alert(results.length);
 				// alert(path);
-				console.log(JSON.stringify($results));
+				console.log(JSON.stringify(results));
 
 				if (data.success) {
 					
