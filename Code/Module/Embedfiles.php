@@ -99,14 +99,14 @@ class Embedfiles extends Controller
  
          /* end get_embed_sub_folders */
 
-         /* start get_embed_sub_files */
+         /* start get_embed_files */
 
          public function get_embed_files($results)
          {
              $sorted = array();
              $i = 0;
              foreach ($results as $result) {
-                 if($result['is_dir'] == '') {
+                 if(!$result['is_dir'] ) {
                     $sorted[$i] = $result;
                     $i++;
                  }
@@ -116,7 +116,7 @@ class Embedfiles extends Controller
          }
  
  
-         /* end get_embed_sub_files */
+         /* end get_embed_files */
 
 
         /* start new_test   */
