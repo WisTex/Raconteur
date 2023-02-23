@@ -28,9 +28,10 @@ class Embedfiles extends Controller
         $success = $results['success'];
         $results = $results['results'];
         $count = count($results);
-        $sorted = $this->get_embed_folders($results);
+        //$sorted = $this->get_embed_folders($results);
         //$sorted = $this->get_embed_top_folders($results);
         //$sorted = $this->get_embed_sub_folders($results);
+        $sorted = $this->new_test($results);
         json_return_and_die(['success' => $success, 'content' => $sorted]);
 
     }
@@ -95,6 +96,37 @@ class Embedfiles extends Controller
  
  
          /* end get_embed_sub_folders */
+
+
+        /* start new_test   */
+
+        public function new_test($results)
+        {
+            $sorted = array();
+            $i = 0;
+            foreach ($results as $result) {
+                
+                if($result['is_dir'] == 1 && $result['folder'] === '' ) {
+                    $sorted[$i] = $result;
+
+                }else{
+                
+                    
+                    
+                        if($result['folder'] === $sorted[$i]['hash']) {
+                            array_push($sorted, $result);
+                        //    array_push($sorted[$i], [$result]);
+                        //    unset($result);
+                        }
+                    
+                    }    
+                
+                $i++
+            }
+            return $sorted;
+        }
+
+        /* end new_test */
 
     
         /*
