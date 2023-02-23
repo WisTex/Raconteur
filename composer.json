@@ -41,7 +41,8 @@
 		"symfony/uid": "^5.4",
 		"symfony/mailer": "^5.4",
 		"wapmorgan/mp3info": "^0.0.8",
-		"chillerlan/php-qrcode": "^4.3"
+		"chillerlan/php-qrcode": "^4.3",
+		"spomky-labs/otphp": "^10.0"
         },
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
