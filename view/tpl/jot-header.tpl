@@ -778,6 +778,7 @@ let postSaveTimer = null;
 				// alert(`Success: ${success}`);
 				// alert(results.length);
 				// alert(path);
+				console.log(results);
 
 				if (data.success) {
 					
