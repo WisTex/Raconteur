@@ -68,6 +68,7 @@ class Embedfiles extends Controller
                 if($result['is_dir'] == 1 && $result['folder'] === '' ) {
                     $sorted[$i] = $result;
                 }
+                $i = $i++;
             }
             return $sorted;
         }
