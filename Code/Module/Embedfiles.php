@@ -51,10 +51,9 @@ class Embedfiles extends Controller
                         //    array_push($sorted, $result);
                             array_push($sorted[$i], [$result]);
                             unset($result);
-                            $i = count($sorted);
                         }
                     }
-                    
+                    $i = count($sorted);
                 }
             }
             return $sorted;
