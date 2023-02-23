@@ -4594,7 +4594,7 @@ class Activity
     {
         return ['@context' => [
             ACTIVITYSTREAMS_JSONLD_REV,
-        //    'https://w3id.org/security/v1',
+           'https://w3id.org/security/v1',
         //    'https://www.w3.org/ns/did/v1',
         //    'https://w3id.org/security/data-integrity/v1',
             self::ap_schema()
