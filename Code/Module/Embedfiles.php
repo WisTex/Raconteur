@@ -111,7 +111,7 @@ class Embedfiles extends Controller
 
                 }else{
                 
-                    
+                    foreach ($results as $result) {
                     
                         if($result['folder'] === $sorted[$i]['hash']) {
                             array_push($sorted, $result);
@@ -119,9 +119,10 @@ class Embedfiles extends Controller
                         //    unset($result);
                         }
                     
-                    }    
+                    }  
+                }  
                 
-                $i++
+                $i++;
             }
             return $sorted;
         }
