@@ -69,27 +69,6 @@ class Embedfiles extends Controller
             $sorted = array();
             $i = 0;
             foreach ($results as $result) {
-                
-                array_filter($result, function($v, $k) {
-                    return $k == 'is_dir' || $v == '';
-                }, ARRAY_FILTER_USE_BOTH);
-                
-                
-                   $sorted[$i] = $result;
-                   $i++;
-                
-                
-            }
-            return $sorted;
-            
-
-
-
-
-
-            $sorted = array();
-            $i = 0;
-            foreach ($results as $result) {
                 if($result['is_dir'] == 1 && $result['folder'] === '' ) {
                    $sorted[$i] = $result;
                    $i++;
