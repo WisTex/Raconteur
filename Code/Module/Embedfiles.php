@@ -66,7 +66,7 @@ class Embedfiles extends Controller
         public function get_embed_top_folders($results)
         {   
 
-            $sorted = array_filter($results, function($v, $k) {
+            $sorted = array_filter($results[0], function($v, $k) {
                 return $k == 'is_dir' && $v == '';
             }, ARRAY_FILTER_USE_BOTH);
 
