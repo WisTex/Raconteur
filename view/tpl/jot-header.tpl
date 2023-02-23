@@ -775,7 +775,7 @@ let postSaveTimer = null;
 				let results = data.content;
 				let path = results[0].display_path;
 				
-				//alert(`Success: ${success}`);
+				alert(`Success: ${success}`);
 				// alert(results.length);
 				// alert(path);
 				console.log(JSON.stringify(results));
