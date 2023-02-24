@@ -381,7 +381,7 @@ class ActivityPub
             return;
         }
 
-        $p = Activity::encode_person($channel, true, true);
+        $p = Activity::encode_person($channel, false);
         if (!$p) {
             return;
         }

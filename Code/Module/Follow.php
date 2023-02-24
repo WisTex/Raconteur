@@ -19,8 +19,6 @@ class Follow extends Controller
 
     public function init()
     {
-
-
         if (ActivityStreams::is_as_request() && argc() >= 2) {
             $abook_id = intval(argv(1));
             if (!$abook_id) {
@@ -41,14 +39,14 @@ class Follow extends Controller
                 http_status_exit(404, 'Not found');
             }
 
-            $actor = Activity::encode_person($chan, true, true);
+            $actor = Activity::encode_person($chan, false);
             if (!$actor) {
                 http_status_exit(404, 'Not found');
             }
 
             // Pleroma requires a unique follow id for every follow and follow response
             // instead of our method of re-using the abook_id. This causes issues if they unfollow
-            // and re-follow so md5 their follow id and slap it on the end so they don't simply discard our
+            // and re-follow so md5 their follow id and slap it on the end, so they don't simply discard our
             // subsequent accept/reject actions.
 
             $orig_follow = get_abconfig($chan['channel_id'], $r[0]['xchan_hash'], 'activitypub', 'their_follow_id');
@@ -56,7 +54,7 @@ class Follow extends Controller
 
             as_return_and_die([
                 'id' => z_root() . '/follow/' . $r[0]['abook_id'] . (($orig_follow) ? '/' . md5($orig_follow) : EMPTY_STR),
-                'type' => (($orig_follow_type) ? $orig_follow_type : 'Follow'),
+                'type' => (($orig_follow_type) ?: 'Follow'),
                 'actor' => $actor,
                 'object' => $r[0]['xchan_url']
             ], $chan);
