@@ -786,9 +786,9 @@ let postSaveTimer = null;
 					let button = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
 					${results[i].filename}
 					</button>`;
-					let ul-start = `<ul class="collapse" id="#embedDir-${i}">`;
-					let ul-end = `</ul>`;
-					let line-item = `<li>${results[i].filename}</li>`;
+					let ulstart = `<ul class="collapse" id="#embedDir-${i}">`;
+					let ulend = `</ul>`;
+					let lineitem = `<li>${results[i].filename}</li>`;
 
 					/* this type of thing works
 					alert(`Content length: ${content.length}`);
@@ -803,11 +803,11 @@ let postSaveTimer = null;
 					// ternary start
 					// if it's a folder do this
 					
-					`${button} ${ul-start}`
+					`${button} ${ulstart}`
 					: // ternary middle
 					
 					// if it's a file do this
-					`${line-item}`
+					`${lineitem}`
 					
 					; // ternary end
 
