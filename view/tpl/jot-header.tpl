@@ -800,11 +800,8 @@ if ((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1")) {
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
   </button>`;
-  return false;
-
 } 
-} // end new loop  
-/*
+
 else if ((results[i].is_dir === '1') && (results[(i-1)].is_dir !== '1')) {
   //  is_dir preceded by a file = add closing </ul> to the beginning of the button
   content += `</ul><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
@@ -819,7 +816,7 @@ else if ((results[i].is_dir === '1') && (results[(i-1)].is_dir !== '1')) {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
 }
-*/
+
 
 alert(content);
 
