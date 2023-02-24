@@ -787,7 +787,7 @@ let postSaveTimer = null;
 					let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="#embedDir-0">${results[0].filename}</button>`;
 										
 					alert(content);
-				//	return false;
+					return false;
 
 					for(let i=1; i<results.length; i++) {
 
