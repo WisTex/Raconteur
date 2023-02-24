@@ -794,27 +794,27 @@ if (results[i].is_dir === '1' && results[i-1].is_dir === '1') {
   content += `<ul class="collapse" id="#embedDir-${i}">
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
-  </button>`
+  </button>`;
 
 } else if (results[i].is_dir === '1' && results[i-1].is_dir !== '1') {
   //  is_dir preceded by a file = add closing </ul> to the beginning of the button
   content += `</ul><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
-  </button>`
+  </button>`;
 
 } else if (results[i].is_dir !== '1' && results[i-1].is_dir === '1') {
   //  file preceded by a is_dir = add opening <ul> to the beginning of file
-  content += `<ul class="collapse" id="#embedDir-${i}"><li>${results[i].filename}</li>`
+  content += `<ul class="collapse" id="#embedDir-${i}"><li>${results[i].filename}</li>`;
 
 } else if (results[i].is_dir !== '1' && results[i-1].is_dir === '1') {
   //  file preceded by another file = just the line item
-  content += `<li>${results[i].filename}</li>`
+  content += `<li>${results[i].filename}</li>`;
 
 } else {
   //  it must be the very first directory so just add the button
   content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
-  </button>`
+  </button>`;
 }
 
 
