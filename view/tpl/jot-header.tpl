@@ -785,7 +785,7 @@ let postSaveTimer = null;
 					// results[0] breaks the loop because it has no object before it.
 					// we'll define it here and start the loop at 1
 			//		let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="#embedDir-0">${results[0].filename}</button>`;
-					let content =``;
+					let content =` `;
 			
 					alert(content);
 					//return false;
@@ -799,6 +799,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
   </button>`;
+
 } else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
   //  is_dir preceded by a file = add closing </ul> to the beginning of the button
   content += `</ul><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
