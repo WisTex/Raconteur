@@ -815,6 +815,8 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
 }
 */
 
+} // end new loop - remove this to allow the ternary
+
 
 					/* let's comment out the ternary for now */
 					content += results[i].is_dir === '1' ? 
@@ -834,7 +836,7 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
 					; // ternary end
 					/* */
 
-					} // end new loop
+				//	} // end new loop
 
 					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					
