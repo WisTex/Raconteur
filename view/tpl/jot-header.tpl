@@ -799,7 +799,7 @@ let postSaveTimer = null;
 
 					for(let i=0; i<results.length; i++) {
 
-					content += results[i].is_dir ? 
+					content += results[i].is_dir === '1' ? 
 					
 					// ternary start
 					// if it's a folder do this
@@ -816,7 +816,7 @@ let postSaveTimer = null;
 					
 					; // ternary end
 
-					} // end new for loop
+					} // end new loop
 
 					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					
