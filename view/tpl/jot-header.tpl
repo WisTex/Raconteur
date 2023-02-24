@@ -785,10 +785,10 @@ let postSaveTimer = null;
 					let content = '';
 					
 					
-					let ulstart = `<ul class="collapse" id="#embedDir-${i}">`;
+					//let ulstart = `<ul class="collapse" id="#embedDir-${i}">`;
 					let ulend = `</ul>`;
 					
-					alert(`${ulstart}`);
+					alert(`${ulend}`);
 
 
 					/* this type of thing works
