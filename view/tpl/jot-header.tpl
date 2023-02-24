@@ -778,13 +778,13 @@ let postSaveTimer = null;
 				//alert(`Success: ${success}`);
 				// alert(results.length);
 				// alert(path);
-				console.log(JSON.stringify(results));
+				//console.log(JSON.stringify(results));
 
 				if (data.success) {
 					
 					let content = '';
 					alert(`Content length: ${content.length}`);
-					alert(`Filename: ${content[3].filename}`);
+					alert(`Filename: ${results[3].filename}`);
 
 
 					for(let i=0; i<results.length; i++) {
