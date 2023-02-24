@@ -781,17 +781,18 @@ let postSaveTimer = null;
 				//console.log(JSON.stringify(results));
 
 				if (data.success) {
-					
-					let content = '';
+
+					// results[0] breaks the loop because it has no object before it.
+					// we'll define it here and start the loop at 1
+					let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${0}" aria-expanded="false" aria-controls="#embedDir-${0}">
+  ${results[0].filename}
+  </button>`;
 										
 					alert(`Let's begin`);
 
-					for(let i=0; i<results.length; i++) {
+					for(let i=1; i<results.length; i++) {
 
-	//		alert(results[i].is_dir === '1' && results[(i-1)].is_dir === '1');
-	alert(results[(i-1)].is_dir === '1');
-
-/*						
+							
 if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
   content += `<ul class="collapse" id="#embedDir-${i}">
@@ -809,17 +810,11 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by a is_dir = add opening <ul> to the beginning of file
   content += `<ul class="collapse" id="#embedDir-${i}"><li>${results[i].filename}</li>`;
 
-} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
+} else (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
-
-} else {
-  //  it must be the very first directory so just add the button
-  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
-  ${results[i].filename}
-  </button>`;
 }
-*/
+
 
 // alert(content);
 
