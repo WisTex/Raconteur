@@ -790,7 +790,7 @@ let postSaveTimer = null;
 
 			alert(results[i].is_dir === '1' && results[(i-1)].is_dir === '1');
 
-						
+/*						
 if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
   content += `<ul class="collapse" id="#embedDir-${i}">
@@ -818,8 +818,9 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   ${results[i].filename}
   </button>`;
 }
+*/
 
-alert(content);
+// alert(content);
 
 
 /* let's comment out the ternary for now
