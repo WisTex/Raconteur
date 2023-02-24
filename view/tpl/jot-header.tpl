@@ -793,7 +793,8 @@ let postSaveTimer = null;
 
 					
 if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
-  //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
+  //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
+  if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse" id="#embedDir-${i}">`;}
   content += `<ul class="collapse" id="#embedDir-${i}">
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
@@ -841,6 +842,9 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 					/* */
 
 					} // end new loop
+
+					// close the last ul
+					content += `</ul>`
 
 					alert(content);
 
