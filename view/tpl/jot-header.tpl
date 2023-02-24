@@ -783,10 +783,18 @@ let postSaveTimer = null;
 				if (data.success) {
 					
 					let content = '';
+					let button = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
+					${results[i].filename}
+					</button>`;
+					let ul-start = `<ul class="collapse" id="#embedDir-${i}">`;
+					let ul-end = `</ul>`;
+					let line-item = `<li>${results[i].filename}</li>`;
+
+					/* this type of thing works
 					alert(`Content length: ${content.length}`);
 					let j = 3;
 					alert(`Filename: ${results[(j-1)].filename}`);
-
+					*/
 
 					for(let i=0; i<results.length; i++) {
 
@@ -795,20 +803,15 @@ let postSaveTimer = null;
 					// ternary start
 					// if it's a folder do this
 					
-					`<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
-					${results[i].display_path}
-					</button>
-					<ul class="collapse" id="#embedDir-${i}">`
+					`${button}${ul-start}`
 					: // ternary middle
 					
 					// if it's a file do this
-					`<li>${results[i].display_path}</li>`
+					`${line-item}`
 					
 					; // ternary end
 
 					} // end new loop
-
-					// let newcontent = content.replaceAll('</li><button', '</li></ul><button');
 
 					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					
