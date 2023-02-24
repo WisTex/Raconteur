@@ -817,19 +817,19 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
 
 
 /* let's comment out the ternary for now */
-					content += results[i].is_dir === '1' ? 
+		//			content += results[i].is_dir === '1' ? 
 					
 					// ternary start
 					// if it's a folder do this
 					
-					`<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
-					${results[i].filename}
-					</button>`
+		//			`<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
+		//			${results[i].filename}
+		//			</button>`
 					
 					: // ternary middle
 					
 					// if it's a file do this
-					`<li>${results[i].filename}</li>`
+		//			`<li>${results[i].filename}</li>`
 										
 					; // ternary end
 /* */
