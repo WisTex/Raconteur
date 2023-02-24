@@ -817,7 +817,7 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   </button>`;
 }
 
-
+alert(content);
 
 
 /* let's comment out the ternary for now
