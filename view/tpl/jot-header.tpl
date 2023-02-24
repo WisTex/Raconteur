@@ -792,8 +792,8 @@ let postSaveTimer = null;
 					for(let i=1; i<results.length; i++) {
 
 							
-if ((results[i].is_dir == "1") && (results[(i-1)].is_dir == "1")) {
-	alert((results[i].is_dir == "1") && (results[(i-1)].is_dir == "1"));
+if ((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1")) {
+	alert((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1"));
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
   content += `<ul class="collapse" id="#embedDir-${i}">
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
