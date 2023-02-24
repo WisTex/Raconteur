@@ -792,9 +792,7 @@ let postSaveTimer = null;
 					for(let i=1; i<results.length; i++) {
 
 					
-if ((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1")) {
-	alert((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1"));
-	
+if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
   content += `<ul class="collapse" id="#embedDir-${i}">
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
@@ -802,25 +800,22 @@ if ((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1")) {
   </button>`;
 } 
 
-else if ((results[i].is_dir === '1') && (results[(i-1)].is_dir !== '1')) {
+else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
   //  is_dir preceded by a file = add closing </ul> to the beginning of the button
   content += `</ul><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
   </button>`;
 
-} else if ((results[i].is_dir !== '1') && (results[(i-1)].is_dir === '1')) {
+} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by a is_dir = add opening <ul> to the beginning of file
   content += `<ul class="collapse" id="#embedDir-${i}"><li>${results[i].filename}</li>`;
 
-} else ((results[i].is_dir !== '1') && (results[(i-1)].is_dir === '1')) {
+} else (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
 }
 
 
-alert(content);
-
-} // end new loop - remove this to allow the ternary
 
 
 					/* let's comment out the ternary for now */
@@ -841,7 +836,7 @@ alert(content);
 					; // ternary end
 					/* */
 
-				//	} // end new loop
+					} // end new loop
 
 					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					
