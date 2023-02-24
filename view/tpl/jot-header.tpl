@@ -790,6 +790,9 @@ let postSaveTimer = null;
 					let ulend = `</ul>`;
 					let lineitem = `<li>${results[i].filename}</li>`;
 
+					alert(`${button} ${ulstart}`);
+					alert(`${lineitem}`);
+
 					/* this type of thing works
 					alert(`Content length: ${content.length}`);
 					let j = 3;
@@ -804,12 +807,12 @@ let postSaveTimer = null;
 					// if it's a folder do this
 					
 					`${button} ${ulstart}`
-					alert(`${button} ${ulstart}`);
+					
 					: // ternary middle
 					
 					// if it's a file do this
 					`${lineitem}`
-					alert(`${lineitem}`);
+					
 					
 					; // ternary end
 
