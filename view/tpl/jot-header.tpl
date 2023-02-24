@@ -814,11 +814,6 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
 
-} else {
-  //  it must be the very first directory so just add the button
-  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
-  ${results[i].filename}
-  </button>`;
 }
 
 
