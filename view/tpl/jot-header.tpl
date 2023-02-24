@@ -783,15 +783,17 @@ let postSaveTimer = null;
 				if (data.success) {
 					
 					let content = '';
+					/*
 					let button = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
 					${results[i].filename}
 					</button>`;
 					let ulstart = `<ul class="collapse" id="#embedDir-${i}">`;
 					let ulend = `</ul>`;
 					let lineitem = `<li>${results[i].filename}</li>`;
-
+*/
 					alert(`${button} ${ulstart}`);
 					alert(`${lineitem}`);
+
 
 					/* this type of thing works
 					alert(`Content length: ${content.length}`);
