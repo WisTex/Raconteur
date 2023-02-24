@@ -816,6 +816,8 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
 }
 */
 
+alert(content);
+
 } // end new loop - remove this to allow the ternary
 
 
