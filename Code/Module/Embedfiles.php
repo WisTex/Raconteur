@@ -32,10 +32,7 @@ class Embedfiles extends Controller
         //$sorted = $this->get_embed_top_folders($results);
         //$sorted = $this->get_embed_sub_folders($results);
         //$sorted = $this->get_embed_files($results);
-        //$sorted = $this->new_test($results);
         json_return_and_die(['success' => $success, 'content' => $sorted]);
-        //json_return_and_die(['success' => $success, 'content' => $results]);
-
     }
 
         /* returns sorted files and folders */
@@ -45,21 +42,10 @@ class Embedfiles extends Controller
             $i = 0;
             foreach ($results as $result) {
                 if($result['is_dir'] == 1) {
-                //if($result['is_dir'] == 1 && $result['folder'] === '' ) {  // get the top level folders
                     $sorted[$i] = $result;
-                    //unset($result);
-                    //unset($results[$i]);
                     foreach ($results as $result) {
                         if($result['folder'] === $sorted[$i]['hash']) {
-
-                        //    if($result['is_dir'] == 1 && $result['folder'] !== ''){
-                        //        array_push($sorted[$i], $result);
-
-                         //   }
-
                             array_push($sorted, $result);
-                        //    array_push($sorted, [$result]);
-                        //   unset($result);
                         }
                     }
                 }
@@ -69,7 +55,6 @@ class Embedfiles extends Controller
         }
 
         /* start get_embed_top_folders */
-
         public function get_embed_top_folders($results)
         {   
             $sorted = array();
@@ -82,82 +67,39 @@ class Embedfiles extends Controller
             }
             return $sorted;
         }
-
         /* end get_embed_top_folders */
 
-         /* start get_embed_sub_folders */
-
-         public function get_embed_sub_folders($results)
-         {
-             $sorted = array();
-             $i = 0;
-             foreach ($results as $result) {
-                 if($result['is_dir'] == 1 && $result['folder'] !== '' ) {
-                    $sorted[$i] = $result;
-                    $i++;
-                 }
-                 
-             }
-             return $sorted;
-         }
- 
- 
-         /* end get_embed_sub_folders */
-
-         /* start get_embed_files */
-
-         public function get_embed_files($results)
-         {
-             $sorted = array();
-             $i = 0;
-             foreach ($results as $result) {
-                 if(!$result['is_dir'] ) {
-                    $sorted[$i] = $result;
-                    $i++;
-                 }
-                 
-             }
-             return $sorted;
-         }
- 
- 
-         /* end get_embed_files */
-
-
-        /* start new_test   */
-
-        public function new_test($results)
+        /* start get_embed_sub_folders */
+        public function get_embed_sub_folders($results)
         {
             $sorted = array();
             $i = 0;
             foreach ($results as $result) {
-                
-                if($result['is_dir'] == 1 && $result['folder'] === '' ) {
+                if($result['is_dir'] == 1 && $result['folder'] !== '' ) {
                     $sorted[$i] = $result;
                     $i++;
-                }else{
-                    $j = 0;
-                    foreach ($results as $result) {
-                        
-                        if($result['folder'] === $sorted[$i]['hash']) {
-                            $sorted[$i] = $result;
-                            $j++;
-                        //    array_push($sorted, $result);
-                        //    array_push($sorted[$i], [$result]);
-                        //    unset($result);
-                        }
-                    
-                    }  
-                }  
-                
-                //$i++;
+                }
             }
             return $sorted;
         }
+        /* end get_embed_sub_folders */
 
-        /* end new_test */
+        /* start get_embed_files */
+        public function get_embed_files($results)
+        {
+            $sorted = array();
+            $i = 0;
+            foreach ($results as $result) {
+                if(!$result['is_dir'] ) {
+                   $sorted[$i] = $result;
+                   $i++;
+                }
+            }
+            return $sorted;
+        }
+        /* end get_embed_files */
 
-    
+
         /*
        
               $channel = Channel::from_id($channel_id);
