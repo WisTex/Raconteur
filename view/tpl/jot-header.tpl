@@ -784,6 +784,7 @@ let postSaveTimer = null;
 					
 					let content = '';
 					alert(`Content length: ${content.length}`);
+					alert(`Filename: ${content[3].filename}`);
 
 
 					for(let i=0; i<results.length; i++) {
