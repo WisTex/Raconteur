@@ -798,6 +798,7 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
   </button>`;
+  alert(`I'm here`);
 
 }
 /* else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
