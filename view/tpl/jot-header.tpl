@@ -789,8 +789,9 @@ let postSaveTimer = null;
 					</button>`;
 					let ulstart = `<ul class="collapse" id="#embedDir-${i}">`;
 					let ulend = `</ul>`;
+					*/
 					let lineitem = `<li>${results[i].filename}</li>`;
-*/
+
 					alert(`${button} ${ulstart}`);
 					alert(`${lineitem}`);
 
