@@ -808,7 +808,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  file preceded by a is_dir = add opening <ul> to the beginning of file
   content += `<ul class="collapse" id="#embedDir-${(i-1)}"><li>${results[i].filename}</li>`;
 
-} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
+} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
 }
