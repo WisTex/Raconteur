@@ -791,7 +791,7 @@ let postSaveTimer = null;
 
 					for(let i=1; i<results.length; i++) {
 
-							
+/*							
 if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
   content += `<ul class="collapse" id="#embedDir-${i}">
@@ -813,9 +813,7 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
 }
-
-
-// alert(content);
+*/
 
 
 /* let's comment out the ternary for now */
