@@ -842,22 +842,7 @@ alert(content);
 
 					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					
-				
-
-                    let albums = data['albumlist']; //JSON.parse(data['albumlist']);
-					$('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
-                    $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
-                    for(let i=0; i<albums.length; i++) {
-                        let albumName = albums[i].text;
-			let jsAlbumName = albums[i].jstext;
-			let albumLink = '<li class="nav-item">';
-			albumLink += '<a class="nav-link" href="#" onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">' + albumName + '</a>';
-                        albumLink += '</li>';
-                        $('#embedPhotoModalBodyAlbumList').find('ul').append(albumLink);
-                    }
-                    $('#embedPhotoModalBodyAlbumDialog').addClass('d-none');
-                    $('#embedPhotoModalBodyAlbumListDialog').removeClass('d-none');
-                } else {
+				} else {
                     window.console.log(`{{$modalerrorlist}} : data['errormsg']`);
                 }
                 return false;
