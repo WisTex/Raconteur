@@ -803,7 +803,7 @@ let postSaveTimer = null;
 					// ternary start
 					// if it's a folder do this
 					
-					`${button}${ul-start}`
+					`${button} ${ul-start}`
 					: // ternary middle
 					
 					// if it's a file do this
