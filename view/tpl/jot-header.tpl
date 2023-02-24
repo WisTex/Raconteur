@@ -789,7 +789,7 @@ let postSaveTimer = null;
 					alert(content);
 					//return false;
 
-					for(let i=0; i<results.length; i++) {
+					for(let i=1; i<results.length; i++) {
 
 					
 if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
