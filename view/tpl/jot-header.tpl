@@ -800,7 +800,9 @@ if ((results[i].is_dir === "1") && (results[(i-1)].is_dir === "1")) {
   ${results[i].filename}
   </button>`;
 
-} else if ((results[i].is_dir === '1') && (results[(i-1)].is_dir !== '1')) {
+}
+return false;
+else if ((results[i].is_dir === '1') && (results[(i-1)].is_dir !== '1')) {
   //  is_dir preceded by a file = add closing </ul> to the beginning of the button
   content += `</ul><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
