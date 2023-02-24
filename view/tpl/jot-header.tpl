@@ -804,10 +804,12 @@ let postSaveTimer = null;
 					// if it's a folder do this
 					
 					`${button} ${ulstart}`
+					alert(`${button} ${ulstart}`);
 					: // ternary middle
 					
 					// if it's a file do this
 					`${lineitem}`
+					alert(`${lineitem}`);
 					
 					; // ternary end
 
