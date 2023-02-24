@@ -784,12 +784,13 @@ let postSaveTimer = null;
 
 					// results[0] breaks the loop because it has no object before it.
 					// we'll define it here and start the loop at 1
-					let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="#embedDir-0">${results[0].filename}</button>`;
-										
+			//		let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="#embedDir-0">${results[0].filename}</button>`;
+					let content =``;
+			
 					alert(content);
 					//return false;
 
-					for(let i=1; i<results.length; i++) {
+					for(let i=0; i<results.length; i++) {
 
 					
 if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
@@ -811,6 +812,12 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
   content += `<li>${results[i].filename}</li>`;
+
+} else {
+  //  it must be the very first directory so just add the button
+  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
+  ${results[i].filename}
+  </button>`;
 }
 
 
