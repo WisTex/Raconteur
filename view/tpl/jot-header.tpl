@@ -787,11 +787,11 @@ let postSaveTimer = null;
 					let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="#embedDir-0">${results[0].filename}</button>`;
 										
 					alert(content);
-					return false;
+					//return false;
 
 					for(let i=1; i<results.length; i++) {
 
-/*							
+							
 if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
   content += `<ul class="collapse" id="#embedDir-${i}">
@@ -799,7 +799,8 @@ if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   ${results[i].filename}
   </button>`;
 
-} else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
+}
+/* else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
   //  is_dir preceded by a file = add closing </ul> to the beginning of the button
   content += `</ul><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
   ${results[i].filename}
