@@ -836,6 +836,8 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 					} // end new loop
 
+					alert(content);
+
 					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
 					
 				} else {
