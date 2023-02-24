@@ -788,6 +788,8 @@ let postSaveTimer = null;
 
 					for(let i=0; i<results.length; i++) {
 
+			alert(results[i].is_dir === '1' && results[(i-1)].is_dir === '1');
+
 						
 if (results[i].is_dir === '1' && results[(i-1)].is_dir === '1') {
   //  is_dir preceded by another is_dir = add opening <ul> to the beginning of the button
