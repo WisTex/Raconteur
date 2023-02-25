@@ -845,7 +845,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 					alert(content);
 
-					$('#embedFileDirModalBody').html( `<div> ${content} </div>`);
+					$('#embedFileDirModalBody').html( content);
 					
 				} else {
                     window.console.log(`{{$modalerrorlist}} : data['errormsg']`);
