@@ -784,7 +784,7 @@ let postSaveTimer = null;
 
 					// results[0] breaks the loop because it has no object before it.
 					// we'll define it here and start the loop at 1
-					let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="#embedDir-0">${results[0].filename}</button>`;
+					let content = `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="embedDir-0">${results[0].filename}</button>`;
 								
 					alert(content);
 					//return false;
@@ -795,13 +795,13 @@ let postSaveTimer = null;
 if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
   if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse" id="#embedDir-${(i-1)}">`;}
-  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">${results[i].filename}</button>`;
+  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}">${results[i].filename}</button>`;
   continue;
 
 } else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
   //  is_dir preceded by a file = if directory is not a sibling add closing </ul> to the beginning of the button
   if(results[i].folder !== results[(i-1)].folder){ content += `</ul>`;}
-  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">${results[i].filename}</button>`;
+  content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}">${results[i].filename}</button>`;
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
