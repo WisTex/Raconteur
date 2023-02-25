@@ -775,11 +775,6 @@ let postSaveTimer = null;
 				let results = data.content;
 				let path = results[0].display_path;
 				
-				//alert(`Success: ${success}`);
-				// alert(results.length);
-				// alert(path);
-				//console.log(JSON.stringify(results));
-
 				if (data.success) {
 
 					// results[0] breaks the loop because it has no object before it.
@@ -817,34 +812,10 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 }
 
-
-
-
-					/* let's comment out the ternary for now */
-					content += results[i].is_dir === '1' ? 
-					
-					// ternary start
-					// if it's a folder do this
-					
-					`<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="#embedDir-${i}">
-					${results[i].filename}
-					</button>`
-					
-					: // ternary middle
-					
-					// if it's a file do this
-					`<li>${results[i].filename}</li>`
-										
-					; // ternary end
-					/* */
-
 					} // end new loop
 
 					// close the last ul
 					content += `</ul>`
-
-					alert(content);
-
 					$('#embedFileDirModalBody').html( content);
 					
 				} else {
@@ -856,7 +827,6 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 	};
 	{{* end new getFileDirList *}}
 
-    //
     // initialize drag-drop
     function DragDropUploadInit() {
 
@@ -866,7 +836,6 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
         filedrag.on("dragover", DragDropUploadFileHover);
         filedrag.on("dragleave", DragDropUploadFileHover);
         filedrag.on("drop", DragDropUploadFileSelectHandler);
-
     }
 
 	// file drag hover
