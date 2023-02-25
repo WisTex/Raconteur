@@ -141,7 +141,7 @@ class Embedfiles extends Controller
         }
     }
 
-
+*/
     protected static function photolink($resource, $channel_id = 0)
     {
         if (intval($channel_id)) {
