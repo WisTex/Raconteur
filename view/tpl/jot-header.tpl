@@ -794,7 +794,7 @@ let postSaveTimer = null;
 					
 if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
-  if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse" id="#embedDir-${(i-1)}">`;}
+  if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse" id="embedDir-${(i-1)}">`;}
   content += `<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}">${results[i].filename}</button>`;
   continue;
 
@@ -806,7 +806,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
-  if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse" id="#embedDir-${(i-1)}">`}
+  if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse" id="embedDir-${(i-1)}">`}
   content += `<li>${results[i].filename}</li>`;
   continue;
 
