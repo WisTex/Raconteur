@@ -310,6 +310,11 @@ function change_channel($change_channel)
             $_SESSION['theme'] = $r[0]['channel_theme'];
             $_SESSION['mobile_theme'] = get_pconfig(local_channel(), 'system', 'mobile_theme');
             $_SESSION['cloud_tiles'] = get_pconfig(local_channel(), 'system', 'cloud_tiles');
+            $_SESSION['loadtime_channel'] = get_pconfig(local_channel(), 'system', 'loadtime_channel', '2000-01-01 00:00:00');
+            $_SESSION['loadtime_stream'] = get_pconfig(local_channel(), 'system', 'loadtime_stream', '2000-01-01 00:00:00');
+            $_SESSION['loadtime_pubstream'] = get_pconfig(local_channel(), 'system', 'loadtime_pubstream', '2000-01-01 00:00:00');
+            $_SESSION['seen_items'] = get_pconfig(local_channel(), 'system', 'seen_items', []);
+    
             date_default_timezone_set($r[0]['channel_timezone']);
 
             // Update the active timestamp at most once a day

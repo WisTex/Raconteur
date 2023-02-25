@@ -1382,4 +1382,19 @@ class Apps
     {
         return chunk_split(base64_encode(json_encode($papp)), 72, "\n");
     }
+
+    static public function get_papp($app) {
+
+        $r = q("select * from app where app_id = '%s' and app_channel = 0 limit 1",
+            dbesc(hash('whirlpool', $app))
+        );
+
+        if ($r) {
+            $papp = self::app_encode(array_shift($r));
+            return $papp;
+        }
+
+        return false;
+    }
+
 }

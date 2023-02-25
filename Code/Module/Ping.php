@@ -160,7 +160,7 @@ class Ping extends Controller
 
 
         if (local_channel()) {
-            $seen = PConfig::Get(local_channel(), 'system', 'seen_items', []);
+            $seen = $_SESSION['seen_items'];
             if ($seen) {
                 $seenstr = " and not item.id in (" . implode(',', $seen) . ") ";
             }
@@ -288,10 +288,11 @@ class Ping extends Controller
                 intval($_REQUEST['markItemRead'])
             );
             $id = intval($_REQUEST['markItemRead']);
-            $seen = PConfig::Get(local_channel(), 'system', 'seen_items', []);
+            $seen = $_SESSION['seen_items'];
             if (!in_array($id, $seen)) {
                 $seen[] = $id;
             }
+            $_SESSION['seen_items'] = $seen;
             PConfig::Set(local_channel(), 'system', 'seen_items', $seen);
         }
 
@@ -794,9 +795,6 @@ class Ping extends Controller
         // This also resets the pconfig storage for seen_items
 
         if ((!$my_activity) && (!(intval($result['home']) + intval($result['stream']) + intval($result['pubs'])))) {
-<<<<<<< Updated upstream
-            PConfig::Delete(local_channel(), 'system', 'seen_items');
-=======
 
             // PConfig storage for seen_items is common across all sessions.
             // In order to reduce conflicts when multiple sessions are active,
@@ -807,7 +805,6 @@ class Ping extends Controller
                 $_SESSION['seen_items'] = [];
                 PConfig::Delete(local_channel(), 'system', 'seen_items');
             }
->>>>>>> Stashed changes
 
             $_SESSION['loadtime_channel'] = datetime_convert();
             $_SESSION['loadtime_stream'] = datetime_convert();

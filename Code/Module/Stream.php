@@ -550,7 +550,7 @@ class Stream extends Controller
 
         $seenstr = EMPTY_STR;
         if (local_channel()) {
-            $seen = PConfig::Get(local_channel(), 'system', 'seen_items', []);
+            $seen = $_SESSION['seen_items'];
             if ($seen) {
                 $seenstr = " and not item.id in (" . implode(',', $seen) . ") ";
             }
@@ -676,9 +676,14 @@ class Stream extends Controller
                 );
             }
 
+            $seen = $_SESSION['seen_items'];
+            if (!$seen) {
+                $seen = [];
+            }
             $ids = ids_to_array($items, 'item_id');
-            $seen = PConfig::Get(local_channel(), 'system', 'seen_items', []);
-            PConfig::Set(local_channel(), 'system', 'seen_items', array_merge($ids, $seen));
+            $seen = array_values(array_unique(array_merge($ids, $seen)));
+            $_SESSION['seen_items'] = $seen;
+            PConfig::Set(local_channel(), 'system', 'seen_items', $seen);
         }
 
         $mode = (($nouveau) ? 'stream-new' : 'stream');
