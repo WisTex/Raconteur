@@ -774,6 +774,8 @@ let postSaveTimer = null;
 				let success = data.success;
 				let results = data.content;
 				let path = results[0].display_path;
+
+				alert(homebase);
 				
 				if (data.success) {
 
