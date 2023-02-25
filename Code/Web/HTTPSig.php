@@ -145,10 +145,6 @@ class HTTPSig
                 $signed_data .= $h . ': ' . $headers[$h] . "\n";
             }
             if ($h === '(created)') {
-                if ($sig_block['algorithm'] && (strpos($sig_block['algorithm'], 'rsa') !== false || strpos($sig_block['algorithm'], 'hmac') !== false || strpos($sig_block['algorithm'], 'ecdsa') !== false)) {
-                    logger('created not allowed here');
-                    return $result;
-                }
                 if ((!isset($sig_block['(created)'])) || (!intval($sig_block['(created)'])) || intval($sig_block['(created)']) > time()) {
                     logger('created in future');
                     return $result;
@@ -156,10 +152,6 @@ class HTTPSig
                 $signed_data .= '(created): ' . $sig_block['(created)'] . "\n";
             }
             if ($h === '(expires)') {
-                if ($sig_block['algorithm'] && (strpos($sig_block['algorithm'], 'rsa') !== false || strpos($sig_block['algorithm'], 'hmac') !== false || strpos($sig_block['algorithm'], 'ecdsa') !== false)) {
-                    logger('expires not allowed here');
-                    return $result;
-                }
                 if ((!isset($sig_block['(expires)'])) || (!intval($sig_block['(expires)'])) || intval($sig_block['(expires)']) < time()) {
                     logger('signature expired');
                     return $result;

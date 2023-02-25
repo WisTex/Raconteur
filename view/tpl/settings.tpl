@@ -72,7 +72,7 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h4 class="modal-title">{{$lbl_p2macro}}</h4>
-                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="{{$close}}"><span aria-hidden="true">&times;</span></button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             {{foreach $permiss_arr as $permit}}

@@ -9,7 +9,7 @@
 					<a target="hubzilla-help" href="{{$helpUrl}}" class="contextual-help-tool" title="Help and documentation"><i class="fa fa-fw fa-question"></i></a>
 					{{/if}}
 				</h4>
-				<button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">&times;</button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="section-content-wrapper">
 				{{if $aclModalDesc}}

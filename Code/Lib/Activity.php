@@ -4594,16 +4594,15 @@ class Activity
     {
         return ['@context' => [
             ACTIVITYSTREAMS_JSONLD_REV,
-            'https://w3id.org/security/v1',
-            'https://www.w3.org/ns/did/v1',
-            'https://w3id.org/security/data-integrity/v1',
+           'https://w3id.org/security/v1',
+        //    'https://www.w3.org/ns/did/v1',
+        //    'https://w3id.org/security/data-integrity/v1',
             self::ap_schema()
         ]];
     }
 
     public static function ap_schema()
     {
-
         return [
             'nomad' => z_root() . '/apschema#',
             'toot' => 'http://joinmastodon.org/ns#',

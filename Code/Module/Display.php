@@ -413,11 +413,12 @@ class Display extends Controller
 
         if (local_channel() && $items) {
             $ids = ids_to_array($items, 'item_id');
-            $seen = PConfig::Get(local_channel(), 'system', 'seen_items');
+            $seen = $_SESSION['seen_items'];
             if (!$seen) {
                 $seen = [];
             }
-            $seen = array_unique(array_merge($ids, $seen));
+            $seen = array_values(array_unique(array_merge($ids, $seen)));
+            $_SESSION['seen_items'] = $seen;
             PConfig::Set(local_channel(), 'system', 'seen_items', $seen);
         }
 

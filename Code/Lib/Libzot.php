@@ -126,7 +126,8 @@ class Libzot
 
         if ($msg) {
             $actor = Channel::url($channel);
-            if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && is_string($msg['actor']) && $actor === $msg['actor']) {
+            $actors = get_hubloc_id_urls_by_portable_id($channel['channel_hash']);
+            if ($encoding === 'activitystreams' && array_key_exists('actor', $msg) && in_array($msg['actor'], $actors)) {
                 $msg = JSalmon::sign($msg, $actor, $channel['channel_prvkey']);
             }
             $data['data'] = $msg;
@@ -1291,7 +1292,7 @@ class Libzot
             $deliveries = self::public_recips($env, $AS);
         }
 
-        $deliveries = array_unique($deliveries);
+        $deliveries = array_values(array_unique($deliveries));
 
         if (!$deliveries) {
             logger('No deliveries on this site');

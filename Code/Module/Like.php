@@ -269,7 +269,7 @@ class Like extends Controller
         $arr['parent_mid']   = $item['parent_mid'];
         $arr['owner_xchan']  = $thread_owner['xchan_hash'];
         $arr['author_xchan'] = $observer['xchan_hash'];
-
+        $arr['created'] = $arr['edited'] = datetime_convert();
 
 
         $arr['verb']          = (($undo) ? 'Undo' : $activity);

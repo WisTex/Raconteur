@@ -5,11 +5,13 @@ use Code\Lib\Libzot;
 use Code\Lib\Oembed;
 use Code\Lib\SvgSanitizer;
 use Code\Extend\Hook;
-use Michelf\MarkdownExtra;
+use chillerlan\QRCode\QRCode;
+
 
 /**
  * @file include/bbcode.php
- * @brief BBCode related functions for parsing, etc.
+ * @brief Converts Markdown and BBCode constructs into HTML.
+ *
  */
 
 require_once('include/event.php');
@@ -781,6 +783,12 @@ function bb_map_location($match)
 {
     // the extra space in the following line is intentional
     return str_replace($match[0], '<div class="map"  >' . generate_named_map($match[1]) . '</div>', $match[0]);
+}
+
+function bb_qr($match)
+{
+    $str = $match[1];
+    return str_replace($match[0], '<img src="' . (new QRCode())->render($str) . '" alt="$str" loading="eager" />', $match[0]);
 }
 
 function bb_opentag($match)
@@ -2122,6 +2130,11 @@ function bbcode($Text, $options = [])
 
     $Text = preg_replace_callback("/\[([zi])mg([ \=])(.*?)\](.*?)\[\/[zi]mg\]/ism", 'bb_imgoptions', $Text);
 
+    if (str_contains($Text,'[/qr]')) {
+        $Text = preg_replace_callback("/\[qr\](.*?)\[\/qr\]/ism", 'bb_qr', $Text);
+    }
+
+
     if ($censored) {
         // This function in include/misc.php separates images wrapped in links
         // so the links are still accessible when censored (where clicking the img views it).
@@ -2245,25 +2258,10 @@ function bbcode($Text, $options = [])
     $Text = str_replace('%eY9-!', 'http', $Text);
     $Text = bb_code_unprotect($Text);
 
-    // This lets you use HTML entities in posts - just wrap them in brackets. For instance [&copy;] to display a copyright symbol.
-
-    $Text = preg_replace('/\[\&amp\;([#a-z0-9]+)\;\]/', '&$1;', $Text);
-
     // fix any escaped ampersands that may have been converted into links
 
     if (str_contains($Text, '&amp;')) {
         $Text = preg_replace("/\<(.*?)(src|href)=(.*?)\&amp\;(.*?)\>/ism", '<$1$2=$3&$4>', $Text);
-    }
-
-    // This is subtle - it's an XSS filter. It only accepts links with a protocol scheme and where
-    // the scheme begins with z (zhttp), h (http(s)), f (ftp(s)), g (gemini), m (mailto|magnet), t (tel) and named anchors.
-    // data: urls are allowed if exporting to activitypub which allows inline svg to federate, but not
-    // to be used for local display
-
-    if ($activitypub) {
-        $Text = preg_replace("/\<(.*?)(src|href)=\"[^dzghfmt#](.*?)\>/ism", '<$1$2="">', $Text);
-    } else {
-        $Text = preg_replace("/\<(.*?)(src|href)=\"[^zhgfmt#](.*?)\>/ism", '<$1$2="">', $Text);
     }
 
     $Text = bb_replace_images($Text, $saved_images);
