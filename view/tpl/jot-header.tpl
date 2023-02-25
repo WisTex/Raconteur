@@ -805,8 +805,9 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
-  //  file preceded by a is_dir = add opening <ul> to the beginning of file
-  content += `<ul class="collapse" id="#embedDir-${i}"><li>${results[i].filename}</li>`;
+  //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
+  if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse" id="#embedDir-${i}">`}
+  content += `<li>${results[i].filename}</li>`;
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
