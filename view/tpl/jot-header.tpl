@@ -777,6 +777,7 @@ let postSaveTimer = null;
 				let path = results[0].display_path;
 
 				alert(address);
+				console.log(results);
 				
 				if (data.success) {
 
