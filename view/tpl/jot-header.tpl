@@ -768,15 +768,15 @@ let postSaveTimer = null;
 
 	function getFileMimeType(result, address) {
 
-		alert(`<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`);
-		return;
+		//alert(`<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`);
+		//return;
 
 		switch(result.filetype) {
-  			case "image/jpeg",
-				 "image/png",
+  			case "image/jpeg":
+				 "image/png":
 			  	 "image/gif":
 				 
-			  	//return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+			  	return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
     			//break;
   			case y:
     			// code block
