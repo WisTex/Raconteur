@@ -807,8 +807,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
-  //content += `<li>${results[i].filename}</li>`;
-  content += `<section src="https://streams.hubzilla.social/cloud/ray/2023/2023-01/fix.txt"></section>`;
+  content += `<li>${results[i].filename}</li>`;
   continue;
 
 }
