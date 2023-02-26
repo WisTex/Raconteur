@@ -807,7 +807,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
-  content += `<li>${results[i].filename}</li>`;
+  content += `<li>${baseurl}/cloud/${channel_address}/${results[i].display_path}</li>`;
   continue;
 
 }
