@@ -77,19 +77,18 @@ function select_webserver {
         --title "Choose your web server" \
         --menu "Please choose the webserver you will be using:" \
         18 80 3 \
-        "1" "Nginx (recommended for small servers)"\
-        "2" "Apache (famous but heavier web server) " 3>&1 1>&2 2>&3)
-        # Only two options here. An extra one with some explanations could be added later
+        "1" "Apache"\
+        "2" "Nginx (EXPERIMENTAL - channel import/cloning doesn't work)" 3>&1 1>&2 2>&3)
 
     exitstatus=$?
     if [ $exitstatus = 0 ]
     then
         case "$which_web_server" in
-        1) webserver=nginx
-           summary_webserver="\nWeb server : Nginx\n\n"
-           ddns_choice ;;
-        2) webserver=apache
+        1) webserver=apache
            summary_webserver="\nWeb server : Apache\n\n"
+           ddns_choice ;;
+        2) webserver=nginx
+           summary_webserver="\nWeb server : Nginx\n\n"
            # After choosing the Web server, we need to check if Dynamic DNS will be needed
            ddns_choice
         esac
