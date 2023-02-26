@@ -772,12 +772,12 @@ let postSaveTimer = null;
 				// alert(JSON.stringify(data));
 				
 				let success = data.success;
-				let channel_address = data.address;
+				let address = data.address;
 				let results = data.content;
 				let path = results[0].display_path;
 
 				alert(address);
-				alert(`<li><img src="/cloud/${channel_address}/${results[0].display_path}" class="img-thumbnail" ></img></li>`);
+				alert(`<li><img src="/cloud/${address}/${results[0].display_path}" class="img-thumbnail" ></img></li>`);
 				console.log(JSON.stringify(results));
 				
 				if (data.success) {
@@ -804,12 +804,12 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
   if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`}
-  content += `<li><img src="/cloud/${channel_address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
-  content += `<li><img src="/cloud/${channel_address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
   continue;
 
 }
