@@ -799,8 +799,7 @@ let postSaveTimer = null;
 				let path = results[0].display_path;
 
 				alert(address);
-				alert(`<li><img src="/cloud/${address}/${results[0].display_path}" class="img-thumbnail" ></img></li>`);
-				console.log(JSON.stringify(results));
+				//console.log(JSON.stringify(results));
 				
 				if (data.success) {
 
