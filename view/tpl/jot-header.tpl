@@ -772,8 +772,8 @@ let postSaveTimer = null;
 		//return;
 
 		switch(result.filetype) {
-  			case "image/jpeg":
-				 "image/png":
+  			case "image/jpeg",
+				 "image/png",
 			  	 "image/gif":
 
 				 alert(`<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`);
