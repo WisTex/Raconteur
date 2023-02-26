@@ -776,8 +776,8 @@ let postSaveTimer = null;
 			  	 "image/gif":
 				 
 			  	alert(`Image: ${result.display_path}`);
-				//let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-    			//return mType;
+				let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+    			return mType;
 				break;
   			case y:
     			// code block
@@ -836,10 +836,10 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
-  content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
   let result = results[i];
   getFileMimeType(result);
-  //content += mType;
+  content += mType;
   continue;
 
 }
