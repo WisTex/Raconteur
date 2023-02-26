@@ -961,20 +961,20 @@ class Apps
             }
         }
         foreach ($apps as $ap) {
-            if (!self::find_app_in_array($ap['name'], $ret)) {
+            if (!self::find_app_in_array($ap['guid'], $ret)) {
                 $ret[] = $ap;
             }
         }
         return $ret;
     }
 
-    public static function find_app_in_array($name, $arr)
+    public static function find_app_in_array($guid, $arr)
     {
         if (!$arr) {
             return false;
         }
         foreach ($arr as $x) {
-            if ($x['name'] === $name) {
+            if ($x['guid'] === $guid) {
                 return $x;
             }
         }
@@ -1022,7 +1022,7 @@ class Apps
 
         $narr = [];
         foreach ($syslist as $x) {
-            $narr[] = $x['name'];
+            $narr[] = $x['guid'];
         }
 
         set_pconfig($uid, 'system', $conf, implode(',', $narr));
@@ -1067,7 +1067,7 @@ class Apps
 
         $narr = [];
         foreach ($syslist as $x) {
-            $narr[] = $x['name'];
+            $narr[] = $x['guid'];
         }
 
         set_pconfig($uid, 'system', $conf, implode(',', $narr));
