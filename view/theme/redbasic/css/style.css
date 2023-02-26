@@ -303,6 +303,9 @@ nav {
 	filter:alpha(opacity=$nav_percent_min_opacity);
 }
 
+.collapsed-divider {
+	border-top: 1px solid #ccc;
+}
 #powered-by {
 	font-size: 0.5rem;
 	position: absolute;
