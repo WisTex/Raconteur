@@ -766,9 +766,9 @@ let postSaveTimer = null;
 
 	{{* start new getFileMimeType *}}
 
-	function getFileMimeType(results[i]) {
+	function getFileMimeType((result)) {
 
-		alert(`getFileMimeType: ${results[i]}`);
+		alert(`getFileMimeType: ${result.filetype}`);
 		return true;
 	}
 
@@ -823,7 +823,8 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
   content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
-  getFileMimeType(results[i]);
+  let result = results[i];
+  getFileMimeType(result);
   continue;
 
 }
