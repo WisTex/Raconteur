@@ -775,7 +775,7 @@ let postSaveTimer = null;
 				 "image/png",
 			  	 "image/gif":
 				 
-			  	//alert(`Image: ${result.display_path}`);
+			  	alert(`Image: ${result.display_path}`);
 				let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
     			break;
   			case y:
