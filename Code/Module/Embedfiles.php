@@ -21,6 +21,7 @@ class Embedfiles extends Controller
 
         $channel = App::get_channel();
         $channel_id = $channel['channel_id'];
+        $channel_address = $channel['channel_address'];
         $observer = get_observer_hash();
         $orderby = 'is_dir desc';
         
@@ -32,7 +33,7 @@ class Embedfiles extends Controller
         //$sorted = $this->get_embed_top_folders($results);
         //$sorted = $this->get_embed_sub_folders($results);
         //$sorted = $this->get_embed_files($results);
-        json_return_and_die(['success' => $success, 'content' => $sorted]);
+        json_return_and_die(['success' => $success, 'address' => $channel_address, 'content' => $sorted]);
     }
 
         /* returns sorted files and folders */

@@ -772,10 +772,11 @@ let postSaveTimer = null;
 				// alert(JSON.stringify(data));
 				
 				let success = data.success;
+				let address = data.address;
 				let results = data.content;
 				let path = results[0].display_path;
 
-				alert(baseurl);
+				alert(address);
 				
 				if (data.success) {
 
