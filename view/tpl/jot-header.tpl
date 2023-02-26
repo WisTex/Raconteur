@@ -771,9 +771,9 @@ let postSaveTimer = null;
 		//alert(`getFileMimeType: ${result.filetype}`);
 
 		switch(result.filetype) {
-  			case "image/jpeg":
-				 //"image/png":
-			  	 //"image/gif":
+  			case "image/jpeg",
+				 "image/png",
+			  	 "image/gif":
 				 
 			  	alert(`Image: ${result.display_path}`);
 				//let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
