@@ -182,10 +182,12 @@
 		</div>
 		<div id="sys-apps-collapsed" style="display:none;">
 		{{/if}}
+		{{if $navbar_apps}}
 		{{foreach $navbar_apps as $navbar_app}}
 		{{$navbar_app|replace:'dropdown-item':'nav-link'}}
-		<div class="dropdown-divider collapsed-divider"></div>
 		{{/foreach}}
+		<div class="dropdown-divider collapsed-divider"></div>
+		{{/if}}
 
 		{{foreach $nav_apps as $nav_app}}
 		{{$nav_app|replace:'dropdown-item':'nav-link'}}
