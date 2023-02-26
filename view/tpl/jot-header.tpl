@@ -778,6 +778,7 @@ let postSaveTimer = null;
 			  	alert(`Image: ${result.display_path}`);
 				//let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
     			//return mType;
+				return true;
   			case y:
     			// code block
     			break;
