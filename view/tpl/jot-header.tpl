@@ -776,7 +776,7 @@ let postSaveTimer = null;
 			  	 "image/gif":
 				 
 			  	alert(`Image: ${result.filetype}`);
-				let mType = `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+				let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
     			return mType;
   			case y:
     			// code block
