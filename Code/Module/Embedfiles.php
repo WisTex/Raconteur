@@ -50,7 +50,8 @@ class Embedfiles extends Controller
                         }
                     }
                 }
-                $i = count($sorted);
+                //$i = count($sorted);
+                $i++;
             }
             return $sorted;
         }
