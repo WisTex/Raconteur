@@ -776,7 +776,7 @@ let postSaveTimer = null;
 			  	 "image/gif":
 				 
 			  	return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-    			break;
+    			//break;
   			case y:
     			// code block
     			break;
