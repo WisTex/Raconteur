@@ -34,6 +34,8 @@ Simply run the setup script:
 
 A series of dialog boxes will appear, in which you can enter the necessary information.
 
+Using Nginx as the webserver is not the best choice if you plan to clone or import an existing channel hosted on another website: it will most likely not work.
+
 On a freshly installed Debian server, there are only four mandatory settings you need to provide: your domain name, your e-mail address, the webserver your will be using (Apache or Nginx), a password for your website's database (if you choose to use a randomly generated password, remember you'll have to use it a little later, so take note of it when the install summary is displayed). Once everything is ready, the actual install process will begin. You should not have anything else to do until your website is installed.
 
 ## Final step 

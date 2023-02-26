@@ -1,5 +1,5 @@
 # Easy install setup script
-    
+
 ## This installation script was provided by the community and is officially unsupported. Use at your own risk. Only use with a fresh install of Debian GNU//Linux stable. If you have a server that has Apache, PHP, MySQL, SSL, etc. already installed this may break your server. 
 
 Here you will find a quick and easy way to set up a website capable of joining the fediverse, using software from the Streams repository. All you have to do is run the setup script, enter some information and the magic will happen. Check the [INSTALL.md](INSTALL.md) file for step-by-step instructions.
@@ -47,3 +47,6 @@ It is recommended to run the Raspi without graphical frontend. Use the following
 
 *Don’t forget to change the default password for user pi!*
 
+## Help wanted
+
+Using Nginx as the webserver is not the best choice if you plan to clone or import a channel currently hosted on another website. The Nginx and/or PHP configuration files probably need some tweaking to have this feature correctly working. If you feel you could help solve this, feel free to contribute.
