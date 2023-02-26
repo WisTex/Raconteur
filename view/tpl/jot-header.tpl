@@ -783,7 +783,7 @@ let postSaveTimer = null;
   			default:
 		  		//code block
 		}
-		return true;
+		return;
 	}
 
 	{{* end new getFileMimeType *}}
