@@ -775,7 +775,7 @@ let postSaveTimer = null;
 				let results = data.content;
 				let path = results[0].display_path;
 
-				alert(homebase);
+				alert(channelId);
 				
 				if (data.success) {
 
