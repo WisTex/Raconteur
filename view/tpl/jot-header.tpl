@@ -769,9 +769,18 @@ let postSaveTimer = null;
 	function getFileMimeType(result) {
 
 		alert(`getFileMimeType: ${result.filetype}`);
-		return true;
-	}
 
+		switch(result.filetype) {
+  			case "image/*":
+			  alert(`Image: ${result.filetype}`);
+    			return true;
+  			case y:
+    			// code block
+    			break;
+  			default:
+		  		return true;
+		}
+	}
 
 	{{* end new getFileMimeType *}}
 
