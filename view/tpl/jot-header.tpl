@@ -764,6 +764,14 @@ let postSaveTimer = null;
         'json');
     };
 
+	{{* start new getFileMimeType *}}
+
+
+
+	{{* end new getFileMimeType *}}
+
+
+
 	{{* start new getFileDirList *}}
 
 	let getFileDirList = function () {
