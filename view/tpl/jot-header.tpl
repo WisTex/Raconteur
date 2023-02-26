@@ -777,6 +777,7 @@ let postSaveTimer = null;
 				let path = results[0].display_path;
 
 				alert(address);
+				alert(`<li><img src="/cloud/${channel_address}/${results[0].display_path}" class="img-thumbnail" ></li>`);
 				console.log(JSON.stringify(results));
 				
 				if (data.success) {
@@ -804,7 +805,6 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
   if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse" id="embedDir-${(i-1)}">`}
   content += `<li><img src="/cloud/${channel_address}/${results[i].display_path}" class="img-thumbnail" ></li>`;
-  alert(`<li><img src="/cloud/${channel_address}/${results[i].display_path}" class="img-thumbnail" ></li>`);
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
