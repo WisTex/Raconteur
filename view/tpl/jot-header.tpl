@@ -802,14 +802,12 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
   if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse" id="embedDir-${(i-1)}">`}
-  //content += `<li>${results[i].filename}</li>`;
-  content += `<li><div src="${baseurl}/cloud/${channel_address}/${results[i].display_path}" class="img-fluid img-thumbnail" alt="..."/></li>`;
+  content += `<li>${results[i].filename}</li>`;
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
-  //content += `<li>${results[i].filename}</li>`;
-  content += `<li><div src="${baseurl}/cloud/${channel_address}/${results[i].display_path}" class="img-fluid img-thumbnail" alt="..."/></li>`;
+  content += `<li>${results[i].filename}</li>`;
   continue;
 
 }
