@@ -59,14 +59,6 @@ function enter_domain {
             # Validate domain name (we check if the input looks like a FQDN of a domain name not that it is an actual one)
             if [[ "$domain_name" =~ $domain_regex ]]
             then
-            ############# We keep this in case one day we manage to handle configuration of domain name + certificates with yunohost tools ###############
-            #    if [ $system == "yunohost" ]
-            #    then
-            #        enter_db_pass
-            #    else
-            #        source scripts/dialogs_debian.sh
-            #    fi
-            ############# Until then, we'll keep using stuff intended for an freshly installed Debian server #############################################
                 source scripts/dialogs_debian.sh
             else
                 inputbox_domain="\"$domain_name\" is not a valid address/domain name for your website. Please enter something that looks like \"example.com\" or \"subdomain.example.com\":"

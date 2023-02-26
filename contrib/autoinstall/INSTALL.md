@@ -2,8 +2,8 @@
 
 ## Disclaimer
 
-- This script does work with Debian 11 only.
-- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to install more than one website on the same computer as long as you use a single webserver. It should also work on a YunoHost server withour breaking it.
+- This script does work with Debian GNU/Linux 11 only.
+- This script has to be used on a fresh debian install only (it does not take account for a possibly already installed and configured webserver or sql implementation). You may use it to install more than one website on the same computer as long as you use a single webserver.
 
 ## First step: setting up your system
 

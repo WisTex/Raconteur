@@ -4,8 +4,8 @@
 # ----------
 #
 # This file automates the installation of your website using the Streams repository
-# (https://codeberg.org/streams/streams), on a server already running YunoHost 11.*,
-# or on a freshly installed Debian Linux 11 ("Bullseye") server.
+# (https://codeberg.org/streams/streams), on a freshly installed Debian GNU/Linux 11
+# ("Bullseye") server.
 #
 # 1) Switch to user "root" by typing "su -"
 #
@@ -17,9 +17,9 @@
 # 3) You will be asked you to provide the domain name of your website to be installed and
 # database settings you wish to use for it.
 #
-# On a freshly installed Debian server, you will be asked for an email address (for your
-# Let's Encrypt certificate). You will also be able to configure a Dynamic DNS provider
-# (three choices available for the moment).
+# On a freshly installed Debian GNU/Linux server, you will be asked for an email address
+# (for your Let's Encrypt certificate). You will also be able to configure a Dynamic DNS
+# provider (three choices available for the moment).
 #
 # Once all the necessary info is  provided, the install will begin.
 #
@@ -28,7 +28,7 @@
 # -----------------------------------
 #
 # This file automates the installation of a Nomad/ActivityPub federation capable website
-# under Debian Linux. It will:
+# under Debian GNU/Linux. It will:
 # - install (if needed)
 #        * php8.2,
 #        * MariaDB (mysql),
@@ -42,7 +42,6 @@
 #        * Updates of your website using git to pull from the Streams repository
 #        * optionally run command to keep the IP up-to-date (if you use a Dynamic DNS provider)
 #
-# If the script is used on a YunoHost server it will need to do a little less. (see README.md)
 #
 #
 # More information
@@ -69,7 +68,6 @@ function check_sanity {
     then
         die 'Must be run by root user'
     fi
-    # We'll add something here to check the script is used on a YunoHost server (i.e. using which yunohost)
     if [ -f /etc/lsb-release ]
     then
         die "Distribution is not supported"
@@ -80,16 +78,10 @@ function check_sanity {
     fi
     if [[ -z "$(grep 'Linux 11' /etc/issue)" ]]
     then
-        if [[ -z "$(which yunohost)" ]]
-        then
-            die "You can only run this script on a Debian 11 or YunoHost server"
-        else
-            system=yunohost
-            print_info "Running the autoinstall script on a YunoHost server"
-        fi
+        die "You can only run this script on a Debian GNU/Linux 11 server"
     else
         system=debian
-        print_info "Running the autoinstall script on a Debian 11 server"
+        print_info "Running the autoinstall script on a Debian GNU/Linux 11 server"
     fi
 }
 
@@ -130,7 +122,7 @@ function nocheck_install {
     else
         print_info "Did not install $1 as it would require removing the following:"
         print_info "$DRYRUN"
-        die "It seems you are not running this script on a fresh Debian install. Please consider another installation method."
+        die "It seems you are not running this script on a fresh Debian GNU/Linux install. Please consider another installation method."
     fi
 }
 
@@ -148,13 +140,8 @@ function print_warn {
 
 function add_nginx_conf {
     print_info "adding nginx conf files"
-#    if [[ $system == "yunohost" ]]
-#    then
-#        SOMETHING ELSE MAYBE
-#    else
-        sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" nginx-server.conf.template >> /etc/nginx/sites-available/${domain_name}.conf
-        ln -s /etc/nginx/sites-available/${domain_name}.conf /etc/nginx/sites-enabled/
-#    fi
+    sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" nginx-server.conf.template >> /etc/nginx/sites-available/${domain_name}.conf
+    ln -s /etc/nginx/sites-available/${domain_name}.conf /etc/nginx/sites-enabled/
     systemctl restart nginx
 }
 
@@ -168,7 +155,6 @@ function install_imagemagick {
 
 function php_version {
     # We check that we can install the required version (8.2),
-    # which should be availabe thanks to the sury repo enabled in YunoHost
     print_info "checking that we can install the required PHP version (8.2)..."
     check_php=$(apt-cache show php8.2 | grep 'No packages found')
     if [ -z "$check_php" ]
@@ -186,11 +172,9 @@ function install_php {
         if [[ $webserver == "nginx" ]]
         then
             nocheck_install "php8.2-fpm php8.2 php8.2-mysql php-pear php8.2-curl php8.2-gd php8.2-mbstring php8.2-xml php8.2-zip"
-            # Rather than changing global php.ini, we use override with custome settings in the website's nginx conf file
-            # We keep the 3 lines below in case it doesn't work (you can change the values here if you want to use different file sizes)
-            # sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/8.2/fpm/php.ini
-            # sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/8.2/fpm/php.ini
-            systemctl reload php8.2-fpm
+            sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/8.2/fpm/php.ini
+            sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/8.2/fpm/php.ini
+            systemctl restart php8.2-fpm
             print_info "php8.2 was installed."
         elif [[ $webserver == "apache" ]]
         then
@@ -275,7 +259,7 @@ function ping_domain {
         else
             if [ $i -gt 5 ]
             then
-                die "Failed to: ping -c 1 $domain_name not resolved\nMake sure that you domain name is configured in YunoHost admin interface."
+                die "Failed to: ping -c 1 $domain_name not resolved."
             fi
         fi
         sleep 10
@@ -385,8 +369,8 @@ function configure_cron_daily {
     echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$cron_job
     if [[ $system == "debian" ]]
     then
-        echo "echo \"\$(date) - updating linux...\"" >> /var/www/$cron_job
-        echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update linux and upgrade" >> /var/www/$cron_job
+        echo "echo \"\$(date) - updating Debian GNU/Linux...\"" >> /var/www/$cron_job
+        echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update Debian GNU/Linux and upgrade" >> /var/www/$cron_job
         echo "echo \"\$(date) - Update finished. Rebooting...\"" >> /var/www/$cron_job
         echo "#" >> /var/www/$cron_job
         echo "shutdown -r now" >> /var/www/$cron_job
@@ -432,13 +416,13 @@ source scripts/dialogs.sh
 
 #set -x    # activate debugging from here
 
-# We'll put the follwing in scripts/yunohost.sh and scripts/debian.sh
-if [[ $system == "yunohost" ]]
-then
-    source scripts/yunohost.sh
-elif [[ $system == "debian" ]]
+if [[ $system == "debian" ]]
 then
     source scripts/debian.sh
+# Scripts for other Debian based distros could be added later
+# elif [[ $system == "other_distro" ]]
+# then
+#     source scripts/other_distro.sh
 fi
 
 install_imagemagick
