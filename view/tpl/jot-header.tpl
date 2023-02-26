@@ -766,9 +766,9 @@ let postSaveTimer = null;
 
 	{{* start new getFileMimeType *}}
 
-	function getFileMimeType((result)) {
+	function getFileMimeType(result) {
 
-		alert(`getFileMimeType: ${result}`);
+		alert(`getFileMimeType: ${result.filetype}`);
 		return true;
 	}
 
