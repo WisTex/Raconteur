@@ -768,7 +768,8 @@ let postSaveTimer = null;
 
 	function getFileMimeType(result, address) {
 
-		alert(`getFileMimeType: ${result.display_path}`);
+		alert(`<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`);
+		return;
 
 		switch(result.filetype) {
   			case "image/jpeg",
@@ -829,15 +830,15 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
   //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
   if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`}
-  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
-  content += getFileMimeType(result, address);
+  content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  //content += getFileMimeType(result, address);
   continue;
 
 } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
   //  file preceded by another file = just the line item
-  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
   let result = results[i];
-  content += getFileMimeType(result, address);
+  getFileMimeType(result, address);
   //content += mType;
   continue;
 
