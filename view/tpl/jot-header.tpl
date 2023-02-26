@@ -777,15 +777,14 @@ let postSaveTimer = null;
 				 
 			  	alert(`Image: ${result.display_path}`);
 				let mType = `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-    			return mType;
-				break;
+    			break;
   			case y:
     			// code block
     			break;
   			default:
 		  		//code block
 		}
-		return true;
+		return mType;
 	}
 
 	{{* end new getFileMimeType *}}
