@@ -781,7 +781,7 @@ let postSaveTimer = null;
 				  return``;
 			case "application/json":
 			case "text/plain":
-    			  return`<li><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
+    			  return`<li class="border rounded my-1 p-2"><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
   			default:
 		  		return;
 		}
