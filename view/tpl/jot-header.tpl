@@ -770,13 +770,10 @@ let postSaveTimer = null;
 
 		switch(result.filetype) {
   			case "image/jpeg":
-				 "image/png":
-			  	 "image/gif":
-				return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-			//case "image/jpeg":
-				 //"image/png"
+				  return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+			case "image/png":
 			  	 //"image/gif":
-			//	return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
     		case y:
     			// code block
     			break;
