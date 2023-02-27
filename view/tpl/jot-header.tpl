@@ -777,7 +777,7 @@ let postSaveTimer = null;
     			  return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
     		case "audio/mpeg":
 				  return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4>
-				  <img src="/images/mp3-icon-png.png" class="img-fluid img-thumbnail" >
+				  <img src="/images/mp3.png" class="img-fluid" >
 				  <audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "text/html":
 				  // security issue, let's move on... Need to return something so we don't get a js undefined message.
