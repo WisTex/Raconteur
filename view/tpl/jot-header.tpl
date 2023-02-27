@@ -785,7 +785,7 @@ let postSaveTimer = null;
 				  return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 				  let send = `/cloud/${address}/${result.display_path}`;
-    			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles('${send}')">${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
+    			  return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${send}')" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
     		case "audio/mpeg":
 				  return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles()"><h4>${result.filename}</h4>
 				  <img src="/images/mp3.png" class="img-fluid my-2" >
