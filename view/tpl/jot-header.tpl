@@ -713,9 +713,9 @@ let postSaveTimer = null;
                             let imageparent = document.getElementById($(image).parent()[0].id);
                             $(imageparent).toggleClass('embed-photo-selected-photo');
                             let href = $(imageparent).attr('href');
-							alert(`href: ${href}`);
-                            $.post("embedphotos/photolink", {href: href},
+							$.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
+									alert(JSON.stringify(ddata));
                                     if (ddata['status']) {
                                         addeditortext(ddata['photolink']);
 										preview_post();
