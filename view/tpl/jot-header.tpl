@@ -692,6 +692,9 @@ let postSaveTimer = null;
     let choosePhotoFromAlbum = function (album) {
         $.post("embedphotos/album", {name: album},
             function(data) {
+
+			alert(JSON.stringify(data));
+
                 if (data['status']) {
                     $('#embedPhotoModalLabel').html("{{$modalchooseimages}}");
                     $('#embedPhotoModalBodyAlbumDialog').html('\
@@ -765,8 +768,8 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		let ddata = array();
-		ddata['filelink'] = `[zrl= ${send}][/zrl]`;
+		//let ddata = array();
+		//ddata['filelink'] = `[zrl= ${send}][/zrl]`;
 		alert(`Send: ${filelink}`);
 		addeditortext(ddata['filelink']);
 		preview_post();
@@ -781,7 +784,8 @@ let postSaveTimer = null;
 			case "image/png":
 			case "image/gif":
 				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
-				  return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  //return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  return `<li onclick ="choosePhotoFromAlbum(`2022`)"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 				  let sendmp4 = `/cloud/${address}/${result.display_path}`;
     			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles('${sendmp4}')">${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
