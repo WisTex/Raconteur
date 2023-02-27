@@ -829,6 +829,7 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
   if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`}
   //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  let result = results[i];
   content += getFileMimeType(result, address);
   continue;
 
