@@ -778,7 +778,7 @@ let postSaveTimer = null;
     		case "audio/mpeg":
 				  return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "text/html":
-				  return``;
+				  return`<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><iframe src="view-source:/cloud/${address}/${result.display_path}" ></iframe></li>`;
 			case "application/json":
 			case "text/plain":
     			  return`<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
