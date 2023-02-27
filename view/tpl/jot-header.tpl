@@ -781,7 +781,7 @@ let postSaveTimer = null;
 			case "image/gif":
 				  return `<li onclick ="alert('Working')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
-    			  return `<li class="border rounded my-1 p-2" onclick ="this.video.getController().pause();alert('Working')"><h4>${result.filename}</h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
+    			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="alert('Working')">${result.filename}</h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
     		case "audio/mpeg":
 				  return `<li class="border rounded my-1 p-2" onclick ="alert('Working')"><h4>${result.filename}</h4>
 				  <img src="/images/mp3.png" class="img-fluid my-2" >
