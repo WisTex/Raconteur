@@ -779,7 +779,7 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-				  let send = `/cloud/${address}/${result.display_path}`;
+				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
 				  return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 				  let sendmp4 = `/cloud/${address}/${result.display_path}`;
