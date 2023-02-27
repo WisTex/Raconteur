@@ -778,7 +778,7 @@ let postSaveTimer = null;
     		case "audio/mpeg":
 				  return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "text/html":
-				  // security issue, let's move on...
+				  // security issue, let's move on... Need to return something so we don't get a js undefined message.
 				  return '';
 			case "application/json":
 			case "text/plain":
