@@ -800,9 +800,6 @@ let postSaveTimer = null;
 				let success = data.success;
 				let address = data.address;
 				let results = data.content;
-				let path = results[0].display_path;
-
-				alert(address);
 				//console.log(JSON.stringify(results));
 				
 				if (data.success) {
