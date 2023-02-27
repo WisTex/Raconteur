@@ -673,15 +673,12 @@ let postSaveTimer = null;
 	    jotCheckoutStatus();
 	}
 
-	/* start new function */
-
+	/* start initializeEmbedFileDialog function */
 	let initializeEmbedFileDialog = function () {
-    			
         getFileDirList();
     	$('#embedFileModal').modal('show');
 	};
-
-	/* end new function */
+	/* end initializeEmbedFileDialog function */
 
 	let initializeEmbedPhotoDialog = function () {
         $('.embed-photo-selected-photo').each(function (index) {
@@ -768,10 +765,10 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-
-
+		let filelink = `[zrl= ${send}][/zrl]`;
+		addeditortext('filelink');
+		preview_post();
 	}
-
 	{{* end new setEmbedFiles *}}
 
 	{{* start new getFileMimeType *}}
