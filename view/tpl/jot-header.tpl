@@ -765,7 +765,8 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		let ddata['filelink'] = `[zrl= ${send}][/zrl]`;
+		let ddata = array();
+		ddata['filelink'] = `[zrl= ${send}][/zrl]`;
 		alert(`Send: ${filelink}`);
 		addeditortext(ddata['filelink']);
 		preview_post();
