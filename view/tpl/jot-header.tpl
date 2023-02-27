@@ -770,13 +770,14 @@ let postSaveTimer = null;
 
 		switch(result.filetype) {
   			case "image/jpeg":
+				 "image/png":
+			  	 "image/gif":
+				return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+			//case "image/jpeg":
 				 //"image/png"
 			  	 //"image/gif":
-
-				// alert(`<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`);
-				return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-    			break;
-  			case y:
+			//	return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+    		case y:
     			// code block
     			break;
   			default:
@@ -838,7 +839,6 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
   let result = results[i];
   content += getFileMimeType(result, address);
-  //content += mType;
   continue;
 
 }
