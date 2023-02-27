@@ -773,23 +773,16 @@ let postSaveTimer = null;
 			case "image/png":
 			case "image/gif":
 				  return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-			/*
-			case "image/png":
-			  	  return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-			case "image/gif":
-				 return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-			*/
-    		case "video/mp4":
-    			 return ``;
-    			break;
 			case "video/mp4":
-    			// code block
-    			break;
+    			 return ``;
+    		
+			case "audio/mpeg":
+				  return `<audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none">${result.filename}</audio>`;
 			case "video/mp4":
     			// code block
     			break;
   			default:
-		  		//code block
+		  		return;
 		}
 		return;
 	}
