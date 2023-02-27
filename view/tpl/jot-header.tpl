@@ -794,7 +794,8 @@ let postSaveTimer = null;
 				  return '';
 			case "application/json":
 			case "text/plain":
-    			  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles()"><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
+				  let sendplain = `/cloud/${address}/${result.display_path}`;
+    			  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')"><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
   			default:
 		  		return;
 		}
