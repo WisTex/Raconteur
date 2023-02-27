@@ -772,8 +772,9 @@ let postSaveTimer = null;
   			case "image/jpeg":
 				  return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "image/png":
-			  	 //"image/gif":
-				return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+			  	  return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+			case "image/gif":
+				 return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
     		case y:
     			// code block
     			break;
