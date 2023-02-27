@@ -774,18 +774,17 @@ let postSaveTimer = null;
 			case "image/gif":
 				  return `<li><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
-    			 return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
+    			  return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
     		case "audio/mpeg":
 				  return `<li class="border rounded my-1 p-2"><h4>${result.filename}</h4><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "text/html":
-			case "text/plain":
-    			  return``;
+				  return``;
 			case "application/json":
-    			  return``;
+			case "text/plain":
+    			  return`<li><img src="data:,/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
   			default:
 		  		return;
 		}
-		return;
 	}
 
 	{{* end new getFileMimeType *}}
