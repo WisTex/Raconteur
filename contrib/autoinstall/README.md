@@ -1,4 +1,4 @@
-# Easy install setup script
+# Autoinstall setup script
 
 ## This installation script was provided by the community and is officially unsupported. Use at your own risk. Only use with a fresh install of Debian GNU//Linux stable. If you have a server that has Apache, PHP, MySQL, SSL, etc. already installed this may break your server. 
 
@@ -10,7 +10,7 @@ Before you start, make sure you have the following:
 
 - A computer/server running a freshly installed Debian GNU/Linux system, on which you can use a command line terminal.  It can be a mini-PC or a Raspberry Pi at home, a dedicated server or a VPS.
 - A domain name pointing to this computer/server (a few Dynamic DNS providers can automatically be configured as you will read below). You can register a free subdomain with providers such as FreeDNS or NoIP, or buy a domain elsewhere.
-- Ports 80 & 443 open on your firewall, forwarded to your computer/server ifœ you use an IPv4 internet connection through a router (i.e. your ISP router at home).
+- Ports 80 & 443 open on your firewall, forwarded to your computer/server if you use an IPv4 internet connection through a router (i.e. your ISP router at home).
 
 ## What the setup script will do for you:
 
