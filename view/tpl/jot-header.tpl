@@ -716,7 +716,7 @@ let postSaveTimer = null;
 							$.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
 									if (ddata['status']) {
-										alert(JSON.stringify(ddata));
+										console.log(JSON.stringify(ddata));
 										
                                         addeditortext(ddata['photolink']);
 										preview_post();
