@@ -765,9 +765,9 @@ let postSaveTimer = null;
     };
 
 	{{* start new setEmbedFiles *}}
-	function setEmbedFiles() {
+	function setEmbedFiles(send) {
 
-		alert('Still Working');
+		alert(`Send: ${send}`);
 
 
 	}
@@ -781,7 +781,8 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-				  return `<li onclick ="setEmbedFiles()"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  let send = `/cloud/${address}/${result.display_path}`;
+				  return `<li onclick ="setEmbedFiles(send)"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
     			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles()">${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
     		case "audio/mpeg":
