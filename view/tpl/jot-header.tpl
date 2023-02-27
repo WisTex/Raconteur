@@ -766,7 +766,7 @@ let postSaveTimer = null;
 
 		alert(`Send: ${send}`);
 		let filelink = `[zrl= ${send}][/zrl]`;
-		addeditortext('filelink');
+		addeditortext('${filelink}');
 		preview_post();
 	}
 	{{* end new setEmbedFiles *}}
