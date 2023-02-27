@@ -717,7 +717,7 @@ let postSaveTimer = null;
                                 function(ddata) {
 									if (ddata['status']) {
 										alert(JSON.stringify(ddata));
-										break;
+										
                                         addeditortext(ddata['photolink']);
 										preview_post();
                                     } else {
