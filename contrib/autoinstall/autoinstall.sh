@@ -349,10 +349,8 @@ function configure_daily_update {
 function configure_cron_daily {
     print_info "configuring cron..."
     # every 10 min for Run.php
-    if [ -z "`grep 'php Code/Daemon/Run.php' /etc/crontab`" ] # We probably need to change something here
-    then
-        echo "*/10 * * * * www-data cd $install_path; php Code/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
-    fi
+    echo "*/10 * * * * www-data cd $install_path; php Code/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
+
     # Run external script daily at 05:30 to  update repository core and addon
     echo "#!/bin/sh" > /var/www/$cron_job
     echo "#" >> /var/www/$cron_job
