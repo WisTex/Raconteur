@@ -781,7 +781,7 @@ let postSaveTimer = null;
 				  return``;
 			case "application/json":
 			case "text/plain":
-    			  return`<li><img class="img-fluid img-thumbnail my-1 p-2" src="data:${result.hash}" ><div>${baseurl}/cloud/${address}/${result.display_path}"</div></li>`;
+    			  return`<li><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
   			default:
 		  		return;
 		}
