@@ -1629,6 +1629,7 @@ function loadText(textRegion,data) {
 }
 
 function addeditortext(data) {
+	alert(data);
 	if(plaintext == 'none') {
 		let textarea = document.getElementById('profile-jot-text');
 		if (textarea) {
