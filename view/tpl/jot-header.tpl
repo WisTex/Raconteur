@@ -777,7 +777,7 @@ let postSaveTimer = null;
     			 return ``;
     		
 			case "audio/mpeg":
-				  return `<li class="border rounded"><h4>${result.filename}</h4><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
+				  return `<li class="border rounded m-1"><h4>${result.filename}</h4><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "video/mp4":
     			// code block
     			break;
