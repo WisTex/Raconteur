@@ -764,8 +764,15 @@ let postSaveTimer = null;
         'json');
     };
 
-	{{* start new getFileMimeType *}}
+	{{* start new setEmbedFiles *}}
+	function setEmbedFiles() {
 
+
+	}
+
+	{{* end new setEmbedFiles *}}
+
+	{{* start new getFileMimeType *}}
 	function getFileMimeType(result, address) {
 
 		switch(result.filetype) {
@@ -789,11 +796,9 @@ let postSaveTimer = null;
 		  		return;
 		}
 	}
-
 	{{* end new getFileMimeType *}}
 
 	{{* start new getFileDirList *}}
-
 	let getFileDirList = function () {
 		$.post("embedfiles", {},
 		    function(data) {
@@ -811,7 +816,6 @@ let postSaveTimer = null;
 					let content = `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="embedDir-0"><i class="fa fa-folder-o fa-lg me-1"></i>${results[0].filename}</button>`;
 								
 					for(let i=1; i<(results.length); i++) {
-
 					
 if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
@@ -839,13 +843,10 @@ if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
   let result = results[i];
   content += getFileMimeType(result, address);
   continue;
-
 }
 
 					} // end new loop
 
-					// close the last ul
-					//content += `</ul>`
 					$('#embedFileDirModalBody').html( content);
 					
 				} else {
