@@ -788,7 +788,7 @@ function bb_map_location($match)
 function bb_qr($match)
 {
     $str = $match[1];
-    return str_replace($match[0], '<img src="' . (new QRCode())->render($str) . '" alt="$str" loading="eager" />', $match[0]);
+    return str_replace($match[0], '<img src="' . (new QRCode())->render($str) . '" alt="' . $str . '" title="' . $str . '" loading="eager" />', $match[0]);
 }
 
 function bb_opentag($match)
