@@ -785,7 +785,7 @@ let postSaveTimer = null;
 			case "image/gif":
 				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
 				  //let send = `2022`;
-				  return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 				  //return `<li onclick ="choosePhotoFromAlbum('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
