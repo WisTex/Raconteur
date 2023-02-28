@@ -123,7 +123,7 @@ function tryzrlaudio($match)
 
    // return '<audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
 
-    return '<img src="/images/mp3.png" class="img-fluid my-2" ><audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none" class="img-fluid"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
+    return '<img src="/images/mp3.png" class="img-fluid my-2" ><audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none" width="100%"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
 }
 
 function tryzrlvideo($match)
