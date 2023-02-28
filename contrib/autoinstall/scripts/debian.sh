@@ -75,6 +75,7 @@ function add_vhost {
     echo "   </Directory>" >> "/etc/apache2/sites-available/${domain_name}.conf"
     echo "</VirtualHost>"  >> "/etc/apache2/sites-available/${domain_name}.conf"
     a2ensite $domain_name
+    vhost_added=yes
 }
 
 function install_letsencrypt {
@@ -103,6 +104,7 @@ function vhost_le {
     print_info "run certbot ..."
     certbot --apache -w $install_path -d $domain_name -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
     service apache2 restart
+    vhost_le_configured=yes
 }
 
 function install_mysql {
@@ -131,7 +133,7 @@ then
         nocheck_install "dnsutils"
         install_run_$ddns_provider
     fi
-    if [ -z $(dig -4 $le_domain +short | grep $(curl ip4.me/ip/)) ]
+    if [ -z $(dig -4 $domain_name +short | grep $(curl ip4.me/ip/)) ]
     then
         touch dns_cache_fail
         die "There seems to be a DNS cache issue here, you need to wait a few minutes before running the script again"
