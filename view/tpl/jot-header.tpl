@@ -767,7 +767,7 @@ let postSaveTimer = null;
 	{{* start new setEmbedFiles *}}
 	function setEmbedFiles(send) {
 
-		alert(`Send: ${send}`);
+		//alert(`Send: ${send}`);
 		addeditortext(send);
 		preview_post();
 	}
@@ -781,7 +781,7 @@ let postSaveTimer = null;
 			case "image/png":
 			case "image/gif":
 				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
-				  //let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][zmg class="img-fluid img-thumbnail" alt=${result.filename}]${baseurl}/cloud/${address}/${result.display_path}[/zmg][/zrl]`;
+				  //let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][zmg class="img-fluid img-thumbnail" alt=${result.filename}]${baseurl}/cloud/${address}/${result.hash}.jpg[/zmg][/zrl]`;
 				  //alert(send.toString());
 				  return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
