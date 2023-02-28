@@ -395,7 +395,7 @@ function configure_daily_update {
 function configure_cron_daily {
     print_info "configuring cron..."
     # every 10 min for Run.php
-    if [[ ! -z $(grep "/var/www/$install_folder; php Code/Daemon/Run.php" /etc/crontab) ]]
+    if [[ -z $(grep "/var/www/$install_folder; php Code/Daemon/Run.php" /etc/crontab) ]]
     then
         echo "*/10 * * * * www-data cd $install_path; php Code/Daemon/Run.php Cron >> /dev/null 2>&1" >> /etc/crontab
     fi
