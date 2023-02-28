@@ -768,7 +768,7 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		addeditortext(`testing 123`);
+		addeditortext(`testing 123 ${send}`);
 		preview_post();
 	}
 	{{* end new setEmbedFiles *}}
