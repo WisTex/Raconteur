@@ -768,10 +768,8 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		let ddata = [];
-		ddata['filelink'] = `[zrl= ${send}][/zrl]`;
-		alert(`Send: ${filelink}`);
-		addeditortext(ddata['filelink']);
+		alert(`Send: ${send}`);
+		addeditortext(send);
 		preview_post();
 	}
 	{{* end new setEmbedFiles *}}
@@ -783,10 +781,9 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
-				  //let send = `2022`;
+				  //let send = `${baseurl}/cloud/${address}/${result.display_path}`;
+				  let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][zmg class="img-fluid img-thumbnail" alt=${result.filename}]${baseurl}/cloud/${address}/${result.display_path}[/zmg][/zrl]`;
 				  return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-				  //return `<li onclick ="choosePhotoFromAlbum('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 				  let sendmp4 = `/cloud/${address}/${result.display_path}`;
