@@ -787,7 +787,7 @@ let postSaveTimer = null;
 				  let sendmp4 = `[video]/cloud/${address}/${result.display_path}[/video]`;
     			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles('${sendmp4}')" data-bs-dismiss="modal" >${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video controls="controls" preload="auto" src="/cloud/${address}/${result.display_path}#t=1" style="width:100%;" /></li>`;
     		case "audio/mpeg":
-				  let sendmpeg = `/cloud/${address}/${result.display_path}`;
+				  let sendmpeg = `[audio]/cloud/${address}/${result.display_path}[/audio]`;
 				  return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendmpeg}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "text/html":
 				  // security issue, let's move on... Need to return something so we don't get a js undefined message.
