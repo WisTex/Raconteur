@@ -121,8 +121,6 @@ function tryzrlaudio($match)
         $link = zid($link);
     }
 
-   // return '<audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
-
     return '<img src="/images/mp3.png" class="img-fluid my-2" ><audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none" class="my-2"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
 }
 
