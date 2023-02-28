@@ -767,8 +767,8 @@ let postSaveTimer = null;
 	{{* start new setEmbedFiles *}}
 	function setEmbedFiles(send) {
 
-		//alert(`Send: ${send}`);
-		$("#profile-jot-form").html(`<div>${send}</div>);
+		alert(`Send: ${send}`);
+		$("#profile-jot-form").html();
 		preview_post();
 	}
 	{{* end new setEmbedFiles *}}
