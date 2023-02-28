@@ -780,7 +780,7 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg][attachment]${result.hash},0[/attachment]`;
+				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg][zrl]${baseurl}/cloud/${address}/${result.hash}[/zrl]`;
 				  return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
