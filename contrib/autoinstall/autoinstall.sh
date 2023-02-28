@@ -126,6 +126,8 @@ function die {
         rm -f $install_path/.htconfig.php ]
         print_info "We delete .htconfig.php"
     fi
+    # We change ownership of the directory back to root so we can try another install
+    chown -R root:root $install_path
 
     echo -n -e '\e[1;31m'
     echo "ERROR: $1" > /dev/null 1>&2
