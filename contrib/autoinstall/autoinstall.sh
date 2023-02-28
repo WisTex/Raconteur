@@ -92,33 +92,39 @@ function die {
         a2dissite $domain_name.conf*
         rm -f /etc/apache2/sites-available/$domain_name*
         systemctl reload apache2
+        print_info "We delete apache conf files"
     fi
     # We remove the website's nginx conf files if they exist 
     if [ ! -z $nginx_conf ]
     then
         rm -f /etc/nginx/sites-available/$domain_name* /etc/nginx/sites-enabled/$domain_name*
         systemctl reload nginx
+        print_info "We delete nginx conf files"
     fi
     # We delete database and database user if they exist
-    if [ ! -z $db_installed ]
+    if [ ! -z $db_installed ] || [[ ! -z $(mysql -h localhost -u root $opt_mysqlpass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]]
     then
         mysql -h localhost -u root $opt_mysqlpass -e "DROP DATABASE $website_db_name; DROP USER $website_db_user@localhost;"
+        print_info "We delete the \"$website_db_name\" database and \"$website_db_user\" database user"
     fi
     # We remove the addons if they were downloaded
     if [ ! -z $addons_installed ]
     then
         rm -rf $install_path/extend/addon/zaddons
         rm -rf $install_path/addon/*
+        print_info "We delete the addons installed during the install attempt"
     fi
     # We remove the website's daily update script if it exists
     if [ ! -z $daily_update_exists ]
     then
         rm -f /var/www/$daily_update
+        print_info "We delete the daily update script"
     fi
     # We remove .htconfig.php if it exists
     if [ -f $install_path/.htconfig.php ]
     then
         rm -f $install_path/.htconfig.php ]
+        print_info "We delete .htconfig.php"
     fi
 
     echo -n -e '\e[1;31m'
@@ -263,16 +269,16 @@ function create_website_db {
         die "website_db_pass not set in $configfile"
     fi
     # Make sure we don't write over an already existing database if we install more one website
-    if [ -z $(mysql -h localhost -u root $opt_mysqlpass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]
+    if [[ -z $(mysql -h localhost -u root $opt_mysqlpass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]]
     then
-        if [ -z $(mysql -h localhost -u root -e "use mysql; SELECT user FROM user;" | grep -w "$website_db_user") ]
+        if [[ -z $(mysql -h localhost -u root $opt_mysqlpass -e "use mysql; SELECT user FROM user;" | grep -w "$website_db_user") ]]
         then
             Q1="CREATE DATABASE IF NOT EXISTS $website_db_name;"
             Q2="GRANT USAGE ON *.* TO $website_db_user@localhost IDENTIFIED BY '$website_db_pass';"
             Q3="GRANT ALL PRIVILEGES ON $website_db_name.* to $website_db_user@localhost identified by '$website_db_pass';"
             Q4="FLUSH PRIVILEGES;"
             SQL="${Q1}${Q2}${Q3}${Q4}"
-            mysql -uroot -e $opt_mysqlpass "$SQL"
+            mysql -h localhost -uroot $opt_mysqlpass -e "$SQL"
             db_installed=yes
         else
             die "database user named \"$website_db_user\" already exists..."
@@ -351,6 +357,7 @@ function install_website {
             print_warn "Streams addons already present, we'll remove them"
             rm -rf $install_path/extend/addon/zaddons
             rm -rf $install_path/addon/*
+            util/add_addon_repo https://codeberg.org/streams/streams-addons.git zaddons
         fi
     # elif [ $repository = "fork_1" ]
     # then

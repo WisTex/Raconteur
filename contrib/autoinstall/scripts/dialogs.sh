@@ -153,7 +153,7 @@ function advanced_db_name {
 
 function db_name_check {
     # Make sure we don't write over an already existing database if we install more than one Streams website with this script
-    if [ ! -z $(mysql -h localhost -u root -e "SHOW DATABASES;" | grep -w "$website_db_name") ]
+    if [[ ! -z $(mysql -h localhost -u root $opt_mysqlpass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]]
     then
         inputbox_db_name="A database named \"$website_db_name\" already exists, please choose another name:"
         unset website_db_name
@@ -201,7 +201,7 @@ function advanced_db_user {
 
 function db_user_check {
     # Make sure we don't use an already existing database user if we install more than one website
-    if [ ! -z $(mysql -h localhost -u root -e "use mysql; SELECT user FROM user;" | grep -w "$website_db_user") ]
+    if [[ ! -z $(mysql -h localhost -u root $opt_mysqlpass -e "use mysql; SELECT user FROM user;" | grep -w "$website_db_user") ]]
     then
         inputbox_db_user="A mysql user named \"$website_db_user\" already exists, please choose another name:"
         unset website_db_user
