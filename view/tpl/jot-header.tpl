@@ -780,9 +780,9 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-				  //let send = `${baseurl}/cloud/${address}/${result.display_path}`;
-				  let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][zmg class="img-fluid img-thumbnail" alt=${result.filename}]${baseurl}/cloud/${address}/${result.display_path}[/zmg][/zrl]`;
-				  alert(`${send}`);
+				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
+				  //let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][zmg class="img-fluid img-thumbnail" alt=${result.filename}]${baseurl}/cloud/${address}/${result.display_path}[/zmg][/zrl]`;
+				  //alert(`${send}`);
 				  return `<li onclick ="setEmbedFiles('${send}')"  ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
