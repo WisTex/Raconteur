@@ -86,6 +86,41 @@ function check_sanity {
 }
 
 function die {
+    # We remove the website's apache conf files if they exist
+    if [ ! -z $vhost_added ]
+    then
+        a2dissite $domain_name.conf*
+        rm -f /etc/apache2/sites-available/$domain_name*
+        systemctl reload apache2
+    fi
+    # We remove the website's nginx conf files if they exist 
+    if [ ! -z $nginx_conf ]
+    then
+        rm -f /etc/nginx/sites-available/$domain_name* /etc/nginx/sites-enabled/$domain_name*
+        systemctl reload nginx
+    fi
+    # We delete database and database user if they exist
+    if [ ! -z $db_installed ]
+    then
+        mysql -h localhost -u root $opt_mysqlpass -e "DROP DATABASE $website_db_name; DROP USER $website_db_user@localhost;"
+    fi
+    # We remove the addons if they were downloaded
+    if [ ! -z $addons_installed ]
+    then
+        rm -rf $install_path/extend/addon/zaddons
+        rm -rf $install_path/addon/*
+    fi
+    # We remove the website's daily update script if it exists
+    if [ ! -z $daily_update_exists ]
+    then
+        rm -f /var/www/$daily_update
+    fi
+    # We remove .htconfig.php if it exists
+    if [ -f $install_path/.htconfig.php ]
+    then
+        rm -f $install_path/.htconfig.php ]
+    fi
+
     echo -n -e '\e[1;31m'
     echo "ERROR: $1" > /dev/null 1>&2
     echo -e '\e[0m'
@@ -309,7 +344,14 @@ function install_website {
     if [ $repository = "streams" ]
     then
         print_info "Streams"
-        util/add_addon_repo https://codeberg.org/streams/streams-addons.git zaddons
+        if [ ! -d $install_path/extend/addon/zaddons ]
+        then
+            util/add_addon_repo https://codeberg.org/streams/streams-addons.git zaddons
+        else
+            print_warn "Streams addons already present, we'll remove them"
+            rm -rf $install_path/extend/addon/zaddons
+            rm -rf $install_path/addon/*
+        fi
     # elif [ $repository = "fork_1" ]
     # then
     #     print_info "Fork_1"
@@ -330,7 +372,7 @@ function install_website {
     chown -R www-data:www-data $install_path
     chown root:www-data $install_path/
     print_info "installed addons"
-    db_installed=yes
+    addons_installed=yes
 }
 
 function configure_daily_update {

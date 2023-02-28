@@ -104,7 +104,7 @@ function vhost_le {
     print_info "run certbot ..."
     certbot --apache -w $install_path -d $domain_name -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
     service apache2 restart
-    vhost_le_confgured=yes
+    vhost_le_configured=yes
 }
 
 function install_mysql {
