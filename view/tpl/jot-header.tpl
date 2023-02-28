@@ -716,9 +716,7 @@ let postSaveTimer = null;
 							$.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
 									if (ddata['status']) {
-										console.log(JSON.stringify(ddata));
-										
-                                        addeditortext(ddata['photolink']);
+										addeditortext(ddata['photolink']);
 										preview_post();
                                     } else {
                                         window.console.log("{{$modalerrorlink}}" + ':' + ddata['errormsg']);
@@ -770,8 +768,8 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		//let ddata = array();
-		//ddata['filelink'] = `[zrl= ${send}][/zrl]`;
+		let ddata = [];
+		ddata['filelink'] = `[zrl= ${send}][/zrl]`;
 		alert(`Send: ${filelink}`);
 		addeditortext(ddata['filelink']);
 		preview_post();
@@ -785,10 +783,10 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-				  //let send = `${baseurl}/cloud/${address}/${result.display_path}`;
-				  let send = `2022`;
-				  //return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
-				  return `<li onclick ="choosePhotoFromAlbum('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  let send = `${baseurl}/cloud/${address}/${result.display_path}`;
+				  //let send = `2022`;
+				  return `<li onclick ="setEmbedFiles('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  //return `<li onclick ="choosePhotoFromAlbum('${send}')"><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 				  let sendmp4 = `/cloud/${address}/${result.display_path}`;
     			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles('${sendmp4}')">${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video poster="images/video_poster.jpg" controls="controls" preload="none" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
