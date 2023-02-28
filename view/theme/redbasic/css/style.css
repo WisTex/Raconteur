@@ -284,7 +284,7 @@ pre {
 audio, video {
 	border-radius: $radius;
 	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
-
+	width: 100%;
 }
 
 .panel {
