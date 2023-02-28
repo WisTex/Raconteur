@@ -768,7 +768,6 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		alert(`Send: ${send}`);
 		addeditortext(send);
 		preview_post();
 	}
