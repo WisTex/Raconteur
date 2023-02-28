@@ -133,7 +133,7 @@ then
         nocheck_install "dnsutils"
         install_run_$ddns_provider
     fi
-    if [ -z $(dig -4 $le_domain +short | grep $(curl ip4.me/ip/)) ]
+    if [ -z $(dig -4 $domain_name +short | grep $(curl ip4.me/ip/)) ]
     then
         touch dns_cache_fail
         die "There seems to be a DNS cache issue here, you need to wait a few minutes before running the script again"
