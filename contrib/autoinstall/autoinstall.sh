@@ -142,6 +142,7 @@ function add_nginx_conf {
     print_info "adding nginx conf files"
     sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" nginx-server.conf.template >> /etc/nginx/sites-available/${domain_name}.conf
     ln -s /etc/nginx/sites-available/${domain_name}.conf /etc/nginx/sites-enabled/
+    nginx_conf=yes
     systemctl restart nginx
 }
 
@@ -237,6 +238,7 @@ function create_website_db {
             Q4="FLUSH PRIVILEGES;"
             SQL="${Q1}${Q2}${Q3}${Q4}"
             mysql -uroot -e $opt_mysqlpass "$SQL"
+            db_installed=yes
         else
             die "database user named \"$website_db_user\" already exists..."
         fi
@@ -328,6 +330,7 @@ function install_website {
     chown -R www-data:www-data $install_path
     chown root:www-data $install_path/
     print_info "installed addons"
+    db_installed=yes
 }
 
 function configure_daily_update {
@@ -344,6 +347,7 @@ function configure_daily_update {
         echo "chmod 0644 $install_path/.htaccess # www-data can read but not write it" >> /var/www/$daily_update
     fi
     chmod a+x /var/www/$daily_update
+    daily_update_exists=yes
 }
 
 function configure_cron_daily {
