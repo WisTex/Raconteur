@@ -1415,7 +1415,6 @@ function preview_post() {
 		"item",
 		$("#profile-jot-form").serialize(),
 		function(data) {
-			alert(JSON.stringify(data));
 			if(data.preview) {
 				$("#jot-preview-content").html(data.preview);
 				$("#jot-preview-content .autotime").timeago();
