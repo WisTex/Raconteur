@@ -49,6 +49,7 @@ class Multifactor
                 dbesc($otp->getSecret()),
                 intval($account['account_id'])
             );
+            $account['account_external'] = $otp->getSecret();
         }
 
         $otp = TOTP::create($account['account_external']);
@@ -62,10 +63,10 @@ class Multifactor
                 '$qrcode' => (new QRCode())->render($uri),
                 '$uri' => $uri,
                 '$secret' => ($account['account_external'])
-                    ? ['secreturi', t('Secret URI'), $account['account_external'],
-                        t('Use this secret to configure your authenticator app if you cannot use the QRcode'), '']
+                    ? ['secreturi', t('Secret'), $account['account_external'],
+                        t('Please make a backup'), '']
                     : '',
-                '$test' => ['totp_test', t('Test your authenticator here'), '', t('If this test does not pass you will be permanently unable to login to this account'), ''],
+                '$test' => ['totp_test', t('Test your authenticator here'), '', '', ''],
 
                 '$enable_mfa' => ['enable_mfa', t('Enable Multi-factor Authentication'), (bool)$account['account_external'], '', [t('No'), t('Yes')]],
                 '$submit' => t('Submit'),
