@@ -6,7 +6,6 @@ use App;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-
 class Account
 {
 
@@ -105,20 +104,18 @@ class Account
         Hook::call('account_settings', $account_settings);
 
         $email = App::$account['account_email'];
-
-
         $tpl = Theme::get_template("settings_account.tpl");
-        return replace_macros($tpl, array(
+        return replace_macros($tpl, [
             '$form_security_token' => get_form_security_token("settings_account"),
             '$title' => t('Account Settings'),
-            '$origpass' => array('origpass', t('Current Password'), ' ', ''),
-            '$password1' => array('npassword', t('Enter New Password'), '', ''),
-            '$password2' => array('confirm', t('Confirm New Password'), '', t('Leave password fields blank unless changing')),
+            '$origpass' => ['origpass', t('Current Password'), ' ', ''],
+            '$password1' => ['npassword', t('Enter New Password'), '', ''],
+            '$password2' => ['confirm', t('Confirm New Password'), '', t('Leave password fields blank unless changing')],
             '$submit' => t('Submit'),
-            '$email' => array('email', t('Email Address:'), $email, ''),
+            '$email' => ['email', t('Email Address:'), $email, ''],
             '$removeme' => t('Remove Account'),
             '$removeaccount' => t('Remove this account including all its channels'),
             '$account_settings' => $account_settings
-        ));
+        ]);
     }
 }

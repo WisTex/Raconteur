@@ -75,6 +75,12 @@ class Settings_menu implements WidgetInterface
             'selected' => ''
         ];
 
+        $tabs[] = [
+            'label' => t('Multifactor authentication'),
+            'url' => z_root() . '/settings/multifactor',
+            'selected' => ((argv(1) === 'multifactor') ? 'active' : ''),
+        ];
+
         if (Apps::system_app_installed(local_channel(), 'Clients')) {
             $tabs[] = [
                 'label' => t('Client apps'),

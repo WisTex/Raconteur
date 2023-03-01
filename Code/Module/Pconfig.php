@@ -120,9 +120,9 @@ class Pconfig extends Controller
         } else {
             if (is_array($v)) {
                 $o .= '<code><pre>' . "\n" . print_array($v) . '</pre></code>';
-                $o .= '<input type="hidden" name="v" value="' . serialise($v) . '" />';
+                $o .= '<input type="hidden" class="form-control" name="v" value="' . serialise($v) . '" />';
             } else {
-                $o .= '<input type="text" name="v" value="' . escape_tags($v) . '" />';
+                $o .= '<input type="text" class="form-control" name="v" value="' . escape_tags($v) . '" />';
             }
         }
         $o .= EOL . EOL;
