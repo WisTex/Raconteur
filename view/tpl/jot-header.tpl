@@ -135,8 +135,8 @@ let postSaveTimer = null;
 			dropZone: $('#profile-jot-text'),
 			maxChunkSize: 2 * 1024 * 1024,
 			add: function(e,data) {
-				// console.log(e);
-				// console.log(data);
+				console.log(e);
+				console.log(data);
 				$('#profile-rotator').show();
 				data.submit();
 			},
