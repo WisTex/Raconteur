@@ -157,7 +157,7 @@ class Apps
 
     public static function check_install_system_app($app)
     {
-        if ((!is_array(self::$available_apps)) || (!count(self::$available_apps))) {
+        if (empty(self::$available_apps)) {
             return true;
         }
         $notfound = true;
@@ -203,7 +203,7 @@ class Apps
                 }
             }
         }
-        if (!$installed && in_array($app['name'], self::$base_apps)) {
+        if (!$installed && is_array(self::$base_apps) && in_array($app['name'], self::$base_apps)) {
             return true;
         }
         return false;
@@ -315,9 +315,9 @@ class Apps
                         break;
                     default:
                         if ($config) {
-                            $unset = ((get_config('system', $require[0]) == $require[1]) ? false : true);
+                            $unset = !((get_config('system', $require[0]) == $require[1]));
                         } else {
-                            $unset = ((local_channel() && Features::enabled(local_channel(), $require)) ? false : true);
+                            $unset = !((local_channel() && Features::enabled(local_channel(), $require)));
                         }
                         if ($unset) {
                             unset($ret);
@@ -560,9 +560,9 @@ class Apps
                             break;
                         default:
                             if ($config) {
-                                $unset = ((get_config('system', $require[0]) === $require[1]) ? false : true);
+                                $unset = !((get_config('system', $require[0]) === $require[1]));
                             } else {
-                                $unset = (($channel_id && Features::enabled($channel_id, $require)) ? false : true);
+                                $unset = !(($channel_id && Features::enabled($channel_id, $require)));
                             }
                             if ($unset) {
                                 return '';
@@ -610,8 +610,8 @@ class Apps
 
         $featured = $pinned = false;
         if (isset($papp['categories'])) {
-            $featured = ((str_contains($papp['categories'], 'nav_featured_app')) ? true : false);
-            $pinned = ((str_contains($papp['categories'], 'nav_pinned_app')) ? true : false);
+            $featured = str_contains($papp['categories'], 'nav_featured_app');
+            $pinned = str_contains($papp['categories'], 'nav_pinned_app');
         }
 
         return replace_macros(Theme::get_template('app.tpl'), [
@@ -626,12 +626,12 @@ class Apps
             '$undelete' => (($channel_id && $installed && $mode === 'edit') ? t('Undelete') : ''),
             '$settings_url' => (($channel_id && $installed && $mode === 'list' && isset($papp['settings_url'])) ? $papp['settings_url'] : ''),
             '$deleted' => ((isset($papp['deleted'])) ? intval($papp['deleted']) : false),
-            '$feature' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
-            '$pin' => (((isset($papp['embed']) && $papp['embed']) || $mode === 'edit') ? false : true),
+            '$feature' => !(((isset($papp['embed']) && $papp['embed']) || $mode === 'edit')),
+            '$pin' => !(((isset($papp['embed']) && $papp['embed']) || $mode === 'edit')),
             '$featured' => $featured,
             '$pinned' => $pinned,
-            '$navapps' => (($mode === 'nav') ? true : false),
-            '$order' => (($mode === 'nav-order' || $mode === 'nav-order-pinned') ? true : false),
+            '$navapps' => $mode === 'nav',
+            '$order' => $mode === 'nav-order' || $mode === 'nav-order-pinned',
             '$mode' => $mode,
             '$add' => t('Add to app-tray'),
             '$remove' => t('Remove from app-tray'),
@@ -834,7 +834,7 @@ class Apps
             $r = $filter_arr['installed'];
         }
 
-        return (($r) ? true : false);
+        return (bool)$r;
     }
 
     public static function addon_app_installed($uid, $app, $bypass_filter = false)
@@ -855,7 +855,7 @@ class Apps
             $r = $filter_arr['installed'];
         }
 
-        return (($r) ? true : false);
+        return (bool)$r;
     }
 
     public static function system_app_installed($uid, $app, $bypass_filter = false)
@@ -876,7 +876,7 @@ class Apps
             $r = $filter_arr['installed'];
         }
 
-        return (($r) ? true : false);
+        return (bool)$r;
     }
 
     public static function app_list($uid, $deleted = false, $cats = [])
@@ -945,7 +945,6 @@ class Apps
         $x = (($uid) ? get_pconfig($uid, 'system', $conf) : get_config('system', $conf));
         if (($x) && (!is_array($x))) {
             $y = explode(',', $x);
-            $y = array_map('trim', $y);
             $x = $y;
         }
 
@@ -961,20 +960,20 @@ class Apps
             }
         }
         foreach ($apps as $ap) {
-            if (!self::find_app_in_array($ap['name'], $ret)) {
+            if (!self::find_app_in_array($ap['guid'], $ret)) {
                 $ret[] = $ap;
             }
         }
         return $ret;
     }
 
-    public static function find_app_in_array($name, $arr)
+    public static function find_app_in_array($guid, $arr)
     {
         if (!$arr) {
             return false;
         }
         foreach ($arr as $x) {
-            if ($x['name'] === $name) {
+            if ($x['guid'] === $guid) {
                 return $x;
             }
         }
@@ -1022,7 +1021,7 @@ class Apps
 
         $narr = [];
         foreach ($syslist as $x) {
-            $narr[] = $x['name'];
+            $narr[] = $x['guid'];
         }
 
         set_pconfig($uid, 'system', $conf, implode(',', $narr));
@@ -1067,7 +1066,7 @@ class Apps
 
         $narr = [];
         foreach ($syslist as $x) {
-            $narr[] = $x['name'];
+            $narr[] = $x['guid'];
         }
 
         set_pconfig($uid, 'system', $conf, implode(',', $narr));
@@ -1383,6 +1382,7 @@ class Apps
         return chunk_split(base64_encode(json_encode($papp)), 72, "\n");
     }
 
+    /** @noinspection PhpUnused */
     static public function get_papp($app) {
 
         $r = q("select * from app where app_id = '%s' and app_channel = 0 limit 1",
@@ -1393,7 +1393,6 @@ class Apps
             $papp = self::app_encode(array_shift($r));
             return $papp;
         }
-
         return false;
     }
 

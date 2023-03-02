@@ -182,9 +182,13 @@
 		</div>
 		<div id="sys-apps-collapsed" style="display:none;">
 		{{/if}}
+		{{if $navbar_apps}}
 		{{foreach $navbar_apps as $navbar_app}}
-		{{$navbar_app}}
+		{{$navbar_app|replace:'dropdown-item':'nav-link'}}
 		{{/foreach}}
+		<div class="dropdown-divider collapsed-divider"></div>
+		{{/if}}
+
 		{{foreach $nav_apps as $nav_app}}
 		{{$nav_app|replace:'dropdown-item':'nav-link'}}
 		{{/foreach}}
@@ -192,10 +196,10 @@
 		</div>
 		{{/if}}
 		{{if $is_owner}}
-		<div class="dropdown-divider"></div>
-		<a class="dropdown-item" href="/apps"><i class="generic-icons-nav fa fa-fw fa-asterisk"></i>{{$manageapps}}</a>
-		<a class="dropdown-item" href="/apps/available"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
-		<a class="dropdown-item" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
+		<div class="dropdown-divider collapsed-divider"></div>
+		<a class="nav-link" href="/apps"><i class="generic-icons-nav fa fa-fw fa-asterisk"></i>{{$manageapps}}</a>
+		<a class="nav-link" href="/apps/available"><i class="generic-icons-nav fa fa-fw fa-plus-circle"></i>{{$addapps}}</a>
+		<a class="nav-link" href="/apporder"><i class="generic-icons-nav fa fa-fw fa-sort"></i>{{$orderapps}}</a>
 		{{/if}}
 	</div>
 </div>

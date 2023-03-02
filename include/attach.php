@@ -2222,7 +2222,6 @@ function attach_recursive_perms($arr_allow_cid, $arr_allow_gid, $arr_deny_cid, $
 
 function filepath_macro($s)
 {
-
     return str_replace(
         [ '%Y', '%m', '%d' ],
         [ datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y'),
@@ -2237,7 +2236,6 @@ function attach_export_data($channel, $resource_id, $deleted = false)
 {
 
     $ret = [];
-
     $paths = [];
 
     $hash_ptr = $resource_id;
@@ -2309,7 +2307,6 @@ function attach_export_data($channel, $resource_id, $deleted = false)
             }
         }
     }
-
     return $ret;
 }
 
@@ -2327,7 +2324,6 @@ function get_attach_binname($s)
         $p = substr($s, 6);
         $p = substr($p, strpos($p, '/') + 1);
     }
-
     return $p;
 }
 

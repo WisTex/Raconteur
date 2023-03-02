@@ -796,6 +796,11 @@ class Ping extends Controller
 
         if ((!$my_activity) && (!(intval($result['home']) + intval($result['stream']) + intval($result['pubs'])))) {
 
+            // PConfig storage for seen_items is common across all sessions.
+            // In order to reduce conflicts when multiple sessions are active,
+            // only perform PConfig deletion if there are seen items in
+            // *this* session.
+
             if ($_SESSION['seen_items']) {
                 $_SESSION['seen_items'] = [];
                 PConfig::Delete(local_channel(), 'system', 'seen_items');
