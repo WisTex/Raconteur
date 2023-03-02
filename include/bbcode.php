@@ -121,7 +121,7 @@ function tryzrlaudio($match)
         $link = zid($link);
     }
 
-    return '<img src="/images/mp3.png" class="img-fluid my-2" ><audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none" class="my-2"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
+    return '<img src="/images/mp3.svg" class="img-fluid my-2" ><audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none" class="my-2"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
 }
 
 function tryzrlvideo($match)
@@ -785,7 +785,7 @@ function bb_map_location($match)
 function bb_qr($match)
 {
     $str = $match[1];
-    return str_replace($match[0], '<img src="' . (new QRCode())->render($str) . '" alt="' . $str . '" title="' . $str . '" loading="eager" />', $match[0]);
+    return str_replace($match[0], '<img src="' . (new QRCode())->render($str) . '" alt="$str" loading="eager" />', $match[0]);
 }
 
 function bb_opentag($match)
@@ -2178,7 +2178,8 @@ function bbcode($Text, $options = [])
     }
     if (str_contains($Text, '[/zvideo]')) {
         $Text = preg_replace_callback("/\[zvideo (.*?)\](.*?)\[\/zvideo\]/ism", 'videowithopts', $Text);
-        $Text = preg_replace_callback("/\[zvideo\](.*?)\[\/zvideo\]/ism", 'tryzrlvideo', $Text);
+        $Text = preg_replace_callback("/\[zvideo\](.*?)\[\/zvideo\]/ism", '
+        ', $Text);
     }
     if (str_contains($Text, '[/zaudio]')) {
         $Text = preg_replace_callback("/\[zaudio\](.*?)\[\/zaudio\]/ism", 'tryzrlaudio', $Text);
