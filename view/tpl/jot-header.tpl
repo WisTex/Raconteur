@@ -792,10 +792,9 @@ let postSaveTimer = null;
 			case "audio/ogg":
 				  let sendmpeg = `[audio]/cloud/${address}/${result.display_path}[/audio]`;
 				  return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendmpeg}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
-			case "text/html":
-				  // security issue, let's move on... Need to return something so we don't get a js undefined message.
-				  return '';
 			case "application/json":
+			case "text/html":
+			case "text/vnd.abc":
 			case "text/plain":
 				  let sendplain = `/cloud/${address}/${result.display_path}`;
     			  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')" data-bs-dismiss="modal" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
