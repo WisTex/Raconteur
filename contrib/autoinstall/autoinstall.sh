@@ -390,7 +390,7 @@ function configure_daily_update {
     echo "# update of $domain_name federation capable website" >> /var/www/$daily_update
     echo "echo \"\$(date) - updating core and addons...\"" >> /var/www/$daily_update
     echo "echo \"reaching git repository for $domain_name $repository hub/instance...\"" >> /var/www/$daily_update
-    echo "(cd $install_path ; util/udall)" >> /var/www/$daily_update
+    echo "(cd $install_path ; sudo -u www-data util/udall)" >> /var/www/$daily_update
     echo "chown -R www-data:www-data $install_path # make all accessible for the webserver" >> /var/www/$daily_update
     if [[ $webserver == "apache" ]]
     then
