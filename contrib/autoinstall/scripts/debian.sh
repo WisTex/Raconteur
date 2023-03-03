@@ -8,27 +8,36 @@ function update_upgrade {
     print_info "updated and upgraded linux"
 }
 
-function install_curl {
-    if [[ -z "$(which curl)" ]]
+function check_install {
+    if [ -z "`which "$1" 2>/dev/null`" ]
     then
-        print_info "installing curl..."
-        nocheck_install "curl"
+        # export DEBIAN_FRONTEND=noninteractive ... answers from the package
+        # configuration database
+        # - q ... without progress information
+        # - y ... answer interactive questions with "yes"
+        # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
+        DEBIAN_FRONTEND=noninteractive apt-get -q -y install $2
+        print_info "installed $2 installed for $1"
+    else
+        print_warn "$2 already installed"
     fi
 }
 
-function install_wget {
-    if [[ -z "$(which wget)" ]]
+function nocheck_install {
+    declare DRYRUN=$(DEBIAN_FRONTEND=noninteractive apt-get install --dry-run $1 | grep Remv | sed 's/Remv /- /g')
+    if [ -z "$DRYRUN" ]
     then
-        print_info "installing wget..."
-        nocheck_install "wget"
-    fi
-}
-
-function install_sendmail {
-    if [[ -z "$(which sendmail)" ]]
-    then
-        print_info "installing sendmail..."
-        nocheck_install "sendmail sendmail-bin"
+        # export DEBIAN_FRONTEND=noninteractive ... answers from the package configuration database
+        # - q ... without progress information
+        # - y ... answer interactive questions with "yes"
+        # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
+        # DEBIAN_FRONTEND=noninteractive apt-get --install-suggests -q -y install $1
+        DEBIAN_FRONTEND=noninteractive apt-get -q -y install $1
+        print_info "installed $1"
+    else
+        print_info "Did not install $1 as it would require removing the following:"
+        print_info "$DRYRUN"
+        die "It seems you are not running this script on a fresh Debian GNU/Linux install. Please consider another installation method."
     fi
 }
 
@@ -46,134 +55,16 @@ function install_sury_repo {
     fi
 }
 
-function install_apache {
-    if [[ -z "$(which apache2)" ]]
+function php_version {
+    # We check that we can install the required version (8.2),
+    print_info "checking that we can install the required PHP version (8.2)..."
+    check_php=$(apt-cache show php8.2 | grep 'No packages found')
+    if [ -z "$check_php" ]
     then
-        print_info "installing apache..."
-        nocheck_install "apache2 apache2-utils"
-        a2enmod rewrite
-        systemctl restart apache2
-    fi
-}
-
-function install_nginx {
-    if [[ -z "$(which nginx)" ]]
-    then
-        print_info "installing nginx..."
-        nocheck_install "nginx"
-        systemctl restart nginx
-    fi
-}
-
-function add_vhost {
-    print_info "adding apache vhost"
-    echo "<VirtualHost *:80>" >> "/etc/apache2/sites-available/${domain_name}.conf"
-    echo "ServerName ${domain_name}" >> "/etc/apache2/sites-available/${domain_name}.conf"
-    echo "DocumentRoot $install_path" >> "/etc/apache2/sites-available/${domain_name}.conf"
-    echo "   <Directory $install_path>" >> "/etc/apache2/sites-available/${domain_name}.conf"
-    echo "       AllowOverride All" >> "/etc/apache2/sites-available/${domain_name}.conf"
-    echo "   </Directory>" >> "/etc/apache2/sites-available/${domain_name}.conf"
-    echo "</VirtualHost>"  >> "/etc/apache2/sites-available/${domain_name}.conf"
-    a2ensite $domain_name
-    vhost_added=yes
-}
-
-function install_letsencrypt {
-    if [[ -z "$(which certbot)" ]]
-    then
-        print_info "installing let's encrypt ..."
-        # installing certbot via snapd is the preferred method (10/2022) https://certbot.eff.org/instructions
-        nocheck_install "snapd"
-        print_info "ensure that version of snapd is up to date..."
-        snap install core
-        snap refresh core
-        print_info "install certbot via snap..."
-        snap install --classic certbot
-        ln -s /snap/bin/certbot /usr/bin/certbot
-    fi
-}
-
-function nginx_conf_le {
-    print_info "run certbot..."
-    certbot certonly --nginx -d $domain_name -m $le_email --agree-tos --non-interactive
-    cert="/etc/letsencrypt/live/$domain_name/fullchain.pem"
-    cert_key="/etc/letsencrypt/live/$domain_name/privkey.pem"
-}
-
-function vhost_le {
-    print_info "run certbot ..."
-    certbot --apache -w $install_path -d $domain_name -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
-    service apache2 restart
-    vhost_le_configured=yes
-}
-
-function install_mysql {
-    if [ ! -z $(which mysql) ]
-    then
-        print_info "MariaDB (or MySQL) is already installed"
+        print_info "We're good!"
     else
-        print_info "we install mariadb-server"
-        nocheck_install "mariadb-server"
-        systemctl is-active --quiet mariadb && echo "MariaDB is running"
+        die "something  went wrong, we can't install php8.2."
     fi
 }
 
-
-# We need to install basic stuff on a fresh install
-update_upgrade
-install_curl
-install_wget
-install_sendmail
-
-if [ ! -z $ddns_provider ]
-then
-    source scripts/ddns/$ddns_provider.sh
-    if [ ! -f dns_cache_fail ]
-    then
-        nocheck_install "dnsutils"
-        install_run_$ddns_provider
-    fi
-    if [ -z $(dig -4 $domain_name +short | grep $(curl ip4.me/ip/)) ]
-    then
-        touch dns_cache_fail
-        die "There seems to be a DNS cache issue here, you need to wait a few minutes before running the script again"
-    fi
-fi
-ping_domain
-# add something here to remove dns_cache_fail ?
-if [ ! -z $ddns_provider ]
-then
-    scripts source ddns/$ddns_provider.sh
-    configure_cron_$ddns_provider
-fi
-
-# We install our webserver
-if [[ $webserver = "nginx" ]]
-then
-    install_nginx
-elif [[ $webserver = "apache" ]]
-then
-    install_apache
-fi
-
-# We install the required PHP version
 install_sury_repo
-php_version
-install_php
-
-install_letsencrypt
-
-# We configure our webserver for our website
-if [[ $webserver = "nginx" ]]
-then
-    nginx_conf_le
-    add_nginx_conf
-elif [[ $webserver = "apache" ]]
-then
-    add_vhost
-    vhost_le
-fi
-
-# We install our MariaDB server
-install_mysql
-

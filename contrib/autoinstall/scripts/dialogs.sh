@@ -41,7 +41,12 @@ function enter_domain {
     # This is where the domain name is choosed
     if [ -z "$inputbox_domain" ]
     then
-        inputbox_domain="Please enter your website's address/domain name\n(i.e. \"mywebsite.example.com\", \"example.com\")"
+        if [ -z $local_install ]
+        then
+            inputbox_domain="Please enter your website's address/domain name\n(i.e. \"mywebsite.example.com\", \"example.com\")"
+        else
+            inputbox_domain="Please enter a local domain for testing\n(i.e. \"localhost\", \"testing\"...)"
+        fi
     fi
     domain_name=$(whiptail \
         --title "Domain name" \
@@ -56,13 +61,26 @@ function enter_domain {
             inputbox_domain="You need to put something here otherwise you won't be able to configure a website.\nPlease enter the domain name you plan to use for your website:"
             enter_domain
         else
-            # Validate domain name (we check if the input looks like a FQDN of a domain name not that it is an actual one)
-            if [[ "$domain_name" =~ $domain_regex ]]
+            source scripts/more_dialogs.sh
+            if [ -z $local_install ]
             then
-                source scripts/dialogs_debian.sh
+                # Validate domain name (we check if the input looks like a FQDN of a domain name not that it is an actual one)
+                if [[ "$domain_name" =~ $domain_regex ]]
+                then
+                    enter_email
+                else
+                    inputbox_domain="\"$domain_name\" is not a valid address/domain name for your website. Please enter something that looks like \"example.com\" or \"subdomain.example.com\":"
+                    enter_domain
+                fi
             else
-                inputbox_domain="\"$domain_name\" is not a valid address/domain name for your website. Please enter something that looks like \"example.com\" or \"subdomain.example.com\":"
-                enter_domain
+                if [[ "$le_domain" =~ $local_regex ]]
+                then
+                    webserver_check
+                else
+                    # We change the message in the dialog box if there's no valid input
+                    inputbox_domain="\"$le_domain\" is not a valid local domain for your test install. Please enter one now:"
+                    enter_domain
+                fi
             fi
         fi
     else
@@ -257,5 +275,5 @@ function launch_install {
 }
 
 
-#set -x
+# set -x
 script_debut
