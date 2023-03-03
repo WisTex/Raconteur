@@ -284,11 +284,8 @@ function final_message {
         --title "Website successfully installed" \
         --msgbox "Your website was successfully installed. You must now visit https://$domain_name with your web browser to finish the setup. You will need the following:\n\n$final_summary" \
         15 80
-    print_info "Website successfully installed
-    print_info "$summary_domain"
-    print_info "$summary_db_user"
-    print_info "$summary_db_pass"
-    print_info "$summary_db_name"
+    print_info "Website successfully installed"
+    print_info "$final_summary"
 }
 
 
