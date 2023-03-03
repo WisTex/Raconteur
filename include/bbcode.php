@@ -137,7 +137,7 @@ function tryzrlvideo($match)
         $poster = 'poster="' . escape_tags($static_link) . '" ' ;
     }
 
-    return '<video ' . ' controls="controls" preload="auto" src="' . str_replace(' ', '%20', $link).'#t=1" class="img-fluid img-thumbnail"><a href="' . str_replace(' ', '%20', $link) .'#t=1">' . $link . '#t=1</a></video>';
+    return '<video ' . ' controls="controls" preload="metadata" src="' . str_replace(' ', '%20', $link).'" class="img-fluid img-thumbnail"><a href="' . str_replace(' ', '%20', $link) .'">' . $link . '#t=1</a></video>';
 }
 
 function videowithopts($match)
