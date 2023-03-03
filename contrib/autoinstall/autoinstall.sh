@@ -138,7 +138,7 @@ function die {
 
 function print_info {
     echo -n -e '\e[1;34m'
-    echo -n $1
+    echo -n -e $1
     echo -e '\e[0m'
 }
 
