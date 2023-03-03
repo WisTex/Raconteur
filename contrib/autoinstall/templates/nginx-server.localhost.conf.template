@@ -100,9 +100,6 @@ server {
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
   }
 
-  # include adminer configuration
-  include /etc/nginx/snippets/adminer-nginx.inc;
-
   # deny access to all dot files
   location ~ /\. {
     deny all;

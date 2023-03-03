@@ -39,7 +39,7 @@ function add_nginx_conf {
     else
         nginx_template="templates/nginx-server.localhost.conf.template"
     fi
-    sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" nginx-server.conf.template >> /etc/nginx/sites-available/${domain_name}.conf
+    sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" $nginx_template >> /etc/nginx/sites-available/${domain_name}.conf
     ln -s /etc/nginx/sites-available/${domain_name}.conf /etc/nginx/sites-enabled/
     systemctl restart nginx
     if [ "$(systemctl is-active nginx)" == "failed" ]
