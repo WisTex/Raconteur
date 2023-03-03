@@ -214,7 +214,7 @@ function ping_domain {
 function check_https {
     print_info "checking httpS > testing ..."
     url_https=https://$domain_name
-    wget_output=$(wget -nv --spider --max-redirect 0 $url_https)
+    curl_output=$(curl -s -o /dev/null -I -w "%{http_code}" $url_https)
     if [ $? -ne 0 ]
     then
         print_warn "It seems that your website is not reachable through a secured https connection, you should investigate this"
@@ -432,7 +432,5 @@ if [ -z $local_install ]
 then
     check_https
 fi
-
-# Put a nice message here no confirm the website was successfully installed
 
 #set +x    # stop debugging from here

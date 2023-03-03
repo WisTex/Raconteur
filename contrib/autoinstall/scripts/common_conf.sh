@@ -47,8 +47,6 @@ function add_nginx_conf {
         die "Something went wrong with the Nginx configuration of your website"
     fi
     nginx_conf=yes
-    # It seems that we also need to restart php-fpm
-    systemctl restart php8.2-fpm
 }
 
 function webserver_conf {
