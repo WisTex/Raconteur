@@ -73,12 +73,12 @@ function enter_domain {
                     enter_domain
                 fi
             else
-                if [[ "$le_domain" =~ $local_regex ]]
+                if [[ "$domain_name" =~ $local_regex ]]
                 then
                     webserver_check
                 else
                     # We change the message in the dialog box if there's no valid input
-                    inputbox_domain="\"$le_domain\" is not a valid local domain for your test install. Please enter one now:"
+                    inputbox_domain="\"$domain_name\" is not a valid local domain for your test install. Please enter one now:"
                     enter_domain
                 fi
             fi
@@ -232,7 +232,12 @@ function db_user_check {
 }
 
 function summary {
-    summary_domain="Website address   :   https://$domain_name/\n\n"
+    if [ -z $local_install ]
+    then
+        summary_domain="Website address   :   https://$domain_name/\n\n"
+    else
+        summary_domain="Website address   :   http://$domain_name/\n\n"
+    fi
     summary_db_pass="Website database password   :   $website_db_pass\n"
     summary_db_name="Website database name       :   $website_db_name\n"
     summary_db_user="Website database user       :   $website_db_user\n"

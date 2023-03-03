@@ -344,6 +344,18 @@ function configure_cron_daily {
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
+
+for arg in "$@" ; do
+   shift
+   case "$arg" in
+      --local) local_install=yes
+               print "We're doing a local install, option is $local_install"
+      ;;
+      *) die "not a valid option"
+      ;;
+   esac
+done
+
 check_sanity
 repo_name
 print_info "We're installing a website using the $repository repository"

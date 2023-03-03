@@ -98,6 +98,11 @@ function select_webserver {
 }
 
 function ddns_choice {
+    # Only useful if we're not doing a local install
+    if [ ! -z $local_install ]
+    then
+        enter_root_db_pass
+    fi
     # We can automatically configure Dynamic DNS (DDNS) with a few providers
     # This is of course to be used only with a FQDN of domain name
     provider=$(whiptail \
@@ -259,4 +264,3 @@ function enter_root_db_pass {
     fi
 }
 
-enter_email
