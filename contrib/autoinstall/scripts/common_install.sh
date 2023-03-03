@@ -25,7 +25,7 @@ function install_sendmail {
 }
 
 function install_apache {
-    if [[ -z "$(which apache2)" ]] && if [[ -z "$(which nginx)" ]]
+    if [[ -z "$(which apache2)" ]] && [[ -z "$(which nginx)" ]]
     then
         print_info "installing apache..."
         nocheck_install "apache2 apache2-utils"
@@ -39,7 +39,7 @@ function install_apache {
 }
 
 function install_nginx {
-    if [[ -z "$(which nginx)" ]] && if [[ -z "$(which apache2)" ]]
+    if [[ -z "$(which nginx)" ]] && [[ -z "$(which apache2)" ]]
     then
         print_info "installing nginx..."
         nocheck_install "nginx"
