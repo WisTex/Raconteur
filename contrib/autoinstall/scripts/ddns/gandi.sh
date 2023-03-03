@@ -66,15 +66,15 @@ sld=".com.au,.net.au,.org.au,.com.br,.net.br,.co.jp,.co.uk,.org.uk,.co.za,.eu.co
 
 function fqdn_slice {
     # We find the domain name which we'll be needing later in the script
-    domain_name=$(echo $le_domain | awk -F. 'END {print $(NF-1)"."$NF}')
-    if [ ! -z $(echo $sld | grep .$domain_name) ]
+    main_domain=$(echo $domain_name | awk -F. 'END {print $(NF-1)"."$NF}')
+    if [ ! -z $(echo $sld | grep .$main_domain) ]
     then
-        domain_name=$(echo $le_domain | awk -F. 'END {print $(NF-2)"."$(NF-1)"."$NF}')
+        main_domain=$(echo $domain_name | awk -F. 'END {print $(NF-2)"."$(NF-1)"."$NF}')
     fi
 
     # The subdomain will also be useful
-    subdomain=${le_domain//\.$domain_name/}
-    if [ $le_domain == $domain_name ]
+    subdomain=${domain_name//\.$main_domain/}
+    if [ $domain_name == $main_domain ]
     then
         subdomain="@"
     fi
@@ -98,14 +98,14 @@ function install_run_gandi {
     then
         die "IP address could not be retrieved. Check your internet connection"
     else
-        echo $ip4 | /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $domain_name -r "$subdomain"
+        echo $ip4 | /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $main_domain -r "$subdomain"
         if [ $? != 0 ]
         then
             die "Something went wrong, you should check you API key in ddns/gandi.sh"
         fi
         if [ $ip4 != $ip6 ]
         then
-        echo $ip6 | /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $domain_name -r "$subdomain"
+        echo $ip6 | /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $main_domain -r "$subdomain"
         fi
     fi
 }
@@ -115,15 +115,15 @@ function configure_cron_gandi {
     # Use cron for dynamich ip update
     #   - at reboot
     #   - every 5 minutes
-    grep "$domain_name".*"$subdomain" /etc/crontab
+    grep "$main_domain".*"$subdomain" /etc/crontab
     if [ $? != 0 ]
     then
-        echo "@reboot root curl ip4.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $domain_name -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
-        echo "*/5 * * * * root curl ip4.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $domain_name -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
+        echo "@reboot root curl ip4.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $main_domain -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
+        echo "*/5 * * * * root curl ip4.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -s -a $gandi_api_key -d $main_domain -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
         if [ $ip4 != $ip6 ]
         then
-            echo "@reboot root curl ip6.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $domain_name -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
-            echo "*/5 * * * * root curl ip6.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $domain_name -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
+            echo "@reboot root curl ip6.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $main_domain -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
+            echo "*/5 * * * * root curl ip6.me/ip/ | /bin/bash /opt/gandi-automatic-dns/gad -5 -6 -s -a $gandi_api_key -d $main_domain -r \"$subdomain\" > /dev/null 2>&1" >> /etc/crontab
         fi
     else
         print_info "cron for Gandi LiveDNS was configured already"
