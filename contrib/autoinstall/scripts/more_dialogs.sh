@@ -199,10 +199,7 @@ function ddns_config {
         fi
     else
     # The following part is for FreeDNS and Gandi which both only need a single key
-        if [ -z "$inputbox_ddns_key" ]
-        then
-            inputbox_ddns_key="Please provide your $ddns_provider_name $ddns_key_type :"
-        fi
+        inputbox_ddns_key="Please provide your $ddns_provider_name $ddns_key_type :"
         ddns_key=$(whiptail \
         --title "$ddns_provider_name $ddns_key_type" \
         --inputbox "$inputbox_ddns_key" \

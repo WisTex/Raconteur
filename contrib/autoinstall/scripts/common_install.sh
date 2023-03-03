@@ -25,21 +25,29 @@ function install_sendmail {
 }
 
 function install_apache {
-    if [[ -z "$(which apache2)" ]]
+    if [[ -z "$(which apache2)" ]] && if [[ -z "$(which nginx)" ]]
     then
         print_info "installing apache..."
         nocheck_install "apache2 apache2-utils"
         a2enmod rewrite
         systemctl restart apache2
     fi
+    if [ "$(systemctl is-active apache2)" == "failed" ]
+    then
+        die "Something went wrong with the installation of Apache"
+    fi
 }
 
 function install_nginx {
-    if [[ -z "$(which nginx)" ]]
+    if [[ -z "$(which nginx)" ]] && if [[ -z "$(which apache2)" ]]
     then
         print_info "installing nginx..."
         nocheck_install "nginx"
         systemctl restart nginx
+    fi
+    if [ "$(systemctl is-active nginx)" == "failed" ]
+    then
+        die "Something went wrong with the installation of Nginx"
     fi
 }
 

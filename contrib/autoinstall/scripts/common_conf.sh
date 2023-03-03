@@ -17,6 +17,10 @@ function vhost_le {
     print_info "run certbot ..."
     certbot --apache -w $install_path -d $domain_name -m $le_email --agree-tos --non-interactive --redirect --hsts --uir
     service apache2 restart
+    if [ "$(systemctl is-active apache2)" == "failed" ]
+    then
+        die "Something went wrong with the Apache configuration of your website"
+    fi
     vhost_le_configured=yes
 }
 
@@ -29,10 +33,20 @@ function nginx_conf_le {
 
 function add_nginx_conf {
     print_info "adding nginx conf files"
+    if [ -z $local_install ]
+    then
+        nginx_template="templates/nginx-server.conf.template"
+    else
+        nginx_template="templates/nginx-server.localhost.conf.template"
+    fi
     sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" nginx-server.conf.template >> /etc/nginx/sites-available/${domain_name}.conf
     ln -s /etc/nginx/sites-available/${domain_name}.conf /etc/nginx/sites-enabled/
-    nginx_conf=yes
     systemctl restart nginx
+    if [ "$(systemctl is-active nginx)" == "failed" ]
+    then
+        die "Something went wrong with the Nginx configuration of your website"
+    fi
+    nginx_conf=yes
 }
 
 function webserver_conf {

@@ -80,7 +80,8 @@ function check_sanity {
     then
         die "You can only run this script on a Debian GNU/Linux 11 server"
     else
-        system=debian
+        pkgsys=deb
+        os=debian
         print_info "Running the autoinstall script on a Debian GNU/Linux 11 server"
     fi
 }
@@ -179,6 +180,13 @@ function create_website_db {
     else
         die "database named \"$website_db_name\" already exists..."
     fi
+    # We check that the database and its user were successfully created
+    if [[ ! -z $(mysql -h localhost -u $website_db_user -p$website_db_pass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]]
+    then
+        print_info "The website's database and database user were successfully created"
+    else
+        die "Something went wrong, the website's database and database user do no seem to exist"
+    fi
 }
 
 function ping_domain {
@@ -209,9 +217,10 @@ function check_https {
     wget_output=$(wget -nv --spider --max-redirect 0 $url_https)
     if [ $? -ne 0 ]
     then
-        print_warn "check not ok"
+        print_warn "It seems that your website is not reachable through a secured https connection, you should investigate this"
     else
-        print_info "check ok"
+        print_info "Check OK"
+        final_message
     fi
 }
 
@@ -314,7 +323,7 @@ function configure_cron_daily {
     echo "#" >> /var/www/$cron_job
     echo "cd /var/www" >> /var/www/$cron_job
     echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$cron_job
-    if [[ $system == "debian" ]]
+    if [[ $os == "debian" ]]
     then
         echo "echo \"\$(date) - updating Debian GNU/Linux...\"" >> /var/www/$cron_job
         echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update Debian GNU/Linux and upgrade" >> /var/www/$cron_job
@@ -345,13 +354,20 @@ function configure_cron_daily {
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
+install_path="$(dirname $(dirname "$(pwd)"))"
+if [ "$install_path" == "/var/www/html" ]
+then
+    die "Please don't install your website in /var/www/html."
+fi
+install_folder="$(basename $install_path)"
+
 for arg in "$@" ; do
    shift
    case "$arg" in
       --local) local_install=yes
                print "We're doing a local install, option is $local_install"
       ;;
-      *) die "not a valid option"
+      *) die "\"$arg\" is not a valid argument or option, \"--local\" is the only option you can use with autoinstall.sh"
       ;;
    esac
 done
@@ -359,24 +375,16 @@ done
 check_sanity
 repo_name
 print_info "We're installing a website using the $repository repository"
-install_path="$(dirname $(dirname "$(pwd)"))"
-if [ "$install_path" == "/var/www/html" ]
-then
-    die "Please don't install your website in /var/www/html."
-fi
-install_folder="$(basename $install_path)"
-domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
-local_regex="^([a-zA-Z0-9]){2,25}$"
 print_info "Now using scripts/dialogs.sh to obtain all necessary settings for the install"
 source scripts/dialogs.sh
 
 #set -x    # activate debugging from here
 
-if [[ $system == "debian" ]]
+if [[ $pkgsys == "deb" ]]
 then
-    source scripts/debian.sh
+    source scripts/deb.sh
 # Scripts for other Debian based distros could be added later
-# elif [[ $system == "other_distro" ]]
+# elif [[ $pkgsys == "other_distro" ]]
 # then
 #     source scripts/other_distro.sh
 fi
@@ -389,9 +397,12 @@ install_wget
 install_sendmail
 install_imagemagick
 # DNS stuff
-install_run_ddns
-ping_domain
-configure_cron_ddns
+if [ -z $local_install ]
+then
+    install_run_ddns
+    ping_domain
+    configure_cron_ddns
+fi
 # Web server
 install_webserver
 # PHP
@@ -416,8 +427,11 @@ daily_update="${domain_name}-daily.sh"
 cron_job="cron_job.sh"
 configure_daily_update
 configure_cron_daily
-# Final checks
-check_https
+# Final https check
+if [ -z $local_install ]
+then
+    check_https
+fi
 
 # Put a nice message here no confirm the website was successfully installed
 

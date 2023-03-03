@@ -1,7 +1,7 @@
 #!/bin/bash
 function script_debut {
     # First we check if we're running the script on a freshly installed Debian 11 server
-    if [[ $system == "debian" ]]
+    if [[ $os == "debian" ]]
     then
         if [[ ! -z "$(which php)" ]] || [[ ! -z "$(which mysql)" ]] || [[ ! -z "$(which apache)" ]] || [[ ! -z "$(which nginx)" ]]
         then
@@ -242,7 +242,6 @@ function summary {
     summary_db_name="Website database name       :   $website_db_name\n"
     summary_db_user="Website database user       :   $website_db_user\n"
     # This will be used to display the settings for our install
-    summary_display="$summary_domain$summary_db_name$summary_db_user$summary_db_pass"
     summary_display="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_name$summary_db_user"
     # We display all settings
     if (whiptail \
@@ -256,7 +255,7 @@ function summary {
         # Reset all settings before sarting over. We keep domain name, email address for Let's Encrypt
         # and mysql root, which will most likely remain the same
         unset webserver summary_webserver
-        unset ddns_provider ddns_provider_name
+        unset ddns_provider ddns_provider_name summary_ddns_provider
         unset ddns_key_type ddns_key summary_ddns_key
         unset ddns_id ddns_password summary_ddns_id summary_ddns_password
         unset website_db_pass website_db_name website_db_user
@@ -279,6 +278,17 @@ function launch_install {
     fi
 }
 
+function final_message {
+    whiptail \
+        --title "Website successfully installed" \
+        --msgbox "Your website was successfully installed. You must now visit https://$domain_name with your web browser to finish the setup. You will need the following:\n\n$summary_db_name$summary_db_pass$summary_db_user" \
+        10 80
+    print_info "Website successfully installed\n\n$summary_domain$summary_db_name$summary_db_pass$summary_db_user"
+}
+
+
+domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
+local_regex="^([a-zA-Z0-9]){2,25}$"
 
 # set -x
 script_debut
