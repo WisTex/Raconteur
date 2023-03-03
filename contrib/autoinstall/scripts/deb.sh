@@ -70,5 +70,4 @@ function php_version {
 if [[ $os == "debian" ]]
 then
     install_sury_repo
-if
-
+fi
