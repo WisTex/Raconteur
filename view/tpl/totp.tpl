@@ -15,14 +15,16 @@ var totp_success_msg = '{{$success}}';
 var totp_fail_msg = '{{$fail}}';
 var totp_maxfails_msg = '{{$maxfails}}';
 var try_countdown = 3;
+
 $(window).on("load", function() {
 	totp_clear();
-	});
+});
+
 function totp_clear() {
-	var box = document.getElementById("totp-code");
+	let box = document.getElementById("totp-code");
 	box.value = "";
 	box.focus();
-	}
+}
 function totp_verify() {
 	var code = document.getElementById("totp-code").value;
 	$.post("totp", {totp_code: code},
