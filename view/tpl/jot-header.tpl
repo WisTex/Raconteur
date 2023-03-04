@@ -769,7 +769,7 @@ let postSaveTimer = null;
 		para.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
 		document.getElementById("page-footer").appendChild(para);
 		const canvas = document.getElementById("special");
-		const dataURL = canvas.toDataURL();
+		const dataURL = canvas[0].toDataURL();
 		console.log(dataURL);
 		return dataURL;
 	}
