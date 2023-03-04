@@ -80,7 +80,8 @@ function check_sanity {
     then
         die "You can only run this script on a Debian GNU/Linux 11 server"
     else
-        system=debian
+        pkgsys=deb
+        os=debian
         print_info "Running the autoinstall script on a Debian GNU/Linux 11 server"
     fi
 }
@@ -135,43 +136,9 @@ function die {
     exit 1
 }
 
-
-function check_install {
-    if [ -z "`which "$1" 2>/dev/null`" ]
-    then
-        # export DEBIAN_FRONTEND=noninteractive ... answers from the package
-        # configuration database
-        # - q ... without progress information
-        # - y ... answer interactive questions with "yes"
-        # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
-        DEBIAN_FRONTEND=noninteractive apt-get -q -y install $2
-        print_info "installed $2 installed for $1"
-    else
-        print_warn "$2 already installed"
-    fi
-}
-
-function nocheck_install {
-    declare DRYRUN=$(DEBIAN_FRONTEND=noninteractive apt-get install --dry-run $1 | grep Remv | sed 's/Remv /- /g')
-    if [ -z "$DRYRUN" ]
-    then
-        # export DEBIAN_FRONTEND=noninteractive ... answers from the package configuration database
-        # - q ... without progress information
-        # - y ... answer interactive questions with "yes"
-        # DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -q -y install $2
-        # DEBIAN_FRONTEND=noninteractive apt-get --install-suggests -q -y install $1
-        DEBIAN_FRONTEND=noninteractive apt-get -q -y install $1
-        print_info "installed $1"
-    else
-        print_info "Did not install $1 as it would require removing the following:"
-        print_info "$DRYRUN"
-        die "It seems you are not running this script on a fresh Debian GNU/Linux install. Please consider another installation method."
-    fi
-}
-
 function print_info {
     echo -n -e '\e[1;34m'
-    echo -n $1
+    echo -n -e $1
     echo -e '\e[0m'
 }
 
@@ -179,81 +146,6 @@ function print_warn {
     echo -n -e '\e[1;31m'
     echo -n $1
     echo -e '\e[0m'
-}
-
-function add_nginx_conf {
-    print_info "adding nginx conf files"
-    sed "s|SERVER_NAME|${domain_name}|g;s|INSTALL_PATH|${install_path}|g;s|SERVER_LOG|${domain_name}.log|;s|DOMAIN_CERT|${cert}|;s|CERT_KEY|${cert_key}|;" nginx-server.conf.template >> /etc/nginx/sites-available/${domain_name}.conf
-    ln -s /etc/nginx/sites-available/${domain_name}.conf /etc/nginx/sites-enabled/
-    nginx_conf=yes
-    systemctl restart nginx
-}
-
-function install_imagemagick {
-    if [[ -z "$(which convert)" ]]
-    then
-        print_info "installing imagemagick..."
-        nocheck_install "imagemagick"
-    fi
-}
-
-function php_version {
-    # We check that we can install the required version (8.2),
-    print_info "checking that we can install the required PHP version (8.2)..."
-    check_php=$(apt-cache show php8.2 | grep 'No packages found')
-    if [ -z "$check_php" ]
-    then
-        print_info "We're good!"
-    else
-        die "something  went wrong, we can't install php8.2."
-    fi
-}
-
-function install_php {
-    if [[ -z "$(which php-fpm8.2)" ]]
-        then
-        print_info "installing php8.2..."
-        if [[ $webserver == "nginx" ]]
-        then
-            nocheck_install "php8.2-fpm php8.2 php8.2-mysql php-pear php8.2-curl php8.2-gd php8.2-mbstring php8.2-xml php8.2-zip"
-            sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/8.2/fpm/php.ini
-            sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/8.2/fpm/php.ini
-            systemctl restart php8.2-fpm
-            print_info "php8.2 was installed."
-        elif [[ $webserver == "apache" ]]
-        then
-            nocheck_install "libapache2-mod-php php php-mysql php-pear php-curl php-gd php-mbstring php-xml php-zip"
-            phpversion=$(php -v|grep --only-matching --perl-regexp "(PHP )\d+\.\\d+\.\\d+"|cut -c 5-7)
-            sed -i "s/^upload_max_filesize =.*/upload_max_filesize = 100M/g" /etc/php/$phpversion/apache2/php.ini
-            sed -i "s/^post_max_size =.*/post_max_size = 100M/g" /etc/php/$phpversion/apache2/php.ini
-            print_info "php ${phpversion} was installed"
-        fi
-    fi
-}
-
-function install_composer {
-    print_info "We check if Composer is already installed"
-    if [ ! -f /usr/local/bin/composer ]
-    then
-        EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
-        php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-        ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
-        if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]
-        then
-            >&2 echo 'ERROR: Invalid installer checksum'
-            rm composer-setup.php
-            die 'ERROR: Invalid installer checksum'
-        fi
-        php composer-setup.php --quiet
-        RESULT=$?
-        rm composer-setup.php
-        # exit $RESULT
-        # We install Composer globally
-        mv composer.phar /usr/local/bin/composer
-        print_info "Composer was successfully installed."
-    else
-        print_info "Composer is already installed on this system."
-    fi
 }
 
 function create_website_db {
@@ -288,6 +180,13 @@ function create_website_db {
     else
         die "database named \"$website_db_name\" already exists..."
     fi
+    # We check that the database and its user were successfully created
+    if [[ ! -z $(mysql -h localhost -u $website_db_user -p$website_db_pass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]]
+    then
+        print_info "The website's database and database user were successfully created"
+    else
+        die "Something went wrong, the website's database and database user do no seem to exist"
+    fi
 }
 
 function ping_domain {
@@ -315,12 +214,13 @@ function ping_domain {
 function check_https {
     print_info "checking httpS > testing ..."
     url_https=https://$domain_name
-    wget_output=$(wget -nv --spider --max-redirect 0 $url_https)
+    curl_output=$(curl -s -o /dev/null -I -w "%{http_code}" $url_https)
     if [ $? -ne 0 ]
     then
-        print_warn "check not ok"
+        print_warn "It seems that your website is not reachable through a secured https connection, you should investigate this"
     else
-        print_info "check ok"
+        print_info "Check OK"
+        final_message
     fi
 }
 
@@ -423,7 +323,7 @@ function configure_cron_daily {
     echo "#" >> /var/www/$cron_job
     echo "cd /var/www" >> /var/www/$cron_job
     echo "for f in *-daily.sh; do \"./\${f}\"; done" >> /var/www/$cron_job
-    if [[ $system == "debian" ]]
+    if [[ $os == "debian" ]]
     then
         echo "echo \"\$(date) - updating Debian GNU/Linux...\"" >> /var/www/$cron_job
         echo "apt-get -q -y update && apt-get -q -y dist-upgrade && apt-get -q -y autoremove # update Debian GNU/Linux and upgrade" >> /var/www/$cron_job
@@ -453,10 +353,6 @@ function configure_cron_daily {
 # START OF PROGRAM
 ########################################################################
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin
-check_sanity
-
-repo_name
-print_info "We're installing a website using the $repository repository"
 
 install_path="$(dirname $(dirname "$(pwd)"))"
 if [ "$install_path" == "/var/www/html" ]
@@ -465,37 +361,76 @@ then
 fi
 install_folder="$(basename $install_path)"
 
-domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
+for arg in "$@" ; do
+   shift
+   case "$arg" in
+      --local) local_install=yes
+               print "We're doing a local install, option is $local_install"
+      ;;
+      *) die "\"$arg\" is not a valid argument or option, \"--local\" is the only option you can use with autoinstall.sh"
+      ;;
+   esac
+done
 
+check_sanity
+repo_name
+print_info "We're installing a website using the $repository repository"
 print_info "Now using scripts/dialogs.sh to obtain all necessary settings for the install"
 source scripts/dialogs.sh
 
 #set -x    # activate debugging from here
 
-if [[ $system == "debian" ]]
+if [[ $pkgsys == "deb" ]]
 then
-    source scripts/debian.sh
+    source scripts/deb.sh
 # Scripts for other Debian based distros could be added later
-# elif [[ $system == "other_distro" ]]
+# elif [[ $pkgsys == "other_distro" ]]
 # then
 #     source scripts/other_distro.sh
 fi
-
+source scripts/common_install.sh
+source scripts/common_conf.sh
+# We need to install some basics on a freshly installed system
+update_upgrade
+install_curl
+install_wget
+install_sendmail
 install_imagemagick
-
+# DNS stuff
+if [ -z $local_install ]
+then
+    install_run_ddns
+    ping_domain
+    configure_cron_ddns
+fi
+# Web server
+install_webserver
+# PHP
+php_version
+install_php
+# Let's Encrypt
+if [ -z $local_install ]
+then
+    install_letsencrypt
+fi
+# Webserver configuration
+webserver_conf
+# We install our MariaDB server
+install_mysql
+# Composer
 install_composer
-
+# Now we the website install
 create_website_db
-
 install_website
-
+# Daily maintenance
 daily_update="${domain_name}-daily.sh"
 cron_job="cron_job.sh"
 configure_daily_update
 configure_cron_daily
-
-check_https
-
-# Put a nice message here no confirm the website was successfully installed
+# Final https check
+if [ -z $local_install ]
+then
+    check_https
+fi
 
 #set +x    # stop debugging from here
