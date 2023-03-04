@@ -771,7 +771,7 @@ let postSaveTimer = null;
 		const canvas = document.getElementById("special");
 		console.dir($('#special'));
 		/*const dataURL = canvas.toDataURL();*/
-		const dataURL = ($('#special')[0]).toDataURL();
+		const dataURL = (($('#special')[0])).toDataURL();
 		console.log(dataURL);
 		return dataURL;
 	}
