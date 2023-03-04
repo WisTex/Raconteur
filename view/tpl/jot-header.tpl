@@ -764,7 +764,7 @@ let postSaveTimer = null;
     };
 
 	{{* start new createThumbnail *}}
-	function createThumbnail(sendplain) {
+	function createEmbedThumbnail(sendplain) {
 		const para = document.createElement("p");
 		para.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
 		const canvas = document.getElementById("special");
@@ -809,7 +809,7 @@ let postSaveTimer = null;
 			//case "text/vnd.abc": these 2 don't work, they open the download dialog
 			case "text/plain":
 				  let sendplain = `/cloud/${address}/${result.display_path}`;
-				  let plainTmb = createThumbnail(sendplain);
+				  let plainTmb = createEmbedThumbnail(sendplain);
 				  alert(plainTmb);
 				  return;
     			  {{*return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')" data-bs-dismiss="modal" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
