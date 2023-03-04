@@ -770,8 +770,8 @@ let postSaveTimer = null;
 		document.getElementById("page-footer").appendChild(para);
 		const canvas = document.getElementById("special");
 		console.dir(canvas);
-		const dataURL = canvas.toDataURL();
-		/*const dataURL = ($('#special')[0]).toDataURL();*/
+		/*const dataURL = canvas.toDataURL();*/
+		dataURL = ($('#special')[0]).toDataURL();
 		console.log(dataURL);
 		return dataURL;
 	}
