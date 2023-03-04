@@ -1,20 +1,22 @@
-<div style="width: 30em; margin: auto; margin-top: 3em; padding: 1em; border: 1px solid grey">
-    <h3 style="text-align: center">{{$header}}</h3>
+<div class="generic-content-wrapper">
+    <div class="section-content-tools-wrapper">
+    <h3 style="text-align: center;">{{$header}}</h3>
 
     <div>{{$desc}}</div>
 
-    <div style="margin: auto; margin-top: 1em; width: 18em">
-        <input type="text" class="form-control" style="float: left; width: 8em" id="totp-code" onkeydown="hitkey(event)"/>
-        <input type="button" style="margin-left: 1em; float: left" value={{$submit}} onclick="totp_verify()"/>
-        <div style="clear: left"></div>
-        <div id="feedback" style="margin-top: 4px; text-align: center"></div>
+    <div>
+        <input type="text" class="form-control" style="width: 10em" id="totp-code" onkeydown="hitkey(event)"/>
+        <div id="feedback"></div>
+        <input type="button" class="btn btn-primary" value={{$submit}} onclick="totp_verify()"/>
+
+    </div>
     </div>
 </div>
 <script type="text/javascript">
-var totp_success_msg = '{{$success}}';
-var totp_fail_msg = '{{$fail}}';
-var totp_maxfails_msg = '{{$maxfails}}';
-var try_countdown = 3;
+let totp_success_msg = '{{$success}}';
+let totp_fail_msg = '{{$fail}}';
+let totp_maxfails_msg = '{{$maxfails}}';
+let try_countdown = 3;
 
 $(window).on("load", function() {
 	totp_clear();
@@ -27,14 +29,14 @@ function totp_clear() {
 }
 function totp_verify() {
 	var code = document.getElementById("totp-code").value;
-	$.post("totp", {totp_code: code},
+	$.post("totp_check", {totp_code: code},
 		function(resp) {
-			var report = document.getElementById("feedback");
-			var box = document.getElementById("totp-code");
-			if (resp['match'] == "1") {
+			let report = document.getElementById("feedback");
+			let box = document.getElementById("totp-code");
+			if (resp['status']) {
 				report.innerHTML = "<b>" + totp_success_msg + "</b>";
 				window.location = "/";
-				}
+			}
 			else {
 				try_countdown -= 1;
 				if (try_countdown < 1) {
@@ -48,7 +50,9 @@ function totp_verify() {
 				}
 			});
 	}
+}
+
 function hitkey(ev) {
 	if (ev.which == 13) totp_verify();
-	}
+}
 </script>
