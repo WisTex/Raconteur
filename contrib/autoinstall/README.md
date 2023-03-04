@@ -47,6 +47,10 @@ It is recommended to run the Raspi without graphical frontend. Use the following
 
 *Don’t forget to change the default password for user pi!*
 
+## Local install
+
+It is possible to install a website locally (i.e. to access it using http://localhost/ or any local domain you please), see README.md for details.
+
 ## Help wanted
 
 Using Nginx as the webserver is not the best choice if you plan to clone or import a channel currently hosted on another website. The Nginx and/or PHP configuration files probably need some tweaking to have this feature correctly working. If you feel you could help solve this, feel free to contribute.
