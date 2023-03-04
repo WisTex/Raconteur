@@ -12,12 +12,11 @@ class LDSignatures
 
     public static function verify($data, $pubkey): bool
     {
-
         $ohash = self::hash(self::signable_options($data['signature']));
         $dhash = self::hash(self::signable_data($data));
 
         $x = Crypto::verify($ohash . $dhash, base64_decode($data['signature']['signatureValue']), $pubkey);
-        logger('LD-verify: ' . intval($x));
+        logger('LD-verify: ' . (intval($x)) ? 'true' : 'false');
 
         return $x;
     }
