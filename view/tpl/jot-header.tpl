@@ -769,6 +769,7 @@ let postSaveTimer = null;
 		para.innerHTML = `<iframe id="special" src="${source}" style="border:none" ></iframe>`;
 		const canvas = document.getElementById("special");
 		const dataURL = canvas.toDataURL();
+		console.log(dataURL);
 		return dataURL;
 	}
 	{{* end new createThumbnail *}}
