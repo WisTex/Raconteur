@@ -4,22 +4,27 @@
     </div>
     <form action="settings/multifactor" id="settings-mfa-form" method="post" autocomplete="off" >
         <div class="section-content-tools-wrapper">
-        <div class="form-group">
-        <input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
-        {{if $secret}}
-            {{include file="field_input.tpl" field=$secret}}
-        {{/if}}
-        <img src="{{$qrcode}}" alt="{{$uri}}" title="{{$uri}}">
+            <div class="form-group">
+                <input type='hidden' name='form_security_token' value='{{$form_security_token}}'>
+                {{if $secret}}
+                    {{$secret}}
+                {{/if}}
+                <img src="{{$qrcode}}" alt="{{$uri}}" title="{{$uri}}">
+                <div id="otp-test-wrapper">
+                    <label for="totp_test" class= "form-control">{{$test_title}}</label>
+                    <input title="{{$test_title}}" type="text" id="totp_test"
+                       style="width: 30%;"
+                       onkeydown="hitkey(event)"
+                       onfocus="totp_clear_code()"/>
 
-        {{include file="field_input.tpl" field=$test}}
-        <div id="otptest_results"></div>
+                    <div id="otptest_results"></div>
+                </div>
+                {{include file="field_checkbox.tpl" field=$enable_mfa}}
 
-        {{include file="field_checkbox.tpl" field=$enable_mfa}}
-
-        <div class="settings-submit-wrapper" >
-            <button type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
-        </div>
-        </div>
+                <div class="settings-submit-wrapper" >
+                    <button id="otp-submit" type="submit" name="submit" class="btn btn-primary">{{$submit}}</button>
+                </div>
+            </div>
         </div>
     </form>
 </div>
@@ -34,9 +39,9 @@
             <br/>{{$has_secret2_text}}
             <p><img id="totp_qrcode" src="{{$image}}" alt="{{$alt_text}}"/></p>
             <p>
-                <input title="{{$test_title}}" type="text" id="totp_test"
+                <input title="{{$test_title}}" type="text" id="totp_test" class="form-control"
                        style="width: 30%;"
-                       onkeypress="hitkey(event)"
+                       onkeydown="hitkey(event)"
                        onfocus="totp_clear_code()"/>
                 <input type="button" value="{{$test_button}}" onclick="totp_test_code()"/>
                 <b><span id="totp_testres"></span></b>
@@ -57,34 +62,26 @@
         <div style="clear: left"></div>
         <div id="totp_note"></div>
         <script type="text/javascript">
-function choose_message(has_secret) {
-	if (has_secret) {
-		document.getElementById("no-secret").style.display = "none";
-		document.getElementById("has-secret").style.display = "block";
-		}
-	else {
-		document.getElementById("no-secret").style.display = "block";
-		document.getElementById("has-secret").style.display = "none";
-		}
-	}
+
 $(window).on("load", function() {
-	choose_message({{$has_secret}});
 	totp_clear_code();
-	});
+});
+
 function totp_clear_code() {
 	var box = document.getElementById("totp_test");
 	box.value = "";
 	box.focus();
 	document.getElementById("totp_testres").innerHTML = "";
-	}
+}
+
 function totp_test_code() {
-	$.post('/settings/totp',
+	$.post('/totp_check',
 		{totp_code: document.getElementById('totp_test').value},
 		function(data) {
 			document.getElementById("totp_testres").innerHTML =
-				(data['match'] == '1' ? '{{$test_pass}}' : '{{$test_fail}}');
-			});
-	}
+				(data['result']) ? '{{$test_pass}}' : '{{$test_fail}}';
+        });
+}
 function totp_generate_secret() {
 	$.post('/settings/totp',
 		{
@@ -110,29 +107,31 @@ function totp_generate_secret() {
 			document.getElementById('totp_note').innerHTML =
 				"{{$note_scan}}";
 			totp_clear_code();
-			});
-	}
+        }
+    );
+}
+
 function go_generate(ev) {
 	if (ev.which == 13) {
 		totp_generate_secret();
 		ev.preventDefault();
 		ev.stopPropagation();
-		}
 	}
+}
 function hitkey(ev) {
 	if (ev.which == 13) {
 		totp_test_code();
 		ev.preventDefault();
 		ev.stopPropagation();
-		}
 	}
+}
 function expose_password() {
 	var div = document.getElementById("password_form");
 	div.style.display = "block";
 	var box = document.getElementById("totp_password");
 	box.value = "";
 	box.focus();
-	}
+}
 </script>
 
 

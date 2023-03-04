@@ -1,17 +1,3 @@
-<div class="generic-content-wrapper">
-    <div class="section-content-tools-wrapper">
-    <h3 style="text-align: center;">{{$header}}</h3>
-
-    <div>{{$desc}}</div>
-
-    <div>
-        <input type="text" class="form-control" style="width: 10em" id="totp-code" onkeydown="hitkey(event)"/>
-        <div id="feedback"></div>
-        <input type="button" class="btn btn-primary" value={{$submit}} onclick="totp_verify()"/>
-
-    </div>
-    </div>
-</div>
 <script type="text/javascript">
 let totp_success_msg = '{{$success}}';
 let totp_fail_msg = '{{$fail}}';
@@ -42,17 +28,33 @@ function totp_verify() {
 				if (try_countdown < 1) {
 					report.innerHTML = totp_maxfails_msg;
 					window.location = "/logout";
-					}
+				}
 				else {
 					report.innerHTML = totp_fail_msg;
 					totp_clear();
-					}
 				}
-			});
-	}
+			}
+		}
+    );
 }
 
 function hitkey(ev) {
 	if (ev.which == 13) totp_verify();
 }
 </script>
+
+<div class="generic-content-wrapper">
+    <div class="section-content-tools-wrapper">
+        <h3 style="text-align: center;">{{$header}}</h3>
+
+        <div>{{$desc}}</div>
+
+        <div class="form-group">
+            <input type="text" class="form-control" style="width: 10em" id="totp-code" onkeydown="hitkey(event)"/>
+            <div id="feedback"></div>
+        </div>
+        <div>
+            <input type="button" class="btn btn-primary" value={{$submit}} onclick="totp_verify()"/>
+        </div>
+    </div>
+</div>
