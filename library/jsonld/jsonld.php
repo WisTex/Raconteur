@@ -1262,6 +1262,7 @@ class JsonLdProcessor {
         $opts['produceGeneralizedRdf'] = false;
         $dataset = $this->toRDF($input, $opts);
       } catch(Exception $e) {
+          logger('Exception: ' . $e->getMessage());
         throw new JsonLdException(
           'Could not convert input to RDF dataset before normalization.',
           'jsonld.NormalizeError', null, null, $e);

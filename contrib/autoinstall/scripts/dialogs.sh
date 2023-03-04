@@ -1,7 +1,7 @@
 #!/bin/bash
 function script_debut {
     # First we check if we're running the script on a freshly installed Debian 11 server
-    if [[ $system == "debian" ]]
+    if [[ $os == "debian" ]]
     then
         if [[ ! -z "$(which php)" ]] || [[ ! -z "$(which mysql)" ]] || [[ ! -z "$(which apache)" ]] || [[ ! -z "$(which nginx)" ]]
         then
@@ -41,7 +41,12 @@ function enter_domain {
     # This is where the domain name is choosed
     if [ -z "$inputbox_domain" ]
     then
-        inputbox_domain="Please enter your website's address/domain name\n(i.e. \"mywebsite.example.com\", \"example.com\")"
+        if [ -z $local_install ]
+        then
+            inputbox_domain="Please enter your website's address/domain name\n(i.e. \"mywebsite.example.com\", \"example.com\")"
+        else
+            inputbox_domain="Please enter a local domain for testing\n(i.e. \"localhost\", \"testing\"...)"
+        fi
     fi
     domain_name=$(whiptail \
         --title "Domain name" \
@@ -56,13 +61,26 @@ function enter_domain {
             inputbox_domain="You need to put something here otherwise you won't be able to configure a website.\nPlease enter the domain name you plan to use for your website:"
             enter_domain
         else
-            # Validate domain name (we check if the input looks like a FQDN of a domain name not that it is an actual one)
-            if [[ "$domain_name" =~ $domain_regex ]]
+            source scripts/more_dialogs.sh
+            if [ -z $local_install ]
             then
-                source scripts/dialogs_debian.sh
+                # Validate domain name (we check if the input looks like a FQDN of a domain name not that it is an actual one)
+                if [[ "$domain_name" =~ $domain_regex ]]
+                then
+                    enter_email
+                else
+                    inputbox_domain="\"$domain_name\" is not a valid address/domain name for your website. Please enter something that looks like \"example.com\" or \"subdomain.example.com\":"
+                    enter_domain
+                fi
             else
-                inputbox_domain="\"$domain_name\" is not a valid address/domain name for your website. Please enter something that looks like \"example.com\" or \"subdomain.example.com\":"
-                enter_domain
+                if [[ "$domain_name" =~ $local_regex ]]
+                then
+                    webserver_check
+                else
+                    # We change the message in the dialog box if there's no valid input
+                    inputbox_domain="\"$domain_name\" is not a valid local domain for your test install. Please enter one now:"
+                    enter_domain
+                fi
             fi
         fi
     else
@@ -153,7 +171,7 @@ function advanced_db_name {
 
 function db_name_check {
     # Make sure we don't write over an already existing database if we install more than one Streams website with this script
-    if [ ! -z $(mysql -h localhost -u root -e "SHOW DATABASES;" | grep -w "$website_db_name") ]
+    if [[ ! -z $(mysql -h localhost -u root $opt_mysqlpass -e "SHOW DATABASES;" | grep -w "$website_db_name") ]]
     then
         inputbox_db_name="A database named \"$website_db_name\" already exists, please choose another name:"
         unset website_db_name
@@ -201,7 +219,7 @@ function advanced_db_user {
 
 function db_user_check {
     # Make sure we don't use an already existing database user if we install more than one website
-    if [ ! -z $(mysql -h localhost -u root -e "use mysql; SELECT user FROM user;" | grep -w "$website_db_user") ]
+    if [[ ! -z $(mysql -h localhost -u root $opt_mysqlpass -e "use mysql; SELECT user FROM user;" | grep -w "$website_db_user") ]]
     then
         inputbox_db_user="A mysql user named \"$website_db_user\" already exists, please choose another name:"
         unset website_db_user
@@ -214,12 +232,16 @@ function db_user_check {
 }
 
 function summary {
-    summary_domain="Website address   :   https://$domain_name/\n\n"
+    if [ -z $local_install ]
+    then
+        summary_domain="Website address   :   https://$domain_name/\n\n"
+    else
+        summary_domain="Website address   :   http://$domain_name/\n\n"
+    fi
     summary_db_pass="Website database password   :   $website_db_pass\n"
     summary_db_name="Website database name       :   $website_db_name\n"
     summary_db_user="Website database user       :   $website_db_user\n"
     # This will be used to display the settings for our install
-    summary_display="$summary_domain$summary_db_name$summary_db_user$summary_db_pass"
     summary_display="$summary_domain$summary_email$summary_webserver$summary_ddns_provider$summary_ddns_key$summary_ddns_id$summary_ddns_password$summary_db_pass$summary_db_name$summary_db_user"
     # We display all settings
     if (whiptail \
@@ -233,7 +255,7 @@ function summary {
         # Reset all settings before sarting over. We keep domain name, email address for Let's Encrypt
         # and mysql root, which will most likely remain the same
         unset webserver summary_webserver
-        unset ddns_provider ddns_provider_name
+        unset ddns_provider ddns_provider_name summary_ddns_provider
         unset ddns_key_type ddns_key summary_ddns_key
         unset ddns_id ddns_password summary_ddns_id summary_ddns_password
         unset website_db_pass website_db_name website_db_user
@@ -256,6 +278,19 @@ function launch_install {
     fi
 }
 
+function final_message {
+    final_summary=$summary_domain$summary_db_user$summary_db_pass$summary_db_name
+    whiptail \
+        --title "Website successfully installed" \
+        --msgbox "Your website was successfully installed. You must now visit https://$domain_name with your web browser to finish the setup. You will need the following:\n\n$final_summary" \
+        15 80
+    print_info "Website successfully installed"
+    print_info "$final_summary"
+}
 
-#set -x
+
+domain_regex="^([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}$"
+local_regex="^([a-zA-Z0-9]){2,25}$"
+
+# set -x
 script_debut

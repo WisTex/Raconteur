@@ -43,3 +43,11 @@ On a freshly installed Debian server, there are only four mandatory settings you
 Open your domain with a browser and step throught the initial configuration of your website. You will need to re-enter a few settings (database name, user and password, admin e-mail…). You will then create your first user, starting with the admin is a great idea.
 
 And that’s it, you can now log in your website and start adding content to it!
+
+## Local install
+
+It is possible to install your website locally (i.e. for testing purposes). You just have to add an option when lauching the command:
+
+    ./autoinstall --local
+
+There will be no https or ddns stuff in the dialogs. If you don't use "localhost" but want a custom local domain, don't forget to add it in /etc/hosts.
