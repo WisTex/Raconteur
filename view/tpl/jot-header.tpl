@@ -798,7 +798,7 @@ let postSaveTimer = null;
 			//case "text/vnd.abc": these 2 don't work, they open the download dialog
 			case "text/plain":
 				  let sendplain = `/cloud/${address}/${result.display_path}`;
-    			  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')" data-bs-dismiss="modal" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
+    			  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')" data-bs-dismiss="modal" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></li>`;
   			default:
 		  		return;
 		}
