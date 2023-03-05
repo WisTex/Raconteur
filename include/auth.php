@@ -275,13 +275,10 @@ if (
                 App::$session->extend_cookie();
                 $login_refresh = true;
             }
-            $multiFactor  =  AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
-            if ($multiFactor && empty($_SESSION['2FA_VERIFIED'])) {
-      //          goaway(z_root() . '/totp_check');
-            }
+
 
             $ch = (($_SESSION['uid']) ? Channel::from_id($_SESSION['uid']) : null);
-            authenticate_success(App::$account, false, $ch, false, false, $login_refresh);
+            authenticate_success(App::$account, $ch, false, false, $login_refresh);
         } else {
             $_SESSION['account_id'] = 0;
             App::$session->nuke();

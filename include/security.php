@@ -1,5 +1,6 @@
 <?php
 
+use Code\Lib\AConfig;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Storage\Stdio;        
@@ -56,9 +57,12 @@ function authenticate_success($user_record, $channel = false, $login_initial = f
         }
     }
 
-    if (($login_initial) && (! $lastlog_updated)) {
+    if ($login_initial && $interactive) {
         Hook::call('logged_in', $user_record);
-
+        $multiFactor  =  AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
+        if ($multiFactor && empty($_SESSION['2FA_VERIFIED'])) {
+            goaway(z_root() . '/totp_check');
+        }
         // might want to log success here
     }
 

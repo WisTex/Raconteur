@@ -32,7 +32,7 @@ class Multifactor
 
         if (!$account['account_external']) {
             $otp = TOTP::create();
-            $otp->setLabel(rawurlencode(System::get_project_name()));
+            $otp->setLabel(rawurlencode(System::get_project_name()) . ':' . rawurlencode($account['acccount_email']));
             $otp->setIssuer(rawurlencode(System::get_project_name()));
 
             $mySecret = trim(Base32::encodeUpper(random_bytes(32)), '=');
@@ -46,7 +46,7 @@ class Multifactor
 
         $otp = TOTP::create($account['account_external']);
         $otp->setLabel(System::get_platform_name());
-        $uri = $otp->getProvisioningUri();
+        $uri = $otp->getProvisioningUri() . '&issuer=' . rawurlencode(System::get_project_name());
         return replace_macros(Theme::get_template('totp_setup.tpl'),
             [
                 '$form_security_token' => get_form_security_token("settings_mfa"),
