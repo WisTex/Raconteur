@@ -55,7 +55,7 @@ class Settings_menu implements WidgetInterface
         ];
 
         $tabs[] = [
-            'label' => t('Manage Blocks'),
+            'label' => t('Manage blocked sites/channels'),
             'url' => z_root() . '/superblock',
             'selected' => ((argv(0) === 'superblock') ? 'active' : ''),
         ];
@@ -91,7 +91,7 @@ class Settings_menu implements WidgetInterface
 
         if(Apps::system_app_installed(local_channel(),'Roles')) {
           $tabs[] = [
-              'label' => t('Permission Roles'),
+              'label' => t('Permission roles'),
               'url' => z_root() . '/settings/permcats',
               'selected' => ((argv(1) === 'permcats') ? 'active' : ''),
           ];
