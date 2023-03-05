@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 23.03.06\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-05 10:05-0800\n"
+"POT-Creation-Date: 2023-03-05 10:26-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -281,7 +281,7 @@ msgstr ""
 #: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
 #: Code/Module/Dev/Zot_probe.php:22 Code/Module/Dev/Ap_probe.php:24
 #: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
-#: Code/Module/Settings/Channel.php:243 Code/Module/Settings/Multifactor.php:69
+#: Code/Module/Settings/Channel.php:243 Code/Module/Settings/Multifactor.php:70
 #: Code/Module/Sources.php:132 Code/Module/Sources.php:168
 #: Code/Storage/Browser.php:435 boot.php:1107
 #: extend/addon/a/content_import/Mod_content_import.php:149
@@ -305,7 +305,7 @@ msgstr ""
 #: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
 #: Code/Module/Dev/Zot_probe.php:22 Code/Module/Dev/Ap_probe.php:24
 #: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
-#: Code/Module/Settings/Channel.php:243 Code/Module/Settings/Multifactor.php:69
+#: Code/Module/Settings/Channel.php:243 Code/Module/Settings/Multifactor.php:70
 #: Code/Module/Sources.php:132 Code/Module/Sources.php:168
 #: Code/Storage/Browser.php:435 boot.php:1107
 #: extend/addon/a/content_import/Mod_content_import.php:149
@@ -1171,7 +1171,7 @@ msgstr ""
 #: Code/Module/Settings/Display.php:209
 #: Code/Module/Settings/Profile_edit.php:588
 #: Code/Module/Settings/Channel.php:439 Code/Module/Settings/Account.php:114
-#: Code/Module/Settings/Multifactor.php:71 Code/Module/Cal.php:354
+#: Code/Module/Settings/Multifactor.php:72 Code/Module/Cal.php:354
 #: Code/Module/Thing.php:364 Code/Module/Thing.php:419
 #: Code/Module/Sources.php:133 Code/Module/Sources.php:171
 #: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
@@ -2865,7 +2865,7 @@ msgstr ""
 msgid "Account settings updated."
 msgstr ""
 
-#: Code/Module/Admin/Account_edit.php:69 Code/Module/Totp_check.php:62
+#: Code/Module/Admin/Account_edit.php:69 Code/Module/Totp_check.php:44
 msgid "Account not found."
 msgstr ""
 
@@ -8296,7 +8296,7 @@ msgid ""
 "connections."
 msgstr ""
 
-#: Code/Module/Settings/Permcats.php:129 Code/Widget/Settings_menu.php:94
+#: Code/Module/Settings/Permcats.php:129
 msgid "Permission Roles"
 msgstr ""
 
@@ -9464,37 +9464,37 @@ msgstr ""
 msgid "Remove this account including all its channels"
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:55
+#: Code/Module/Settings/Multifactor.php:56
 msgid "Multifactor Settings"
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:56
+#: Code/Module/Settings/Multifactor.php:57
 msgid "Multi-Factor Authentication Setup"
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:57
+#: Code/Module/Settings/Multifactor.php:58
 msgid ""
 "This is your generated secret. This may be used in some cases if the QR "
 "image cannot be read. Please save it."
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:58
+#: Code/Module/Settings/Multifactor.php:59
 msgid "Please enter the code from your authenticator"
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:62
+#: Code/Module/Settings/Multifactor.php:63
 msgid "That code is correct."
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:63
+#: Code/Module/Settings/Multifactor.php:64
 msgid "Incorrect code."
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:66
+#: Code/Module/Settings/Multifactor.php:67
 msgid "Enable Multi-factor Authentication"
 msgstr ""
 
-#: Code/Module/Settings/Multifactor.php:72
+#: Code/Module/Settings/Multifactor.php:73
 msgid "Test"
 msgstr ""
 
@@ -9847,27 +9847,27 @@ msgstr ""
 msgid "Unable to remove source."
 msgstr ""
 
-#: Code/Module/Totp_check.php:66
+#: Code/Module/Totp_check.php:49
 msgid "Multifactor Verification"
 msgstr ""
 
-#: Code/Module/Totp_check.php:67
+#: Code/Module/Totp_check.php:50
 msgid "Please enter the verification key from your authenticator app"
 msgstr ""
 
-#: Code/Module/Totp_check.php:68
+#: Code/Module/Totp_check.php:51
 msgid "Success!"
 msgstr ""
 
-#: Code/Module/Totp_check.php:69
+#: Code/Module/Totp_check.php:52
 msgid "Invalid code, please try again."
 msgstr ""
 
-#: Code/Module/Totp_check.php:70
+#: Code/Module/Totp_check.php:53
 msgid "Too many invalid codes..."
 msgstr ""
 
-#: Code/Module/Totp_check.php:71
+#: Code/Module/Totp_check.php:54
 msgid "Verify"
 msgstr ""
 
@@ -9899,7 +9899,7 @@ msgstr ""
 msgid "No servers currently blocked"
 msgstr ""
 
-#: Code/Module/Superblock.php:282 Code/Widget/Settings_menu.php:58
+#: Code/Module/Superblock.php:282
 msgid "Manage Blocks"
 msgstr ""
 
@@ -10126,6 +10126,10 @@ msgstr ""
 msgid "Display settings"
 msgstr ""
 
+#: Code/Widget/Settings_menu.php:58
+msgid "Manage blocked sites/channels"
+msgstr ""
+
 #: Code/Widget/Settings_menu.php:66
 msgid "Manage locations"
 msgstr ""
@@ -10140,6 +10144,10 @@ msgstr ""
 
 #: Code/Widget/Settings_menu.php:86
 msgid "Client apps"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:94
+msgid "Permission roles"
 msgstr ""
 
 #: Code/Widget/Site_projects.php:29
