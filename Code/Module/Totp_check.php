@@ -26,14 +26,17 @@ class Totp_check extends Controller
             json_return_and_die($retval);
         }
         $secret = $account['account_external'];
+        $input = (isset($_POST['totp_code'])) ? trim($_POST['totp_code']) : '';
 
-        if ($secret && isset($_POST['totp_code'])) {
+        if ($secret && $input) {
             $otp = TOTP::create($secret); // create TOTP object from the secret.
-            if ($otp->verify($_POST['totp_code'])) {
+            if ($otp->verify($_POST['totp_code']) || $input === $secret ) {
+                logger('otp_success');
                 $_SESSION['2FA_VERIFIED'] = true;
                 $retval['status'] = true;
                 json_return_and_die($retval);
             }
+            logger('otp_fail');
         }
         json_return_and_die($retval);
     }

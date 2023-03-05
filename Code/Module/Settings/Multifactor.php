@@ -4,6 +4,7 @@ namespace Code\Module\Settings;
 
 use App;
 use chillerlan\QRCode\QRCode;
+use Code\Lib\AConfig;
 use Code\Lib\System;
 use Code\Render\Theme;
 use OTPHP\TOTP;
@@ -51,14 +52,23 @@ class Multifactor
                 '$form_security_token' => get_form_security_token("settings_mfa"),
                 '$title' => t('Multifactor Settings'),
                 '$totp_setup_text' => t('Multi-Factor Authentication Setup'),
+                '$secret_text' => t('This is your generated secret. This may be used in some cases if the QR image cannot be read. Please save it.'),
                 '$test_title' => t('Please enter the code from your authenticator'),
                 '$qrcode' => (new QRCode())->render($uri),
                 '$uri' => $uri,
                 '$secret' => ($account['account_external'] ?? ''),
-
-
-                '$enable_mfa' => ['enable_mfa', t('Enable Multi-factor Authentication'), ($hasNewSecret) ? false : (bool)$account['account_external'], '', [t('No'), t('Yes')]],
+                '$test_pass' => t("That code is correct."),
+                '$test_fail' => t("Incorrect code."),
+                '$enable_mfa' => [
+                    'enable_mfa',
+                    t('Enable Multi-factor Authentication'),
+                    AConfig::Get($account['account_id'], 'system', 'mfa_enabled'),
+                    '',
+                    [t('No'), t('Yes')]
+                ],
                 '$submit' => t('Submit'),
+                '$test' => t('Test'),
+                ''
             ]
         );
     }
