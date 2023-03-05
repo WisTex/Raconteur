@@ -12,28 +12,12 @@ use ParagonIE\ConstantTime\Base32;
 
 class Multifactor
 {
-    public function post()
+    public function init()
     {
         $account = App::get_account();
         if (!$account) {
             return;
         }
-        if (!empty($_POST['enable_mfa']) && intval($_POST['enable_mfa']) && ! $account['account_external']) {
-            $otp=TOTP::create();
-            $otp->setLabel('label');
-            $otp->setIssuer('issuer');
-            $dbResult = q("UPDATE account set account_external = '%s' where account_id = %d",
-                dbesc($otp->getSecret()),
-                intval($account['account_id'])
-            );
-        }
-        else {
-            $dbResult = q("UPDATE account set account_external = '' where account_id = %d",
-                intval($account['account_id'])
-            );
-        }
-
-
     }
 
     public function get()
