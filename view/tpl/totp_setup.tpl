@@ -43,7 +43,7 @@
                 {{include file="field_checkbox.tpl" field=$enable_mfa}}
                 <div class="settings-submit-wrapper" >
                     <button id="otp-enable-submit" type="submit"
-                        name="submit" class="btn btn-primary" onclick="totp_test_code(); return false;">{{$submit}}
+                        name="submit" class="btn btn-primary">{{$submit}}
                     </button>
                 </div>
 

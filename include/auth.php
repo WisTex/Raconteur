@@ -11,6 +11,7 @@
  */
 
 use Code\Lib\Account;
+use Code\Lib\AConfig;
 use Code\Lib\Channel;
 use Code\Lib\Libzot;
 use Code\Extend\Hook;
@@ -274,6 +275,11 @@ if (
                 App::$session->extend_cookie();
                 $login_refresh = true;
             }
+            $multiFactor  =  AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
+            if ($multiFactor && empty($_SESSION['2FA_VERIFIED'])) {
+      //          goaway(z_root() . '/totp_check');
+            }
+
             $ch = (($_SESSION['uid']) ? Channel::from_id($_SESSION['uid']) : null);
             authenticate_success(App::$account, false, $ch, false, false, $login_refresh);
         } else {

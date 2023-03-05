@@ -13,17 +13,18 @@ use ParagonIE\ConstantTime\Base32;
 
 class Multifactor
 {
-    public function init()
+    public function post()
     {
         $account = App::get_account();
         if (!$account) {
             return;
         }
+        $enable_mfa = isset($_POST['enable_mfa']) ? (int) $_POST['enable_mfa'] : false;
+        AConfig::Set($account['account_id'], 'system', 'mfa_enabled', $enable_mfa);
     }
 
     public function get()
     {
-        $hasNewSecret = false;
         $account = App::get_account();
         if (!$account) {
             return '';
@@ -31,8 +32,8 @@ class Multifactor
 
         if (!$account['account_external']) {
             $otp = TOTP::create();
-            $otp->setLabel('label');
-            $otp->setIssuer('issuer');
+            $otp->setLabel(rawurlencode(System::get_project_name()));
+            $otp->setIssuer(rawurlencode(System::get_project_name()));
 
             $mySecret = trim(Base32::encodeUpper(random_bytes(32)), '=');
             $otp = TOTP::create($mySecret);
@@ -41,7 +42,6 @@ class Multifactor
                 intval($account['account_id'])
             );
             $account['account_external'] = $otp->getSecret();
-            $hasNewSecret = true;
         }
 
         $otp = TOTP::create($account['account_external']);

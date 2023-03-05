@@ -51,9 +51,11 @@ class Totp_check extends Controller
         }
         return Apps::addon_app_installed($id, 'totp');
     }
+
     function get_secret($acct_id) {
         return AConfig::get($acct_id, 'totp', 'secret', null);
     }
+
     function get() {
         $account = App::get_account();
         if (!$account) {
