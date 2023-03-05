@@ -7,11 +7,12 @@ use chillerlan\QRCode\QRCode;
 use Code\Lib\AConfig;
 use Code\Lib\System;
 use Code\Render\Theme;
+use Code\Web\Controller;
 use OTPHP\TOTP;
 use ParagonIE\ConstantTime\Base32;
 
 
-class Multifactor
+class Multifactor extends Controller
 {
     public function post()
     {

@@ -3,9 +3,6 @@
 namespace Code\Module;
 
 use App;
-use Code\Lib\Apps;
-use Code\Lib\AConfig;
-use Code\Lib\System;
 use Code\Render\Theme;
 use Code\Web\Controller;
 use OTPHP\TOTP;
@@ -13,7 +10,7 @@ use OTPHP\TOTP;
 class Totp_check extends Controller
 {
 
-    function post()
+    public function post()
     {
         $retval = ['status' => false];
 
@@ -41,26 +38,12 @@ class Totp_check extends Controller
         json_return_and_die($retval);
     }
 
-
-
-
-    function totp_installed() {
-        $id = local_channel();
-        if (!$id) {
-            return false;
-        }
-        return Apps::addon_app_installed($id, 'totp');
-    }
-
-    function get_secret($acct_id) {
-        return AConfig::get($acct_id, 'totp', 'secret', null);
-    }
-
-    function get() {
+    public function get() {
         $account = App::get_account();
         if (!$account) {
             return t('Account not found.');
         }
+
         return replace_macros(Theme::get_template('totp.tpl'),
             [
                 '$header' => t('Multifactor Verification'),
