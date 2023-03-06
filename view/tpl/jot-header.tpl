@@ -821,6 +821,7 @@ let postSaveTimer = null;
 			case "text/plain":
 				  {{* let sendplain = `/cloud/${address}/${result.display_path}`; *}}
 				  let sendplain = `/store/${result.os_path}`;
+				  alert(sendplain);
 				  let plainTmb = createEmbedThumbnail(sendplain);
 				  alert(plainTmb);
 				  return;
