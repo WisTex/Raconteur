@@ -154,18 +154,10 @@ let postSaveTimer = null;
 		$('#wall-file-upload').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
 		$('#wall-file-upload-sub').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
 
-		/* start new */
-
-		$('#wall-file-upload-1').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
-		$('#wall-file-upload-sub').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
-
-		/* end new */
-
-        // call initialization file
+		// call initialization file
         if (window.File && window.FileList && window.FileReader) {
 			DragDropUploadInit();
         }
-
 
 		$('#invisible-comment-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
