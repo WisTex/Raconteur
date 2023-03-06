@@ -763,28 +763,6 @@ let postSaveTimer = null;
         'json');
     };
 
-	{{* start new createThumbnail *}}
-	function createEmbedThumbnail(sendplain) {
-		const canvas = document.getElementById("canvas");
-		{{* canvas.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`; *}}
-		canvas.innerHTML = `${sendplain}`;
-		
-		const dataURL = canvas.toDataURL();
-		console.log(dataURL);
-		return dataURL;
-		{{*
-		const pause = document.getElementById("pause");;
-		pause.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
-		const canvas = document.getElementById("canvas");
-		/*console.dir(canvas);*/
-		canvas.getContext('2d').drawImage(pause, 0, 0, video.videoWidth, video.videoHeight);
-		const dataURL = canvas.toDataURL();
-		console.log(dataURL);
-		return dataURL;
-		*}}
-	}
-	{{* end new createThumbnail *}}
-
 	{{* start new setEmbedFiles *}}
 	function setEmbedFiles(send) {
 
