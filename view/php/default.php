@@ -14,7 +14,6 @@
 		<section id="region_2"><?php if(x($page,'content')) echo $page['content']; ?>
 					<div id="page-footer"></div>
 			<div id="pause"></div>
-			<canvas id="canvas"></canvas>
 		</section>
 		<aside id="region_3" class="d-none d-xl-table-cell"><div class="aside_spacer"><div id="right_aside_wrapper"><?php if(x($page,'right_aside')) echo $page['right_aside']; ?></div></div></aside>
 	</main>
