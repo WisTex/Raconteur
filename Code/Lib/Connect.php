@@ -38,7 +38,7 @@ class Connect
 
         $ap_allowed = get_config('system', 'activitypub', ACTIVITYPUB_ENABLED) && get_pconfig($uid, 'system', 'activitypub', ACTIVITYPUB_ENABLED);
 
-        if (substr($url, 0, 1) === '[') {
+        if (str_starts_with($url, '[')) {
             $x = strpos($url, ']');
             if ($x) {
                 $protocol = substr($url, 1, $x - 1);
@@ -126,7 +126,6 @@ class Connect
 
         if (!$r) {
             // not in cache - try discovery
-
             $wf = discover_resource($url, $protocol, false);
 
             if (!$wf) {
@@ -137,7 +136,6 @@ class Connect
 
         if ($wf) {
             // something was discovered - find the record which was just created.
-
             $r = q(
                 "select * from xchan where ( xchan_hash = '%s' or xchan_url = '%s' or xchan_addr = '%s' ) $sql_options",
                 dbesc(($wf) ? $wf : $url),
@@ -152,7 +150,7 @@ class Connect
             }
         }
 
-        // if discovery was a success or the channel was already cached we should have an xchan record in $r
+        // if discovery was a success or the channel was already cached we should have a record of type xchan in $r
 
         if ($r) {
             $xchan = $r;

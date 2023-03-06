@@ -16,6 +16,7 @@ use Code\Daemon\Run;
 use Code\Extend\Hook;
 use Code\Storage\Stdio;
 
+require_once('library/jsonld/jsonld.php');
 /**
  * @file include/network.php
  * @brief Network related functions.
@@ -1316,10 +1317,14 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false)
  */
 function jsonld_document_loader($url)
 {
-
-    require_once('library/jsonld/jsonld.php');
-
     $recursion = 0;
+
+    $builtins = [
+        'https://www.w3.org/ns/activitystreams' => 'library/w3org/activitystreams.jsonld',
+        'https://w3id.org/identity/v1' => 'library/w3org/identity-v1.jsonld',
+        'https://w3id.org/security/v1' => 'library/w3org/security-v1.jsonld',
+    ];
+
 
     $x = debug_backtrace();
     if ($x) {
@@ -1340,20 +1345,37 @@ function jsonld_document_loader($url)
         Stdio::mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
     }
 
-    $filename = $cachepath . '/' . urlencode($url);
+    $filename = '';
+
+    foreach ($builtins as $key => $value) {
+        if ($url === $value) {
+            $filename = $key;
+            break;
+        }
+    }
+    if (! $filename) {
+        $filename = $cachepath . '/' . urlencode($url);
+    }
+
     if (file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
+        logger('loading ' . $filename . ' from recent cache');
         return json_decode(file_get_contents($filename));
     }
 
     $r = jsonld_default_document_loader($url);
     if ($r) {
-        file_put_contents($filename, json_encode($r));
+        if (!in_array($url, $builtins)) {
+            file_put_contents($filename, json_encode($r));
+        }
         return $r;
     }
 
-    logger('not found');
     if (file_exists($filename)) {
+        logger('loading ' . $filename . ' from longterm cache');
         return json_decode(file_get_contents($filename));
+    }
+    else {
+        logger($filename . ' does not exist and cannot be loaded');
     }
 
     return [];
