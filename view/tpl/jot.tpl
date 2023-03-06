@@ -502,7 +502,7 @@
       		</div>
       		<div class="modal-body">
 			  	{{if $writefiles}}
-				<button id="wall-file-upload-1" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-cloud-upload jot-icons me-1"></i>{{$fromDevice}}</button>
+				<button id="wall-file-upload" class="btn btn-labeled btn-primary" data-bs-dismiss="modal" title="{{$attach}}"><i id="wall-file-upload-icon-1" class="fa fa-cloud-upload jot-icons me-1"></i>{{$fromDevice}}</button>
 				{{/if}}
 				
 	  			{{if $embedFiles}}
