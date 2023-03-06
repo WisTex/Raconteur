@@ -765,6 +765,26 @@ let postSaveTimer = null;
 	}
 	{{* end new setEmbedFiles *}}
 
+	{{* start new setEmbedFiles-1 *}}
+	function setEmbedFiles-1(result, address) {
+		$.ajax({
+            type: 'post',
+            url: `wall_attach/${address}`,
+            data: JSON.stringify(result),
+            contentType: "application/json; charset=utf-8",
+            traditional: true,
+            success: function (data) {
+            	alert(JSON.stringify(data));
+            }
+        });
+
+	{{*	alert(`Send: ${send}`);
+		addeditortext(`${send}`);
+		preview_post(); *}}
+	}
+	{{* end new setEmbedFiles-1 *}}
+
+
 	{{* start new getFileMimeType *}}
 	function getFileMimeType(result, address) {
 
@@ -775,7 +795,8 @@ let postSaveTimer = null;
 			//case "image/svg+xml": not working
 				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg]`;
 				  {{*let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][/zrl][zmg]${baseurl}/cloud/${address}/{result.display_path}[/zmg]`;*}}
-				  return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				{{* return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`; *}}
+				  return `<li onclick ="setEmbedFiles-1(${result}, ${address})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
