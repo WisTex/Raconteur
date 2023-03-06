@@ -766,7 +766,9 @@ let postSaveTimer = null;
 	{{* start new createThumbnail *}}
 	function createEmbedThumbnail(sendplain) {
 		const canvas = document.getElementById("canvas");
-		canvas.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
+		{{* canvas.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`; *}}
+		canvas.innerHTML = `${sendplain}`;
+		
 		const dataURL = canvas.toDataURL();
 		console.log(dataURL);
 		return dataURL;
