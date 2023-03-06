@@ -817,7 +817,8 @@ let postSaveTimer = null;
 			//case "text/html":
 			//case "text/vnd.abc": these 2 don't work, they open the download dialog
 			case "text/plain":
-				  let sendplain = `/cloud/${address}/${result.display_path}`;
+				  {{* let sendplain = `/cloud/${address}/${result.display_path}`; *}}
+				  let sendplain = `/store/${result.os_path}`;
 				  let plainTmb = createEmbedThumbnail(sendplain);
 				  alert(plainTmb);
 				  return;
