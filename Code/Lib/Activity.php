@@ -4149,6 +4149,8 @@ class Activity
                 break;
             }
 
+            logger('decoded_note: ' . print_r($item,true), LOGGER_DATA);
+
             $hookinfo = [
                 'activity' => $activity,
                 'item' => $item
