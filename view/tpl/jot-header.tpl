@@ -765,15 +765,19 @@ let postSaveTimer = null;
 
 	{{* start new createThumbnail *}}
 	function createEmbedThumbnail(sendplain) {
-		const para = document.createElement("p");
-		para.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
-		document.getElementById("page-footer").appendChild(para);
-		const canvas = document.getElementById("special");
-		console.dir(canvas);
-		/*const dataURL = canvas.toDataURL();*/
-		dataURL = ($('#special')[0]).toDataURL();
+		const canvas = document.getElementById("canvas");
+		const dataURL = canvas.toDataURL();
+		console.log(dataURL);
+		{{*
+		const pause = document.getElementById("pause");;
+		pause.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
+		const canvas = document.getElementById("canvas");
+		/*console.dir(canvas);*/
+		canvas.getContext('2d').drawImage(pause, 0, 0, video.videoWidth, video.videoHeight);
+		const dataURL = canvas.toDataURL();
 		console.log(dataURL);
 		return dataURL;
+		*}}
 	}
 	{{* end new createThumbnail *}}
 
