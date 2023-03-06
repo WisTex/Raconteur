@@ -769,7 +769,7 @@ let postSaveTimer = null;
 	function setEmbedFiles-1(result, address) {
 		$.ajax({
             type: 'post',
-            url: 'wall_attach/'address,
+            url: `'wall_attach/${address}'`,
             data: JSON.stringify(result),
             contentType: "application/json; charset=utf-8",
             traditional: true,
