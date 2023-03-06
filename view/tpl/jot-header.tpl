@@ -141,6 +141,7 @@ let postSaveTimer = null;
 				data.submit();
 			},
 			done: function(e,data) {
+				console.log(data);
 				addeditortext(data.result.message);
 				$('#jot-media').val($('#jot-media').val() + data.result.message);
 			},
