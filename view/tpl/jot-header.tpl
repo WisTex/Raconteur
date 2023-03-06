@@ -769,6 +769,7 @@ let postSaveTimer = null;
 		canvas.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
 		const dataURL = canvas.toDataURL();
 		console.log(dataURL);
+		return dataURL;
 		{{*
 		const pause = document.getElementById("pause");;
 		pause.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
