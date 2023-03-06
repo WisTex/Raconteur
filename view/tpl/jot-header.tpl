@@ -765,12 +765,14 @@ let postSaveTimer = null;
 
 	{{* start new createThumbnail *}}
 	function createEmbedThumbnail(sendplain) {
+		const pause = document.getElementById("pause");;
+		pause.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
 		const canvas = document.getElementById("canvas");
+		canvas.getContext('2d').drawImage(pause, 0, 0, pause.width, pause.height);
 		const dataURL = canvas.toDataURL();
 		console.log(dataURL);
 		{{*
-		const pause = document.getElementById("pause");;
-		pause.innerHTML = `<iframe id="special" src="${sendplain}" style="border:none" ></iframe>`;
+		
 		const canvas = document.getElementById("canvas");
 		/*console.dir(canvas);*/
 		canvas.getContext('2d').drawImage(pause, 0, 0, video.videoWidth, video.videoHeight);
