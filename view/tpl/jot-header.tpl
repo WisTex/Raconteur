@@ -799,7 +799,7 @@ let postSaveTimer = null;
 			case "text/plain":
 			case "text/html":
 				  let sendplain = `/cloud/${address}/${result.display_path}`;
-				  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')" data-bs-dismiss="modal" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" ></iframe></li>`;
+				  return`<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendplain}')" data-bs-dismiss="modal" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><iframe src="/cloud/${address}/${result.display_path}" scrolling="no" ></iframe></li>`;
 			default:
 		  		return;
 		}
