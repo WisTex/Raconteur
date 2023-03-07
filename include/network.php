@@ -1317,6 +1317,7 @@ function getBestSupportedMimeType($mimeTypes = null, $acceptedTypes = false)
  */
 function jsonld_document_loader($url)
 {
+    $doc = (object) [ 'contextUrl' => null, 'document' => null, 'documentUrl' => $url];
     $recursion = 0;
 
     $builtins = [
@@ -1324,7 +1325,6 @@ function jsonld_document_loader($url)
         'https://w3id.org/identity/v1' => 'library/w3org/identity-v1.jsonld',
         'https://w3id.org/security/v1' => 'library/w3org/security-v1.jsonld',
     ];
-
 
     $x = debug_backtrace();
     if ($x) {
@@ -1339,7 +1339,6 @@ function jsonld_document_loader($url)
         killme();
     }
 
-
     $cachepath = 'cache/ldcache';
     if (! is_dir($cachepath)) {
         Stdio::mkdir($cachepath, STORAGE_DEFAULT_PERMISSIONS, true);
@@ -1348,18 +1347,19 @@ function jsonld_document_loader($url)
     $filename = '';
 
     foreach ($builtins as $key => $value) {
-        if ($url === $value) {
-            $filename = $key;
-            break;
+        if ($url === $key) {
+            $doc->document = file_get_contents($value);
+            return $doc;
         }
     }
+
     if (! $filename) {
         $filename = $cachepath . '/' . urlencode($url);
     }
 
     if (file_exists($filename) && filemtime($filename) > time() - (12 * 60 * 60)) {
         logger('loading ' . $filename . ' from recent cache');
-        return json_decode(file_get_contents($filename));
+        return file_get_contents($filename);
     }
 
     $r = jsonld_default_document_loader($url);
@@ -1372,13 +1372,14 @@ function jsonld_document_loader($url)
 
     if (file_exists($filename)) {
         logger('loading ' . $filename . ' from longterm cache');
-        return json_decode(file_get_contents($filename));
+        $doc->document = file_get_contents($filename);
+        return $doc;
     }
     else {
         logger($filename . ' does not exist and cannot be loaded');
     }
 
-    return [];
+    return $doc;
 }
 
 
