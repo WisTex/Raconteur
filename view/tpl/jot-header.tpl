@@ -756,6 +756,28 @@ let postSaveTimer = null;
         'json');
     };
 
+	{{* start new test *}}
+
+	let test = function () {
+    $.post("wall_attach/{{$nickname}}", {},
+        function(data) {
+			alert(JSON.stringify(date));
+            if (data['status']) {
+                
+            } else {
+                window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']);
+            }
+            return false;
+        },
+    'json');
+};
+
+
+
+
+	{{* end new test *}}
+
+
 	{{* start new setEmbedFiles *}}
 	function setEmbedFiles(send) {
 
@@ -774,6 +796,7 @@ let postSaveTimer = null;
 			case "image/gif":
 			//case "image/svg+xml": not working
 				let send = `[img]${baseurl}/cloud/${address}/${result.display_path}[/img]`;
+				test(result);
 				return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
