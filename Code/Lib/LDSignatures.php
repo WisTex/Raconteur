@@ -89,7 +89,7 @@ class LDSignatures
             $d = jsonld_normalize($data, ['algorithm' => 'URDNA2015', 'format' => 'application/nquads']);
         } catch (Exception $e) {
             logger('normalise error: ' . $e->getMessage());
-            logger('normalise error: ' . print_r($data, true));
+            logger('normalise error: ' . print_r($data, true), LOGGER_DATA);
         }
         return $d;
     }
