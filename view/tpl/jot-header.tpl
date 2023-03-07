@@ -766,8 +766,9 @@ let postSaveTimer = null;
 	{{* end new setEmbedFiles *}}
 
 	{{* start new setEmbedFiles-1 *}}
-	function setEmbedFiles1(result, address) {
-		alert(JSON.stringify(result));
+	function setEmbedFiles1(send) {
+		alert(send);
+		{{*
 		$.post("wall_attach/ray", JSON.stringify(result))
   			.done(function(data) {
     		console.log("Data received:", data);
@@ -775,6 +776,7 @@ let postSaveTimer = null;
   			.fail(function(error) {
     		console.error("Error:", error);
   		});
+		*}}
 	{{*	$.ajax({
             type: 'post',
             url: `wall_attach/${address}`,
@@ -804,7 +806,7 @@ let postSaveTimer = null;
 				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg]`;
 				  {{*let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][/zrl][zmg]${baseurl}/cloud/${address}/{result.display_path}[/zmg]`;*}}
 				{{* return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`; *}}
-				  return `<li onclick ="setEmbedFiles1(${send}, ${address})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  return `<li onclick ="setEmbedFiles1(${send})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
