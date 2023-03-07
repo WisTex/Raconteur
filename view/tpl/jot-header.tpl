@@ -759,7 +759,7 @@ let postSaveTimer = null;
 	{{* start new test *}}
 
 	let test = function (result) {
-    $.post("wall_attach/{{$nickname}}", result,
+    $.post("wall_attach/{{$nickname}}", JSON.stringify(result),
         function(data) {
 			alert(JSON.stringify(data));
 			addeditortext(data.message);
