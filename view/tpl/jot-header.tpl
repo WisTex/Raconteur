@@ -767,11 +767,11 @@ let postSaveTimer = null;
 
 	{{* start new setEmbedFiles-1 *}}
 	function setEmbedFiles1(result, address) {
-		alert(result);
+		alert(JSON.stringify(result));
 		$.ajax({
             type: 'post',
             url: `wall_attach/${address}`,
-            data: result,
+            data: JSON.stringify(result),
             contentType: "application/json; charset=utf-8",
             traditional: true,
             success: function (data) {
@@ -795,7 +795,6 @@ let postSaveTimer = null;
 			case "image/gif":
 			//case "image/svg+xml": not working
 				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg]`;
-				  result = JSON.stringify(result);
 				  {{*let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][/zrl][zmg]${baseurl}/cloud/${address}/{result.display_path}[/zmg]`;*}}
 				{{* return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`; *}}
 				  return `<li onclick ="setEmbedFiles1(${result}, ${address})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
