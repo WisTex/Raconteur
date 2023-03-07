@@ -1372,8 +1372,7 @@ function jsonld_document_loader($url)
 
     if (file_exists($filename)) {
         logger('loading ' . $filename . ' from longterm cache');
-        $doc->document = file_get_contents($filename);
-        return $doc;
+        return file_get_contents($filename);
     }
     else {
         logger($filename . ' does not exist and cannot be loaded');
