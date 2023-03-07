@@ -757,10 +757,11 @@ let postSaveTimer = null;
     };
 
 	{{* start new setEmbedFiles *}}
-	function setEmbedFiles(send) {
+	function setEmbedFiles(send, title) {
 
 		alert(`Send: ${send}`);
 		$('#jot-media').val($('#jot-media').val() + send);
+		$('#jot-title').val($('#jot-title').val() + title);
 		addeditortext(`${send}`);
 		preview_post();
 	}
@@ -775,7 +776,8 @@ let postSaveTimer = null;
 			case "image/gif":
 			//case "image/svg+xml": not working
 				let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg]`;
-				return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				let title = result.filename;
+				return `<li onclick ="setEmbedFiles('${send}', ${title})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
