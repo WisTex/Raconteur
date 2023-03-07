@@ -760,7 +760,6 @@ let postSaveTimer = null;
 	function setEmbedFiles(send) {
 
 		alert(`Send: ${send}`);
-		$('#jot-media').val($('#jot-media').val() + send);
 		addeditortext(`${send}`);
 		preview_post();
 	}
