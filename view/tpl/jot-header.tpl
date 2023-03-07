@@ -758,10 +758,10 @@ let postSaveTimer = null;
 
 	{{* start new test *}}
 
-	let test = function () {
-    $.post("wall_attach/{{$nickname}}", {},
+	let test = function (result) {
+    $.post("wall_attach/{{$nickname}}", result,
         function(data) {
-			alert(JSON.stringify(date));
+			alert(JSON.stringify(data));
             if (data['status']) {
                 
             } else {
