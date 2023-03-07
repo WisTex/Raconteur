@@ -808,7 +808,7 @@ let postSaveTimer = null;
 				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg]`;
 				  {{*let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][/zrl][zmg]${baseurl}/cloud/${address}/{result.display_path}[/zmg]`;*}}
 				{{* return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`; *}}
-				  return `<li onclick ="setEmbedFilesOne(${result}, ${address})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				  return `<li onclick ="setEmbedFilesOne(${JSON.stringify(result).split('"').join("&quot;")}, ${address})" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
