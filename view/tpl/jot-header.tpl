@@ -768,7 +768,14 @@ let postSaveTimer = null;
 	{{* start new setEmbedFiles-1 *}}
 	function setEmbedFiles1(result, address) {
 		alert(JSON.stringify(result));
-		$.ajax({
+		$.post("`wall_attach/${address}`", JSON.stringify(result))
+  			.done(function(data) {
+    		console.log("Data received:", data);
+  			})
+  			.fail(function(error) {
+    		console.error("Error:", error);
+  		});
+	{{*	$.ajax({
             type: 'post',
             url: `wall_attach/${address}`,
             data: JSON.stringify(result),
@@ -777,7 +784,7 @@ let postSaveTimer = null;
             success: function (data) {
             	alert(JSON.stringify(data));
             }
-        });
+        });	*}}
 
 	{{*	alert(`Send: ${send}`);
 		addeditortext(`${send}`);
