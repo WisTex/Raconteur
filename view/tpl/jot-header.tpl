@@ -805,7 +805,7 @@ let postSaveTimer = null;
 			case "image/gif":
 			//case "image/svg+xml": not working
 			alert(JSON.stringify(result));
-				let test = setEmbedFilesOne(result, address);
+				let test = `setEmbedFilesOne(${result, address})`;
 				  let send = `[zmg]${baseurl}/cloud/${address}/${result.display_path}[/zmg]`;
 				  {{*let send = `[zrl=${baseurl}/cloud/${address}/${result.hash}][/zrl][zmg]${baseurl}/cloud/${address}/{result.display_path}[/zmg]`;*}}
 				{{* return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`; *}}
