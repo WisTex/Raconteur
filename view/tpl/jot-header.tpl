@@ -814,7 +814,7 @@ let postSaveTimer = null;
 			//case "text/html":
 			case "text/vnd.abc": these 2 don't work, they open the download dialog
 				let sendabc = `[abc]/cloud/${address}/${result.display_path}[/abc]`;
-				  return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendabc}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><iframe src="/cloud/${address}/${result.display_path}" scrolling="no" ></iframe></li>`;
+				return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendabc}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><iframe src="store/${address}/${result.os_path}.abc" scrolling="no" ></iframe></li>`;
 			case "text/plain":
 			case "application/json":
 				  let sendplain = `/cloud/${address}/${result.display_path}`;
