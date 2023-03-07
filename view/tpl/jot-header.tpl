@@ -759,7 +759,8 @@ let postSaveTimer = null;
 	{{* start new test *}}
 
 	let test = function (result) {
-    $.post("wall_attach/{{$nickname}}", JSON.parse(result),
+		let testone = JSON.parse(result);
+    $.post("wall_attach/{{$nickname}}", testone,
         function(data) {
 			alert(JSON.stringify(data));
 			addeditortext(data.message);
