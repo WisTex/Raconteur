@@ -762,6 +762,8 @@ let postSaveTimer = null;
     $.post("wall_attach/{{$nickname}}", result,
         function(data) {
 			alert(JSON.stringify(data));
+			addeditortext(JSON.stringify(data));
+			preview_post();
             if (data['status']) {
                 
             } else {
