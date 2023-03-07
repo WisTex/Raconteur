@@ -813,7 +813,7 @@ let postSaveTimer = null;
 			case "video/webm":
 			case "video/ogg":
 				  let sendmp4 = `[video]/cloud/${address}/${result.display_path}[/video]`;
-    			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles('${sendmp4}')" data-bs-dismiss="modal" >${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video controls="controls" preload="auto" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
+    			  return `<li class="border rounded my-1 p-2" ><h4 onclick ="setEmbedFiles('${sendmp4}')" data-bs-dismiss="modal" >${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video controls="controls" preload="metadata" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
 			case "audio/mpeg":
 			case "audio/wav":
 			case "audio/ogg":
