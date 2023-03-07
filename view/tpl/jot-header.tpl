@@ -767,8 +767,8 @@ let postSaveTimer = null;
 
 	{{* start new setEmbedFiles-1 *}}
 	function setEmbedFilesOne(result, address) {
-		const myString = JSON.stringify(result);
-		console.log(myString);
+		alert(`I'm here`);
+		console.log(result);
 		{{*
 		$.post("wall_attach/ray", JSON.stringify(result))
   			.done(function(data) {
