@@ -773,7 +773,7 @@ let postSaveTimer = null;
 			case "image/png":
 			case "image/gif":
 			//case "image/svg+xml": not working
-				let send = `[image]${baseurl}/cloud/${address}/${result.display_path}[/image]`;
+				let send = `[img]${baseurl}/cloud/${address}/${result.display_path}[/img]`;
 				return `<li onclick ="setEmbedFiles('${send}')" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
