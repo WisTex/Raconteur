@@ -14,10 +14,6 @@ class Totp_check extends Controller
     {
         $retval = ['status' => false];
 
-        if (!local_channel()) {
-            json_return_and_die($retval);
-        }
-
         $account = App::get_account();
         if (!$account) {
             json_return_and_die($retval);
