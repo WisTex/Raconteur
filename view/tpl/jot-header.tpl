@@ -814,7 +814,7 @@ let postSaveTimer = null;
 			//case "text/html":
 			case "text/vnd.abc":
 				let sendabc = `[abc]/cloud/${address}/${result.display_path}[/abc]`;
-				return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendabc}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><iframe src="davs://streams.hubzilla.social/dav/ray/${result.display_path}" scrolling="no" ></iframe></li>`;
+				return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendabc}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><iframe src="/dav/ray/${result.display_path}" scrolling="no" ></iframe></li>`;
 			case "text/plain":
 			case "application/json":
 				  let sendplain = `/cloud/${address}/${result.display_path}`;
