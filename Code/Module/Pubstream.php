@@ -152,6 +152,8 @@ class Pubstream extends Controller
                 '$pf' => '0',
                 '$distance' => (($distance) ? intval($distance) : '0'),
                 '$distance_from' => (($distance_from) ? urlencode($distance_from) : ''),
+                '$maxtags' => '0',
+                '$mintags' => '0',
             ));
         }
 

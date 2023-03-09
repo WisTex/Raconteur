@@ -98,28 +98,34 @@ function select_webserver {
 }
 
 function ddns_choice {
-    # We can automatically configure Dynamic DNS (DDNS) with a few providers
-    # This is of course to be used only with a FQDN of domain name
-    provider=$(whiptail \
-        --title "Optional - Dynamic DNS configuration" \
-        --menu "If you plan to use a Dynamic DNS (DDNS) provider, you may choose one here. Currently supported providers are FreeDNS, Gandi and selHOST.de. You must already have an account with the selected provider and own a domain/subdomain. Please choose one of the following options:"\
-        18 80 4 \
-        "1" "None, I won't be using a DDNS provider"\
-        "2" "FreeDNS (offers free of charge subdomains)"\
-        "3" "Gandi (French domain name registrar with a nice API)"\
-        "4" "selfHOST.de (German language provider & registrar)" 3>&1 1>&2 2>&3)
-        ### "5" "Sorry, what now?" 3>&1 1>&2 2>&3) ### Maybe an explanation short text about DDNS could be useful
-    exitstatus=$?
-    if [ $exitstatus = 0 ]
+    # Only useful if we're not doing a local install
+    if [ ! -z $local_install ]
     then
-        case "$provider" in
-        # If no Dynamic DNS provider is used
-        1) enter_root_db_pass ;;
-        2|3|4) ddns_config ;;
-            ### 5) ddns_ELIF ;; ### Could link to a short explanation text
-        esac
+        enter_root_db_pass
     else
-        die "Lost your way? Feel free to try again!"
+        # We can automatically configure Dynamic DNS (DDNS) with a few providers
+        # This is of course to be used only with a FQDN of domain name
+        provider=$(whiptail \
+            --title "Optional - Dynamic DNS configuration" \
+            --menu "If you plan to use a Dynamic DNS (DDNS) provider, you may choose one here. Currently supported providers are FreeDNS, Gandi and selHOST.de. You must already have an account with the selected provider and own a domain/subdomain. Please choose one of the following options:"\
+            18 80 4 \
+            "1" "None, I won't be using a DDNS provider"\
+            "2" "FreeDNS (offers free of charge subdomains)"\
+            "3" "Gandi (French domain name registrar with a nice API)"\
+            "4" "selfHOST.de (German language provider & registrar)" 3>&1 1>&2 2>&3)
+            ### "5" "Sorry, what now?" 3>&1 1>&2 2>&3) ### Maybe an explanation short text about DDNS could be useful
+        exitstatus=$?
+        if [ $exitstatus = 0 ]
+        then
+            case "$provider" in
+            # If no Dynamic DNS provider is used
+            1) enter_root_db_pass ;;
+            2|3|4) ddns_config ;;
+            ### 5) ddns_ELIF ;; ### Could link to a short explanation text
+            esac
+        else
+            die "Lost your way? Feel free to try again!"
+        fi
     fi
 }
 
@@ -194,10 +200,7 @@ function ddns_config {
         fi
     else
     # The following part is for FreeDNS and Gandi which both only need a single key
-        if [ -z "$inputbox_ddns_key" ]
-        then
-            inputbox_ddns_key="Please provide your $ddns_provider_name $ddns_key_type :"
-        fi
+        inputbox_ddns_key="Please provide your $ddns_provider_name $ddns_key_type :"
         ddns_key=$(whiptail \
         --title "$ddns_provider_name $ddns_key_type" \
         --inputbox "$inputbox_ddns_key" \
@@ -259,4 +262,3 @@ function enter_root_db_pass {
     fi
 }
 
-enter_email

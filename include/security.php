@@ -1,5 +1,6 @@
 <?php
 
+use Code\Lib\AConfig;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 use Code\Storage\Stdio;        
@@ -29,19 +30,27 @@ function authenticate_success($user_record, $channel = false, $login_initial = f
         $_SESSION['account_id'] = $user_record['account_id'];
         $_SESSION['authenticated'] = 1;
 
-        if ($channel) {
-            $uid_to_load = $channel['channel_id'];
+        $canChangeChannel = empty($_SESSION['2FA_REQUIRED']);
+        if (!empty($_SESSION['2FA_VERIFIED'])) {
+            $canChangeChannel = true;
         }
 
-        if (! isset($uid_to_load)) {
-            $uid_to_load = (((x($_SESSION, 'uid')) && (intval($_SESSION['uid'])))
-                ? intval($_SESSION['uid'])
-                : intval(App::$account['account_default_channel'])
-            );
-        }
+        if ($canChangeChannel) {
 
-        if ($uid_to_load) {
-            change_channel($uid_to_load);
+            if ($channel) {
+                $uid_to_load = $channel['channel_id'];
+            }
+
+            if (!isset($uid_to_load)) {
+                $uid_to_load = (((x($_SESSION, 'uid')) && (intval($_SESSION['uid'])))
+                    ? intval($_SESSION['uid'])
+                    : intval(App::$account['account_default_channel'])
+                );
+            }
+
+            if ($uid_to_load) {
+                change_channel($uid_to_load);
+            }
         }
 
         if (($login_initial || $update_lastlog) && (! (isset($_SESSION['sudo']) && $_SESSION['sudo']))) {
@@ -56,10 +65,13 @@ function authenticate_success($user_record, $channel = false, $login_initial = f
         }
     }
 
-    if (($login_initial) && (! $lastlog_updated)) {
+    if ($login_initial && $interactive) {
         Hook::call('logged_in', $user_record);
-
         // might want to log success here
+    }
+
+    if ($_SESSION['2FA_REQUIRED'] && !$_SESSION['2FA_VERIFIED'] && App::$module !== 'totp_check') {
+        goaway(z_root() . '/totp_check');
     }
 
     if ($return || x($_SESSION, 'workflow')) {

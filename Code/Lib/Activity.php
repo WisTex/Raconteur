@@ -3923,7 +3923,7 @@ class Activity
                             $parent_item = array_shift($parent_item);
                         }
                     } else {
-                        logger('no parent');
+                        logger('no parent: ' . $item['mid']);
                         return;
                     }
                 }
@@ -4149,6 +4149,8 @@ class Activity
                 break;
             }
 
+            logger('decoded_note: ' . print_r($item,true), LOGGER_DATA);
+
             $hookinfo = [
                 'activity' => $activity,
                 'item' => $item
@@ -4179,7 +4181,7 @@ class Activity
             $current_item = $item;
         }
 
-        if ($conversation && $conversation[0]['item']['mid'] === $conversation[0]['item']['parent_md']) {
+        if ($conversation && $conversation[0]['item']['mid'] === $conversation[0]['item']['parent_mid']) {
             foreach ($conversation as $post) {
                 if ($post['activity']->is_valid()) {
                     self::store($channel, $observer_hash, $post['activity'], $post['item'], false);
@@ -4609,7 +4611,7 @@ class Activity
             'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
             'sm' => 'http://smithereen.software/ns#',
-            'fep' => 'https://codeberg.org/fediverse/fep#',
+         //   'fep' => 'https://codeberg.org/fediverse/fep#',
             'manuallyApprovesFollowers' => 'as:manuallyApprovesFollowers',
             'oauthRegistrationEndpoint' => 'litepub:oauthRegistrationEndpoint',
             'sensitive' => 'as:sensitive',
@@ -4625,7 +4627,7 @@ class Activity
             'Hashtag' => 'as:Hashtag',
             'canReply' => 'toot:canReply',
             'approval' => 'toot:approval',
-            'Identity' => 'fep:Identity',
+         //   'Identity' => 'fep:Identity',
             'isContainedConversation' => 'nomad:isContainedConversation',
             'conversation' => 'nomad:conversation',
             'commentPolicy' => 'nomad:commentPolicy',

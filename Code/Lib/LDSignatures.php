@@ -12,12 +12,11 @@ class LDSignatures
 
     public static function verify($data, $pubkey): bool
     {
-
         $ohash = self::hash(self::signable_options($data['signature']));
         $dhash = self::hash(self::signable_data($data));
 
         $x = Crypto::verify($ohash . $dhash, base64_decode($data['signature']['signatureValue']), $pubkey);
-        logger('LD-verify: ' . intval($x));
+        logger('LD-verify: ' . (intval($x)) ? 'true' : 'false');
 
         return $x;
     }
@@ -90,7 +89,7 @@ class LDSignatures
             $d = jsonld_normalize($data, ['algorithm' => 'URDNA2015', 'format' => 'application/nquads']);
         } catch (Exception $e) {
             logger('normalise error: ' . $e->getMessage());
-            logger('normalise error: ' . print_r($data, true));
+            logger('normalise error: ' . print_r($data, true), LOGGER_DATA);
         }
         return $d;
     }

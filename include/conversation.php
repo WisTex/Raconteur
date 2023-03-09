@@ -276,8 +276,13 @@ function visible_activity($item)
     // of those patforms. Hide them on our own platform because they make the conversation look like dung.
     // Performance wise this is a mess because we need to send two activities for every group comment.
 
-    if ($item['verb'] === 'Announce' && $item['author_xchan'] === $item['owner_xchan']) {
-        return false;
+    if ($item['verb'] === 'Announce') {
+        if ($item['author_xchan'] === $item['owner_xchan']) {
+            return false;
+        }
+        if (isset($item['author']) && intval($item['author']['xchan_type']) === XCHAN_TYPE_GROUP) {
+            return false;
+        }
     }
 
     foreach ($hidden_activities as $act) {

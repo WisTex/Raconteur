@@ -262,6 +262,8 @@ class Display extends Controller
                 '$pf' => '0',
                 '$distance' => '0',
                 '$distance_from' => '',
+                '$maxtags' => '0',
+                '$mintags' => '0',
             ]);
 
             Head::add_link([
