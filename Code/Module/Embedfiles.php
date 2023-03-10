@@ -21,14 +21,16 @@ class Embedfiles extends Controller
 
         if (argc() > 1 && argv(1) === 'sharelink') {
             // API: /embedfiles/sharelink
+            /*
             $href = (x($_POST, 'href') ? $_POST['href'] : null);
             if (!$href) {
                 json_return_and_die(['errormsg' => 'Error retrieving link ' . $href, 'status' => false]);
             }
             $tmp = explode('/', $href);
             $resource_id = array_pop($tmp);
+            */
 
-            $x = self::photolink($resource_id, $channel_id);
+            $x = self::sharelink($resource_id, $channel_id);
             if ($x) {
                 json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
             }
@@ -161,6 +163,7 @@ class Embedfiles extends Controller
 */
     protected static function sharelink($resource, $channel_id = 0)
     {
+        return 'success from sharelink';
         if (intval($channel_id)) {
             $channel = Channel::from_id($channel_id);
         } else {

@@ -760,9 +760,9 @@ let postSaveTimer = null;
 
 	let test = function (result) {
 		var array = Object.keys(result);
-    $.post("wall_attach/{{$nickname}}", array,
+    $.post("embedfiles/sharelink", ,
         function(data) {
-			alert(JSON.stringify(data));
+			alert(data);
 			addeditortext(data.message);
 			preview_post();
             if (data['status']) {
@@ -801,7 +801,7 @@ let postSaveTimer = null;
 				let send = `[img]${baseurl}/cloud/${address}/${result.display_path}[/img]`;
 				let send_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(send); }); });
-				/* test(result); */
+				test(result);
 				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
