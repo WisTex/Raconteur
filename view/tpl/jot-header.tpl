@@ -757,7 +757,7 @@ let postSaveTimer = null;
     };
 
 	{{* start new test *}}
-
+{{*}}
 	let test = function () {
 		/*var array = Object.keys(result);*/
 		alert(`HERE`);
@@ -770,7 +770,7 @@ let postSaveTimer = null;
             if (data['status']) {
                 
             } else {
-            {{*    window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']); *}}
+                window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']); 
             }
 			
             return false;
@@ -778,6 +778,7 @@ let postSaveTimer = null;
         },
     'json');
 };
+*}}
 
 
 
