@@ -760,6 +760,7 @@ let postSaveTimer = null;
 
 	let test = function () {
 		/*var array = Object.keys(result);*/
+		alert(`HERE`);
     $.post("embedfiles/sharelink", ,
         function(data) {
 			alert(data);
