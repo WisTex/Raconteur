@@ -765,12 +765,13 @@ let postSaveTimer = null;
 			alert(data);
 			/*addeditortext(data.message);
 			preview_post();
-			*/
+			
             if (data['status']) {
                 
             } else {
-                window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']);
+            {{*    window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']); *}}
             }
+			*/
             return false;
         },
     'text');
