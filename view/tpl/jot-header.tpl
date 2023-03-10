@@ -763,8 +763,9 @@ let postSaveTimer = null;
     $.post("embedfiles/sharelink", ,
         function(data) {
 			alert(data);
-			addeditortext(data.message);
+			/*addeditortext(data.message);
 			preview_post();
+			*/
             if (data['status']) {
                 
             } else {
