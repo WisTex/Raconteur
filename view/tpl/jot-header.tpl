@@ -758,8 +758,8 @@ let postSaveTimer = null;
 
 	{{* start new test *}}
 
-	let test = function (result) {
-		var array = Object.keys(result);
+	let test = function () {
+		/*var array = Object.keys(result);*/
     $.post("embedfiles/sharelink", ,
         function(data) {
 			alert(data);
