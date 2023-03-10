@@ -799,7 +799,8 @@ let postSaveTimer = null;
 			case "image/gif":
 			//case "image/svg+xml": not working
 				let send = `[img]${baseurl}/cloud/${address}/${result.display_path}[/img]`;
-				document.getElementById(`embedFiles_${result.id}`).addEventListener("click", function() { setEmbedFiles(send); });
+				let send_id = `embedFiles_${result.id}`;
+				document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(send); });
 				/* test(result); */
 				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
