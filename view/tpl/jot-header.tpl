@@ -757,28 +757,7 @@ let postSaveTimer = null;
     };
 
 	{{* start new test *}}
-{{*}}
-	let test = function () {
-		/*var array = Object.keys(result);*/
-		alert(`HERE`);
-    $.post("embedfiles/sharelink", ,
-        function(data) {
-			alert(data);
-			/*addeditortext(data.message);
-			preview_post();
-			
-            if (data['status']) {
-                
-            } else {
-                window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']); 
-            }
-			
-            return false;
-			*/
-        },
-    'json');
-};
-*}}
+
 
 
 
@@ -807,7 +786,7 @@ let postSaveTimer = null;
 				let send_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(send); }); });
 				/*test(); */
-				return `<li id = "embedFiles_${send_id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				return `<li id = "${send_id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
