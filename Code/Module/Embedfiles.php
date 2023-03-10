@@ -32,7 +32,7 @@ class Embedfiles extends Controller
 
             $x = self::sharelink($resource_id, $channel_id);
             if ($x) {
-                json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
+                json_return_and_die(['status' => true, 'sharelink' => $x, 'resource_id' => $resource_id]);
             }
             json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
         }

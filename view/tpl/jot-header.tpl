@@ -774,7 +774,7 @@ let postSaveTimer = null;
 			*/
             return false;
         },
-    'text');
+    'json');
 };
 
 
