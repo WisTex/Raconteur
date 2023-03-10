@@ -772,7 +772,7 @@ let postSaveTimer = null;
             }
             return false;
         },
-    'json');
+    'text');
 };
 
 
