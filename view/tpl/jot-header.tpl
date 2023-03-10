@@ -771,8 +771,9 @@ let postSaveTimer = null;
             } else {
             {{*    window.console.log("{{$modalerrorlist}}" + ':' + data['errormsg']); *}}
             }
-			*/
+			
             return false;
+			*/
         },
     'json');
 };
