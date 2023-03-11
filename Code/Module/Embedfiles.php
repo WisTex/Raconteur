@@ -25,6 +25,11 @@ class Embedfiles extends Controller
 
         if (argc() > 1 && argv(1) === 'sharelink') {
             // API: /embedfiles/sharelink
+            // Takes raw data from the request
+            $json = file_get_contents('php://input');
+            // Converts it into a PHP object
+            $data = json_decode($json);
+            
             $x = self::sharelink($resource_id, $channel_id);
             if ($x) {
                 json_return_and_die(['status' => true, 'sharelink' => $x, 'resource_id' => $resource_id]);
