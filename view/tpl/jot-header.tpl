@@ -759,11 +759,9 @@ let postSaveTimer = null;
 	{{* start new test *}}
 
 	let test = function (result) {
-		$.post('embedfiles/sharelink', {
-    		user_id: "143",
-    		username: "ninjazhai",
-    		website: "https://codeofaninja.com/"
-  		 }, function(data) {
+		$.post('embedfiles/sharelink',
+			result,
+			function(data) {
     		// demonstrate the response
     		alert(JSON.stringify(data));
   		}).fail(function() {
