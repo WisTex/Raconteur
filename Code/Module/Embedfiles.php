@@ -21,15 +21,6 @@ class Embedfiles extends Controller
 
         if (argc() > 1 && argv(1) === 'sharelink') {
             // API: /embedfiles/sharelink
-            /*
-            $href = (x($_POST, 'href') ? $_POST['href'] : null);
-            if (!$href) {
-                json_return_and_die(['errormsg' => 'Error retrieving link ' . $href, 'status' => false]);
-            }
-            $tmp = explode('/', $href);
-            $resource_id = array_pop($tmp);
-            */
-
             $x = self::sharelink($resource_id, $channel_id);
             if ($x) {
                 json_return_and_die(['status' => true, 'sharelink' => $x, 'resource_id' => $resource_id]);
