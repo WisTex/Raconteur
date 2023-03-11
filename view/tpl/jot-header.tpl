@@ -758,7 +758,7 @@ let postSaveTimer = null;
 
 	{{* start new test *}}
 
-	let test = function (result) {
+	function test (result) {
 		$.post('embedfiles/sharelink',
 			result,
 			function(data) {
