@@ -770,10 +770,7 @@ let postSaveTimer = null;
   		});
 	}
 
-
-
 	{{* end new test *}}
-
 
 	{{* start new setEmbedFiles *}}
 	function setEmbedFiles(send) {
