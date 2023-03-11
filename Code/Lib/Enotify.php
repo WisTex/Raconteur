@@ -21,7 +21,7 @@ class Enotify
      * @param array $params an associative array with:
      *  * \e string \b from_xchan sender xchan hash
      *  * \e string \b to_xchan recipient xchan hash
-     *  * \e array \b item an assoziative array
+     *  * \e array \b item an associative array
      *  * \e int \b type one of the NOTIFY_* constants from boot.php
      *  * \e string \b link
      *  * \e string \b parent_mid
@@ -165,7 +165,16 @@ class Enotify
 
             $itemlink = $params['link'];
 
-            $action = t('commented on');
+            if ($params['type'] === NOTIFY_RESHARE) {
+                $action = t('repeated');
+                if ($sender['xchan_type'] == XCHAN_TYPE_GROUP) {
+                    pop_lang();
+                    return;
+                }
+            }
+            else {
+                $action = t('commented on');
+            }
 
             if (array_key_exists('item', $params) && in_array($params['item']['verb'], [ACTIVITY_LIKE, ACTIVITY_DISLIKE])) {
                 if (!($vnotify & VNOTIFY_LIKE)) {
