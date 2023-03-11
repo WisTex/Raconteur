@@ -32,7 +32,7 @@ class Embedfiles extends Controller
             $resource_id = $data->hash;
 
             $arr = $data->uid;
-            var_dump($_POST["uid"]);
+            var_dump($_POST["hash"]);
 	print("<pre>".print_r($arr,true)."</pre>");
     exit;
             
