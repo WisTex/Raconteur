@@ -29,10 +29,10 @@ class Embedfiles extends Controller
             $json = file_get_contents('php://input');
             // Converts it into a PHP object
             $data = json_decode($json);
-            
+
             $x = self::sharelink($resource_id, $channel_id);
             if ($x) {
-                json_return_and_die(['status' => true, 'sharelink' => $x, 'resource_id' => $resource_id]);
+                json_return_and_die(['status' => true, 'sharelink' => $data, 'resource_id' => $resource_id]);
             }
             json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
         }
