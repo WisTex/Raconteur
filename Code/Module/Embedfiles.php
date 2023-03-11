@@ -18,6 +18,10 @@ class Embedfiles extends Controller
     public function post()
     {
         /* start add new */
+        $channel = App::get_channel();
+        $channel_id = $channel['channel_id'];
+        $channel_address = $channel['channel_address'];
+        $observer = get_observer_hash();
 
         if (argc() > 1 && argv(1) === 'sharelink') {
             // API: /embedfiles/sharelink
@@ -27,11 +31,6 @@ class Embedfiles extends Controller
             }
             json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
         }
-
-        $channel = App::get_channel();
-        $channel_id = $channel['channel_id'];
-        $channel_address = $channel['channel_address'];
-        $observer = get_observer_hash();
 
         $orderby = 'is_dir desc';
         $results = attach_list_files($channel_id, $observer, $hash = '', $filename = '', $filetype = '', $orderby, $start = 0, $entries = 0, $since = '', $until = '');
@@ -119,21 +118,7 @@ class Embedfiles extends Controller
         } else {
             return null;
         }
-    
-        if (argc() > 1 && argv(1) === 'album') {
-            // API: /embedphotos/album
-            $name = (x($_POST, 'name') ? $_POST['name'] : null);
-            if (!$name) {
-                json_return_and_die(['errormsg' => 'Error retrieving album', 'status' => false]);
-            }
-            $album = $this->embedphotos_widget_album(['channel_id' => $channel_id, 'album' => $name]);
-            json_return_and_die(['status' => true, 'content' => $album]);
-        }
-        if (argc() > 1 && argv(1) === 'albumlist') {
-            // API: /embedphotos/albumlist
-            $album_list = $this->embedphotos_album_list($channel_id);
-            json_return_and_die(['status' => true, 'albumlist' => $album_list]);
-        }
+            
         if (argc() > 1 && argv(1) === 'photolink') {
             // API: /embedphotos/photolink
             $href = (x($_POST, 'href') ? $_POST['href'] : null);
