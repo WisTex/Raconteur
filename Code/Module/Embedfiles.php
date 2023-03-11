@@ -30,6 +30,11 @@ class Embedfiles extends Controller
             // Converts it into a PHP object
             $data = json_decode($json);
             $resource_id = $data->hash;
+
+            $arr = get_defined_vars();
+
+	print("<pre>".print_r($arr,true)."</pre>");
+    exit;
             
             // $x = self::sharelink($resource_id, $channel_id);
             $x = self::sharelink($data);
