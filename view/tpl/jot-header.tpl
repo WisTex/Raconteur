@@ -759,9 +759,17 @@ let postSaveTimer = null;
 	{{* start new test *}}
 
 	let test = function () {
-
-		alert(`HERE`);
-
+		$.post('embedfiles/sharelink', {
+    		user_id: "143",
+    		username: "ninjazhai",
+    		website: "https://codeofaninja.com/"
+  		 }, function(data) {
+    		// demonstrate the response
+    		alert(JSON.stringify(data));
+  		}).fail(function() {
+    	// if posting your form failed
+    	alert("Posting failed.");
+  		});
 	}
 
 
