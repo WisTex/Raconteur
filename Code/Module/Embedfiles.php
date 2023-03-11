@@ -148,6 +148,7 @@ class Embedfiles extends Controller
     protected static function sharelink($data)
     {
         //return 'success from sharelink';
+        $data = $data;
         return $data;
         if (intval($channel_id)) {
             $channel = Channel::from_id($channel_id);
