@@ -31,7 +31,7 @@ class Embedfiles extends Controller
             $data = json_decode($json);
             $resource_id = $data->hash;
 
-            $arr = $data;
+            $arr = $json;
 
 	print("<pre>".print_r($arr,true)."</pre>");
     exit;
