@@ -32,7 +32,7 @@ class Embedfiles extends Controller
             $resource_id = $data->hash;
 
             $arr = $data->uid;
-            var_dump(unserialize($json));
+            var_dump($json);
 	print("<pre>".print_r($arr,true)."</pre>");
     exit;
             
