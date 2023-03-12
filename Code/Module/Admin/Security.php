@@ -2,6 +2,7 @@
 
 namespace Code\Module\Admin;
 
+use Code\Lib\Config;
 use Code\Render\Theme;
 
 
@@ -26,6 +27,9 @@ class Security
 
         $use_fep5624 = ((x($_POST, 'use_fep5624')) ? intval($_POST['use_fep5624']) : 0);
         set_config('system', 'use_fep5624', $use_fep5624);
+
+        $accept_unsigned_relay = ((x($_POST, 'accept_unsigned_relay')) ? 1 : 0);
+        set_config('system', 'accept_unsigned_relay', $accept_unsigned_relay);
 
         $block_public_search = ((x($_POST, 'block_public_search')) ? 1 : 0);
         set_config('system', 'block_public_search', $block_public_search);
@@ -141,6 +145,7 @@ class Security
             '$title' => t('Administration'),
             '$page' => t('Security'),
             '$form_security_token' => get_form_security_token('admin_security'),
+            '$accept_unsigned_relay' => ['accept_unsigned_relay', t('Accept unsigned relayed activities'), Config::Get('system','accept_unsigned_relay'),''],
             '$block_public_search' => array('block_public_search', t("Block public search"), get_config('system', 'block_public_search', 1), t("Prevent access to search content unless you are currently authenticated.")),
             '$block_public_dir' => ['block_public_directory', t('Block directory from visitors'), get_config('system', 'block_public_directory', true), t('Only allow authenticated access to directory.')],
             '$localdir_hide' => ['localdir_hide', t('Hide local directory'), intval(get_config('system', 'localdir_hide')), t('Only use the global directory')],

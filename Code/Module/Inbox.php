@@ -138,7 +138,6 @@ class Inbox extends Controller
 
             $v = Activity::get_actor_hublocs($AS->actor['id'], 'activitypub,not_deleted');
 
-            /*
             if ($v && $v[0]['hubloc_hash'] !== $hsig['portable_id']) {
                 // The sender is not actually the activity actor, so verify the LD signature.
                 // litepub activities (with no LD signature) will always have a matching actor and sender
@@ -148,11 +147,13 @@ class Inbox extends Controller
                     return;
                 }
                 if (!$AS->sigok) {
-                    // The activity signature isn't valid.
-                    return;
+                    if (! Config::Get('system','accept_unsigned_relay')) {
+                        // The activity signature isn't valid.
+                        return;
+                    }
                 }
             }
-            */
+
 
             if ($v) {
                 // The sender has been validated and stored

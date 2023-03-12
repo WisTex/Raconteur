@@ -30,7 +30,8 @@ class Search extends Controller
     public $profile_uid = 0;
     public $loading = 0;
     public $updating = 0;
-
+    public $maxtags = 0;
+    public $mintags = 0;
     public $search_channel =  null;
 
     public function init()
@@ -139,9 +140,24 @@ class Search extends Controller
             self::apsearch($search);
         }
 
+        $this->maxtags = ($_REQUEST['maxtags']) ? intval($_REQUEST['maxtags']) : 0;
+        $this->mintags = ($_REQUEST['mintags']) ? intval($_REQUEST['mintags']) : 0;
+
         if (str_starts_with($search, '#')) {
             $tag = true;
             $search = substr($search, 1);
+            if (preg_match('/(&lt;|&gt;)([0-9]+)/ism',$search,$matches )) {
+                if ($matches[1] === '&lt;') {
+                    $this->maxtags = $matches[2];
+                    $search = substr($search,0,strpos($search,'&lt;'));
+                }
+                else {
+                    $this->mintags = $matches[2];
+                    $search = substr($search, 0, strpos($search, '&gt;'));
+                }
+
+            }
+
         }
         if (str_starts_with($search, '@') && $format === '') {
             $search = substr($search, 1);
@@ -228,6 +244,8 @@ class Search extends Controller
                 '$dbegin' => '',
                 '$distance' => '0',
                 '$distance_from' => '',
+                '$maxtags' => $this->maxtags,
+                '$mintags' => $this->mintags,
             ]);
         }
 
@@ -304,6 +322,30 @@ class Search extends Controller
         else {
             $items = [];
         }
+
+        $filteredItems = [];
+        if ($this->maxtags) {
+            foreach ($items as $item) {
+                if ($item['term']) {
+                    $ntags = $this->count_hashtags($item['term']);
+                    if ($ntags < $this->maxtags) {
+                        $filteredItems[] = $item;
+                    }
+                }
+            }
+        }
+
+        if ($this->mintags) {
+            foreach ($items as $item) {
+                if ($item['term']) {
+                    $ntags = $this->count_hashtags($item['term']);
+                    if ($ntags > $this->maxtags) {
+                        $filteredItems[] = $item;
+                    }
+                }
+            }
+        }
+        $items = $filteredItems;
 
         if ($format === 'json') {
 
@@ -455,5 +497,18 @@ class Search extends Controller
             }
         }
         return '';
+    }
+
+    public function count_hashtags($terms): int
+    {
+        $total = 0;
+        if (is_array($terms)) {
+            foreach ($terms as $term) {
+                if ($term['ttype'] === TERM_HASHTAG) {
+                    $total ++;
+                }
+            }
+        }
+        return $total;
     }
 }

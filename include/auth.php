@@ -309,6 +309,13 @@ if (
             $atoken  = $verify['xchan'];
             $channel = $verify['channel'];
             $account = App::$account = $verify['account'];
+            $multiFactor = AConfig::Get(App::$account['account_id'], 'system', 'mfa_enabled');
+            if ($multiFactor) {
+                $_SESSION['2FA_REQUIRED'] = true;
+            }
+            else {
+                unset($_SESSION['2FA_REQUIRED']);
+            }
         }
 
         if (App::$account) {

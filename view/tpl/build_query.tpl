@@ -18,6 +18,8 @@
 	let bParam_list = {{$list}};
 	let bParam_fh = {{$fh}};
 	let bParam_dm = {{$dm}};
+    let bParam_maxtags = {{$maxtags}};
+    let bParam_mintags = {{$mintags}};
 	let bParam_static = {{$static}};
 
 	let bParam_search = "{{$search}}";
@@ -54,6 +56,8 @@
 		if(bParam_list != 0) bCmd = bCmd + "&list=" + bParam_list;
 		if(bParam_fh != 0) bCmd = bCmd + "&fh=" + bParam_fh;
 		if(bParam_dm != 0) bCmd = bCmd + "&dm=" + bParam_dm;
+        if(bParam_maxtags != 0) bCmd = bCmd + "&maxtags=" + bParam_maxtags;
+        if(bParam_mintags != 0) bCmd = bCmd + "&mintags=" + bParam_mintags;
 		if(bParam_search != "") bCmd = bCmd + "&search=" + bParam_search;
 		if(bParam_xchan != "") bCmd = bCmd + "&xchan=" + bParam_xchan;
 		if(bParam_order != "") bCmd = bCmd + "&order=" + bParam_order;

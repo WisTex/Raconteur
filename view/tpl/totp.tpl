@@ -46,13 +46,13 @@ function hitkey(ev) {
 <div class="generic-content-wrapper">
     <div class="section-content-tools-wrapper">
         <h3 style="text-align: center;">{{$header}}</h3>
-
         <div>{{$desc}}</div>
-
+        <br>
         <div class="form-group">
             <input type="text" class="form-control" style="width: 10em" id="totp-code" onkeydown="hitkey(event)"/>
             <div id="feedback"></div>
         </div>
+        <br>
         <div>
             <input type="button" class="btn btn-primary" value={{$submit}} onclick="totp_verify()"/>
         </div>
