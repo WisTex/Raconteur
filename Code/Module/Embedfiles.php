@@ -29,13 +29,13 @@ class Embedfiles extends Controller
             $json = file_get_contents('php://input');
             // Converts it into a PHP object
             $data = json_decode($json);
-            $resource_id = $data->hash;
+            $resource_id = $_POST["hash"];
 
         //    var_dump($_POST);
 	    //   exit;
             
             // $x = self::sharelink($resource_id, $channel_id);
-            $x = self::sharelink($data);
+            $x = self::sharelink($resource_id, $channel_id);
             if ($x) {
                 json_return_and_die(['status' => true, 'sharelink' => $x, 'resource_id' => $resource_id]);
             }
@@ -148,11 +148,11 @@ class Embedfiles extends Controller
 
 */
     // protected static function sharelink($resource, $channel_id = 0)
-    protected static function sharelink($data)
+    protected static function sharelink($resource, $channel_id = 0)
     {
         //return 'success from sharelink';
-        $data = $data;
-        return $_POST;
+       // $data = $data;
+        // return $_POST;
         if (intval($channel_id)) {
             $channel = Channel::from_id($channel_id);
         } else {
