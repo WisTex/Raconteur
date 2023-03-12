@@ -170,7 +170,9 @@ class Embedfiles extends Controller
                 $ext = EMPTY_STR;
             }
 
-            $alt = $r[0]['title'];
+            // $alt = $r[0]['title'];
+            $alt = $_POST["filename"];
+            /*
             if (!$alt) {
                 $a = q(
                     "select filename from attach where hash = '%s' and uid = %d limit 1",
@@ -183,6 +185,7 @@ class Embedfiles extends Controller
                     $alt = t('Image/photo');
                 }
             }
+            */
             $alt = ' alt="' . $alt . '"';
 
             $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
