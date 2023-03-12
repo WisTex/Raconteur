@@ -160,11 +160,11 @@ class Embedfiles extends Controller
                 return $output;
             }
 
-            if ($r[0]['mimetype'] === 'image/jpeg') {
+            if ($_POST["filetype"] === 'image/jpeg') {
                 $ext = '.jpg';
-            } elseif ($r[0]['mimetype'] === 'image/png') {
+            } elseif ($_POST["filetype"] === 'image/png') {
                 $ext = '.png';
-            } elseif ($r[0]['mimetype'] === 'image/gif') {
+            } elseif ($_POST["filetype"] === 'image/gif') {
                 $ext = '.gif';
             } else {
                 $ext = EMPTY_STR;
