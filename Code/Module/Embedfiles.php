@@ -31,7 +31,7 @@ class Embedfiles extends Controller
             $data = json_decode($json);
             $resource_id = $data->hash;
 
-            var_dump(unserialize($_POST));
+            var_dump($_POST);
 	        exit;
             
             // $x = self::sharelink($resource_id, $channel_id);
