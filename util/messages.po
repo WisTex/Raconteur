@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.03.07\n"
+"Project-Id-Version: 23.03.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 21:04-0800\n"
+"POT-Creation-Date: 2023-03-11 16:25-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -437,7 +437,7 @@ msgid "Roles"
 msgstr ""
 
 #: Code/Lib/Apps.php:406 Code/Lib/Navbar.php:169 Code/Lib/Libacl.php:134
-#: Code/Module/Connections.php:378 Code/Module/Search.php:119
+#: Code/Module/Connections.php:378 Code/Module/Search.php:120
 #: Code/Widget/Sitesearch.php:35 include/misc.php:1025 include/misc.php:1037
 msgid "Search"
 msgstr ""
@@ -1415,8 +1415,8 @@ msgstr ""
 #: Code/Module/Admin/Account_edit.php:81 Code/Module/Admin/Customsql.php:38
 #: Code/Module/Admin/Themes.php:160 Code/Module/Admin/Addons.php:441
 #: Code/Module/Admin/Logs.php:87 Code/Module/Admin/Accounts.php:185
-#: Code/Module/Admin/Channels.php:145 Code/Module/Admin/Security.php:176
-#: Code/Module/Admin/Site.php:272 Code/Module/Connedit.php:833
+#: Code/Module/Admin/Channels.php:145 Code/Module/Admin/Site.php:272
+#: Code/Module/Admin/Security.php:181 Code/Module/Connedit.php:833
 #: Code/Module/Pdledit.php:115 Code/Module/Setup.php:313
 #: Code/Module/Setup.php:348 Code/Module/Defperms.php:254
 #: Code/Module/Content_filter.php:68 Code/Module/Email_validation.php:47
@@ -1556,7 +1556,7 @@ msgstr ""
 #: Code/Module/Layouts.php:89 Code/Module/Layouts.php:100
 #: Code/Module/Connedit.php:351 Code/Module/Pdledit.php:37
 #: Code/Module/Channel.php:240 Code/Module/Channel.php:418
-#: Code/Module/Channel.php:456 Code/Module/Display.php:506
+#: Code/Module/Channel.php:456 Code/Module/Display.php:508
 #: Code/Module/Setup.php:220 Code/Module/Inspect.php:17
 #: Code/Module/Profile.php:102 Code/Module/Profile.php:117
 #: Code/Module/Defperms.php:176 Code/Module/Defperms.php:182
@@ -2226,230 +2226,234 @@ msgstr ""
 msgid "Please visit %s to view and/or reply to your private messages."
 msgstr ""
 
-#: Code/Lib/Enotify.php:168
+#: Code/Lib/Enotify.php:169
+msgid "repeated"
+msgstr ""
+
+#: Code/Lib/Enotify.php:176
 msgid "commented on"
 msgstr ""
 
-#: Code/Lib/Enotify.php:177
+#: Code/Lib/Enotify.php:186
 msgid "liked"
 msgstr ""
 
-#: Code/Lib/Enotify.php:181
+#: Code/Lib/Enotify.php:190
 msgid "disliked"
 msgstr ""
 
-#: Code/Lib/Enotify.php:227
+#: Code/Lib/Enotify.php:236
 #, php-format
 msgid "%1$s %2$s [zrl=%3$s]a %4$s[/zrl]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:237
+#: Code/Lib/Enotify.php:246
 #, php-format
 msgid "%1$s %2$s [zrl=%3$s]%4$s's %5$s[/zrl]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:249
+#: Code/Lib/Enotify.php:258
 #, php-format
 msgid "%1$s %2$s [zrl=%3$s]your %4$s[/zrl]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:263
+#: Code/Lib/Enotify.php:272
 #, php-format
 msgid "[$Projectname:Notify] Moderated Comment to conversation #%1$d by %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:266
+#: Code/Lib/Enotify.php:275
 #, php-format
 msgid "[$Projectname:Notify] Comment to conversation #%1$d by %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:268
+#: Code/Lib/Enotify.php:277
 #, php-format
 msgid "%1$s commented on an item/conversation you have been following."
 msgstr ""
 
-#: Code/Lib/Enotify.php:272
+#: Code/Lib/Enotify.php:281
 msgid "(Moderated)"
 msgstr ""
 
-#: Code/Lib/Enotify.php:275 Code/Lib/Enotify.php:358 Code/Lib/Enotify.php:386
-#: Code/Lib/Enotify.php:417 Code/Lib/Enotify.php:436 Code/Lib/Enotify.php:451
+#: Code/Lib/Enotify.php:284 Code/Lib/Enotify.php:367 Code/Lib/Enotify.php:395
+#: Code/Lib/Enotify.php:426 Code/Lib/Enotify.php:445 Code/Lib/Enotify.php:460
 #, php-format
 msgid "Please visit %s to view and/or reply to the conversation."
 msgstr ""
 
-#: Code/Lib/Enotify.php:279 Code/Lib/Enotify.php:280
+#: Code/Lib/Enotify.php:288 Code/Lib/Enotify.php:289
 #, php-format
 msgid "Please visit %s to approve or reject this comment."
 msgstr ""
 
-#: Code/Lib/Enotify.php:339
+#: Code/Lib/Enotify.php:348
 #, php-format
 msgid "%1$s liked [zrl=%2$s]your %3$s[/zrl]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:354
+#: Code/Lib/Enotify.php:363
 #, php-format
 msgid "[$Projectname:Notify] Like received to conversation #%1$d by %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:355
+#: Code/Lib/Enotify.php:364
 #, php-format
 msgid "%1$s liked an item/conversation you created."
 msgstr ""
 
-#: Code/Lib/Enotify.php:366
+#: Code/Lib/Enotify.php:375
 #, php-format
 msgid "[$Projectname:Notify] %s posted to your profile wall"
 msgstr ""
 
-#: Code/Lib/Enotify.php:372
+#: Code/Lib/Enotify.php:381
 #, php-format
 msgid "%1$s posted to your profile wall at %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:375
+#: Code/Lib/Enotify.php:384
 #, php-format
 msgid "%1$s posted to [zrl=%2$s]your wall[/zrl]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:382 Code/Lib/Enotify.php:383
+#: Code/Lib/Enotify.php:391 Code/Lib/Enotify.php:392
 msgid " - "
 msgstr ""
 
-#: Code/Lib/Enotify.php:382 Code/Lib/Enotify.php:383
+#: Code/Lib/Enotify.php:391 Code/Lib/Enotify.php:392
 msgid "Moderated"
 msgstr ""
 
-#: Code/Lib/Enotify.php:391 Code/Lib/Enotify.php:392
+#: Code/Lib/Enotify.php:400 Code/Lib/Enotify.php:401
 #, php-format
 msgid "Please visit %s to approve or reject this post."
 msgstr ""
 
-#: Code/Lib/Enotify.php:409
+#: Code/Lib/Enotify.php:418
 #, php-format
 msgid "[$Projectname:Notify] %s tagged you"
 msgstr ""
 
-#: Code/Lib/Enotify.php:410
+#: Code/Lib/Enotify.php:419
 #, php-format
 msgid "%1$s tagged you at %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:412
+#: Code/Lib/Enotify.php:421
 #, php-format
 msgid "%1$s [zrl=%2$s]tagged you[/zrl]."
 msgstr ""
 
-#: Code/Lib/Enotify.php:424
+#: Code/Lib/Enotify.php:433
 #, php-format
 msgid "[$Projectname:Notify] %1$s poked you"
 msgstr ""
 
-#: Code/Lib/Enotify.php:425
+#: Code/Lib/Enotify.php:434
 #, php-format
 msgid "%1$s poked you at %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:427
+#: Code/Lib/Enotify.php:436
 #, php-format
 msgid "%1$s [zrl=%2$s]poked you[/zrl]."
 msgstr ""
 
-#: Code/Lib/Enotify.php:443
+#: Code/Lib/Enotify.php:452
 #, php-format
 msgid "[$Projectname:Notify] %s tagged your post"
 msgstr ""
 
-#: Code/Lib/Enotify.php:444
+#: Code/Lib/Enotify.php:453
 #, php-format
 msgid "%1$s tagged your post at %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:446
+#: Code/Lib/Enotify.php:455
 #, php-format
 msgid "%1$s tagged [zrl=%2$s]your post[/zrl]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:458
+#: Code/Lib/Enotify.php:467
 msgid "[$Projectname:Notify] Introduction received"
 msgstr ""
 
-#: Code/Lib/Enotify.php:459
+#: Code/Lib/Enotify.php:468
 #, php-format
 msgid "You've received an new connection request from '%1$s' at %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:461
+#: Code/Lib/Enotify.php:470
 #, php-format
 msgid "You've received [zrl=%1$s]a new connection request[/zrl] from %2$s."
 msgstr ""
 
-#: Code/Lib/Enotify.php:465 Code/Lib/Enotify.php:485
+#: Code/Lib/Enotify.php:474 Code/Lib/Enotify.php:494
 #, php-format
 msgid "You may visit their profile at %s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:467
+#: Code/Lib/Enotify.php:476
 #, php-format
 msgid "Please visit %s to approve or reject the connection request."
 msgstr ""
 
-#: Code/Lib/Enotify.php:474
+#: Code/Lib/Enotify.php:483
 msgid "[$Projectname:Notify] Friend suggestion received"
 msgstr ""
 
-#: Code/Lib/Enotify.php:475
+#: Code/Lib/Enotify.php:484
 #, php-format
 msgid "You've received a friend suggestion from '%1$s' at %2$s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:477
+#: Code/Lib/Enotify.php:486
 #, php-format
 msgid "You've received [zrl=%1$s]a friend suggestion[/zrl] for %2$s from %3$s."
 msgstr ""
 
-#: Code/Lib/Enotify.php:483
+#: Code/Lib/Enotify.php:492
 msgid "Name:"
 msgstr ""
 
-#: Code/Lib/Enotify.php:484
+#: Code/Lib/Enotify.php:493
 msgid "Photo:"
 msgstr ""
 
-#: Code/Lib/Enotify.php:487
+#: Code/Lib/Enotify.php:496
 #, php-format
 msgid "Please visit %s to approve or reject the suggestion."
 msgstr ""
 
-#: Code/Lib/Enotify.php:735
+#: Code/Lib/Enotify.php:744
 msgid "[$Projectname:Notify]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:917
+#: Code/Lib/Enotify.php:926
 msgid "created a new post"
 msgstr ""
 
-#: Code/Lib/Enotify.php:918
+#: Code/Lib/Enotify.php:927
 #, php-format
 msgid "reacted to %s's conversation"
 msgstr ""
 
-#: Code/Lib/Enotify.php:920
+#: Code/Lib/Enotify.php:929
 #, php-format
 msgid "shared %s's post"
 msgstr ""
 
-#: Code/Lib/Enotify.php:924
+#: Code/Lib/Enotify.php:933
 msgid "sent a direct message"
 msgstr ""
 
-#: Code/Lib/Enotify.php:931
+#: Code/Lib/Enotify.php:940
 #, php-format
 msgid "updated a poll dated %s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:934
+#: Code/Lib/Enotify.php:943
 #, php-format
 msgid "edited a post dated %s"
 msgstr ""
@@ -2866,7 +2870,7 @@ msgstr ""
 msgid "Account settings updated."
 msgstr ""
 
-#: Code/Module/Admin/Account_edit.php:69 Code/Module/Totp_check.php:44
+#: Code/Module/Admin/Account_edit.php:69 Code/Module/Totp_check.php:40
 msgid "Account not found."
 msgstr ""
 
@@ -2935,9 +2939,9 @@ msgid "No themes found."
 msgstr ""
 
 #: Code/Module/Admin/Themes.php:79 Code/Module/Admin/Addons.php:265
-#: Code/Module/Display.php:59 Code/Module/Display.php:509
+#: Code/Module/Display.php:59 Code/Module/Display.php:511
 #: Code/Module/Admin.php:100 Code/Module/Inspect.php:31
-#: Code/Module/Filestorage.php:41 Code/Module/Search.php:450
+#: Code/Module/Filestorage.php:41 Code/Module/Search.php:492
 #: Code/Module/Viewsrc.php:29 Code/Module/Thing.php:110 Code/Module/Dev.php:61
 #: extend/addon/a/flashcards/Mod_Flashcards.php:285
 #: extend/addon/a/flashcards/Mod_Flashcards.php:286
@@ -2959,8 +2963,8 @@ msgstr ""
 #: Code/Module/Admin/Themes.php:125 Code/Module/Admin/Themes.php:158
 #: Code/Module/Admin/Addons.php:341 Code/Module/Admin/Addons.php:439
 #: Code/Module/Admin/Logs.php:85 Code/Module/Admin/Accounts.php:183
-#: Code/Module/Admin/Channels.php:143 Code/Module/Admin/Security.php:141
-#: Code/Module/Admin/Site.php:270 Code/Module/Admin.php:179
+#: Code/Module/Admin/Channels.php:143 Code/Module/Admin/Site.php:270
+#: Code/Module/Admin/Security.php:145 Code/Module/Admin.php:179
 msgid "Administration"
 msgstr ""
 
@@ -3373,196 +3377,6 @@ msgstr ""
 msgid ""
 "The channel {0} will be deleted!\\n\\nEverything that was posted in this "
 "channel on this site will be permanently deleted!\\n\\nAre you sure?"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:132
-msgid ""
-"By default, unfiltered HTML is allowed in embedded media. This is inherently "
-"insecure."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:135
-msgid ""
-"The recommended setting is to only allow unfiltered HTML from the following "
-"sites:"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:136
-msgid ""
-"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/"
-"<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:137
-msgid ""
-"All other embedded content will be filtered, <strong>unless</strong> "
-"embedded content from that site is explicitly blocked."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:142 Code/Widget/Admin.php:30
-msgid "Security"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:144
-msgid "Block public search"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:144
-msgid ""
-"Prevent access to search content unless you are currently authenticated."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:145
-msgid "Block directory from visitors"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:145
-msgid "Only allow authenticated access to directory."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:146
-msgid "Hide local directory"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:146
-msgid "Only use the global directory"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:147
-msgid "Provide a cloud root directory"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:147
-msgid ""
-"The cloud root directory lists all channel names which provide public files. "
-"Otherwise only the names of connections are shown."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:148
-msgid "Show total disk space available to cloud uploads"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:149
-msgid "Use hs2019 HTTP-Signature specification"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:149 Code/Module/Admin/Security.php:150
-msgid "This is not yet supported by many fediverse servers."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:150
-msgid "Require FEP-5624 comment approvals"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:151
-msgid "Allow SVG thumbnails in file browser"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:151
-msgid "WARNING: SVG images may contain malicious code."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:153
-msgid "Allow embedded (inline) PDF files"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:154
-msgid "Permit anonymous comments"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:154
-msgid ""
-"Moderation will be performed by channels that select this comment option."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:155
-msgid "Set \"Transport Security\" HTTP header"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:156
-msgid "Set \"Content Security Policy\" HTTP header"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:157
-msgid "Allowed email domains"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:157
-msgid ""
-"Comma separated list of domains which are allowed in email addresses for "
-"registrations to this site. Wildcards are accepted. Empty to allow any "
-"domains"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:158
-msgid "Not allowed email domains"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:158
-msgid ""
-"Comma separated list of domains which are not allowed in email addresses for "
-"registrations to this site. Wildcards are accepted. Empty to allow any "
-"domains, unless allowed domains have been defined."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:159
-msgid "Allow communications only from these sites"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:159 Code/Module/Admin/Security.php:164
-msgid ""
-"One site per line. Leave empty to allow communication from anywhere by "
-"default"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:160
-msgid "Block communications from these sites"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:161
-msgid "Allow communications only from these channels"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:161 Code/Module/Admin/Security.php:166
-msgid ""
-"One channel (hash) per line. Leave empty to allow communication from any "
-"channel by default"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:162
-msgid "Block communications from these channels"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:164
-msgid "Allow public stream communications only from these sites"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:165
-msgid "Block public stream communications from these sites"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:166
-msgid "Allow public stream communications only from these channels"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:167
-msgid "Block public stream communications from these channels"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:170
-msgid "Only allow embeds from secure (SSL) websites and links."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:171
-msgid "Allow unfiltered embedded HTML content only from these domains"
-msgstr ""
-
-#: Code/Module/Admin/Security.php:171
-msgid "One site per line. By default embedded content is filtered."
-msgstr ""
-
-#: Code/Module/Admin/Security.php:172
-msgid "Block embedded HTML from these domains"
 msgstr ""
 
 #: Code/Module/Admin/Site.php:174
@@ -4056,6 +3870,200 @@ msgstr ""
 
 #: Code/Module/Admin/Queue.php:59
 msgid "Last known contact"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:136
+msgid ""
+"By default, unfiltered HTML is allowed in embedded media. This is inherently "
+"insecure."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:139
+msgid ""
+"The recommended setting is to only allow unfiltered HTML from the following "
+"sites:"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:140
+msgid ""
+"https://youtube.com/<br>https://www.youtube.com/<br>https://youtu.be/"
+"<br>https://vimeo.com/<br>https://soundcloud.com/<br>"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:141
+msgid ""
+"All other embedded content will be filtered, <strong>unless</strong> "
+"embedded content from that site is explicitly blocked."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:146 Code/Widget/Admin.php:30
+msgid "Security"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:148
+msgid "Accept unsigned relayed activities"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:149
+msgid "Block public search"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:149
+msgid ""
+"Prevent access to search content unless you are currently authenticated."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:150
+msgid "Block directory from visitors"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:150
+msgid "Only allow authenticated access to directory."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:151
+msgid "Hide local directory"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:151
+msgid "Only use the global directory"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:152
+msgid "Provide a cloud root directory"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:152
+msgid ""
+"The cloud root directory lists all channel names which provide public files. "
+"Otherwise only the names of connections are shown."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:153
+msgid "Show total disk space available to cloud uploads"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:154
+msgid "Use hs2019 HTTP-Signature specification"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:154 Code/Module/Admin/Security.php:155
+msgid "This is not yet supported by many fediverse servers."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:155
+msgid "Require FEP-5624 comment approvals"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:156
+msgid "Allow SVG thumbnails in file browser"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:156
+msgid "WARNING: SVG images may contain malicious code."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:158
+msgid "Allow embedded (inline) PDF files"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:159
+msgid "Permit anonymous comments"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:159
+msgid ""
+"Moderation will be performed by channels that select this comment option."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:160
+msgid "Set \"Transport Security\" HTTP header"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:161
+msgid "Set \"Content Security Policy\" HTTP header"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:162
+msgid "Allowed email domains"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:162
+msgid ""
+"Comma separated list of domains which are allowed in email addresses for "
+"registrations to this site. Wildcards are accepted. Empty to allow any "
+"domains"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:163
+msgid "Not allowed email domains"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:163
+msgid ""
+"Comma separated list of domains which are not allowed in email addresses for "
+"registrations to this site. Wildcards are accepted. Empty to allow any "
+"domains, unless allowed domains have been defined."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:164
+msgid "Allow communications only from these sites"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:164 Code/Module/Admin/Security.php:169
+msgid ""
+"One site per line. Leave empty to allow communication from anywhere by "
+"default"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:165
+msgid "Block communications from these sites"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:166
+msgid "Allow communications only from these channels"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:166 Code/Module/Admin/Security.php:171
+msgid ""
+"One channel (hash) per line. Leave empty to allow communication from any "
+"channel by default"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:167
+msgid "Block communications from these channels"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:169
+msgid "Allow public stream communications only from these sites"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:170
+msgid "Block public stream communications from these sites"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:171
+msgid "Allow public stream communications only from these channels"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:172
+msgid "Block public stream communications from these channels"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:175
+msgid "Only allow embeds from secure (SSL) websites and links."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:176
+msgid "Allow unfiltered embedded HTML content only from these domains"
+msgstr ""
+
+#: Code/Module/Admin/Security.php:176
+msgid "One site per line. By default embedded content is filtered."
+msgstr ""
+
+#: Code/Module/Admin/Security.php:177
+msgid "Block embedded HTML from these domains"
 msgstr ""
 
 #: Code/Module/Apporder.php:52
@@ -4814,60 +4822,60 @@ msgstr ""
 msgid "Reset form"
 msgstr ""
 
-#: Code/Module/Channel.php:563 Code/Module/Display.php:434
+#: Code/Module/Channel.php:565 Code/Module/Display.php:436
 msgid ""
 "You must enable javascript for your browser to be able to view this content."
 msgstr ""
 
-#: Code/Module/Channel.php:611
+#: Code/Module/Channel.php:613
 #, php-format
 msgid "This post was published on the home page of %s."
 msgstr ""
 
-#: Code/Module/Display.php:386
+#: Code/Module/Display.php:388
 #, php-format
 msgid "\"%1$s\", shared by %2$s with %3$s"
 msgstr ""
 
-#: Code/Module/Display.php:387
+#: Code/Module/Display.php:389
 #, php-format
 msgid "%1$s shared this post with %2$s"
 msgstr ""
 
-#: Code/Module/Display.php:391
+#: Code/Module/Display.php:393
 msgid "Not much to read, click to see the post."
 msgstr ""
 
-#: Code/Module/Display.php:395
+#: Code/Module/Display.php:397
 #, php-format
 msgid "%1$s shared a reaction to \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:396
+#: Code/Module/Display.php:398
 #, php-format
 msgid "%s shared a reaction to this post/conversation"
 msgstr ""
 
-#: Code/Module/Display.php:403
+#: Code/Module/Display.php:405
 #, php-format
 msgid "%1$s commented \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:404
+#: Code/Module/Display.php:406
 #, php-format
 msgid "%s shared a comment of this post/conversation"
 msgstr ""
 
-#: Code/Module/Display.php:408
+#: Code/Module/Display.php:410
 #, php-format
 msgid "%1$s wrote this: \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:451
+#: Code/Module/Display.php:453
 msgid "Article"
 msgstr ""
 
-#: Code/Module/Display.php:504
+#: Code/Module/Display.php:506
 msgid "Item has been removed."
 msgstr ""
 
@@ -7305,12 +7313,12 @@ msgstr ""
 msgid "No entries (some entries may be hidden)."
 msgstr ""
 
-#: Code/Module/Search.php:329
+#: Code/Module/Search.php:371
 #, php-format
 msgid "Items tagged with: %s"
 msgstr ""
 
-#: Code/Module/Search.php:332
+#: Code/Module/Search.php:374
 #, php-format
 msgid "Search results for: %s"
 msgstr ""
@@ -9848,27 +9856,27 @@ msgstr ""
 msgid "Unable to remove source."
 msgstr ""
 
-#: Code/Module/Totp_check.php:49
+#: Code/Module/Totp_check.php:45
 msgid "Multifactor Verification"
 msgstr ""
 
-#: Code/Module/Totp_check.php:50
+#: Code/Module/Totp_check.php:46
 msgid "Please enter the verification key from your authenticator app"
 msgstr ""
 
-#: Code/Module/Totp_check.php:51
+#: Code/Module/Totp_check.php:47
 msgid "Success!"
 msgstr ""
 
-#: Code/Module/Totp_check.php:52
+#: Code/Module/Totp_check.php:48
 msgid "Invalid code, please try again."
 msgstr ""
 
-#: Code/Module/Totp_check.php:53
+#: Code/Module/Totp_check.php:49
 msgid "Too many invalid codes..."
 msgstr ""
 
-#: Code/Module/Totp_check.php:54
+#: Code/Module/Totp_check.php:50
 msgid "Verify"
 msgstr ""
 
@@ -11086,27 +11094,9 @@ msgstr ""
 msgid "Network: %s"
 msgstr ""
 
-#: include/network.php:1115
-msgid "RSS/Atom"
-msgstr ""
-
-#: include/network.php:1117
-msgid "Diaspora"
-msgstr ""
-
-#: include/network.php:1119
-msgid "Zot6"
-msgstr ""
-
 #: include/dba/dba_driver.php:190
 #, php-format
 msgid "Cannot locate DNS info for database server '%s'"
-msgstr ""
-
-#: include/security.php:655
-msgid ""
-"The form security token was not correct. This probably happened because the "
-"form has been opened for too long (>3 hours) before submitting it."
 msgstr ""
 
 #: include/conversation.php:110
@@ -11414,6 +11404,38 @@ msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
 
+#: include/network.php:1115
+msgid "RSS/Atom"
+msgstr ""
+
+#: include/network.php:1117
+msgid "Diaspora"
+msgstr ""
+
+#: include/network.php:1119
+msgid "Zot6"
+msgstr ""
+
+#: include/auth.php:212
+msgid "Delegation session ended."
+msgstr ""
+
+#: include/auth.php:215
+msgid "Logged out."
+msgstr ""
+
+#: include/auth.php:306
+msgid "Email validation is incomplete. Please check your email."
+msgstr ""
+
+#: include/auth.php:326
+msgid "Failed authentication"
+msgstr ""
+
+#: include/auth.php:337
+msgid "Login failed."
+msgstr ""
+
 #: include/event.php:37 include/event.php:123
 msgid "l F d, Y \\@ g:i A"
 msgstr ""
@@ -11625,24 +11647,10 @@ msgstr ""
 msgid "OpenWebAuth: %1$s welcomes %2$s"
 msgstr ""
 
-#: include/auth.php:212
-msgid "Delegation session ended."
-msgstr ""
-
-#: include/auth.php:215
-msgid "Logged out."
-msgstr ""
-
-#: include/auth.php:306
-msgid "Email validation is incomplete. Please check your email."
-msgstr ""
-
-#: include/auth.php:319
-msgid "Failed authentication"
-msgstr ""
-
-#: include/auth.php:330
-msgid "Login failed."
+#: include/security.php:663
+msgid ""
+"The form security token was not correct. This probably happened because the "
+"form has been opened for too long (>3 hours) before submitting it."
 msgstr ""
 
 #: include/language.php:364 include/misc.php:2207
