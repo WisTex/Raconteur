@@ -31,8 +31,8 @@ class Embedfiles extends Controller
             $data = json_decode($json);
             $resource_id = $data->hash;
 
-            var_dump($_POST);
-	        exit;
+        //    var_dump($_POST);
+	    //   exit;
             
             // $x = self::sharelink($resource_id, $channel_id);
             $x = self::sharelink($data);
@@ -152,7 +152,7 @@ class Embedfiles extends Controller
     {
         //return 'success from sharelink';
         $data = $data;
-        return $data;
+        return $_POST;
         if (intval($channel_id)) {
             $channel = Channel::from_id($channel_id);
         } else {
