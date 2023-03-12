@@ -171,7 +171,7 @@ class Embedfiles extends Controller
             }
 
             // $alt = $r[0]['title'];
-            $alt = $_POST["filename"];
+            //$alt = $_POST["filename"];
             /*
             if (!$alt) {
                 $a = q(
@@ -186,7 +186,7 @@ class Embedfiles extends Controller
                 }
             }
             */
-            $alt = ' alt="' . $alt . '"';
+            $alt = ' alt="' . $_POST["filename"] . '"';
 
             $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
                 . '[zmg width="' . $r[0]['width'] . '" height="' . $r[0]['height'] . '"' . $alt . ']'
