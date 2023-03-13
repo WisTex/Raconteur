@@ -171,7 +171,11 @@ class Embedfiles extends Controller
                 . '[zmg width="100%" height="auto"' . $alt . ']'
                 . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
 
-            break;
+                break;
+            case "video/mp4":
+            case "video/webm":
+            case "video/ogg":
+                    break;
             default:
 		  		return '';
 		}
