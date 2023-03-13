@@ -194,12 +194,15 @@ class Embedfiles extends Controller
             case "text/plain":
             case "application/json":
                 $content = @file_get_contents('store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
+                    $output .= "\n\n" . $content . "\n\n";  
+                    /*
                     if ($content) {
                         $text = z_input_filter($content, $_POST['filetype']);
                         if ($text) {
                             $output .= "\n\n" . $text . "\n\n";
                         }
                     }
+                    */
                 break;
             default:
 		  		return '';
