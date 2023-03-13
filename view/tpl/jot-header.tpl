@@ -806,7 +806,7 @@ let postSaveTimer = null;
 			case "audio/ogg":
 				  // let sendmpeg = `[audio]/cloud/${address}/${result.display_path}[/audio]`;
 				  let sendmpeg_id = `embedFiles_${result.id}`;
-				  $( document ).ready(function() { document.getElementById(sendmpeg_id).addEventListener("click", function() { setEmbedFiles(sendmpeg); }); });
+				  $( document ).ready(function() { document.getElementById(sendmpeg_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
 				  return `<li id = "${sendmpeg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			//case "text/html":
 			//case "text/vnd.abc":
