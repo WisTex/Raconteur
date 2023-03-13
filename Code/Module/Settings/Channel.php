@@ -95,6 +95,7 @@ class Channel
         $mailhost = ((array_key_exists('mailhost', $_POST)) ? notags(trim($_POST['mailhost'])) : '');
         $profile_assign = ((x($_POST, 'profile_assign')) ? notags(trim($_POST['profile_assign'])) : '');
         $permit_all_mentions = (($_POST['permit_all_mentions'] == 1) ? 1 : 0);
+        $permit_all_likes = (($_POST['permit_all_likes'] == 1) ? 1 : 0);
         $close_comment_days = (($_POST['close_comments']) ? intval($_POST['close_comments']) : 0);
         set_pconfig(local_channel(), 'system', 'close_comments', $close_comment_days ? $close_comment_days . ' days' : '');
 
@@ -176,6 +177,7 @@ class Channel
         set_pconfig(local_channel(), 'system', 'autoperms', $this->autoperms);
         set_pconfig(local_channel(), 'system', 'tag_username', $tag_username);
         set_pconfig(local_channel(), 'system', 'permit_all_mentions', $permit_all_mentions);
+        set_pconfig(local_channel(), 'system', 'permit_all_likes', $permit_all_likes);
         set_pconfig(local_channel(), 'system', 'unless_mention_count', $unless_mention_count);
         set_pconfig(local_channel(), 'system', 'unless_tag_count', $unless_tag_count);
         set_pconfig(local_channel(), 'system', 'noindex', $noindex);
@@ -533,6 +535,7 @@ class Channel
             '$desktop_notifications_request' => t('Grant permission'),
             '$mailhost' => ['mailhost', t('Email notifications sent from (hostname)'), get_pconfig(local_channel(), 'system', 'email_notify_host', App::get_hostname()), sprintf(t('If your channel is mirrored to multiple locations, set this to your preferred location. This will prevent duplicate email notifications. Example: %s'), App::get_hostname())],
             '$permit_all_mentions' => ['permit_all_mentions', t('Accept messages from strangers which mention you'), get_pconfig(local_channel(), 'system', 'permit_all_mentions'), t('This setting bypasses normal permissions'), $yes_no],
+            '$permit_all_likes' => ['permit_all_likes', t('Accept likes from strangers'), get_pconfig(local_channel(), 'system', 'permit_all_likes'), t('This setting bypasses normal permissions'), $yes_no],
             '$followed_tags' => ['followed_tags', t('Accept messages from strangers which include any of the following hashtags'), $followed, t('comma separated, do not include the #')],
             '$unless_mention_count' => ['unless_mention_count', t('Unless more than this many channels are mentioned'), $mention_count, t('0 for unlimited')],
             '$unless_tag_count' => ['unless_tag_count', t('Unless more than this many hashtags are used'), $tag_count, t('0 for unlimited')],
