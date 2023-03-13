@@ -796,15 +796,15 @@ let postSaveTimer = null;
 			case "image/svg+xml":
 				let sendsvg_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendsvg_id).addEventListener("click", function() { setEmbedFiles(result); }); });
-				return `<li id = "${sendsvg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
+				return `<li id = "${sendsvg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`; 
 			case "text/vnd.abc":
 				let sendabc_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendabc_id).addEventListener("click", function() { setEmbedFiles(result); }); });
-				return `<li id = "${sendabc_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
+				return `<li id = "${sendabc_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`; 
 			case "text/calendar":
 				let sendcal_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendcal_id).addEventListener("click", function() { setEmbedFiles(result); }); });
-				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
+				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`; 
 			case "text/x-multicode":
             case "text/bbcode":
             case "text/markdown":
