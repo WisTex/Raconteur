@@ -756,8 +756,7 @@ let postSaveTimer = null;
         'json');
     };
 
-	{{* start new test *}}
-
+	{{* start new setEmbedFiles *}}
 	function setEmbedFiles2 (result) {
 		$.post('embedfiles/sharelink',
 			result,
@@ -769,16 +768,6 @@ let postSaveTimer = null;
     	// if posting your form failed
     	alert("Posting failed.");
   		});
-	}
-
-	{{* end new test *}}
-
-	{{* start new setEmbedFiles *}}
-	function setEmbedFiles(send) {
-
-		alert(`Send: ${send}`);
-		addeditortext(`${send}`);
-		preview_post();
 	}
 	{{* end new setEmbedFiles *}}
 
