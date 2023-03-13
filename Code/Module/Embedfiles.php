@@ -110,35 +110,6 @@ class Embedfiles extends Controller
         }
         /* end get_embed_files */
 
-
-        /*
-       
-              $channel = Channel::from_id($channel_id);
-        $p = photos_albums_list($channel, App::get_observer());
-        if ($p['success']) {
-            return $p['albums'];
-        } else {
-            return null;
-        }
-            
-        if (argc() > 1 && argv(1) === 'photolink') {
-            // API: /embedphotos/photolink
-            $href = (x($_POST, 'href') ? $_POST['href'] : null);
-            if (!$href) {
-                json_return_and_die(['errormsg' => 'Error retrieving link ' . $href, 'status' => false]);
-            }
-            $tmp = explode('/', $href);
-            $resource_id = array_pop($tmp);
-
-            $x = self::photolink($resource_id, $channel_id);
-            if ($x) {
-                json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
-            }
-            json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
-        }
-    }
-
-*/
     protected static function sharelink($resource, $channel_id = 0)
     {
         if (intval($channel_id)) {
