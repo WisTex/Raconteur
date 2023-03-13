@@ -817,7 +817,7 @@ let postSaveTimer = null;
 			case "text/calendar":
 				let sendcal_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendcal_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
-				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ></li>`; 
+				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
 			case "text/x-multicode":
             case "text/bbcode":
             case "text/markdown":
