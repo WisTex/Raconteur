@@ -176,6 +176,8 @@ class Embedfiles extends Controller
                 . '[zmg width="' . $r[0]['width'] . '" height="' . $r[0]['height'] . '"' . $alt . ']'
                 . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
 
+            $output .= "\n\n" . '[attachment]' . $_POST['hash'] . ',' . $_POST['revision'] . '[/attachment]' . "\n";
+
             return $output;
         }
         return '';
