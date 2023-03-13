@@ -151,6 +151,10 @@ class Embedfiles extends Controller
         if ($channel) {
             $resolution = 1;
             
+        switch(result.filetype) {
+            case "image/jpeg":
+            case "image/png":
+            case "image/gif":
             if ($_POST["filetype"] === 'image/jpeg') {
                 $ext = '.jpg';
             } elseif ($_POST["filetype"] === 'image/png') {
@@ -166,6 +170,11 @@ class Embedfiles extends Controller
             $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
                 . '[zmg width="100%" height="auto"' . $alt . ']'
                 . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
+
+            break;
+            default:
+		  		return '';
+		}
 
             $output .= "\n\n" . '[attachment]' . $_POST['hash'] . ',' . $_POST['revision'] . '[/attachment]' . "\n";
 
