@@ -207,6 +207,15 @@ class Embedfiles extends Controller
                     }
                 }
                 break;
+            case "text/calendar":
+                $content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $_POST['os_path']);
+                if ($content) {
+                    $ev = ical_to_ev($content);
+                    if ($ev) {
+                        $output .= "\n\n" . format_event_bbcode($ev[0]) . "\n\n";
+                    }
+                }
+                break;
             default:
 		  		return '';
 		}

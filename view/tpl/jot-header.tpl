@@ -814,8 +814,12 @@ let postSaveTimer = null;
 				let sendabc_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendabc_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
 				return `<li id = "${sendabc_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ></li>`; 
+			case "text/calendar":
+				let sendcal_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendcal_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ></li>`; 
 			//case "text/html":
-			//case "text/vnd.abc":
+			
 			{{*	let sendabc = `[abc]/cloud/${address}/${result.display_path}[/abc]`;
 				return `<li class="border rounded my-1 p-2" onclick ="setEmbedFiles('${sendabc}')" data-bs-dismiss="modal" ><h4>${result.filename}</h4><iframe src="/dav/ray/${result.display_path}" scrolling="no" ></iframe></li>`;
 			*}}
