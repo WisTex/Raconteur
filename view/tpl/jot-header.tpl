@@ -762,9 +762,7 @@ let postSaveTimer = null;
 		$.post('embedfiles/sharelink',
 			result,
 			function(data) {
-    		// demonstrate the response
-    		alert(JSON.stringify(data));
-			addeditortext(data.message);
+    		addeditortext(data.message);
 			$('#jot-media').val($('#jot-media').val() + data.message);
 			preview_post();
   		}).fail(function() {
