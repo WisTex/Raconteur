@@ -151,7 +151,7 @@ class Embedfiles extends Controller
         if ($channel) {
             $resolution = 1;
             
-        switch(result.filetype) {
+        switch($_POST["filetype"]) {
             case "image/jpeg":
             case "image/png":
             case "image/gif":
