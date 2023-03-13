@@ -797,7 +797,7 @@ let postSaveTimer = null;
 				{{* $( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(send); }); }); *}}
 				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
 				// setEmbedFiles2(result);
-				return `<li id = "${send_id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
