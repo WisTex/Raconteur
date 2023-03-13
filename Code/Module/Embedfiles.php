@@ -155,19 +155,19 @@ class Embedfiles extends Controller
             case "image/jpeg":
             case "image/png":
             case "image/gif":
-            if ($_POST["filetype"] === 'image/jpeg') {
-                $ext = '.jpg';
-            } elseif ($_POST["filetype"] === 'image/png') {
-                $ext = '.png';
-            } elseif ($_POST["filetype"] === 'image/gif') {
-                $ext = '.gif';
-            } else {
-                $ext = EMPTY_STR;
-            }
+                if ($_POST["filetype"] === 'image/jpeg') {
+                    $ext = '.jpg';
+                } elseif ($_POST["filetype"] === 'image/png') {
+                    $ext = '.png';
+                } elseif ($_POST["filetype"] === 'image/gif') {
+                    $ext = '.gif';
+                } else {
+                    $ext = EMPTY_STR;
+                }
 
-            $alt = ' alt="' . $_POST["filename"] . '"';
+                $alt = ' alt="' . $_POST["filename"] . '"';
 
-            $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
+                $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
                 . '[zmg width="100%" height="auto"' . $alt . ']'
                 . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
 
