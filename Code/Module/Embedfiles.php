@@ -220,8 +220,8 @@ class Embedfiles extends Controller
             case "text/bbcode":
             case "text/markdown":
             case "text/html":
-            case "text/plain":
-            case "application/json":
+           // case "text/plain":
+           // case "application/json":
                 $content = @file_get_contents('store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
                     if ($content) {
                         $text = z_input_filter($content, $_POST['filetype']);
