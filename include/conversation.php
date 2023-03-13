@@ -1157,7 +1157,6 @@ function z_status_editor($x, $popup = false)
         '$modalerrorlist' => t('Error getting album list'),
         '$modalerrorlink' => t('Error getting photo link'),
         '$modalerroralbum' => t('Error getting album'),
-        '$clicktitle' => t('Click title to embed'),
         '$auto_save_draft' => $feature_auto_save_draft,
         '$confirmdelete' => t('Delete this item?'),
         '$reset' => $reset
