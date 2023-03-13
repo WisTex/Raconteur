@@ -216,6 +216,13 @@ class Embedfiles extends Controller
                     }
                 }
                 break;
+            case "text/x-multicode":
+            case "text/bbcode":
+            case "text/markdown":
+            case "text/html":
+            case "text/plain":
+            case "application/json":
+                break;
             default:
 		  		return '';
 		}
