@@ -786,7 +786,7 @@ let postSaveTimer = null;
 			case "video/ogg":
 				let sendmp4_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendmp4_id).addEventListener("click", function() { setEmbedFiles(result); }); });
-    			return `<li class="border rounded my-1 p-2" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video id = "${sendmp4_id}" data-bs-dismiss="modal" preload="metadata" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
+    			return `<li class="border rounded my-1 p-2" ><h4>${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video id = "${sendmp4_id}" data-bs-dismiss="modal" preload="metadata" src="/cloud/${address}/${result.display_path}" style="width:100%;" /><img src="/images/controls.png" class="img-fluid my-2" ></li>`;
 			case "audio/mpeg":
 			case "audio/wav":
 			case "audio/ogg":
