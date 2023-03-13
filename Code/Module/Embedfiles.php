@@ -181,6 +181,8 @@ class Embedfiles extends Controller
             case "audio/mpeg":
             case "audio/wav":
             case "audio/ogg":
+                $url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $_POST['display_path'];
+                $output .= "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
                 break;
             default:
 		  		return '';
