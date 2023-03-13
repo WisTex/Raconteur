@@ -757,7 +757,7 @@ let postSaveTimer = null;
     };
 
 	{{* start new setEmbedFiles *}}
-	function setEmbedFiles2 (result) {
+	function setEmbedFiles (result) {
 		$.post('embedfiles/sharelink',
 			result,
 			function(data) {
@@ -779,31 +779,31 @@ let postSaveTimer = null;
 			case "image/png":
 			case "image/gif":
 				let send_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(result); }); });
 				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
 			case "video/ogg":
 				let sendmp4_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(sendmp4_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(sendmp4_id).addEventListener("click", function() { setEmbedFiles(result); }); });
     			return `<li class="border rounded my-1 p-2" ><h4 id = "${sendmp4_id}" data-bs-dismiss="modal" >${result.filename}<i class="float-end">{{$clicktitle}}</i></h4><video controls="controls" preload="metadata" src="/cloud/${address}/${result.display_path}" style="width:100%;" /></li>`;
 			case "audio/mpeg":
 			case "audio/wav":
 			case "audio/ogg":
 				let sendmpeg_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(sendmpeg_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(sendmpeg_id).addEventListener("click", function() { setEmbedFiles(result); }); });
 				return `<li id = "${sendmpeg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
 			case "image/svg+xml":
 				let sendsvg_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(sendsvg_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(sendsvg_id).addEventListener("click", function() { setEmbedFiles(result); }); });
 				return `<li id = "${sendsvg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
 			case "text/vnd.abc":
 				let sendabc_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(sendabc_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(sendabc_id).addEventListener("click", function() { setEmbedFiles(result); }); });
 				return `<li id = "${sendabc_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
 			case "text/calendar":
 				let sendcal_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(sendcal_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(sendcal_id).addEventListener("click", function() { setEmbedFiles(result); }); });
 				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`; 
 			case "text/x-multicode":
             case "text/bbcode":
@@ -812,7 +812,7 @@ let postSaveTimer = null;
 			case "text/plain":
 			case "application/json":
 				let sendplain_id = `embedFiles_${result.id}`;
-				$( document ).ready(function() { document.getElementById(sendplain_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				$( document ).ready(function() { document.getElementById(sendplain_id).addEventListener("click", function() { setEmbedFiles(result); }); });
 				return`<li id = "${sendplain_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4>
 				<div class="border border-5 rounded text-center fw-bold">${result.filetype}</div></li>`;
 			default:
