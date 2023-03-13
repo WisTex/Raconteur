@@ -184,6 +184,19 @@ class Embedfiles extends Controller
                 $url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $_POST['display_path'];
                 $output .= "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
                 break;
+            case "image/svg+xml":
+                $x = @file_get_contents('store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
+                if ($x) {
+                    $bb = svg2bb($x);
+                if ($bb) {
+                    $output .= "\n\n" . $bb;
+                } else {
+                    logger('empty return from svgbb');
+                }
+            } else {
+                logger('unable to read svg data file: '.'store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
+            }
+                break;
             default:
 		  		return '';
 		}

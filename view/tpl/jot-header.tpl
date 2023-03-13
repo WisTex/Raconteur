@@ -791,7 +791,6 @@ let postSaveTimer = null;
   			case "image/jpeg":
 			case "image/png":
 			case "image/gif":
-			//case "image/svg+xml": not working
 				let send_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
 				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
@@ -807,6 +806,10 @@ let postSaveTimer = null;
 				let sendmpeg_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendmpeg_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
 				return `<li id = "${sendmpeg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
+			case "image/svg+xml":
+				let sendsvg_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendsvg_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				return `<li id = "${sendsvg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ></li>`; 
 			//case "text/html":
 			//case "text/vnd.abc":
 			{{*	let sendabc = `[abc]/cloud/${address}/${result.display_path}[/abc]`;
