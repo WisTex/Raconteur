@@ -226,7 +226,7 @@ class Embedfiles extends Controller
                     if ($content) {
                         $text = z_input_filter($content, $_POST['filetype']);
                         if ($text) {
-                            $s .= "\n\n" . $text . "\n\n";
+                            $output .= "\n\n" . $text . "\n\n";
                         }
                     }
                 break;
