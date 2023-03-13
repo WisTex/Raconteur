@@ -2823,7 +2823,7 @@ function tgroup_check($uid, $item) {
         return true;
     }
 
-    if (PConfig::Get($uid, 'system','permit_all_likes',true) && $item['verb'] === 'Like') {
+    if (PConfig::Get($uid, 'system','permit_all_likes') && $item['verb'] === 'Like' && $item['obj_type'] === 'Note') {
         return true;
     }
     
