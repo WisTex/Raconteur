@@ -173,7 +173,7 @@ class Embedfiles extends Controller
             $alt = ' alt="' . $_POST["filename"] . '"';
 
             $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
-                . '[zmg width="100%" height="' . $r[0]['height'] . '"' . $alt . ']'
+                . '[zmg width="100%" height="auto"' . $alt . ']'
                 . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
 
             $output .= "\n\n" . '[attachment]' . $_POST['hash'] . ',' . $_POST['revision'] . '[/attachment]' . "\n";
