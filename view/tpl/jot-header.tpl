@@ -792,11 +792,8 @@ let postSaveTimer = null;
 			case "image/png":
 			case "image/gif":
 			//case "image/svg+xml": not working
-				{{* let send = `[img]${baseurl}/cloud/${address}/${result.display_path}[/img]`; *}}
 				let send_id = `embedFiles_${result.id}`;
-				{{* $( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(send); }); }); *}}
 				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
-				// setEmbedFiles2(result);
 				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
 			case "video/mp4":
 			case "video/webm":
