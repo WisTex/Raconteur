@@ -6,7 +6,7 @@ use App;
 use Code\Web\Controller;
 use Code\Lib\Channel;
 use Code\Render\Theme;
-
+use Code\Lib\Addon;
 
 require_once('include/attach.php');
 require_once('include/photos.php');
@@ -198,14 +198,14 @@ class Embedfiles extends Controller
             }
                 break;
             case "text/vnd.abc":
-            //    if (Addon::is_installed('abc')) {
+                if (Addon::is_installed('abc')) {
                     $x = @file_get_contents('store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
                     if ($x) {
                         $output .= "\n\n" . '[abc]' . $x . '[/abc]';
                     } else {
                         logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $_POST['os_path']);
                     }
-            //   }
+                }
                 break;
             default:
 		  		return '';
