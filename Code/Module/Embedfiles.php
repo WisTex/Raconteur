@@ -197,6 +197,16 @@ class Embedfiles extends Controller
                 logger('unable to read svg data file: '.'store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
             }
                 break;
+            case "text/vnd.abc":
+                if (Addon::is_installed('abc')) {
+                    $x = @file_get_contents('store/'. $channel['channel_address'] .'/'. $_POST['os_path']);
+                    if ($x) {
+                        $output .= "\n\n" . '[abc]' . $x . '[/abc]';
+                    } else {
+                        logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $_POST['os_path']);
+                    }
+                }
+                break;
             default:
 		  		return '';
 		}

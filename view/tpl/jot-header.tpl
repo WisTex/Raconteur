@@ -810,6 +810,10 @@ let postSaveTimer = null;
 				let sendsvg_id = `embedFiles_${result.id}`;
 				$( document ).ready(function() { document.getElementById(sendsvg_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
 				return `<li id = "${sendsvg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ></li>`; 
+			case "text/vnd.abc":
+				let sendabc_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendabc_id).addEventListener("click", function() { setEmbedFiles2(result); }); });
+				return `<li id = "${sendabc_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ></li>`; 
 			//case "text/html":
 			//case "text/vnd.abc":
 			{{*	let sendabc = `[abc]/cloud/${address}/${result.display_path}[/abc]`;
