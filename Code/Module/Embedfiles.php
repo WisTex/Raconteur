@@ -175,13 +175,14 @@ class Embedfiles extends Controller
             case "video/mp4":
             case "video/webm":
             case "video/ogg":
-                    break;
+                $url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $_POST['display_path'];
+                $output .= "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
+                break;
             default:
 		  		return '';
 		}
 
             $output .= "\n\n" . '[attachment]' . $_POST['hash'] . ',' . $_POST['revision'] . '[/attachment]' . "\n";
-
             return $output;
         }
         return '';
