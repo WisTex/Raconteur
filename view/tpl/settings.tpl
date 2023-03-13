@@ -57,6 +57,7 @@
                         {{include file="field_select.tpl" field=$mail_perms}}
                         {{include file="field_select.tpl" field=$view_contact_perms}}
                         {{include file="field_select.tpl" field=$search_perms}}
+                        {{include file="field_checkbox.tpl" field=$permit_all_likes}}
                         {{include file="field_checkbox.tpl" field=$permit_all_mentions}}
                         {{include file="field_input.tpl" field=$unless_mention_count}}
                         {{include file="field_input.tpl" field=$followed_tags}}

@@ -7,7 +7,7 @@
 
 	{{include file="field_checkbox.tpl" field=$use_hs2019}}
 	{{include file="field_checkbox.tpl" field=$use_fep5624}}
-
+	{{include file="field_checkbox.tpl" field=$accept_unsigned_relay}}
 	{{include file="field_checkbox.tpl" field=$block_public_search}}
 	{{include file="field_checkbox.tpl" field=$block_public_dir}}
 	{{include file="field_checkbox.tpl" field=$anonymous_comments}}
