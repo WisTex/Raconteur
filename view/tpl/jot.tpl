@@ -125,20 +125,17 @@
 				{{if $visitor}}
 				&nbsp;
 				<div class="btn-group mr-2 ">
+	                {{if $embedFiles || $writefiles}}
+                    <button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;">
+			            <i id="embed-photo" class="fa fa-paperclip jot-icons"></i>
+                    </button>
+					{{/if}}
 
 					{{if $weblink}}
 					<button id="profile-link-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$weblink}}" ondragenter="linkdropper(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);"  onclick="jotGetLink(); return false;">
 						<i id="profile-link" class="fa fa-link jot-icons"></i>
 					</button>
 					{{/if}}
-
-					<!-- new test button -->
-					{{if $embedFiles || $writefiles}}
-						<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedFileDialog();return false;">
-							<i id="embed-photo" class="fa fa-file-o jot-icons"></i>
-						</button>
-					{{/if}}
-					<!-- end new test button -->
 
 					<button type="button" id="profile-poll-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$poll}}" onclick="initPoll();">
 						<i id="profile-poll" class="fa fa-bar-chart jot-icons"></i>
