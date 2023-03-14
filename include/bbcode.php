@@ -121,7 +121,7 @@ function tryzrlaudio($match)
         $link = zid($link);
     }
 
-    return '<audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
+    return '<img src="/images/mp3.png" class="img-fluid my-2" ><audio src="' . str_replace(' ', '%20', $link) . '" controls="controls" preload="none" class="my-2"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></audio>';
 }
 
 function tryzrlvideo($match)
@@ -137,7 +137,7 @@ function tryzrlvideo($match)
         $poster = 'poster="' . escape_tags($static_link) . '" ' ;
     }
 
-    return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ', '%20', $link) . '" style="width:100%; max-width:100%;"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></video>';
+    return '<video ' . ' controls="controls" preload="metadata" src="' . str_replace(' ', '%20', $link).'" class="img-fluid img-thumbnail"><a href="' . str_replace(' ', '%20', $link) .'">' . $link . '#t=1</a></video>';
 }
 
 function videowithopts($match)
@@ -169,9 +169,6 @@ function videowithopts($match)
 
     return '<video ' . $poster . ' controls="controls" preload="none" src="' . str_replace(' ', '%20', $link) . '" style="width:100%; max-width:100%;"><a href="' . str_replace(' ', '%20', $link) . '">' . $link . '</a></video>';
 }
-
-
-
 
 // [noparse][i]italic[/i][/noparse] turns into
 // [noparse][ i ]italic[ /i ][/noparse],

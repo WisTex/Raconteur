@@ -468,8 +468,6 @@ function doPoke(xchan) {
 	return true;
 }
 
-
-
 function update_role_text() {
 	let new_role = $("#id_permissions_role").val();
 	if (typeof(new_role) !== 'undefined') {
@@ -583,9 +581,6 @@ function alertsUpdate() {
 	}
 	alertstimer = setTimeout(alertsUpdate,alertsInterval);
 }
-
-
-
 
 function notificationsUpdate(cached_data) {
 	let pingCmd = 'ping' + ((localUser != 0) ? '?f=&uid=' + localUser : '');
@@ -886,7 +881,6 @@ function updateConvItems(mode,data) {
 		$('html, body').animate({ scrollTop: $('.item_' + submid_encoded).offset().top - $('nav').outerHeight() }, 'slow');
 		$('.item_' + submid_encoded).addClass('item-highlight');
 	}
-
 	
 	$(document.body).trigger("sticky_kit:recalc");
 }
@@ -983,7 +977,6 @@ function liveUpdate(notify_id) {
 
 	let origHeight = 0;
 	let expanded = $('.comment-edit-text.expanded');
-
 	
 	if(typeof profile_uid === 'undefined') profile_uid = false;
 

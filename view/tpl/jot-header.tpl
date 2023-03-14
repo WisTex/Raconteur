@@ -110,6 +110,25 @@ let postSaveTimer = null;
 				$('#profile-jot-submit-left').hide();
 		}
 
+		/**
+		 * uses the jQuery file upload plugin to upload files.
+		 * It is initialized on an element with an ID of "invisible-wall-file-upload" using the .fileupload() method.
+		 * It is configured with several options passed as an object to the .fileupload() method:
+		 * url: specifies the server endpoint to which the uploaded file will be sent. It includes a PHP variable $nickname in the URL path.
+		 * dataType: specifies the expected format of the response from the server, which is JSON in this case.
+		 * dropZone: specifies the element that is used as the drop zone for the file upload. In this case, it's the element with an ID of "profile-jot-text".
+		 * maxChunkSize: specifies the maximum chunk size for chunked file uploads. It's set to 2 megabytes in this case.
+		 * add: specifies a callback function to be executed when a file is added to the queue.
+		 * In this case, the function shows a rotating icon to indicate that the upload is in progress and submits the file for uploading.
+		 * done: specifies a callback function to be executed when the upload is complete.
+		 * In this case, the function appends the file's URL to a text area with an ID of "jot-media" 
+		 * and adds the file's URL to the text editor by calling a function named addeditortext().
+		 * stop: specifies a callback function to be executed when the upload is stopped, 
+		 * either because it's completed or because it was cancelled. 
+		 * In this case, the function hides the rotating icon and calls a function named preview_post(), which previews the uploaded file in the user's post.
+		 *  
+		 */
+
 		$('#invisible-wall-file-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
 			dataType: 'json',
@@ -122,6 +141,7 @@ let postSaveTimer = null;
 				data.submit();
 			},
 			done: function(e,data) {
+				console.log(data);
 				addeditortext(data.result.message);
 				$('#jot-media').val($('#jot-media').val() + data.result.message);
 			},
@@ -134,11 +154,10 @@ let postSaveTimer = null;
 		$('#wall-file-upload').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
 		$('#wall-file-upload-sub').click(function(event) { event.preventDefault(); $('#invisible-wall-file-upload').trigger('click'); return false;});
 
-        // call initialization file
+		// call initialization file
         if (window.File && window.FileList && window.FileReader) {
 			DragDropUploadInit();
         }
-
 
 		$('#invisible-comment-upload').fileupload({
 			url: 'wall_attach/{{$nickname}}',
@@ -388,7 +407,14 @@ let postSaveTimer = null;
 		})
 	}
 
-
+	/**
+	 *  opens a modal window with an ID of "createdModal" 
+	 *  and listens for a click event on a button with an ID of "created-modal-OKButton". 
+	 *  When the button is clicked, it retrieves the value of an input field with an ID of "created-date" 
+	 *  and if it is not empty, it sets the value of an input field with an ID of "jot-created" 
+	 *  to the retrieved value and hides the modal window.
+	 */
+	
 	function jotGetPubDate() {
 		$('#createdModal').modal('show');
 		$('#created-modal-OKButton').on('click', function() {
@@ -399,7 +425,6 @@ let postSaveTimer = null;
 			}
 		})
 	}
-
 
 	function jotShare(id,post_type) {
 		$('#like-rotator-' + id).show();
@@ -640,6 +665,12 @@ let postSaveTimer = null;
 	    jotCheckoutStatus();
 	}
 
+	/* start initializeEmbedFileDialog function */
+	let initializeEmbedFileDialog = function () {
+        getFileDirList();
+    	$('#embedFileModal').modal('show');
+	};
+	/* end initializeEmbedFileDialog function */
 
 	let initializeEmbedPhotoDialog = function () {
         $('.embed-photo-selected-photo').each(function (index) {
@@ -653,6 +684,9 @@ let postSaveTimer = null;
     let choosePhotoFromAlbum = function (album) {
         $.post("embedphotos/album", {name: album},
             function(data) {
+
+			alert(JSON.stringify(data));
+
                 if (data['status']) {
                     $('#embedPhotoModalLabel').html("{{$modalchooseimages}}");
                     $('#embedPhotoModalBodyAlbumDialog').html('\
@@ -671,10 +705,10 @@ let postSaveTimer = null;
                             let imageparent = document.getElementById($(image).parent()[0].id);
                             $(imageparent).toggleClass('embed-photo-selected-photo');
                             let href = $(imageparent).attr('href');
-                            $.post("embedphotos/photolink", {href: href},
+							$.post("embedphotos/photolink", {href: href},
                                 function(ddata) {
-                                    if (ddata['status']) {
-                                        addeditortext(ddata['photolink']);
+									if (ddata['status']) {
+										addeditortext(ddata['photolink']);
 										preview_post();
                                     } else {
                                         window.console.log("{{$modalerrorlink}}" + ':' + ddata['errormsg']);
@@ -722,7 +756,131 @@ let postSaveTimer = null;
         'json');
     };
 
-    //
+	{{* start new setEmbedFiles *}}
+	function setEmbedFiles (result) {
+		$.post('embedfiles/sharelink',
+			result,
+			function(data) {
+    		addeditortext(data.message);
+			$('#jot-media').val($('#jot-media').val() + data.message);
+			preview_post();
+  		}).fail(function() {
+    	// if posting your form failed
+    	alert("Posting failed.");
+  		});
+	}
+	{{* end new setEmbedFiles *}}
+
+	{{* start new getFileMimeType *}}
+	function getFileMimeType(result, address) {
+
+		switch(result.filetype) {
+  			case "image/jpeg":
+			case "image/png":
+			case "image/gif":
+				let send_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(send_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+				return `<li id = "embedFiles_${result.id}" data-bs-dismiss="modal" ><img src="/cloud/${address}/${result.display_path}" class="img-fluid img-thumbnail" ></li>`;
+			case "video/mp4":
+			case "video/webm":
+			case "video/ogg":
+				let sendmp4_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendmp4_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+    			return `<li class="border rounded my-1 p-2" ><h4>${result.filename}</h4><video id = "${sendmp4_id}" data-bs-dismiss="modal" preload="metadata" src="/cloud/${address}/${result.display_path}" style="width:100%;" /><img src="/images/controls.png" class="img-fluid my-2" ></li>`;
+			case "audio/mpeg":
+			case "audio/wav":
+			case "audio/ogg":
+				let sendmpeg_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendmpeg_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+				return `<li id = "${sendmpeg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><img src="/images/mp3.png" class="img-fluid my-2" ><audio src="/cloud/${address}/${result.display_path}" controls="controls" preload="none" /></li>`;
+			case "image/svg+xml":
+				let sendsvg_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendsvg_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+				return `<li id = "${sendsvg_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`; 
+			case "text/vnd.abc":
+				let sendabc_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendabc_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+				return `<li id = "${sendabc_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`; 
+			case "text/calendar":
+				let sendcal_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendcal_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+				return `<li id = "${sendcal_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4><div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`; 
+			case "text/x-multicode":
+            case "text/bbcode":
+            case "text/markdown":
+            case "text/html":
+			case "text/plain":
+			case "application/json":
+				let sendplain_id = `embedFiles_${result.id}`;
+				$( document ).ready(function() { document.getElementById(sendplain_id).addEventListener("click", function() { setEmbedFiles(result); }); });
+				return`<li id = "${sendplain_id}" class="border rounded my-1 p-2" data-bs-dismiss="modal" ><h4>${result.filename}</h4>
+				<div class="border border-5 rounded text-center fw-bold p-5">${result.filetype}</div></li>`;
+			default:
+		  		return;
+		}
+	}
+	{{* end new getFileMimeType *}}
+
+	{{* start new getFileDirList *}}
+	let getFileDirList = function () {
+		$.post("embedfiles", {},
+		    function(data) {
+				// alert(JSON.stringify(data));
+				
+				let success = data.success;
+				let address = data.address;
+				let results = data.content;
+				//console.log(JSON.stringify(results));
+				
+				if (data.success) {
+
+					// results[0] breaks the loop because it has no object before it.
+					// we'll define it here and start the loop at 1
+					let content = `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-0" aria-expanded="false" aria-controls="embedDir-0"><i class="fa fa-folder-o fa-lg me-1"></i>${results[0].filename}</button>`;
+								
+					for(let i=1; i<(results.length); i++) {
+					
+if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
+  //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
+  if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`;}
+  content += `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}"><i class="fa fa-folder-o fa-lg me-1"></i>${results[i].filename}</button>`;
+  continue;
+
+} else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
+  //  is_dir preceded by a file = if directory is not a sibling add closing </ul> to the beginning of the button
+  if(results[i].folder !== results[(i-1)].folder){ content += `</ul>`;}
+  content += `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}"><i class="fa fa-folder-o fa-lg me-1"></i>${results[i].filename}</button>`;
+  continue;
+
+} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
+  //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
+  if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`}
+  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  let result = results[i];
+  content += getFileMimeType(result, address);
+  continue;
+
+} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
+  //  file preceded by another file = just the line item
+  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+  let result = results[i];
+  content += getFileMimeType(result, address);
+  continue;
+}
+
+					} // end new loop
+
+					$('#embedFileDirModalBody').html( content);
+					
+				} else {
+                    window.console.log(`{{$modalerrorlist}} : data['errormsg']`);
+                }
+                return false;
+            },
+        'json');
+	};
+	{{* end new getFileDirList *}}
+
     // initialize drag-drop
     function DragDropUploadInit() {
 
@@ -732,7 +890,6 @@ let postSaveTimer = null;
         filedrag.on("dragover", DragDropUploadFileHover);
         filedrag.on("dragleave", DragDropUploadFileHover);
         filedrag.on("drop", DragDropUploadFileSelectHandler);
-
     }
 
 	// file drag hover

@@ -284,7 +284,7 @@ pre {
 audio, video {
 	border-radius: $radius;
 	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
-
+	width: 100%;
 }
 
 .panel {
@@ -1833,8 +1833,6 @@ dl.bb-dl > dd > li {
 	filter:alpha(opacity=30);
 
 }
-
-
 
 .help-searchlist {
 	list-style-type: none;
