@@ -1099,10 +1099,10 @@ function z_status_editor($x, $popup = false)
     }
 
     $embedPhotos = t('Embed (existing) photo from your photo albums');
-    $embedFiles = t('Embed a File');
+    $embedFiles = t('Attach File');
     $insertFile = t('Insert File');
-    $fromDevice = t('from Device');
-    $fromCloud = t('from the Cloud');
+    $fromDevice = t('from device');
+    $fromCloud = t('from personal cloud');
     
     $writefiles = (($mimetype === 'text/x-multicode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
     if (x($x, 'hide_attach')) {

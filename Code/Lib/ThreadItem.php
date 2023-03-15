@@ -915,7 +915,7 @@ class ThreadItem
             '$edquote' => t('Quote'),
             '$edcode' => t('Code'),
             '$edimg' => t('Image'),
-            '$edatt' => t('Embed a File'),
+            '$edatt' => t('Attach/Upload a File'),
             '$edurl' => t('Insert Link'),
             '$edvideo' => t('Video'),
             '$preview' => t('Preview'),

@@ -665,6 +665,8 @@ let postSaveTimer = null;
 	    jotCheckoutStatus();
 	}
 
+
+
 	/* start initializeEmbedFileDialog function */
 	let initializeEmbedFileDialog = function () {
         getFileDirList();
@@ -684,9 +686,7 @@ let postSaveTimer = null;
     let choosePhotoFromAlbum = function (album) {
         $.post("embedphotos/album", {name: album},
             function(data) {
-
-			alert(JSON.stringify(data));
-
+                // alert(JSON.stringify(data));
                 if (data['status']) {
                     $('#embedPhotoModalLabel').html("{{$modalchooseimages}}");
                     $('#embedPhotoModalBodyAlbumDialog').html('\
@@ -825,7 +825,7 @@ let postSaveTimer = null;
 	let getFileDirList = function () {
 		$.post("embedfiles", {},
 		    function(data) {
-				// alert(JSON.stringify(data));
+				alert(JSON.stringify(data));
 				
 				let success = data.success;
 				let address = data.address;
@@ -840,33 +840,33 @@ let postSaveTimer = null;
 								
 					for(let i=1; i<(results.length); i++) {
 					
-if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
-  //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
-  if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`;}
-  content += `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}"><i class="fa fa-folder-o fa-lg me-1"></i>${results[i].filename}</button>`;
-  continue;
+                        if (results[i].is_dir === "1" && results[(i-1)].is_dir === "1") {
+                          //  is_dir preceded by another is_dir = if child directory add opening <ul> to the beginning of the button
+                          if(results[i].folder === results[(i-1)].hash){ content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`;}
+                          content += `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}"><i class="fa fa-folder-o fa-lg me-1"></i>${results[i].filename}</button>`;
+                          continue;
 
-} else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
-  //  is_dir preceded by a file = if directory is not a sibling add closing </ul> to the beginning of the button
-  if(results[i].folder !== results[(i-1)].folder){ content += `</ul>`;}
-  content += `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}"><i class="fa fa-folder-o fa-lg me-1"></i>${results[i].filename}</button>`;
-  continue;
+                        } else if (results[i].is_dir === '1' && results[(i-1)].is_dir !== '1') {
+                          //  is_dir preceded by a file = if directory is not a sibling add closing </ul> to the beginning of the button
+                          if(results[i].folder !== results[(i-1)].folder){ content += `</ul>`;}
+                          content += `<button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#embedDir-${i}" aria-expanded="false" aria-controls="embedDir-${i}"><i class="fa fa-folder-o fa-lg me-1"></i>${results[i].filename}</button>`;
+                          continue;
 
-} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
-  //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
-  if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`}
-  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
-  let result = results[i];
-  content += getFileMimeType(result, address);
-  continue;
+                        } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir === '1') {
+                          //  file preceded by a is_dir = only add opening <ul> to the beginning of file if button is not a sibling
+                          if(results[i].folder !== results[(i-1)].folder){content += `<ul class="collapse list-unstyled" id="embedDir-${(i-1)}">`}
+                          //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+                          let result = results[i];
+                          content += getFileMimeType(result, address);
+                          continue;
 
-} else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
-  //  file preceded by another file = just the line item
-  //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
-  let result = results[i];
-  content += getFileMimeType(result, address);
-  continue;
-}
+                        } else if (results[i].is_dir !== '1' && results[(i-1)].is_dir !== '1') {
+                          //  file preceded by another file = just the line item
+                          //content += `<li><img src="/cloud/${address}/${results[i].display_path}" class="img-fluid img-thumbnail" ></li>`;
+                          let result = results[i];
+                          content += getFileMimeType(result, address);
+                          continue;
+                        }
 
 					} // end new loop
 

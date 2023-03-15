@@ -47,17 +47,9 @@
 						{{/if}}
 						<div class="btn-group mr-2">
 							{{if $can_upload}}
-					{{*
-							<button class="btn btn-outline-secondary btn-sm" title="{{$edatt}}" onclick="insertCommentAttach('{{$comment}}',{{$id}}); return false;">
-								<i class="fa fa-paperclip comment-icon"></i>
-							</button>
-					*}}
-							<!-- new test button -->
-				{{*			{{if $embedPhotos || $writefiles}}	*}}
-								<button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$edatt}} " onclick="initializeEmbedFileDialog();return false;"><i id="embed-photo" class="fa fa-file-o jot-icons"></i>
+								<button class="btn btn-outline-secondary btn-sm" title="{{$edatt}}" onclick="insertCommentAttach('{{$comment}}',{{$id}}); return false;">
+									<i class="fa fa-paperclip comment-icon"></i>
 								</button>
-				{{*			{{/if}}		*}}
-							<!-- end new test button -->
 							{{/if}}
 							<button class="btn btn-outline-secondary btn-sm" title="{{$edurl}}" onclick="insertCommentURL('{{$comment}}',{{$id}}); return false;">
 								<i class="fa fa-link comment-icon"></i>
