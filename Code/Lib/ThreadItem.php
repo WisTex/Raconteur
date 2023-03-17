@@ -500,7 +500,7 @@ class ThreadItem
             'submid' => str_replace(['+','='], ['',''], base64_encode(urlencode($item['mid']))),
             'thread_level' => $thread_level,
             'indentpx' => intval(get_pconfig(local_channel(), 'system', 'thread_indent_px', get_config('system', 'thread_indent_px', 0))),
-            'thread_max' => intval(get_config('system', 'thread_maxlevel', 20)) + 1
+            'thread_max' => intval(get_config('system', 'thread_maxlevel', 80)) + 1
         ];
 
         $arr = ['item' => $item, 'output' => $tmp_item];
