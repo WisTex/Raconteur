@@ -1430,7 +1430,7 @@ function get_item_children($arr, $parent)
     }
 
     $thread_allow = get_config('system', 'thread_allow', true);
-    $thread_max   = intval(get_config('system', 'thread_maxlevel', 20));
+    $thread_max   = intval(get_config('system', 'thread_maxlevel', 80));
 
     foreach ($arr as $item) {
         if (intval($item['id']) !== intval($item['parent'])) {

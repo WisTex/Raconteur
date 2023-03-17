@@ -51,7 +51,7 @@ class Register extends Controller
 
     public function post()
     {
-        // security token is session_id() based and we have a transient session, so we can't use it here.
+        // security token is session_id() based, and we have a transient session, so we can't use it here.
         //check_form_security_token_redirectOnErr('/register', 'register');
 
         $max_dailies = intval(get_config('system', 'max_daily_registrations'));
@@ -272,13 +272,13 @@ class Register extends Controller
         $password2 = ['password2', t('Please re-enter your password'), '', '', '', ' required '];
         $invite_code = ['invite_code', t('Please enter your invitation code'), ((x($_REQUEST, 'invite_code')) ? strip_tags(trim($_REQUEST['invite_code'])) : "")];
         $name = ['name', t('Your Name'), ((x($_REQUEST, 'name')) ? $_REQUEST['name'] : ''), t('Real names are preferred.')];
-        $nickhub = '@' . str_replace(array('http://', 'https://', '/'), '', get_config('system', 'baseurl'));
+        $nickhub = '@' . str_replace(['http://', 'https://', '/'], '', get_config('system', 'baseurl'));
         $nickname = ['nickname', t('Choose a short nickname'), ((x($_REQUEST, 'nickname')) ? $_REQUEST['nickname'] : ''), sprintf(t('Your nickname will be used to create an easy to remember channel address e.g. nickname%s'), $nickhub)];
-        $role = ['permissions_role', t('Channel role and privacy'), ($privacy_role) ? $privacy_role : 'social', t('Select a channel permission role for your usage needs and privacy requirements.'), $perm_roles];
+        $role = ['permissions_role', t('Channel role and privacy'), ($privacy_role) ?: 'social', t('Select a channel permission role for your usage needs and privacy requirements.'), $perm_roles];
         $tos = ['tos', $label_tos, '', '', [t('no'), t('yes')], ' required '];
 
 
-        $auto_create = (get_config('system', 'auto_channel_create') ? true : false);
+        $auto_create = (bool)get_config('system', 'auto_channel_create');
         $default_role = get_config('system', 'default_permissions_role');
         $email_verify = get_config('system', 'verify_email');
 
@@ -288,7 +288,7 @@ class Register extends Controller
             '$title' => t('Registration'),
             '$reg_is' => $registration_is,
             '$registertext' => bbcode(get_config('system', 'register_text')),
-            '$other_sites' => (($other_sites) ? t('<a href="sites">Show affiliated sites - some of which may allow registration.</a>') : EMPTY_STR),
+            '$other_sites' => (($other_sites) ? t('<a href="communities">Show affiliated sites - some of which may allow registration.</a>') : EMPTY_STR),
             '$invitations' => $invitations,
             '$invite_code' => $invite_code,
             '$auto_create' => $auto_create,
