@@ -35,6 +35,7 @@ a.zrl:hover {
 
 .threadlevel {
 	margin-right: 0.1rem;
+    font-size: 1.4rem;
 }
 
 .login-button {
@@ -284,7 +285,7 @@ pre {
 audio, video {
 	border-radius: $radius;
 	box-shadow: $shadowpx $shadowpx $shadowpx 0 #aaaaaa;
-
+	width: 100%;
 }
 
 .panel {
@@ -1833,8 +1834,6 @@ dl.bb-dl > dd > li {
 	filter:alpha(opacity=30);
 
 }
-
-
 
 .help-searchlist {
 	list-style-type: none;

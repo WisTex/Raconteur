@@ -1099,7 +1099,11 @@ function z_status_editor($x, $popup = false)
     }
 
     $embedPhotos = t('Embed (existing) photo from your photo albums');
-
+    $embedFiles = t('Attach File');
+    $insertFile = t('Insert File');
+    $fromDevice = t('from device');
+    $fromCloud = t('from personal cloud');
+    
     $writefiles = (($mimetype === 'text/x-multicode') ? perm_is_allowed($x['profile_uid'], get_observer_hash(), 'write_storage') : false);
     if (x($x, 'hide_attach')) {
         $writefiles = false;
@@ -1283,6 +1287,11 @@ function z_status_editor($x, $popup = false)
         '$linkurl' => t('Please enter a link location (URL)'),
         '$hidden_mentions' => ((x($x, 'hidden_mentions')) ? $x['hidden_mentions'] : ''),
         '$weblink_style' => [ t('Insert link only'), t('Embed content if possible') ],
+        '$embedFiles' => $embedFiles,
+        '$insertFile' => $insertFile,
+        '$fromDevice' => $fromDevice,
+        '$fromCloud' => $fromCloud,
+        '$embedFileDirModalTitle' => t('Embed a file from the cloud'),
         '$embedPhotos' => $embedPhotos,
         '$embedPhotosModalTitle' => t('Embed an image from your albums'),
         '$embedPhotosModalCancel' => t('Cancel'),

@@ -4055,7 +4055,7 @@ class Activity
         $allowed = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'post_comments');
 
         // Allow likes from strangers if permitted to do so. These are difficult (but not impossible) to spam.
-        if ($item['verb'] === 'Like' && PConfig::Get($channel['channel_id'], 'system', 'permit_all_likes', true)) {
+        if ($item['verb'] === 'Like' && PConfig::Get($channel['channel_id'], 'system', 'permit_all_likes') && $item['obj_type'] === 'Note') {
             $allowed = true;
         }
 
