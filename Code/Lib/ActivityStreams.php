@@ -508,13 +508,26 @@ class ActivityStreams
 
     public static function is_as_request() : bool
     {
-        $x = getBestSupportedMimeType([
-            'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
-            'application/activity+json',
-            'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
-            'application/ld+json',
-            'application/x-zot-activity+json'
-        ]);
+        $default_accept_header = 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"';
+
+        if ($channel) {
+            $accept_header = PConfig::Get($channel['channel_id'],'system','accept_header');
+        }
+        if (!$accept_header) {
+            $accept_header = Config::Get('system', 'accept_header', $default_accept_header);
+        }
+
+        $x = getBestSupportedMimeType(explode(',', $accept_header));
+
+        if (! $x) {
+            $x = getBestSupportedMimeType([
+                'application/ld+json;profile="https://www.w3.org/ns/activitystreams"',
+                'application/activity+json',
+                'application/ld+json;profile="http://www.w3.org/ns/activitystreams"',
+                'application/ld+json',
+                'application/x-zot-activity+json'
+            ]);
+        }
 
         return (bool)$x;
     }

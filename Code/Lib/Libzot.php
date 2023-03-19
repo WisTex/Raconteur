@@ -3238,7 +3238,7 @@ class Libzot
 
     public static function is_nomad_request()
     {
-        $supportedTypes = [explode(',', self::getAccepts())];
+        $supportedTypes = explode(',', self::getAccepts());
         $x = getBestSupportedMimeType($supportedTypes);
         return (($x) ? true : false);
     }
