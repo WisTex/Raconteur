@@ -1183,7 +1183,7 @@ function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '')
  *   * \e boolean \b success
  *   * \e array \b albums
  */
-function attach_list($channel, $observer, $sort_key = 'display_path', $direction = 'asc')
+function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direction = 'asc')
 {
 
     $channel_id     = $channel['channel_id'];

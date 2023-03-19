@@ -243,9 +243,10 @@ class Embedphotos extends Controller
     public function embedphotos_album_list($channel_id)
     {
         $channel = Channel::from_id($channel_id);
-        $p = photos_albums_list($channel, App::get_observer());
+        $p = attach_dirlist($channel,App::get_observer());
+        // $p = photos_albums_list($channel, App::get_observer());
         if ($p['success']) {
-            return $p['albums'];
+            return $p['folders'];
         } else {
             return null;
         }
