@@ -1170,6 +1170,92 @@ function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '')
 }
 
 /**
+ * @brief Returns a list with all folders observer is allowed to see.
+ *
+ * Returns an associative array with all folders where observer has permissions.
+ *
+ * @param array $channel
+ * @param array $observer
+ * @param array $sort_key (optional) default display_path
+ * @param array $direction (optional) default asc
+ *
+ * @return bool|array false if no view_storage permission or an array
+ *   * \e boolean \b success
+ *   * \e array \b albums
+ */
+function attach_list($channel, $observer, $sort_key = 'display_path', $direction = 'asc')
+{
+
+    $channel_id     = $channel['channel_id'];
+    $observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
+
+    if (! perm_is_allowed($channel_id, $observer_xchan, 'view_storage')) {
+        return false;
+    }
+
+    $sql_extra = permissions_sql($channel_id, $observer_xchan);
+
+    $sort_key = dbesc($sort_key);
+    $direction = dbesc($direction);
+
+    $r = q(
+        "select display_path, hash from attach where is_dir = 1 and uid = %d $sql_extra order by $sort_key $direction",
+        intval($channel_id)
+    );
+
+    // add a 'root directory' to the results
+
+    array_unshift($r, [ 'display_path' => '/', 'hash' => '' ]);
+    $str = ids_to_querystr($r, 'hash', true);
+
+    $folders = [];
+
+    if ($str) {
+        $x = q(
+            "select count( distinct hash ) as total, folder from attach where is_photo = 1 and uid = %d and folder in ( $str ) $sql_extra group by folder ",
+            intval($channel_id)
+        );
+        if ($x) {
+            foreach ($r as $rv) {
+                foreach ($x as $xv) {
+                    if ($xv['folder'] === $rv['hash']) {
+                        if ($xv['total'] != 0 && attach_can_view_folder($channel_id, $observer_xchan, $xv['folder'])) {
+                            $folders[] = [ 'path' => $rv['display_path'], 'folder' => $xv['folder'], 'total' => $xv['total'] ];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // add various encodings to the array, so we can just loop through and pick them out in a template
+
+    $ret = [ 'success' => false ];
+
+    if ($folders) {
+        $ret['success'] = true;
+        $ret['folders'] = [];
+        foreach ($folders as $folder) {
+            $entry = [
+                'text'      => (($folder['path']) ?: '/'),
+                'shorttext' => (($folder['path']) ? ellipsify($folder['path'], 28) : '/'),
+                'jstext'    => (($folder['path']) ? addslashes($folder['path']) : '/'),
+                'total'     => $folder['total'],
+                'url'       => z_root() . '/' . $folder['path'],
+                'urlencode' => urlencode($folder['path']),
+                'bin2hex'   => $folder['folder']
+            ];
+            $ret['folders'][] = $entry;
+        }
+    }
+
+    App::$data['folders'] = $ret;
+
+    return $ret;
+}
+
+
+/**
  * @brief Create directory.
  *
  * @param array $channel channel array of owner
