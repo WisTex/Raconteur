@@ -31,7 +31,12 @@ class Zot_probe extends Controller
 
             $o .= '<pre>' . htmlspecialchars(print_array($x)) . '</pre>';
 
-            $headers = 'Accept: application/x-nomad+json, application/x-zot+json, application/jrd+json, application/json';
+            $accepts = 'application/x-nomad+json, application/x-zot+json, application/jrd+json, application/json';
+            if (defined('MAGIC_SPACE')) {
+                /** @noinspection PhpUndefinedConstantInspection */
+                $accepts .= ', ' . MAGIC_SPACE;
+            }
+            $headers = 'Accept: ' . $accepts;
 
             $x = Url::get($resource, ['headers' => [$headers]]);
 

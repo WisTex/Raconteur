@@ -25,9 +25,15 @@ class Zotfinger
 
         $data = json_encode(['zot_token' => random_string()]);
 
+        $accepts = 'application/x-nomad+json, application/x-zot+json';
+        if (defined('MAGIC_SPACE')) {
+            /** @noinspection PhpUndefinedConstantInspection */
+            $accepts .= ', ' . MAGIC_SPACE;
+        }
+
         if ($channel && $m) {
             $headers = [
-				'Accept' => 'application/x-nomad+json, application/x-zot+json', 
+				'Accept' => $accepts,
 				'Content-Type' => 'application/x-nomad+json',
                 'X-Zot-Token' => random_string(),
                 'Digest' => HTTPSig::generate_digest_header($data),
@@ -37,7 +43,7 @@ class Zotfinger
             $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), false);
         }
         else {
-            $h = ['Accept: application/x-nomad+json, application/x-zot+json'];
+            $h = ['Accept: ' . $accepts];
         }
 
         $result = [];

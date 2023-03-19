@@ -96,6 +96,10 @@ class Magic extends Controller
 
                 $headers = [];
 				$headers['Accept'] = 'application/x-nomad+json, application/x-zot+json';
+                if (defined('MAGIC_SPACE')) {
+                    /** @noinspection PhpUndefinedConstantInspection */
+                    $headers['Accept'] .= ', ' . MAGIC_SPACE;
+                }
 				$headers['Content-Type'] = 'application/x-nomad+json';
                 $headers['X-Open-Web-Auth'] = random_string();
                 $headers['Host'] = $parsed['host'];

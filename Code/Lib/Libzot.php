@@ -3238,7 +3238,12 @@ class Libzot
 
     public static function is_nomad_request()
     {
-        $x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad+json' ]);
+        $supportedTypes = ['application/x-zot+json', 'application/x-nomad+json'];
+        if (defined('MAGIC_SPACE')) {
+            /** @noinspection PhpUndefinedConstantInspection */
+            $supportedTypes[] = MAGIC_SPACE;
+        }
+        $x = getBestSupportedMimeType($supportedTypes);
         return (($x) ? true : false);
     }
 
