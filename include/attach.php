@@ -14,6 +14,7 @@ use Code\Daemon\Run;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
+use Code\Render\Theme;
 use Code\Storage\Stdio;
 
 require_once('include/permissions.php');
@@ -1255,6 +1256,128 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
 
     return $ret;
 }
+/**
+ * Copied from include/widgets.php::widget_album() with a modification to get the profile_uid from
+ * the input array as in widget_item()
+ *
+ * @param array $args
+ * @return string with HTML
+ */
+
+public function embedfolder_widget($args)
+{
+
+    $channel_id = 0;
+    if (array_key_exists('channel_id', $args)) {
+        $channel_id = $args['channel_id'];
+        $channel = Channel::from_id($channel_id);
+    }
+
+    if (!$channel_id) {
+        return '';
+    }
+
+    $owner_uid = $channel_id;
+    require_once('include/security.php');
+    $sql_extra = permissions_sql($channel_id);
+
+    if (!perm_is_allowed($channel_id, get_observer_hash(), 'view_storage')) {
+        return '';
+    }
+
+    if ($args['album']) {
+        $album = (($args['album'] === '/') ? '' : $args['album']);
+    }
+
+    if ($args['title']) {
+        $title = $args['title'];
+    }
+
+    /**
+     * This may return incorrect permissions if you have multiple directories of the same name.
+     * It is a limitation of the photo table using a name for a photo album instead of a folder hash
+     */
+    if ($album) {
+        $x = q(
+            "select hash from attach where filename = '%s' and uid = %d limit 1",
+            dbesc($album),
+            intval($owner_uid)
+        );
+        if ($x) {
+            $y = attach_can_view_folder($owner_uid, get_observer_hash(), $x[0]['hash']);
+            if (!$y) {
+                return '';
+            }
+        }
+    }
+
+    $r = q(
+        "SELECT * from attach where uid = %d AND folder = '%s' 
+            $sql_extra
+			ORDER BY filename ASC",
+        intval($owner_uid),
+        dbesc($x[0]['hash'])
+    );
+
+    if ($r) {
+        foreach ($r as $rv) {
+            // new attach widget code goes here
+            // try and locate thumbnails
+        }
+    }
+    // We will need this to map mimetypes to appropriate file extensions
+    $ph = photo_factory('');
+    $phototypes = $ph->supportedTypes();
+
+    $photos = [];
+    if ($r) {
+        $twist = 'rotright';
+        foreach ($r as $rr) {
+            if ($twist == 'rotright') {
+                $twist = 'rotleft';
+            } else {
+                $twist = 'rotright';
+            }
+
+            $ext = $phototypes[$rr['mimetype']];
+
+            $imgalt_e = $rr['filename'];
+            $desc_e = $rr['description'];
+
+            $imagelink = (z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $rr['resource_id']
+                . (($_GET['order'] === 'posted') ? '?f=&order=posted' : ''));
+
+            $photos[] = [
+                'id' => $rr['id'],
+                'twist' => ' ' . $twist . rand(2, 4),
+                'link' => $imagelink,
+                'title' => t('View Photo'),
+                'src' => z_root() . '/photo/' . $rr['resource_id'] . '-' . $rr['imgscale'] . '.' . $ext,
+                'alt' => $imgalt_e,
+                'desc' => $desc_e,
+                'ext' => $ext,
+                'hash' => $rr['resource_id'],
+                'unknown' => t('Unknown')
+            ];
+        }
+    }
+
+    $o = replace_macros(Theme::get_template('photo_album.tpl'), [
+        '$photos' => $photos,
+        '$album' => (($title) ? $title : $album),
+        '$album_id' => rand(),
+        '$album_edit' => [t('Edit Album'), false],
+        '$can_post' => false,
+        '$upload' => [t('Upload'), z_root() . '/photos/' . $channel['channel_address'] . '/upload/' . bin2hex($album)],
+        '$order' => false,
+        '$upload_form' => false,
+        '$no_fullscreen_btn' => true
+    ]);
+
+    return $o;
+}
+
+
 
 
 /**
