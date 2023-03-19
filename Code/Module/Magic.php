@@ -3,6 +3,7 @@
 namespace Code\Module;
 
 use App;
+use Code\Lib\Libzot;
 use Code\Web\Controller;
 use Code\Web\HTTPSig;
 use Code\Lib\SConfig;
