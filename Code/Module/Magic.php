@@ -95,11 +95,7 @@ class Magic extends Controller
                 $dest = strip_query_param($dest, 'f');
 
                 $headers = [];
-				$headers['Accept'] = 'application/x-nomad+json, application/x-zot+json';
-                if (defined('MAGIC_SPACE')) {
-                    /** @noinspection PhpUndefinedConstantInspection */
-                    $headers['Accept'] .= ', ' . MAGIC_SPACE;
-                }
+				$headers['Accept'] = Libzot::getAccepts();
 				$headers['Content-Type'] = 'application/x-nomad+json';
                 $headers['X-Open-Web-Auth'] = random_string();
                 $headers['Host'] = $parsed['host'];

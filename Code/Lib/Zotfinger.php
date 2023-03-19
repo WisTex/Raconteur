@@ -25,12 +25,7 @@ class Zotfinger
 
         $data = json_encode(['zot_token' => random_string()]);
 
-        $accepts = 'application/x-nomad+json, application/x-zot+json';
-        if (defined('MAGIC_SPACE')) {
-            /** @noinspection PhpUndefinedConstantInspection */
-            $accepts .= ', ' . MAGIC_SPACE;
-        }
-
+        $accepts = Libzot::getAccepts();
         if ($channel && $m) {
             $headers = [
 				'Accept' => $accepts,
