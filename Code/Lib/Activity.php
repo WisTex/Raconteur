@@ -122,8 +122,16 @@ class Activity
 
         logger('fetch_actual: ' . $url, LOGGER_DEBUG);
 
+        $default_accept_header = 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"';
+        
+        if ($channel) {
+            $accept_header = PConfig::Get($channel['channel_id'],'system','accept_header');
+        }
+        if (!$accept_header) {
+            $accept_header = Config::Get('system', 'accept_header', $default_accept_header);
+        }
         $headers = [
-            'Accept' => 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+            'Accept' => $accept_header,
             'Host' => $parsed['host'],
             'Date' => datetime_convert('UTC', 'UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
             '(request-target)' => 'get ' . get_request_string($url)
