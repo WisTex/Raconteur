@@ -3238,10 +3238,22 @@ class Libzot
 
     public static function is_nomad_request()
     {
-        $x = getBestSupportedMimeType([ 'application/x-zot+json', 'application/x-nomad+json' ]);
+        $supportedTypes = explode(',', self::getAccepts());
+        $x = getBestSupportedMimeType($supportedTypes);
         return (($x) ? true : false);
     }
 
+    public static function getAccepts() {
+        $default_accept_header = 'application/x-zot+json,application/x-nomad+json';
+
+        if ($channel) {
+            $accept_header = PConfig::Get($channel['channel_id'],'system','nomad_accept_header');
+        }
+        if (!$accept_header) {
+            $accept_header = Config::Get('system', 'nomad_accept_header', $default_accept_header);
+        }
+        return $accept_header;
+    }
 
     public static function zot_record_preferred($arr, $check = 'hubloc_network')
     {

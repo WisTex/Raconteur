@@ -99,7 +99,7 @@ class Rpost extends Controller
 
             $url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
 
-            if (strpos($r['data']['filetype'], 'video') === 0) {
+            if (str_starts_with($r['data']['filetype'], 'video')) {
                 for ($n = 0; $n < 15; $n++) {
                     $thumb = Linkinfo::get_video_poster($url);
                     if ($thumb) {
@@ -114,7 +114,7 @@ class Rpost extends Controller
                     $s .= "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
                 }
             }
-            if (strpos($r['data']['filetype'], 'audio') === 0) {
+            if (str_starts_with($r['data']['filetype'], 'audio')) {
                 $s .= "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
             }
             if ($r['data']['filetype'] === 'image/svg+xml') {
