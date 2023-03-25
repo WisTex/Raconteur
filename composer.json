@@ -42,7 +42,8 @@
 		"symfony/mailer": "^5.4",
 		"wapmorgan/mp3info": "^0.0.8",
 		"chillerlan/php-qrcode": "^4.3",
-		"spomky-labs/otphp": "^10.0"
+		"spomky-labs/otphp": "^10.0",
+		"indieweb/rel-me": "^0.1.1"
         },
 	"require-dev" : {
 		"phpunit/phpunit" : "@stable",
