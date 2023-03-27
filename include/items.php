@@ -3537,7 +3537,7 @@ function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
 // $stage = 1 => set deleted flag on the item and perform intial notifications
 // $stage = 2 => perform low level delete at a later stage
 
-function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0) {
+function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $observer_hash = '') {
 
     // locate item to be deleted
 
@@ -3571,7 +3571,13 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0) {
 
 
     // author deletion
-    $observer = App::get_observer();
+    if ($observer_hash) {
+        $observer = ['xchan_hash' => $observer_hash];
+    }
+    else {
+        $observer = App::get_observer();
+    }
+    
     if ($observer && $observer['xchan_hash'] && ($observer['xchan_hash'] === $item['author_xchan'])) {
         $ok_to_delete = true;
     }

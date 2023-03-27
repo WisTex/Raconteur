@@ -2631,14 +2631,15 @@ class Activity
             dbesc((is_array($act->obj)) ? $act->obj['id'] : $act->obj),
             intval($channel['channel_id'])
         );
-
+    
         if (!$r) {
             return;
         }
 
         if (in_array($observer, [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
-            drop_item($r[0]['id']);
-        } elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
+            drop_item($r[0]['id'], observer_hash: $observer);
+        }
+        elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
             drop_item($r[0]['id']);
         }
     }
