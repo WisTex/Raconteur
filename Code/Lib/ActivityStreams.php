@@ -509,6 +509,7 @@ class ActivityStreams
     public static function is_as_request() : bool
     {
         $default_accept_header = 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"';
+        $channel = App::get_channel();
 
         if ($channel) {
             $accept_header = PConfig::Get($channel['channel_id'],'system','accept_header');

@@ -3245,6 +3245,7 @@ class Libzot
 
     public static function getAccepts() {
         $default_accept_header = 'application/x-zot+json,application/x-nomad+json';
+        $channel = App::get_channel();
 
         if ($channel) {
             $accept_header = PConfig::Get($channel['channel_id'],'system','nomad_accept_header');
