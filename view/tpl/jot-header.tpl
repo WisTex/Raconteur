@@ -740,9 +740,9 @@ let postSaveTimer = null;
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
                     for(let i=0; i<albums.length; i++) {
                         let albumName = albums[i].text;
-			let jsAlbumName = albums[i].jstext;
-			let albumLink = '<li class="nav-item">';
-			albumLink += '<a class="nav-link" href="#" onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">' + albumName + '</a>';
+            			let jsAlbumName = albums[i].jstext;
+			            let albumLink = '<li class="nav-item">';
+			            albumLink += '<a class="nav-link" href="#" onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">' + albumName + '</a>';
                         albumLink += '</li>';
                         $('#embedPhotoModalBodyAlbumList').find('ul').append(albumLink);
                     }

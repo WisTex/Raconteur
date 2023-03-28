@@ -2015,6 +2015,10 @@ class Activity
 
                     set_abconfig($channel['channel_id'], $person_obj['id'], 'activitypub', 'their_follow_id', $their_follow_id);
                     set_abconfig($channel['channel_id'], $person_obj['id'], 'activitypub', 'their_follow_type', $act->type);
+                    // In case they unfollowed us and followed again, reset their permissions to show that we're connected again. 
+                    if ($their_perms) {
+                        AbConfig::Set($channel['channel_id'], $person_obj['id'], 'system', 'their_perms', $their_perms);
+                    }
                     Run::Summon(['Notifier', 'permissions_accept', $contact['abook_id']]);
                     return;
 

@@ -231,10 +231,13 @@ class Enotify
 
             //$possess_desc = str_replace('<!item_type!>',$possess_desc);
 
+            // Put zero-width spaces between the links and the sender name in case they contain parens,
+            // as these will be interpreted as markdown links when rendered. 
+    
             // "a post"
             $dest_str = sprintf(
                 t('%1$s %2$s [zrl=%3$s]a %4$s[/zrl]'),
-                '[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
+                '[zrl=' . $sender['xchan_url'] . ']' . html_entity_decode('&#8203;') . $sender['xchan_name'] . '[/zrl]',
                 $action,
                 $itemlink,
                 $item_post_type
@@ -244,7 +247,7 @@ class Enotify
             if ($p) {
                 $dest_str = sprintf(
                     t('%1$s %2$s [zrl=%3$s]%4$s\'s %5$s[/zrl]'),
-                    '[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
+                    '[zrl=' . $sender['xchan_url'] . ']' . html_entity_decode('&#8203;') . $sender['xchan_name'] . '[/zrl]',
                     $action,
                     $itemlink,
                     $p[0]['author']['xchan_name'],
@@ -256,7 +259,7 @@ class Enotify
             if ($p[0]['owner']['xchan_name'] == $p[0]['author']['xchan_name'] && intval($p[0]['item_wall'])) {
                 $dest_str = sprintf(
                     t('%1$s %2$s [zrl=%3$s]your %4$s[/zrl]'),
-                    '[zrl=' . $sender['xchan_url'] . ']' . $sender['xchan_name'] . '[/zrl]',
+                    '[zrl=' . $sender['xchan_url'] . ']' . html_entity_decode('&#8203;') . $sender['xchan_name'] . '[/zrl]',
                     $action,
                     $itemlink,
                     $item_post_type
