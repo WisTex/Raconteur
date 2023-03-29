@@ -29,7 +29,6 @@ class Notifications implements WidgetInterface
                     'label' => t('Mark all notifications read')
                 ],
                 'filter' => [
-                    'posts_label' => t('Show new posts only'),
                     'name_label' => t('Filter by name')
                 ]
             ];
@@ -48,7 +47,6 @@ class Notifications implements WidgetInterface
                     'label' => t('Mark all notifications seen')
                 ],
                 'filter' => [
-                    'posts_label' => t('Show new posts only'),
                     'name_label' => t('Filter by name')
                 ]
             ];
@@ -156,7 +154,6 @@ class Notifications implements WidgetInterface
                     'label' => t('Mark all notifications seen')
                 ],
                 'filter' => [
-                    'posts_label' => t('Show new posts only'),
                     'name_label' => t('Filter by name')
                 ]
             ];
