@@ -304,6 +304,20 @@ class ThreadItem
             $has_event = true;
         }
 
+        $colours = [
+            '_aqua',
+            '_fuschia',
+            '_orange',
+            '_teal',
+            '_maroon',
+            '_lime',
+            '_red',
+            '_blue',
+            '_gray',
+            '_yellow',
+            '_olive',
+        ];
+
         if ($this->is_commentable() && $observer) {
             $like = [t('I like this'), t('Undo like')];
             $dislike = [t('I don\'t like this'), t('Undo dislike')];
@@ -388,6 +402,8 @@ class ThreadItem
             'categories' => $body['categories'],
             'mentions' => $body['mentions'],
             'attachments' => $body['attachments'],
+            'colours' => $colours,
+            'colourIndex' => 0,
             'folders' => $body['folders'],
             'text' => strip_tags($body['html']),
             'id' => $this->get_id(),
@@ -500,7 +516,7 @@ class ThreadItem
             'submid' => str_replace(['+','='], ['',''], base64_encode(urlencode($item['mid']))),
             'thread_level' => $thread_level,
             'indentpx' => intval(get_pconfig(local_channel(), 'system', 'thread_indent_px', get_config('system', 'thread_indent_px', 0))),
-            'thread_max' => intval(get_config('system', 'thread_maxlevel', 20)) + 1
+            'thread_max' => intval(get_config('system', 'thread_maxlevel', 80)) + 1
         ];
 
         $arr = ['item' => $item, 'output' => $tmp_item];
@@ -915,7 +931,7 @@ class ThreadItem
             '$edquote' => t('Quote'),
             '$edcode' => t('Code'),
             '$edimg' => t('Image'),
-            '$edatt' => t('Attach/Upload file'),
+            '$edatt' => t('Attach/Upload a File'),
             '$edurl' => t('Insert Link'),
             '$edvideo' => t('Video'),
             '$preview' => t('Preview'),

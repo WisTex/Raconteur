@@ -187,6 +187,10 @@ class WebServer
                     'type' => 'application/jrd+json',
                     'href'  => z_root() . '/.well-known/webfinger?f=&resource=acct%3A' . argv(1) . '%40' . App::get_hostname()
                 ],
+                [
+                    'rel' => 'me',
+                    'href' => z_root() . '/channel/' . argv(1)
+                ],
 
                 [
                     'rel'  => 'alternate',
