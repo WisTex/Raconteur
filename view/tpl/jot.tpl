@@ -130,11 +130,11 @@
 							<i id="wall-file-upload-icon" class="fa fa-paperclip jot-icons"></i>
 						</button>
 					{{/if}}
-	                {{*if $embedFiles || $writefiles}}
+
                     <button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedPhotoDialog();return false;">
 			            <i id="embed-photo" class="fa fa-paperclip jot-icons"></i>
                     </button>
-					{{/if*}}
+
 
 					{{if $weblink}}
 					<button id="profile-link-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$weblink}}" ondragenter="linkdropper(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);"  onclick="jotGetLink(); return false;">

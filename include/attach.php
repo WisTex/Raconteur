@@ -1187,10 +1187,10 @@ function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '')
 function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direction = 'asc')
 {
 
-    $channel_id     = $channel['channel_id'];
+    $channel_id = $channel['channel_id'];
     $observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
 
-    if (! perm_is_allowed($channel_id, $observer_xchan, 'view_storage')) {
+    if (!perm_is_allowed($channel_id, $observer_xchan, 'view_storage')) {
         return false;
     }
 
@@ -1206,7 +1206,7 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
 
     // add a 'root directory' to the results
 
-    array_unshift($r, [ 'display_path' => '', 'hash' => '' ]);
+    array_unshift($r, ['display_path' => '', 'hash' => '']);
     $str = ids_to_querystr($r, 'hash', true);
 
     $folders = [];
@@ -1221,9 +1221,9 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
                 foreach ($x as $xv) {
                     if ($xv['folder'] === $rv['hash']) {
                         if ($xv['total'] != 0 && attach_can_view_folder($channel_id, $observer_xchan, $xv['folder'])) {
-                            $folders[] = [ 'path' => $rv['display_path'], 'folder' => $xv['folder'],
+                            $folders[] = ['path' => $rv['display_path'], 'folder' => $xv['folder'],
                                 'location' => 'cloud/' . $channel['channel_address'] . '/' . $rv['display_path'],
-                                'total' => $xv['total'] ];
+                                'total' => $xv['total']];
                         }
                     }
                 }
@@ -1233,20 +1233,20 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
 
     // add various encodings to the array, so we can just loop through and pick them out in a template
 
-    $ret = [ 'success' => false ];
+    $ret = ['success' => false];
 
     if ($folders) {
         $ret['success'] = true;
         $ret['folders'] = [];
         foreach ($folders as $folder) {
             $entry = [
-                'text'      => (($folder['path']) ?: '/'),
+                'text' => (($folder['path']) ?: '/'),
                 'shorttext' => (($folder['path']) ? ellipsify($folder['path'], 28) : '/'),
-                'jstext'    => (($folder['path']) ? addslashes($folder['path']) : '/'),
-                'total'     => $folder['total'],
-                'url'       => z_root() . '/' . $folder['location'],
+                'jstext' => (($folder['path']) ? addslashes($folder['path']) : '/'),
+                'total' => $folder['total'],
+                'url' => z_root() . '/' . $folder['location'],
                 'urlencode' => urlencode($folder['path']),
-                'bin2hex'   => $folder['folder']
+                'bin2hex' => $folder['folder']
             ];
             $ret['folders'][] = $entry;
         }
@@ -1256,6 +1256,7 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
 
     return $ret;
 }
+
 /**
  * Copied from include/widgets.php::widget_album() with a modification to get the profile_uid from
  * the input array as in widget_item()
@@ -1264,7 +1265,7 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
  * @return string with HTML
  */
 
-public function embedfolder_widget($args)
+function embedfolder_widget($args)
 {
 
     $channel_id = 0;
@@ -1321,7 +1322,7 @@ public function embedfolder_widget($args)
 
     if ($r) {
         foreach ($r as $rv) {
-            // new attach widget code goes here
+          logger('hey');  // new attach widget code goes here
             // try and locate thumbnails
         }
     }
