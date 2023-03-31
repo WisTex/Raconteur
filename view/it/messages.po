@@ -6302,7 +6302,7 @@ msgstr "Indirizzo home page"
 
 #: ../../Code/Module/Profiles.php:768
 msgid "Hometown"
-msgstr "Città dove vivo"
+msgstr "Città natale"
 
 #: ../../Code/Module/Profiles.php:769
 msgid "Political views"
@@ -6912,7 +6912,7 @@ msgstr "Descrizione:"
 
 #: ../../Code/Module/Directory.php:335 ../../include/channel.php:1593
 msgid "Hometown:"
-msgstr "Città dove vivo:"
+msgstr "Città natale:"
 
 #: ../../Code/Module/Directory.php:337 ../../include/channel.php:1599
 msgid "About:"
