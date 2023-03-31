@@ -122,8 +122,16 @@ class Activity
 
         logger('fetch_actual: ' . $url, LOGGER_DEBUG);
 
+        $default_accept_header = 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"';
+        
+        if ($channel) {
+            $accept_header = PConfig::Get($channel['channel_id'],'system','accept_header');
+        }
+        if (!$accept_header) {
+            $accept_header = Config::Get('system', 'accept_header', $default_accept_header);
+        }
         $headers = [
-            'Accept' => 'application/activity+json, application/x-zot-activity+json, application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+            'Accept' => $accept_header,
             'Host' => $parsed['host'],
             'Date' => datetime_convert('UTC', 'UTC', 'now', 'D, d M Y H:i:s \\G\\M\\T'),
             '(request-target)' => 'get ' . get_request_string($url)
@@ -2007,6 +2015,10 @@ class Activity
 
                     set_abconfig($channel['channel_id'], $person_obj['id'], 'activitypub', 'their_follow_id', $their_follow_id);
                     set_abconfig($channel['channel_id'], $person_obj['id'], 'activitypub', 'their_follow_type', $act->type);
+                    // In case they unfollowed us and followed again, reset their permissions to show that we're connected again. 
+                    if ($their_perms) {
+                        AbConfig::Set($channel['channel_id'], $person_obj['id'], 'system', 'their_perms', $their_perms);
+                    }
                     Run::Summon(['Notifier', 'permissions_accept', $contact['abook_id']]);
                     return;
 
@@ -2619,14 +2631,15 @@ class Activity
             dbesc((is_array($act->obj)) ? $act->obj['id'] : $act->obj),
             intval($channel['channel_id'])
         );
-
+    
         if (!$r) {
             return;
         }
 
         if (in_array($observer, [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
-            drop_item($r[0]['id']);
-        } elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
+            drop_item($r[0]['id'], observer_hash: $observer);
+        }
+        elseif (in_array($act->actor['id'], [$r[0]['author_xchan'], $r[0]['owner_xchan']])) {
             drop_item($r[0]['id']);
         }
     }

@@ -637,17 +637,6 @@ let postSaveTimer = null;
 		timer = setTimeout(updateInit,1000);
 	}
 
-	function toggleVoting() {
-		if($('#jot-consensus').val() > 0) {
-			$('#jot-consensus').val(0);
-			$('#profile-voting, #profile-voting-sub').removeClass('fa-check-square-o').addClass('fa-square-o');
-		}
-		else {
-			$('#jot-consensus').val(1);
-			$('#profile-voting, #profile-voting-sub').removeClass('fa-square-o').addClass('fa-check-square-o');
-		}
-	}
-
 	function jotReact(id,icon) {
 		if(id && icon) {
 			$.get('{{$baseurl}}/react?f=&postid=' + id + '&emoji=' + icon);
@@ -738,11 +727,13 @@ let postSaveTimer = null;
                     let albums = data['albumlist']; //JSON.parse(data['albumlist']);
                     $('#embedPhotoModalLabel').html("{{$modalchoosealbum}}");
                     $('#embedPhotoModalBodyAlbumList').html('<ul class="nav nav-pills flex-column"></ul>');
-                    for(let i=0; i<albums.length; i++) {
+                    for (let i=0; i < albums.length; i++) {
                         let albumName = albums[i].text;
-			let jsAlbumName = albums[i].jstext;
-			let albumLink = '<li class="nav-item">';
-			albumLink += '<a class="nav-link" href="#" onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">' + albumName + '</a>';
+			            let jsAlbumName = albums[i].jstext;
+			            let albumLink = '<li class="nav-item">';
+			            albumLink += '<a class="nav-link" href="#" '
+                            + 'onclick="choosePhotoFromAlbum(\'' + jsAlbumName + '\'); return false;">'
+                            + albumName + '</a>';
                         albumLink += '</li>';
                         $('#embedPhotoModalBodyAlbumList').find('ul').append(albumLink);
                     }

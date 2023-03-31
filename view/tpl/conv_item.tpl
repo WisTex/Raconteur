@@ -12,7 +12,7 @@
 		<div class="wall-item-outside-wrapper{{if $item.is_comment}} comment{{/if}}{{if $item.previewing}} preview{{/if}}" id="wall-item-outside-wrapper-{{$item.id}}" >
 			<div class="clearfix wall-item-content-wrapper{{if $item.is_comment}} comment{{/if}}" id="wall-item-content-wrapper-{{$item.id}}">
 				{{if $item.thread_level > 1}}<hr class="thread-separator">{{/if}}
-				{{for $x=3 to $item.thread_level}}<i class="fa fa-caret-right threadlevel {{if $x is odd}}odd{{else}}even{{/if}}"></i>{{/for}}
+				{{for $x=3 to $item.thread_level}}<i class="fa fa-caret-right threadlevel {{$item.colours[$item.colourIndex]}}"></i>{{$item.colourIndex=$item.colourIndex+1}}{{if $item.colourIndex>9}}{{$item.colourIndex=0}}{{/if}}{{/for}}
 				{{if $item.indentpx}}
 				<div {{if $item.thread_level > 2}}style="margin-left: {{$item.thread_level * $item.indentpx}}px;"{{/if}}>
 				{{/if}}
