@@ -1355,6 +1355,7 @@ function embedfolder_widget($args)
             $g = [ 'resource_id' => $attach['hash'], 'thumbnail' => $photo_icon, 'security' => $preview_style ];
             Hook::call('file_thumbnail', $g);
             $r[$x]['photo_icon'] = $g['thumbnail'];
+            $r[$x]['default_icon'] = getIconFromType($attach['filetype']);
         }
     }
 
@@ -1374,6 +1375,7 @@ function embedfolder_widget($args)
                 'link' => $imagelink,
                 'title' => t('Select'),
                 'src' => $rr['photo_icon'],
+                'icon' => $rr['default_icon'],
                 'alt' => $imgalt_e,
                 'desc' => $desc_e,
                 'ext' => $filetype,
