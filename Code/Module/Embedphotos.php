@@ -37,7 +37,7 @@ class Embedphotos extends Controller
             if (!$name) {
                 json_return_and_die(['errormsg' => 'Error retrieving album', 'status' => false]);
             }
-            $album = $this->embedphotos_widget_album(['channel_id' => $channel_id, 'album' => $name]);
+            $album = embedfolder_widget(['channel_id' => $channel_id, 'album' => $name]);
             json_return_and_die(['status' => true, 'content' => $album]);
         }
         if (argc() > 1 && argv(1) === 'albumlist') {
@@ -244,7 +244,6 @@ class Embedphotos extends Controller
     {
         $channel = Channel::from_id($channel_id);
         $p = attach_dirlist($channel,App::get_observer());
-        // $p = photos_albums_list($channel, App::get_observer());
         if ($p['success']) {
             return $p['folders'];
         } else {
