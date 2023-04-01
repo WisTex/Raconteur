@@ -1300,7 +1300,7 @@ function embedfolder_widget($args)
      */
     if ($album) {
         $x = q(
-            "select hash from attach where filename = '%s' and uid = %d limit 1",
+            "select hash from attach where display_path= '%s' and uid = %d limit 1",
             dbesc($album),
             intval($owner_uid)
         );
@@ -1312,6 +1312,8 @@ function embedfolder_widget($args)
         }
     }
 
+    $preview_style = intval(get_config('system','thumbnail_security',0));
+
     $r = q(
         "SELECT * from attach where uid = %d AND folder = '%s' 
             $sql_extra
@@ -1321,49 +1323,67 @@ function embedfolder_widget($args)
     );
 
     if ($r) {
-        foreach ($r as $rv) {
-          logger('hey');  // new attach widget code goes here
-            // try and locate thumbnails
+        for ($x = 0; $x < count($r); $x ++) {
+            $photo_icon = '';
+
+            $attach = q("select * from attach where hash = '%s' and uid = %d limit 1",
+                dbesc($r[$x]['hash']),
+                intval($owner_uid)
+            );
+
+            if ($attach) {
+                $attach  = array_shift($attach);
+                if (file_exists(dbunescbin($attach['content']) . '.thumb')) {
+                    $photo_icon = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(dbunescbin($attach['content']) . '.thumb'));
+                }
+            }
+
+            if (strpos($attach['filetype'],'image/') === 0 && $attach['hash']) {
+                $p = q("select resource_id, imgscale from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
+                    dbesc($attach['hash']),
+                    intval(PHOTO_RES_320),
+                    intval(PHOTO_RES_PROFILE_80)
+                );
+                if ($p) {
+                    $photo_icon = 'photo/' . $p[0]['resource_id'] . '-' . $p[0]['imgscale'];
+                }
+                if ($type === 'image/svg+xml' && $preview_style > 0) {
+                    $photo_icon = $fullPath;
+                }
+            }
+
+            $g = [ 'resource_id' => $attach['hash'], 'thumbnail' => $photo_icon, 'security' => $preview_style ];
+            Hook::call('file_thumbnail', $g);
+            $r[$x]['photo_icon'] = $g['thumbnail'];
         }
     }
-    // We will need this to map mimetypes to appropriate file extensions
-    $ph = photo_factory('');
-    $phototypes = $ph->supportedTypes();
 
     $photos = [];
     if ($r) {
-        $twist = 'rotright';
         foreach ($r as $rr) {
-            if ($twist == 'rotright') {
-                $twist = 'rotleft';
-            } else {
-                $twist = 'rotright';
-            }
 
-            $ext = $phototypes[$rr['mimetype']];
+            $filetype = $rr['filetype'];
 
             $imgalt_e = $rr['filename'];
-            $desc_e = $rr['description'];
 
             $imagelink = (z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $rr['resource_id']
                 . (($_GET['order'] === 'posted') ? '?f=&order=posted' : ''));
 
             $photos[] = [
                 'id' => $rr['id'],
-                'twist' => ' ' . $twist . rand(2, 4),
                 'link' => $imagelink,
-                'title' => t('View Photo'),
-                'src' => z_root() . '/photo/' . $rr['resource_id'] . '-' . $rr['imgscale'] . '.' . $ext,
+                'title' => t('Select'),
+                'src' => $rr['photo_icon'],
                 'alt' => $imgalt_e,
                 'desc' => $desc_e,
-                'ext' => $ext,
+                'ext' => $filetype,
                 'hash' => $rr['resource_id'],
                 'unknown' => t('Unknown')
             ];
         }
     }
 
-    $o = replace_macros(Theme::get_template('photo_album.tpl'), [
+    $o = replace_macros(Theme::get_template('file_album.tpl'), [
         '$photos' => $photos,
         '$album' => (($title) ? $title : $album),
         '$album_id' => rand(),
