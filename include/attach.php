@@ -1339,7 +1339,7 @@ function embedfolder_widget($args)
             }
 
             if (strpos($attach['filetype'],'image/') === 0 && $attach['hash']) {
-                $p = q("select resource_id, imgscale from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
+                $p = q("select * from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
                     dbesc($attach['hash']),
                     intval(PHOTO_RES_320),
                     intval(PHOTO_RES_PROFILE_80)
@@ -1356,6 +1356,7 @@ function embedfolder_widget($args)
             Hook::call('file_thumbnail', $g);
             $r[$x]['photo_icon'] = $g['thumbnail'];
             $r[$x]['default_icon'] = getIconFromType($attach['filetype']);
+            $r[$x]['alt_text'] = $p[0]['description'] ?: $r[$x]['filename'];
         }
     }
 
@@ -1365,7 +1366,7 @@ function embedfolder_widget($args)
 
             $filetype = $rr['filetype'];
 
-            $imgalt_e = $rr['filename'];
+            $imgalt_e = $rr['alt_text'];
 
             $imagelink = (z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $rr['resource_id']
                 . (($_GET['order'] === 'posted') ? '?f=&order=posted' : ''));
@@ -1377,7 +1378,6 @@ function embedfolder_widget($args)
                 'src' => $rr['photo_icon'],
                 'icon' => $rr['default_icon'],
                 'alt' => $imgalt_e,
-                'desc' => $desc_e,
                 'ext' => $filetype,
                 'hash' => $rr['resource_id'],
                 'unknown' => t('Unknown')
