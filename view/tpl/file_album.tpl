@@ -26,7 +26,7 @@
 	</div>
 	{{$upload_form}}
 	{{$album_edit.1}}
-	<div class="section-content-wrapper-np">
+	<div class="section-content-wrapper-np" style="overflow: auto;">
 		<div id="photo-album-contents-{{$album_id}}">
 			{{foreach $photos as $photo}}
 				{{include file="file_top.tpl"}}
