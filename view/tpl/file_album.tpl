@@ -31,6 +31,7 @@
 			{{foreach $photos as $photo}}
 				{{include file="file_top.tpl"}}
 			{{/foreach}}
+			<div  class="clear"></div>
 			<div id="page-end"></div>
 		</div>
 	</div>
