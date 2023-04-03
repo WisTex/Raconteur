@@ -1374,6 +1374,7 @@ function embedfolder_widget($args)
             $photos[] = [
                 'id' => $rr['id'],
                 'link' => $imagelink,
+                'filename' => $rr['filename'],
                 'title' => t('Select'),
                 'src' => $rr['photo_icon'],
                 'icon' => $rr['default_icon'],
