@@ -3,6 +3,7 @@
 namespace Code\Module;
 
 use App;
+use Code\Lib\Addon;
 use Code\Web\Controller;
 use Code\Lib\Channel;
 use Code\Render\Theme;
@@ -70,6 +71,80 @@ class Embedphotos extends Controller
         } else {
             $channel = App::get_channel();
         }
+
+        $r = attach_by_hash($resource,get_observer_hash());
+        if (str_starts_with($r['data']['filetype'], 'video')) {
+            for ($n = 0; $n < 15; $n++) {
+                $thumb = Linkinfo::get_video_poster($url);
+                if ($thumb) {
+                    break;
+                }
+                sleep(1);
+            }
+
+            if ($thumb) {
+                $s .= "\n\n" . '[zvideo poster=\'' . $thumb . '\']' . $url . '[/zvideo]' . "\n\n";
+            } else {
+                $s .= "\n\n" . '[zvideo]' . $url . '[/zvideo]' . "\n\n";
+            }
+        }
+        if (str_starts_with($r['data']['filetype'], 'audio')) {
+            $s .= "\n\n" . '[zaudio]' . $url . '[/zaudio]' . "\n\n";
+        }
+        if ($r['data']['filetype'] === 'image/svg+xml') {
+            $x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            if ($x) {
+                $bb = svg2bb($x);
+                if ($bb) {
+                    $s .= "\n\n" . $bb;
+                } else {
+                    logger('empty return from svgbb');
+                }
+            } else {
+                logger('unable to read svg data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            }
+        }
+        elseif ($r['data']['is_photo']) {
+            $s =  '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $r['data']['hash'] . ']'
+                . $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . '[/zmg]'
+                . '[/zrl]';
+        }
+        if ($r['data']['filetype'] === 'text/vnd.abc' && Addon::is_installed('abc')) {
+            $x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            if ($x) {
+                $s .= "\n\n" . '[abc]' . $x . '[/abc]';
+            } else {
+                logger('unable to read ABC data file: ' . 'store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            }
+        }
+        if ($r['data']['filetype'] === 'text/calendar') {
+            $content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            if ($content) {
+                $ev = ical_to_ev($content);
+                if ($ev) {
+                    $s .= "\n\n" . format_event_bbcode($ev[0]) . "\n\n";
+                }
+            }
+        }
+
+        if (in_array($r['data']['filetype'], ['text/x-multicode', 'text/bbcode', 'text/markdown', 'text/html'])) {
+            $content = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
+            if ($content) {
+                $text = z_input_filter($content, $r['data']['filetype']);
+                if ($text) {
+                    $s .= "\n\n" . $text . "\n\n";
+                }
+            }
+        }
+
+        $s .= "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
+
+
+
+
+
+
+
 
         $output = EMPTY_STR;
         if ($channel) {

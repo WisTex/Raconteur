@@ -1,7 +1,11 @@
 <div class="{{if !$no_fullscreen_btn}}generic-content-wrapper{{/if}}">
 	<div class="section-title-wrapper">
 		<div class="float-end">
+			{{if $file_view}}
 			<a href="{{$files_path}}" title="{{$file_view}}" class="btn btn-outline-secondary btn-sm"><i class="fa fa-folder fa-fw" title="{{$file_view}}"></i></a>
+			{{elseif $files_path}}
+				<h3>{{$files_path}}</h3>
+			{{/if}}
 			{{if $order}}
 			<button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{$sort}}">
 				<i class="fa fa-sort-amount-up"></i>

@@ -1261,6 +1261,7 @@ function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direct
  * Copied from include/widgets.php::widget_album() with a modification to get the profile_uid from
  * the input array as in widget_item()
  *
+ *
  * @param array $args
  * @return string with HTML
  */
@@ -1315,7 +1316,7 @@ function embedfolder_widget($args)
     $preview_style = intval(get_config('system','thumbnail_security',0));
 
     $r = q(
-        "SELECT * from attach where uid = %d AND folder = '%s' 
+        "SELECT * from attach where uid = %d AND folder = '%s' and is_dir = 0
             $sql_extra
 			ORDER BY filename ASC",
         intval($owner_uid),
@@ -1388,6 +1389,7 @@ function embedfolder_widget($args)
 
     $o = replace_macros(Theme::get_template('file_album.tpl'), [
         '$photos' => $photos,
+        '$files_path' => $rr['display_name'],
         '$album' => (($title) ? $title : $album),
         '$album_id' => rand(),
         '$album_edit' => [t('Edit Album'), false],
