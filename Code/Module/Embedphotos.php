@@ -22,16 +22,8 @@ class Embedphotos extends Controller
      */
     public function post()
     {
+        $channel_id = local_channel();
 
-        // The admin tools for setting a site logo and cover photo set the channel_id explicitly
-        // to the 'sys' channel and use stored resources for that channel.
-        // Legacy behaviour uses the local logged in channel.
-
-        if (argc() > 2 && is_site_admin() && intval(argv(2))) {
-            $channel_id = argv(2);
-        } else {
-            $channel_id = local_channel();
-        }
         if (argc() > 1 && argv(1) === 'album') {
             // API: /embedphotos/album
             $name = (x($_POST, 'name') ? $_POST['name'] : null);
