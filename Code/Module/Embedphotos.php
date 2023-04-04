@@ -48,13 +48,10 @@ class Embedphotos extends Controller
         }
         if (argc() > 1 && argv(1) === 'photolink') {
             // API: /embedphotos/photolink
-            $href = (x($_POST, 'href') ? $_POST['href'] : null);
-            if (!$href) {
-                json_return_and_die(['errormsg' => 'Error retrieving link ' . $href, 'status' => false]);
+            $resource_id = argv(2);
+            if (!$resource_id) {
+                json_return_and_die(['errormsg' => 'Error retrieving link ' . (string) $resource_id, 'status' => false]);
             }
-            $tmp = explode('/', $href);
-            $resource_id = array_pop($tmp);
-
             $x = self::photolink($resource_id, $channel_id);
             if ($x) {
                 json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
@@ -105,9 +102,7 @@ class Embedphotos extends Controller
             }
         }
         elseif ($r['data']['is_photo']) {
-            $s =  '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $r['data']['hash'] . ']'
-                . $tag . z_root() . "/photo/{$photo_hash}-{$scale}." . '[/zmg]'
-                . '[/zrl]';
+            $s = self::getPhotoBody($r['data'], $channel);
         }
         if ($r['data']['filetype'] === 'text/vnd.abc' && Addon::is_installed('abc')) {
             $x = @file_get_contents('store/' . $channel['channel_address'] . '/' . $r['data']['os_path']);
@@ -138,62 +133,23 @@ class Embedphotos extends Controller
         }
 
         $s .= "\n\n" . '[attachment]' . $r['data']['hash'] . ',' . $r['data']['revision'] . '[/attachment]' . "\n";
-
-
-
-
-
-
-
-
-        $output = EMPTY_STR;
-        if ($channel) {
-            $resolution = 1;
-            $r = q(
-                "select mimetype, height, width, title from photo where resource_id = '%s' and imgscale = %d and uid = %d limit 1",
-                dbesc($resource),
-                intval($resolution),
-                intval($channel['channel_id'])
-            );
-            if (!$r) {
-                return $output;
-            }
-
-            if ($r[0]['mimetype'] === 'image/jpeg') {
-                $ext = '.jpg';
-            } elseif ($r[0]['mimetype'] === 'image/png') {
-                $ext = '.png';
-            } elseif ($r[0]['mimetype'] === 'image/gif') {
-                $ext = '.gif';
-            } else {
-                $ext = EMPTY_STR;
-            }
-
-            $alt = $r[0]['title'];
-            if (!$alt) {
-                $a = q(
-                    "select filename from attach where hash = '%s' and uid = %d limit 1",
-                    dbesc($resource),
-                    intval($channel['channel_id'])
-                );
-                if ($a) {
-                    $alt = $a[0]['filename'];
-                } else {
-                    $alt = t('Image/photo');
-                }
-            }
-            $alt = ' alt="' . $alt . '"';
-
-            $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
-                . '[zmg width="' . $r[0]['width'] . '" height="' . $r[0]['height'] . '"' . $alt . ']'
-                . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
-
-            return $output;
-        }
-        return '';
+        return $s;
     }
 
-
+    public static function getPhotoBody($attach,$channel)
+    {
+        $r = q("select * from photo where resource_id = '%s' and uid = %d order by imgscale",
+            dbesc($attach['hash']),
+            intval($channel['channel_id'])
+        );
+        if (!$r) {
+            return '';
+        }
+        $image = $r[1] ?? $r[0];
+        $link = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $attach['hash'] . ']' .
+            '[zmg alt="' . $image['filename'] . '"]' . z_root() . '/photo/' . $attach['hash'] . '-' . $image['imgscale'] . '[/zmg][/zrl]' . "\n\n";
+        return $link;
+    }
     /**
      * Copied from include/widgets.php::widget_album() with a modification to get the profile_uid from
      * the input array as in widget_item()

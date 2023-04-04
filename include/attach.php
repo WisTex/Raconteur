@@ -1369,8 +1369,7 @@ function embedfolder_widget($args)
 
             $imgalt_e = $rr['alt_text'];
 
-            $imagelink = (z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $rr['resource_id']
-                . (($_GET['order'] === 'posted') ? '?f=&order=posted' : ''));
+            $imagelink = z_root() . '/embedphotos/photolink/' . $rr['hash'];
 
             $photos[] = [
                 'id' => $rr['id'],
