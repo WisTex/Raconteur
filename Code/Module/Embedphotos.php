@@ -139,7 +139,7 @@ class Embedphotos extends Controller
         }
         $image = $r[1] ?? $r[0];
         $link = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $attach['hash'] . ']' .
-            '[zmg alt="' . $image['filename'] . '"]' . z_root() . '/photo/' . $attach['hash'] . '-' . $image['imgscale'] . '[/zmg][/zrl]' . "\n\n";
+            '[zmg alt="' . $image['description'] ?: $image['filename'] . '"]' . z_root() . '/photo/' . $attach['hash'] . '-' . $image['imgscale'] . '[/zmg][/zrl]' . "\n\n";
         return $link;
     }
     /**
