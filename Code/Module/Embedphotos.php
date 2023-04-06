@@ -38,22 +38,99 @@ class Embedphotos extends Controller
             $album_list = $this->embedphotos_album_list($channel_id);
             json_return_and_die(['status' => true, 'albumlist' => $album_list]);
         }
+        if (argc() > 1 && argv(1) === 'filelist') {
+            // API: /embedphotos/albumlist
+            $album_list = $this->embedfiles_list($channel_id);
+            json_return_and_die(['status' => true, 'albumlist' => $album_list]);
+        }
         if (argc() > 1 && argv(1) === 'photolink') {
             // API: /embedphotos/photolink
-            $resource_id = argv(2);
-            if (!$resource_id) {
-                json_return_and_die(['errormsg' => 'Error retrieving link ' . (string) $resource_id, 'status' => false]);
+            $href = (x($_POST, 'href') ? $_POST['href'] : null);
+            if (!$href) {
+                json_return_and_die(['errormsg' => 'Error retrieving link ' . $href, 'status' => false]);
             }
+            $tmp = explode('/', $href);
+            $resource_id = array_pop($tmp);
+
             $x = self::photolink($resource_id, $channel_id);
             if ($x) {
                 json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
             }
             json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
         }
+        if (argc() > 1 && argv(1) === 'filelink') {
+            // API: /embedphotos/filelink
+            $resource_id = argv(2);
+            if (!$resource_id) {
+                json_return_and_die(['errormsg' => 'Error retrieving link ' . (string) $resource_id, 'status' => false]);
+            }
+            $x = self::filelink($resource_id, $channel_id);
+            if ($x) {
+                json_return_and_die(['status' => true, 'photolink' => $x, 'resource_id' => $resource_id]);
+            }
+            json_return_and_die(['errormsg' => 'Error retrieving resource ' . $resource_id, 'status' => false]);
+        }
+
+    }
+
+    protected static function photolink($resource, $channel_id = 0)
+    {
+        if (intval($channel_id)) {
+            $channel = Channel::from_id($channel_id);
+        } else {
+            $channel = App::get_channel();
+        }
+
+        $output = EMPTY_STR;
+        if ($channel) {
+            $resolution = 1;
+            $r = q(
+                "select mimetype, height, width, title from photo where resource_id = '%s' and imgscale = %d and uid = %d limit 1",
+                dbesc($resource),
+                intval($resolution),
+                intval($channel['channel_id'])
+            );
+            if (!$r) {
+                return $output;
+            }
+
+            if ($r[0]['mimetype'] === 'image/jpeg') {
+                $ext = '.jpg';
+            } elseif ($r[0]['mimetype'] === 'image/png') {
+                $ext = '.png';
+            } elseif ($r[0]['mimetype'] === 'image/gif') {
+                $ext = '.gif';
+            } else {
+                $ext = EMPTY_STR;
+            }
+
+            $alt = $r[0]['title'];
+            if (!$alt) {
+                $a = q(
+                    "select filename from attach where hash = '%s' and uid = %d limit 1",
+                    dbesc($resource),
+                    intval($channel['channel_id'])
+                );
+                if ($a) {
+                    $alt = $a[0]['filename'];
+                } else {
+                    $alt = t('Image/photo');
+                }
+            }
+            $alt = ' alt="' . $alt . '"';
+
+            $output = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $resource . ']'
+                . '[zmg width="' . $r[0]['width'] . '" height="' . $r[0]['height'] . '"' . $alt . ']'
+                . z_root() . '/photo/' . $resource . '-' . $resolution . $ext . '[/zmg][/zrl]';
+
+            return $output;
+        }
+        return '';
     }
 
 
-    protected static function photolink($resource, $channel_id = 0)
+
+    protected static function filelink($resource, $channel_id = 0)
     {
         if (intval($channel_id)) {
             $channel = Channel::from_id($channel_id);
@@ -262,8 +339,18 @@ class Embedphotos extends Controller
 
         return $o;
     }
-
     public function embedphotos_album_list($channel_id)
+    {
+        $channel = Channel::from_id($channel_id);
+        $p = photos_albums_list($channel, App::get_observer());
+        if ($p['success']) {
+            return $p['albums'];
+        } else {
+            return null;
+        }
+    }
+
+    public function embedfiles_list($channel_id)
     {
         $channel = Channel::from_id($channel_id);
         $p = attach_dirlist($channel,App::get_observer());

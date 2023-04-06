@@ -1369,7 +1369,7 @@ function embedfolder_widget($args)
 
             $imgalt_e = $rr['alt_text'];
 
-            $imagelink = z_root() . '/embedphotos/photolink/' . $rr['hash'];
+            $imagelink = z_root() . '/embedphotos/filelink/' . $rr['hash'];
 
             $photos[] = [
                 'id' => $rr['id'],

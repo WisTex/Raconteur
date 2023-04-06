@@ -47,6 +47,5 @@
 <script>
 $(document).ready(function() {
 	loadingPage = false;
-//	justifyPhotos('photo-album-contents-{{$album_id}}');
 });
 </script>

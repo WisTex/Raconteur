@@ -125,17 +125,17 @@
 				{{if $visitor}}
 				&nbsp;
 				<div class="btn-group mr-2 ">
-					{{if $writefiles}}
-						<button id="wall-file-upload" class="btn btn-outline-secondary btn-sm" title="{{$attach}}" >
-							<i id="wall-file-upload-icon" class="fa fa-paperclip jot-icons"></i>
-						</button>
-					{{/if}}
-
-                    <button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedPhotoDialog();return false;">
-			            <i id="embed-photo" class="fa fa-paperclip jot-icons"></i>
-                    </button>
-
-
+					<button type="button" id="attach-source" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+						<i id="attach-source-icon" class="fa fa-paperclip jot-icons"></i>
+					</button>
+					<div class="dropdown-menu">
+						{{if $writefiles}}
+						<a class="dropdown-item" id="wall-file-upload-sub" href="#" ><i class="fa fa-paperclip"></i>&nbsp;{{$attach}}</a>
+						{{/if}}
+						{{if $embedPhotos}}
+						<a class="dropdown-item" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud jot-icons"></i>&nbsp;{{$embedPhotos}}</a>
+						{{/if}}
+					</div>
 					{{if $weblink}}
 					<button id="profile-link-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$weblink}}" ondragenter="linkdropper(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);"  onclick="jotGetLink(); return false;">
 						<i id="profile-link" class="fa fa-link jot-icons"></i>

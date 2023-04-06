@@ -1098,7 +1098,7 @@ function z_status_editor($x, $popup = false)
         $weblink = false;
     }
 
-    $embedPhotos = t('Embed (existing) photo from your photo albums');
+    $embedPhotos = t('Embed file from personal cloud');
     $embedFiles = t('Attach File');
     $insertFile = t('Insert File');
     $fromDevice = t('from device');
