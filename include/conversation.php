@@ -1099,7 +1099,7 @@ function z_status_editor($x, $popup = false)
     }
 
     $embedPhotos = t('Attach file from your personal cloud');
-    $embedFiles = t('Attach File');
+    $embedFiles = t('Attach/Embed file');
     $insertFile = t('Insert File');
     $fromDevice = t('from device');
     $fromCloud = t('from personal cloud');

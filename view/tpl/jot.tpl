@@ -125,7 +125,7 @@
 				{{if $visitor}}
 				&nbsp;
 				<div class="btn-group mr-2 ">
-					<button type="button" id="attach-source" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+					<button type="button" id="attach-source" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="{{$embedFiles}}">
 						<i id="attach-source-icon" class="fa fa-paperclip jot-icons"></i>
 					</button>
 					<div class="dropdown-menu">
