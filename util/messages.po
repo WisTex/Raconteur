@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 23.04.07\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-06 15:17-0700\n"
+"POT-Creation-Date: 2023-04-06 15:23-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11401,7 +11401,7 @@ msgid "Clear your location"
 msgstr ""
 
 #: include/conversation.php:1101
-msgid "Embed file from personal cloud"
+msgid "Attach file from your personal cloud"
 msgstr ""
 
 #: include/conversation.php:1102
@@ -11485,7 +11485,7 @@ msgid "Text styles"
 msgstr ""
 
 #: include/conversation.php:1285
-msgid "Attach/Upload file"
+msgid "Attach file from your device"
 msgstr ""
 
 #: include/conversation.php:1287
