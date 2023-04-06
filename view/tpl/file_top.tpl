@@ -1,16 +1,16 @@
-<div style="width:8rem;height:10rem;margin:5px;float:left;padding:5px;overflow:hidden;">
-<a href="{{$photo.link}}" id="photo-top-photo-link-{{$photo.id}}" title="{{$photo.title}}">
+<div class="cloud-icon tiles cloud-icon-modal" >
+	<a href="{{$photo.link}}" id="photo-top-photo-link-{{$photo.id}}" title="{{$photo.title}}">
 	{{if $photo.src}}
-
-	<img style="width:8rem;max-width:8rem;max-height:8rem;" src="{{$photo.src}}" alt="{{if $photo.album.name}}{{$photo.album.name}}{{elseif $photo.desc}}{{$photo.desc}}{{elseif $photo.alt}}{{$photo.alt}}{{else}}{{$photo.unknown}}{{/if}}" title="{{$photo.title}}" id="photo-top-photo-{{$photo.id}}" />
-
+	<img src="{{$photo.src}}" alt="{{if $photo.album.name}}{{$photo.album.name}}{{elseif $photo.desc}}{{$photo.desc}}{{elseif $photo.alt}}{{$photo.alt}}{{else}}{{$photo.unknown}}{{/if}}" title="{{$photo.title}}" id="photo-top-photo-{{$photo.id}}" />
 	{{else}}
-	<div style="width:8rem;height:8rem;text-align:center;">
-	<i class="fa fa-fw {{$photo.icon}}" style="font-size:5rem;margin-top:2rem;"></i>
+	<div class="cloud-icon-container" id="photo-top-photo-link-{{$photo.id}}">
+	<i id="photo-top-photo-{{$photo.id}}" class="fa fa-fw {{$photo.icon}}" ></i>
 	</div>
 	{{/if}}
-	<div>
-	{{$photo.filename}}
+
+	</a>
+
+	<div class="cloud-title">
+		<a href="{{$photo.link}}" title="{{$photo.filename}}">{{$photo.filename}}</a>
 	</div>
-</a>
 </div>

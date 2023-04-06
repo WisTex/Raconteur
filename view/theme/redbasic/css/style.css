@@ -1899,6 +1899,16 @@ dl.bb-dl > dd > li {
 	margin: 5px;
 }
 
+.cloud-modal-container {
+	width: 100px;
+	height: 110px;
+	margin: 5px;
+	display: flex;
+}
+.modal-overflow {
+	overflow: auto;
+}
+
 .cloud-icon-container {
 	width: 64px;
 	height: 64px;
