@@ -1098,7 +1098,7 @@ function z_status_editor($x, $popup = false)
         $weblink = false;
     }
 
-    $embedPhotos = t('Embed file from personal cloud');
+    $embedPhotos = t('Attach file from your personal cloud');
     $embedFiles = t('Attach File');
     $insertFile = t('Insert File');
     $fromDevice = t('from device');
@@ -1282,7 +1282,7 @@ function z_status_editor($x, $popup = false)
         '$underline' => t('Underline'),
         '$quote' => t('Quote'),
         '$code' => t('Code'),
-        '$attach' => t('Attach/Upload file'),
+        '$attach' => t('Attach file from your device'),
         '$weblink' => $weblink,
         '$linkurl' => t('Please enter a link location (URL)'),
         '$hidden_mentions' => ((x($x, 'hidden_mentions')) ? $x['hidden_mentions'] : ''),
