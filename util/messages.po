@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 23.04.07\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-06 15:23-0700\n"
+"POT-Creation-Date: 2023-04-06 15:31-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11405,7 +11405,7 @@ msgid "Attach file from your personal cloud"
 msgstr ""
 
 #: include/conversation.php:1102
-msgid "Attach File"
+msgid "Attach/Embed file"
 msgstr ""
 
 #: include/conversation.php:1103
