@@ -1909,6 +1909,11 @@ dl.bb-dl > dd > li {
 	overflow: auto;
 }
 
+#attach-source {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
 .cloud-icon-container {
 	width: 64px;
 	height: 64px;
