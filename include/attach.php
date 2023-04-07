@@ -14,6 +14,7 @@ use Code\Daemon\Run;
 use Code\Lib\Channel;
 use Code\Lib\ServiceClass;
 use Code\Extend\Hook;
+use Code\Render\Theme;
 use Code\Storage\Stdio;
 
 require_once('include/permissions.php');
@@ -1168,6 +1169,241 @@ function z_readdir($channel_id, $observer_hash, $pathname, $parent_hash = '')
 
     return $ret;
 }
+
+/**
+ * @brief Returns a list with all folders observer is allowed to see.
+ *
+ * Returns an associative array with all folders where observer has permissions.
+ *
+ * @param array $channel
+ * @param array $observer
+ * @param array $sort_key (optional) default display_path
+ * @param array $direction (optional) default asc
+ *
+ * @return bool|array false if no view_storage permission or an array
+ *   * \e boolean \b success
+ *   * \e array \b albums
+ */
+function attach_dirlist($channel, $observer, $sort_key = 'display_path', $direction = 'asc')
+{
+
+    $channel_id = $channel['channel_id'];
+    $observer_xchan = (($observer) ? $observer['xchan_hash'] : '');
+
+    if (!perm_is_allowed($channel_id, $observer_xchan, 'view_storage')) {
+        return false;
+    }
+
+    $sql_extra = permissions_sql($channel_id, $observer_xchan);
+
+    $sort_key = dbesc($sort_key);
+    $direction = dbesc($direction);
+
+    $r = q(
+        "select display_path, hash from attach where is_dir = 1 and uid = %d $sql_extra order by $sort_key $direction",
+        intval($channel_id)
+    );
+
+    // add a 'root directory' to the results
+
+    array_unshift($r, ['display_path' => '', 'hash' => '']);
+    $str = ids_to_querystr($r, 'hash', true);
+
+    $folders = [];
+
+    if ($str) {
+        $x = q(
+            "select count( distinct hash ) as total, folder from attach where uid = %d and folder in ( $str ) $sql_extra group by folder ",
+            intval($channel_id)
+        );
+        if ($x) {
+            foreach ($r as $rv) {
+                foreach ($x as $xv) {
+                    if ($xv['folder'] === $rv['hash']) {
+                        if ($xv['total'] != 0 && attach_can_view_folder($channel_id, $observer_xchan, $xv['folder'])) {
+                            $folders[] = ['path' => $rv['display_path'], 'folder' => $xv['folder'],
+                                'location' => 'cloud/' . $channel['channel_address'] . '/' . $rv['display_path'],
+                                'total' => $xv['total']];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // add various encodings to the array, so we can just loop through and pick them out in a template
+
+    $ret = ['success' => false];
+
+    if ($folders) {
+        $ret['success'] = true;
+        $ret['folders'] = [];
+        foreach ($folders as $folder) {
+            $entry = [
+                'text' => (($folder['path']) ?: '/'),
+                'shorttext' => (($folder['path']) ? ellipsify($folder['path'], 28) : '/'),
+                'jstext' => (($folder['path']) ? addslashes($folder['path']) : '/'),
+                'total' => $folder['total'],
+                'url' => z_root() . '/' . $folder['location'],
+                'urlencode' => urlencode($folder['path']),
+                'bin2hex' => $folder['folder']
+            ];
+            $ret['folders'][] = $entry;
+        }
+    }
+
+    App::$data['folders'] = $ret;
+
+    return $ret;
+}
+
+/**
+ * Copied from include/widgets.php::widget_album() with a modification to get the profile_uid from
+ * the input array as in widget_item()
+ *
+ *
+ * @param array $args
+ * @return string with HTML
+ */
+
+function embedfolder_widget($args)
+{
+
+    $channel_id = 0;
+    if (array_key_exists('channel_id', $args)) {
+        $channel_id = $args['channel_id'];
+        $channel = Channel::from_id($channel_id);
+    }
+
+    if (!$channel_id) {
+        return '';
+    }
+
+    $owner_uid = $channel_id;
+    require_once('include/security.php');
+    $sql_extra = permissions_sql($channel_id);
+
+    if (!perm_is_allowed($channel_id, get_observer_hash(), 'view_storage')) {
+        return '';
+    }
+
+    if ($args['album']) {
+        $album = (($args['album'] === '/') ? '' : $args['album']);
+    }
+
+    if ($args['title']) {
+        $title = $args['title'];
+    }
+
+    /**
+     * This may return incorrect permissions if you have multiple directories of the same name.
+     * It is a limitation of the photo table using a name for a photo album instead of a folder hash
+     */
+    if ($album) {
+        $x = q(
+            "select hash from attach where display_path= '%s' and uid = %d limit 1",
+            dbesc($album),
+            intval($owner_uid)
+        );
+        if ($x) {
+            $y = attach_can_view_folder($owner_uid, get_observer_hash(), $x[0]['hash']);
+            if (!$y) {
+                return '';
+            }
+        }
+    }
+
+    $preview_style = intval(get_config('system','thumbnail_security',0));
+
+    $r = q(
+        "SELECT * from attach where uid = %d AND folder = '%s' and is_dir = 0
+            $sql_extra
+			ORDER BY filename ASC",
+        intval($owner_uid),
+        dbesc($x[0]['hash'])
+    );
+
+    if ($r) {
+        for ($x = 0; $x < count($r); $x ++) {
+            $photo_icon = '';
+
+            $attach = q("select * from attach where hash = '%s' and uid = %d limit 1",
+                dbesc($r[$x]['hash']),
+                intval($owner_uid)
+            );
+
+            if ($attach) {
+                $attach  = array_shift($attach);
+                if (file_exists(dbunescbin($attach['content']) . '.thumb')) {
+                    $photo_icon = 'data:image/jpeg;base64,' . base64_encode(file_get_contents(dbunescbin($attach['content']) . '.thumb'));
+                }
+            }
+
+            if (strpos($attach['filetype'],'image/') === 0 && $attach['hash']) {
+                $p = q("select * from photo where resource_id = '%s' and imgscale in ( %d, %d ) order by imgscale asc limit 1",
+                    dbesc($attach['hash']),
+                    intval(PHOTO_RES_320),
+                    intval(PHOTO_RES_PROFILE_80)
+                );
+                if ($p) {
+                    $photo_icon = 'photo/' . $p[0]['resource_id'] . '-' . $p[0]['imgscale'];
+                }
+                if ($type === 'image/svg+xml' && $preview_style > 0) {
+                    $photo_icon = $fullPath;
+                }
+            }
+
+            $g = [ 'resource_id' => $attach['hash'], 'thumbnail' => $photo_icon, 'security' => $preview_style ];
+            Hook::call('file_thumbnail', $g);
+            $r[$x]['photo_icon'] = $g['thumbnail'];
+            $r[$x]['default_icon'] = getIconFromType($attach['filetype']);
+            $r[$x]['alt_text'] = $p[0]['description'] ?: $r[$x]['filename'];
+        }
+    }
+
+    $photos = [];
+    if ($r) {
+        foreach ($r as $rr) {
+
+            $filetype = $rr['filetype'];
+
+            $imgalt_e = $rr['alt_text'];
+
+            $imagelink = z_root() . '/embedphotos/filelink/' . $rr['hash'];
+
+            $photos[] = [
+                'id' => $rr['id'],
+                'link' => $imagelink,
+                'filename' => $rr['filename'],
+                'title' => t('Select'),
+                'src' => $rr['photo_icon'],
+                'icon' => $rr['default_icon'],
+                'alt' => $imgalt_e,
+                'ext' => $filetype,
+                'hash' => $rr['resource_id'],
+                'unknown' => t('Unknown')
+            ];
+        }
+    }
+
+    $o = replace_macros(Theme::get_template('file_album.tpl'), [
+        '$photos' => $photos,
+        '$files_path' => $rr['display_name'],
+        '$album' => (($title) ? $title : $album),
+        '$album_id' => rand(),
+        '$album_edit' => [t('Edit Album'), false],
+        '$can_post' => false,
+        '$upload' => [t('Upload'), z_root() . '/photos/' . $channel['channel_address'] . '/upload/' . bin2hex($album)],
+        '$order' => false,
+        '$upload_form' => false,
+        '$no_fullscreen_btn' => true
+    ]);
+
+    return $o;
+}
+
+
+
 
 /**
  * @brief Create directory.

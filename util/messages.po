@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.04.02\n"
+"Project-Id-Version: 23.04.07\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-01 23:58-0700\n"
+"POT-Creation-Date: 2023-04-06 15:31-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -564,10 +564,10 @@ msgstr ""
 
 #: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2263
 #: Code/Module/Cdav.php:878 Code/Module/Cdav.php:879 Code/Module/Cdav.php:885
-#: Code/Module/Embedphotos.php:223 Code/Module/Photos.php:854
+#: Code/Module/Embedphotos.php:323 Code/Module/Photos.php:854
 #: Code/Module/Photos.php:1322 Code/Widget/Album.php:100
 #: Code/Widget/Portfolio.php:110 Code/Storage/Browser.php:182
-#: include/conversation.php:962
+#: include/attach.php:1384 include/conversation.php:962
 msgid "Unknown"
 msgstr ""
 
@@ -1184,7 +1184,8 @@ msgstr ""
 msgid "Admin Delete"
 msgstr ""
 
-#: Code/Lib/ThreadItem.php:194 include/conversation.php:497
+#: Code/Lib/ThreadItem.php:194 include/attach.php:1378
+#: include/conversation.php:497
 msgid "Select"
 msgstr ""
 
@@ -1591,10 +1592,10 @@ msgstr ""
 #: Code/Module/Vote.php:23 Code/Module/Viewsrc.php:24 Code/Module/Thing.php:317
 #: Code/Module/Thing.php:338 Code/Module/Thing.php:380
 #: Code/Module/Suggestions.php:35 Code/Module/Webpages.php:143
-#: Code/Module/Sources.php:92 Code/Web/WebServer.php:67 include/attach.php:160
-#: include/attach.php:209 include/attach.php:287 include/attach.php:414
-#: include/attach.php:429 include/attach.php:436 include/attach.php:515
-#: include/attach.php:1131 include/attach.php:1208 include/attach.php:1379
+#: Code/Module/Sources.php:92 Code/Web/WebServer.php:67 include/attach.php:161
+#: include/attach.php:210 include/attach.php:288 include/attach.php:415
+#: include/attach.php:430 include/attach.php:437 include/attach.php:516
+#: include/attach.php:1132 include/attach.php:1444 include/attach.php:1615
 #: include/photos.php:42
 msgid "Permission denied."
 msgstr ""
@@ -5900,11 +5901,11 @@ msgstr ""
 msgid "Change Cover Photo"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:420 Code/Module/Embedphotos.php:234
+#: Code/Module/Cover_photo.php:420 Code/Module/Embedphotos.php:334
 #: Code/Module/Photos.php:745 Code/Module/Profile_photo.php:511
 #: Code/Widget/Album.php:111 Code/Widget/Portfolio.php:124
 #: Code/Widget/Cdav.php:157 Code/Widget/Cdav.php:191
-#: Code/Storage/Browser.php:422
+#: Code/Storage/Browser.php:422 include/attach.php:1396
 msgid "Upload"
 msgstr ""
 
@@ -5920,12 +5921,10 @@ msgid "OK"
 msgstr ""
 
 #: Code/Module/Cover_photo.php:426 Code/Module/Profile_photo.php:519
-#: include/conversation.php:1154
 msgid "Choose images to embed"
 msgstr ""
 
 #: Code/Module/Cover_photo.php:427 Code/Module/Profile_photo.php:520
-#: include/conversation.php:1155
 msgid "Choose an album"
 msgstr ""
 
@@ -5934,17 +5933,14 @@ msgid "Choose a different album"
 msgstr ""
 
 #: Code/Module/Cover_photo.php:429 Code/Module/Profile_photo.php:522
-#: include/conversation.php:1157
 msgid "Error getting album list"
 msgstr ""
 
 #: Code/Module/Cover_photo.php:430 Code/Module/Profile_photo.php:523
-#: include/conversation.php:1158
 msgid "Error getting photo link"
 msgstr ""
 
 #: Code/Module/Cover_photo.php:431 Code/Module/Profile_photo.php:524
-#: include/conversation.php:1159
 msgid "Error getting album"
 msgstr ""
 
@@ -5988,8 +5984,8 @@ msgid "Event not found."
 msgstr ""
 
 #: Code/Module/Calendar.php:250 Code/Module/Events.php:297
-#: Code/Module/Like.php:178 Code/Module/Tagger.php:89
-#: include/conversation.php:62 include/event.php:1338 include/misc.php:2386
+#: Code/Module/Like.php:178 Code/Module/Tagger.php:89 include/event.php:1338
+#: include/conversation.php:62 include/misc.php:2386
 msgid "event"
 msgstr ""
 
@@ -6128,19 +6124,20 @@ msgstr ""
 msgid "Validation token"
 msgstr ""
 
-#: Code/Module/Embedphotos.php:107 include/misc.php:1809 include/bbcode.php:258
+#: Code/Module/Embedphotos.php:117 include/misc.php:1809 include/bbcode.php:258
 #: include/bbcode.php:1173 include/bbcode.php:2122 include/bbcode.php:2125
 msgid "Image/photo"
 msgstr ""
 
-#: Code/Module/Embedphotos.php:217 Code/Module/Photos.php:848
+#: Code/Module/Embedphotos.php:317 Code/Module/Photos.php:848
 #: Code/Module/Photos.php:1395 Code/Widget/Album.php:94
 #: Code/Widget/Portfolio.php:102
 msgid "View Photo"
 msgstr ""
 
-#: Code/Module/Embedphotos.php:232 Code/Module/Photos.php:879
+#: Code/Module/Embedphotos.php:332 Code/Module/Photos.php:879
 #: Code/Widget/Album.php:109 Code/Widget/Portfolio.php:122
+#: include/attach.php:1394
 msgid "Edit Album"
 msgstr ""
 
@@ -11190,6 +11187,112 @@ msgstr ""
 msgid "Login failed."
 msgstr ""
 
+#: include/event.php:37 include/event.php:123
+msgid "l F d, Y \\@ g:i A"
+msgstr ""
+
+#: include/event.php:45 include/event.php:129
+msgid "Starts:"
+msgstr ""
+
+#: include/event.php:63 include/event.php:133
+msgid "Finishes:"
+msgstr ""
+
+#: include/event.php:1190
+msgid "This event has been added to your calendar."
+msgstr ""
+
+#: include/event.php:1421
+msgid "Not specified"
+msgstr ""
+
+#: include/event.php:1422
+msgid "Needs Action"
+msgstr ""
+
+#: include/event.php:1423
+msgid "Completed"
+msgstr ""
+
+#: include/event.php:1424
+msgid "In Process"
+msgstr ""
+
+#: include/event.php:1425
+msgid "Cancelled"
+msgstr ""
+
+#: include/api_auth.php:162
+msgid "This API method requires authentication."
+msgstr ""
+
+#: include/attach.php:283 include/attach.php:410
+msgid "Item was not found."
+msgstr ""
+
+#: include/attach.php:301
+msgid "Unknown error."
+msgstr ""
+
+#: include/attach.php:605
+msgid "No source file."
+msgstr ""
+
+#: include/attach.php:629
+msgid "Cannot locate file to replace"
+msgstr ""
+
+#: include/attach.php:650
+msgid "Cannot locate file to revise/update"
+msgstr ""
+
+#: include/attach.php:813
+#, php-format
+msgid "File exceeds size limit of %d"
+msgstr ""
+
+#: include/attach.php:836
+#, php-format
+msgid "You have reached your limit of %1$.0f Mbytes attachment storage."
+msgstr ""
+
+#: include/attach.php:1038
+msgid "File upload failed. Possible system limit or action terminated."
+msgstr ""
+
+#: include/attach.php:1069
+msgid "Stored file could not be verified. Upload failed."
+msgstr ""
+
+#: include/attach.php:1147 include/attach.php:1164
+msgid "Path not available."
+msgstr ""
+
+#: include/attach.php:1449 include/attach.php:1620
+msgid "Empty pathname"
+msgstr ""
+
+#: include/attach.php:1477
+msgid "duplicate filename or path"
+msgstr ""
+
+#: include/attach.php:1502
+msgid "Path not found."
+msgstr ""
+
+#: include/attach.php:1573
+msgid "mkdir failed."
+msgstr ""
+
+#: include/attach.php:1576
+msgid "database storage failed."
+msgstr ""
+
+#: include/attach.php:1626
+msgid "Empty path"
+msgstr ""
+
 #: include/conversation.php:110
 #, php-format
 msgid "%1$s repeated %2$s's %3$s"
@@ -11298,11 +11401,11 @@ msgid "Clear your location"
 msgstr ""
 
 #: include/conversation.php:1101
-msgid "Embed (existing) photo from your photo albums"
+msgid "Attach file from your personal cloud"
 msgstr ""
 
 #: include/conversation.php:1102
-msgid "Attach File"
+msgid "Attach/Embed file"
 msgstr ""
 
 #: include/conversation.php:1103
@@ -11329,8 +11432,28 @@ msgstr ""
 msgid "(Enter a dot . to use your current device coordinates.)"
 msgstr ""
 
+#: include/conversation.php:1154
+msgid "Choose files to embed"
+msgstr ""
+
+#: include/conversation.php:1155
+msgid "Choose a folder"
+msgstr ""
+
 #: include/conversation.php:1156
-msgid "Choose a different album..."
+msgid "Choose a different folder..."
+msgstr ""
+
+#: include/conversation.php:1157
+msgid "Error getting folder list"
+msgstr ""
+
+#: include/conversation.php:1158
+msgid "Error getting file link"
+msgstr ""
+
+#: include/conversation.php:1159
+msgid "Error getting folder"
 msgstr ""
 
 #: include/conversation.php:1217
@@ -11362,7 +11485,7 @@ msgid "Text styles"
 msgstr ""
 
 #: include/conversation.php:1285
-msgid "Attach/Upload file"
+msgid "Attach file from your device"
 msgstr ""
 
 #: include/conversation.php:1287
@@ -11518,112 +11641,6 @@ msgid "Abstain"
 msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
-
-#: include/event.php:37 include/event.php:123
-msgid "l F d, Y \\@ g:i A"
-msgstr ""
-
-#: include/event.php:45 include/event.php:129
-msgid "Starts:"
-msgstr ""
-
-#: include/event.php:63 include/event.php:133
-msgid "Finishes:"
-msgstr ""
-
-#: include/event.php:1190
-msgid "This event has been added to your calendar."
-msgstr ""
-
-#: include/event.php:1421
-msgid "Not specified"
-msgstr ""
-
-#: include/event.php:1422
-msgid "Needs Action"
-msgstr ""
-
-#: include/event.php:1423
-msgid "Completed"
-msgstr ""
-
-#: include/event.php:1424
-msgid "In Process"
-msgstr ""
-
-#: include/event.php:1425
-msgid "Cancelled"
-msgstr ""
-
-#: include/api_auth.php:162
-msgid "This API method requires authentication."
-msgstr ""
-
-#: include/attach.php:282 include/attach.php:409
-msgid "Item was not found."
-msgstr ""
-
-#: include/attach.php:300
-msgid "Unknown error."
-msgstr ""
-
-#: include/attach.php:604
-msgid "No source file."
-msgstr ""
-
-#: include/attach.php:628
-msgid "Cannot locate file to replace"
-msgstr ""
-
-#: include/attach.php:649
-msgid "Cannot locate file to revise/update"
-msgstr ""
-
-#: include/attach.php:812
-#, php-format
-msgid "File exceeds size limit of %d"
-msgstr ""
-
-#: include/attach.php:835
-#, php-format
-msgid "You have reached your limit of %1$.0f Mbytes attachment storage."
-msgstr ""
-
-#: include/attach.php:1037
-msgid "File upload failed. Possible system limit or action terminated."
-msgstr ""
-
-#: include/attach.php:1068
-msgid "Stored file could not be verified. Upload failed."
-msgstr ""
-
-#: include/attach.php:1146 include/attach.php:1163
-msgid "Path not available."
-msgstr ""
-
-#: include/attach.php:1213 include/attach.php:1384
-msgid "Empty pathname"
-msgstr ""
-
-#: include/attach.php:1241
-msgid "duplicate filename or path"
-msgstr ""
-
-#: include/attach.php:1266
-msgid "Path not found."
-msgstr ""
-
-#: include/attach.php:1337
-msgid "mkdir failed."
-msgstr ""
-
-#: include/attach.php:1340
-msgid "database storage failed."
-msgstr ""
-
-#: include/attach.php:1390
-msgid "Empty path"
-msgstr ""
 
 #: include/taxonomy.php:366
 msgid "Popular Tags"

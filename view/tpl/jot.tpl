@@ -125,17 +125,17 @@
 				{{if $visitor}}
 				&nbsp;
 				<div class="btn-group mr-2 ">
-					{{if $writefiles}}
-						<button id="wall-file-upload" class="btn btn-outline-secondary btn-sm" title="{{$attach}}" >
-							<i id="wall-file-upload-icon" class="fa fa-paperclip jot-icons"></i>
-						</button>
-					{{/if}}
-	                {{*if $embedFiles || $writefiles}}
-                    <button id="embed-photo-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$embedFiles}} " onclick="initializeEmbedPhotoDialog();return false;">
-			            <i id="embed-photo" class="fa fa-paperclip jot-icons"></i>
-                    </button>
-					{{/if*}}
-
+					<button type="button" id="attach-source" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="{{$embedFiles}}">
+						<i id="attach-source-icon" class="fa fa-paperclip jot-icons"></i>
+					</button>
+					<div class="dropdown-menu">
+						{{if $writefiles}}
+						<a class="dropdown-item" id="wall-file-upload-sub" href="#" ><i class="fa fa-paperclip"></i>&nbsp;{{$attach}}</a>
+						{{/if}}
+						{{if $embedPhotos}}
+						<a class="dropdown-item" href="#" onclick="initializeEmbedPhotoDialog(); return false;"><i class="fa fa-cloud jot-icons"></i>&nbsp;{{$embedPhotos}}</a>
+						{{/if}}
+					</div>
 					{{if $weblink}}
 					<button id="profile-link-wrapper" class="btn btn-outline-secondary btn-sm " title="{{$weblink}}" ondragenter="linkdropper(event);" ondragover="linkdropper(event);" ondrop="linkdrop(event);"  onclick="jotGetLink(); return false;">
 						<i id="profile-link" class="fa fa-link jot-icons"></i>
@@ -427,38 +427,6 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 {{/if}}
-
-{{* start new embedFileDirModal *}}
-{{if $embedFiles}}
-<div class="modal" id="embedFileDirModal" tabindex="-1" role="dialog" aria-labelledby="embedFileDirModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" id="embedFileDirModalLabel">{{$embedFileDirModalTitle}}</h4><i class="fa fa-cloud jot-icons ms-2 pt-1"></i>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body" id="embedFileDirModalBody" >
-				<!-- testing a bootstrap collapse -->
-
-				<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#myList" aria-expanded="false" aria-controls="myList">
-					Toggle List
-				</button>
-
-				<ul class="collapse" id="myList">
-  					<li>Item 1</li>
-  					<li>Item 2</li>
-  					<li>Item 3</li>
-				</ul>
-
-
-				<!-- end  testing a bootstrap collapse -->
-
-			</div>
-		</div><!-- /.modal-content -->
-	</div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-{{/if}}
-{{* end new embedFileDirModal *}}
 
 {{if $weblink}}
 <div class="modal" id="linkModal" tabindex="-1" role="dialog" aria-labelledby="linkModalLabel" aria-hidden="true">
