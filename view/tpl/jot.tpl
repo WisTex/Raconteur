@@ -25,14 +25,14 @@
 		<input type="hidden" name="source" id="jot-source" value="{{$source}}" />
 		<input type="hidden" name="lat" id="jot-lat" value="{{$lat}}" />
 		<input type="hidden" name="lon" id="jot-lon" value="{{$lon}}" />
-		<input type="hidden" id="jot-postid" name="post_id" value="{{$post_id}}" />
-		<input type="hidden" id="jot-webpage" name="webpage" value="{{$webpage}}" />
+		<input type="hidden" name="post_id" id="jot-postid" value="{{$post_id}}" />
+		<input type="hidden" name="webpage" id="jot-webpage" value="{{$webpage}}" />
 		<input type="hidden" name="preview" id="jot-preview" value="0" />
 		<input type="hidden" name="draft" id="jot-draft" value="0" />
 		<input type="hidden" name="checkin" id="jot-checkin" value="{{$checkin_checked}}" />
 		<input type="hidden" name="checkout" id="jot-checkout" value="{{$checkout_checked}}" />
 		<input type="hidden" name="hidden_mentions" id="jot-hidden-mentions" value="{{$hidden_mentions}}" />
-		<input type="hidden" id="jot-commentstate" name="comments_enabled" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
+		<input type="hidden" name="comments_enabled" id="jot-commentstate" value="{{if $commentstate}}{{$commentstate}}{{else}}1{{/if}}" />
 
 		{{if $webpage}}
 		<div id="jot-pagetitle-wrap" class="jothidden">
