@@ -332,7 +332,7 @@
 			<div class="modal-body form-group" >
 				{{include file="field_checkbox.tpl" field=$comments_allowed}}				
 				{{include file="field_select.tpl" field=$comment_perms}}
-				<div class="date">
+				<div class="date form-group">
 					<label for="commclose-date">{{$commclosedate}}</label>
 					<input type="text" placeholder="yyyy-mm-dd HH:MM" name="start_text" value="{{$comments_closed}}" id="commclose-date" class="form-control" />
 				</div>
