@@ -2571,6 +2571,23 @@ class Channel
         return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root());
     }
 
+
+    public static function keyId($channel)
+    {
+
+        // data validation - if this is wrong, log the call stack so we can find the issue
+
+        if (! is_array($channel)) {
+            btlogger('not a channel array: ' . print_r($channel, true));
+        }
+
+        if ($channel['channel_address'] === App::get_hostname() || intval($channel['channel_system'])) {
+            return z_root() .  '?operation=getkey';
+        }
+
+        return (($channel) ? z_root() . '/channel/' . $channel['channel_address'] : z_root()) . '?operation=getkey';
+    }
+
     public static function is_group($uid)
     {
         $role = get_pconfig($uid, 'system', 'permissions_role');

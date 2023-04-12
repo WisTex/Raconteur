@@ -384,7 +384,7 @@ class Queue
             $headers['Host'] = $m['host'];
             $headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
 
-            $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
+            $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::keyId($channel));
             if (strpos($outq['outq_posturl'], 'http') !== 0) {
                 logger('bad url: ' . $outq['outq_posturl']);
                 self::remove($outq['outq_hash']);
