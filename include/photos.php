@@ -377,7 +377,7 @@ function photo_upload($channel, $observer, $args)
 
     $title = ((isset($args['title']) && $args['title']) ? $args['title'] : $args['filename']);
 
-    $desc = htmlspecialchars($alt_desc);
+    $desc = htmlspecialchars($alt_desc, double_encode: false);
 
     $found_tags = linkify_tags($args['body'], $channel_id);
 
