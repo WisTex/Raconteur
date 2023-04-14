@@ -345,8 +345,10 @@ class Search extends Controller
                 }
             }
         }
-        $items = $filteredItems;
-
+        if ($this->maxtags || $this->mintags) {
+            $items = $filteredItems;
+        }
+    
         if ($format === 'json') {
 
             $chan = Channel::get_system();
