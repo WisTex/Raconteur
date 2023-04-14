@@ -1206,7 +1206,11 @@ function multicode_purify($s)
 
 function bb_mdlink_protect($matches)
 {
-    if ($matches[1] === $matches[3]) {
+    $token = strtok($matches[1],'= ');
+    if (!$token) {
+        $token = $matches[1];
+    }
+    if ($token === $matches[3]) {
         return '[' . $matches[1]  . ']' . html_entity_decode('&#8203;')
             . '(' . $matches[2] . ')[/' . $matches[3] . ']';
     }

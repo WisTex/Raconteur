@@ -50,7 +50,7 @@ function as_return_and_die($obj, $channel)
     $headers['Digest'] = HTTPSig::generate_digest_header($ret);
     $headers['(request-target)'] = strtolower($_SERVER['REQUEST_METHOD']) . ' ' . $_SERVER['REQUEST_URI'];
 
-    $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
+    $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::keyId($channel));
     HTTPSig::set_headers($h);
 
     echo $ret;

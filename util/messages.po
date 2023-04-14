@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.04.07\n"
+"Project-Id-Version: 23.04.14\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-06 15:31-0700\n"
+"POT-Creation-Date: 2023-04-13 22:03-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1536,6 +1536,56 @@ msgstr ""
 msgid "This action is not available under your subscription plan."
 msgstr ""
 
+#: Code/Lib/Activity.php:448
+msgid "Quoted post"
+msgstr ""
+
+#: Code/Lib/Activity.php:2954
+msgid "Activity"
+msgstr ""
+
+#: Code/Lib/Activity.php:2960
+#, php-format
+msgid "Likes %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:2963
+#, php-format
+msgid "Doesn't like %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:2969
+#, php-format
+msgid "Will attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2972
+#, php-format
+msgid "Will not attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2975
+#, php-format
+msgid "May attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2978
+#, php-format
+msgid "May not attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2983 Code/Lib/Share.php:123 Code/Module/Share.php:119
+#: include/items.php:3175
+#, php-format
+msgid "&#x1f501; Repeated %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:3526 include/items.php:3038 include/misc.php:1669
+#: include/misc.php:3155
+#, php-format
+msgid "%1$s (%2$s)"
+msgstr ""
+
 #: Code/Lib/Chatroom.php:28
 msgid "Missing room name"
 msgstr ""
@@ -2040,12 +2090,6 @@ msgid ""
 "language or topic. Replies are sent back to your main channel"
 msgstr ""
 
-#: Code/Lib/Share.php:123 Code/Lib/Activity.php:2983 Code/Module/Share.php:119
-#: include/items.php:3175
-#, php-format
-msgid "&#x1f501; Repeated %1$s's %2$s"
-msgstr ""
-
 #: Code/Lib/Oembed.php:169
 msgid "View PDF"
 msgstr ""
@@ -2064,50 +2108,6 @@ msgstr ""
 
 #: Code/Lib/Oembed.php:429
 msgid "Embedding disabled"
-msgstr ""
-
-#: Code/Lib/Activity.php:448
-msgid "Quoted post"
-msgstr ""
-
-#: Code/Lib/Activity.php:2954
-msgid "Activity"
-msgstr ""
-
-#: Code/Lib/Activity.php:2960
-#, php-format
-msgid "Likes %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:2963
-#, php-format
-msgid "Doesn't like %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:2969
-#, php-format
-msgid "Will attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2972
-#, php-format
-msgid "Will not attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2975
-#, php-format
-msgid "May attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2978
-#, php-format
-msgid "May not attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:3526 include/items.php:3038 include/misc.php:1669
-#: include/misc.php:3155
-#, php-format
-msgid "%1$s (%2$s)"
 msgstr ""
 
 #: Code/Lib/AccessList.php:31
@@ -2465,7 +2465,7 @@ msgid "%1$s wrote the following %2$s %3$s"
 msgstr ""
 
 #: Code/Lib/Markdown.php:220 Code/Module/Tagger.php:93
-#: include/conversation.php:89 include/misc.php:2389 include/bbcode.php:680
+#: include/conversation.php:89 include/bbcode.php:680 include/misc.php:2389
 msgid "post"
 msgstr ""
 
@@ -2942,7 +2942,7 @@ msgstr ""
 #: Code/Module/Admin/Themes.php:79 Code/Module/Admin/Addons.php:265
 #: Code/Module/Display.php:59 Code/Module/Display.php:511
 #: Code/Module/Admin.php:100 Code/Module/Inspect.php:31
-#: Code/Module/Filestorage.php:41 Code/Module/Search.php:492
+#: Code/Module/Filestorage.php:41 Code/Module/Search.php:494
 #: Code/Module/Viewsrc.php:29 Code/Module/Thing.php:110 Code/Module/Dev.php:61
 #: extend/addon/a/flashcards/Mod_Flashcards.php:285
 #: extend/addon/a/flashcards/Mod_Flashcards.php:286
@@ -6124,8 +6124,9 @@ msgstr ""
 msgid "Validation token"
 msgstr ""
 
-#: Code/Module/Embedphotos.php:117 include/misc.php:1809 include/bbcode.php:258
-#: include/bbcode.php:1173 include/bbcode.php:2122 include/bbcode.php:2125
+#: Code/Module/Embedphotos.php:117 include/bbcode.php:258
+#: include/bbcode.php:1173 include/bbcode.php:2126 include/bbcode.php:2129
+#: include/misc.php:1809
 msgid "Image/photo"
 msgstr ""
 
@@ -7310,12 +7311,12 @@ msgstr ""
 msgid "No entries (some entries may be hidden)."
 msgstr ""
 
-#: Code/Module/Search.php:371
+#: Code/Module/Search.php:373
 #, php-format
 msgid "Items tagged with: %s"
 msgstr ""
 
-#: Code/Module/Search.php:374
+#: Code/Module/Search.php:376
 #, php-format
 msgid "Search results for: %s"
 msgstr ""
@@ -11155,18 +11156,6 @@ msgstr ""
 msgid "Cannot locate DNS info for database server '%s'"
 msgstr ""
 
-#: include/network.php:1115
-msgid "RSS/Atom"
-msgstr ""
-
-#: include/network.php:1117
-msgid "Diaspora"
-msgstr ""
-
-#: include/network.php:1119
-msgid "Zot6"
-msgstr ""
-
 #: include/auth.php:212
 msgid "Delegation session ended."
 msgstr ""
@@ -11185,46 +11174,6 @@ msgstr ""
 
 #: include/auth.php:337
 msgid "Login failed."
-msgstr ""
-
-#: include/event.php:37 include/event.php:123
-msgid "l F d, Y \\@ g:i A"
-msgstr ""
-
-#: include/event.php:45 include/event.php:129
-msgid "Starts:"
-msgstr ""
-
-#: include/event.php:63 include/event.php:133
-msgid "Finishes:"
-msgstr ""
-
-#: include/event.php:1190
-msgid "This event has been added to your calendar."
-msgstr ""
-
-#: include/event.php:1421
-msgid "Not specified"
-msgstr ""
-
-#: include/event.php:1422
-msgid "Needs Action"
-msgstr ""
-
-#: include/event.php:1423
-msgid "Completed"
-msgstr ""
-
-#: include/event.php:1424
-msgid "In Process"
-msgstr ""
-
-#: include/event.php:1425
-msgid "Cancelled"
-msgstr ""
-
-#: include/api_auth.php:162
-msgid "This API method requires authentication."
 msgstr ""
 
 #: include/attach.php:283 include/attach.php:410
@@ -11291,6 +11240,46 @@ msgstr ""
 
 #: include/attach.php:1626
 msgid "Empty path"
+msgstr ""
+
+#: include/event.php:37 include/event.php:123
+msgid "l F d, Y \\@ g:i A"
+msgstr ""
+
+#: include/event.php:45 include/event.php:129
+msgid "Starts:"
+msgstr ""
+
+#: include/event.php:63 include/event.php:133
+msgid "Finishes:"
+msgstr ""
+
+#: include/event.php:1190
+msgid "This event has been added to your calendar."
+msgstr ""
+
+#: include/event.php:1421
+msgid "Not specified"
+msgstr ""
+
+#: include/event.php:1422
+msgid "Needs Action"
+msgstr ""
+
+#: include/event.php:1423
+msgid "Completed"
+msgstr ""
+
+#: include/event.php:1424
+msgid "In Process"
+msgstr ""
+
+#: include/event.php:1425
+msgid "Cancelled"
+msgstr ""
+
+#: include/api_auth.php:162
+msgid "This API method requires authentication."
 msgstr ""
 
 #: include/conversation.php:110
@@ -11642,6 +11631,63 @@ msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
 
+#: include/bbcode.php:316
+msgid "Encrypted content"
+msgstr ""
+
+#: include/bbcode.php:358
+#, php-format
+msgid "(Embedded app '%s' could not be displayed)."
+msgstr ""
+
+#: include/bbcode.php:402
+#, php-format
+msgid "Install %1$s element %2$s"
+msgstr ""
+
+#: include/bbcode.php:405
+#, php-format
+msgid ""
+"This post contains an installable %s element, however you lack permissions "
+"to install it on this site."
+msgstr ""
+
+#: include/bbcode.php:676
+msgid "card"
+msgstr ""
+
+#: include/bbcode.php:678
+msgid "article"
+msgstr ""
+
+#: include/bbcode.php:793 include/bbcode.php:802
+msgid "Click to open/close"
+msgstr ""
+
+#: include/bbcode.php:802
+msgid "spoiler"
+msgstr ""
+
+#: include/bbcode.php:1500 include/bbcode.php:1779
+msgid "Different viewers will see this text differently"
+msgstr ""
+
+#: include/bbcode.php:2105
+msgid "$1 wrote:"
+msgstr ""
+
+#: include/network.php:1115
+msgid "RSS/Atom"
+msgstr ""
+
+#: include/network.php:1117
+msgid "Diaspora"
+msgstr ""
+
+#: include/network.php:1119
+msgid "Zot6"
+msgstr ""
+
 #: include/taxonomy.php:366
 msgid "Popular Tags"
 msgstr ""
@@ -11699,39 +11745,6 @@ msgstr ""
 
 #: include/language.php:377
 msgid "Select an alternate language"
-msgstr ""
-
-#: include/photos.php:140
-#, php-format
-msgid "Image exceeds website size limit of %lu bytes"
-msgstr ""
-
-#: include/photos.php:151
-msgid "Image file is empty."
-msgstr ""
-
-#: include/photos.php:344
-msgid "Photo storage failed."
-msgstr ""
-
-#: include/photos.php:393
-msgid "a new photo"
-msgstr ""
-
-#: include/photos.php:397
-#, php-format
-msgctxt "photo_upload"
-msgid "%1$s posted %2$s to %3$s"
-msgstr ""
-
-#: include/photos.php:400
-#, php-format
-msgctxt "photo_upload"
-msgid "%1$s posted %2$s"
-msgstr ""
-
-#: include/photos.php:750
-msgid "Upload New Photos"
 msgstr ""
 
 #: include/misc.php:533
@@ -12173,49 +12186,37 @@ msgstr ""
 msgid "Cloned channel not found. Import failed."
 msgstr ""
 
-#: include/bbcode.php:316
-msgid "Encrypted content"
-msgstr ""
-
-#: include/bbcode.php:358
+#: include/photos.php:140
 #, php-format
-msgid "(Embedded app '%s' could not be displayed)."
+msgid "Image exceeds website size limit of %lu bytes"
 msgstr ""
 
-#: include/bbcode.php:402
+#: include/photos.php:151
+msgid "Image file is empty."
+msgstr ""
+
+#: include/photos.php:344
+msgid "Photo storage failed."
+msgstr ""
+
+#: include/photos.php:393
+msgid "a new photo"
+msgstr ""
+
+#: include/photos.php:397
 #, php-format
-msgid "Install %1$s element %2$s"
+msgctxt "photo_upload"
+msgid "%1$s posted %2$s to %3$s"
 msgstr ""
 
-#: include/bbcode.php:405
+#: include/photos.php:400
 #, php-format
-msgid ""
-"This post contains an installable %s element, however you lack permissions "
-"to install it on this site."
+msgctxt "photo_upload"
+msgid "%1$s posted %2$s"
 msgstr ""
 
-#: include/bbcode.php:676
-msgid "card"
-msgstr ""
-
-#: include/bbcode.php:678
-msgid "article"
-msgstr ""
-
-#: include/bbcode.php:793 include/bbcode.php:802
-msgid "Click to open/close"
-msgstr ""
-
-#: include/bbcode.php:802
-msgid "spoiler"
-msgstr ""
-
-#: include/bbcode.php:1496 include/bbcode.php:1775
-msgid "Different viewers will see this text differently"
-msgstr ""
-
-#: include/bbcode.php:2101
-msgid "$1 wrote:"
+#: include/photos.php:750
+msgid "Upload New Photos"
 msgstr ""
 
 #: view/theme/redbasic/php/config.php:23 view/theme/redbasic/php/config.php:25

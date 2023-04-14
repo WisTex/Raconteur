@@ -140,7 +140,7 @@ class Activity
         if (isset($token)) {
             $headers['Authorization'] = 'Bearer ' . $token;
         }
-        $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel));
+        $h = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::keyId($channel));
         $x = Url::get($url, ['headers' => $h]);
 
         if ($x['success']) {
