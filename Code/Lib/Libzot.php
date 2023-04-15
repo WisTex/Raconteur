@@ -1771,6 +1771,7 @@ class Libzot
             }
 
             $friendofriend = false;
+            $isMail = (bool) (intval($arr['item_private']) === 2);
 
             if ((!$tag_delivery) && (!$local_public)) {
                 $allowed = (perm_is_allowed($channel['channel_id'], $sender, $perm));
@@ -1833,7 +1834,7 @@ class Libzot
                     $friendofriend = true;
                 }
 
-                if (intval($arr['item_private']) === 2) {
+                if ($isMail) {
                     if (!perm_is_allowed($channel['channel_id'], $sender, 'post_mail')) {
                         $allowed = false;
                     }
