@@ -1144,7 +1144,8 @@ class Item extends Controller
                     else {
                         $r = attach_by_hash_nodata($hash, $observer['xchan_hash'], $rev);
                         if ($r['success']) {
-                            $href = z_root() . '/attach/' . $r['data']['hash'];
+                            $ch = Channel::from_id($r['data']['uid']);
+                            $href = z_root() . (($ch)  ? '/cloud/' . $ch['channel_address'] . '/' . $r['data']['display_path'] : '/attach/' . $r['data']['hash']);
                             if ($r['data']['is_photo']) {
                                 $href = z_root() . '/photo/' . $r['data']['hash'] . '-1.' . photoExtensionFromType($r['data']['filetype']);
                                 if ($token) {
