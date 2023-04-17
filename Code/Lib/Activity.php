@@ -4301,7 +4301,7 @@ class Activity
         return false;
     }
 
-    // check for the existence of existing media link in body
+    // check for the existence of existing share in body
 
     public static function share_not_in_body($body)
     {
