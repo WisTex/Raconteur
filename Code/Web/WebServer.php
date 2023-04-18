@@ -3,6 +3,7 @@
 namespace Code\Web;
 
 use App;
+use Code\Lib\Activity;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
 
@@ -181,6 +182,10 @@ class WebServer
          */
 
         if (( App::$module === 'channel' ) && argc() > 1) {
+            $channel = Channel::from_username(argv(1));
+            if ($channel) {
+                $nomadicIds = Activity::nomadic_locations(['author_xchan' => $channel['channel_hash']]);
+            }
             App::$channel_links = [
                 [
                     'rel'  => 'jrd',
@@ -217,10 +222,21 @@ class WebServer
                 ]
             ];
 
+            if (isset($nomadicIds)) {
+                foreach ($nomadicIds as $self) {
+                    if ($self['hubloc_url'] !== z_root()) {
+                        App::$channel_links[] = [
+                            'rel' => 'me',
+                            'href' => $self['hubloc_id_url']
+                        ];
+                    }
+                }
+            }
+
             $x = [ 'channel_address' => argv(1), 'channel_links' => App::$channel_links ];
             Hook::call('channel_links', $x);
             App::$channel_links = $x['channel_links'];
-            header('Link: ' . App::get_channel_links());
+            header('Link: ' . App::get_channel_links_header());
         }
     }
 

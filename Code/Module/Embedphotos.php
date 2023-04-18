@@ -139,6 +139,9 @@ class Embedphotos extends Controller
         }
 
         $r = attach_by_hash($resource,get_observer_hash());
+
+        $url = z_root() . '/cloud/' . $channel['channel_address'] . '/' . $r['data']['display_path'];
+
         if (str_starts_with($r['data']['filetype'], 'video')) {
             for ($n = 0; $n < 15; $n++) {
                 $thumb = Linkinfo::get_video_poster($url);
