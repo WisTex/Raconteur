@@ -648,17 +648,7 @@ class Enotify
 
         $itemlink = z_root() . '/notify/view/' . $notify_id;
         $msg = str_replace('$itemlink', $itemlink, $epreamble);
-
-        // 2023-04-16 - I don't think this is used any more and messes up notifications
-        // containing a comma in the sender name.
-        // Leaving here for reference in case it introduces some other bug.
-        // This is a wretched hack, but we don't want to duplicate all the preamble variations,
-        // and we also don't want to screw up a translation.
-
-        //       if ((App::$language === 'en' || (! App::$language)) && strpos($msg, ', ')) {
-        //           $msg = substr($msg, strpos($msg, ', ') + 1);
-        //       }
-
+        
         $r = q(
             "update notify set msg = '%s' where id = %d and uid = %d",
             dbesc($msg),
