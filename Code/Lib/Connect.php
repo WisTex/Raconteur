@@ -28,7 +28,15 @@ class Connect
         $uid = $channel['channel_id'];
 
         if (strpos($url, '@') === false && strpos($url, '/') === false) {
-            $url = $url . '@' . App::get_hostname();
+            if (str_contains($url,'.') && !str_contains(trim($url), ' ') && checkdnsrr('_apobjid.' . trim($url), 'TXT')) {
+                $dnsRecord = dns_get_record('_apobjid.' . trim($url), DNS_TXT);
+                if (isset($dnsRecord[0]['txt'])) {
+                    $url = $dnsRecord[0]['txt'];
+                }
+            }
+            else {
+                $url = $url . '@' . App::get_hostname();
+            }
         }
 
         $result = ['success' => false, 'message' => ''];
