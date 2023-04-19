@@ -2004,22 +2004,19 @@ function format_poll($item, $s, $opts)
                     } else {
                         $total = 0;
                     }
-                    if ($activated && $commentable) {
-						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-                        $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
-                        $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-                        $output .= '</div>';
+                    $disabled = !($activated && $commentable);
 
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '</small></div>';
-						$output .= EOL;
-                    } else {
-						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-                        $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
-                        $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-                        $output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '</small></div>';
-						$output .= EOL;
-                    }
+                    $output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" ' .
+                        (($disabled) ? ' disabled="disabled" ' : '') . '>&nbsp;&nbsp;<strong>' . $text . '</strong>'
+                        . EOL;
+                    $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
+                    $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' .
+                        (($totalResponses) ?  round($total / $totalResponses * 100) : 0)  .
+                        '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+                    $output .= '</div>';
+                    $output .= '<div class="text-muted"><small>'
+                        . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total)
+                        . '</small></div>' . EOL;
                 }
             }
         }
@@ -2038,23 +2035,15 @@ function format_poll($item, $s, $opts)
                     } else {
                         $total = 0;
                     }
-                    if ($activated && $commentable) {
+                    $disabled = !($activated && $commentable);
+                    $output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" ' .
+                        (($disabled) ? ' disabled="disabled" ' : '') . '>&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+                    $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
+                    $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+                    $output .= '</div>';
+                    $output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+                    $output .= EOL;
 
-						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
-						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
-						$output .= EOL;
-
-                    } else {
-						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
-						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
-						$output .= EOL;
-                    }
                 }
             }
         }
