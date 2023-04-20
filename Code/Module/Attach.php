@@ -14,7 +14,6 @@ class Attach extends Controller
 
     public function init()
     {
-
         if (argc() < 2) {
             notice(t('Item not available.') . EOL);
             return;

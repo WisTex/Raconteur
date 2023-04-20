@@ -103,7 +103,6 @@ class Search extends Controller
                     http_status_exit(403, 'Permission denied.');
                 }
             }
-
         }
 
         if ($this->loading) {
@@ -161,6 +160,12 @@ class Search extends Controller
         }
         if (str_starts_with($search, '@') && $format === '') {
             $search = substr($search, 1);
+            if (str_contains($search, '.') && !str_contains($search,'/') && !str_contains($search,'@') && checkdnsrr('_apobjid.' . trim($search), 'TXT')) {
+                $dnsRecord = dns_get_record('_apobjid.' . trim($search), DNS_TXT);
+                if (isset($dnsRecord[0]['txt'])) {
+                    $search = $dnsRecord[0]['txt'];
+                }
+            }
             goaway(z_root() . '/directory' . '?f=1&navsearch=1&search=' . $search);
         }
         if (str_starts_with($search, '!') && $format === '') {
