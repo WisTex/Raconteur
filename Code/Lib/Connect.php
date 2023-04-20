@@ -28,7 +28,7 @@ class Connect
         $uid = $channel['channel_id'];
 
         if (strpos($url, '@') === false && strpos($url, '/') === false) {
-            if (str_contains($url,'.') && !str_contains(trim($url), ' ') &&  {
+            if (str_contains($url,'.') && !str_contains(trim($url), ' ') && checkdnsrr('_apobjid.' . trim($url), 'TXT'))  {
                 $dnsRecord = dns_get_record('_apobjid.' . trim($url), DNS_TXT);
                 if (isset($dnsRecord[0]['txt'])) {
                     $url = $dnsRecord[0]['txt'];
