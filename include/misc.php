@@ -132,7 +132,7 @@ function z_input_filter($s, $type = 'text/x-multicode')
     if ($type === 'text/x-multicode') {
         return (multicode_purify($s));
     }
-    if (in_array($type, ['text/plain', 'text/bbcode', 'application/x-pdl']) {
+    if (in_array($type, ['text/plain', 'text/bbcode', 'application/x-pdl'])) {
         return escape_tags($s);
     }
     if (App::$is_sys) {
