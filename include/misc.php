@@ -3839,9 +3839,9 @@ function cleanup_bbcode($body)
     $body = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $body);
 
-    $body = preg_replace_callback("/([^\]\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
+    $body = preg_replace_callback("/([^\]\[\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
 
-    $body = preg_replace_callback("/([^\]\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\red_zrl_callback', $body);
+    $body = preg_replace_callback("/([^\]\[\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\red_zrl_callback', $body);
 
 
     $body = preg_replace_callback('/\[\$b64code(.*?)\[\/(code)\]/ism', '\red_unescape_codeblock', $body);
