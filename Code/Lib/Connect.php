@@ -27,7 +27,7 @@ class Connect
 
         $uid = $channel['channel_id'];
 
-        if (strpos($url, '@') === false && strpos($url, '/') === false) {
+        if (!str_contains($url, '@') && !str_contains($url, '/')) {
             if (str_contains($url,'.') && !str_contains(trim($url), ' ') && checkdnsrr('_apobjid.' . trim($url), 'TXT'))  {
                 $dnsRecord = dns_get_record('_apobjid.' . trim($url), DNS_TXT);
                 if (isset($dnsRecord[0]['txt'])) {
@@ -231,7 +231,7 @@ class Connect
 
             // If they are on a non-nomadic network, add them to this location
 
-            if (($singleton) && strpos($abook_instance, z_root()) === false) {
+            if (($singleton) && !str_contains($abook_instance, z_root())) {
                 if ($abook_instance) {
                     $abook_instance .= ',';
                 }
