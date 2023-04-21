@@ -1335,7 +1335,6 @@ function md_bolditalic($content)
     return '<strong><em>' . $content[1] . $content[3] . '</em></strong>';
 }
 
-
 /** @noinspection HtmlUnknownAttribute */
 function md_image($content)
 {
@@ -1676,14 +1675,16 @@ function bbcode($Text, $options = [])
 
     $Text = str_replace("\r\n", "\n", $Text);
 
+
     if ($bbonly) {
         $Text = escape_tags($Text);
     }
 
     // Convert new line chars to html <br> tags
 
-    $Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
+    $Text = str_replace("\n", '<br>', $Text);
     $Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
+
 
     // Check for [code] text
     if (str_contains($Text, '[code]')) {
@@ -2135,9 +2136,13 @@ function bbcode($Text, $options = [])
     // Markdown processing
     
     if (!$bbonly) {
+
         // the bbcode tag 'nomd' will bypass markdown processing for any given text region
         $Text = preg_replace_callback('#\[nomd\](.*?)\[\/nomd\]#ism', 'md_protect', $Text);
 
+        $Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
+
+        $Text = str_replace('<br>', "\n", $Text);
         // Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
         // The preceding character check in bold/italic sequences is so we don't mistake underscore/asterisk in the middle of conversational text as an italic trigger.
 
@@ -2177,14 +2182,17 @@ function bbcode($Text, $options = [])
             $Text = preg_replace('#^(\\\)([*\-+]) #m', '$2', $Text);
         }
         // order lists
-        $Text = preg_replace('#^\d+[\.\)] +(.*?)$#m', '<ol><li>$1</li></ol>', $Text);
+        $Text = preg_replace('#^(\d+[\.\)]) +(.*?)$#m', '<ol><li value="$1">$2</li></ol>', $Text);
 
-        $Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/', "\n", $Text);
+        $Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/', '', $Text);
+
+        $Text = str_replace("\n", '<br>', $Text);
         $Text = bb_code_preunprotect($Text);
+
+
     }
 
     // Replace naked urls
-
     $Text = bb_nakedlinks($Text);
 
     // oembed tag
@@ -2234,7 +2242,7 @@ function bbcode($Text, $options = [])
     // replace escaped links in code= blocks
     $Text = str_replace('%eY9-!', 'http', $Text);
     $Text = bb_code_unprotect($Text);
-
+    $Text = str_replace('<code><br>', '<code>', $Text);
     // fix any escaped ampersands that may have been converted into links
 
     if (str_contains($Text, '&amp;')) {
