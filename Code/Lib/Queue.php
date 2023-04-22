@@ -132,7 +132,7 @@ class Queue
             // entries still exist for it. This fixes an issue where one immediate delivery left everything
             // else for that site undeliverable since all the other entries had been pushed far into the future.
 
-            $forThisUrl = q("select * from outq where outq_posturl = '%s' limit 1",
+            $forThisUrl = q("select * from outq where outq_posturl = '%s' and outq_delivered = 0 limit 1",
                 dbesc($record[0]['outq_posturl'])
             );
 
