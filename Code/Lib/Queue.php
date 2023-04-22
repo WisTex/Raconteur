@@ -132,15 +132,21 @@ class Queue
             // entries still exist for it. This fixes an issue where one immediate delivery left everything
             // else for that site undeliverable since all the other entries had been pushed far into the future.
 
-            q("update outq set outq_scheduled = '%s' where outq_posturl = '%s' limit 1",
-                dbesc(datetime_convert()),
+            $forThisUrl = q("select * from outq where outq_posturl = '%s' limit 1",
                 dbesc($record[0]['outq_posturl'])
             );
+
+            if ($forThisUrl) {
+                q("update outq set outq_scheduled = '%s' where outq_hash = '%s' and outq_delivered = 0 and outq_driver = '%s'",
+                    dbesc(datetime_convert()),
+                    dbesc($forThisUrl[0]['outq_hash']),
+                    dbesc($forThisUrl[0]['outq_driver'])
+                );
+            }
         }
-
+        return;
     }
-
-
+    
     public static function remove_by_posturl($posturl)
     {
         logger('queue: remove queue posturl ' . $posturl, LOGGER_DEBUG);
