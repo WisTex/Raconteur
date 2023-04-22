@@ -137,16 +137,15 @@ class Queue
             );
 
             if ($forThisUrl) {
-                q("update outq set outq_scheduled = '%s' where outq_hash = '%s' and outq_delivered = 0 and outq_driver = '%s'",
+                q("update outq set outq_scheduled = '%s' where outq_hash = '%s' and outq_delivered = 0",
                     dbesc(datetime_convert()),
-                    dbesc($forThisUrl[0]['outq_hash']),
-                    dbesc($forThisUrl[0]['outq_driver'])
+                    dbesc($forThisUrl[0]['outq_hash'])
                 );
             }
         }
         return;
     }
-    
+
     public static function remove_by_posturl($posturl)
     {
         logger('queue: remove queue posturl ' . $posturl, LOGGER_DEBUG);
