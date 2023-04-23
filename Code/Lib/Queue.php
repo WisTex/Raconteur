@@ -254,7 +254,7 @@ class Queue
             return;
         }
 
-        // "post" queue driver - used for diaspora and friendica-over-diaspora communications.
+        // "post" queue driver - once used for diaspora communications.
 
         if ($outq['outq_driver'] === 'post') {
             $result = Url::post($outq['outq_posturl'], $outq['outq_msg']);
