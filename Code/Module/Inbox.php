@@ -209,7 +209,7 @@ class Inbox extends Controller
                 && isset($AS->obj['actor'])) {
                 $channels = q(
                     "SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
-                    dbesc(basename($AS->obj['actor']))
+                    dbesc(basename(is_array($AS->obj['actor']) ? $AS->obj['actor']['id'] : $AS->obj['actor']))
                 );
             }
             else {
