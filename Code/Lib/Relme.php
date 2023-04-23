@@ -18,43 +18,24 @@ class Relme
         return $this->channel;
     }
 
-    public function getLinksFrom($url)
+    public function RelmeValidate($otherUrl, $myUrl)
     {
-        $output = '';
-        $results = IndieWeb\relMeDocumentUrl($url);
-        $canon = $results[0];
-        $results = Url::get($canon);
-        if ($results['success']) {
-            $headers = '<pre>' . htmlspecialchars(print_r($results['header'], true)) . '</pre>';
-            $output .= $headers;
-            $links = IndieWeb\relMeLinks($results['body'], $canon);
-        }
-        $output .= print_r($links, true);
-        return $output;
-    }
-
-
-    public function checkLinks(array $links, $url = null)
-    {
-        if ($url) {
-            $checkUrl = IndieWeb\relMeDocumentUrl($url);
-            $url = $checkUrl[0];
-        }
-        else {
-            $url = z_root() . '/channel/' . $this->channel['channel_address'];
-        }
-
-        if (!$links || !$url) {
-            return false;
+        $links = [];
+        list($resolvedProfileUrl, $isSecure, $redirectChain) = IndieWeb\relMeDocumentUrl($otherUrl);
+        if ($isSecure) {
+            $htmlResponse = Url::get($$resolvedProfileUrl);
+            if ($htmlResponse['success']) {
+                $links = IndieWeb\relMeLinks($htmlResponse['body'], $resolvedProfileUrl);
+            }
         }
         foreach($links as $link) {
-            list($matches, $secure, $redirectChain) = IndieWeb\backlinkingRelMeUrlMatches($link, $url);
+            list($matches, $secure, $redirectChain) = IndieWeb\backlinkingRelMeUrlMatches($link, $myUrl);
             if ($matches && $secure) {
                 return true;
             }
         }
         return false;
     }
-
+    
 
 }
