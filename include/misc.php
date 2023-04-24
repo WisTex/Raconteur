@@ -18,9 +18,11 @@ use Code\Lib\Features;
 use Code\Extend\Hook;
 use Code\Render\Theme;
 
-
 use Michelf\MarkdownExtra;
 use Symfony\Component\Uid\Uuid;
+
+require_once('include/bbcode.php');
+
 /**
  * @brief This is our template processor.
  *
@@ -127,16 +129,12 @@ function escape_tags($string)
 function z_input_filter($s, $type = 'text/x-multicode')
 {
 
-    if (in_array($type, [ 'text/bbcode', 'text/x-multicode' ])) {
+    if ($type === 'text/x-multicode') {
         return (multicode_purify($s));
     }
-    if ($type == 'text/plain') {
+    if (in_array($type, ['text/plain', 'text/bbcode', 'application/x-pdl'])) {
         return escape_tags($s);
     }
-    if ($type == 'application/x-pdl') {
-        return escape_tags($s);
-    }
-
     if (App::$is_sys) {
         return $s;
     }
@@ -1454,10 +1452,6 @@ function link_compare($a, $b)
     return false;
 }
 
-// Given an item array, convert the body element from bbcode to html and add smilie icons.
-// If attach is true, also add icons for item attachments
-
-
 function unobscure($item)
 {
     return;
@@ -1772,7 +1766,6 @@ function item_is_censored($item, $observer) {
 
 function prepare_body(&$item, $attach = false, $opts = false)
 {
-
     Hook::call('prepare_body_init', $item);
 
     if (item_is_censored($item, get_observer_hash())) {
@@ -2004,22 +1997,19 @@ function format_poll($item, $s, $opts)
                     } else {
                         $total = 0;
                     }
-                    if ($activated && $commentable) {
-						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-                        $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
-                        $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-                        $output .= '</div>';
+                    $disabled = !($activated && $commentable);
 
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '</small></div>';
-						$output .= EOL;
-                    } else {
-						$output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-                        $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
-                        $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-                        $output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '</small></div>';
-						$output .= EOL;
-                    }
+                    $output .= '<input type="checkbox" name="answer[]" value="' . htmlspecialchars($text) . '" ' .
+                        (($disabled) ? ' disabled="disabled" ' : '') . '>&nbsp;&nbsp;<strong>' . $text . '</strong>'
+                        . EOL;
+                    $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
+                    $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' .
+                        (($totalResponses) ?  round($total / $totalResponses * 100) : 0)  .
+                        '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+                    $output .= '</div>';
+                    $output .= '<div class="text-muted"><small>'
+                        . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total)
+                        . '</small></div>' . EOL;
                 }
             }
         }
@@ -2038,23 +2028,15 @@ function format_poll($item, $s, $opts)
                     } else {
                         $total = 0;
                     }
-                    if ($activated && $commentable) {
+                    $disabled = !($activated && $commentable);
+                    $output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" ' .
+                        (($disabled) ? ' disabled="disabled" ' : '') . '>&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
+                    $output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
+                    $output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  round($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
+                    $output .= '</div>';
+                    $output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? round($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
+                    $output .= EOL;
 
-						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="progress bg-opacity-25" style="height: 3px; max-width: 75%;">';
-						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0). '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
-						$output .= EOL;
-
-                    } else {
-						$output .= '<input type="radio" name="answer" value="' . htmlspecialchars($text) . '" disabled="disabled">&nbsp;&nbsp;<strong>' . $text . '</strong>' . EOL;
-						$output .= '<div class="progress bg-opacity-25" style="height: 3px;">';
-						$output .= '<div class="progress-bar bg-default" role="progressbar" style="width: ' . (($totalResponses) ?  intval($total / $totalResponses * 100) : 0) . '%;" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>';
-						$output .= '</div>';
-						$output .= '<div class="text-muted"><small>' . sprintf(tt('%d Vote', '%d Votes', $total, 'noun'), $total) . '&nbsp;|&nbsp;' . (($totalResponses) ? intval($total / $totalResponses * 100) . '%' : '0%') . '</small></div>';
-						$output .= EOL;
-                    }
                 }
             }
         }
@@ -2096,10 +2078,8 @@ function prepare_binary($item)
  *
  * @return string
  */
-function prepare_text($text, $content_type = 'text/x-multicode', $opts = false)
+function prepare_text($text, $content_type = 'text/x-multicode', $opts = [])
 {
-
-
     switch ($content_type) {
         case 'text/plain':
         case 'application/x-pdl';
@@ -2115,40 +2095,20 @@ function prepare_text($text, $content_type = 'text/x-multicode', $opts = false)
             $s = MarkdownExtra::defaultTransform($text);
             break;
 
-        // No security checking is done here at display time - so we need to verify
-        // that the author is allowed to use PHP before storing. We also cannot allow
-        // importation of PHP text bodies from other sites. Therefore this content
-        // type is only valid for web pages (and profile details).
-
-        // It may be possible to provide a PHP message body which is evaluated on the
-        // sender's site before sending it elsewhere. In that case we will have a
-        // different content-type here.
-
-        case 'application/x-php':
-            ob_start();
-            eval($text);
-            $s = ob_get_contents();
-            ob_end_clean();
-            break;
-
         case 'text/bbcode':
+            $opts['bbonly'] = true;
         case 'text/x-multicode':
         case '':
         default:
-            require_once('include/bbcode.php');
-
             if (stristr($text, '[nosmile]')) {
-                $s = bbcode($text, ((is_array($opts)) ? $opts : [] ));
+                $s = bbcode($text, $opts);
             } else {
-                $s = smilies(bbcode($text, ((is_array($opts)) ? $opts : [] )));
+                $s = smilies(bbcode($text, $opts));
             }
 
             $s = zidify_links($s);
-
             break;
     }
-
-//logger('prepare_text: ' . $s);
 
     return $s;
 }
@@ -3879,9 +3839,9 @@ function cleanup_bbcode($body)
     $body = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $body);
 
-    $body = preg_replace_callback("/([^\]\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
+    $body = preg_replace_callback("/([^\]\[\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
 
-    $body = preg_replace_callback("/([^\]\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\red_zrl_callback', $body);
+    $body = preg_replace_callback("/([^\]\[\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\red_zrl_callback', $body);
 
 
     $body = preg_replace_callback('/\[\$b64code(.*?)\[\/(code)\]/ism', '\red_unescape_codeblock', $body);

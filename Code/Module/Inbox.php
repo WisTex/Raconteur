@@ -200,7 +200,20 @@ class Inbox extends Controller
                     "SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
                     dbesc(basename($AS->obj['id']))
                 );
-            } else {
+            }
+            // This is primarily for lemmy - as those accept|reject/follow activities have no addressing
+            // and were delivered to the public inbox.  
+            elseif (in_array($AS->type, ['Accept', 'Reject'])
+                && is_array($AS->obj)
+                && in_array($AS->obj['type'], ['Follow', 'Join'])
+                && isset($AS->obj['actor'])) {
+                $channels = q(
+                    "SELECT * from channel where channel_address = '%s' and channel_removed = 0 ",
+                    dbesc(basename(is_array($AS->obj['actor']) ? $AS->obj['actor']['id'] : $AS->obj['actor']))
+                );
+            }
+            else {
+
                 $collections = Activity::get_actor_collections($observer_hash);
 
                 if (is_array($collections) && in_array($collections['followers'], $AS->recips)

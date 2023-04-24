@@ -5,11 +5,6 @@
 namespace Code\Lib;
 
 use Code\Web\HTTPSig;
-use Code\Lib\Activity;
-use Code\Lib\ActivityStreams;
-use Code\Lib\Channel;
-use Code\Lib\Libzot;
-use Code\Lib\Url;
 use Code\Nomad\Receiver;
 use Code\Nomad\NomadHandler;
 use Code\Extend\Hook;
@@ -71,7 +66,7 @@ class Queue
         $might_be_down = false;
 
         if ($y) {
-            $might_be_down = ((datetime_convert('UTC', 'UTC', $y[0]['earliest']) < datetime_convert('UTC', 'UTC', 'now - 2 days')) ? true : false);
+            $might_be_down = datetime_convert('UTC', 'UTC', $y[0]['earliest']) < datetime_convert('UTC', 'UTC', 'now - 2 days');
         }
 
 
@@ -132,14 +127,18 @@ class Queue
             // entries still exist for it. This fixes an issue where one immediate delivery left everything
             // else for that site undeliverable since all the other entries had been pushed far into the future.
 
-            q("update outq set outq_scheduled = '%s' where outq_posturl = '%s' limit 1",
-                dbesc(datetime_convert()),
+            $forThisUrl = q("select * from outq where outq_posturl = '%s' and outq_delivered = 0 limit 1",
                 dbesc($record[0]['outq_posturl'])
             );
+
+            if ($forThisUrl) {
+                q("update outq set outq_scheduled = '%s' where outq_hash = '%s' and outq_delivered = 0",
+                    dbesc(datetime_convert()),
+                    dbesc($forThisUrl[0]['outq_hash'])
+                );
+            }
         }
-
     }
-
 
     public static function remove_by_posturl($posturl)
     {
@@ -197,7 +196,7 @@ class Queue
             dbesc(datetime_convert()),
             dbesc((isset($arr['scheduled'])) ? $arr['scheduled'] : datetime_convert()),
             dbesc($arr['notify']),
-            dbesc(($arr['msg']) ? $arr['msg'] : '')
+            dbesc(($arr['msg']) ?: '')
         );
         return $x;
     }
@@ -249,13 +248,13 @@ class Queue
             }
         }
 
-        $arr = array('outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate);
+        $arr = ['outq' => $outq, 'base' => $base, 'handled' => false, 'immediate' => $immediate];
         Hook::call('queue_deliver', $arr);
         if ($arr['handled']) {
             return;
         }
 
-        // "post" queue driver - used for diaspora and friendica-over-diaspora communications.
+        // "post" queue driver - once used for diaspora communications.
 
         if ($outq['outq_driver'] === 'post') {
             $result = Url::post($outq['outq_posturl'], $outq['outq_msg']);
@@ -326,7 +325,7 @@ class Queue
                     if (ActivityStreams::is_an_actor($AS->data['type'])) {
                         Activity::actor_store($AS->data['id'], $AS->data);
                     }
-                    if (strpos($AS->data['type'], 'Collection') !== false) {
+                    if (str_contains($AS->data['type'], 'Collection')) {
                         // we are probably fetching a collection already - and do not support collection recursion at this time
                         self::remove($outq['outq_hash']);
                         return;
@@ -385,7 +384,7 @@ class Queue
             $headers['(request-target)'] = 'post ' . get_request_string($outq['outq_posturl']);
 
             $xhead = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::keyId($channel));
-            if (strpos($outq['outq_posturl'], 'http') !== 0) {
+            if (!str_starts_with($outq['outq_posturl'], 'http')) {
                 logger('bad url: ' . $outq['outq_posturl']);
                 self::remove($outq['outq_hash']);
             }

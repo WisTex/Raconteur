@@ -1,4 +1,4 @@
-### Zot API
+### Nomad API
 
 This document describes the native API; which allows direct programmatic access to several internal data structures and libraries extending beyond the basic social interface.   
 
@@ -464,7 +464,7 @@ group_member+abook+xchan (DB join) for each member of the privacy group
 	        "xchan_follow": "https://xyz.macgirvin.com/follow?f=&url=%s",
 	        "xchan_connpage": "",
 	        "xchan_name": "Teller",
-	        "xchan_network": "zot",
+	        "xchan_network": "nomad",
 	        "xchan_instance_url": "",
 	        "xchan_flags": "0",
 	        "xchan_photo_date": "2016-10-19 01:26:50",
@@ -520,7 +520,7 @@ group_member+abook+xchan (DB join) for each member of the privacy group
 	        "xchan_follow": "https://xyz.macgirvin.com/follow?f=&url=%s",
 	        "xchan_connpage": "",
 	        "xchan_name": "Karen",
-	        "xchan_network": "zot",
+	        "xchan_network": "nomad",
 	        "xchan_instance_url": "",
 	        "xchan_flags": "0",
 	        "xchan_photo_date": "2016-03-31 19:59:20",
@@ -573,7 +573,7 @@ Returns:
 		"follow": "https://macgirvin.com/follow?f=&url=%s",
 		"connpage": "https://macgirvin.com/connect/mike",
 		"name": "Mike Macgirvin",
-		"network": "zot",
+		"network": "nomad",
 		"instance_url": "",
 		"flags": "0",
 		"photo_date": "2012-12-06 05:06:11",
@@ -635,7 +635,7 @@ Optional:
 
 	array of group.hash not allowed to view this item
 
-- coord
+- lat, lon
 
 	geographic coordinates
 

@@ -310,6 +310,7 @@ class Ping extends Controller
             if ($t) {
                 foreach ($t as $tt) {
                     $message = trim(strip_tags(bbcode($tt['msg'])));
+                    $message = str_replace(html_entity_decode('&#8203;'), '', $message);
 
                     if (str_starts_with($message, $tt['xname'])) {
                         $message = substr($message, strlen($tt['xname']) + 1);

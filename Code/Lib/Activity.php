@@ -3684,7 +3684,7 @@ class Activity
 
         $allowed = false;
         $reason = ['init'];
-
+        $isMail = (bool) (intval($item['item_private']) === 2);
         if ($is_child_node) {
             $parent_item = q(
                 "select * from item where mid = '%s' and uid = %d",
@@ -3779,7 +3779,7 @@ class Activity
             }
         }
         else {
-            if (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_system && $pubstream)) {
+            if ((!$isMail) && (perm_is_allowed($channel['channel_id'], $observer_hash, 'send_stream') || ($is_system && $pubstream))) {
                 logger('allowed: permission allowed', LOGGER_DATA);
                 $allowed = true;
             }
@@ -3801,7 +3801,7 @@ class Activity
             }
         }
 
-        if (intval($item['item_private']) === 2) {
+        if ($isMail) {
             if (!perm_is_allowed($channel['channel_id'], $observer_hash, 'post_mail')) {
                 $allowed = false;
             }
@@ -4301,7 +4301,7 @@ class Activity
         return false;
     }
 
-    // check for the existence of existing media link in body
+    // check for the existence of existing share in body
 
     public static function share_not_in_body($body)
     {

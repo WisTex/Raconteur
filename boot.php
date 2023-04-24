@@ -472,7 +472,7 @@ class App {
         return self::$path;
     }
 
-    public static function get_channel_links() {
+    public static function get_channel_links_header() {
         $s = '';
         $x = self::$channel_links;
         if ($x && is_array($x) && count($x)) {
@@ -485,6 +485,7 @@ class App {
         }
         return $s;
     }
+
     public static function set_account($acct) {
         self::$account = $acct;
     }

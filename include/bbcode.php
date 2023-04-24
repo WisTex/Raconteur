@@ -1335,7 +1335,6 @@ function md_bolditalic($content)
     return '<strong><em>' . $content[1] . $content[3] . '</em></strong>';
 }
 
-
 /** @noinspection HtmlUnknownAttribute */
 function md_image($content)
 {
@@ -1676,88 +1675,16 @@ function bbcode($Text, $options = [])
 
     $Text = str_replace("\r\n", "\n", $Text);
 
+
     if ($bbonly) {
-        $Text = purify_html($Text);
-    } else {
-        // Here we are catching things like [quote](something)[/quote] and [b](something)[/b] and preventing them from turning into broken markdown links [text](url)
-        // We'll do this with a zero-width space between ] and (
-        $Text = preg_replace_callback("/\[(.*?)\]\((.*?)\)\[\/(.*?)\]/ism", 'bb_mdlink_protect', $Text);
-
-        // save code blocks from being interpreted as markdown
-
-        $Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
-
-        // Quick but flawed fix for performance regression after purification
-        // was moved to rendering code to allow multiple code formats
-        // A proper fix would be to escape any code blocks before purification,
-        // restore them and store the resultant intermediate multicode.
-        // This is now accomplished using multicode_purify()
-
-        //      if (strpbrk($Text,'<>') !== false) {
-        //          $Text = purify_html($Text, [ 'escape' ]);
-        //      }
-
-        // the bbcode tag 'nomd' will bypass markdown processing for any given text region
-
-        $Text = preg_replace_callback('#\[nomd\](.*?)\[\/nomd\]#ism', 'md_protect', $Text);
-
-        // and for completeness, there's 'nohtml'
-
-
-        $Text = preg_replace_callback('#\[nohtml\](.*?)\[\/nohtml\]#ism', 'html_protect', $Text);
-
-
-        // Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
-        // The preceding character check in bold/italic sequences is so we don't mistake underscore/asterisk in the middle of conversational text as an italic trigger.
-
-        $Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{3})([^\n]+?)\2#', 'md_bolditalic', $Text);
-        $Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{2})([^\n]+?)\2#', 'md_bold', $Text);
-        $Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_])([^\n|`]+?)\2#m', 'md_italic', $Text);
-
-        // strip the backslash from escaped bold/italic markdown sequences
-        $Text = preg_replace('#(\\\)([*_])#', '$2', $Text);
-
-        $Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx', 'md_topheader', $Text);
-        $Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m', 'md_header', $Text);
-        $Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', 'md_codeblock', $Text);
-        // do not use the "indent by tab or 4 spaces" markdown codeblock trigger - this produces way too many false positives
-        //      $Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
-        // markdown inline code blocks must be preceded by space or linebreak
-        $Text = preg_replace('#(^|\n| )(?<!\\\)`([^\n`]+?)`#', '$1<code class="inline-code">$2</code>', $Text);
-        // strip backslash escape for inline code
-        $Text = preg_replace('#(\\\)`#', '`', $Text);
-        $Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#', '<br>', $Text);
-
-        // blockquotes
-        $Text = preg_replace('#^(&gt;)+ +(.*?)$#m', '<blockquote>$2</blockquote>', $Text);
-        $Text = preg_replace('#^(\>)+ +(.*?)$#m', '<blockquote>$2</blockquote>', $Text);
-        $Text = preg_replace('#</blockquote>\n<blockquote>#', "\n", $Text);
-
-        // links
-        $Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#', 'md_image', $Text);
-        $Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#', '<a href="$2">$1</a>', $Text);
-
-        // unordered lists
-        $matches = [];
-        // Ignore if there is only one list element as it could be a false positive.
-        if (preg_match_all('#^(?<!\\\)[*\-+] +(.*?)$#m', $Text, $matches, PREG_SET_ORDER) && count($matches) > 1) {
-            $Text = preg_replace('#^(?<!\\\)[*\-+] +(.*?)$#m', '<ul><li>$1</li></ul>', $Text);
-            // strip the backslash escape if present
-            $Text = preg_replace('#^(\\\)([*\-+]) #m', '$2', $Text);
-        }
-        // order lists
-        $Text = preg_replace('#^\d+[\.\)] +(.*?)$#m', '<ol><li>$1</li></ol>', $Text);
-
-        $Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/', "\n", $Text);
-
-        $Text = bb_code_preunprotect($Text);
+        $Text = escape_tags($Text);
     }
-
 
     // Convert new line chars to html <br> tags
 
-    $Text = str_replace(array("\r", "\n"), array('<br>', '<br>'), $Text);
+    $Text = str_replace("\n", '<br>', $Text);
     $Text = str_replace(array("\t", "  "), array("&nbsp;&nbsp;&nbsp;&nbsp;", "&nbsp;&nbsp;"), $Text);
+
 
     // Check for [code] text
     if (str_contains($Text, '[code]')) {
@@ -1806,11 +1733,6 @@ function bbcode($Text, $options = [])
         $Text = str_replace('[observer.webname/]', '', $Text);
         $Text = str_replace('[observer.photo/]', '', $Text);
     }
-
-
-    // Replace naked urls
-
-    $Text = bb_nakedlinks($Text);
 
     // Perform URL Search
 
@@ -2211,6 +2133,68 @@ function bbcode($Text, $options = [])
         $Text = preg_replace_callback("/\[svg(.*?)\](.*?)\[\/svg\]/ism", 'bb_svg', $Text);
     }
 
+    // Markdown processing
+    
+    if (!$bbonly) {
+
+        // the bbcode tag 'nomd' will bypass markdown processing for any given text region
+        $Text = preg_replace_callback('#\[nomd\](.*?)\[\/nomd\]#ism', 'md_protect', $Text);
+
+        $Text = preg_replace_callback("/\[code(.*?)\](.*?)\[\/code\]/ism", 'bb_code_preprotect', $Text);
+
+        $Text = str_replace('<br>', "\n", $Text);
+        // Perform some markdown conversions before translating linefeeds so as to keep the regexes manageable
+        // The preceding character check in bold/italic sequences is so we don't mistake underscore/asterisk in the middle of conversational text as an italic trigger.
+
+        $Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{3})([^\n]+?)\2#', 'md_bolditalic', $Text);
+        $Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_]{2})([^\n]+?)\2#', 'md_bold', $Text);
+        $Text = preg_replace_callback('#(^|\n| )(?<!\\\)([*_])([^\n|`]+?)\2#m', 'md_italic', $Text);
+
+        // strip the backslash from escaped bold/italic markdown sequences
+        $Text = preg_replace('#(\\\)([*_])#', '$2', $Text);
+
+        $Text = preg_replace_callback('{ ^(.+?)[ ]*\n(=+|-+)[ ]*\n+ }mx', 'md_topheader', $Text);
+        $Text = preg_replace_callback('#^(\#{1,6})\s+([^\#]+?)\s*\#*$#m', 'md_header', $Text);
+        $Text = preg_replace_callback('#(^|\n)([`~]{3,})(?: *\.?([a-zA-Z0-9\-.]+))?\n+([\s\S]+?)\n+\2(\n|$)#', 'md_codeblock', $Text);
+        // do not use the "indent by tab or 4 spaces" markdown codeblock trigger - this produces way too many false positives
+        //      $Text = preg_replace('#^(?:\0(.*?)\0\n)?( {4}|\t)(.*?)$#m','<pre><code>$3</code></pre>',$Text);
+        // markdown inline code blocks must be preceded by space or linebreak
+        $Text = preg_replace('#(^|\n| )(?<!\\\)`([^\n`]+?)`#', '$1<code class="inline-code">$2</code>', $Text);
+        // strip backslash escape for inline code
+        $Text = preg_replace('#(\\\)`#', '`', $Text);
+        $Text = preg_replace('#<\/code><\/pre>\n<pre><code(>| .*?>)#', '<br>', $Text);
+
+        // blockquotes
+        $Text = preg_replace('#^(&gt;)+ +(.*?)$#m', '<blockquote>$2</blockquote>', $Text);
+        $Text = preg_replace('#^(\>)+ +(.*?)$#m', '<blockquote>$2</blockquote>', $Text);
+        $Text = preg_replace('#</blockquote>\n<blockquote>#', "\n", $Text);
+
+        // links
+        $Text = preg_replace_callback('#!\[[^\]]*\]\((.*?)(?=\"|\))(\".*\")?\)(?!`)#', 'md_image', $Text);
+        $Text = preg_replace('#\[([^\[]+)\]\((?:javascript:)?([^\)]+)\)(?!`)#', '<a href="$2">$1</a>', $Text);
+
+        // unordered lists
+        $matches = [];
+        // Ignore if there is only one list element as it could be a false positive.
+        if (preg_match_all('#^(?<!\\\)[*\-+] +(.*?)$#m', $Text, $matches, PREG_SET_ORDER) && count($matches) > 1) {
+            $Text = preg_replace('#^(?<!\\\)[*\-+] +(.*?)$#m', '<ul><li>$1</li></ul>', $Text);
+            // strip the backslash escape if present
+            $Text = preg_replace('#^(\\\)([*\-+]) #m', '$2', $Text);
+        }
+        // order lists
+        $Text = preg_replace('#^(\d+[\.\)]) +(.*?)$#m', '<ol><li value="$1">$2</li></ol>', $Text);
+
+        $Text = preg_replace('/\s*<\/(ol|ul)>\n+<\1>\s*/', '', $Text);
+
+        $Text = str_replace("\n", '<br>', $Text);
+        $Text = bb_code_preunprotect($Text);
+
+
+    }
+
+    // Replace naked urls
+    $Text = bb_nakedlinks($Text);
+
     // oembed tag
     if (! $export) {
         $Text = Oembed::bbcode2html($Text);
@@ -2258,7 +2242,7 @@ function bbcode($Text, $options = [])
     // replace escaped links in code= blocks
     $Text = str_replace('%eY9-!', 'http', $Text);
     $Text = bb_code_unprotect($Text);
-
+    $Text = str_replace('<code><br>', '<code>', $Text);
     // fix any escaped ampersands that may have been converted into links
 
     if (str_contains($Text, '&amp;')) {

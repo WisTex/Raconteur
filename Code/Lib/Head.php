@@ -52,8 +52,10 @@ class Head {
     public static function get_links(): string
     {
         $str = '';
-        $sources = App::$linkrel;
-        if (is_array($sources) && $sources) {
+        $sources = App::$linkrel ?? [];
+        $sources = array_merge($sources, App::$channel_links ?? []);
+
+        if ($sources) {
             foreach ($sources as $source) {
                 if (is_array($source) && $source) {
                     $str .= '<link';

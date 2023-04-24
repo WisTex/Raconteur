@@ -17,12 +17,8 @@ class Resizer
 
     public function __construct($converter_path,$getimagesize)
     {
-        if (@file_exists($converter_path)) {
-            $this->converter_path = $converter_path;
-        }
-        if ($getimagesize) {
-            $this->getimagesize = $getimagesize;
-        }
+        $this->converter_path = (file_exists($converter_path)) ? $converter_path : '';
+        $this->getimagesize = $getimagesize;
     }
 
     private function constructDimension($max): bool|string

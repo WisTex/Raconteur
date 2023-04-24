@@ -18,9 +18,9 @@ class Sources extends Controller
             return;
         }
 
-        if (!Features::enabled(local_channel(), 'channel_sources')) {
-            return;
-        }
+  //      if (!Features::enabled(local_channel(), 'channel_sources')) {
+  //          return;
+  //      }
 
         $source = intval($_REQUEST['source']);
         $xchan = escape_tags($_REQUEST['xchan']);
@@ -93,9 +93,9 @@ class Sources extends Controller
             return EMPTY_STR;
         }
 
-        if (!Features::enabled(local_channel(), 'channel_sources')) {
-            return EMPTY_STR;
-        }
+ //       if (!Features::enabled(local_channel(), 'channel_sources')) {
+//            return EMPTY_STR;
+  //      }
 
         // list sources
         if (argc() == 1) {
@@ -193,7 +193,6 @@ class Sources extends Controller
             } else {
                 notice(t('Unable to remove source.') . EOL);
             }
-
             goaway(z_root() . '/sources');
         }
 
