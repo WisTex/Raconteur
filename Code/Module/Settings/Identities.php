@@ -3,8 +3,10 @@
 namespace Code\Module\Settings;
 
 
-
+use App;
 use Code\Lib\PConfig;
+use Code\Lib\Relme;
+
 
 class Identities extends \Code\Web\Controller
 {
@@ -40,7 +42,8 @@ class Identities extends \Code\Web\Controller
 
         foreach ($identities as $identity) {
             $currentRecord = $this->matchRecord($identity[1], $links);
-            $isMe = RelmeValidate($identity[1], $myUrl);
+            $validator = new Relme();
+            $isMe = $validator->RelmeValidate($identity[1], $myUrl);
             if ($isMe) {
                 if (!$currentRecord) {
                     q("insert into linkid (ident, link, sigtype) values ( '%s', '%s' %d) ",
