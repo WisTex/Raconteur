@@ -531,6 +531,8 @@ define ( 'DBTYPE_POSTGRES', 1 );
 
 define ( 'HUBLOC_OFFLINE',  1 );
 
+
+define ( 'IDLINK_NONE',     0 );
 define ( 'IDLINK_RELME',    1 );
 
     

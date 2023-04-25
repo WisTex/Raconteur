@@ -6,9 +6,10 @@ namespace Code\Module\Settings;
 use App;
 use Code\Lib\PConfig;
 use Code\Lib\Relme;
+use Code\Web\Controller;
 
 
-class Identities extends \Code\Web\Controller
+class Identities extends Controller
 {
     public function post()
     {
@@ -44,14 +45,21 @@ class Identities extends \Code\Web\Controller
             $currentRecord = $this->matchRecord($identity[1], $links);
             $validator = new Relme();
             $isMe = $validator->RelmeValidate($identity[1], $myUrl);
-            if ($isMe) {
-                if (!$currentRecord) {
-                    q("insert into linkid (ident, link, sigtype) values ( '%s', '%s' %d) ",
-                        dbesc($myIdentity)
-                    );
-                }
+            if ($currentRecord) {
+                q("update linkid set sigtype = %d where link_id = %d",
+                    intval($isMe ? IDLINK_RELME : IDLINK_NONE),
+                    intval($currentRecord['link_id'])
+                );
+            }
+            else {
+                q("insert into linkid (ident, link, sigtype) values ( '%s', '%s', %d) ",
+                    dbesc($myIdentity),
+                    dbesc($identity[1]),
+                    intval($isMe ? IDLINK_RELME : IDLINK_NONE)
+                );
             }
         }
+
         foreach ($links as $link) {
             if (! $this->matchLinks($link['link'], $identities)) {
                 q("delete from linkid where link_id = %d",
@@ -63,9 +71,10 @@ class Identities extends \Code\Web\Controller
 
     protected function loadIdentities($myIdentity)
     {
-        return q("select * from linkid where ident = '%s' and sigtype = %d",
+        return q("select * from linkid where ident = '%s' and sigtype in (%d, %d)",
             dbesc($myIdentity),
-            intval(IDLINK_RELME)
+            intval(IDLINK_RELME),
+            intval(IDLINK_NONE)
         );
     }
 

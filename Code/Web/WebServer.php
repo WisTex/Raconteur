@@ -185,6 +185,10 @@ class WebServer
             $channel = Channel::from_username(argv(1));
             if ($channel) {
                 $nomadicIds = Activity::nomadic_locations(['author_xchan' => $channel['channel_hash']]);
+                $linkedIds = q("select * from linkid where ident = '%s' and sigtype = %d",
+                    dbesc($channel['channel_hash']),
+                    intval(IDLINK_RELME)
+                );
             }
             App::$channel_links = [
                 [
@@ -230,6 +234,15 @@ class WebServer
                             'href' => $self['hubloc_id_url']
                         ];
                     }
+                }
+            }
+
+            if ($linkedIds) {
+                foreach ($linkedIds as $self) {
+                    App::$channel_links[] = [
+                        'rel' => 'me',
+                        'href' => $self['link']
+                    ];
                 }
             }
 
