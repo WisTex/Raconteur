@@ -2196,9 +2196,8 @@ function bbcode($Text, $options = [])
     $Text = bb_nakedlinks($Text);
 
     // oembed tag
-    if (! $export) {
-        $Text = Oembed::bbcode2html($Text);
-    }
+
+    $Text = Oembed::bbcode2html($Text, $export);
 
     // Avoid triple linefeeds through oembed
     $Text = str_replace("<br style='clear:left'></span><br><br>", "<br style='clear:left'></span><br>", $Text);
