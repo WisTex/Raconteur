@@ -787,7 +787,7 @@ function do_delivery($deliveries, $force = false)
         $deliver[] = $d;
 
         if (count($deliver) >= $deliveries_per_process) {
-            Run::Summon([ 'Deliver',$deliver ]);
+            Run::Summon(['Deliver', $deliver]);
             $deliver = [];
             if ($interval) {
                 @time_sleep_until(microtime(true) + (float) $interval);
