@@ -6,6 +6,7 @@ namespace Code\Module\Settings;
 use App;
 use Code\Lib\PConfig;
 use Code\Lib\Relme;
+use Code\Render\Theme;
 use Code\Web\Controller;
 
 
@@ -13,18 +14,35 @@ class Identities extends Controller
 {
     public function post()
     {
+        if (!local_channel()) {
+            http_status_exit(403, 'Permission denied.');
+        }
 
     }
 
     public function get()
     {
+      if (!local_channel()) {
+          return login();
+      }
+      $identities = $this->getIdentities();
+      $form = $this->getForm();
 
+        return replace_macros(Theme::get_template('identity_settings.tpl'), [
+        ]);
+
+
+    }
+
+    protected function getForm()
+    {
+        return replace_macros(Theme::get_template('identity_form.tpl'), [
+        ]);
     }
 
     protected function getIdentities()
     {
-        $identities = PConfig::Get(local_channel(),'system','identities', []);
-        return $identities;
+        return PConfig::Get(local_channel(),'system','identities', []);
     }
 
     protected function add_identity($name, $link) {
