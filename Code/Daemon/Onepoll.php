@@ -108,7 +108,7 @@ class Onepoll implements DaemonInterface
 
         // we haven't given them permission to send us their stream
 
-        $can_send_stream = ( intval(get_abconfig($importer_uid, $contact['abook_xchan'], 'my_perms', 'send_stream'))
+        $can_send_stream = ( perm_is_allowed($importer_uid, $contact['abook_xchan'],'send_stream')
             || PConfig::Get($importer_uid,'system','preview_outbox', false));
 
         if (! $can_send_stream) {
