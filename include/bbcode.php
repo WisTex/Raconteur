@@ -2192,13 +2192,13 @@ function bbcode($Text, $options = [])
 
     }
 
+    // oembed tag
+
+    $Text = Oembed::bbcode2html($Text, $export, $target);
+
     // Replace naked urls
     $Text = bb_nakedlinks($Text);
 
-    // oembed tag
-    if (! $export) {
-        $Text = Oembed::bbcode2html($Text);
-    }
 
     // Avoid triple linefeeds through oembed
     $Text = str_replace("<br style='clear:left'></span><br><br>", "<br style='clear:left'></span><br>", $Text);

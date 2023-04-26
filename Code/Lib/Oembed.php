@@ -422,11 +422,11 @@ class Oembed
 
 
 
-    public static function bbcode2html($text)
+    public static function bbcode2html($text, $export = false, $target = '')
     {
         $stopoembed = get_config("system", "no_oembed");
-        if ($stopoembed == true) {
-            return preg_replace("/\[embed\](.+?)\[\/embed\]/is", "<!-- oembed $1 --><i>" . t('Embedding disabled') . " : $1</i><!-- /oembed $1 -->", $text);
+        if ($stopoembed || $export) {
+            return preg_replace("/\[embed\](.+?)\[\/embed\]/is", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $text);
         }
         return preg_replace_callback("/\[embed\](.+?)\[\/embed\]/is", ['\\Code\\Lib\\Oembed','replacecb'], $text);
     }
