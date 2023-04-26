@@ -2040,7 +2040,8 @@ function bbcode($Text, $options = [])
         $Text = str_replace([ '<blockquote>','</blockquote>' ], [ '“', '”' ], $Text);
     }
 
-
+    // Replace naked urls
+    $Text = bb_nakedlinks($Text);
     // Images
 
     // [img]pathtoimage[/img]
@@ -2196,8 +2197,7 @@ function bbcode($Text, $options = [])
 
     $Text = Oembed::bbcode2html($Text, $export, $target);
 
-    // Replace naked urls
-    $Text = bb_nakedlinks($Text);
+
 
 
     // Avoid triple linefeeds through oembed
