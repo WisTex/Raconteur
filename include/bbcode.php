@@ -2194,7 +2194,7 @@ function bbcode($Text, $options = [])
 
     // oembed tag
 
-    $Text = Oembed::bbcode2html($Text, $export);
+    $Text = Oembed::bbcode2html($Text, $export, $target);
 
     // Replace naked urls
     $Text = bb_nakedlinks($Text);
