@@ -92,7 +92,8 @@ class Search extends Controller
                         $clone = Channel::from_hash(get_observer_hash());
                     }
                     if (!$clone && !local_channel()) {
-                        http_status_exit(403, 'Permission denied.');
+                        notice (t('Permission denied'));
+                        return '';
                     }
                 }
             }
