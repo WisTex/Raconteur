@@ -92,15 +92,29 @@ class Home extends Controller
             goaway($dest);
         }
 
-        if (remote_channel() && (!$splash) && $_SESSION['atoken']) {
-            $r = q(
-                "select * from atoken where atoken_id = %d",
-                intval($_SESSION['atoken'])
-            );
-            if ($r) {
-                $x = Channel::from_id($r[0]['atoken_uid']);
-                if ($x) {
-                    goaway(z_root() . '/channel/' . $x['channel_address']);
+        if (remote_channel() && (!$splash)) {
+            if ($_SESSION['atoken']) {
+                $r = q(
+                    "select * from atoken where atoken_id = %d",
+                    intval($_SESSION['atoken'])
+                );
+                if ($r) {
+                    $x = Channel::from_id($r[0]['atoken_uid']);
+                    if ($x) {
+                        goaway(z_root() . '/channel/' . $x['channel_address']);
+                    }
+                }
+            }
+            else {
+                $randfunc = db_getfunc('rand');
+                $r = q("select * from channel where channel_id in ( select abook_channel from abook where abook_xchan = '%s') orber by $randfunc limit 1",
+                    dbesc(get_observer_hash())
+                );
+                if ($r) {
+                    goaway(z_root() . '/channel/' . $r[0]['channel_hash']);
+                }
+                else {
+                    goaway(z_root() . '/search');
                 }
             }
         }
