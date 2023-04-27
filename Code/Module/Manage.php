@@ -23,6 +23,7 @@ class Manage extends Controller
             notice(t('Permission denied.') . EOL);
             return '';
         }
+        $channel = App::get_channel();
 
         Navbar::set_selected('Manage');
 
@@ -169,6 +170,16 @@ class Manage extends Controller
                 intval(local_channel()),
                 dbesc('%delegate%')
             );
+            $links = q("select * from linkid where ident = '%s' and sigtype = %s",
+                dbesc($channel['channel_hash']),
+                intval(IDLINK_RELME)
+            );
+            $linkid_str = ids_to_querystr($links,'link', true);
+            if ($linkid_str) {
+                $linkedIdentities = q("select * from xchan where xchan_hash in (%s)",
+                    dbesc($linkid_str)
+                );
+            }
         }
 
         if ($delegates) {
@@ -187,6 +198,7 @@ class Manage extends Controller
         return replace_macros(Theme::get_template('channels.tpl'), [
             '$header' => t('Channels'),
             '$msg_selected' => t('Current Channel'),
+            '$msg_linked' => t('Linked Identities'),
             '$selected' => local_channel(),
             '$desc' => t('Switch to one of your channels by selecting it.'),
             '$msg_default' => t('Default Login Channel'),
@@ -199,7 +211,8 @@ class Manage extends Controller
             '$intros_format' => t('%d new introductions'),
             '$channel_usage_message' => $channel_usage_message,
             '$delegated_desc' => t('Delegated Channel'),
-            '$delegates' => $delegates
+            '$delegates' => $delegates,
+            '$links' => $linkedIdentities,
         ]);
     }
 }

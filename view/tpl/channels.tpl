@@ -20,5 +20,11 @@
 				{{include file="channel.tpl" channel=$chn}}
 			{{/foreach}}
 		{{/if}}
+		{{if $links}}
+			{{foreach $links as $chn}}
+				{{include file="channel.tpl" channel=$chn}}
+			{{/foreach}}
+		{{/if}}
+
 	</div>
 </div>
