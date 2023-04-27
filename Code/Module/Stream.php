@@ -332,6 +332,9 @@ class Stream extends Controller
                     $p2 = q("SELECT oid AS parent FROM term WHERE uid = " . intval(local_channel()) . " AND ttype = $ttype AND term = '" . dbesc($cid_r[0]['xchan_name']) . "'");
 
                     $p_str = ids_to_querystr(array_merge($p1, $p2), 'parent');
+                    if (!$p_str) {
+                        $p_str = '0';
+                    }
                     $sql_extra = " AND item.parent IN ( $p_str ) ";
                 }
             }
@@ -630,7 +633,7 @@ class Stream extends Controller
 					WHERE true $uids $item_normal
 					AND item.parent IN ( %s )
 					$sql_extra ",
-                    dbesc($parents_str)
+                    dbesc($parents_str ?: '0')
                 );
 
                 if ($distance) {

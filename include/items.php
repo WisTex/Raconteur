@@ -4343,7 +4343,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
         // Then fetch all the children of the parents that are on this page
 
-        if(isset($r) && $r) {
+        if ($r) {
 
             $parents_str = ids_to_querystr($r,'item_id');
 
@@ -4354,7 +4354,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
                 WHERE $item_uids $item_restrict
                 AND item.parent IN ( %s )
                 $sql_extra ",
-                dbesc($parents_str)
+                dbesc($parents_str ?: '0')
             );
 
             xchan_query($items);

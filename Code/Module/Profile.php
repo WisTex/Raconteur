@@ -37,7 +37,7 @@ class Profile extends Controller
 
         if ((local_channel()) && (argc() > 2) && (argv(2) === 'view')) {
             $which = $channel['channel_address'];
-            $profile = argv(1);
+            $profile = intval(argv(1));
             $r = q(
                 "select profile_guid from profile where id = %d and uid = %d limit 1",
                 intval($profile),
