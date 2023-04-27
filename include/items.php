@@ -3494,7 +3494,7 @@ function item_expire($uid,$days,$comment_days = 7) {
             continue;
         }
 
-        drop_item($item['id']);
+        drop_item($item['id'], expire: true);
     }
 
 }
@@ -3507,13 +3507,13 @@ function retain_item($id) {
 
 // Items is array of item.id
 
-function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
+function drop_items($items, $stage = DROPITEM_NORMAL, $force = false, $expire = false) {
 
     $uid = 0;
 
     if (count($items)) {
         foreach ($items as $item) {
-            $owner = drop_item($item, $stage, $force);
+            $owner = drop_item($item, $stage, $force, $expire);
             if ($owner && (! $uid)) {
                 $uid = $owner;
             }
@@ -3537,7 +3537,7 @@ function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
 // $stage = 1 => set deleted flag on the item and perform intial notifications
 // $stage = 2 => perform low level delete at a later stage
 
-function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $observer_hash = '') {
+function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $observer_hash = '', $expire = false) {
 
     // locate item to be deleted
 
