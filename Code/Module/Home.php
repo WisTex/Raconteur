@@ -107,7 +107,7 @@ class Home extends Controller
             }
             else {
                 $randfunc = db_getfunc('rand');
-                $r = q("select * from channel where channel_id in ( select abook_channel from abook where abook_xchan = '%s') orber by $randfunc limit 1",
+                $r = q("select * from channel where channel_id in ( select abook_channel from abook where abook_xchan = '%s') and channel_system = 0 and channel_removed = 0 orber by $randfunc limit 1",
                     dbesc(get_observer_hash())
                 );
                 if ($r) {
