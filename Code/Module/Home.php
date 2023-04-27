@@ -106,16 +106,7 @@ class Home extends Controller
                 }
             }
             else {
-                $randfunc = db_getfunc('rand');
-                $r = q("select * from channel where channel_id in ( select abook_channel from abook where abook_xchan = '%s') and channel_system = 0 and channel_removed = 0 orber by $randfunc limit 1",
-                    dbesc(get_observer_hash())
-                );
-                if ($r) {
-                    goaway(z_root() . '/channel/' . $r[0]['channel_hash']);
-                }
-                else {
-                    goaway(z_root() . '/search');
-                }
+                goaway(z_root() . '/apps');
             }
         }
 
@@ -174,7 +165,7 @@ class Home extends Controller
         }
 
         $loginbox = get_config('system', 'login_on_homepage');
-        if (intval($loginbox) || $loginbox === false) {
+        if ((intval($loginbox) || $loginbox === false) && !get_observer_hash()) {
             $o .= login(true);
         }
 
