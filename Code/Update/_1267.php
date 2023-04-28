@@ -14,7 +14,7 @@ class _1267
                 id_hash varchar(255) NOT NULL,
                 id_channel bigint NOT NULL,
                 deleted_at timestamp NOT NULL DEFAUL '0001-01-01 00:00:00',
-                PRIMARY KEY (id)
+                PRIMARY KEY (id)"
             );
 
             $r2 = q("create index \"id_hash\" on tombstone (\"id_hash\")");
