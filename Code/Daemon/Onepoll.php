@@ -100,7 +100,7 @@ class Onepoll implements DaemonInterface
 
         // They haven't given us permission to see their stream
 
-        $can_view_stream = intval(get_abconfig($importer_uid, $contact['abook_xchan'], 'their_perms', 'view_stream'));
+        $can_view_stream = their_perms_contains($importer_uid, $contact['abook_xchan'], 'view_stream');
 
         if (! $can_view_stream) {
             $fetch_feed = false;
@@ -170,6 +170,5 @@ class Onepoll implements DaemonInterface
         if (! $r) {
             Socgraph::poco_load($contact['xchan_hash'], $contact['xchan_connurl']);
         }
-        return;
     }
 }
