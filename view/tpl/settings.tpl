@@ -173,7 +173,7 @@
                                     {{include file="field_intcheckbox.tpl" field=$vnotify13}}
                                 {{/if}}
                                 {{include file="field_intcheckbox.tpl" field=$vnotify14}}
-                                {{include file="field_intcheckbox.tpl" field=$vnotify15}}
+                                {{*include file="field_intcheckbox.tpl" field=$vnotify15*}}
                                 {{include file="field_intcheckbox.tpl" field=$vnotify17}}
                                 {{if $vnotify16}}
                                     {{include file="field_intcheckbox.tpl" field=$vnotify16}}
