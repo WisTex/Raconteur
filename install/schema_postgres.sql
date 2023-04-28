@@ -1171,6 +1171,17 @@ create index "tokens_client_id" on tokens ("client_id");
 create index "tokens_expires" on tokens ("expires");
 create index "tokens_uid" on tokens ("uid");
 
+CREATE TABLE "tombstone" (
+  "id" serial NOT NULL,
+  "id_hash" varchar(255) NOT NULL,
+  "id_channel" bigint NOT NULL,
+  "deleted_at" timestamp NOT NULL DEFAULT '0001-01-01 00:00:00',
+  PRIMARY KEY ("id")
+);
+create index "id_hash" on tombstone ("id_hash");
+create index "id_channel" on tombstone ("id_channel");
+create index "deleted_at" on tombstone ("deleted_at");
+    
 CREATE TABLE "updates" (
   "ud_id" serial  NOT NULL,
   "ud_hash" varchar(128) NOT NULL,

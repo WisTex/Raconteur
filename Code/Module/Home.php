@@ -92,16 +92,21 @@ class Home extends Controller
             goaway($dest);
         }
 
-        if (remote_channel() && (!$splash) && $_SESSION['atoken']) {
-            $r = q(
-                "select * from atoken where atoken_id = %d",
-                intval($_SESSION['atoken'])
-            );
-            if ($r) {
-                $x = Channel::from_id($r[0]['atoken_uid']);
-                if ($x) {
-                    goaway(z_root() . '/channel/' . $x['channel_address']);
+        if (remote_channel() && (!$splash)) {
+            if ($_SESSION['atoken']) {
+                $r = q(
+                    "select * from atoken where atoken_id = %d",
+                    intval($_SESSION['atoken'])
+                );
+                if ($r) {
+                    $x = Channel::from_id($r[0]['atoken_uid']);
+                    if ($x) {
+                        goaway(z_root() . '/channel/' . $x['channel_address']);
+                    }
                 }
+            }
+            else {
+                goaway(z_root() . '/apps');
             }
         }
 
@@ -160,7 +165,7 @@ class Home extends Controller
         }
 
         $loginbox = get_config('system', 'login_on_homepage');
-        if (intval($loginbox) || $loginbox === false) {
+        if ((intval($loginbox) || $loginbox === false) && !get_observer_hash()) {
             $o .= login(true);
         }
 

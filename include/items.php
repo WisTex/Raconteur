@@ -21,6 +21,7 @@ use Code\Lib\ObjCache;
 use Code\Lib\PConfig;
 use Code\Lib\LibBlock;
 use Code\Lib\ThreadListener;
+use Code\Lib\Tombstone;
 use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
 use Code\Access\AccessControl;
@@ -3494,7 +3495,7 @@ function item_expire($uid,$days,$comment_days = 7) {
             continue;
         }
 
-        drop_item($item['id']);
+        drop_item($item['id'], expire: true);
     }
 
 }
@@ -3507,13 +3508,13 @@ function retain_item($id) {
 
 // Items is array of item.id
 
-function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
+function drop_items($items, $stage = DROPITEM_NORMAL, $force = false, $expire = false) {
 
     $uid = 0;
 
     if (count($items)) {
         foreach ($items as $item) {
-            $owner = drop_item($item, $stage, $force);
+            $owner = drop_item($item, $stage, $force, $expire);
             if ($owner && (! $uid)) {
                 $uid = $owner;
             }
@@ -3537,7 +3538,7 @@ function drop_items($items, $stage = DROPITEM_NORMAL, $force = false) {
 // $stage = 1 => set deleted flag on the item and perform intial notifications
 // $stage = 2 => perform low level delete at a later stage
 
-function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $observer_hash = '') {
+function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $observer_hash = '', $expire = false) {
 
     // locate item to be deleted
 
@@ -3621,11 +3622,11 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $obs
         );
         if ($items) {
             foreach ($items as $i) {
-                delete_item_lowlevel($i, $stage, $force);
+                delete_item_lowlevel($i, $stage, $force, $expire);
             }
         }
         else {
-            delete_item_lowlevel($item, $stage, $force);
+            delete_item_lowlevel($item, $stage, $force, $expire);
         }
 
         return true;
@@ -3646,11 +3647,15 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $obs
  * @param bool $force
  * @return bool
  */
-function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
+function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false, $expire = false) {
 
 
     logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . ($force) ? 'true' : 'false', LOGGER_DATA);
 
+    if (!$expire) {
+        Tombstone::store($item['mid'], $item['uid']);
+    }
+    
     match ($stage) {
         DROPITEM_PHASE2 => q("UPDATE item SET item_pending_remove = 1, body = '', title = '',
                 changed = '%s', edited = '%s'  WHERE id = %d",
@@ -4343,7 +4348,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
 
         // Then fetch all the children of the parents that are on this page
 
-        if(isset($r) && $r) {
+        if ($r) {
 
             $parents_str = ids_to_querystr($r,'item_id');
 
@@ -4354,7 +4359,7 @@ function items_fetch($arr,$channel = null,$observer_hash = null,$client_mode = C
                 WHERE $item_uids $item_restrict
                 AND item.parent IN ( %s )
                 $sql_extra ",
-                dbesc($parents_str)
+                dbesc($parents_str ?: '0')
             );
 
             xchan_query($items);

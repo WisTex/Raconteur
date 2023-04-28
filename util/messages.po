@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.04.14\n"
+"Project-Id-Version: 23.04.28\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-13 22:03-0700\n"
+"POT-Creation-Date: 2023-04-27 22:38-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,2134 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: Code/Lib/Channel.php:54
-msgid "Empty name"
-msgstr ""
-
-#: Code/Lib/Channel.php:58
-msgid "Name too long"
-msgstr ""
-
-#: Code/Lib/Channel.php:286
-msgid "No account identifier"
-msgstr ""
-
-#: Code/Lib/Channel.php:298
-msgid "Nickname is required."
-msgstr ""
-
-#: Code/Lib/Channel.php:312 Code/Lib/Channel.php:775
-#: Code/Module/Changeaddr.php:72
-msgid "Reserved nickname. Please choose another."
-msgstr ""
-
-#: Code/Lib/Channel.php:317 Code/Lib/Channel.php:780
-#: Code/Module/Changeaddr.php:77
-msgid ""
-"Nickname has unsupported characters or is already being used on this site."
-msgstr ""
-
-#: Code/Lib/Channel.php:396
-msgid "Unable to retrieve created identity"
-msgstr ""
-
-#: Code/Lib/Channel.php:506 Code/Import/Friendica.php:191
-msgid "Default Profile"
-msgstr ""
-
-#: Code/Lib/Channel.php:555 Code/Lib/Channel.php:557
-#: Code/Module/Connedit.php:688 Code/Module/Affinity.php:66
-#: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Channel.php:634 Code/Module/Settings/Channel.php:637
-#: Code/Module/Settings/Channel.php:638 Code/Module/Settings/Channel.php:642
-#: Code/Module/Settings/Channel.php:653 Code/Widget/Affinity.php:31
-#: Code/Import/Friendica.php:237 Code/Import/Friendica.php:238
-#: Code/Import/Friendica.php:246
-msgid "Friends"
-msgstr ""
-
-#: Code/Lib/Channel.php:701 Code/Lib/Channel.php:799
-msgid "Unable to retrieve modified identity"
-msgstr ""
-
-#: Code/Lib/Channel.php:1860 Code/Module/Cover_photo.php:289
-#: Code/Module/Cover_photo.php:291 Code/Widget/Cover_photo.php:92
-msgid "cover photo"
-msgstr ""
-
-#: Code/Lib/Channel.php:2162 Code/Module/Rmagic.php:88 boot.php:1103
-msgid "Remote Authentication"
-msgstr ""
-
-#: Code/Lib/Channel.php:2163 Code/Module/Rmagic.php:89
-msgid "Enter your channel address (e.g. channel@example.com)"
-msgstr ""
-
-#: Code/Lib/Channel.php:2164 Code/Module/Rmagic.php:92
-msgid "Authenticate"
-msgstr ""
-
-#: Code/Lib/DB_Upgrade.php:70
-msgid "Source code of failed update: "
-msgstr ""
-
-#: Code/Lib/DB_Upgrade.php:93
-#, php-format
-msgid "Update Error at %s"
-msgstr ""
-
-#: Code/Lib/DB_Upgrade.php:100
-#, php-format
-msgid "Update %s failed. See error logs."
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:35 Code/Lib/Libacl.php:36
-msgid "Visible to your default audience"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:112 Code/Lib/Libacl.php:122
-msgid "Only me"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:114
-msgid "Public"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:116
-msgid "Anybody in the $Projectname network"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:118
-#, php-format
-msgid "Any account on %s"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:120
-msgid "Any of my connections"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:122
-msgid "Only connections I specifically allow"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:124
-msgid "Anybody authenticated (could include visitors from other networks)"
-msgstr ""
-
-#: Code/Lib/PermissionDescription.php:126
-msgid "Any connections including those who haven't yet been approved"
-msgstr ""
-
-#: Code/Lib/Url.php:483
-msgid "url: "
-msgstr ""
-
-#: Code/Lib/Url.php:484
-msgid "http_code: "
-msgstr ""
-
-#: Code/Lib/Url.php:485
-msgid "error_code: "
-msgstr ""
-
-#: Code/Lib/Url.php:486
-msgid "error_string: "
-msgstr ""
-
-#: Code/Lib/Url.php:487
-msgid "content-type: "
-msgstr ""
-
-#: Code/Lib/Url.php:489
-msgid "request-header: "
-msgstr ""
-
-#: Code/Lib/Libzot.php:774
-msgid "Unable to verify channel signature"
-msgstr ""
-
-#: Code/Lib/Apps.php:342 Code/Module/Lists.php:203
-msgid "Access Lists"
-msgstr ""
-
-#: Code/Lib/Apps.php:343
-msgid "Site Admin"
-msgstr ""
-
-#: Code/Lib/Apps.php:344 Code/Lib/Navbar.php:296
-msgid "Apps"
-msgstr ""
-
-#: Code/Lib/Apps.php:345
-msgid "Articles"
-msgstr ""
-
-#: Code/Lib/Apps.php:346
-msgid "CalDAV"
-msgstr ""
-
-#: Code/Lib/Apps.php:347
-msgid "CardDAV"
-msgstr ""
-
-#: Code/Lib/Apps.php:348 Code/Module/Cards.php:211
-msgid "Cards"
-msgstr ""
-
-#: Code/Lib/Apps.php:349 Code/Lib/Navbar.php:410 Code/Lib/Navbar.php:413
-#: Code/Storage/Browser.php:157
-msgid "Calendar"
-msgstr ""
-
-#: Code/Lib/Apps.php:350 Code/Module/Cdav.php:1093
-#: Code/Widget/Appcategories.php:52 Code/Widget/Categories.php:87
-#: Code/Widget/Categories.php:135 Code/Widget/Categories.php:186
-#: include/taxonomy.php:467 include/taxonomy.php:561 include/taxonomy.php:583
-#: include/taxonomy.php:606
-msgid "Categories"
-msgstr ""
-
-#: Code/Lib/Apps.php:351
-msgid "Channel Home"
-msgstr ""
-
-#: Code/Lib/Apps.php:352
-msgid "Channel Manager"
-msgstr ""
-
-#: Code/Lib/Apps.php:353 Code/Module/Sources.php:115
-msgid "Channel Sources"
-msgstr ""
-
-#: Code/Lib/Apps.php:354
-msgid "Chat"
-msgstr ""
-
-#: Code/Lib/Apps.php:355 Code/Lib/Navbar.php:424 Code/Lib/Navbar.php:427
-#: Code/Widget/Chatroom_list.php:23
-msgid "Chatrooms"
-msgstr ""
-
-#: Code/Lib/Apps.php:356
-msgid "Clients"
-msgstr ""
-
-#: Code/Lib/Apps.php:357 include/conversation.php:1312
-msgid "Comment Control"
-msgstr ""
-
-#: Code/Lib/Apps.php:358 Code/Module/Communities.php:154
-#: Code/Widget/Findpeople.php:40
-msgid "Communities"
-msgstr ""
-
-#: Code/Lib/Apps.php:359 Code/Module/Connedit.php:690
-#: Code/Module/Connections.php:371 Code/Module/Stream.php:150
-#: Code/Module/Affinity.php:68 Code/Widget/Affinity.php:33
-#: include/connections.php:950
-msgid "Connections"
-msgstr ""
-
-#: Code/Lib/Apps.php:360
-msgid "Content Filter"
-msgstr ""
-
-#: Code/Lib/Apps.php:361
-#: extend/addon/a/content_import/Mod_content_import.php:147
-msgid "Content Import"
-msgstr ""
-
-#: Code/Lib/Apps.php:362
-msgid "Custom SQL"
-msgstr ""
-
-#: Code/Lib/Apps.php:363 Code/Module/Directory.php:517
-msgid "Directory"
-msgstr ""
-
-#: Code/Lib/Apps.php:364 Code/Widget/Activity_filter.php:81
-msgid "Drafts"
-msgstr ""
-
-#: Code/Lib/Apps.php:365 Code/Widget/Activity_filter.php:109
-msgid "Events"
-msgstr ""
-
-#: Code/Lib/Apps.php:366
-msgid "Expire Posts"
-msgstr ""
-
-#: Code/Lib/Apps.php:367
-msgid "Features"
-msgstr ""
-
-#: Code/Lib/Apps.php:368 Code/Lib/Navbar.php:399 Code/Module/Fbrowser.php:95
-#: Code/Storage/Browser.php:298
-msgid "Files"
-msgstr ""
-
-#: Code/Lib/Apps.php:369 extend/addon/a/followlist/Mod_followlist.php:123
-msgid "Followlist"
-msgstr ""
-
-#: Code/Lib/Apps.php:370 Code/Module/Connedit.php:679
-msgid "Friend Zoom"
-msgstr ""
-
-#: Code/Lib/Apps.php:371
-msgid "Future Posting"
-msgstr ""
-
-#: Code/Lib/Apps.php:372 extend/addon/a/gallery/gallery.php:49
-#: extend/addon/a/gallery/Mod_Gallery.php:138
-msgid "Gallery"
-msgstr ""
-
-#: Code/Lib/Apps.php:373
-msgid "Guest Pass"
-msgstr ""
-
-#: Code/Lib/Apps.php:374 Code/Lib/Navbar.php:278 include/help.php:62
-msgid "Help"
-msgstr ""
-
-#: Code/Lib/Apps.php:375
-msgid "Invite"
-msgstr ""
-
-#: Code/Lib/Apps.php:376
-msgid "Language"
-msgstr ""
-
-#: Code/Lib/Apps.php:377
-msgid "Legal"
-msgstr ""
-
-#: Code/Lib/Apps.php:378 Code/Lib/Navbar.php:128 Code/Lib/Navbar.php:131
-#: boot.php:1102
-msgid "Login"
-msgstr ""
-
-#: Code/Lib/Apps.php:379
-msgid "Mail"
-msgstr ""
-
-#: Code/Lib/Apps.php:380
-msgid "Markup"
-msgstr ""
-
-#: Code/Lib/Apps.php:381
-msgid "Moderate"
-msgstr ""
-
-#: Code/Lib/Apps.php:382 Code/Module/Mood.php:166
-msgid "Mood"
-msgstr ""
-
-#: Code/Lib/Apps.php:383
-msgid "My Chatrooms"
-msgstr ""
-
-#: Code/Lib/Apps.php:384
-msgid "No Comment"
-msgstr ""
-
-#: Code/Lib/Apps.php:385 Code/Widget/Notes.php:24
-msgid "Notes"
-msgstr ""
-
-#: Code/Lib/Apps.php:386 Code/Lib/Navbar.php:300
-#: Code/Module/Settings/Channel.php:496 Code/Widget/Notifications.php:165
-msgid "Notifications"
-msgstr ""
-
-#: Code/Lib/Apps.php:387
-msgid "OAuth Apps Manager"
-msgstr ""
-
-#: Code/Lib/Apps.php:388
-msgid "OAuth2 Apps Manager"
-msgstr ""
-
-#: Code/Lib/Apps.php:389
-msgid "Order Apps"
-msgstr ""
-
-#: Code/Lib/Apps.php:390
-msgid "PDL Editor"
-msgstr ""
-
-#: Code/Lib/Apps.php:391 Code/Lib/Features.php:158
-msgid "Permission Categories"
-msgstr ""
-
-#: Code/Lib/Apps.php:392 Code/Lib/Navbar.php:391 Code/Module/Fbrowser.php:37
-msgid "Photos"
-msgstr ""
-
-#: Code/Lib/Apps.php:393
-msgid "Photomap"
-msgstr ""
-
-#: Code/Lib/Apps.php:394
-msgid "Poke"
-msgstr ""
-
-#: Code/Lib/Apps.php:395
-msgid "Post"
-msgstr ""
-
-#: Code/Lib/Apps.php:396
-msgid "Premium Channel"
-msgstr ""
-
-#: Code/Lib/Apps.php:397
-msgid "Probe"
-msgstr ""
-
-#: Code/Lib/Apps.php:398 Code/Lib/Libprofile.php:682 Code/Lib/Activity.php:2956
-#: Code/Module/Profperm.php:131
-msgid "Profile"
-msgstr ""
-
-#: Code/Lib/Apps.php:399
-msgid "Profile Photo"
-msgstr ""
-
-#: Code/Lib/Apps.php:400
-msgid "Profiles"
-msgstr ""
-
-#: Code/Lib/Apps.php:401 Code/Module/Pubstream.php:97
-#: Code/Widget/Notifications.php:147
-msgid "Public Stream"
-msgstr ""
-
-#: Code/Lib/Apps.php:402
-msgid "Random Channel"
-msgstr ""
-
-#: Code/Lib/Apps.php:403
-msgid "Remote Diagnostics"
-msgstr ""
-
-#: Code/Lib/Apps.php:404
-msgid "Report Bug"
-msgstr ""
-
-#: Code/Lib/Apps.php:405
-msgid "Roles"
-msgstr ""
-
-#: Code/Lib/Apps.php:406 Code/Lib/Navbar.php:169 Code/Lib/Libacl.php:134
-#: Code/Module/Connections.php:378 Code/Module/Search.php:120
-#: Code/Widget/Sitesearch.php:35 include/misc.php:1025 include/misc.php:1037
-msgid "Search"
-msgstr ""
-
-#: Code/Lib/Apps.php:407
-msgid "Secrets"
-msgstr ""
-
-#: Code/Lib/Apps.php:408 Code/Module/Admin/Themes.php:128
-#: Code/Module/Admin/Addons.php:344 Code/Widget/Newmember.php:57
-#: Code/Widget/Settings_menu.php:101
-msgid "Settings"
-msgstr ""
-
-#: Code/Lib/Apps.php:409
-msgid "Sites"
-msgstr ""
-
-#: Code/Lib/Apps.php:410
-msgid "Stream"
-msgstr ""
-
-#: Code/Lib/Apps.php:411 Code/Widget/Stream_order.php:154
-msgid "Stream Order"
-msgstr ""
-
-#: Code/Lib/Apps.php:412
-msgid "Suggest"
-msgstr ""
-
-#: Code/Lib/Apps.php:413 Code/Lib/Features.php:286
-msgid "Suggest Channels"
-msgstr ""
-
-#: Code/Lib/Apps.php:414
-msgid "Tagadelic"
-msgstr ""
-
-#: Code/Lib/Apps.php:415 Code/Widget/Tasklist.php:30
-msgid "Tasks"
-msgstr ""
-
-#: Code/Lib/Apps.php:416
-msgid "View Bookmarks"
-msgstr ""
-
-#: Code/Lib/Apps.php:417 Code/Lib/Navbar.php:122 Code/Module/Connedit.php:564
-msgid "View Profile"
-msgstr ""
-
-#: Code/Lib/Apps.php:418 Code/Module/Webpages.php:266
-msgid "Webpages"
-msgstr ""
-
-#: Code/Lib/Apps.php:419
-msgid "Wiki"
-msgstr ""
-
-#: Code/Lib/Apps.php:420 extend/addon/a/zotpost/Mod_zotpost.php:56
-msgid "ZotPost"
-msgstr ""
-
-#: Code/Lib/Apps.php:597
-msgid "Installed"
-msgstr ""
-
-#: Code/Lib/Apps.php:597 Code/Module/Admin/Addons.php:425
-msgid "Install"
-msgstr ""
-
-#: Code/Lib/Apps.php:621
-msgid "Purchase"
-msgstr ""
-
-#: Code/Lib/Apps.php:624 Code/Lib/Libprofile.php:203
-#: Code/Lib/ThreadItem.php:149 Code/Lib/Menu.php:142
-#: Code/Module/Admin/Profs.php:192 Code/Module/Layouts.php:209
-#: Code/Module/Connections.php:320 Code/Module/Connections.php:361
-#: Code/Module/Connections.php:382 Code/Module/Editlayout.php:127
-#: Code/Module/Editwebpage.php:160 Code/Module/Lists.php:343
-#: Code/Module/Card_edit.php:110 Code/Module/Menu.php:182
-#: Code/Module/Settings/Oauth2.php:213 Code/Module/Settings/Oauth.php:166
-#: Code/Module/Editblock.php:129 Code/Module/Blocks.php:173
-#: Code/Module/Thing.php:304 Code/Module/Webpages.php:269
-#: Code/Widget/Cdav.php:149 Code/Widget/Cdav.php:184
-#: Code/Storage/Browser.php:318
-msgid "Edit"
-msgstr ""
-
-#: Code/Lib/Apps.php:625 Code/Lib/ThreadItem.php:186
-#: Code/Module/Admin/Profs.php:193 Code/Module/Admin/Accounts.php:192
-#: Code/Module/Admin/Channels.php:147 Code/Module/Connedit.php:632
-#: Code/Module/Connedit.php:868 Code/Module/Cdav.php:1080
-#: Code/Module/Cdav.php:1389 Code/Module/Connections.php:328
-#: Code/Module/Editlayout.php:151 Code/Module/Editwebpage.php:185
-#: Code/Module/Photos.php:1259 Code/Module/Card_edit.php:140
-#: Code/Module/Settings/Oauth2.php:214 Code/Module/Settings/Oauth.php:167
-#: Code/Module/Settings/Profile_edit.php:668 Code/Module/Editblock.php:154
-#: Code/Module/Blocks.php:175 Code/Module/Thing.php:305
-#: Code/Module/Webpages.php:271 Code/Storage/Browser.php:319
-#: include/conversation.php:498 include/conversation.php:549
-msgid "Delete"
-msgstr ""
-
-#: Code/Lib/Apps.php:626
-msgid "Undelete"
-msgstr ""
-
-#: Code/Lib/Apps.php:636
-msgid "Add to app-tray"
-msgstr ""
-
-#: Code/Lib/Apps.php:637
-msgid "Remove from app-tray"
-msgstr ""
-
-#: Code/Lib/Apps.php:638
-msgid "Pin to navbar"
-msgstr ""
-
-#: Code/Lib/Apps.php:639
-msgid "Unpin from navbar"
-msgstr ""
-
-#: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2263
-#: Code/Module/Cdav.php:878 Code/Module/Cdav.php:879 Code/Module/Cdav.php:885
-#: Code/Module/Embedphotos.php:323 Code/Module/Photos.php:854
-#: Code/Module/Photos.php:1322 Code/Widget/Album.php:100
-#: Code/Widget/Portfolio.php:110 Code/Storage/Browser.php:182
-#: include/attach.php:1384 include/conversation.php:962
-msgid "Unknown"
-msgstr ""
-
-#: Code/Lib/Libsync.php:981
-#, php-format
-msgid "Unable to verify site signature for %s"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:87
-msgid "Directory Options"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:89 Code/Lib/Navbar.php:112
-msgid "Safe Mode"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:89 Code/Lib/Libzotdir.php:90
-#: Code/Lib/Libzotdir.php:93 Code/Lib/Libzotdir.php:94
-#: Code/Lib/Libzotdir.php:95 Code/Module/Admin/Site.php:244
-#: Code/Module/Admin/Site.php:295 Code/Module/Connedit.php:358
-#: Code/Module/Connedit.php:722 Code/Module/Connedit.php:808
-#: Code/Module/Defperms.php:189 Code/Module/Events.php:518
-#: Code/Module/Events.php:519 Code/Module/Events.php:544
-#: Code/Module/Filestorage.php:243 Code/Module/Filestorage.php:251
-#: Code/Module/Import.php:726 Code/Module/Menu.php:169 Code/Module/Menu.php:227
-#: Code/Module/Mitem.php:191 Code/Module/Mitem.php:192
-#: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
-#: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
-#: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
-#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:245
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
-#: Code/Storage/Browser.php:435 boot.php:1107
-#: extend/addon/a/content_import/Mod_content_import.php:149
-#: extend/addon/a/content_import/Mod_content_import.php:150
-#: extend/addon/a/content_import/Mod_content_import.php:151
-#: extend/addon/a/zotpost/Mod_zotpost.php:79 include/conversation.php:1304
-#: include/conversation.php:1309 view/theme/redbasic/php/config.php:105
-msgid "No"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:89 Code/Lib/Libzotdir.php:90
-#: Code/Lib/Libzotdir.php:93 Code/Lib/Libzotdir.php:94
-#: Code/Lib/Libzotdir.php:95 Code/Module/Admin/Site.php:246
-#: Code/Module/Admin/Site.php:295 Code/Module/Connedit.php:358
-#: Code/Module/Connedit.php:722 Code/Module/Connedit.php:808
-#: Code/Module/Defperms.php:189 Code/Module/Events.php:518
-#: Code/Module/Events.php:519 Code/Module/Events.php:544
-#: Code/Module/Filestorage.php:243 Code/Module/Filestorage.php:251
-#: Code/Module/Import.php:726 Code/Module/Menu.php:169 Code/Module/Menu.php:227
-#: Code/Module/Mitem.php:191 Code/Module/Mitem.php:192
-#: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
-#: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
-#: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
-#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:245
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
-#: Code/Storage/Browser.php:435 boot.php:1107
-#: extend/addon/a/content_import/Mod_content_import.php:149
-#: extend/addon/a/content_import/Mod_content_import.php:150
-#: extend/addon/a/content_import/Mod_content_import.php:151
-#: extend/addon/a/zotpost/Mod_zotpost.php:79 include/conversation.php:1304
-#: include/conversation.php:1309 view/theme/redbasic/php/config.php:105
-msgid "Yes"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:90
-msgid "Groups Only"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:93
-msgid "This Website Only"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:94
-msgid "Recently Updated"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:95
-msgid "Show cover photos"
-msgstr ""
-
-#: Code/Lib/Libzotdir.php:95
-msgid "May slow page loading"
-msgstr ""
-
-#: Code/Lib/Connect.php:50 Code/Lib/Connect.php:170
-msgid "Channel is blocked on this site."
-msgstr ""
-
-#: Code/Lib/Connect.php:55
-msgid "Channel location missing."
-msgstr ""
-
-#: Code/Lib/Connect.php:132
-msgid "Remote channel or protocol unavailable."
-msgstr ""
-
-#: Code/Lib/Connect.php:164
-msgid "Channel discovery failed."
-msgstr ""
-
-#: Code/Lib/Connect.php:178
-msgid "Protocol not supported"
-msgstr ""
-
-#: Code/Lib/Connect.php:191
-msgid "Cannot connect to yourself."
-msgstr ""
-
-#: Code/Lib/Connect.php:269
-msgid "error saving data"
-msgstr ""
-
-#: Code/Lib/Account.php:31
-msgid "Not a valid email address"
-msgstr ""
-
-#: Code/Lib/Account.php:33
-msgid "Your email domain is not among those allowed on this site"
-msgstr ""
-
-#: Code/Lib/Account.php:40
-msgid "Your email address is already registered at this site."
-msgstr ""
-
-#: Code/Lib/Account.php:75
-msgid "An invitation is required."
-msgstr ""
-
-#: Code/Lib/Account.php:79
-msgid "Invitation could not be verified."
-msgstr ""
-
-#: Code/Lib/Account.php:161
-msgid "Please enter the required information."
-msgstr ""
-
-#: Code/Lib/Account.php:225
-msgid "Failed to store account information."
-msgstr ""
-
-#: Code/Lib/Account.php:315
-#, php-format
-msgid "Registration confirmation for %s"
-msgstr ""
-
-#: Code/Lib/Account.php:390
-#, php-format
-msgid "Registration request at %s"
-msgstr ""
-
-#: Code/Lib/Account.php:414
-msgid "your registration password"
-msgstr ""
-
-#: Code/Lib/Account.php:420 Code/Lib/Account.php:490
-#, php-format
-msgid "Registration details for %s"
-msgstr ""
-
-#: Code/Lib/Account.php:502
-msgid "Account approved."
-msgstr ""
-
-#: Code/Lib/Account.php:549
-#, php-format
-msgid "Registration revoked for %s"
-msgstr ""
-
-#: Code/Lib/Account.php:688 Code/Module/Admin/Accounts.php:103
-#, php-format
-msgid "Account '%s' deleted"
-msgstr ""
-
-#: Code/Lib/Navbar.php:104
-msgid "Remote authentication"
-msgstr ""
-
-#: Code/Lib/Navbar.php:104
-msgid "Click to authenticate to your home hub"
-msgstr ""
-
-#: Code/Lib/Navbar.php:109 Code/Module/Admin/Channels.php:144
-#: Code/Module/Admin.php:154 Code/Module/Manage.php:188
-#: Code/Widget/Admin.php:29
-msgid "Channels"
-msgstr ""
-
-#: Code/Lib/Navbar.php:109
-msgid "Manage your channels"
-msgstr ""
-
-#: Code/Lib/Navbar.php:112
-msgid "(is on)"
-msgstr ""
-
-#: Code/Lib/Navbar.php:112
-msgid "(is off)"
-msgstr ""
-
-#: Code/Lib/Navbar.php:112
-msgid "Content filtering"
-msgstr ""
-
-#: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:141 Code/Lib/Navbar.php:159
-#: boot.php:1101
-msgid "Logout"
-msgstr ""
-
-#: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:141
-msgid "End this session"
-msgstr ""
-
-#: Code/Lib/Navbar.php:122
-msgid "Your profile page"
-msgstr ""
-
-#: Code/Lib/Navbar.php:128 Code/Lib/Navbar.php:131
-msgid "Sign in"
-msgstr ""
-
-#: Code/Lib/Navbar.php:157
-msgid "Take me home"
-msgstr ""
-
-#: Code/Lib/Navbar.php:159
-msgid "Log me out of this site"
-msgstr ""
-
-#: Code/Lib/Navbar.php:164 Code/Module/Register.php:304
-#: Code/Module/Communities.php:83 boot.php:1082
-msgid "Register"
-msgstr ""
-
-#: Code/Lib/Navbar.php:164
-msgid "Create an account"
-msgstr ""
-
-#: Code/Lib/Navbar.php:169
-msgid "Search site @name, #tag, ?doc, content"
-msgstr ""
-
-#: Code/Lib/Navbar.php:175 Code/Widget/Admin.php:58
-msgid "Admin"
-msgstr ""
-
-#: Code/Lib/Navbar.php:175
-msgid "Site Setup and Configuration"
-msgstr ""
-
-#: Code/Lib/Navbar.php:282 Code/Module/Connedit.php:803
-#: Code/Module/Defperms.php:246 Code/Module/New_channel.php:170
-#: Code/Module/New_channel.php:177 Code/Widget/Notifications.php:167
-msgid "Loading"
-msgstr ""
-
-#: Code/Lib/Navbar.php:287
-msgid "Side Panel"
-msgstr ""
-
-#: Code/Lib/Navbar.php:288
-msgid "@name, #tag, ?doc, content"
-msgstr ""
-
-#: Code/Lib/Navbar.php:289
-msgid "Please wait..."
-msgstr ""
-
-#: Code/Lib/Navbar.php:295 Code/Module/Apps.php:59 Code/Widget/Appstore.php:17
-msgid "Installed Apps"
-msgstr ""
-
-#: Code/Lib/Navbar.php:297 Code/Module/Apps.php:59 Code/Widget/Appstore.php:18
-msgid "Available Apps"
-msgstr ""
-
-#: Code/Lib/Navbar.php:298 Code/Module/Apporder.php:51
-msgid "Arrange Apps"
-msgstr ""
-
-#: Code/Lib/Navbar.php:299
-msgid "Toggle System Apps"
-msgstr ""
-
-#: Code/Lib/Navbar.php:368 Code/Module/Admin/Channels.php:150
-msgid "Channel"
-msgstr ""
-
-#: Code/Lib/Navbar.php:371
-msgid "Status Messages and Posts"
-msgstr ""
-
-#: Code/Lib/Navbar.php:381
-msgid "About"
-msgstr ""
-
-#: Code/Lib/Navbar.php:384
-msgid "Profile Details"
-msgstr ""
-
-#: Code/Lib/Navbar.php:394 include/photos.php:745
-msgid "Photo Albums"
-msgstr ""
-
-#: Code/Lib/Navbar.php:402
-msgid "Files and Storage"
-msgstr ""
-
-#: Code/Lib/Libacl.php:93
-msgid "(List)"
-msgstr ""
-
-#: Code/Lib/Libacl.php:102
-msgid "(Group)"
-msgstr ""
-
-#: Code/Lib/Libacl.php:115
-msgid "(DM)"
-msgstr ""
-
-#: Code/Lib/Libacl.php:129
-msgid "Who can see this?"
-msgstr ""
-
-#: Code/Lib/Libacl.php:130
-msgid "Custom selection"
-msgstr ""
-
-#: Code/Lib/Libacl.php:131
-msgid ""
-"Select \"Show\" to allow viewing. \"Don't show\" lets you override and limit "
-"the scope of \"Show\"."
-msgstr ""
-
-#: Code/Lib/Libacl.php:132
-msgid "Show"
-msgstr ""
-
-#: Code/Lib/Libacl.php:133
-msgid "Don't show"
-msgstr ""
-
-#: Code/Lib/Libacl.php:139 Code/Module/Connedit.php:653
-#: Code/Module/Filestorage.php:233 Code/Module/Photos.php:735
-#: Code/Module/Photos.php:1121 Code/Module/Chat.php:243
-#: Code/Module/Thing.php:357 Code/Module/Thing.php:412
-#: extend/addon/a/flashcards/Mod_Flashcards.php:255
-msgid "Permissions"
-msgstr ""
-
-#: Code/Lib/Libacl.php:141 Code/Lib/ThreadItem.php:511
-#: Code/Module/Photos.php:1340 Code/Module/Settings/Channel.php:495
-#: include/conversation.php:1373
-msgid "Close"
-msgstr ""
-
-#: Code/Lib/Libacl.php:164
-msgid ""
-"Post permissions cannot be changed after a post is shared.<br>These "
-"permissions set who is allowed to view the post."
-msgstr ""
-
-#: Code/Lib/Libprofile.php:39
-msgid "Requested channel is not available."
-msgstr ""
-
-#: Code/Lib/Libprofile.php:99 Code/Module/Layouts.php:41
-#: Code/Module/Profile.php:28 Code/Module/Editlayout.php:40
-#: Code/Module/Editwebpage.php:45 Code/Module/Cards.php:41
-#: Code/Module/Connect.php:23 Code/Module/Menu.php:98
-#: Code/Module/Editblock.php:42 Code/Module/Blocks.php:41
-#: Code/Module/Webpages.php:48 extend/addon/a/gallery/Mod_Gallery.php:51
-msgid "Requested profile is not available."
-msgstr ""
-
-#: Code/Lib/Libprofile.php:199 Code/Module/Settings/Profile_edit.php:593
-msgid "Change profile photo"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:203
-msgid "Edit Profile"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:219
-msgid "Profile Image"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:222
-msgid "Visible to everybody"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:223 Code/Module/Settings/Profile_edit.php:590
-msgid "Edit visibility"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:296 include/connections.php:182
-#: include/conversation.php:876
-msgid "Direct Message"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:309 Code/Module/Fedi_id.php:55
-#: Code/Module/Directory.php:444 Code/Widget/Suggestions.php:49
-#: Code/Widget/Follow.php:41 include/connections.php:154
-#: include/conversation.php:856
-msgid "Connect"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:311 Code/Module/Directory.php:444
-#: Code/Widget/Suggestions.php:49
-msgid "Join"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:331 Code/Module/Directory.php:431
-#: Code/Module/Communities.php:121 include/event.php:84 include/event.php:141
-msgid "Location:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:336 Code/Lib/Libprofile.php:511
-msgid "Gender:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:337 Code/Lib/Libprofile.php:561
-msgid "Status:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:338 Code/Lib/Libprofile.php:594
-msgid "Homepage:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:339 Code/Lib/Libprofile.php:590
-msgid "Pronouns:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:401 Code/Module/Connections.php:64
-#: Code/Module/Connections.php:123 Code/Module/Connections.php:134
-#: Code/Module/Connections.php:294
-msgid "Active"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:405
-msgid "Change your profile photo"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:406
-msgid "Copy to clipboard"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:407
-msgid "Address copied to clipboard"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:435 Code/Module/Settings/Profile_edit.php:774
-#: Code/Module/Settings/Profile_edit.php:792
-msgid "Female"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:438 Code/Module/Settings/Profile_edit.php:774
-#: Code/Module/Settings/Profile_edit.php:792
-msgid "Male"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:441
-msgid "Trans"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:444
-msgid "Inter"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:447 Code/Module/Settings/Profile_edit.php:774
-msgid "Neuter"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:450 Code/Module/Settings/Profile_edit.php:774
-msgid "Non-specific"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:464
-msgid "She"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:467
-msgid "Him"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:470
-msgid "Them"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:508
-msgid "Full Name:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:545
-msgid "j F, Y"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:546
-msgid "j F"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:553
-msgid "Birthday:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:557 Code/Module/Directory.php:426
-msgid "Age:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:569
-#, php-format
-msgid "for %1$d %2$s"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:581
-msgid "Tags:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:586
-msgid "Sexual Preference:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:598 Code/Module/Directory.php:441
-msgid "Hometown:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:602
-msgid "Political Views:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:606
-msgid "Religion:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:610 Code/Module/Directory.php:443
-msgid "About:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:614
-msgid "Hobbies/Interests:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:618
-msgid "Likes:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:622
-msgid "Dislikes:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:626
-msgid "Contact information and Social Networks:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:630
-msgid "My other channels:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:634
-msgid "Musical interests:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:638
-msgid "Books, literature:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:642
-msgid "Television:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:646
-msgid "Film/dance/culture/entertainment:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:650
-msgid "Love/Romance:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:654
-msgid "Work/employment:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:658
-msgid "School/education:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:684
-msgid "Like this thing"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:685 Code/Module/Events.php:756
-#: Code/Module/Cal.php:350
-msgid "Export"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:111 include/conversation.php:506
-msgid "Public visibility"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:113 include/conversation.php:508
-msgid "Direct message (private mail)"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:116 include/conversation.php:511
-msgid "Restricted visibility"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:141
-msgid ""
-"This comment is part of a private conversation, yet was shared with the "
-"public. Discretion advised."
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:189 Code/Storage/Browser.php:306
-msgid "Admin Delete"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:194 include/attach.php:1378
-#: include/conversation.php:497
-msgid "Select"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:198 Code/Module/Filer.php:63
-msgid "Save to Folder"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:220
-msgid "I will attend"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:220
-msgid "I will not attend"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:220
-msgid "I might attend"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:221
-msgid "Undo attendance"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:236 Code/Lib/ThreadItem.php:256
-#: Code/Module/Photos.php:1223 Code/Module/Photos.php:1234
-msgid "View all"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:241 Code/Module/Photos.php:1227
-#: include/conversation.php:1876 include/taxonomy.php:743
-msgctxt "noun"
-msgid "Like"
-msgid_plural "Likes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: Code/Lib/ThreadItem.php:243 Code/Lib/ThreadItem.php:505
-#: Code/Module/Photos.php:1334 include/conversation.php:1878
-msgctxt "noun"
-msgid "Likes"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:249 Code/Module/Photos.php:1231
-#: include/conversation.php:1882
-msgctxt "noun"
-msgid "Dislike"
-msgid_plural "Dislikes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: Code/Lib/ThreadItem.php:251 Code/Lib/ThreadItem.php:506
-#: Code/Module/Photos.php:1335 include/conversation.php:1884
-msgctxt "noun"
-msgid "Dislikes"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:272 Code/Module/Admin/Profs.php:103
-#: Code/Module/Admin/Profs.php:124 Code/Module/Filer.php:62
-#: Code/Widget/Notes.php:26 extend/addon/a/queueworker/Mod_Queueworker.php:118
-#: include/misc.php:1026 include/misc.php:1038
-msgid "Save"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:281 include/conversation.php:516
-msgid "Message signature validated"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:282 include/conversation.php:517
-msgid "Message signature incorrect"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:288
-msgid "Add Tag"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:322 Code/Module/Photos.php:1164
-msgid "I like this"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:322 Code/Module/Photos.php:1168
-msgid "Undo like"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:323 Code/Module/Photos.php:1167
-msgid "I don't like this"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:323 Code/Module/Photos.php:1169
-msgid "Undo dislike"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:329
-msgid "Repeat This"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:330
-msgid "Share this"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:341
-msgid "Delivery Report"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:370
-#, php-format
-msgid "%d comment"
-msgid_plural "%d comments"
-msgstr[0] ""
-msgstr[1] ""
-
-#: Code/Lib/ThreadItem.php:371
-#, php-format
-msgid "%d unseen"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:416 Code/Lib/ThreadItem.php:417
-#, php-format
-msgid "View %s's profile - %s"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:420
-msgid "to"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:421 include/conversation.php:580
-msgid "via"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:422
-msgid "Wall-to-Wall"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:423
-msgid "via Wall-To-Wall:"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:437 include/conversation.php:583
-#, php-format
-msgid "from %s"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:440 include/conversation.php:586
-#, php-format
-msgid "last edited: %s"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:441 include/conversation.php:587
-#, php-format
-msgid "Expires: %s"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:451
-msgid "Attend"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:452
-msgid "Attendance Options"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:453 include/misc.php:2073
-msgid "Vote"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:454
-msgid "Voting Options"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:455
-msgid "Reply"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:481 include/conversation.php:602
-msgid "Pinned post"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:483 Code/Lib/Stringsjs.php:43
-#: include/conversation.php:604
-msgid "Unpin this post"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:483 Code/Lib/Stringsjs.php:42
-#: include/conversation.php:604
-msgid "Pin this post"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:485
-msgid "Saved draft"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:486
-msgid "Save Bookmarks"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:487
-msgid "Add to Calendar"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:498 Code/Module/Notifications.php:75
-msgid "Mark all seen"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:514 include/conversation.php:339
-msgid "This is an unsaved preview"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:515 Code/Module/Photos.php:1171
-#: include/conversation.php:607
-msgid "Please wait"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:578 Code/Lib/Stringsjs.php:15
-#, php-format
-msgid "%s show all"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:923 Code/Module/Photos.php:1187
-#: Code/Module/Photos.php:1293
-msgid "This is you"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:925 Code/Lib/Stringsjs.php:14
-#: Code/Module/Photos.php:1189 Code/Module/Photos.php:1295
-msgid "Comment"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:926 Code/Lib/Stringsjs.php:27
-#: Code/Module/Appman.php:163 Code/Module/Admin/Profs.php:195
-#: Code/Module/Admin/Account_edit.php:81 Code/Module/Admin/Customsql.php:38
-#: Code/Module/Admin/Themes.php:160 Code/Module/Admin/Addons.php:441
-#: Code/Module/Admin/Logs.php:87 Code/Module/Admin/Accounts.php:185
-#: Code/Module/Admin/Channels.php:145 Code/Module/Admin/Security.php:181
-#: Code/Module/Admin/Site.php:272 Code/Module/Connedit.php:833
-#: Code/Module/Pdledit.php:115 Code/Module/Setup.php:313
-#: Code/Module/Setup.php:348 Code/Module/Defperms.php:254
-#: Code/Module/Content_filter.php:68 Code/Module/Email_validation.php:47
-#: Code/Module/Events.php:541 Code/Module/Filestorage.php:248
-#: Code/Module/Lists.php:211 Code/Module/Lists.php:220
-#: Code/Module/Photos.php:1132 Code/Module/Photos.php:1190
-#: Code/Module/Photos.php:1296 Code/Module/Locs.php:134
-#: Code/Module/Expire.php:50 Code/Module/Editpost.php:145
-#: Code/Module/Import_items.php:142 Code/Module/Connect.php:99
-#: Code/Module/Invite.php:171 Code/Module/Import.php:732
-#: Code/Module/Mitem.php:274 Code/Module/Mood.php:170
-#: Code/Module/Pconfig.php:129 Code/Module/Affinity.php:89
-#: Code/Module/Chat.php:214 Code/Module/Chat.php:250
-#: Code/Module/Dev/Zotfinger.php:30 Code/Module/Dev/Finger.php:26
-#: Code/Module/Dev/Serialize.php:27 Code/Module/Dev/Xchan.php:18
-#: Code/Module/Dev/Ap_probe.php:25 Code/Module/Dev/Zot_probe.php:24
-#: Code/Module/Settings/Oauth2.php:115 Code/Module/Settings/Oauth.php:98
-#: Code/Module/Settings/Features.php:66 Code/Module/Settings/Featured.php:63
-#: Code/Module/Settings/Permcats.php:146 Code/Module/Settings/Tokens.php:315
-#: Code/Module/Settings/Display.php:209
-#: Code/Module/Settings/Profile_edit.php:588
-#: Code/Module/Settings/Account.php:114 Code/Module/Settings/Multifactor.php:72
-#: Code/Module/Settings/Channel.php:441 Code/Module/Cal.php:354
-#: Code/Module/Thing.php:364 Code/Module/Thing.php:419
-#: Code/Module/Sources.php:133 Code/Module/Sources.php:171
-#: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
-#: extend/addon/a/content_import/Mod_content_import.php:155
-#: extend/addon/a/faces/Mod_Faces.php:141
-#: extend/addon/a/flashcards/Mod_Flashcards.php:263
-#: extend/addon/a/followlist/Mod_followlist.php:130
-#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:58
-#: extend/addon/a/logrot/logrot.php:37 extend/addon/a/nsfw/Mod_Nsfw.php:53
-#: extend/addon/a/openstreetmap/openstreetmap.php:218
-#: extend/addon/a/zotpost/Mod_zotpost.php:83
-#: view/theme/redbasic/php/config.php:100
-msgid "Submit"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:928 include/conversation.php:1280
-msgid "Bold"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:929 include/conversation.php:1281
-msgid "Italic"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:930 include/conversation.php:1282
-msgid "Underline"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:931 include/conversation.php:1283
-msgid "Quote"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:932 include/conversation.php:1284
-msgid "Code"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:933
-msgid "Image"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:934
-msgid "Attach/Upload a File"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:935
-msgid "Insert Link"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:936
-msgid "Video"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:937 Code/Module/Events.php:526
-#: Code/Module/Photos.php:1191 Code/Module/Webpages.php:276
-#: include/conversation.php:1167
-msgid "Preview"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:938 Code/Module/Pdledit.php:72
-#: Code/Module/Pdledit.php:80 Code/Module/Lostpass.php:143
-msgid "Reset"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:943 Code/Module/Chat.php:222
-#: include/conversation.php:1365
-msgid "Encrypt text"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:948
-msgid "Your full name (required)"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:949
-msgid "Your email address (required)"
-msgstr ""
-
-#: Code/Lib/ThreadItem.php:950
-msgid "Your website URL (optional)"
-msgstr ""
-
-#: Code/Lib/ServiceClass.php:34
-msgid "Unable to obtain identity information from database"
-msgstr ""
-
-#: Code/Lib/ServiceClass.php:279 Code/Lib/ServiceClass.php:281
-msgid "Click here to upgrade."
-msgstr ""
-
-#: Code/Lib/ServiceClass.php:289
-msgid "This action exceeds the limits set by your subscription plan."
-msgstr ""
-
-#: Code/Lib/ServiceClass.php:295
-msgid "This action is not available under your subscription plan."
-msgstr ""
-
-#: Code/Lib/Activity.php:448
-msgid "Quoted post"
-msgstr ""
-
-#: Code/Lib/Activity.php:2954
-msgid "Activity"
-msgstr ""
-
-#: Code/Lib/Activity.php:2960
-#, php-format
-msgid "Likes %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:2963
-#, php-format
-msgid "Doesn't like %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:2969
-#, php-format
-msgid "Will attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2972
-#, php-format
-msgid "Will not attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2975
-#, php-format
-msgid "May attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2978
-#, php-format
-msgid "May not attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2983 Code/Lib/Share.php:123 Code/Module/Share.php:119
-#: include/items.php:3175
-#, php-format
-msgid "&#x1f501; Repeated %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:3526 include/items.php:3038 include/misc.php:1669
-#: include/misc.php:3155
-#, php-format
-msgid "%1$s (%2$s)"
-msgstr ""
-
-#: Code/Lib/Chatroom.php:28
-msgid "Missing room name"
-msgstr ""
-
-#: Code/Lib/Chatroom.php:38
-msgid "Duplicate room name"
-msgstr ""
-
-#: Code/Lib/Chatroom.php:94 Code/Lib/Chatroom.php:103
-msgid "Invalid room specifier."
-msgstr ""
-
-#: Code/Lib/Chatroom.php:141
-msgid "Room not found."
-msgstr ""
-
-#: Code/Lib/Chatroom.php:153 Code/Module/Block.php:31 Code/Module/Block.php:84
-#: Code/Module/Appman.php:100 Code/Module/Layouts.php:82
-#: Code/Module/Layouts.php:89 Code/Module/Layouts.php:100
-#: Code/Module/Connedit.php:351 Code/Module/Pdledit.php:37
-#: Code/Module/Channel.php:240 Code/Module/Channel.php:418
-#: Code/Module/Channel.php:456 Code/Module/Display.php:508
-#: Code/Module/Setup.php:220 Code/Module/Inspect.php:17
-#: Code/Module/Profile.php:102 Code/Module/Profile.php:117
-#: Code/Module/Defperms.php:176 Code/Module/Defperms.php:182
-#: Code/Module/Common.php:48 Code/Module/Connections.php:37
-#: Code/Module/Cover_photo.php:336 Code/Module/Cover_photo.php:350
-#: Code/Module/Calendar.php:260 Code/Module/Editlayout.php:77
-#: Code/Module/Editlayout.php:100 Code/Module/Editwebpage.php:82
-#: Code/Module/Editwebpage.php:103 Code/Module/Editwebpage.php:122
-#: Code/Module/Editwebpage.php:138 Code/Module/Events.php:307
-#: Code/Module/Filestorage.php:29 Code/Module/Filestorage.php:115
-#: Code/Module/Filestorage.php:131 Code/Module/Filestorage.php:159
-#: Code/Module/Filestorage.php:192 Code/Module/Filestorage.php:199
-#: Code/Module/Moderate.php:21 Code/Module/Cards.php:85
-#: Code/Module/Register.php:92 Code/Module/Lists.php:98
-#: Code/Module/Lists.php:110 Code/Module/Lists.php:141
-#: Code/Module/Photos.php:72 Code/Module/Locs.php:105
-#: Code/Module/Editpost.php:26 Code/Module/Invite.php:102
-#: Code/Module/Card_edit.php:63 Code/Module/Manage.php:23
-#: Code/Module/Menu.php:136 Code/Module/Menu.php:147 Code/Module/Mitem.php:143
-#: Code/Module/Page.php:42 Code/Module/Page.php:147 Code/Module/Mood.php:136
-#: Code/Module/New_channel.php:123 Code/Module/New_channel.php:146
-#: Code/Module/Notifications.php:19 Code/Module/Item.php:622
-#: Code/Module/Item.php:644 Code/Module/Item.php:656 Code/Module/Item.php:1877
-#: Code/Module/Poke.php:118 Code/Module/Api.php:31
-#: Code/Module/Profile_photo.php:348 Code/Module/Profile_photo.php:362
-#: Code/Module/Chat.php:115 Code/Module/Chat.php:120 Code/Module/Regmod.php:25
-#: Code/Module/Service_limits.php:16 Code/Module/Settings.php:71
-#: Code/Module/Settings/Profile_edit.php:71
-#: Code/Module/Settings/Profile_edit.php:523 Code/Module/Editblock.php:79
-#: Code/Module/Sharedwithme.php:22 Code/Module/Blocks.php:82
-#: Code/Module/Blocks.php:89 Code/Module/Viewconnections.php:25
-#: Code/Module/Vote.php:23 Code/Module/Viewsrc.php:24 Code/Module/Thing.php:317
-#: Code/Module/Thing.php:338 Code/Module/Thing.php:380
-#: Code/Module/Suggestions.php:35 Code/Module/Webpages.php:143
-#: Code/Module/Sources.php:92 Code/Web/WebServer.php:67 include/attach.php:161
-#: include/attach.php:210 include/attach.php:288 include/attach.php:415
-#: include/attach.php:430 include/attach.php:437 include/attach.php:516
-#: include/attach.php:1132 include/attach.php:1444 include/attach.php:1615
-#: include/photos.php:42
-msgid "Permission denied."
-msgstr ""
-
-#: Code/Lib/Chatroom.php:164
-msgid "Room is full"
-msgstr ""
-
-#: Code/Lib/Permcat.php:77
-msgctxt "permcat"
-msgid "default"
-msgstr ""
-
-#: Code/Lib/Permcat.php:156
-msgctxt "permcat"
-msgid "follower"
-msgstr ""
-
-#: Code/Lib/Permcat.php:160
-msgctxt "permcat"
-msgid "contributor"
-msgstr ""
-
-#: Code/Lib/Permcat.php:165
-msgctxt "permcat"
-msgid "publisher"
-msgstr ""
-
-#: Code/Lib/Permcat.php:192
-msgid "custom"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:13 include/conversation.php:1161
-msgid "Delete this item?"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:16
-#, php-format
-msgid "%s show less"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:17
-#, php-format
-msgid "%s expand"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:18
-#, php-format
-msgid "%s collapse"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:19
-msgid "Password too short"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:20
-msgid "Passwords do not match"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:21
-msgid "everybody"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:22
-msgid "Secret Passphrase"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:23
-msgid "Passphrase hint"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:24
-msgid "Notice: Permissions have changed but have not yet been submitted."
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:25
-msgid "close all"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:26
-msgid "Nothing new here"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:28
-msgid "Please enter a link URL"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:29
-msgid "Unsaved changes. Are you sure you wish to leave this page?"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:30 Code/Module/Cdav.php:1041
-#: Code/Module/Events.php:523 Code/Module/Locs.php:130
-#: Code/Module/Settings/Profile_edit.php:387
-#: Code/Module/Settings/Profile_edit.php:599
-msgid "Location"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:31
-msgid "lovely"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:32
-msgid "wonderful"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:33
-msgid "fantastic"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:34
-msgid "great"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:35
-msgid ""
-"Your chosen nickname was either already taken or not valid. Please use our "
-"suggestion ("
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:36
-msgid ") or enter a new one."
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:37
-msgid "Thank you, this nickname is valid."
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:38
-msgid "A channel name is required."
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:39
-msgid "This is a "
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:40
-msgid " channel name"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:41
-msgid "Pinned"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:44
-msgid "Please accept terms to continue"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:50
-msgid "timeago.prefixAgo"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:51
-msgid "timeago.prefixFromNow"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:52
-msgid "timeago.suffixAgo"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:53
-msgid "timeago.suffixFromNow"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:56
-msgid "less than a minute"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:57
-msgid "about a minute"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:58
-#, php-format
-msgid "%d minutes"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:59
-msgid "about an hour"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:60
-#, php-format
-msgid "about %d hours"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:61
-msgid "a day"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:62
-#, php-format
-msgid "%d days"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:63
-msgid "about a month"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:64
-#, php-format
-msgid "%d months"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:65
-msgid "about a year"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:66
-#, php-format
-msgid "%d years"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:67
-msgid " "
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:68
-msgid "timeago.numbers"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:70 include/misc.php:1415
-msgid "January"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:71 include/misc.php:1415
-msgid "February"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:72 include/misc.php:1415
-msgid "March"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:73 include/misc.php:1415
-msgid "April"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:74
-msgctxt "long"
-msgid "May"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:75 include/misc.php:1415
-msgid "June"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:76 include/misc.php:1415
-msgid "July"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:77 include/misc.php:1415
-msgid "August"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:78 include/misc.php:1415
-msgid "September"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:79 include/misc.php:1415
-msgid "October"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:80 include/misc.php:1415
-msgid "November"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:81 include/misc.php:1415
-msgid "December"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:82
-msgid "Jan"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:83
-msgid "Feb"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:84
-msgid "Mar"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:85
-msgid "Apr"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:86
-msgctxt "short"
-msgid "May"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:87
-msgid "Jun"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:88
-msgid "Jul"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:89
-msgid "Aug"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:90
-msgid "Sep"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:91
-msgid "Oct"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:92
-msgid "Nov"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:93
-msgid "Dec"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:94 Code/Module/Settings/Channel.php:567
-#: include/misc.php:1409
-msgid "Sunday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:95 Code/Module/Settings/Channel.php:568
-#: include/misc.php:1409
-msgid "Monday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:96 Code/Module/Settings/Channel.php:569
-#: include/misc.php:1409
-msgid "Tuesday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:97 Code/Module/Settings/Channel.php:570
-#: include/misc.php:1409
-msgid "Wednesday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:98 Code/Module/Settings/Channel.php:571
-#: include/misc.php:1409
-msgid "Thursday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:99 Code/Module/Settings/Channel.php:572
-#: include/misc.php:1409
-msgid "Friday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:100 Code/Module/Settings/Channel.php:573
-#: include/misc.php:1409
-msgid "Saturday"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:101
-msgid "Sun"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:102
-msgid "Mon"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:103
-msgid "Tue"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:104
-msgid "Wed"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:105
-msgid "Thu"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:106
-msgid "Fri"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:107
-msgid "Sat"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:108
-msgctxt "calendar"
-msgid "today"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:109
-msgctxt "calendar"
-msgid "month"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:110
-msgctxt "calendar"
-msgid "week"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:111
-msgctxt "calendar"
-msgid "day"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:112
-msgctxt "calendar"
-msgid "All day"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:113
-msgid ""
-"A social networking profile that is public by default and private if desired"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:114
-msgid ""
-"A social networking profile where content is private to your [Friends] "
-"Access List by default but can be made public if desired"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:115
-msgid "A public group where members are allowed to upload media by default"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:116
-msgid "A private group with no upload permission"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:117
-msgid ""
-"A public group where posts are moderated by the owner. The [moderated] "
-"permission may be removed from any group member once trust is established"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:118
-msgid ""
-"A sub-channel of your main channel - often devoted to a specific language or "
-"topic. Replies are sent back to your main channel"
-msgstr ""
-
-#: Code/Lib/Stringsjs.php:119
-msgid ""
-"A private sub-channel of your main channel - often devoted to a specific "
-"language or topic. Replies are sent back to your main channel"
-msgstr ""
-
-#: Code/Lib/Oembed.php:169
-msgid "View PDF"
-msgstr ""
-
-#: Code/Lib/Oembed.php:386
-msgid " by "
-msgstr ""
-
-#: Code/Lib/Oembed.php:389
-msgid " on "
-msgstr ""
-
-#: Code/Lib/Oembed.php:420
-msgid "Embedded content"
-msgstr ""
-
-#: Code/Lib/Oembed.php:429
-msgid "Embedding disabled"
-msgstr ""
-
-#: Code/Lib/AccessList.php:31
-msgid ""
-"A deleted list with this name was revived. Existing item permissions "
-"<strong>may</strong> apply to this list and any future members. If this is "
-"not what you intended, please create another list with a different name."
-msgstr ""
-
-#: Code/Lib/AccessList.php:344
-msgid "Add new connections to this access list"
-msgstr ""
-
-#: Code/Lib/AccessList.php:368
-msgid "edit"
-msgstr ""
-
-#: Code/Lib/AccessList.php:387 Code/Widget/Activity_filter.php:146
-msgid "Lists"
-msgstr ""
-
-#: Code/Lib/AccessList.php:388
-msgid "Edit list"
-msgstr ""
-
-#: Code/Lib/AccessList.php:389
-msgid "Create new list"
-msgstr ""
-
-#: Code/Lib/AccessList.php:390
-msgid "Channels not in any access list"
-msgstr ""
-
-#: Code/Lib/AccessList.php:392 Code/Widget/Savedsearch.php:95
-msgid "add"
-msgstr ""
 
 #: Code/Lib/Enotify.php:70
 msgid "$Projectname Notification"
@@ -2167,7 +39,7 @@ msgstr ""
 msgid "This email was sent by %1$s at %2$s."
 msgstr ""
 
-#: Code/Lib/Enotify.php:76 Code/Module/Home.php:140 Code/Module/Home.php:149
+#: Code/Lib/Enotify.php:76 Code/Module/Home.php:145 Code/Module/Home.php:154
 #: extend/addon/a/opensearch/Mod_opensearch.php:30
 msgid "$Projectname"
 msgstr ""
@@ -2427,36 +299,2159 @@ msgstr ""
 msgid "Please visit %s to approve or reject the suggestion."
 msgstr ""
 
-#: Code/Lib/Enotify.php:747
+#: Code/Lib/Enotify.php:740
 msgid "[$Projectname:Notify]"
 msgstr ""
 
-#: Code/Lib/Enotify.php:929
+#: Code/Lib/Enotify.php:922
 msgid "created a new post"
 msgstr ""
 
-#: Code/Lib/Enotify.php:930
+#: Code/Lib/Enotify.php:923
 #, php-format
 msgid "reacted to %s's conversation"
 msgstr ""
 
-#: Code/Lib/Enotify.php:932
+#: Code/Lib/Enotify.php:925
 #, php-format
 msgid "shared %s's post"
 msgstr ""
 
-#: Code/Lib/Enotify.php:936
+#: Code/Lib/Enotify.php:929
 msgid "sent a direct message"
 msgstr ""
 
-#: Code/Lib/Enotify.php:943
+#: Code/Lib/Enotify.php:936
 #, php-format
 msgid "updated a poll dated %s"
 msgstr ""
 
-#: Code/Lib/Enotify.php:946
+#: Code/Lib/Enotify.php:939
 #, php-format
 msgid "edited a post dated %s"
+msgstr ""
+
+#: Code/Lib/DB_Upgrade.php:70
+msgid "Source code of failed update: "
+msgstr ""
+
+#: Code/Lib/DB_Upgrade.php:93
+#, php-format
+msgid "Update Error at %s"
+msgstr ""
+
+#: Code/Lib/DB_Upgrade.php:100
+#, php-format
+msgid "Update %s failed. See error logs."
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:35 Code/Lib/Libacl.php:36
+msgid "Visible to your default audience"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:112 Code/Lib/Libacl.php:122
+msgid "Only me"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:114
+msgid "Public"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:116
+msgid "Anybody in the $Projectname network"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:118
+#, php-format
+msgid "Any account on %s"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:120
+msgid "Any of my connections"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:122
+msgid "Only connections I specifically allow"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:124
+msgid "Anybody authenticated (could include visitors from other networks)"
+msgstr ""
+
+#: Code/Lib/PermissionDescription.php:126
+msgid "Any connections including those who haven't yet been approved"
+msgstr ""
+
+#: Code/Lib/Url.php:483
+msgid "url: "
+msgstr ""
+
+#: Code/Lib/Url.php:484
+msgid "http_code: "
+msgstr ""
+
+#: Code/Lib/Url.php:485
+msgid "error_code: "
+msgstr ""
+
+#: Code/Lib/Url.php:486
+msgid "error_string: "
+msgstr ""
+
+#: Code/Lib/Url.php:487
+msgid "content-type: "
+msgstr ""
+
+#: Code/Lib/Url.php:489
+msgid "request-header: "
+msgstr ""
+
+#: Code/Lib/Apps.php:342 Code/Module/Lists.php:203
+msgid "Access Lists"
+msgstr ""
+
+#: Code/Lib/Apps.php:343
+msgid "Site Admin"
+msgstr ""
+
+#: Code/Lib/Apps.php:344 Code/Lib/Navbar.php:296
+msgid "Apps"
+msgstr ""
+
+#: Code/Lib/Apps.php:345
+msgid "Articles"
+msgstr ""
+
+#: Code/Lib/Apps.php:346
+msgid "CalDAV"
+msgstr ""
+
+#: Code/Lib/Apps.php:347
+msgid "CardDAV"
+msgstr ""
+
+#: Code/Lib/Apps.php:348 Code/Module/Cards.php:211
+msgid "Cards"
+msgstr ""
+
+#: Code/Lib/Apps.php:349 Code/Lib/Navbar.php:410 Code/Lib/Navbar.php:413
+#: Code/Storage/Browser.php:157
+msgid "Calendar"
+msgstr ""
+
+#: Code/Lib/Apps.php:350 Code/Module/Cdav.php:1093
+#: Code/Widget/Appcategories.php:52 Code/Widget/Categories.php:87
+#: Code/Widget/Categories.php:135 Code/Widget/Categories.php:186
+#: include/taxonomy.php:467 include/taxonomy.php:561 include/taxonomy.php:583
+#: include/taxonomy.php:606
+msgid "Categories"
+msgstr ""
+
+#: Code/Lib/Apps.php:351
+msgid "Channel Home"
+msgstr ""
+
+#: Code/Lib/Apps.php:352
+msgid "Channel Manager"
+msgstr ""
+
+#: Code/Lib/Apps.php:353 Code/Module/Sources.php:115
+msgid "Channel Sources"
+msgstr ""
+
+#: Code/Lib/Apps.php:354
+msgid "Chat"
+msgstr ""
+
+#: Code/Lib/Apps.php:355 Code/Lib/Navbar.php:424 Code/Lib/Navbar.php:427
+#: Code/Widget/Chatroom_list.php:23
+msgid "Chatrooms"
+msgstr ""
+
+#: Code/Lib/Apps.php:356
+msgid "Clients"
+msgstr ""
+
+#: Code/Lib/Apps.php:357 include/conversation.php:1312
+msgid "Comment Control"
+msgstr ""
+
+#: Code/Lib/Apps.php:358 Code/Module/Communities.php:154
+#: Code/Widget/Findpeople.php:40
+msgid "Communities"
+msgstr ""
+
+#: Code/Lib/Apps.php:359 Code/Module/Connedit.php:690
+#: Code/Module/Connections.php:371 Code/Module/Stream.php:150
+#: Code/Module/Affinity.php:68 Code/Widget/Affinity.php:33
+#: include/connections.php:950
+msgid "Connections"
+msgstr ""
+
+#: Code/Lib/Apps.php:360
+msgid "Content Filter"
+msgstr ""
+
+#: Code/Lib/Apps.php:361
+#: extend/addon/a/content_import/Mod_content_import.php:147
+msgid "Content Import"
+msgstr ""
+
+#: Code/Lib/Apps.php:362
+msgid "Custom SQL"
+msgstr ""
+
+#: Code/Lib/Apps.php:363 Code/Module/Directory.php:517
+msgid "Directory"
+msgstr ""
+
+#: Code/Lib/Apps.php:364 Code/Widget/Activity_filter.php:81
+msgid "Drafts"
+msgstr ""
+
+#: Code/Lib/Apps.php:365 Code/Widget/Activity_filter.php:109
+msgid "Events"
+msgstr ""
+
+#: Code/Lib/Apps.php:366
+msgid "Expire Posts"
+msgstr ""
+
+#: Code/Lib/Apps.php:367
+msgid "Features"
+msgstr ""
+
+#: Code/Lib/Apps.php:368 Code/Lib/Navbar.php:399 Code/Module/Fbrowser.php:95
+#: Code/Storage/Browser.php:298
+msgid "Files"
+msgstr ""
+
+#: Code/Lib/Apps.php:369 extend/addon/a/followlist/Mod_followlist.php:123
+msgid "Followlist"
+msgstr ""
+
+#: Code/Lib/Apps.php:370 Code/Module/Connedit.php:679
+msgid "Friend Zoom"
+msgstr ""
+
+#: Code/Lib/Apps.php:371
+msgid "Future Posting"
+msgstr ""
+
+#: Code/Lib/Apps.php:372 extend/addon/a/gallery/gallery.php:49
+#: extend/addon/a/gallery/Mod_Gallery.php:138
+msgid "Gallery"
+msgstr ""
+
+#: Code/Lib/Apps.php:373
+msgid "Guest Pass"
+msgstr ""
+
+#: Code/Lib/Apps.php:374 Code/Lib/Navbar.php:278 include/help.php:62
+msgid "Help"
+msgstr ""
+
+#: Code/Lib/Apps.php:375
+msgid "Invite"
+msgstr ""
+
+#: Code/Lib/Apps.php:376
+msgid "Language"
+msgstr ""
+
+#: Code/Lib/Apps.php:377
+msgid "Legal"
+msgstr ""
+
+#: Code/Lib/Apps.php:378 Code/Lib/Navbar.php:128 Code/Lib/Navbar.php:131
+#: boot.php:1103
+msgid "Login"
+msgstr ""
+
+#: Code/Lib/Apps.php:379
+msgid "Mail"
+msgstr ""
+
+#: Code/Lib/Apps.php:380
+msgid "Markup"
+msgstr ""
+
+#: Code/Lib/Apps.php:381
+msgid "Moderate"
+msgstr ""
+
+#: Code/Lib/Apps.php:382 Code/Module/Mood.php:166
+msgid "Mood"
+msgstr ""
+
+#: Code/Lib/Apps.php:383
+msgid "My Chatrooms"
+msgstr ""
+
+#: Code/Lib/Apps.php:384
+msgid "No Comment"
+msgstr ""
+
+#: Code/Lib/Apps.php:385 Code/Widget/Notes.php:24
+msgid "Notes"
+msgstr ""
+
+#: Code/Lib/Apps.php:386 Code/Lib/Navbar.php:300
+#: Code/Module/Settings/Channel.php:496 Code/Widget/Notifications.php:165
+msgid "Notifications"
+msgstr ""
+
+#: Code/Lib/Apps.php:387
+msgid "OAuth Apps Manager"
+msgstr ""
+
+#: Code/Lib/Apps.php:388
+msgid "OAuth2 Apps Manager"
+msgstr ""
+
+#: Code/Lib/Apps.php:389
+msgid "Order Apps"
+msgstr ""
+
+#: Code/Lib/Apps.php:390
+msgid "PDL Editor"
+msgstr ""
+
+#: Code/Lib/Apps.php:391 Code/Lib/Features.php:158
+msgid "Permission Categories"
+msgstr ""
+
+#: Code/Lib/Apps.php:392 Code/Lib/Navbar.php:391 Code/Module/Fbrowser.php:37
+msgid "Photos"
+msgstr ""
+
+#: Code/Lib/Apps.php:393
+msgid "Photomap"
+msgstr ""
+
+#: Code/Lib/Apps.php:394
+msgid "Poke"
+msgstr ""
+
+#: Code/Lib/Apps.php:395
+msgid "Post"
+msgstr ""
+
+#: Code/Lib/Apps.php:396
+msgid "Premium Channel"
+msgstr ""
+
+#: Code/Lib/Apps.php:397
+msgid "Probe"
+msgstr ""
+
+#: Code/Lib/Apps.php:398 Code/Lib/Activity.php:2956 Code/Lib/Libprofile.php:682
+#: Code/Module/Profperm.php:131
+msgid "Profile"
+msgstr ""
+
+#: Code/Lib/Apps.php:399
+msgid "Profile Photo"
+msgstr ""
+
+#: Code/Lib/Apps.php:400
+msgid "Profiles"
+msgstr ""
+
+#: Code/Lib/Apps.php:401 Code/Module/Pubstream.php:97
+#: Code/Widget/Notifications.php:147
+msgid "Public Stream"
+msgstr ""
+
+#: Code/Lib/Apps.php:402
+msgid "Random Channel"
+msgstr ""
+
+#: Code/Lib/Apps.php:403
+msgid "Remote Diagnostics"
+msgstr ""
+
+#: Code/Lib/Apps.php:404
+msgid "Report Bug"
+msgstr ""
+
+#: Code/Lib/Apps.php:405
+msgid "Roles"
+msgstr ""
+
+#: Code/Lib/Apps.php:406 Code/Lib/Navbar.php:169 Code/Lib/Libacl.php:134
+#: Code/Module/Connections.php:378 Code/Module/Search.php:120
+#: Code/Widget/Sitesearch.php:35 include/misc.php:1023 include/misc.php:1035
+msgid "Search"
+msgstr ""
+
+#: Code/Lib/Apps.php:407
+msgid "Secrets"
+msgstr ""
+
+#: Code/Lib/Apps.php:408 Code/Module/Admin/Themes.php:128
+#: Code/Module/Admin/Addons.php:344 Code/Widget/Newmember.php:57
+#: Code/Widget/Settings_menu.php:101
+msgid "Settings"
+msgstr ""
+
+#: Code/Lib/Apps.php:409
+msgid "Sites"
+msgstr ""
+
+#: Code/Lib/Apps.php:410
+msgid "Stream"
+msgstr ""
+
+#: Code/Lib/Apps.php:411 Code/Widget/Stream_order.php:154
+msgid "Stream Order"
+msgstr ""
+
+#: Code/Lib/Apps.php:412
+msgid "Suggest"
+msgstr ""
+
+#: Code/Lib/Apps.php:413 Code/Lib/Features.php:286
+msgid "Suggest Channels"
+msgstr ""
+
+#: Code/Lib/Apps.php:414
+msgid "Tagadelic"
+msgstr ""
+
+#: Code/Lib/Apps.php:415 Code/Widget/Tasklist.php:30
+msgid "Tasks"
+msgstr ""
+
+#: Code/Lib/Apps.php:416
+msgid "View Bookmarks"
+msgstr ""
+
+#: Code/Lib/Apps.php:417 Code/Lib/Navbar.php:122 Code/Module/Connedit.php:564
+msgid "View Profile"
+msgstr ""
+
+#: Code/Lib/Apps.php:418 Code/Module/Webpages.php:266
+msgid "Webpages"
+msgstr ""
+
+#: Code/Lib/Apps.php:419
+msgid "Wiki"
+msgstr ""
+
+#: Code/Lib/Apps.php:420 extend/addon/a/zotpost/Mod_zotpost.php:56
+msgid "ZotPost"
+msgstr ""
+
+#: Code/Lib/Apps.php:597
+msgid "Installed"
+msgstr ""
+
+#: Code/Lib/Apps.php:597 Code/Module/Admin/Addons.php:425
+msgid "Install"
+msgstr ""
+
+#: Code/Lib/Apps.php:621
+msgid "Purchase"
+msgstr ""
+
+#: Code/Lib/Apps.php:624 Code/Lib/ThreadItem.php:149 Code/Lib/Menu.php:142
+#: Code/Lib/Libprofile.php:203 Code/Module/Admin/Profs.php:192
+#: Code/Module/Layouts.php:209 Code/Module/Connections.php:320
+#: Code/Module/Connections.php:361 Code/Module/Connections.php:382
+#: Code/Module/Editlayout.php:127 Code/Module/Editwebpage.php:160
+#: Code/Module/Lists.php:343 Code/Module/Card_edit.php:110
+#: Code/Module/Menu.php:182 Code/Module/Settings/Oauth2.php:213
+#: Code/Module/Settings/Oauth.php:166 Code/Module/Editblock.php:129
+#: Code/Module/Blocks.php:173 Code/Module/Thing.php:304
+#: Code/Module/Webpages.php:269 Code/Widget/Cdav.php:149
+#: Code/Widget/Cdav.php:184 Code/Storage/Browser.php:318
+msgid "Edit"
+msgstr ""
+
+#: Code/Lib/Apps.php:625 Code/Lib/ThreadItem.php:186
+#: Code/Module/Admin/Profs.php:193 Code/Module/Admin/Accounts.php:192
+#: Code/Module/Admin/Channels.php:147 Code/Module/Connedit.php:632
+#: Code/Module/Connedit.php:868 Code/Module/Cdav.php:1080
+#: Code/Module/Cdav.php:1389 Code/Module/Connections.php:328
+#: Code/Module/Editlayout.php:151 Code/Module/Editwebpage.php:185
+#: Code/Module/Photos.php:1259 Code/Module/Card_edit.php:140
+#: Code/Module/Settings/Oauth2.php:214 Code/Module/Settings/Oauth.php:167
+#: Code/Module/Settings/Profile_edit.php:668 Code/Module/Editblock.php:154
+#: Code/Module/Blocks.php:175 Code/Module/Thing.php:305
+#: Code/Module/Webpages.php:271 Code/Storage/Browser.php:319
+#: include/conversation.php:498 include/conversation.php:549
+msgid "Delete"
+msgstr ""
+
+#: Code/Lib/Apps.php:626
+msgid "Undelete"
+msgstr ""
+
+#: Code/Lib/Apps.php:636
+msgid "Add to app-tray"
+msgstr ""
+
+#: Code/Lib/Apps.php:637
+msgid "Remove from app-tray"
+msgstr ""
+
+#: Code/Lib/Apps.php:638
+msgid "Pin to navbar"
+msgstr ""
+
+#: Code/Lib/Apps.php:639
+msgid "Unpin from navbar"
+msgstr ""
+
+#: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2263
+#: Code/Module/Cdav.php:878 Code/Module/Cdav.php:879 Code/Module/Cdav.php:885
+#: Code/Module/Embedphotos.php:326 Code/Module/Photos.php:854
+#: Code/Module/Photos.php:1322 Code/Widget/Album.php:100
+#: Code/Widget/Portfolio.php:110 Code/Storage/Browser.php:182
+#: include/attach.php:1384 include/conversation.php:962
+msgid "Unknown"
+msgstr ""
+
+#: Code/Lib/Libsync.php:981
+#, php-format
+msgid "Unable to verify site signature for %s"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:87
+msgid "Directory Options"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:89 Code/Lib/Navbar.php:112
+msgid "Safe Mode"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:89 Code/Lib/Libzotdir.php:90
+#: Code/Lib/Libzotdir.php:93 Code/Lib/Libzotdir.php:94
+#: Code/Lib/Libzotdir.php:95 Code/Module/Admin/Site.php:244
+#: Code/Module/Admin/Site.php:295 Code/Module/Connedit.php:358
+#: Code/Module/Connedit.php:722 Code/Module/Connedit.php:808
+#: Code/Module/Defperms.php:189 Code/Module/Events.php:518
+#: Code/Module/Events.php:519 Code/Module/Events.php:544
+#: Code/Module/Filestorage.php:243 Code/Module/Filestorage.php:251
+#: Code/Module/Import.php:726 Code/Module/Menu.php:169 Code/Module/Menu.php:227
+#: Code/Module/Mitem.php:191 Code/Module/Mitem.php:192
+#: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
+#: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
+#: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
+#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:245
+#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
+#: Code/Storage/Browser.php:435 boot.php:1108
+#: extend/addon/a/content_import/Mod_content_import.php:149
+#: extend/addon/a/content_import/Mod_content_import.php:150
+#: extend/addon/a/content_import/Mod_content_import.php:151
+#: extend/addon/a/zotpost/Mod_zotpost.php:79 include/conversation.php:1304
+#: include/conversation.php:1309 view/theme/redbasic/php/config.php:105
+msgid "No"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:89 Code/Lib/Libzotdir.php:90
+#: Code/Lib/Libzotdir.php:93 Code/Lib/Libzotdir.php:94
+#: Code/Lib/Libzotdir.php:95 Code/Module/Admin/Site.php:246
+#: Code/Module/Admin/Site.php:295 Code/Module/Connedit.php:358
+#: Code/Module/Connedit.php:722 Code/Module/Connedit.php:808
+#: Code/Module/Defperms.php:189 Code/Module/Events.php:518
+#: Code/Module/Events.php:519 Code/Module/Events.php:544
+#: Code/Module/Filestorage.php:243 Code/Module/Filestorage.php:251
+#: Code/Module/Import.php:726 Code/Module/Menu.php:169 Code/Module/Menu.php:227
+#: Code/Module/Mitem.php:191 Code/Module/Mitem.php:192
+#: Code/Module/Mitem.php:271 Code/Module/Mitem.php:272
+#: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
+#: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
+#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:245
+#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
+#: Code/Storage/Browser.php:435 boot.php:1108
+#: extend/addon/a/content_import/Mod_content_import.php:149
+#: extend/addon/a/content_import/Mod_content_import.php:150
+#: extend/addon/a/content_import/Mod_content_import.php:151
+#: extend/addon/a/zotpost/Mod_zotpost.php:79 include/conversation.php:1304
+#: include/conversation.php:1309 view/theme/redbasic/php/config.php:105
+msgid "Yes"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:90
+msgid "Groups Only"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:93
+msgid "This Website Only"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:94
+msgid "Recently Updated"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:95
+msgid "Show cover photos"
+msgstr ""
+
+#: Code/Lib/Libzotdir.php:95
+msgid "May slow page loading"
+msgstr ""
+
+#: Code/Lib/Activity.php:448
+msgid "Quoted post"
+msgstr ""
+
+#: Code/Lib/Activity.php:2954
+msgid "Activity"
+msgstr ""
+
+#: Code/Lib/Activity.php:2960
+#, php-format
+msgid "Likes %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:2963
+#, php-format
+msgid "Doesn't like %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:2969
+#, php-format
+msgid "Will attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2972
+#, php-format
+msgid "Will not attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2975
+#, php-format
+msgid "May attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2978
+#, php-format
+msgid "May not attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2983 Code/Lib/Share.php:123 Code/Module/Share.php:119
+#: include/items.php:3176
+#, php-format
+msgid "&#x1f501; Repeated %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:3526 include/items.php:3039 include/misc.php:1663
+#: include/misc.php:3115
+#, php-format
+msgid "%1$s (%2$s)"
+msgstr ""
+
+#: Code/Lib/Account.php:31
+msgid "Not a valid email address"
+msgstr ""
+
+#: Code/Lib/Account.php:33
+msgid "Your email domain is not among those allowed on this site"
+msgstr ""
+
+#: Code/Lib/Account.php:40
+msgid "Your email address is already registered at this site."
+msgstr ""
+
+#: Code/Lib/Account.php:75
+msgid "An invitation is required."
+msgstr ""
+
+#: Code/Lib/Account.php:79
+msgid "Invitation could not be verified."
+msgstr ""
+
+#: Code/Lib/Account.php:161
+msgid "Please enter the required information."
+msgstr ""
+
+#: Code/Lib/Account.php:225
+msgid "Failed to store account information."
+msgstr ""
+
+#: Code/Lib/Account.php:315
+#, php-format
+msgid "Registration confirmation for %s"
+msgstr ""
+
+#: Code/Lib/Account.php:390
+#, php-format
+msgid "Registration request at %s"
+msgstr ""
+
+#: Code/Lib/Account.php:414
+msgid "your registration password"
+msgstr ""
+
+#: Code/Lib/Account.php:420 Code/Lib/Account.php:490
+#, php-format
+msgid "Registration details for %s"
+msgstr ""
+
+#: Code/Lib/Account.php:502
+msgid "Account approved."
+msgstr ""
+
+#: Code/Lib/Account.php:549
+#, php-format
+msgid "Registration revoked for %s"
+msgstr ""
+
+#: Code/Lib/Account.php:688 Code/Module/Admin/Accounts.php:103
+#, php-format
+msgid "Account '%s' deleted"
+msgstr ""
+
+#: Code/Lib/Navbar.php:104
+msgid "Remote authentication"
+msgstr ""
+
+#: Code/Lib/Navbar.php:104
+msgid "Click to authenticate to your home hub"
+msgstr ""
+
+#: Code/Lib/Navbar.php:109 Code/Module/Admin/Channels.php:144
+#: Code/Module/Admin.php:154 Code/Module/Manage.php:199
+#: Code/Widget/Admin.php:29
+msgid "Channels"
+msgstr ""
+
+#: Code/Lib/Navbar.php:109
+msgid "Manage your channels"
+msgstr ""
+
+#: Code/Lib/Navbar.php:112
+msgid "(is on)"
+msgstr ""
+
+#: Code/Lib/Navbar.php:112
+msgid "(is off)"
+msgstr ""
+
+#: Code/Lib/Navbar.php:112
+msgid "Content filtering"
+msgstr ""
+
+#: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:141 Code/Lib/Navbar.php:159
+#: boot.php:1102
+msgid "Logout"
+msgstr ""
+
+#: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:141
+msgid "End this session"
+msgstr ""
+
+#: Code/Lib/Navbar.php:122
+msgid "Your profile page"
+msgstr ""
+
+#: Code/Lib/Navbar.php:128 Code/Lib/Navbar.php:131
+msgid "Sign in"
+msgstr ""
+
+#: Code/Lib/Navbar.php:157
+msgid "Take me home"
+msgstr ""
+
+#: Code/Lib/Navbar.php:159
+msgid "Log me out of this site"
+msgstr ""
+
+#: Code/Lib/Navbar.php:164 Code/Module/Register.php:304
+#: Code/Module/Communities.php:83 boot.php:1083
+msgid "Register"
+msgstr ""
+
+#: Code/Lib/Navbar.php:164
+msgid "Create an account"
+msgstr ""
+
+#: Code/Lib/Navbar.php:169
+msgid "Search site @name, #tag, ?doc, content"
+msgstr ""
+
+#: Code/Lib/Navbar.php:175 Code/Widget/Admin.php:58
+msgid "Admin"
+msgstr ""
+
+#: Code/Lib/Navbar.php:175
+msgid "Site Setup and Configuration"
+msgstr ""
+
+#: Code/Lib/Navbar.php:282 Code/Module/Connedit.php:803
+#: Code/Module/Defperms.php:246 Code/Module/New_channel.php:170
+#: Code/Module/New_channel.php:177 Code/Widget/Notifications.php:167
+msgid "Loading"
+msgstr ""
+
+#: Code/Lib/Navbar.php:287
+msgid "Side Panel"
+msgstr ""
+
+#: Code/Lib/Navbar.php:288
+msgid "@name, #tag, ?doc, content"
+msgstr ""
+
+#: Code/Lib/Navbar.php:289
+msgid "Please wait..."
+msgstr ""
+
+#: Code/Lib/Navbar.php:295 Code/Module/Apps.php:59 Code/Widget/Appstore.php:17
+msgid "Installed Apps"
+msgstr ""
+
+#: Code/Lib/Navbar.php:297 Code/Module/Apps.php:59 Code/Widget/Appstore.php:18
+msgid "Available Apps"
+msgstr ""
+
+#: Code/Lib/Navbar.php:298 Code/Module/Apporder.php:51
+msgid "Arrange Apps"
+msgstr ""
+
+#: Code/Lib/Navbar.php:299
+msgid "Toggle System Apps"
+msgstr ""
+
+#: Code/Lib/Navbar.php:368 Code/Module/Admin/Channels.php:150
+msgid "Channel"
+msgstr ""
+
+#: Code/Lib/Navbar.php:371
+msgid "Status Messages and Posts"
+msgstr ""
+
+#: Code/Lib/Navbar.php:381
+msgid "About"
+msgstr ""
+
+#: Code/Lib/Navbar.php:384
+msgid "Profile Details"
+msgstr ""
+
+#: Code/Lib/Navbar.php:394 include/photos.php:745
+msgid "Photo Albums"
+msgstr ""
+
+#: Code/Lib/Navbar.php:402
+msgid "Files and Storage"
+msgstr ""
+
+#: Code/Lib/Libacl.php:93
+msgid "(List)"
+msgstr ""
+
+#: Code/Lib/Libacl.php:102
+msgid "(Group)"
+msgstr ""
+
+#: Code/Lib/Libacl.php:115
+msgid "(DM)"
+msgstr ""
+
+#: Code/Lib/Libacl.php:129
+msgid "Who can see this?"
+msgstr ""
+
+#: Code/Lib/Libacl.php:130
+msgid "Custom selection"
+msgstr ""
+
+#: Code/Lib/Libacl.php:131
+msgid ""
+"Select \"Show\" to allow viewing. \"Don't show\" lets you override and limit "
+"the scope of \"Show\"."
+msgstr ""
+
+#: Code/Lib/Libacl.php:132
+msgid "Show"
+msgstr ""
+
+#: Code/Lib/Libacl.php:133
+msgid "Don't show"
+msgstr ""
+
+#: Code/Lib/Libacl.php:139 Code/Module/Connedit.php:653
+#: Code/Module/Filestorage.php:233 Code/Module/Photos.php:735
+#: Code/Module/Photos.php:1121 Code/Module/Chat.php:243
+#: Code/Module/Thing.php:357 Code/Module/Thing.php:412
+#: extend/addon/a/flashcards/Mod_Flashcards.php:255
+msgid "Permissions"
+msgstr ""
+
+#: Code/Lib/Libacl.php:141 Code/Lib/ThreadItem.php:511
+#: Code/Module/Photos.php:1340 Code/Module/Settings/Channel.php:495
+#: include/conversation.php:1373
+msgid "Close"
+msgstr ""
+
+#: Code/Lib/Libacl.php:164
+msgid ""
+"Post permissions cannot be changed after a post is shared.<br>These "
+"permissions set who is allowed to view the post."
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:111 include/conversation.php:506
+msgid "Public visibility"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:113 include/conversation.php:508
+msgid "Direct message (private mail)"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:116 include/conversation.php:511
+msgid "Restricted visibility"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:141
+msgid ""
+"This comment is part of a private conversation, yet was shared with the "
+"public. Discretion advised."
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:189 Code/Storage/Browser.php:306
+msgid "Admin Delete"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:194 include/attach.php:1378
+#: include/conversation.php:497
+msgid "Select"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:198 Code/Module/Filer.php:63
+msgid "Save to Folder"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:220
+msgid "I will attend"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:220
+msgid "I will not attend"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:220
+msgid "I might attend"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:221
+msgid "Undo attendance"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:236 Code/Lib/ThreadItem.php:256
+#: Code/Module/Photos.php:1223 Code/Module/Photos.php:1234
+msgid "View all"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:241 Code/Module/Photos.php:1227
+#: include/conversation.php:1876 include/taxonomy.php:743
+msgctxt "noun"
+msgid "Like"
+msgid_plural "Likes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: Code/Lib/ThreadItem.php:243 Code/Lib/ThreadItem.php:505
+#: Code/Module/Photos.php:1334 include/conversation.php:1878
+msgctxt "noun"
+msgid "Likes"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:249 Code/Module/Photos.php:1231
+#: include/conversation.php:1882
+msgctxt "noun"
+msgid "Dislike"
+msgid_plural "Dislikes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: Code/Lib/ThreadItem.php:251 Code/Lib/ThreadItem.php:506
+#: Code/Module/Photos.php:1335 include/conversation.php:1884
+msgctxt "noun"
+msgid "Dislikes"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:272 Code/Module/Admin/Profs.php:103
+#: Code/Module/Admin/Profs.php:124 Code/Module/Filer.php:62
+#: Code/Widget/Notes.php:26 extend/addon/a/queueworker/Mod_Queueworker.php:118
+#: include/misc.php:1024 include/misc.php:1036
+msgid "Save"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:281 include/conversation.php:516
+msgid "Message signature validated"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:282 include/conversation.php:517
+msgid "Message signature incorrect"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:288
+msgid "Add Tag"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:322 Code/Module/Photos.php:1164
+msgid "I like this"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:322 Code/Module/Photos.php:1168
+msgid "Undo like"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:323 Code/Module/Photos.php:1167
+msgid "I don't like this"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:323 Code/Module/Photos.php:1169
+msgid "Undo dislike"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:329
+msgid "Repeat This"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:330
+msgid "Share this"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:341
+msgid "Delivery Report"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:370
+#, php-format
+msgid "%d comment"
+msgid_plural "%d comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: Code/Lib/ThreadItem.php:371
+#, php-format
+msgid "%d unseen"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:416 Code/Lib/ThreadItem.php:417
+#, php-format
+msgid "View %s's profile - %s"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:420
+msgid "to"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:421 include/conversation.php:580
+msgid "via"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:422
+msgid "Wall-to-Wall"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:423
+msgid "via Wall-To-Wall:"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:437 include/conversation.php:583
+#, php-format
+msgid "from %s"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:440 include/conversation.php:586
+#, php-format
+msgid "last edited: %s"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:441 include/conversation.php:587
+#, php-format
+msgid "Expires: %s"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:451
+msgid "Attend"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:452
+msgid "Attendance Options"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:453 include/misc.php:2055
+msgid "Vote"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:454
+msgid "Voting Options"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:455
+msgid "Reply"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:481 include/conversation.php:602
+msgid "Pinned post"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:483 Code/Lib/Stringsjs.php:43
+#: include/conversation.php:604
+msgid "Unpin this post"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:483 Code/Lib/Stringsjs.php:42
+#: include/conversation.php:604
+msgid "Pin this post"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:485
+msgid "Saved draft"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:486
+msgid "Save Bookmarks"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:487
+msgid "Add to Calendar"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:498 Code/Module/Notifications.php:75
+msgid "Mark all seen"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:514 include/conversation.php:339
+msgid "This is an unsaved preview"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:515 Code/Module/Photos.php:1171
+#: include/conversation.php:607
+msgid "Please wait"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:578 Code/Lib/Stringsjs.php:15
+#, php-format
+msgid "%s show all"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:923 Code/Module/Photos.php:1187
+#: Code/Module/Photos.php:1293
+msgid "This is you"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:925 Code/Lib/Stringsjs.php:14
+#: Code/Module/Photos.php:1189 Code/Module/Photos.php:1295
+msgid "Comment"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:926 Code/Lib/Stringsjs.php:27
+#: Code/Module/Appman.php:163 Code/Module/Admin/Profs.php:195
+#: Code/Module/Admin/Account_edit.php:81 Code/Module/Admin/Customsql.php:38
+#: Code/Module/Admin/Themes.php:160 Code/Module/Admin/Addons.php:441
+#: Code/Module/Admin/Logs.php:87 Code/Module/Admin/Accounts.php:185
+#: Code/Module/Admin/Channels.php:145 Code/Module/Admin/Security.php:181
+#: Code/Module/Admin/Site.php:272 Code/Module/Connedit.php:833
+#: Code/Module/Pdledit.php:115 Code/Module/Setup.php:313
+#: Code/Module/Setup.php:348 Code/Module/Defperms.php:254
+#: Code/Module/Content_filter.php:68 Code/Module/Email_validation.php:47
+#: Code/Module/Events.php:541 Code/Module/Filestorage.php:248
+#: Code/Module/Lists.php:211 Code/Module/Lists.php:220
+#: Code/Module/Photos.php:1132 Code/Module/Photos.php:1190
+#: Code/Module/Photos.php:1296 Code/Module/Locs.php:134
+#: Code/Module/Expire.php:50 Code/Module/Editpost.php:145
+#: Code/Module/Import_items.php:142 Code/Module/Connect.php:99
+#: Code/Module/Invite.php:171 Code/Module/Import.php:732
+#: Code/Module/Mitem.php:274 Code/Module/Mood.php:170
+#: Code/Module/Pconfig.php:129 Code/Module/Affinity.php:89
+#: Code/Module/Chat.php:214 Code/Module/Chat.php:250
+#: Code/Module/Dev/Zotfinger.php:30 Code/Module/Dev/Finger.php:26
+#: Code/Module/Dev/Serialize.php:27 Code/Module/Dev/Xchan.php:18
+#: Code/Module/Dev/Ap_probe.php:25 Code/Module/Dev/Zot_probe.php:24
+#: Code/Module/Settings/Oauth2.php:115 Code/Module/Settings/Oauth.php:98
+#: Code/Module/Settings/Features.php:66 Code/Module/Settings/Featured.php:63
+#: Code/Module/Settings/Permcats.php:146 Code/Module/Settings/Tokens.php:315
+#: Code/Module/Settings/Display.php:209
+#: Code/Module/Settings/Profile_edit.php:588
+#: Code/Module/Settings/Account.php:114 Code/Module/Settings/Multifactor.php:72
+#: Code/Module/Settings/Channel.php:441 Code/Module/Cal.php:354
+#: Code/Module/Thing.php:364 Code/Module/Thing.php:419
+#: Code/Module/Sources.php:133 Code/Module/Sources.php:171
+#: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
+#: extend/addon/a/content_import/Mod_content_import.php:155
+#: extend/addon/a/faces/Mod_Faces.php:141
+#: extend/addon/a/flashcards/Mod_Flashcards.php:263
+#: extend/addon/a/followlist/Mod_followlist.php:130
+#: extend/addon/a/fuzzloc/Mod_Fuzzloc.php:58
+#: extend/addon/a/logrot/logrot.php:37 extend/addon/a/nsfw/Mod_Nsfw.php:53
+#: extend/addon/a/openstreetmap/openstreetmap.php:218
+#: extend/addon/a/zotpost/Mod_zotpost.php:83
+#: view/theme/redbasic/php/config.php:100
+msgid "Submit"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:928 include/conversation.php:1280
+msgid "Bold"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:929 include/conversation.php:1281
+msgid "Italic"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:930 include/conversation.php:1282
+msgid "Underline"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:931 include/conversation.php:1283
+msgid "Quote"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:932 include/conversation.php:1284
+msgid "Code"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:933
+msgid "Image"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:934
+msgid "Attach/Upload a File"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:935
+msgid "Insert Link"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:936
+msgid "Video"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:937 Code/Module/Events.php:526
+#: Code/Module/Photos.php:1191 Code/Module/Webpages.php:276
+#: include/conversation.php:1167
+msgid "Preview"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:938 Code/Module/Pdledit.php:72
+#: Code/Module/Pdledit.php:80 Code/Module/Lostpass.php:143
+msgid "Reset"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:943 Code/Module/Chat.php:222
+#: include/conversation.php:1365
+msgid "Encrypt text"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:948
+msgid "Your full name (required)"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:949
+msgid "Your email address (required)"
+msgstr ""
+
+#: Code/Lib/ThreadItem.php:950
+msgid "Your website URL (optional)"
+msgstr ""
+
+#: Code/Lib/ServiceClass.php:34
+msgid "Unable to obtain identity information from database"
+msgstr ""
+
+#: Code/Lib/ServiceClass.php:279 Code/Lib/ServiceClass.php:281
+msgid "Click here to upgrade."
+msgstr ""
+
+#: Code/Lib/ServiceClass.php:289
+msgid "This action exceeds the limits set by your subscription plan."
+msgstr ""
+
+#: Code/Lib/ServiceClass.php:295
+msgid "This action is not available under your subscription plan."
+msgstr ""
+
+#: Code/Lib/Chatroom.php:28
+msgid "Missing room name"
+msgstr ""
+
+#: Code/Lib/Chatroom.php:38
+msgid "Duplicate room name"
+msgstr ""
+
+#: Code/Lib/Chatroom.php:94 Code/Lib/Chatroom.php:103
+msgid "Invalid room specifier."
+msgstr ""
+
+#: Code/Lib/Chatroom.php:141
+msgid "Room not found."
+msgstr ""
+
+#: Code/Lib/Chatroom.php:153 Code/Module/Block.php:31 Code/Module/Block.php:84
+#: Code/Module/Appman.php:100 Code/Module/Layouts.php:82
+#: Code/Module/Layouts.php:89 Code/Module/Layouts.php:100
+#: Code/Module/Connedit.php:351 Code/Module/Pdledit.php:37
+#: Code/Module/Channel.php:240 Code/Module/Channel.php:418
+#: Code/Module/Channel.php:456 Code/Module/Display.php:508
+#: Code/Module/Setup.php:220 Code/Module/Inspect.php:17
+#: Code/Module/Profile.php:102 Code/Module/Profile.php:117
+#: Code/Module/Defperms.php:176 Code/Module/Defperms.php:182
+#: Code/Module/Common.php:48 Code/Module/Connections.php:37
+#: Code/Module/Cover_photo.php:336 Code/Module/Cover_photo.php:350
+#: Code/Module/Calendar.php:260 Code/Module/Editlayout.php:77
+#: Code/Module/Editlayout.php:100 Code/Module/Editwebpage.php:82
+#: Code/Module/Editwebpage.php:103 Code/Module/Editwebpage.php:122
+#: Code/Module/Editwebpage.php:138 Code/Module/Events.php:307
+#: Code/Module/Filestorage.php:29 Code/Module/Filestorage.php:115
+#: Code/Module/Filestorage.php:131 Code/Module/Filestorage.php:159
+#: Code/Module/Filestorage.php:192 Code/Module/Filestorage.php:199
+#: Code/Module/Moderate.php:21 Code/Module/Cards.php:85
+#: Code/Module/Register.php:92 Code/Module/Lists.php:98
+#: Code/Module/Lists.php:110 Code/Module/Lists.php:141
+#: Code/Module/Photos.php:72 Code/Module/Locs.php:105
+#: Code/Module/Editpost.php:26 Code/Module/Invite.php:102
+#: Code/Module/Card_edit.php:63 Code/Module/Manage.php:23
+#: Code/Module/Menu.php:136 Code/Module/Menu.php:147 Code/Module/Mitem.php:143
+#: Code/Module/Page.php:42 Code/Module/Page.php:147 Code/Module/Mood.php:136
+#: Code/Module/New_channel.php:123 Code/Module/New_channel.php:146
+#: Code/Module/Notifications.php:19 Code/Module/Item.php:622
+#: Code/Module/Item.php:644 Code/Module/Item.php:656 Code/Module/Item.php:1878
+#: Code/Module/Poke.php:118 Code/Module/Api.php:31
+#: Code/Module/Profile_photo.php:348 Code/Module/Profile_photo.php:362
+#: Code/Module/Chat.php:115 Code/Module/Chat.php:120 Code/Module/Regmod.php:25
+#: Code/Module/Service_limits.php:16 Code/Module/Settings.php:71
+#: Code/Module/Settings/Profile_edit.php:71
+#: Code/Module/Settings/Profile_edit.php:523 Code/Module/Editblock.php:79
+#: Code/Module/Sharedwithme.php:22 Code/Module/Blocks.php:82
+#: Code/Module/Blocks.php:89 Code/Module/Viewconnections.php:25
+#: Code/Module/Vote.php:23 Code/Module/Viewsrc.php:24 Code/Module/Thing.php:317
+#: Code/Module/Thing.php:338 Code/Module/Thing.php:380
+#: Code/Module/Suggestions.php:35 Code/Module/Webpages.php:143
+#: Code/Module/Sources.php:92 Code/Web/WebServer.php:68 include/attach.php:161
+#: include/attach.php:210 include/attach.php:288 include/attach.php:415
+#: include/attach.php:430 include/attach.php:437 include/attach.php:516
+#: include/attach.php:1132 include/attach.php:1444 include/attach.php:1615
+#: include/photos.php:42
+msgid "Permission denied."
+msgstr ""
+
+#: Code/Lib/Chatroom.php:164
+msgid "Room is full"
+msgstr ""
+
+#: Code/Lib/Permcat.php:77
+msgctxt "permcat"
+msgid "default"
+msgstr ""
+
+#: Code/Lib/Permcat.php:156
+msgctxt "permcat"
+msgid "follower"
+msgstr ""
+
+#: Code/Lib/Permcat.php:160
+msgctxt "permcat"
+msgid "contributor"
+msgstr ""
+
+#: Code/Lib/Permcat.php:165
+msgctxt "permcat"
+msgid "publisher"
+msgstr ""
+
+#: Code/Lib/Permcat.php:192
+msgid "custom"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:13 include/conversation.php:1161
+msgid "Delete this item?"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:16
+#, php-format
+msgid "%s show less"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:17
+#, php-format
+msgid "%s expand"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:18
+#, php-format
+msgid "%s collapse"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:19
+msgid "Password too short"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:20
+msgid "Passwords do not match"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:21
+msgid "everybody"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:22
+msgid "Secret Passphrase"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:23
+msgid "Passphrase hint"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:24
+msgid "Notice: Permissions have changed but have not yet been submitted."
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:25
+msgid "close all"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:26
+msgid "Nothing new here"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:28
+msgid "Please enter a link URL"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:29
+msgid "Unsaved changes. Are you sure you wish to leave this page?"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:30 Code/Module/Cdav.php:1041
+#: Code/Module/Events.php:523 Code/Module/Locs.php:130
+#: Code/Module/Settings/Profile_edit.php:387
+#: Code/Module/Settings/Profile_edit.php:599
+msgid "Location"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:31
+msgid "lovely"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:32
+msgid "wonderful"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:33
+msgid "fantastic"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:34
+msgid "great"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:35
+msgid ""
+"Your chosen nickname was either already taken or not valid. Please use our "
+"suggestion ("
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:36
+msgid ") or enter a new one."
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:37
+msgid "Thank you, this nickname is valid."
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:38
+msgid "A channel name is required."
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:39
+msgid "This is a "
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:40
+msgid " channel name"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:41
+msgid "Pinned"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:44
+msgid "Please accept terms to continue"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:50
+msgid "timeago.prefixAgo"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:51
+msgid "timeago.prefixFromNow"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:52
+msgid "timeago.suffixAgo"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:53
+msgid "timeago.suffixFromNow"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:56
+msgid "less than a minute"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:57
+msgid "about a minute"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:58
+#, php-format
+msgid "%d minutes"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:59
+msgid "about an hour"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:60
+#, php-format
+msgid "about %d hours"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:61
+msgid "a day"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:62
+#, php-format
+msgid "%d days"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:63
+msgid "about a month"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:64
+#, php-format
+msgid "%d months"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:65
+msgid "about a year"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:66
+#, php-format
+msgid "%d years"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:67
+msgid " "
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:68
+msgid "timeago.numbers"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:70 include/misc.php:1413
+msgid "January"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:71 include/misc.php:1413
+msgid "February"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:72 include/misc.php:1413
+msgid "March"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:73 include/misc.php:1413
+msgid "April"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:74
+msgctxt "long"
+msgid "May"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:75 include/misc.php:1413
+msgid "June"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:76 include/misc.php:1413
+msgid "July"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:77 include/misc.php:1413
+msgid "August"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:78 include/misc.php:1413
+msgid "September"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:79 include/misc.php:1413
+msgid "October"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:80 include/misc.php:1413
+msgid "November"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:81 include/misc.php:1413
+msgid "December"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:82
+msgid "Jan"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:83
+msgid "Feb"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:84
+msgid "Mar"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:85
+msgid "Apr"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:86
+msgctxt "short"
+msgid "May"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:87
+msgid "Jun"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:88
+msgid "Jul"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:89
+msgid "Aug"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:90
+msgid "Sep"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:91
+msgid "Oct"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:92
+msgid "Nov"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:93
+msgid "Dec"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:94 Code/Module/Settings/Channel.php:567
+#: include/misc.php:1407
+msgid "Sunday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:95 Code/Module/Settings/Channel.php:568
+#: include/misc.php:1407
+msgid "Monday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:96 Code/Module/Settings/Channel.php:569
+#: include/misc.php:1407
+msgid "Tuesday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:97 Code/Module/Settings/Channel.php:570
+#: include/misc.php:1407
+msgid "Wednesday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:98 Code/Module/Settings/Channel.php:571
+#: include/misc.php:1407
+msgid "Thursday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:99 Code/Module/Settings/Channel.php:572
+#: include/misc.php:1407
+msgid "Friday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:100 Code/Module/Settings/Channel.php:573
+#: include/misc.php:1407
+msgid "Saturday"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:101
+msgid "Sun"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:102
+msgid "Mon"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:103
+msgid "Tue"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:104
+msgid "Wed"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:105
+msgid "Thu"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:106
+msgid "Fri"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:107
+msgid "Sat"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:108
+msgctxt "calendar"
+msgid "today"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:109
+msgctxt "calendar"
+msgid "month"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:110
+msgctxt "calendar"
+msgid "week"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:111
+msgctxt "calendar"
+msgid "day"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:112
+msgctxt "calendar"
+msgid "All day"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:113
+msgid ""
+"A social networking profile that is public by default and private if desired"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:114
+msgid ""
+"A social networking profile where content is private to your [Friends] "
+"Access List by default but can be made public if desired"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:115
+msgid "A public group where members are allowed to upload media by default"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:116
+msgid "A private group with no upload permission"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:117
+msgid ""
+"A public group where posts are moderated by the owner. The [moderated] "
+"permission may be removed from any group member once trust is established"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:118
+msgid ""
+"A sub-channel of your main channel - often devoted to a specific language or "
+"topic. Replies are sent back to your main channel"
+msgstr ""
+
+#: Code/Lib/Stringsjs.php:119
+msgid ""
+"A private sub-channel of your main channel - often devoted to a specific "
+"language or topic. Replies are sent back to your main channel"
+msgstr ""
+
+#: Code/Lib/Oembed.php:169
+msgid "View PDF"
+msgstr ""
+
+#: Code/Lib/Oembed.php:386
+msgid " by "
+msgstr ""
+
+#: Code/Lib/Oembed.php:389
+msgid " on "
+msgstr ""
+
+#: Code/Lib/Oembed.php:420
+msgid "Embedded content"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:39
+msgid "Requested channel is not available."
+msgstr ""
+
+#: Code/Lib/Libprofile.php:99 Code/Module/Layouts.php:41
+#: Code/Module/Profile.php:28 Code/Module/Editlayout.php:40
+#: Code/Module/Editwebpage.php:45 Code/Module/Cards.php:41
+#: Code/Module/Connect.php:23 Code/Module/Menu.php:98
+#: Code/Module/Editblock.php:42 Code/Module/Blocks.php:41
+#: Code/Module/Webpages.php:48 extend/addon/a/gallery/Mod_Gallery.php:51
+msgid "Requested profile is not available."
+msgstr ""
+
+#: Code/Lib/Libprofile.php:199 Code/Module/Settings/Profile_edit.php:593
+msgid "Change profile photo"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:203
+msgid "Edit Profile"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:219
+msgid "Profile Image"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:222
+msgid "Visible to everybody"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:223 Code/Module/Settings/Profile_edit.php:590
+msgid "Edit visibility"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:296 include/connections.php:182
+#: include/conversation.php:876
+msgid "Direct Message"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:309 Code/Module/Fedi_id.php:55
+#: Code/Module/Directory.php:444 Code/Widget/Suggestions.php:49
+#: Code/Widget/Follow.php:41 include/connections.php:154
+#: include/conversation.php:856
+msgid "Connect"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:311 Code/Module/Directory.php:444
+#: Code/Widget/Suggestions.php:49
+msgid "Join"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:331 Code/Module/Directory.php:431
+#: Code/Module/Communities.php:121 include/event.php:84 include/event.php:141
+msgid "Location:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:336 Code/Lib/Libprofile.php:511
+msgid "Gender:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:337 Code/Lib/Libprofile.php:561
+msgid "Status:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:338 Code/Lib/Libprofile.php:594
+msgid "Homepage:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:339 Code/Lib/Libprofile.php:590
+msgid "Pronouns:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:401 Code/Module/Connections.php:64
+#: Code/Module/Connections.php:123 Code/Module/Connections.php:134
+#: Code/Module/Connections.php:294
+msgid "Active"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:405
+msgid "Change your profile photo"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:406
+msgid "Copy to clipboard"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:407
+msgid "Address copied to clipboard"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:435 Code/Module/Settings/Profile_edit.php:774
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Female"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:438 Code/Module/Settings/Profile_edit.php:774
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Male"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:441
+msgid "Trans"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:444
+msgid "Inter"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:447 Code/Module/Settings/Profile_edit.php:774
+msgid "Neuter"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:450 Code/Module/Settings/Profile_edit.php:774
+msgid "Non-specific"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:464
+msgid "She"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:467
+msgid "Him"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:470
+msgid "Them"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:508
+msgid "Full Name:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:545
+msgid "j F, Y"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:546
+msgid "j F"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:553
+msgid "Birthday:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:557 Code/Module/Directory.php:426
+msgid "Age:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:569
+#, php-format
+msgid "for %1$d %2$s"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:581
+msgid "Tags:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:586
+msgid "Sexual Preference:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:598 Code/Module/Directory.php:441
+msgid "Hometown:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:602
+msgid "Political Views:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:606
+msgid "Religion:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:610 Code/Module/Directory.php:443
+msgid "About:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:614
+msgid "Hobbies/Interests:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:618
+msgid "Likes:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:622
+msgid "Dislikes:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:626
+msgid "Contact information and Social Networks:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:630
+msgid "My other channels:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:634
+msgid "Musical interests:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:638
+msgid "Books, literature:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:642
+msgid "Television:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:646
+msgid "Film/dance/culture/entertainment:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:650
+msgid "Love/Romance:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:654
+msgid "Work/employment:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:658
+msgid "School/education:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:684
+msgid "Like this thing"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:685 Code/Module/Events.php:756
+#: Code/Module/Cal.php:350
+msgid "Export"
+msgstr ""
+
+#: Code/Lib/Libzot.php:774
+msgid "Unable to verify channel signature"
+msgstr ""
+
+#: Code/Lib/AccessList.php:31
+msgid ""
+"A deleted list with this name was revived. Existing item permissions "
+"<strong>may</strong> apply to this list and any future members. If this is "
+"not what you intended, please create another list with a different name."
+msgstr ""
+
+#: Code/Lib/AccessList.php:344
+msgid "Add new connections to this access list"
+msgstr ""
+
+#: Code/Lib/AccessList.php:368
+msgid "edit"
+msgstr ""
+
+#: Code/Lib/AccessList.php:387 Code/Widget/Activity_filter.php:146
+msgid "Lists"
+msgstr ""
+
+#: Code/Lib/AccessList.php:388
+msgid "Edit list"
+msgstr ""
+
+#: Code/Lib/AccessList.php:389
+msgid "Create new list"
+msgstr ""
+
+#: Code/Lib/AccessList.php:390
+msgid "Channels not in any access list"
+msgstr ""
+
+#: Code/Lib/AccessList.php:392 Code/Widget/Savedsearch.php:95
+msgid "add"
+msgstr ""
+
+#: Code/Lib/Channel.php:54
+msgid "Empty name"
+msgstr ""
+
+#: Code/Lib/Channel.php:58
+msgid "Name too long"
+msgstr ""
+
+#: Code/Lib/Channel.php:286
+msgid "No account identifier"
+msgstr ""
+
+#: Code/Lib/Channel.php:298
+msgid "Nickname is required."
+msgstr ""
+
+#: Code/Lib/Channel.php:312 Code/Lib/Channel.php:775
+#: Code/Module/Changeaddr.php:72
+msgid "Reserved nickname. Please choose another."
+msgstr ""
+
+#: Code/Lib/Channel.php:317 Code/Lib/Channel.php:780
+#: Code/Module/Changeaddr.php:77
+msgid ""
+"Nickname has unsupported characters or is already being used on this site."
+msgstr ""
+
+#: Code/Lib/Channel.php:396
+msgid "Unable to retrieve created identity"
+msgstr ""
+
+#: Code/Lib/Channel.php:506 Code/Import/Friendica.php:191
+msgid "Default Profile"
+msgstr ""
+
+#: Code/Lib/Channel.php:555 Code/Lib/Channel.php:557
+#: Code/Module/Connedit.php:688 Code/Module/Affinity.php:66
+#: Code/Module/Settings/Profile_edit.php:881
+#: Code/Module/Settings/Channel.php:634 Code/Module/Settings/Channel.php:637
+#: Code/Module/Settings/Channel.php:638 Code/Module/Settings/Channel.php:642
+#: Code/Module/Settings/Channel.php:653 Code/Widget/Affinity.php:31
+#: Code/Import/Friendica.php:237 Code/Import/Friendica.php:238
+#: Code/Import/Friendica.php:246
+msgid "Friends"
+msgstr ""
+
+#: Code/Lib/Channel.php:701 Code/Lib/Channel.php:799
+msgid "Unable to retrieve modified identity"
+msgstr ""
+
+#: Code/Lib/Channel.php:1860 Code/Module/Cover_photo.php:289
+#: Code/Module/Cover_photo.php:291 Code/Widget/Cover_photo.php:92
+msgid "cover photo"
+msgstr ""
+
+#: Code/Lib/Channel.php:2162 Code/Module/Rmagic.php:88 boot.php:1104
+msgid "Remote Authentication"
+msgstr ""
+
+#: Code/Lib/Channel.php:2163 Code/Module/Rmagic.php:89
+msgid "Enter your channel address (e.g. channel@example.com)"
+msgstr ""
+
+#: Code/Lib/Channel.php:2164 Code/Module/Rmagic.php:92
+msgid "Authenticate"
+msgstr ""
+
+#: Code/Lib/Connect.php:58 Code/Lib/Connect.php:178
+msgid "Channel is blocked on this site."
+msgstr ""
+
+#: Code/Lib/Connect.php:63
+msgid "Channel location missing."
+msgstr ""
+
+#: Code/Lib/Connect.php:140
+msgid "Remote channel or protocol unavailable."
+msgstr ""
+
+#: Code/Lib/Connect.php:172
+msgid "Channel discovery failed."
+msgstr ""
+
+#: Code/Lib/Connect.php:186
+msgid "Protocol not supported"
+msgstr ""
+
+#: Code/Lib/Connect.php:199
+msgid "Cannot connect to yourself."
+msgstr ""
+
+#: Code/Lib/Connect.php:277
+msgid "error saving data"
 msgstr ""
 
 #: Code/Lib/Markdown.php:218 include/bbcode.php:686
@@ -2465,7 +2460,7 @@ msgid "%1$s wrote the following %2$s %3$s"
 msgstr ""
 
 #: Code/Lib/Markdown.php:220 Code/Module/Tagger.php:93
-#: include/conversation.php:89 include/bbcode.php:680 include/misc.php:2389
+#: include/conversation.php:89 include/bbcode.php:680 include/misc.php:2349
 msgid "post"
 msgstr ""
 
@@ -2720,7 +2715,7 @@ msgstr ""
 #: Code/Module/Block.php:49 Code/Module/Chanview.php:106
 #: Code/Module/Card_edit.php:56 Code/Module/Page.php:85 Code/Module/Cal.php:65
 #: Code/Module/Wall_upload.php:37 Code/Module/Superblock.php:44
-#: include/items.php:4185
+#: include/items.php:4190
 msgid "Channel not found."
 msgstr ""
 
@@ -2942,7 +2937,7 @@ msgstr ""
 #: Code/Module/Admin/Themes.php:79 Code/Module/Admin/Addons.php:265
 #: Code/Module/Display.php:59 Code/Module/Display.php:511
 #: Code/Module/Admin.php:100 Code/Module/Inspect.php:31
-#: Code/Module/Filestorage.php:41 Code/Module/Search.php:494
+#: Code/Module/Filestorage.php:41 Code/Module/Search.php:500
 #: Code/Module/Viewsrc.php:29 Code/Module/Thing.php:110 Code/Module/Dev.php:61
 #: extend/addon/a/flashcards/Mod_Flashcards.php:285
 #: extend/addon/a/flashcards/Mod_Flashcards.php:286
@@ -3622,7 +3617,7 @@ msgstr ""
 msgid "Site settings updated."
 msgstr ""
 
-#: Code/Module/Admin/Site.php:203 include/misc.php:3620
+#: Code/Module/Admin/Site.php:203 include/misc.php:3580
 #: view/theme/redbasic/php/config.php:22
 msgid "Default"
 msgstr ""
@@ -4102,7 +4097,7 @@ msgstr ""
 msgid "Layout Description (Optional)"
 msgstr ""
 
-#: Code/Module/Layouts.php:200 include/misc.php:2865
+#: Code/Module/Layouts.php:200 include/misc.php:2825
 msgid "Layouts"
 msgstr ""
 
@@ -4371,7 +4366,7 @@ msgstr ""
 msgid "Connection Default Permissions"
 msgstr ""
 
-#: Code/Module/Connedit.php:801 include/items.php:4182
+#: Code/Module/Connedit.php:801 include/items.php:4187
 #, php-format
 msgid "Connection: %s"
 msgstr ""
@@ -5521,7 +5516,7 @@ msgid ""
 "access your channel."
 msgstr ""
 
-#: Code/Module/Cloud.php:132 Code/Module/Item.php:1827
+#: Code/Module/Cloud.php:132 Code/Module/Item.php:1828
 msgid "Not found"
 msgstr ""
 
@@ -5529,8 +5524,9 @@ msgstr ""
 #: Code/Module/Dreport.php:84 Code/Module/Subthread.php:99
 #: Code/Module/Lists.php:182 Code/Module/Lists.php:225
 #: Code/Module/Lists.php:254 Code/Module/Lists.php:296 Code/Module/Like.php:113
-#: Code/Module/Import_items.php:133 Code/Module/Profperm.php:35
-#: Code/Module/Share.php:82 Code/Web/WebServer.php:66 include/items.php:400
+#: Code/Module/Import_items.php:133 Code/Module/Search.php:95
+#: Code/Module/Profperm.php:35 Code/Module/Share.php:82
+#: Code/Web/WebServer.php:67 include/items.php:401
 msgid "Permission denied"
 msgstr ""
 
@@ -5857,25 +5853,25 @@ msgstr ""
 msgid "Unable to process image"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:281 include/items.php:4537
+#: Code/Module/Cover_photo.php:281 include/items.php:4542
 msgid "female"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:282 include/items.php:4538
+#: Code/Module/Cover_photo.php:282 include/items.php:4543
 #, php-format
 msgid "%1$s updated her %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:283 include/items.php:4539
+#: Code/Module/Cover_photo.php:283 include/items.php:4544
 msgid "male"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:284 include/items.php:4540
+#: Code/Module/Cover_photo.php:284 include/items.php:4545
 #, php-format
 msgid "%1$s updated his %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:286 include/items.php:4542
+#: Code/Module/Cover_photo.php:286 include/items.php:4547
 #, php-format
 msgid "%1$s updated their %2$s"
 msgstr ""
@@ -5901,7 +5897,7 @@ msgstr ""
 msgid "Change Cover Photo"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:420 Code/Module/Embedphotos.php:334
+#: Code/Module/Cover_photo.php:420 Code/Module/Embedphotos.php:337
 #: Code/Module/Photos.php:745 Code/Module/Profile_photo.php:511
 #: Code/Widget/Album.php:111 Code/Widget/Portfolio.php:124
 #: Code/Widget/Cdav.php:157 Code/Widget/Cdav.php:191
@@ -5984,8 +5980,8 @@ msgid "Event not found."
 msgstr ""
 
 #: Code/Module/Calendar.php:250 Code/Module/Events.php:297
-#: Code/Module/Like.php:178 Code/Module/Tagger.php:89 include/event.php:1338
-#: include/conversation.php:62 include/misc.php:2386
+#: Code/Module/Like.php:178 Code/Module/Tagger.php:89
+#: include/conversation.php:62 include/event.php:1338 include/misc.php:2346
 msgid "event"
 msgstr ""
 
@@ -6037,12 +6033,12 @@ msgstr ""
 msgid "Access list is empty"
 msgstr ""
 
-#: Code/Module/Stream.php:317 include/items.php:4172
+#: Code/Module/Stream.php:317 include/items.php:4177
 #, php-format
 msgid "Access list: %s"
 msgstr ""
 
-#: Code/Module/Stream.php:360 extend/addon/a/zotpost/Mod_zotpost.php:31
+#: Code/Module/Stream.php:363 extend/addon/a/zotpost/Mod_zotpost.php:31
 msgid "Invalid channel."
 msgstr ""
 
@@ -6125,18 +6121,18 @@ msgid "Validation token"
 msgstr ""
 
 #: Code/Module/Embedphotos.php:117 include/bbcode.php:258
-#: include/bbcode.php:1173 include/bbcode.php:2126 include/bbcode.php:2129
-#: include/misc.php:1809
+#: include/bbcode.php:1173 include/bbcode.php:2049 include/bbcode.php:2052
+#: include/misc.php:1802
 msgid "Image/photo"
 msgstr ""
 
-#: Code/Module/Embedphotos.php:317 Code/Module/Photos.php:848
+#: Code/Module/Embedphotos.php:320 Code/Module/Photos.php:848
 #: Code/Module/Photos.php:1395 Code/Widget/Album.php:94
 #: Code/Widget/Portfolio.php:102
 msgid "View Photo"
 msgstr ""
 
-#: Code/Module/Embedphotos.php:332 Code/Module/Photos.php:879
+#: Code/Module/Embedphotos.php:335 Code/Module/Photos.php:879
 #: Code/Widget/Album.php:109 Code/Widget/Portfolio.php:122
 #: include/attach.php:1394
 msgid "Edit Album"
@@ -6240,7 +6236,7 @@ msgstr ""
 msgid "l, F j"
 msgstr ""
 
-#: Code/Module/Events.php:727 Code/Module/Cal.php:326 include/misc.php:2187
+#: Code/Module/Events.php:727 Code/Module/Cal.php:326 include/misc.php:2147
 msgid "Link to Source"
 msgstr ""
 
@@ -6257,7 +6253,7 @@ msgid "Event removed"
 msgstr ""
 
 #: Code/Module/Subthread.php:126 Code/Module/Like.php:176
-#: Code/Module/Tagger.php:85 include/conversation.php:59 include/misc.php:2383
+#: Code/Module/Tagger.php:85 include/conversation.php:59 include/misc.php:2343
 msgid "photo"
 msgstr ""
 
@@ -6292,7 +6288,7 @@ msgstr ""
 msgid "Authentication failed."
 msgstr ""
 
-#: Code/Module/Home.php:159
+#: Code/Module/Home.php:164
 #, php-format
 msgid "Welcome to %s"
 msgstr ""
@@ -6518,7 +6514,7 @@ msgstr ""
 msgid "Could not create access list."
 msgstr ""
 
-#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4148
+#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4153
 msgid "Access list not found."
 msgstr ""
 
@@ -7171,7 +7167,7 @@ msgid ""
 "Password reset failed."
 msgstr ""
 
-#: Code/Module/Lostpass.php:104 boot.php:1111
+#: Code/Module/Lostpass.php:104 boot.php:1112
 msgid "Password Reset"
 msgstr ""
 
@@ -7244,14 +7240,14 @@ msgstr ""
 msgid "Description:"
 msgstr ""
 
-#: Code/Module/Directory.php:445 Code/Module/Manage.php:83
-#: Code/Module/Manage.php:181
+#: Code/Module/Directory.php:445 Code/Module/Manage.php:84
+#: Code/Module/Manage.php:192
 msgid "Group"
 msgstr ""
 
-#: Code/Module/Directory.php:446 Code/Module/Manage.php:82
-#: Code/Module/Manage.php:180 Code/Storage/Browser.php:148
-#: include/misc.php:3298
+#: Code/Module/Directory.php:446 Code/Module/Manage.php:83
+#: Code/Module/Manage.php:191 Code/Storage/Browser.php:148
+#: include/misc.php:3258
 msgid "Collection"
 msgstr ""
 
@@ -7311,64 +7307,68 @@ msgstr ""
 msgid "No entries (some entries may be hidden)."
 msgstr ""
 
-#: Code/Module/Search.php:373
+#: Code/Module/Search.php:379
 #, php-format
 msgid "Items tagged with: %s"
 msgstr ""
 
-#: Code/Module/Search.php:376
+#: Code/Module/Search.php:382
 #, php-format
 msgid "Search results for: %s"
 msgstr ""
 
-#: Code/Module/Manage.php:84
+#: Code/Module/Manage.php:85
 msgid "System | Site Channel"
 msgstr ""
 
-#: Code/Module/Manage.php:154 Code/Module/New_channel.php:164
+#: Code/Module/Manage.php:155 Code/Module/New_channel.php:164
 #, php-format
 msgid "You have created %1$.0f of %2$.0f allowed channels."
 msgstr ""
 
-#: Code/Module/Manage.php:160
+#: Code/Module/Manage.php:161
 msgid "Create a new channel"
 msgstr ""
 
-#: Code/Module/Manage.php:160 Code/Module/Chat.php:264
+#: Code/Module/Manage.php:161 Code/Module/Chat.php:264
 msgid "Create New"
 msgstr ""
 
-#: Code/Module/Manage.php:189
+#: Code/Module/Manage.php:200
 msgid "Current Channel"
 msgstr ""
 
-#: Code/Module/Manage.php:191
+#: Code/Module/Manage.php:201
+msgid "Linked Identities"
+msgstr ""
+
+#: Code/Module/Manage.php:203
 msgid "Switch to one of your channels by selecting it."
 msgstr ""
 
-#: Code/Module/Manage.php:192
+#: Code/Module/Manage.php:204
 msgid "Default Login Channel"
 msgstr ""
 
-#: Code/Module/Manage.php:193
+#: Code/Module/Manage.php:205
 msgid "Make Default"
 msgstr ""
 
-#: Code/Module/Manage.php:194 Code/Module/Manage.php:195
+#: Code/Module/Manage.php:206 Code/Module/Manage.php:207
 msgid "Add to menu"
 msgstr ""
 
-#: Code/Module/Manage.php:198
+#: Code/Module/Manage.php:210
 #, php-format
 msgid "%d new messages"
 msgstr ""
 
-#: Code/Module/Manage.php:199
+#: Code/Module/Manage.php:211
 #, php-format
 msgid "%d new introductions"
 msgstr ""
 
-#: Code/Module/Manage.php:201
+#: Code/Module/Manage.php:213
 msgid "Delegated Channel"
 msgstr ""
 
@@ -7408,7 +7408,7 @@ msgstr ""
 msgid "Submit and proceed"
 msgstr ""
 
-#: Code/Module/Menu.php:177 include/misc.php:2864
+#: Code/Module/Menu.php:177 include/misc.php:2824
 msgid "Menus"
 msgstr ""
 
@@ -7684,38 +7684,38 @@ msgstr ""
 msgid "Empty post discarded."
 msgstr ""
 
-#: Code/Module/Item.php:1576
+#: Code/Module/Item.php:1577
 msgid "Duplicate post suppressed."
 msgstr ""
 
-#: Code/Module/Item.php:1623
+#: Code/Module/Item.php:1624
 msgid ""
 "Draft saved. Use <a href=\"/stream?draft=1\">Drafts</a> app to continue "
 "editing."
 msgstr ""
 
-#: Code/Module/Item.php:1683
+#: Code/Module/Item.php:1684
 msgid "Your comment has been posted."
 msgstr ""
 
-#: Code/Module/Item.php:1752
+#: Code/Module/Item.php:1753
 msgid "System error. Post not saved."
 msgstr ""
 
-#: Code/Module/Item.php:1794
+#: Code/Module/Item.php:1795
 msgid "Your post/comment is awaiting approval."
 msgstr ""
 
-#: Code/Module/Item.php:1966
+#: Code/Module/Item.php:1967
 msgid "Unable to obtain post information from database."
 msgstr ""
 
-#: Code/Module/Item.php:1974
+#: Code/Module/Item.php:1975
 #, php-format
 msgid "You have reached your limit of %1$.0f top level posts."
 msgstr ""
 
-#: Code/Module/Item.php:1980
+#: Code/Module/Item.php:1981
 #, php-format
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr ""
@@ -7833,31 +7833,31 @@ msgid ""
 "or restore these in date order (oldest first)."
 msgstr ""
 
-#: Code/Module/Ping.php:443
+#: Code/Module/Ping.php:444
 msgid "added your channel"
 msgstr ""
 
-#: Code/Module/Ping.php:503
+#: Code/Module/Ping.php:504
 msgid "requires approval"
 msgstr ""
 
-#: Code/Module/Ping.php:512
+#: Code/Module/Ping.php:513
 msgid "g A l, F d"
 msgstr ""
 
-#: Code/Module/Ping.php:530
+#: Code/Module/Ping.php:531
 msgid "[today]"
 msgstr ""
 
-#: Code/Module/Ping.php:540
+#: Code/Module/Ping.php:541
 msgid "posted an event"
 msgstr ""
 
-#: Code/Module/Ping.php:574
+#: Code/Module/Ping.php:575
 msgid "shared a file with you"
 msgstr ""
 
-#: Code/Module/Ping.php:602
+#: Code/Module/Ping.php:603
 msgid "reported content"
 msgstr ""
 
@@ -7927,7 +7927,7 @@ msgstr ""
 msgid "Use"
 msgstr ""
 
-#: Code/Module/Attach.php:19
+#: Code/Module/Attach.php:18
 msgid "Item not available."
 msgstr ""
 
@@ -9531,7 +9531,7 @@ msgid "NEW"
 msgstr ""
 
 #: Code/Module/Sharedwithme.php:109 Code/Storage/Browser.php:315
-#: include/misc.php:1516
+#: include/misc.php:1510
 msgid "Size"
 msgstr ""
 
@@ -9551,11 +9551,11 @@ msgstr ""
 msgid "Permissions denied."
 msgstr ""
 
-#: Code/Module/Cal.php:353 include/misc.php:2888
+#: Code/Module/Cal.php:353 include/misc.php:2848
 msgid "Import"
 msgstr ""
 
-#: Code/Module/Blocks.php:167 include/misc.php:2863
+#: Code/Module/Blocks.php:167 include/misc.php:2823
 msgid "Blocks"
 msgstr ""
 
@@ -9580,7 +9580,7 @@ msgstr ""
 msgid "Post not found."
 msgstr ""
 
-#: Code/Module/Tagger.php:95 include/conversation.php:91 include/misc.php:2391
+#: Code/Module/Tagger.php:95 include/conversation.php:91 include/misc.php:2351
 msgid "comment"
 msgstr ""
 
@@ -10642,45 +10642,45 @@ msgstr ""
 msgid "Added by superblock"
 msgstr ""
 
-#: boot.php:1081
+#: boot.php:1082
 msgid "Create an account to access services and applications"
 msgstr ""
 
-#: boot.php:1105
+#: boot.php:1106
 msgid "Login/Email"
 msgstr ""
 
-#: boot.php:1106
+#: boot.php:1107
 msgid "Password"
 msgstr ""
 
-#: boot.php:1107
+#: boot.php:1108
 msgid "Remember me"
 msgstr ""
 
-#: boot.php:1110
+#: boot.php:1111
 msgid "Forgot your password?"
 msgstr ""
 
-#: boot.php:1836
+#: boot.php:1837
 #, php-format
 msgid "[$Projectname] Website SSL error for %s"
 msgstr ""
 
-#: boot.php:1841
+#: boot.php:1842
 msgid "Website SSL certificate is not valid. Please correct."
 msgstr ""
 
-#: boot.php:1885
+#: boot.php:1886
 #, php-format
 msgid "[$Projectname] Cron tasks not running on %s"
 msgstr ""
 
-#: boot.php:1890
+#: boot.php:1891
 msgid "Cron/Scheduled tasks not running."
 msgstr ""
 
-#: boot.php:1891 include/datetime.php:278
+#: boot.php:1892 include/datetime.php:278
 msgid "never"
 msgstr ""
 
@@ -11091,62 +11091,62 @@ msgstr ""
 msgid "Network: %s"
 msgstr ""
 
-#: include/items.php:870
+#: include/items.php:871
 msgid "(Unknown)"
 msgstr ""
 
-#: include/items.php:1041
+#: include/items.php:1042
 msgid "Visible to anybody on the internet."
 msgstr ""
 
-#: include/items.php:1043
+#: include/items.php:1044
 msgid "Visible to you only."
 msgstr ""
 
-#: include/items.php:1045
+#: include/items.php:1046
 msgid "Visible to anybody in this network."
 msgstr ""
 
-#: include/items.php:1047
+#: include/items.php:1048
 msgid "Visible to anybody authenticated."
 msgstr ""
 
-#: include/items.php:1049
+#: include/items.php:1050
 #, php-format
 msgid "Visible to anybody on %s."
 msgstr ""
 
-#: include/items.php:1051
+#: include/items.php:1052
 msgid "Visible to all connections."
 msgstr ""
 
-#: include/items.php:1053
+#: include/items.php:1054
 msgid "Visible to approved connections."
 msgstr ""
 
-#: include/items.php:1055
+#: include/items.php:1056
 msgid "Visible to specific connections."
 msgstr ""
 
-#: include/items.php:4165
+#: include/items.php:4170
 msgid "Privacy group is empty."
 msgstr ""
 
-#: include/items.php:4544
+#: include/items.php:4549
 msgid "profile photo"
 msgstr ""
 
-#: include/items.php:4760
+#: include/items.php:4765
 #, php-format
 msgid "[Edited %s]"
 msgstr ""
 
-#: include/items.php:4760
+#: include/items.php:4765
 msgctxt "edit_activity"
 msgid "Post"
 msgstr ""
 
-#: include/items.php:4760
+#: include/items.php:4765
 msgctxt "edit_activity"
 msgid "Comment"
 msgstr ""
@@ -11242,40 +11242,16 @@ msgstr ""
 msgid "Empty path"
 msgstr ""
 
-#: include/event.php:37 include/event.php:123
-msgid "l F d, Y \\@ g:i A"
+#: include/network.php:1115
+msgid "RSS/Atom"
 msgstr ""
 
-#: include/event.php:45 include/event.php:129
-msgid "Starts:"
+#: include/network.php:1117
+msgid "Diaspora"
 msgstr ""
 
-#: include/event.php:63 include/event.php:133
-msgid "Finishes:"
-msgstr ""
-
-#: include/event.php:1190
-msgid "This event has been added to your calendar."
-msgstr ""
-
-#: include/event.php:1421
-msgid "Not specified"
-msgstr ""
-
-#: include/event.php:1422
-msgid "Needs Action"
-msgstr ""
-
-#: include/event.php:1423
-msgid "Completed"
-msgstr ""
-
-#: include/event.php:1424
-msgid "In Process"
-msgstr ""
-
-#: include/event.php:1425
-msgid "Cancelled"
+#: include/network.php:1119
+msgid "Zot6"
 msgstr ""
 
 #: include/api_auth.php:162
@@ -11312,7 +11288,7 @@ msgstr ""
 msgid "%1$s poked %2$s"
 msgstr ""
 
-#: include/conversation.php:201 include/misc.php:1164 include/misc.php:1168
+#: include/conversation.php:201 include/misc.php:1162 include/misc.php:1166
 msgid "poked"
 msgstr ""
 
@@ -11631,63 +11607,6 @@ msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/bbcode.php:316
-msgid "Encrypted content"
-msgstr ""
-
-#: include/bbcode.php:358
-#, php-format
-msgid "(Embedded app '%s' could not be displayed)."
-msgstr ""
-
-#: include/bbcode.php:402
-#, php-format
-msgid "Install %1$s element %2$s"
-msgstr ""
-
-#: include/bbcode.php:405
-#, php-format
-msgid ""
-"This post contains an installable %s element, however you lack permissions "
-"to install it on this site."
-msgstr ""
-
-#: include/bbcode.php:676
-msgid "card"
-msgstr ""
-
-#: include/bbcode.php:678
-msgid "article"
-msgstr ""
-
-#: include/bbcode.php:793 include/bbcode.php:802
-msgid "Click to open/close"
-msgstr ""
-
-#: include/bbcode.php:802
-msgid "spoiler"
-msgstr ""
-
-#: include/bbcode.php:1500 include/bbcode.php:1779
-msgid "Different viewers will see this text differently"
-msgstr ""
-
-#: include/bbcode.php:2105
-msgid "$1 wrote:"
-msgstr ""
-
-#: include/network.php:1115
-msgid "RSS/Atom"
-msgstr ""
-
-#: include/network.php:1117
-msgid "Diaspora"
-msgstr ""
-
-#: include/network.php:1119
-msgid "Zot6"
-msgstr ""
-
 #: include/taxonomy.php:366
 msgid "Popular Tags"
 msgstr ""
@@ -11739,7 +11658,52 @@ msgid ""
 "form has been opened for too long (>3 hours) before submitting it."
 msgstr ""
 
-#: include/language.php:364 include/misc.php:2207
+#: include/bbcode.php:316
+msgid "Encrypted content"
+msgstr ""
+
+#: include/bbcode.php:358
+#, php-format
+msgid "(Embedded app '%s' could not be displayed)."
+msgstr ""
+
+#: include/bbcode.php:402
+#, php-format
+msgid "Install %1$s element %2$s"
+msgstr ""
+
+#: include/bbcode.php:405
+#, php-format
+msgid ""
+"This post contains an installable %s element, however you lack permissions "
+"to install it on this site."
+msgstr ""
+
+#: include/bbcode.php:676
+msgid "card"
+msgstr ""
+
+#: include/bbcode.php:678
+msgid "article"
+msgstr ""
+
+#: include/bbcode.php:793 include/bbcode.php:802
+msgid "Click to open/close"
+msgstr ""
+
+#: include/bbcode.php:802
+msgid "spoiler"
+msgstr ""
+
+#: include/bbcode.php:1499 include/bbcode.php:1706
+msgid "Different viewers will see this text differently"
+msgstr ""
+
+#: include/bbcode.php:2027
+msgid "$1 wrote:"
+msgstr ""
+
+#: include/language.php:364 include/misc.php:2167
 msgid "default"
 msgstr ""
 
@@ -11747,188 +11711,223 @@ msgstr ""
 msgid "Select an alternate language"
 msgstr ""
 
-#: include/misc.php:533
+#: include/event.php:37 include/event.php:123
+msgid "l F d, Y \\@ g:i A"
+msgstr ""
+
+#: include/event.php:45 include/event.php:129
+msgid "Starts:"
+msgstr ""
+
+#: include/event.php:63 include/event.php:133
+msgid "Finishes:"
+msgstr ""
+
+#: include/event.php:1190
+msgid "This event has been added to your calendar."
+msgstr ""
+
+#: include/event.php:1421
+msgid "Not specified"
+msgstr ""
+
+#: include/event.php:1422
+msgid "Needs Action"
+msgstr ""
+
+#: include/event.php:1423
+msgid "Completed"
+msgstr ""
+
+#: include/event.php:1424
+msgid "In Process"
+msgstr ""
+
+#: include/event.php:1425
+msgid "Cancelled"
+msgstr ""
+
+#: include/misc.php:531
 msgid "prev"
 msgstr ""
 
-#: include/misc.php:536
+#: include/misc.php:534
 msgid "first"
 msgstr ""
 
-#: include/misc.php:567
+#: include/misc.php:565
 msgid "last"
 msgstr ""
 
-#: include/misc.php:570
+#: include/misc.php:568
 msgid "next"
 msgstr ""
 
-#: include/misc.php:583
+#: include/misc.php:581
 msgid "older"
 msgstr ""
 
-#: include/misc.php:586
+#: include/misc.php:584
 msgid "newer"
 msgstr ""
 
-#: include/misc.php:1164 include/misc.php:1168
+#: include/misc.php:1162 include/misc.php:1166
 msgid "poke"
 msgstr ""
 
-#: include/misc.php:1169
+#: include/misc.php:1167
 msgid "ping"
 msgstr ""
 
-#: include/misc.php:1169
+#: include/misc.php:1167
 msgid "pinged"
 msgstr ""
 
-#: include/misc.php:1170
+#: include/misc.php:1168
 msgid "prod"
 msgstr ""
 
-#: include/misc.php:1170
+#: include/misc.php:1168
 msgid "prodded"
 msgstr ""
 
-#: include/misc.php:1171
+#: include/misc.php:1169
 msgid "slap"
 msgstr ""
 
-#: include/misc.php:1171
+#: include/misc.php:1169
 msgid "slapped"
 msgstr ""
 
-#: include/misc.php:1172
+#: include/misc.php:1170
 msgid "finger"
 msgstr ""
 
-#: include/misc.php:1172
+#: include/misc.php:1170
 msgid "fingered"
 msgstr ""
 
-#: include/misc.php:1173
+#: include/misc.php:1171
 msgid "rebuff"
 msgstr ""
 
-#: include/misc.php:1173
+#: include/misc.php:1171
 msgid "rebuffed"
 msgstr ""
 
-#: include/misc.php:1197
+#: include/misc.php:1195
 msgid "happy"
 msgstr ""
 
-#: include/misc.php:1198
+#: include/misc.php:1196
 msgid "sad"
 msgstr ""
 
-#: include/misc.php:1199
+#: include/misc.php:1197
 msgid "mellow"
 msgstr ""
 
-#: include/misc.php:1200
+#: include/misc.php:1198
 msgid "tired"
 msgstr ""
 
-#: include/misc.php:1201
+#: include/misc.php:1199
 msgid "perky"
 msgstr ""
 
-#: include/misc.php:1202
+#: include/misc.php:1200
 msgid "angry"
 msgstr ""
 
-#: include/misc.php:1203
+#: include/misc.php:1201
 msgid "stupefied"
 msgstr ""
 
-#: include/misc.php:1204
+#: include/misc.php:1202
 msgid "puzzled"
 msgstr ""
 
-#: include/misc.php:1205
+#: include/misc.php:1203
 msgid "interested"
 msgstr ""
 
-#: include/misc.php:1206
+#: include/misc.php:1204
 msgid "bitter"
 msgstr ""
 
-#: include/misc.php:1207
+#: include/misc.php:1205
 msgid "cheerful"
 msgstr ""
 
-#: include/misc.php:1208
+#: include/misc.php:1206
 msgid "alive"
 msgstr ""
 
-#: include/misc.php:1209
+#: include/misc.php:1207
 msgid "annoyed"
 msgstr ""
 
-#: include/misc.php:1210
+#: include/misc.php:1208
 msgid "anxious"
 msgstr ""
 
-#: include/misc.php:1211
+#: include/misc.php:1209
 msgid "cranky"
 msgstr ""
 
-#: include/misc.php:1212
+#: include/misc.php:1210
 msgid "disturbed"
 msgstr ""
 
-#: include/misc.php:1213
+#: include/misc.php:1211
 msgid "frustrated"
 msgstr ""
 
-#: include/misc.php:1214
+#: include/misc.php:1212
 msgid "depressed"
 msgstr ""
 
-#: include/misc.php:1215
+#: include/misc.php:1213
 msgid "motivated"
 msgstr ""
 
-#: include/misc.php:1216
+#: include/misc.php:1214
 msgid "relaxed"
 msgstr ""
 
-#: include/misc.php:1217
+#: include/misc.php:1215
 msgid "surprised"
 msgstr ""
 
-#: include/misc.php:1415
+#: include/misc.php:1413
 msgid "May"
 msgstr ""
 
-#: include/misc.php:1513
+#: include/misc.php:1507
 msgid "Unknown Attachment"
 msgstr ""
 
-#: include/misc.php:1516
+#: include/misc.php:1510
 msgid "unknown"
 msgstr ""
 
-#: include/misc.php:1570
+#: include/misc.php:1564
 msgid "remove category"
 msgstr ""
 
-#: include/misc.php:1709
+#: include/misc.php:1703
 msgid "remove from file"
 msgstr ""
 
-#: include/misc.php:1848
+#: include/misc.php:1841
 msgid "Added to your calendar"
 msgstr ""
 
-#: include/misc.php:1949
+#: include/misc.php:1942
 msgid "Link"
 msgstr ""
 
-#: include/misc.php:2013 include/misc.php:2020 include/misc.php:2047
-#: include/misc.php:2055
+#: include/misc.php:2011 include/misc.php:2037
 #, php-format
 msgctxt "noun"
 msgid "%d Vote"
@@ -11936,7 +11935,7 @@ msgid_plural "%d Votes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/misc.php:2062
+#: include/misc.php:2044
 #, php-format
 msgctxt "noun"
 msgid "%d Vote in total"
@@ -11944,132 +11943,132 @@ msgid_plural "%d Votes in total"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/misc.php:2066
+#: include/misc.php:2048
 msgid "Poll has ended."
 msgstr ""
 
-#: include/misc.php:2068
+#: include/misc.php:2050
 #, php-format
 msgid "Poll ends: %1$s (%2$s)"
 msgstr ""
 
-#: include/misc.php:2084
+#: include/misc.php:2066
 msgid "Download binary/encrypted content"
 msgstr ""
 
-#: include/misc.php:2215
+#: include/misc.php:2175
 msgid "Page layout"
 msgstr ""
 
-#: include/misc.php:2215
+#: include/misc.php:2175
 msgid "You can create your own with the layouts tool"
 msgstr ""
 
-#: include/misc.php:2226
+#: include/misc.php:2186
 msgid "BBcode"
 msgstr ""
 
-#: include/misc.php:2227
+#: include/misc.php:2187
 msgid "Multicode"
 msgstr ""
 
-#: include/misc.php:2228
+#: include/misc.php:2188
 msgid "HTML"
 msgstr ""
 
-#: include/misc.php:2229
+#: include/misc.php:2189
 msgid "Markdown"
 msgstr ""
 
-#: include/misc.php:2230
+#: include/misc.php:2190
 msgid "Text"
 msgstr ""
 
-#: include/misc.php:2231
+#: include/misc.php:2191
 msgid "Comanche Layout"
 msgstr ""
 
-#: include/misc.php:2235
+#: include/misc.php:2195
 msgid "PHP"
 msgstr ""
 
-#: include/misc.php:2244
+#: include/misc.php:2204
 msgid "Page content type"
 msgstr ""
 
-#: include/misc.php:2397
+#: include/misc.php:2357
 msgid "activity"
 msgstr ""
 
-#: include/misc.php:2510
+#: include/misc.php:2470
 msgid "a-z, 0-9, -, and _ only"
 msgstr ""
 
-#: include/misc.php:2860
+#: include/misc.php:2820
 msgid "Design Tools"
 msgstr ""
 
-#: include/misc.php:2866
+#: include/misc.php:2826
 msgid "Pages"
 msgstr ""
 
-#: include/misc.php:2889
+#: include/misc.php:2849
 msgid "Import website..."
 msgstr ""
 
-#: include/misc.php:2890
+#: include/misc.php:2850
 msgid "Select folder to import"
 msgstr ""
 
-#: include/misc.php:2891
+#: include/misc.php:2851
 msgid "Import from a zipped folder:"
 msgstr ""
 
-#: include/misc.php:2892
+#: include/misc.php:2852
 msgid "Import from cloud files:"
 msgstr ""
 
-#: include/misc.php:2893
+#: include/misc.php:2853
 msgid "/cloud/channel/path/to/folder"
 msgstr ""
 
-#: include/misc.php:2894
+#: include/misc.php:2854
 msgid "Enter path to website files"
 msgstr ""
 
-#: include/misc.php:2895
+#: include/misc.php:2855
 msgid "Select folder"
 msgstr ""
 
-#: include/misc.php:2896
+#: include/misc.php:2856
 msgid "Export website..."
 msgstr ""
 
-#: include/misc.php:2897
+#: include/misc.php:2857
 msgid "Export to a zip file"
 msgstr ""
 
-#: include/misc.php:2898
+#: include/misc.php:2858
 msgid "website.zip"
 msgstr ""
 
-#: include/misc.php:2899
+#: include/misc.php:2859
 msgid "Enter a name for the zip file."
 msgstr ""
 
-#: include/misc.php:2900
+#: include/misc.php:2860
 msgid "Export to cloud files"
 msgstr ""
 
-#: include/misc.php:2901
+#: include/misc.php:2861
 msgid "/path/to/export/folder"
 msgstr ""
 
-#: include/misc.php:2902
+#: include/misc.php:2862
 msgid "Enter a path to a cloud files destination."
 msgstr ""
 
-#: include/misc.php:2903
+#: include/misc.php:2863
 msgid "Specify folder"
 msgstr ""
 

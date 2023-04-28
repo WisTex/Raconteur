@@ -54,7 +54,7 @@ class Libprofile
 
         if (!$profile) {
             $r = q(
-                "SELECT abook_profile FROM abook WHERE abook_xchan = '%s' and abook_channel = '%d' limit 1",
+                "SELECT abook_profile FROM abook WHERE abook_xchan = '%s' and abook_channel = %d limit 1",
                 dbesc(($observer) ? $observer['xchan_hash'] : ''),
                 intval($channel['channel_id'])
             );

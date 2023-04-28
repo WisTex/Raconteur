@@ -100,7 +100,7 @@ class Onepoll implements DaemonInterface
 
         // They haven't given us permission to see their stream
 
-        $can_view_stream = intval(get_abconfig($importer_uid, $contact['abook_xchan'], 'their_perms', 'view_stream'));
+        $can_view_stream = their_perms_contains($importer_uid, $contact['abook_xchan'], 'view_stream');
 
         if (! $can_view_stream) {
             $fetch_feed = false;
@@ -108,7 +108,7 @@ class Onepoll implements DaemonInterface
 
         // we haven't given them permission to send us their stream
 
-        $can_send_stream = ( intval(get_abconfig($importer_uid, $contact['abook_xchan'], 'my_perms', 'send_stream'))
+        $can_send_stream = ( perm_is_allowed($importer_uid, $contact['abook_xchan'],'send_stream')
             || PConfig::Get($importer_uid,'system','preview_outbox', false));
 
         if (! $can_send_stream) {
@@ -132,6 +132,9 @@ class Onepoll implements DaemonInterface
                 $cl = get_xconfig($contact['abook_xchan'], 'activitypub', 'collections');
                 if (is_array($cl) && $cl) {
                     $url = ((array_key_exists('outbox', $cl)) ? $cl['outbox'] : '');
+                    if (!$url && array_key_exists('wall', $cl)) {
+                        $url = $cl['wall'];
+                    }
                     if ($url) {
                         logger('fetching outbox');
                         $url = $url . '?date_begin=' .  urlencode($last_update);
@@ -170,6 +173,5 @@ class Onepoll implements DaemonInterface
         if (! $r) {
             Socgraph::poco_load($contact['xchan_hash'], $contact['xchan_connurl']);
         }
-        return;
     }
 }

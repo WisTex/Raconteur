@@ -528,7 +528,7 @@ class Channel
 //          '$vnotify12'  => array('vnotify12', t('Unseen shared files'), ($vnotify & VNOTIFY_FILES), VNOTIFY_FILES, '', $yes_no),
             '$vnotify13' => (($public_stream_mode) ? ['vnotify13', t('Unseen public stream activity'), ($vnotify & VNOTIFY_PUBS), VNOTIFY_PUBS, '', $yes_no] : []),
             '$vnotify14' => ['vnotify14', t('Unseen likes and dislikes'), ($vnotify & VNOTIFY_LIKE), VNOTIFY_LIKE, '', $yes_no],
-            '$vnotify15' => ['vnotify15', t('Unseen group posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no],
+//            '$vnotify15' => ['vnotify15', t('Unseen group posts'), ($vnotify & VNOTIFY_FORUMS), VNOTIFY_FORUMS, '', $yes_no],
             '$vnotify16' => ((is_site_admin()) ? ['vnotify16', t('Reported content'), ($vnotify & VNOTIFY_REPORTS), VNOTIFY_REPORTS, '', $yes_no] : []),
             '$vnotify17' => ['vnotify17', t('Moderated Activities'), ($vnotify & VNOTIFY_MODERATE), VNOTIFY_MODERATE, t('Recommended'), $yes_no],
             '$desktop_notifications_info' => t('Desktop notifications are unavailable because the required browser permission has not been granted'),

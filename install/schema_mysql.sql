@@ -1113,6 +1113,17 @@ CREATE TABLE IF NOT EXISTS `term` (
   KEY `term_ttype` (`term`,`ttype`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `tombstone` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_hash` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_channel` int NOT NULL,
+  `deleted_at` datetime NOT NULL DEFAULT '0001-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `id_hash` (`id_hash`(191)),
+  KEY `id_channel` (`id_channel`),
+  KEY `deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `updates` (
   `ud_id` int unsigned NOT NULL AUTO_INCREMENT,
   `ud_hash` varchar(255) NOT NULL DEFAULT '',
