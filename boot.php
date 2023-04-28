@@ -25,7 +25,7 @@ use Code\Lib\Url;
  */
 
 const REPOSITORY_ID = 'streams';
-const DB_UPDATE_VERSION = 1266;
+const DB_UPDATE_VERSION = 1267;
 const PROJECT_BASE = __DIR__;
 const ACTIVITYPUB_ENABLED = true;
 const NOMAD_PROTOCOL_VERSION = '11.0';
