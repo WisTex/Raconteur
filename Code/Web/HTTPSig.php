@@ -185,6 +185,13 @@ class HTTPSig
             return $result;
         }
 
+        if (str_starts_with($sig_block['keyId'], 'http')) {
+            $parsed = parse_url($sig_block['keyId']);
+            unset($parsed['query']);
+            unset($parsed['fragment']);
+            $sig_block['keyId'] = unparse_url($parsed);
+        }
+
         $result['signer'] = $sig_block['keyId'];
 
         $fkey = self::get_key($key, $keytype, $result['signer']);

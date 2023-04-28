@@ -132,6 +132,9 @@ class Onepoll implements DaemonInterface
                 $cl = get_xconfig($contact['abook_xchan'], 'activitypub', 'collections');
                 if (is_array($cl) && $cl) {
                     $url = ((array_key_exists('outbox', $cl)) ? $cl['outbox'] : '');
+                    if (!$url && array_key_exists('wall', $cl)) {
+                        $url = $cl['wall'];
+                    }
                     if ($url) {
                         logger('fetching outbox');
                         $url = $url . '?date_begin=' .  urlencode($last_update);
