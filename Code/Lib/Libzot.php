@@ -1654,6 +1654,12 @@ class Libzot
 
             $DR->set_name($channel['channel_name'] . ' <' . Channel::get_webfinger($channel) . '>');
 
+            if (Tombstone::check($arr['mid'], $channel['channel_id'])) {
+                $DR->update('update ignored');
+                $result[] = $DR->get();
+                continue;
+            }
+    
             if (($act) && ($act->obj) && (!is_array($act->obj))) {
                 // The initial object fetch failed using the sys channel credentials.
                 // Try again using the delivery channel credentials.

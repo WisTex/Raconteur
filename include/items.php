@@ -21,6 +21,7 @@ use Code\Lib\ObjCache;
 use Code\Lib\PConfig;
 use Code\Lib\LibBlock;
 use Code\Lib\ThreadListener;
+use Code\Lib\Tombstone;
 use Code\Access\PermissionLimits;
 use Code\Access\PermissionRoles;
 use Code\Access\AccessControl;
@@ -3621,11 +3622,11 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $obs
         );
         if ($items) {
             foreach ($items as $i) {
-                delete_item_lowlevel($i, $stage, $force);
+                delete_item_lowlevel($i, $stage, $force, $expire);
             }
         }
         else {
-            delete_item_lowlevel($item, $stage, $force);
+            delete_item_lowlevel($item, $stage, $force, $expire);
         }
 
         return true;
@@ -3646,11 +3647,15 @@ function drop_item($id, $stage = DROPITEM_NORMAL, $force = false, $uid = 0, $obs
  * @param bool $force
  * @return bool
  */
-function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false) {
+function delete_item_lowlevel($item, $stage = DROPITEM_NORMAL, $force = false, $expire = false) {
 
 
     logger('item: ' . $item['id'] . ' stage: ' . $stage . ' force: ' . ($force) ? 'true' : 'false', LOGGER_DATA);
 
+    if (!$expire) {
+        Tombstone::store($item['mid'], $item['uid']);
+    }
+    
     match ($stage) {
         DROPITEM_PHASE2 => q("UPDATE item SET item_pending_remove = 1, body = '', title = '',
                 changed = '%s', edited = '%s'  WHERE id = %d",
