@@ -10,6 +10,7 @@ use Code\Render\Theme;
 use Code\Web\Controller;
 
 
+
 class Identities extends Controller
 {
     public function post()
@@ -18,17 +19,48 @@ class Identities extends Controller
             http_status_exit(403, 'Permission denied.');
         }
 
+        $identities = $this->getIdentities();
+        $id = (($_REQUEST['id']) ? intval($_REQUEST['id']) - 1 : null);
+        $description = (($_REQUEST['description']) ? escape_tags(trim($_REQUEST['description'])) : '' );
+        $url = (($_REQUEST['url']) ? escape_tags(trim($_REQUEST['url'])) : '' );
+
+        if (isset($id)) {
+            $identities[$id] = [$description, $url];
+        }
+        else {
+            $identities[] = [$description, $url];
+        }
+        PConfig::Set(local_channel(),'system','identities', $identities);
+        $this->check_identities();
+
+        // build_sync_packet
     }
 
     public function get()
     {
-      if (!local_channel()) {
+        if (!local_channel()) {
           return login();
-      }
-      $identities = $this->getIdentities();
-      $form = $this->getForm();
+        }
+        $channel = App::get_channel();
 
+        $identities = $this->getIdentities();
+        $id = $_REQUEST['id'] ? intval($_REQUEST['id']) - 1 : null;
+        if (isset($id)) {
+            $record = $identities[$id];
+        }
+
+        $verified = $this->loadIdentities($channel['xchan_hash']);
+        for ($x = 0; $x < count($identities); $x ++) {
+            $identities[$x][2] = $this->matchRecord($identities[$x][1], $verified);
+        }
+        
         return replace_macros(Theme::get_template('identity_settings.tpl'), [
+            '$title' => t('Manage Identities'),
+            '$identities' => $identities,
+            '$description' => [ 'description', t('Site name'), ($record ? $record[0] : ''), ''],
+            '$url' => ['url', t('Site address/URL'), ($record ? $record[1] : ''), ''],
+            '$id' => $id,
+            '$submit' => t('Submit/Verify')
         ]);
 
 
@@ -85,6 +117,9 @@ class Identities extends Controller
                 );
             }
         }
+        q("delete from linkid where sigtype = %d",
+            intval(IDLINK_NONE)
+        );
     }
 
     protected function loadIdentities($myIdentity)
