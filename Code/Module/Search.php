@@ -84,14 +84,14 @@ class Search extends Controller
 
         if ($this->search_channel) {
             if (Channel::is_system($this->search_channel['channel_id'])) {
-                if (get_config('system', 'block_public_search', 1)) {
+                if (!local_channel() && get_config('system', 'block_public_search', 1)) {
                     // Local channels and clones of local channels are permitted when
                     // public search is disabled.
                     $clone = null;
-                    if (remote_channel() && !local_channel()) {
+                    if (remote_channel()) {
                         $clone = Channel::from_hash(get_observer_hash());
                     }
-                    if (!$clone && !local_channel()) {
+                    if (!$clone) {
                         notice (t('Permission denied'));
                         return '';
                     }

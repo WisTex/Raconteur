@@ -53,7 +53,7 @@ class Identities extends Controller
         for ($x = 0; $x < count($identities); $x ++) {
             $identities[$x][2] = $this->matchRecord($identities[$x][1], $verified);
         }
-        
+
         return replace_macros(Theme::get_template('identity_settings.tpl'), [
             '$title' => t('Manage Identities'),
             '$identities' => $identities,
