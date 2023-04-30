@@ -20,7 +20,7 @@ class Identities extends Controller
         }
 
         $identities = $this->getIdentities();
-        $id = (($_REQUEST['id']) ? intval($_REQUEST['id']) - 1 : null);
+        $id = ($_REQUEST['id'] ? intval($_REQUEST['id']) - 1 : null);
         $description = (($_REQUEST['description']) ? escape_tags(trim($_REQUEST['description'])) : '' );
         $url = (($_REQUEST['url']) ? escape_tags(trim($_REQUEST['url'])) : '' );
 
@@ -41,10 +41,11 @@ class Identities extends Controller
         if (!local_channel()) {
           return login();
         }
+        logger('args: ' . print_r(App::$argv,true));
         $channel = App::get_channel();
 
         $identities = $this->getIdentities();
-        $id = $_REQUEST['id'] ? intval($_REQUEST['id']) - 1 : null;
+        $id = (argc() > 2) ? intval(argv(2)) : null;
         if (isset($id)) {
             $record = $identities[$id];
         }

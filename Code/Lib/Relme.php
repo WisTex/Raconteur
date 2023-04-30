@@ -23,7 +23,7 @@ class Relme
         $links = [];
         list($resolvedProfileUrl, $isSecure, $redirectChain) = IndieWeb\relMeDocumentUrl($otherUrl);
         if ($isSecure) {
-            $htmlResponse = Url::get($$resolvedProfileUrl);
+            $htmlResponse = Url::get($resolvedProfileUrl);
             if ($htmlResponse['success']) {
                 $links = IndieWeb\relMeLinks($htmlResponse['body'], $resolvedProfileUrl);
             }
