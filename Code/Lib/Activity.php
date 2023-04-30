@@ -3678,7 +3678,8 @@ class Activity
             $item['item_private'] = 2;
         }
 
-        if (Tombstone::check($item['mid'], $channel['channel_id'])) {
+        if (Tombstone::check($item['mid'], $channel['channel_id'])
+                || Tombstone::check($item['parent_mid'], $channel['channel_id'])) {
             logger('tombstone: post was deleted. Ignoring update.');
             return;
         }
