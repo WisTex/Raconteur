@@ -10,15 +10,15 @@
         <div class="section-content-tools-wrapper">
         {{foreach $identities as $key => $identity}}
             <div class="">
-                <div class="float-start"><a href="{{$identity.1}}" >{{$identity.0}}</a> {{if $identity.2}}verified{{else}}not verified{{/if}}</div>
-                <div class="float-end"><a href="settings/identities/{{$key}}"><i class="fa fa-pencil"></i></a></div>
-                <div class="clear"></div>
+                <div class="float-start" ><a href="{{$identity.1}}" >{{$identity.0}}</a> <i class="fa {{if $identity.2}}_green fa-check-square-o{{else}}_red fa-square-o{{/if}}"></i></div>
+                <div class="float-end" ><a href="settings/identities/{{$key}}?drop=1" class="btn btn-default btn-outline-secondary"><i class="fa fa-remove" title="{{$drop}}"></i></a></div>
+                <div class="float-end" ><a href="settings/identities/{{$key}}" class="btn btn-default btn-outline-secondary" style="margin-right:5px;"><i class="fa fa-pencil" title="{{$edit}}"></i></a></div>
+                <div class="clear" ></div>
             </div>
         {{/foreach}}
         </div>
     {{/if}}
-    <br>
-    <div>
+    <div class="section-content-tools-wrapper">
     <form action="settings/identities" method="POST">
         {{include file="field_input.tpl" field=$description}}
         {{include file="field_input.tpl" field=$url}}

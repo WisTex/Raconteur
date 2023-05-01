@@ -36,8 +36,11 @@ class Settings extends Controller
         }
 
         $this->sm = new SubModule();
-    }
 
+        if ($this->sm->call('init') !== false) {
+            return;
+        }
+    }
 
     public function post()
     {

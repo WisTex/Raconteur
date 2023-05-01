@@ -13,27 +13,45 @@ use Code\Web\Controller;
 
 class Identities extends Controller
 {
-    public function post()
+    public function init()
     {
         if (!local_channel()) {
             http_status_exit(403, 'Permission denied.');
         }
 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (argc() > 2) ? intval(argv(2)) : null;
+        }
+        else {
+            $id = ($_REQUEST['id'] ? intval($_REQUEST['id']) - 1 : null);
+        }
+
         $identities = $this->getIdentities();
-        $id = ($_REQUEST['id'] ? intval($_REQUEST['id']) - 1 : null);
+        $delete = ($_REQUEST['drop'] ? boolval($_REQUEST['drop']) : false);
         $description = (($_REQUEST['description']) ? escape_tags(trim($_REQUEST['description'])) : '' );
         $url = (($_REQUEST['url']) ? escape_tags(trim($_REQUEST['url'])) : '' );
 
-        if (isset($id)) {
-            $identities[$id] = [$description, $url];
+        if ($delete && isset($id)) {
+            unset($identities['id']);
         }
         else {
-            $identities[] = [$description, $url];
+            if (isset($id)) {
+                $identities[$id] = [$description, $url];
+            } elseif ($description && $url) {
+                $identities[] = [$description, $url];
+            }
         }
-        PConfig::Set(local_channel(),'system','identities', $identities);
+        if ($identities) {
+            PConfig::Set(local_channel(), 'system', 'identities', $identities);
+        }
+        else {
+            PConfig::Delete(local_channel(), 'system','identities');
+        }
         $this->check_identities();
 
+
         // build_sync_packet
+
     }
 
     public function get()
@@ -60,6 +78,8 @@ class Identities extends Controller
             '$identities' => $identities,
             '$description' => [ 'description', t('Site name'), ($record ? $record[0] : ''), ''],
             '$url' => ['url', t('Site address/URL'), ($record ? $record[1] : ''), ''],
+            '$edit' => t('Edit'),
+            '$drop' => t('Remove'),
             '$id' => $id,
             '$submit' => t('Submit/Verify')
         ]);
@@ -103,12 +123,13 @@ class Identities extends Controller
                 );
             }
             else {
-                q("insert into linkid (ident, link, sigtype) values ( '%s', '%s', %d) ",
+                q("insert into linkid (ident, link, ikey, lkey, isig, lsig, sigtype) values ( '%s', '%s', '', '', '', '', %d) ",
                     dbesc($myIdentity),
                     dbesc($identity[1]),
                     intval($isMe ? IDLINK_RELME : IDLINK_NONE)
                 );
             }
+            $links = $this->loadIdentities($myIdentity);
         }
 
         foreach ($links as $link) {
