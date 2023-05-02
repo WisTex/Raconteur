@@ -701,7 +701,7 @@ class Ping extends Controller
         }
 
         if ($vnotify & VNOTIFY_MODERATE) {
-            $mods = q("SELECT COUNT(id) AS total from item where uid = %d and item_blocked = %d",
+            $mods = q("SELECT COUNT(id) AS total from item where uid = %d and item_blocked = %d and item_deleted = 0",
                 intval(local_channel()),
                 intval(ITEM_MODERATED)
             );

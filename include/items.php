@@ -2903,56 +2903,13 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
     // btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
     $moderated = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated');
 
-    $sourced = check_item_source($channel['channel_id'],$item);
-
-    if ($sourced) {
-        $r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
-            intval($channel['channel_id']),
-            dbesc(($item['source_xchan']) ?: $item['owner_xchan'])
-        );
-        if ($r && ! $edit) {
-            $t = trim($r[0]['src_tag']);
-            if ($t) {
-                $tags = explode(',',$t);
-                if ($tags) {
-                    foreach ($tags as $tt) {
-                        $tt = trim($tt);
-                        if ($tt) {
-                            q("insert into term (uid,oid,otype,ttype,term,url)
-                                values(%d,%d,%d,%d,'%s','%s') ",
-                                intval($channel['channel_id']),
-                                intval($item_id),
-                                intval(TERM_OBJ_POST),
-                                intval(TERM_CATEGORY),
-                                dbesc($tt),
-                                dbesc(z_root() . '/channel/' . $channel['channel_address'] . '?f=&cat=' . urlencode($tt))
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        // This will change the author to the post owner. Useful for RSS feeds which are to be syndicated
-        // to federated platforms which can't verify the identity of the author.
-        // This MAY cause you to run afoul of copyright law.
-
-        $rewrite_author = intval(get_abconfig($channel['channel_id'],$item['owner_xchan'],'system','rself'));
-        if ($rewrite_author) {
-            $item['author_xchan'] = $channel['channel_hash'];
-
-            $r = q("update item set author_xchan = '%s' where id = %d",
-                dbesc($item['author_xchan']),
-                intval($item_id)
-            );
-        }
-    }
+    $source = check_item_source($channel['channel_id'],$item);
 
     // This creates an embedded share authored by the group actor.
     // The original message is no longer needed and its presence can cause
     // confusion so make it hidden.
 
-    if ($group && (! $parent)) {
+    if (!$parent) {
 
         $arr = [];
 
@@ -3108,6 +3065,29 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
 
         $post_id = $post['item_id'];
 
+        if ($source && $post_id && !$edit) {
+            $t = trim($source['src_tag']);
+            if ($t) {
+                $tags = explode(',', $t);
+                if ($tags) {
+                    foreach ($tags as $tt) {
+                        $tt = trim($tt);
+                        if ($tt) {
+                            q("insert into term (uid,oid,otype,ttype,term,url)
+                            values(%d,%d,%d,%d,'%s','%s') ",
+                                intval($channel['channel_id']),
+                                intval($post_id),
+                                intval(TERM_OBJ_POST),
+                                intval(TERM_CATEGORY),
+                                dbesc($tt),
+                                dbesc(z_root() . '/channel/' . $channel['channel_address'] . '?f=&cat=' . urlencode($tt))
+                            );
+                        }
+                    }
+                }
+            }
+        }
+
         if($post_id) {
             Run::Summon([ 'Notifier','tgroup',$post_id ]);
         }
@@ -3123,8 +3103,8 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
 
     // Send Announce activities for group comments, so they will show up in microblog streams
 
-    if ($group && $parent) {
-        logger('comment arrived in group', LOGGER_DEBUG);
+    if ($parent) {
+        logger('comment arrived for new delivery chain', LOGGER_DEBUG);
         $arr = [];
 
         // don't let this recurse. We checked for this before calling, but this ensures
@@ -3202,69 +3182,6 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
 
         return;
     }
-
-    // Change this copy of the post to a forum head message and deliver to all the tgroup members
-    // also reset all the privacy bits to the forum default permissions
-
-    $private = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
-    $item_origin = ($item['item_deleted']) ? 0 : 1;
-    $item_wall = 1;
-    $item_uplink = 0;
-    $item_nocomment = 0;
-    $flag_bits = $item['item_flags'];
-
-    // maintain the original source, which will be the original item owner and was stored in source_xchan
-    // when we created the delivery fork
-
-    if ($parent) {
-        $r = q("update item set source_xchan = '%s' where id = %d",
-            dbesc($parent['source_xchan']),
-            intval($item_id)
-        );
-    }
-    else {
-        $item_uplink = 1;
-        if (! $edit) {
-            q("update item set source_xchan = owner_xchan where id = %d",
-                intval($item_id)
-            );
-        }
-    }
-
-    $title = $item['title'];
-    $body  = $item['body'];
-
-    $r = q("update item set item_uplink = %d, item_nocomment = %d, item_flags = %d, owner_xchan = '%s', replyto = '%s', allow_cid = '%s', allow_gid = '%s',
-        deny_cid = '%s', deny_gid = '%s', item_private = %d, item_blocked = %d, comment_policy = '%s', title = '%s', body = '%s', item_wall = %d, item_origin = %d  where id = %d",
-        intval($item_uplink),
-        intval($item_nocomment),
-        intval($flag_bits),
-        dbesc($channel['channel_hash']),
-        dbesc(Channel::url($channel)),
-        dbesc($channel['channel_allow_cid']),
-        dbesc($channel['channel_allow_gid']),
-        dbesc($channel['channel_deny_cid']),
-        dbesc($channel['channel_deny_gid']),
-        intval($private),
-        intval(($moderated) ? ($item['item_blocked'] | ITEM_MODERATED) : $item['item_blocked']),
-        dbesc(map_scope(PermissionLimits::Get($channel['channel_id'],'post_comments'))),
-        dbesc($title),
-        dbesc($body),
-        intval($item_wall),
-        intval($item_origin),
-        intval($item_id)
-    );
-
-    if ($r) {
-        Run::Summon([ 'Notifier','tgroup',$item_id ]);
-    }
-    else {
-        logger('start_delivery_chain: failed to update item');
-        // reset the source xchan to prevent loops
-        $r = q("update item set source_xchan = '' where id = %d",
-            intval($item_id)
-        );
-    }
 }
 
 /**
@@ -3319,12 +3236,12 @@ function check_item_source($uid, $item) {
 
     if (! $r[0]['src_patt']) {
         logger('source: success');
-        return true;
+        return array_shift($r);
     }
 
     if (MessageFilter::evaluate($item, $r[0]['src_patt'], EMPTY_STR)) {
         logger('source: text filter success');
-        return true;
+        return array_shift($r);
     }
 
     logger('source: filter fail');

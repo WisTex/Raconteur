@@ -125,11 +125,10 @@ class Sources extends Controller
 
             $o = replace_macros(Theme::get_template('sources_new.tpl'), [
                 '$title' => t('New Source'),
-                '$desc' => t('Import all or selected content from the following channel into this channel and distribute it according to your channel settings.'),
+                '$desc' => t('Import all or selected content from the following channel into this channel and re-distribute it according to your channel settings.'),
                 '$words' => ['words', t('Only import content with these words (one per line)'), '', t('Leave blank to import all public content')],
                 '$name' => ['name', t('Channel Name'), '', '', '', 'autocomplete="off"'],
                 '$tags' => ['tags', t('Add the following categories to posts imported from this source (comma separated)'), '', t('Optional')],
-                '$resend' => ['resend', t('Resend posts with this channel as author'), 0, t('Copyrights may apply'), [t('No'), t('Yes')]],
                 '$submit' => t('Submit')
             ]);
             return $o;
@@ -160,13 +159,11 @@ class Sources extends Controller
                 '$title' => t('Edit Source'),
                 '$drop' => t('Delete Source'),
                 '$id' => $r[0]['src_id'],
-                '$desc' => t('Import all or selected content from the following channel into this channel and distribute it according to your channel settings.'),
+                '$desc' => t('Import all or selected content from the following channel into this channel and re-distribute it according to your channel settings.'),
                 '$words' => array('words', t('Only import content with these words (one per line)'), $r[0]['src_patt'], t('Leave blank to import all public content')),
                 '$xchan' => $r[0]['src_xchan'],
                 '$abook' => $x[0]['abook_id'],
                 '$tags' => array('tags', t('Add the following categories to posts imported from this source (comma separated)'), $r[0]['src_tag'], t('Optional')),
-                '$resend' => ['resend', t('Resend posts with this channel as author'), get_abconfig(local_channel(), $r[0]['xchan_hash'], 'system', 'rself'), t('Copyrights may apply'), [t('No'), t('Yes')]],
-
                 '$name' => array('name', t('Channel Name'), $r[0]['xchan_name'], ''),
                 '$submit' => t('Submit')
             ));
