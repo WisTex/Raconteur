@@ -2,15 +2,18 @@
 	<div class="float-end">
 		{{if $channel.default_links}}
 		{{/if}}
-		{{if $channel.delegate}}
+		{{if $channel.delegate == 1}}
 			{{$delegated_desc}}
+		{{/if}}
+		{{if $channel.delegate == 2}}
+			{{$remote_desc}}
 		{{/if}}
 	</div>
 	<h3>
 		{{*if $selected == $channel.channel_id}}
 		<i class="fa fa-circle text-success" title="{{$msg_selected}}"></i>
 		{{/if*}}
-		{{if $channel.delegate}}
+		{{if $channel.delegate == 1}}
 		<i class="fa fa-arrow-circle-right" title="{{$delegated_desc}}"></i>
 		{{/if}}
 		{{if $channel.xchan_type == 2}}<i class="fa fa-tags" title="{{$channel.collections_label}}"></i>&nbsp;{{elseif $channel.xchan_type == 1}}<i class="fa fa-comments-o" title="{{$channel.forum_label}}"></i>&nbsp;{{/if}}

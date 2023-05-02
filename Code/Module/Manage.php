@@ -176,9 +176,8 @@ class Manage extends Controller
             );
             $linkid_str = ids_to_querystr($links,'link', true);
             if ($linkid_str) {
-                $linkedIdentities = q("select * from xchan where xchan_hash in (%s)",
-                    dbesc($linkid_str)
-                );
+                $linkedIdentities = q("select * from xchan where (xchan_hash in ($linkid_str) and xchan_network = 'activitypub')
+                    or (xchan_url in ($linkid_str) and xchan_network in ('zot6','nomad')) ");
             }
         }
 
@@ -193,6 +192,18 @@ class Manage extends Controller
             }
         } else {
             $delegates = null;
+        }
+
+
+        if ($linkedIdentities) {
+            for ($x = 0; $x < count($linkedIdentities); $x++) {
+                $linkedIdentities[$x]['link'] = zid($linkedIdentities[$x]['xchan_url']);
+                $linkedIdentities[$x]['channel_name'] = $linkedIdentities[$x]['xchan_name'];
+                $linkedIdentities[$x]['delegate'] = 2;
+                $linkedIdentities[$x]['collections_label'] = t('Collection');
+            }
+        } else {
+            $linkedIdentities = null;
         }
 
         return replace_macros(Theme::get_template('channels.tpl'), [
@@ -210,6 +221,7 @@ class Manage extends Controller
             '$mail_format' => t('%d new messages'),
             '$intros_format' => t('%d new introductions'),
             '$channel_usage_message' => $channel_usage_message,
+            '$remote_desc' => t('Linked Identity'),
             '$delegated_desc' => t('Delegated Channel'),
             '$delegates' => $delegates,
             '$links' => $linkedIdentities,
