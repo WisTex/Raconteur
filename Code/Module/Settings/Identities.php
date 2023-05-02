@@ -35,7 +35,7 @@ class Identities extends Controller
             unset($identities['id']);
         }
         else {
-            if (isset($id)) {
+            if (isset($id) && $description && $url) {
                 $identities[$id] = [$description, $url];
             } elseif ($description && $url) {
                 $identities[] = [$description, $url];
@@ -77,6 +77,7 @@ class Identities extends Controller
             '$title' => t('Manage Identities'),
             '$identities' => $identities,
             '$description' => [ 'description', t('Site name'), ($record ? $record[0] : ''), ''],
+            '$help_text' => t('Identities are verified by providing a link on the URL you provide here which links back to your channel home page with a link relation of rel="me"'),
             '$url' => ['url', t('Site address/URL'), ($record ? $record[1] : ''), ''],
             '$edit' => t('Edit'),
             '$drop' => t('Remove'),

@@ -5,6 +5,9 @@
             {{$title}}
         </h2>
     </div>
+    <div class="section-content-tools-wrapper">
+    {{$help_text}}
+    </div>
     <div>
     {{if $identities}}
         <div class="section-content-tools-wrapper">
