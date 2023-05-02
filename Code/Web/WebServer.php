@@ -5,6 +5,7 @@ namespace Code\Web;
 use App;
 use Code\Lib\Activity;
 use Code\Lib\Channel;
+use Code\Lib\PConfig;
 use Code\Extend\Hook;
 
 class WebServer
@@ -185,10 +186,7 @@ class WebServer
             $channel = Channel::from_username(argv(1));
             if ($channel) {
                 $nomadicIds = Activity::nomadic_locations(['author_xchan' => $channel['channel_hash']]);
-                $linkedIds = q("select * from linkid where ident = '%s' and sigtype = %d",
-                    dbesc($channel['channel_hash']),
-                    intval(IDLINK_RELME)
-                );
+                $linkedIds = PConfig::Get($channel['channel_id'],'system','identities', []);
             }
             App::$channel_links = [
                 [
@@ -241,7 +239,7 @@ class WebServer
                 foreach ($linkedIds as $self) {
                     App::$channel_links[] = [
                         'rel' => 'me',
-                        'href' => $self['link']
+                        'href' => $self[1]
                     ];
                 }
             }
