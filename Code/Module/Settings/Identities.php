@@ -20,19 +20,25 @@ class Identities extends Controller
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = (argc() > 2) ? intval(argv(2)) : null;
+            $id = (isset($_REQUEST['id']) ? intval($_REQUEST['id']) : null);
         }
         else {
-            $id = ($_REQUEST['id'] ? intval($_REQUEST['id']) - 1 : null);
+            $id = (argc() > 2) ? intval(argv(2)) : null;
+
         }
+
 
         $identities = $this->getIdentities();
         $delete = ($_REQUEST['drop'] ? boolval($_REQUEST['drop']) : false);
+        $edit = ($_REQUEST['edit'] ? boolval($_REQUEST['edit']) : false);
         $description = (($_REQUEST['description']) ? escape_tags(trim($_REQUEST['description'])) : '' );
         $url = (($_REQUEST['url']) ? escape_tags(trim($_REQUEST['url'])) : '' );
 
+        if (!$edit && !$delete && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
         if ($delete && isset($id)) {
-            unset($identities['id']);
+            unset($identities[$id]);
         }
         else {
             if (isset($id) && $description && $url) {
@@ -42,16 +48,18 @@ class Identities extends Controller
             }
         }
         if ($identities) {
-            PConfig::Set(local_channel(), 'system', 'identities', $identities);
+            PConfig::Set(local_channel(), 'system', 'identities', array_values($identities));
         }
         else {
             PConfig::Delete(local_channel(), 'system','identities');
         }
-        $this->check_identities();
-
-
-        // build_sync_packet
-
+        if ($delete) {
+            goaway(z_root() . '/settings/identities');
+        }
+        else
+        {
+            $this->check_identity($url);
+        }
     }
 
     public function get()
@@ -105,44 +113,39 @@ class Identities extends Controller
         PConfig::Set(local_channel(),'system','identities', $identities);
     }
 
-    protected function check_identities()
+    protected function check_identity($url)
     {
         $channel = App::get_channel();
         $myUrl = z_root() . '/channel/' . $channel['channel_address'];
         $myIdentity = $channel['channel_hash'];
-        $identities = $this->getIdentities();
         $links = $this->loadIdentities($myIdentity);
 
-        foreach ($identities as $identity) {
-            $currentRecord = $this->matchRecord($identity[1], $links);
-            $validator = new Relme();
-            $isMe = $validator->RelmeValidate($identity[1], $myUrl);
+        $currentRecord = $this->matchRecord($url, $links);
+        $validator = new Relme();
+        $isMe = $validator->RelmeValidate($url, $myUrl);
+        if ($isMe) {
             if ($currentRecord) {
                 q("update linkid set sigtype = %d where link_id = %d",
-                    intval($isMe ? IDLINK_RELME : IDLINK_NONE),
+                    intval(IDLINK_RELME),
                     intval($currentRecord['link_id'])
                 );
             }
             else {
                 q("insert into linkid (ident, link, ikey, lkey, isig, lsig, sigtype) values ( '%s', '%s', '', '', '', '', %d) ",
                     dbesc($myIdentity),
-                    dbesc($identity[1]),
-                    intval($isMe ? IDLINK_RELME : IDLINK_NONE)
+                    dbesc($url),
+                    intval(IDLINK_RELME)
                 );
             }
             $links = $this->loadIdentities($myIdentity);
         }
-
-        foreach ($links as $link) {
-            if (! $this->matchLinks($link['link'], $identities)) {
-                q("delete from linkid where link_id = %d",
-                    intval($link['link_id'])
-                );
-            }
+        else {
+            q("delete from linkid where ident = '%s' and link = '%s'",
+                dbesc($myIdentity),
+                dbesc($url)
+            );
         }
-        q("delete from linkid where sigtype = %d",
-            intval(IDLINK_NONE)
-        );
+        return $isMe;
     }
 
     protected function loadIdentities($myIdentity)

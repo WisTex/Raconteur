@@ -2900,7 +2900,7 @@ function i_am_mentioned($channel,$item,$check_groups = false) {
  */
 function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $group = false, $edit = false) {
 
-    btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
+   // btlogger('start_chain: ' . $channel['channel_id'] . ' item: ' . $item_id);
     $moderated = perm_is_allowed($channel['channel_id'], $item['author_xchan'], 'moderated');
 
     $source = check_item_source($channel['channel_id'],$item);
