@@ -4050,6 +4050,7 @@ class Activity
 //      }
 
         if (is_array($x) && $x['item_id']) {
+            tag_deliver($channel['channel_id'], $x['item_id']);
             if ($is_child_node) {
                 if ($item['owner_xchan'] === $channel['channel_hash']) {
                     // We are the owner of this conversation, so send all received comments back downstream
