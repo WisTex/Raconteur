@@ -2416,6 +2416,7 @@ function tag_deliver($uid, $item_id) {
     $is_group = $channel_type === 'group';
     $is_collection = $channel_type === 'collection';
 
+    logger('checking tags');
     /*
      * Fetch stuff we need - a channel and an item
      */
