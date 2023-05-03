@@ -1654,7 +1654,8 @@ class Libzot
 
             $DR->set_name($channel['channel_name'] . ' <' . Channel::get_webfinger($channel) . '>');
 
-            if (Tombstone::check($arr['mid'], $channel['channel_id'])) {
+            if (Tombstone::check($arr['mid'], $channel['channel_id'])
+                    || Tombstone::check($arr['parent_mid'], $channel['channel_id'])) {
                 $DR->update('update ignored');
                 $result[] = $DR->get();
                 continue;

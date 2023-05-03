@@ -97,6 +97,12 @@ class Settings_menu implements WidgetInterface
           ];
         }
 
+        $tabs[] = [
+            'label' => t('External Identities'),
+            'url' => z_root() . '/settings/identities',
+            'selected' => ((argv(1) === 'identities') ? 'active' : '')
+        ];
+
         return replace_macros(Theme::get_template('generic_links_widget.tpl'), [
             '$title' => t('Settings'),
             '$class' => 'settings-widget',

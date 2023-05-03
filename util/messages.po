@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.04.28\n"
+"Project-Id-Version: 23.05.03\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-27 22:38-0700\n"
+"POT-Creation-Date: 2023-05-02 16:12-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -691,7 +691,7 @@ msgstr ""
 
 #: Code/Lib/Apps.php:408 Code/Module/Admin/Themes.php:128
 #: Code/Module/Admin/Addons.php:344 Code/Widget/Newmember.php:57
-#: Code/Widget/Settings_menu.php:101
+#: Code/Widget/Settings_menu.php:107
 msgid "Settings"
 msgstr ""
 
@@ -762,10 +762,11 @@ msgstr ""
 #: Code/Module/Editlayout.php:127 Code/Module/Editwebpage.php:160
 #: Code/Module/Lists.php:343 Code/Module/Card_edit.php:110
 #: Code/Module/Menu.php:182 Code/Module/Settings/Oauth2.php:213
-#: Code/Module/Settings/Oauth.php:166 Code/Module/Editblock.php:129
-#: Code/Module/Blocks.php:173 Code/Module/Thing.php:304
-#: Code/Module/Webpages.php:269 Code/Widget/Cdav.php:149
-#: Code/Widget/Cdav.php:184 Code/Storage/Browser.php:318
+#: Code/Module/Settings/Oauth.php:166 Code/Module/Settings/Identities.php:82
+#: Code/Module/Editblock.php:129 Code/Module/Blocks.php:173
+#: Code/Module/Thing.php:304 Code/Module/Webpages.php:269
+#: Code/Widget/Cdav.php:149 Code/Widget/Cdav.php:184
+#: Code/Storage/Browser.php:318
 msgid "Edit"
 msgstr ""
 
@@ -840,7 +841,6 @@ msgstr ""
 #: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
 #: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
 #: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:245
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
 #: Code/Storage/Browser.php:435 boot.php:1108
 #: extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
@@ -864,7 +864,6 @@ msgstr ""
 #: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
 #: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
 #: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:245
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
 #: Code/Storage/Browser.php:435 boot.php:1108
 #: extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
@@ -894,54 +893,20 @@ msgstr ""
 msgid "May slow page loading"
 msgstr ""
 
-#: Code/Lib/Activity.php:448
-msgid "Quoted post"
+#: Code/Lib/Oembed.php:169
+msgid "View PDF"
 msgstr ""
 
-#: Code/Lib/Activity.php:2954
-msgid "Activity"
+#: Code/Lib/Oembed.php:386
+msgid " by "
 msgstr ""
 
-#: Code/Lib/Activity.php:2960
-#, php-format
-msgid "Likes %1$s's %2$s"
+#: Code/Lib/Oembed.php:389
+msgid " on "
 msgstr ""
 
-#: Code/Lib/Activity.php:2963
-#, php-format
-msgid "Doesn't like %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:2969
-#, php-format
-msgid "Will attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2972
-#, php-format
-msgid "Will not attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2975
-#, php-format
-msgid "May attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2978
-#, php-format
-msgid "May not attend %s's event"
-msgstr ""
-
-#: Code/Lib/Activity.php:2983 Code/Lib/Share.php:123 Code/Module/Share.php:119
-#: include/items.php:3176
-#, php-format
-msgid "&#x1f501; Repeated %1$s's %2$s"
-msgstr ""
-
-#: Code/Lib/Activity.php:3526 include/items.php:3039 include/misc.php:1663
-#: include/misc.php:3115
-#, php-format
-msgid "%1$s (%2$s)"
+#: Code/Lib/Oembed.php:420
+msgid "Embedded content"
 msgstr ""
 
 #: Code/Lib/Account.php:31
@@ -1014,7 +979,7 @@ msgid "Click to authenticate to your home hub"
 msgstr ""
 
 #: Code/Lib/Navbar.php:109 Code/Module/Admin/Channels.php:144
-#: Code/Module/Admin.php:154 Code/Module/Manage.php:199
+#: Code/Module/Admin.php:154 Code/Module/Manage.php:210
 #: Code/Widget/Admin.php:29
 msgid "Channels"
 msgstr ""
@@ -1473,7 +1438,7 @@ msgstr ""
 #: Code/Module/Settings/Account.php:114 Code/Module/Settings/Multifactor.php:72
 #: Code/Module/Settings/Channel.php:441 Code/Module/Cal.php:354
 #: Code/Module/Thing.php:364 Code/Module/Thing.php:419
-#: Code/Module/Sources.php:133 Code/Module/Sources.php:171
+#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
 #: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
 #: extend/addon/a/content_import/Mod_content_import.php:155
 #: extend/addon/a/faces/Mod_Faces.php:141
@@ -1567,6 +1532,56 @@ msgstr ""
 msgid "This action is not available under your subscription plan."
 msgstr ""
 
+#: Code/Lib/Activity.php:448
+msgid "Quoted post"
+msgstr ""
+
+#: Code/Lib/Activity.php:2954
+msgid "Activity"
+msgstr ""
+
+#: Code/Lib/Activity.php:2960
+#, php-format
+msgid "Likes %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:2963
+#, php-format
+msgid "Doesn't like %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:2969
+#, php-format
+msgid "Will attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2972
+#, php-format
+msgid "Will not attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2975
+#, php-format
+msgid "May attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2978
+#, php-format
+msgid "May not attend %s's event"
+msgstr ""
+
+#: Code/Lib/Activity.php:2983 Code/Lib/Share.php:123 Code/Module/Share.php:119
+#: include/items.php:3156
+#, php-format
+msgid "&#x1f501; Repeated %1$s's %2$s"
+msgstr ""
+
+#: Code/Lib/Activity.php:3526 include/items.php:2996 include/misc.php:1663
+#: include/misc.php:3115
+#, php-format
+msgid "%1$s (%2$s)"
+msgstr ""
+
 #: Code/Lib/Chatroom.php:28
 msgid "Missing room name"
 msgstr ""
@@ -1615,7 +1630,7 @@ msgstr ""
 #: Code/Module/Poke.php:118 Code/Module/Api.php:31
 #: Code/Module/Profile_photo.php:348 Code/Module/Profile_photo.php:362
 #: Code/Module/Chat.php:115 Code/Module/Chat.php:120 Code/Module/Regmod.php:25
-#: Code/Module/Service_limits.php:16 Code/Module/Settings.php:71
+#: Code/Module/Service_limits.php:16 Code/Module/Settings.php:74
 #: Code/Module/Settings/Profile_edit.php:71
 #: Code/Module/Settings/Profile_edit.php:523 Code/Module/Editblock.php:79
 #: Code/Module/Sharedwithme.php:22 Code/Module/Blocks.php:82
@@ -1623,7 +1638,7 @@ msgstr ""
 #: Code/Module/Vote.php:23 Code/Module/Viewsrc.php:24 Code/Module/Thing.php:317
 #: Code/Module/Thing.php:338 Code/Module/Thing.php:380
 #: Code/Module/Suggestions.php:35 Code/Module/Webpages.php:143
-#: Code/Module/Sources.php:92 Code/Web/WebServer.php:68 include/attach.php:161
+#: Code/Module/Sources.php:92 Code/Web/WebServer.php:69 include/attach.php:161
 #: include/attach.php:210 include/attach.php:288 include/attach.php:415
 #: include/attach.php:430 include/attach.php:437 include/attach.php:516
 #: include/attach.php:1132 include/attach.php:1444 include/attach.php:1615
@@ -2071,22 +2086,6 @@ msgid ""
 "language or topic. Replies are sent back to your main channel"
 msgstr ""
 
-#: Code/Lib/Oembed.php:169
-msgid "View PDF"
-msgstr ""
-
-#: Code/Lib/Oembed.php:386
-msgid " by "
-msgstr ""
-
-#: Code/Lib/Oembed.php:389
-msgid " on "
-msgstr ""
-
-#: Code/Lib/Oembed.php:420
-msgid "Embedded content"
-msgstr ""
-
 #: Code/Lib/Libprofile.php:39
 msgid "Requested channel is not available."
 msgstr ""
@@ -2459,8 +2458,8 @@ msgstr ""
 msgid "%1$s wrote the following %2$s %3$s"
 msgstr ""
 
-#: Code/Lib/Markdown.php:220 Code/Module/Tagger.php:93
-#: include/conversation.php:89 include/bbcode.php:680 include/misc.php:2349
+#: Code/Lib/Markdown.php:220 Code/Module/Tagger.php:93 include/bbcode.php:680
+#: include/conversation.php:89 include/misc.php:2349
 msgid "post"
 msgstr ""
 
@@ -2715,7 +2714,7 @@ msgstr ""
 #: Code/Module/Block.php:49 Code/Module/Chanview.php:106
 #: Code/Module/Card_edit.php:56 Code/Module/Page.php:85 Code/Module/Cal.php:65
 #: Code/Module/Wall_upload.php:37 Code/Module/Superblock.php:44
-#: include/items.php:4190
+#: include/items.php:4107
 msgid "Channel not found."
 msgstr ""
 
@@ -3093,8 +3092,8 @@ msgid "Switch branch"
 msgstr ""
 
 #: Code/Module/Admin/Addons.php:458 Code/Module/Photos.php:1068
-#: Code/Module/Tagrm.php:151 Code/Module/Superblock.php:261
-#: Code/Module/Superblock.php:278
+#: Code/Module/Tagrm.php:151 Code/Module/Settings/Identities.php:83
+#: Code/Module/Superblock.php:261 Code/Module/Superblock.php:278
 msgid "Remove"
 msgstr ""
 
@@ -3692,7 +3691,7 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: Code/Module/Admin/Site.php:279
+#: Code/Module/Admin/Site.php:279 Code/Module/Settings/Identities.php:79
 msgid "Site name"
 msgstr ""
 
@@ -4366,7 +4365,7 @@ msgstr ""
 msgid "Connection Default Permissions"
 msgstr ""
 
-#: Code/Module/Connedit.php:801 include/items.php:4187
+#: Code/Module/Connedit.php:801 include/items.php:4104
 #, php-format
 msgid "Connection: %s"
 msgstr ""
@@ -5526,7 +5525,7 @@ msgstr ""
 #: Code/Module/Lists.php:254 Code/Module/Lists.php:296 Code/Module/Like.php:113
 #: Code/Module/Import_items.php:133 Code/Module/Search.php:95
 #: Code/Module/Profperm.php:35 Code/Module/Share.php:82
-#: Code/Web/WebServer.php:67 include/items.php:401
+#: Code/Web/WebServer.php:68 include/items.php:401
 msgid "Permission denied"
 msgstr ""
 
@@ -5853,25 +5852,25 @@ msgstr ""
 msgid "Unable to process image"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:281 include/items.php:4542
+#: Code/Module/Cover_photo.php:281 include/items.php:4459
 msgid "female"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:282 include/items.php:4543
+#: Code/Module/Cover_photo.php:282 include/items.php:4460
 #, php-format
 msgid "%1$s updated her %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:283 include/items.php:4544
+#: Code/Module/Cover_photo.php:283 include/items.php:4461
 msgid "male"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:284 include/items.php:4545
+#: Code/Module/Cover_photo.php:284 include/items.php:4462
 #, php-format
 msgid "%1$s updated his %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:286 include/items.php:4547
+#: Code/Module/Cover_photo.php:286 include/items.php:4464
 #, php-format
 msgid "%1$s updated their %2$s"
 msgstr ""
@@ -6033,7 +6032,7 @@ msgstr ""
 msgid "Access list is empty"
 msgstr ""
 
-#: Code/Module/Stream.php:317 include/items.php:4177
+#: Code/Module/Stream.php:317 include/items.php:4094
 #, php-format
 msgid "Access list: %s"
 msgstr ""
@@ -6514,7 +6513,7 @@ msgstr ""
 msgid "Could not create access list."
 msgstr ""
 
-#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4153
+#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4070
 msgid "Access list not found."
 msgstr ""
 
@@ -7241,13 +7240,13 @@ msgid "Description:"
 msgstr ""
 
 #: Code/Module/Directory.php:445 Code/Module/Manage.php:84
-#: Code/Module/Manage.php:192
+#: Code/Module/Manage.php:191
 msgid "Group"
 msgstr ""
 
 #: Code/Module/Directory.php:446 Code/Module/Manage.php:83
-#: Code/Module/Manage.php:191 Code/Storage/Browser.php:148
-#: include/misc.php:3258
+#: Code/Module/Manage.php:190 Code/Module/Manage.php:203
+#: Code/Storage/Browser.php:148 include/misc.php:3258
 msgid "Collection"
 msgstr ""
 
@@ -7334,41 +7333,45 @@ msgstr ""
 msgid "Create New"
 msgstr ""
 
-#: Code/Module/Manage.php:200
+#: Code/Module/Manage.php:211
 msgid "Current Channel"
 msgstr ""
 
-#: Code/Module/Manage.php:201
+#: Code/Module/Manage.php:212
 msgid "Linked Identities"
 msgstr ""
 
-#: Code/Module/Manage.php:203
+#: Code/Module/Manage.php:214
 msgid "Switch to one of your channels by selecting it."
 msgstr ""
 
-#: Code/Module/Manage.php:204
+#: Code/Module/Manage.php:215
 msgid "Default Login Channel"
 msgstr ""
 
-#: Code/Module/Manage.php:205
+#: Code/Module/Manage.php:216
 msgid "Make Default"
 msgstr ""
 
-#: Code/Module/Manage.php:206 Code/Module/Manage.php:207
+#: Code/Module/Manage.php:217 Code/Module/Manage.php:218
 msgid "Add to menu"
 msgstr ""
 
-#: Code/Module/Manage.php:210
+#: Code/Module/Manage.php:221
 #, php-format
 msgid "%d new messages"
 msgstr ""
 
-#: Code/Module/Manage.php:211
+#: Code/Module/Manage.php:222
 #, php-format
 msgid "%d new introductions"
 msgstr ""
 
-#: Code/Module/Manage.php:213
+#: Code/Module/Manage.php:224
+msgid "Linked Identity"
+msgstr ""
+
+#: Code/Module/Manage.php:225
 msgid "Delegated Channel"
 msgstr ""
 
@@ -8229,7 +8232,7 @@ msgid "Icon url"
 msgstr ""
 
 #: Code/Module/Settings/Oauth.php:104 Code/Module/Sources.php:131
-#: Code/Module/Sources.php:167
+#: Code/Module/Sources.php:166
 msgid "Optional"
 msgstr ""
 
@@ -9362,10 +9365,6 @@ msgstr ""
 msgid "Unseen likes and dislikes"
 msgstr ""
 
-#: Code/Module/Settings/Channel.php:531
-msgid "Unseen group posts"
-msgstr ""
-
 #: Code/Module/Settings/Channel.php:532
 msgid "Reported content"
 msgstr ""
@@ -9507,6 +9506,24 @@ msgstr ""
 
 #: Code/Module/Settings/Channel.php:566
 msgid "This varies by country/culture"
+msgstr ""
+
+#: Code/Module/Settings/Identities.php:77
+msgid "Manage Identities"
+msgstr ""
+
+#: Code/Module/Settings/Identities.php:80
+msgid ""
+"Identities are verified by providing a link on the URL you provide here "
+"which links back to your channel home page with a link relation of rel=\"me\""
+msgstr ""
+
+#: Code/Module/Settings/Identities.php:81
+msgid "Site address/URL"
+msgstr ""
+
+#: Code/Module/Settings/Identities.php:85
+msgid "Submit/Verify"
 msgstr ""
 
 #: Code/Module/Editblock.php:128 Code/Module/Blocks.php:106
@@ -9806,55 +9823,47 @@ msgstr ""
 msgid "New Source"
 msgstr ""
 
-#: Code/Module/Sources.php:128 Code/Module/Sources.php:163
+#: Code/Module/Sources.php:128 Code/Module/Sources.php:162
 msgid ""
 "Import all or selected content from the following channel into this channel "
-"and distribute it according to your channel settings."
+"and re-distribute it according to your channel settings."
 msgstr ""
 
-#: Code/Module/Sources.php:129 Code/Module/Sources.php:164
+#: Code/Module/Sources.php:129 Code/Module/Sources.php:163
 msgid "Only import content with these words (one per line)"
 msgstr ""
 
-#: Code/Module/Sources.php:129 Code/Module/Sources.php:164
+#: Code/Module/Sources.php:129 Code/Module/Sources.php:163
 msgid "Leave blank to import all public content"
 msgstr ""
 
-#: Code/Module/Sources.php:130 Code/Module/Sources.php:170
+#: Code/Module/Sources.php:130 Code/Module/Sources.php:167
 msgid "Channel Name"
 msgstr ""
 
-#: Code/Module/Sources.php:131 Code/Module/Sources.php:167
+#: Code/Module/Sources.php:131 Code/Module/Sources.php:166
 msgid ""
 "Add the following categories to posts imported from this source (comma "
 "separated)"
 msgstr ""
 
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
-msgid "Resend posts with this channel as author"
-msgstr ""
-
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
-msgid "Copyrights may apply"
-msgstr ""
-
-#: Code/Module/Sources.php:153 Code/Module/Sources.php:183
+#: Code/Module/Sources.php:152 Code/Module/Sources.php:180
 msgid "Source not found."
 msgstr ""
 
-#: Code/Module/Sources.php:160
+#: Code/Module/Sources.php:159
 msgid "Edit Source"
 msgstr ""
 
-#: Code/Module/Sources.php:161
+#: Code/Module/Sources.php:160
 msgid "Delete Source"
 msgstr ""
 
-#: Code/Module/Sources.php:192
+#: Code/Module/Sources.php:189
 msgid "Source removed"
 msgstr ""
 
-#: Code/Module/Sources.php:194
+#: Code/Module/Sources.php:191
 msgid "Unable to remove source."
 msgstr ""
 
@@ -10121,46 +10130,6 @@ msgstr ""
 msgid "See more..."
 msgstr ""
 
-#: Code/Widget/Settings_menu.php:32
-msgid "Account settings"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:38
-msgid "Channel settings"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:46
-msgid "Edit profile"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:52
-msgid "Display settings"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:58
-msgid "Manage blocked sites/channels"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:66
-msgid "Manage locations"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:73
-msgid "Export channel"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:79
-msgid "Multifactor authentication"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:86
-msgid "Client apps"
-msgstr ""
-
-#: Code/Widget/Settings_menu.php:94
-msgid "Permission roles"
-msgstr ""
-
 #: Code/Widget/Site_projects.php:29
 msgid "Community Types"
 msgstr ""
@@ -10404,6 +10373,50 @@ msgstr ""
 msgid "Sorry, you have got no notifications at the moment"
 msgstr ""
 
+#: Code/Widget/Settings_menu.php:32
+msgid "Account settings"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:38
+msgid "Channel settings"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:46
+msgid "Edit profile"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:52
+msgid "Display settings"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:58
+msgid "Manage blocked sites/channels"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:66
+msgid "Manage locations"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:73
+msgid "Export channel"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:79
+msgid "Multifactor authentication"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:86
+msgid "Client apps"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:94
+msgid "Permission roles"
+msgstr ""
+
+#: Code/Widget/Settings_menu.php:101
+msgid "External Identities"
+msgstr ""
+
 #: Code/Widget/Cdav.php:46
 msgid "Select Channel"
 msgstr ""
@@ -10545,15 +10558,15 @@ msgid "Grant permission to post on your channel (wall) page"
 msgstr ""
 
 #: Code/Access/Permissions.php:69
-msgid "Accept delivery of direct messages and personal mail"
+msgid "Accept delivery of direct messages and personal mail from"
 msgstr ""
 
 #: Code/Access/Permissions.php:70
-msgid "Accept delivery of their posts and conversations"
+msgid "Accept delivery of posts and conversations from"
 msgstr ""
 
 #: Code/Access/Permissions.php:71
-msgid "Accept delivery of their comments on your posts"
+msgid "Accept delivery of comments on your posts from"
 msgstr ""
 
 #: Code/Access/Permissions.php:72
@@ -11091,64 +11104,49 @@ msgstr ""
 msgid "Network: %s"
 msgstr ""
 
-#: include/items.php:871
-msgid "(Unknown)"
+#: include/bbcode.php:316
+msgid "Encrypted content"
 msgstr ""
 
-#: include/items.php:1042
-msgid "Visible to anybody on the internet."
-msgstr ""
-
-#: include/items.php:1044
-msgid "Visible to you only."
-msgstr ""
-
-#: include/items.php:1046
-msgid "Visible to anybody in this network."
-msgstr ""
-
-#: include/items.php:1048
-msgid "Visible to anybody authenticated."
-msgstr ""
-
-#: include/items.php:1050
+#: include/bbcode.php:358
 #, php-format
-msgid "Visible to anybody on %s."
+msgid "(Embedded app '%s' could not be displayed)."
 msgstr ""
 
-#: include/items.php:1052
-msgid "Visible to all connections."
-msgstr ""
-
-#: include/items.php:1054
-msgid "Visible to approved connections."
-msgstr ""
-
-#: include/items.php:1056
-msgid "Visible to specific connections."
-msgstr ""
-
-#: include/items.php:4170
-msgid "Privacy group is empty."
-msgstr ""
-
-#: include/items.php:4549
-msgid "profile photo"
-msgstr ""
-
-#: include/items.php:4765
+#: include/bbcode.php:402
 #, php-format
-msgid "[Edited %s]"
+msgid "Install %1$s element %2$s"
 msgstr ""
 
-#: include/items.php:4765
-msgctxt "edit_activity"
-msgid "Post"
+#: include/bbcode.php:405
+#, php-format
+msgid ""
+"This post contains an installable %s element, however you lack permissions "
+"to install it on this site."
 msgstr ""
 
-#: include/items.php:4765
-msgctxt "edit_activity"
-msgid "Comment"
+#: include/bbcode.php:676
+msgid "card"
+msgstr ""
+
+#: include/bbcode.php:678
+msgid "article"
+msgstr ""
+
+#: include/bbcode.php:793 include/bbcode.php:802
+msgid "Click to open/close"
+msgstr ""
+
+#: include/bbcode.php:802
+msgid "spoiler"
+msgstr ""
+
+#: include/bbcode.php:1499 include/bbcode.php:1706
+msgid "Different viewers will see this text differently"
+msgstr ""
+
+#: include/bbcode.php:2027
+msgid "$1 wrote:"
 msgstr ""
 
 #: include/dba/dba_driver.php:190
@@ -11242,16 +11240,64 @@ msgstr ""
 msgid "Empty path"
 msgstr ""
 
-#: include/network.php:1115
-msgid "RSS/Atom"
+#: include/items.php:871
+msgid "(Unknown)"
 msgstr ""
 
-#: include/network.php:1117
-msgid "Diaspora"
+#: include/items.php:1042
+msgid "Visible to anybody on the internet."
 msgstr ""
 
-#: include/network.php:1119
-msgid "Zot6"
+#: include/items.php:1044
+msgid "Visible to you only."
+msgstr ""
+
+#: include/items.php:1046
+msgid "Visible to anybody in this network."
+msgstr ""
+
+#: include/items.php:1048
+msgid "Visible to anybody authenticated."
+msgstr ""
+
+#: include/items.php:1050
+#, php-format
+msgid "Visible to anybody on %s."
+msgstr ""
+
+#: include/items.php:1052
+msgid "Visible to all connections."
+msgstr ""
+
+#: include/items.php:1054
+msgid "Visible to approved connections."
+msgstr ""
+
+#: include/items.php:1056
+msgid "Visible to specific connections."
+msgstr ""
+
+#: include/items.php:4087
+msgid "Privacy group is empty."
+msgstr ""
+
+#: include/items.php:4466
+msgid "profile photo"
+msgstr ""
+
+#: include/items.php:4682
+#, php-format
+msgid "[Edited %s]"
+msgstr ""
+
+#: include/items.php:4682
+msgctxt "edit_activity"
+msgid "Post"
+msgstr ""
+
+#: include/items.php:4682
+msgctxt "edit_activity"
+msgid "Comment"
 msgstr ""
 
 #: include/api_auth.php:162
@@ -11658,49 +11704,16 @@ msgid ""
 "form has been opened for too long (>3 hours) before submitting it."
 msgstr ""
 
-#: include/bbcode.php:316
-msgid "Encrypted content"
+#: include/network.php:1115
+msgid "RSS/Atom"
 msgstr ""
 
-#: include/bbcode.php:358
-#, php-format
-msgid "(Embedded app '%s' could not be displayed)."
+#: include/network.php:1117
+msgid "Diaspora"
 msgstr ""
 
-#: include/bbcode.php:402
-#, php-format
-msgid "Install %1$s element %2$s"
-msgstr ""
-
-#: include/bbcode.php:405
-#, php-format
-msgid ""
-"This post contains an installable %s element, however you lack permissions "
-"to install it on this site."
-msgstr ""
-
-#: include/bbcode.php:676
-msgid "card"
-msgstr ""
-
-#: include/bbcode.php:678
-msgid "article"
-msgstr ""
-
-#: include/bbcode.php:793 include/bbcode.php:802
-msgid "Click to open/close"
-msgstr ""
-
-#: include/bbcode.php:802
-msgid "spoiler"
-msgstr ""
-
-#: include/bbcode.php:1499 include/bbcode.php:1706
-msgid "Different viewers will see this text differently"
-msgstr ""
-
-#: include/bbcode.php:2027
-msgid "$1 wrote:"
+#: include/network.php:1119
+msgid "Zot6"
 msgstr ""
 
 #: include/language.php:364 include/misc.php:2167

@@ -115,7 +115,7 @@ class Pconfig extends Controller
         $o .= '<input type="hidden" name="k" value="' . $k . '" />';
 
 
-        if (strpos($v, "\n")) {
+        if (is_string($v) && strpos($v, "\n")) {
             $o .= '<textarea name="v" >' . escape_tags($v) . '</textarea>';
         } else {
             if (is_array($v)) {

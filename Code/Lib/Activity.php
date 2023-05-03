@@ -3678,7 +3678,8 @@ class Activity
             $item['item_private'] = 2;
         }
 
-        if (Tombstone::check($item['mid'], $channel['channel_id'])) {
+        if (Tombstone::check($item['mid'], $channel['channel_id'])
+                || Tombstone::check($item['parent_mid'], $channel['channel_id'])) {
             logger('tombstone: post was deleted. Ignoring update.');
             return;
         }
@@ -3771,7 +3772,7 @@ class Activity
                     }
                 }
                 else {
-                    $allowed = !Config::Get('system', 'use_fep5624');
+                    $allowed = !(bool) Config::Get('system', 'use_fep5624');
                 }
 
                 // reject public stream comments that weren't sent by the conversation owner
@@ -3807,8 +3808,10 @@ class Activity
         }
 
         if ($isMail) {
-            if (!perm_is_allowed($channel['channel_id'], $observer_hash, 'post_mail')) {
-                $allowed = false;
+            $allowed = perm_is_allowed($channel['channel_id'], $observer_hash, 'post_mail');
+            if (!$allowed) {
+                logger('mail permission denied for "' . $observer_hash . '" ');
+                $reason[] = 'mail permission';
             }
         }
 
