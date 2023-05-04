@@ -78,14 +78,17 @@ class Activity
 
         // Find the original object
         $j = q(
-            "select id as item_id from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra",
+            "select *, id as item_id from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra",
             dbesc($url)
         );
         if ($j) {
-            xchan_query($i, true);
-            $items = fetch_post_tags($i);
+            xchan_query($j, true);
+            $items = fetch_post_tags($j);
         }
-        return Activity::encode_item(array_shift($items), true);
+        if ($items) {
+            return self::encode_item(array_shift($items), true);
+        }
+        return false;
     }
 
     public static function fetch($url, $channel = null, $must_verify = false, $debug = false)
