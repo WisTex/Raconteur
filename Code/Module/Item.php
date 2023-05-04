@@ -102,7 +102,6 @@ class Item extends Controller
             } elseif (Config::Get('system', 'require_authenticated_fetch', false)) {
                 http_status_exit(403, 'Permission denied');
             }
-
             // if we don't have a parent id belonging to the signer see if we can obtain one as a visitor that we have permission to access
             // and which contains our requested uri as a child.
     

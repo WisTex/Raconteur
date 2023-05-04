@@ -73,6 +73,23 @@ class Activity
         return $x;
     }
 
+    public static function fetch_local($url, $portable_id) {
+        $sql_extra = item_permissions_sql(0, $portable_id);
+
+        // Find the original object
+        $j = q(
+            "select *, id as item_id from item where mid = '%s' and item_wall = 1 $item_normal $sql_extra",
+            dbesc($url)
+        );
+        if ($j) {
+            xchan_query($j, true);
+            $items = fetch_post_tags($j);
+        }
+        if ($items) {
+            return self::encode_item(array_shift($items), true);
+        }
+        return false;
+    }
 
     public static function fetch_local($url, $portable_id) {
         $sql_extra = item_permissions_sql(0, $portable_id);
