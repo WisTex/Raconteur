@@ -71,7 +71,7 @@
 </div>
 <div class="clear"></div>
 
-{{$rating}}
+{{$identities}}
 
 {{$chanmenu}}
 
