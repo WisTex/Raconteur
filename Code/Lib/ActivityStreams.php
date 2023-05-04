@@ -45,12 +45,13 @@ class ActivityStreams
      * @param null $hub
      * @param null $client
      */
-    public function __construct(mixed $string, $hub = null, $client = null)
+    public function __construct(mixed $string, $hub = null, $client = null, $portable_id = null)
     {
 
         $this->raw = $string;
         $this->hub = $hub;
         $this->client = $client;
+        $this->portable_id = $portable_id;
 
         if (is_array($string)) {
             $this->data = $string;
@@ -337,15 +338,19 @@ class ActivityStreams
 
     public function fetch_property(string $url, array $channel = null): mixed
     {
-        $x = Activity::fetch($url, $channel);
-        if ($x === null && strpos($url, '/channel/')) {
-            // look for other nomadic channels which might be alive
-            $zf = Zotfinger::exec($url, $channel);
-
-            $url = $zf['signature']['signer'];
-            $x = Activity::fetch($url, $channel);
+        if (str_starts_with($url, z_root() . '/item/')) {
+            $x = Activity::fetch_local($url, $this->portable_id ?? '');
         }
+        if (!$x) {
+            $x = Activity::fetch($url, $channel);
+            if ($x === null && strpos($url, '/channel/')) {
+                // look for other nomadic channels which might be alive
+                $zf = Zotfinger::exec($url, $channel);
 
+                $url = $zf['signature']['signer'];
+                $x = Activity::fetch($url, $channel);
+            }
+        }
         return $x;
     }
 
