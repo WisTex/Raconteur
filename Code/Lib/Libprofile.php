@@ -377,6 +377,27 @@ class Libprofile
             $channel_menu .= $comanche->block($menublock);
         }
 
+        $identities = '';
+        $pconfigs = PConfig::Get($profile['uid'], 'system','identities', []);
+        $ids = q("select * from linkid where ident = '%s' and sigtype = %d",
+            dbesc($profile['channel_hash']),
+            intval(IDLINK_RELME)
+        );
+        if ($ids && $pconfigs) {
+            $identities .= '<table style="border: 1px solid #ccc; width=100%; display:table;">';
+            foreach ($pconfigs as $pconfig) {
+                foreach ($ids as $id) {
+                    if ($pconfig[1] === $id['link']) {
+                        $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($pconfig[0])
+                            . '</td><td style="border: 1px solid #ccc; padding:3px;">'
+                            . '<a href="' . $pconfig[1] . '">' . $pconfig[1] . '</a>'
+                            . '</td><td style="border: 1px solid #ccc; padding:3px;"><i class="fa fa-check"></i></td></tr>';
+                    }
+                }
+            }
+            $identities .= '</table>' . EOL;
+        }
+
         if ($zcard) {
             $tpl = Theme::get_template('profile_vcard_short.tpl');
         } else {
@@ -401,7 +422,7 @@ class Libprofile
             '$active' => t('Active'),
             '$activewhen' => relative_date($profile['channel_lastpost']),
             '$identities' => $identities,
-            '$identities_text' => t('Identities'),
+            '$ident_label' => t('Identities:'),
             '$contact_block' => $contact_block,
             '$change_photo' => t('Change your profile photo'),
             '$copyto' => t('Copy to clipboard'),

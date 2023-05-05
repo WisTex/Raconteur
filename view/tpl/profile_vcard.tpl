@@ -67,11 +67,14 @@
 
 	{{if $homepage}}<dl class="homepage"><dt class="homepage-label">{{$homepage}}</dt><dd class="homepage-url u-url">{{$profile.homepage}}</dd></dl>{{/if}}
 
+	{{if $identities}}
+		<dl class="identities"><dt class="identities-label">{{$ident_label}}</dt>
+		<dd>{{$identities}}</dd>
+		</dl>
+	{{/if}}
 <div class="hcard-addon"></div>
 </div>
 <div class="clear"></div>
-
-{{$identities}}
 
 {{$chanmenu}}
 
