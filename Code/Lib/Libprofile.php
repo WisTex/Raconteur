@@ -383,8 +383,24 @@ class Libprofile
             dbesc($profile['channel_hash']),
             intval(IDLINK_RELME)
         );
-        if ($ids && $pconfigs) {
+        $clones = Libzot::encode_locations($profile);
+
+        if (($ids && $pconfigs) || $clones) {
             $identities .= '<table style="border: 1px solid #ccc; width=100%; display:table;">';
+        }
+        if ($clones) {
+            foreach ($clones as $clone) {
+                if (str_starts_with($clone['id_url'], z_root())) {
+                    continue;
+                }
+                $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($clone['host'])
+                    . '</td><td style="border: 1px solid #ccc; padding:3px;">'
+                    . '<a href="' . $clone['id_url'] . '">' . $clone['id_url'] . '</a>'
+                    . '</td><td style="border: 1px solid #ccc; padding:3px;">'
+                    . '<i class="fa fa-check" title="' . t('Verified') . '"></i></td></tr>';
+            }
+        }
+        if ($ids && $pconfigs) {
             foreach ($pconfigs as $pconfig) {
                 $matched = false;
                 foreach ($ids as $id) {
