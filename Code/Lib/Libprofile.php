@@ -386,12 +386,22 @@ class Libprofile
         if ($ids && $pconfigs) {
             $identities .= '<table style="border: 1px solid #ccc; width=100%; display:table;">';
             foreach ($pconfigs as $pconfig) {
+                $matched = false;
                 foreach ($ids as $id) {
                     if ($pconfig[1] === $id['link']) {
+                        $matched = true;
                         $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($pconfig[0])
                             . '</td><td style="border: 1px solid #ccc; padding:3px;">'
                             . '<a href="' . $pconfig[1] . '">' . $pconfig[1] . '</a>'
-                            . '</td><td style="border: 1px solid #ccc; padding:3px;"><i class="fa fa-check"></i></td></tr>';
+                            . '</td><td style="border: 1px solid #ccc; padding:3px;">'
+                            . '<i class="fa fa-check" title="' . t('Verified') . '"></i></td></tr>';
+                    }
+                    if (!$matched) {
+                        $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($pconfig[0])
+                            . '</td><td style="border: 1px solid #ccc; padding:3px;">'
+                            . '<a href="' . $pconfig[1] . '">' . $pconfig[1] . '</a>'
+                            . '</td><td style="border: 1px solid #ccc; padding:3px;">'
+                            . '<i class="fa fa-close" title="' . t('Not verified') . '"></i></td></tr>';
                     }
                 }
             }
