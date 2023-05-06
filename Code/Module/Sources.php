@@ -119,6 +119,7 @@ class Sources extends Controller
             ]);
             return $o;
         }
+        $required = t('This name currently must autocomplete to one of your connections');
 
         if (argc() == 2 && argv(1) === 'new') {
             // TODO add the words 'or RSS feed' and corresponding code to manage feeds and frequency
@@ -127,7 +128,7 @@ class Sources extends Controller
                 '$title' => t('New Source'),
                 '$desc' => t('Import all or selected content from the following channel into this channel and re-distribute it according to your channel settings.'),
                 '$words' => ['words', t('Only import content with these words (one per line)'), '', t('Leave blank to import all public content')],
-                '$name' => ['name', t('Channel Name'), '', '', '', 'autocomplete="off"'],
+                '$name' => ['name', t('Channel Name'), '', $required, '', 'autocomplete="off"'],
                 '$tags' => ['tags', t('Add the following categories to posts imported from this source (comma separated)'), '', t('Optional')],
                 '$submit' => t('Submit')
             ]);
@@ -155,16 +156,19 @@ class Sources extends Controller
 
             $r[0]['src_patt'] = htmlspecialchars($r[0]['src_patt'], ENT_QUOTES, 'UTF-8');
 
+            $required = t('This name currently must autocomplete to one of your connections');
+
             $o = replace_macros(Theme::get_template('sources_edit.tpl'), array(
                 '$title' => t('Edit Source'),
                 '$drop' => t('Delete Source'),
                 '$id' => $r[0]['src_id'],
+
                 '$desc' => t('Import all or selected content from the following channel into this channel and re-distribute it according to your channel settings.'),
                 '$words' => array('words', t('Only import content with these words (one per line)'), $r[0]['src_patt'], t('Leave blank to import all public content')),
                 '$xchan' => $r[0]['src_xchan'],
                 '$abook' => $x[0]['abook_id'],
                 '$tags' => array('tags', t('Add the following categories to posts imported from this source (comma separated)'), $r[0]['src_tag'], t('Optional')),
-                '$name' => array('name', t('Channel Name'), $r[0]['xchan_name'], ''),
+                '$name' => array('name', t('Channel Name'), $r[0]['xchan_name'], $required),
                 '$submit' => t('Submit')
             ));
             return $o;

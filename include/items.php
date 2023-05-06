@@ -4455,7 +4455,16 @@ function comment_local_origin($item) {
     return false;
 }
 
+function ap_update_actor($channel)
+{
+    $arr = [];
 
+    $arr['actor'] = z_root() . '/channel/' . $channel['channel_address'];
+    $arr['type'] = 'Update';
+    $arr['updated'] = datetime_convert(format: ATOM_TIME);
+    $arr['object'] = $arr['actor'];
+    return array_merge(Activity::ap_schema(), $arr);
+}
 
 function send_profile_photo_activity($channel,$photo,$profile) {
 

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.05.03\n"
+"Project-Id-Version: 23.05.06\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-02 16:12-0700\n"
+"POT-Creation-Date: 2023-05-05 22:58-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -456,6 +456,7 @@ msgid "Channel Manager"
 msgstr ""
 
 #: Code/Lib/Apps.php:353 Code/Module/Sources.php:115
+#: Code/Widget/Settings_menu.php:117
 msgid "Channel Sources"
 msgstr ""
 
@@ -645,7 +646,7 @@ msgstr ""
 msgid "Probe"
 msgstr ""
 
-#: Code/Lib/Apps.php:398 Code/Lib/Activity.php:2956 Code/Lib/Libprofile.php:682
+#: Code/Lib/Apps.php:398 Code/Lib/Libprofile.php:732 Code/Lib/Activity.php:2973
 #: Code/Module/Profperm.php:131
 msgid "Profile"
 msgstr ""
@@ -691,7 +692,7 @@ msgstr ""
 
 #: Code/Lib/Apps.php:408 Code/Module/Admin/Themes.php:128
 #: Code/Module/Admin/Addons.php:344 Code/Widget/Newmember.php:57
-#: Code/Widget/Settings_menu.php:107
+#: Code/Widget/Settings_menu.php:124
 msgid "Settings"
 msgstr ""
 
@@ -755,18 +756,18 @@ msgstr ""
 msgid "Purchase"
 msgstr ""
 
-#: Code/Lib/Apps.php:624 Code/Lib/ThreadItem.php:149 Code/Lib/Menu.php:142
-#: Code/Lib/Libprofile.php:203 Code/Module/Admin/Profs.php:192
-#: Code/Module/Layouts.php:209 Code/Module/Connections.php:320
-#: Code/Module/Connections.php:361 Code/Module/Connections.php:382
-#: Code/Module/Editlayout.php:127 Code/Module/Editwebpage.php:160
-#: Code/Module/Lists.php:343 Code/Module/Card_edit.php:110
-#: Code/Module/Menu.php:182 Code/Module/Settings/Oauth2.php:213
-#: Code/Module/Settings/Oauth.php:166 Code/Module/Settings/Identities.php:82
-#: Code/Module/Editblock.php:129 Code/Module/Blocks.php:173
-#: Code/Module/Thing.php:304 Code/Module/Webpages.php:269
-#: Code/Widget/Cdav.php:149 Code/Widget/Cdav.php:184
-#: Code/Storage/Browser.php:318
+#: Code/Lib/Apps.php:624 Code/Lib/Libprofile.php:203
+#: Code/Lib/ThreadItem.php:149 Code/Lib/Menu.php:142
+#: Code/Module/Admin/Profs.php:192 Code/Module/Layouts.php:209
+#: Code/Module/Connections.php:320 Code/Module/Connections.php:361
+#: Code/Module/Connections.php:382 Code/Module/Editlayout.php:127
+#: Code/Module/Editwebpage.php:160 Code/Module/Lists.php:343
+#: Code/Module/Card_edit.php:110 Code/Module/Menu.php:182
+#: Code/Module/Settings/Oauth2.php:213 Code/Module/Settings/Oauth.php:166
+#: Code/Module/Settings/Identities.php:90 Code/Module/Editblock.php:129
+#: Code/Module/Blocks.php:173 Code/Module/Thing.php:304
+#: Code/Module/Webpages.php:269 Code/Widget/Cdav.php:149
+#: Code/Widget/Cdav.php:184 Code/Storage/Browser.php:318
 msgid "Edit"
 msgstr ""
 
@@ -805,7 +806,7 @@ msgstr ""
 msgid "Unpin from navbar"
 msgstr ""
 
-#: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2263
+#: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2280
 #: Code/Module/Cdav.php:878 Code/Module/Cdav.php:879 Code/Module/Cdav.php:885
 #: Code/Module/Embedphotos.php:326 Code/Module/Photos.php:854
 #: Code/Module/Photos.php:1322 Code/Widget/Album.php:100
@@ -817,6 +818,251 @@ msgstr ""
 #: Code/Lib/Libsync.php:981
 #, php-format
 msgid "Unable to verify site signature for %s"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:39
+msgid "Requested channel is not available."
+msgstr ""
+
+#: Code/Lib/Libprofile.php:99 Code/Module/Layouts.php:41
+#: Code/Module/Profile.php:28 Code/Module/Editlayout.php:40
+#: Code/Module/Editwebpage.php:45 Code/Module/Cards.php:41
+#: Code/Module/Connect.php:23 Code/Module/Menu.php:98
+#: Code/Module/Editblock.php:42 Code/Module/Blocks.php:41
+#: Code/Module/Webpages.php:48 extend/addon/a/gallery/Mod_Gallery.php:51
+msgid "Requested profile is not available."
+msgstr ""
+
+#: Code/Lib/Libprofile.php:199 Code/Module/Settings/Profile_edit.php:593
+msgid "Change profile photo"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:203
+msgid "Edit Profile"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:219
+msgid "Profile Image"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:222
+msgid "Visible to everybody"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:223 Code/Module/Settings/Profile_edit.php:590
+msgid "Edit visibility"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:296 include/connections.php:182
+#: include/conversation.php:876
+msgid "Direct Message"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:309 Code/Module/Fedi_id.php:55
+#: Code/Module/Directory.php:444 Code/Widget/Suggestions.php:49
+#: Code/Widget/Follow.php:41 include/connections.php:154
+#: include/conversation.php:856
+msgid "Connect"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:311 Code/Module/Directory.php:444
+#: Code/Widget/Suggestions.php:49
+msgid "Join"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:331 Code/Module/Directory.php:431
+#: Code/Module/Communities.php:121 include/event.php:84 include/event.php:141
+msgid "Location:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:336 Code/Lib/Libprofile.php:561
+msgid "Gender:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:337 Code/Lib/Libprofile.php:611
+msgid "Status:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:338 Code/Lib/Libprofile.php:644
+msgid "Homepage:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:339 Code/Lib/Libprofile.php:640
+msgid "Pronouns:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:400 Code/Lib/Libprofile.php:413
+msgid "Verified"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:420
+msgid "Not verified"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:450 Code/Module/Connections.php:64
+#: Code/Module/Connections.php:123 Code/Module/Connections.php:134
+#: Code/Module/Connections.php:294
+msgid "Active"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:453
+msgid "Identities:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:455
+msgid "Change your profile photo"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:456
+msgid "Copy to clipboard"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:457
+msgid "Address copied to clipboard"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:485 Code/Module/Settings/Profile_edit.php:774
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Female"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:488 Code/Module/Settings/Profile_edit.php:774
+#: Code/Module/Settings/Profile_edit.php:792
+msgid "Male"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:491
+msgid "Trans"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:494
+msgid "Inter"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:497 Code/Module/Settings/Profile_edit.php:774
+msgid "Neuter"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:500 Code/Module/Settings/Profile_edit.php:774
+msgid "Non-specific"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:514
+msgid "She"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:517
+msgid "Him"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:520
+msgid "Them"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:558
+msgid "Full Name:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:595
+msgid "j F, Y"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:596
+msgid "j F"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:603
+msgid "Birthday:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:607 Code/Module/Directory.php:426
+msgid "Age:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:619
+#, php-format
+msgid "for %1$d %2$s"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:631
+msgid "Tags:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:636
+msgid "Sexual Preference:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:648 Code/Module/Directory.php:441
+msgid "Hometown:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:652
+msgid "Political Views:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:656
+msgid "Religion:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:660 Code/Module/Directory.php:443
+msgid "About:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:664
+msgid "Hobbies/Interests:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:668
+msgid "Likes:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:672
+msgid "Dislikes:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:676
+msgid "Contact information and Social Networks:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:680
+msgid "My other channels:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:684
+msgid "Musical interests:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:688
+msgid "Books, literature:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:692
+msgid "Television:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:696
+msgid "Film/dance/culture/entertainment:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:700
+msgid "Love/Romance:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:704
+msgid "Work/employment:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:708
+msgid "School/education:"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:734
+msgid "Like this thing"
+msgstr ""
+
+#: Code/Lib/Libprofile.php:735 Code/Module/Events.php:756
+#: Code/Module/Cal.php:350
+msgid "Export"
 msgstr ""
 
 #: Code/Lib/Libzotdir.php:87
@@ -1438,7 +1684,7 @@ msgstr ""
 #: Code/Module/Settings/Account.php:114 Code/Module/Settings/Multifactor.php:72
 #: Code/Module/Settings/Channel.php:441 Code/Module/Cal.php:354
 #: Code/Module/Thing.php:364 Code/Module/Thing.php:419
-#: Code/Module/Sources.php:132 Code/Module/Sources.php:168
+#: Code/Module/Sources.php:133 Code/Module/Sources.php:172
 #: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
 #: extend/addon/a/content_import/Mod_content_import.php:155
 #: extend/addon/a/faces/Mod_Faces.php:141
@@ -1532,51 +1778,51 @@ msgstr ""
 msgid "This action is not available under your subscription plan."
 msgstr ""
 
-#: Code/Lib/Activity.php:448
+#: Code/Lib/Activity.php:465
 msgid "Quoted post"
 msgstr ""
 
-#: Code/Lib/Activity.php:2954
+#: Code/Lib/Activity.php:2971
 msgid "Activity"
 msgstr ""
 
-#: Code/Lib/Activity.php:2960
+#: Code/Lib/Activity.php:2977
 #, php-format
 msgid "Likes %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:2963
+#: Code/Lib/Activity.php:2980
 #, php-format
 msgid "Doesn't like %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:2969
+#: Code/Lib/Activity.php:2986
 #, php-format
 msgid "Will attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2972
+#: Code/Lib/Activity.php:2989
 #, php-format
 msgid "Will not attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2975
+#: Code/Lib/Activity.php:2992
 #, php-format
 msgid "May attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2978
+#: Code/Lib/Activity.php:2995
 #, php-format
 msgid "May not attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2983 Code/Lib/Share.php:123 Code/Module/Share.php:119
-#: include/items.php:3156
+#: Code/Lib/Activity.php:3000 Code/Lib/Share.php:123 Code/Module/Share.php:119
+#: include/items.php:3157
 #, php-format
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:3526 include/items.php:2996 include/misc.php:1663
+#: Code/Lib/Activity.php:3543 include/items.php:2997 include/misc.php:1663
 #: include/misc.php:3115
 #, php-format
 msgid "%1$s (%2$s)"
@@ -1625,8 +1871,8 @@ msgstr ""
 #: Code/Module/Menu.php:136 Code/Module/Menu.php:147 Code/Module/Mitem.php:143
 #: Code/Module/Page.php:42 Code/Module/Page.php:147 Code/Module/Mood.php:136
 #: Code/Module/New_channel.php:123 Code/Module/New_channel.php:146
-#: Code/Module/Notifications.php:19 Code/Module/Item.php:622
-#: Code/Module/Item.php:644 Code/Module/Item.php:656 Code/Module/Item.php:1878
+#: Code/Module/Notifications.php:19 Code/Module/Item.php:621
+#: Code/Module/Item.php:643 Code/Module/Item.php:655 Code/Module/Item.php:1877
 #: Code/Module/Poke.php:118 Code/Module/Api.php:31
 #: Code/Module/Profile_photo.php:348 Code/Module/Profile_photo.php:362
 #: Code/Module/Chat.php:115 Code/Module/Chat.php:120 Code/Module/Regmod.php:25
@@ -2086,239 +2332,6 @@ msgid ""
 "language or topic. Replies are sent back to your main channel"
 msgstr ""
 
-#: Code/Lib/Libprofile.php:39
-msgid "Requested channel is not available."
-msgstr ""
-
-#: Code/Lib/Libprofile.php:99 Code/Module/Layouts.php:41
-#: Code/Module/Profile.php:28 Code/Module/Editlayout.php:40
-#: Code/Module/Editwebpage.php:45 Code/Module/Cards.php:41
-#: Code/Module/Connect.php:23 Code/Module/Menu.php:98
-#: Code/Module/Editblock.php:42 Code/Module/Blocks.php:41
-#: Code/Module/Webpages.php:48 extend/addon/a/gallery/Mod_Gallery.php:51
-msgid "Requested profile is not available."
-msgstr ""
-
-#: Code/Lib/Libprofile.php:199 Code/Module/Settings/Profile_edit.php:593
-msgid "Change profile photo"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:203
-msgid "Edit Profile"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:219
-msgid "Profile Image"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:222
-msgid "Visible to everybody"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:223 Code/Module/Settings/Profile_edit.php:590
-msgid "Edit visibility"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:296 include/connections.php:182
-#: include/conversation.php:876
-msgid "Direct Message"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:309 Code/Module/Fedi_id.php:55
-#: Code/Module/Directory.php:444 Code/Widget/Suggestions.php:49
-#: Code/Widget/Follow.php:41 include/connections.php:154
-#: include/conversation.php:856
-msgid "Connect"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:311 Code/Module/Directory.php:444
-#: Code/Widget/Suggestions.php:49
-msgid "Join"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:331 Code/Module/Directory.php:431
-#: Code/Module/Communities.php:121 include/event.php:84 include/event.php:141
-msgid "Location:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:336 Code/Lib/Libprofile.php:511
-msgid "Gender:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:337 Code/Lib/Libprofile.php:561
-msgid "Status:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:338 Code/Lib/Libprofile.php:594
-msgid "Homepage:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:339 Code/Lib/Libprofile.php:590
-msgid "Pronouns:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:401 Code/Module/Connections.php:64
-#: Code/Module/Connections.php:123 Code/Module/Connections.php:134
-#: Code/Module/Connections.php:294
-msgid "Active"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:405
-msgid "Change your profile photo"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:406
-msgid "Copy to clipboard"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:407
-msgid "Address copied to clipboard"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:435 Code/Module/Settings/Profile_edit.php:774
-#: Code/Module/Settings/Profile_edit.php:792
-msgid "Female"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:438 Code/Module/Settings/Profile_edit.php:774
-#: Code/Module/Settings/Profile_edit.php:792
-msgid "Male"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:441
-msgid "Trans"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:444
-msgid "Inter"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:447 Code/Module/Settings/Profile_edit.php:774
-msgid "Neuter"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:450 Code/Module/Settings/Profile_edit.php:774
-msgid "Non-specific"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:464
-msgid "She"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:467
-msgid "Him"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:470
-msgid "Them"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:508
-msgid "Full Name:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:545
-msgid "j F, Y"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:546
-msgid "j F"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:553
-msgid "Birthday:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:557 Code/Module/Directory.php:426
-msgid "Age:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:569
-#, php-format
-msgid "for %1$d %2$s"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:581
-msgid "Tags:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:586
-msgid "Sexual Preference:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:598 Code/Module/Directory.php:441
-msgid "Hometown:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:602
-msgid "Political Views:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:606
-msgid "Religion:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:610 Code/Module/Directory.php:443
-msgid "About:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:614
-msgid "Hobbies/Interests:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:618
-msgid "Likes:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:622
-msgid "Dislikes:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:626
-msgid "Contact information and Social Networks:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:630
-msgid "My other channels:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:634
-msgid "Musical interests:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:638
-msgid "Books, literature:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:642
-msgid "Television:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:646
-msgid "Film/dance/culture/entertainment:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:650
-msgid "Love/Romance:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:654
-msgid "Work/employment:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:658
-msgid "School/education:"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:684
-msgid "Like this thing"
-msgstr ""
-
-#: Code/Lib/Libprofile.php:685 Code/Module/Events.php:756
-#: Code/Module/Cal.php:350
-msgid "Export"
-msgstr ""
-
 #: Code/Lib/Libzot.php:774
 msgid "Unable to verify channel signature"
 msgstr ""
@@ -2714,7 +2727,7 @@ msgstr ""
 #: Code/Module/Block.php:49 Code/Module/Chanview.php:106
 #: Code/Module/Card_edit.php:56 Code/Module/Page.php:85 Code/Module/Cal.php:65
 #: Code/Module/Wall_upload.php:37 Code/Module/Superblock.php:44
-#: include/items.php:4107
+#: include/items.php:4108
 msgid "Channel not found."
 msgstr ""
 
@@ -3092,7 +3105,7 @@ msgid "Switch branch"
 msgstr ""
 
 #: Code/Module/Admin/Addons.php:458 Code/Module/Photos.php:1068
-#: Code/Module/Tagrm.php:151 Code/Module/Settings/Identities.php:83
+#: Code/Module/Tagrm.php:151 Code/Module/Settings/Identities.php:91
 #: Code/Module/Superblock.php:261 Code/Module/Superblock.php:278
 msgid "Remove"
 msgstr ""
@@ -3691,7 +3704,7 @@ msgstr ""
 msgid "Advanced"
 msgstr ""
 
-#: Code/Module/Admin/Site.php:279 Code/Module/Settings/Identities.php:79
+#: Code/Module/Admin/Site.php:279 Code/Module/Settings/Identities.php:87
 msgid "Site name"
 msgstr ""
 
@@ -4365,7 +4378,7 @@ msgstr ""
 msgid "Connection Default Permissions"
 msgstr ""
 
-#: Code/Module/Connedit.php:801 include/items.php:4104
+#: Code/Module/Connedit.php:801 include/items.php:4105
 #, php-format
 msgid "Connection: %s"
 msgstr ""
@@ -5515,7 +5528,7 @@ msgid ""
 "access your channel."
 msgstr ""
 
-#: Code/Module/Cloud.php:132 Code/Module/Item.php:1828
+#: Code/Module/Cloud.php:132 Code/Module/Item.php:1827
 msgid "Not found"
 msgstr ""
 
@@ -5852,25 +5865,25 @@ msgstr ""
 msgid "Unable to process image"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:281 include/items.php:4459
+#: Code/Module/Cover_photo.php:281 include/items.php:4460
 msgid "female"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:282 include/items.php:4460
+#: Code/Module/Cover_photo.php:282 include/items.php:4461
 #, php-format
 msgid "%1$s updated her %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:283 include/items.php:4461
+#: Code/Module/Cover_photo.php:283 include/items.php:4462
 msgid "male"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:284 include/items.php:4462
+#: Code/Module/Cover_photo.php:284 include/items.php:4463
 #, php-format
 msgid "%1$s updated his %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:286 include/items.php:4464
+#: Code/Module/Cover_photo.php:286 include/items.php:4465
 #, php-format
 msgid "%1$s updated their %2$s"
 msgstr ""
@@ -6032,7 +6045,7 @@ msgstr ""
 msgid "Access list is empty"
 msgstr ""
 
-#: Code/Module/Stream.php:317 include/items.php:4094
+#: Code/Module/Stream.php:317 include/items.php:4095
 #, php-format
 msgid "Access list: %s"
 msgstr ""
@@ -6513,7 +6526,7 @@ msgstr ""
 msgid "Could not create access list."
 msgstr ""
 
-#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4070
+#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4071
 msgid "Access list not found."
 msgstr ""
 
@@ -7675,50 +7688,50 @@ msgstr ""
 msgid "This app provides a simple personal and task list."
 msgstr ""
 
-#: Code/Module/Item.php:582 Code/Module/Pin.php:49
+#: Code/Module/Item.php:581 Code/Module/Pin.php:49
 msgid "Unable to locate original post."
 msgstr ""
 
-#: Code/Module/Item.php:676
+#: Code/Module/Item.php:675
 msgid "Comment may be moderated."
 msgstr ""
 
-#: Code/Module/Item.php:905
+#: Code/Module/Item.php:904
 msgid "Empty post discarded."
 msgstr ""
 
-#: Code/Module/Item.php:1577
+#: Code/Module/Item.php:1576
 msgid "Duplicate post suppressed."
 msgstr ""
 
-#: Code/Module/Item.php:1624
+#: Code/Module/Item.php:1623
 msgid ""
 "Draft saved. Use <a href=\"/stream?draft=1\">Drafts</a> app to continue "
 "editing."
 msgstr ""
 
-#: Code/Module/Item.php:1684
+#: Code/Module/Item.php:1683
 msgid "Your comment has been posted."
 msgstr ""
 
-#: Code/Module/Item.php:1753
+#: Code/Module/Item.php:1752
 msgid "System error. Post not saved."
 msgstr ""
 
-#: Code/Module/Item.php:1795
+#: Code/Module/Item.php:1794
 msgid "Your post/comment is awaiting approval."
 msgstr ""
 
-#: Code/Module/Item.php:1967
+#: Code/Module/Item.php:1966
 msgid "Unable to obtain post information from database."
 msgstr ""
 
-#: Code/Module/Item.php:1975
+#: Code/Module/Item.php:1974
 #, php-format
 msgid "You have reached your limit of %1$.0f top level posts."
 msgstr ""
 
-#: Code/Module/Item.php:1981
+#: Code/Module/Item.php:1980
 #, php-format
 msgid "You have reached your limit of %1$.0f webpages."
 msgstr ""
@@ -8231,8 +8244,8 @@ msgstr ""
 msgid "Icon url"
 msgstr ""
 
-#: Code/Module/Settings/Oauth.php:104 Code/Module/Sources.php:131
-#: Code/Module/Sources.php:166
+#: Code/Module/Settings/Oauth.php:104 Code/Module/Sources.php:132
+#: Code/Module/Sources.php:170
 msgid "Optional"
 msgstr ""
 
@@ -9508,21 +9521,21 @@ msgstr ""
 msgid "This varies by country/culture"
 msgstr ""
 
-#: Code/Module/Settings/Identities.php:77
+#: Code/Module/Settings/Identities.php:85
 msgid "Manage Identities"
 msgstr ""
 
-#: Code/Module/Settings/Identities.php:80
+#: Code/Module/Settings/Identities.php:88
 msgid ""
 "Identities are verified by providing a link on the URL you provide here "
 "which links back to your channel home page with a link relation of rel=\"me\""
 msgstr ""
 
-#: Code/Module/Settings/Identities.php:81
+#: Code/Module/Settings/Identities.php:89
 msgid "Site address/URL"
 msgstr ""
 
-#: Code/Module/Settings/Identities.php:85
+#: Code/Module/Settings/Identities.php:93
 msgid "Submit/Verify"
 msgstr ""
 
@@ -9819,51 +9832,55 @@ msgstr ""
 msgid "Manage remote sources of content for your channel."
 msgstr ""
 
-#: Code/Module/Sources.php:117 Code/Module/Sources.php:127
+#: Code/Module/Sources.php:117 Code/Module/Sources.php:128
 msgid "New Source"
 msgstr ""
 
-#: Code/Module/Sources.php:128 Code/Module/Sources.php:162
+#: Code/Module/Sources.php:122 Code/Module/Sources.php:159
+msgid "This name currently must autocomplete to one of your connections"
+msgstr ""
+
+#: Code/Module/Sources.php:129 Code/Module/Sources.php:166
 msgid ""
 "Import all or selected content from the following channel into this channel "
 "and re-distribute it according to your channel settings."
 msgstr ""
 
-#: Code/Module/Sources.php:129 Code/Module/Sources.php:163
+#: Code/Module/Sources.php:130 Code/Module/Sources.php:167
 msgid "Only import content with these words (one per line)"
 msgstr ""
 
-#: Code/Module/Sources.php:129 Code/Module/Sources.php:163
+#: Code/Module/Sources.php:130 Code/Module/Sources.php:167
 msgid "Leave blank to import all public content"
 msgstr ""
 
-#: Code/Module/Sources.php:130 Code/Module/Sources.php:167
+#: Code/Module/Sources.php:131 Code/Module/Sources.php:171
 msgid "Channel Name"
 msgstr ""
 
-#: Code/Module/Sources.php:131 Code/Module/Sources.php:166
+#: Code/Module/Sources.php:132 Code/Module/Sources.php:170
 msgid ""
 "Add the following categories to posts imported from this source (comma "
 "separated)"
 msgstr ""
 
-#: Code/Module/Sources.php:152 Code/Module/Sources.php:180
+#: Code/Module/Sources.php:153 Code/Module/Sources.php:184
 msgid "Source not found."
 msgstr ""
 
-#: Code/Module/Sources.php:159
+#: Code/Module/Sources.php:162
 msgid "Edit Source"
 msgstr ""
 
-#: Code/Module/Sources.php:160
+#: Code/Module/Sources.php:163
 msgid "Delete Source"
 msgstr ""
 
-#: Code/Module/Sources.php:189
+#: Code/Module/Sources.php:193
 msgid "Source removed"
 msgstr ""
 
-#: Code/Module/Sources.php:191
+#: Code/Module/Sources.php:195
 msgid "Unable to remove source."
 msgstr ""
 
@@ -11277,25 +11294,25 @@ msgstr ""
 msgid "Visible to specific connections."
 msgstr ""
 
-#: include/items.php:4087
+#: include/items.php:4088
 msgid "Privacy group is empty."
 msgstr ""
 
-#: include/items.php:4466
+#: include/items.php:4467
 msgid "profile photo"
 msgstr ""
 
-#: include/items.php:4682
+#: include/items.php:4683
 #, php-format
 msgid "[Edited %s]"
 msgstr ""
 
-#: include/items.php:4682
+#: include/items.php:4683
 msgctxt "edit_activity"
 msgid "Post"
 msgstr ""
 
-#: include/items.php:4682
+#: include/items.php:4683
 msgctxt "edit_activity"
 msgid "Comment"
 msgstr ""

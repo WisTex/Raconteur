@@ -3774,9 +3774,8 @@ class Activity
                     $commentApproval?->Reject();
                     return;
                 }
-
-
-            } else {
+            }
+            else {
                 // By default, if we allow you to send_stream and comments and this is a comment, it is allowed.
                 // A side effect of this action is that if you take away send_stream permission, comments to those
                 // posts you previously allowed will still be accepted. It is possible but might be difficult to fix this.
