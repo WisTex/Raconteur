@@ -103,6 +103,23 @@ class Settings_menu implements WidgetInterface
             'selected' => ((argv(1) === 'identities') ? 'active' : '')
         ];
 
+        $links = q("select * from linkid where sigtype = %d and ident = '%s'",
+            intval(IDLINK_RELME),
+            dbesc($channel['channel_hash'])
+        );
+
+        $sources = q("select * from sources where src_channel_id = %d",
+            intval($channel['channel_id'])
+        );
+
+        if ($links || $sources) {
+            $tabs[] = [
+                'label' => t('Channel Sources'),
+                'url' => z_root() . '/sources',
+                'selected' => ((argv(1) === 'sources') ? 'active' : ''),
+            ];
+        }
+
         return replace_macros(Theme::get_template('generic_links_widget.tpl'), [
             '$title' => t('Settings'),
             '$class' => 'settings-widget',

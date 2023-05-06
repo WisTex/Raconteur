@@ -13,7 +13,8 @@ use Code\Lib\ActivityPub;
 use Code\Lib\LDSignatures;
 use Code\Lib\Channel;
 use Code\Extend\Hook;
-    
+
+
 require_once('include/html2plain.php');
 require_once('include/conversation.php');
 require_once('include/bbcode.php');
@@ -186,6 +187,7 @@ class Notifier implements DaemonInterface
                         if ($perm_update['deliveries']) {
                             self::$deliveries[] = $perm_update['deliveries'];
                             do_delivery(self::$deliveries);
+                            self::$deliveries = [];
                         }
                         return;
                     } else {
@@ -200,15 +202,34 @@ class Notifier implements DaemonInterface
             logger('notifier: refresh_all: ' . $item_id);
 
             self::$channel = Channel::from_id($item_id, true);
+
+            $perm_update = [ 'sender' => self::$channel, 'success' => false, 'deliveries' => '' ];
+            ActivityPub::refresh_all($perm_update);
+
+            if (! $perm_update['success']) {
+                Hook::call($cmd, $perm_update);
+            }
+
+            if ($perm_update['success']) {
+                if ($perm_update['deliveries']) {
+                    self::$deliveries[] = $perm_update['deliveries'];
+                    do_delivery(self::$deliveries);
+                    self::$deliveries = [];
+                }
+            }
+
             $r = q(
-                "select abook_xchan from abook where abook_channel = %d",
+                "select abook_xchan from abook left join xchan on abook_xchan = xchan_hash 
+                   where abook_channel = %d and xchan_network != 'activitypub'",
                 intval($item_id)
             );
+
             if ($r) {
                 foreach ($r as $rr) {
                     self::$recipients[] = $rr['abook_xchan'];
                 }
             }
+            
             self::$recipients[] = self::$channel['channel_hash'];
             self::$private = false;
             self::$packet_type = 'refresh';

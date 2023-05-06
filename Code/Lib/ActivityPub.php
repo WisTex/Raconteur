@@ -363,6 +363,47 @@ class ActivityPub
 
         $x['success'] = true;
     }
+    public static function refresh_all(&$x)
+    {
+        // send Update/Actor to all followers
+
+        $p = Activity::encode_person($x['sender'], false);
+        if (!$p) {
+            return;
+        }
+
+        $msg = array_merge(
+            Activity::ap_context(),
+            [
+                'id' => z_root() . '/channel/' . $x['sender']['channel_address'] . '#update',
+                'type' => 'Update',
+                'updated' => datetime_convert(format: ATOM_TIME),
+                'actor' => $p,
+                'object' => z_root() . '/channel/' . $x['sender']['channel_address'],
+                'to' => [z_root() . '/followers/' . $x['sender']['channel_address']],
+                'cc' => [ACTIVITY_PUBLIC_INBOX]
+            ]
+        );
+
+        $msg['signature'] = LDSignatures::sign($msg, $x['sender']);
+        $jmsg = json_encode($msg, JSON_UNESCAPED_SLASHES);
+
+        $r = q("select * from abook left join hubloc on abook_xchan = hubloc_hash
+            where abook_channel = %d and hubloc_network = 'activitypub'",
+            intval($x['sender']['channel_id'])
+        );
+
+        if ($r) {
+            foreach ($r as $recipient) {
+                $qi = self::queue_message($jmsg, $x['sender'], $recipient);
+                if ($qi) {
+                    $x['deliveries'] = $qi;
+                }
+            }
+        }
+
+        $x['success'] = true;
+    }
 
     public static function contact_remove($channel_id, $abook)
     {
