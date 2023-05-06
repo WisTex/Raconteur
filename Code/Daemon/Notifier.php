@@ -209,6 +209,7 @@ class Notifier implements DaemonInterface
                     self::$recipients[] = $rr['abook_xchan'];
                 }
             }
+            
             self::$recipients[] = self::$channel['channel_hash'];
             self::$private = false;
             self::$packet_type = 'refresh';
