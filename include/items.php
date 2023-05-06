@@ -3200,6 +3200,16 @@ function check_item_source($uid, $item) {
     logger('source: uid: ' . $uid, LOGGER_DEBUG);
     $xchan = ((isset($item['source_xchan']) && $item['source_xchan'] && isset($item['item_uplink']) && intval($item['item_uplink'])) ?  $item['source_xchan'] : $item['owner_xchan']);
 
+    $linkedIds = null;
+
+    $channel = Channel::from_id($uid);
+    if ($channel) {
+        $linkedIds = q("select * from linkid where ident = '%s' and sigtype = %d",
+            dbesc($channel['channel_hash']),
+            intval(IDLINK_RELME)
+        );
+    }
+
     $r = q("select * from source where src_channel_id = %d and ( src_xchan = '%s' or src_xchan = '*' ) limit 1",
         intval($uid),
         dbesc($xchan)
@@ -3221,6 +3231,13 @@ function check_item_source($uid, $item) {
     }
 
     if (! their_perms_contains($uid,$xchan,'republish')) {
+        if ($linkedIds) {
+            foreach ($linkedIds as $linkId) {
+                if ($linkId['link'] === $item['owner_xchan']) {
+                    return true;
+                }
+            }
+        }
         logger('source: no republish permission');
         return false;
     }
