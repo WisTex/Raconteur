@@ -421,9 +421,11 @@ class Libprofile
                     }
                 }
             }
+
+        }
+        if (($ids && $pconfigs) || $clones) {
             $identities .= '</table>' . EOL;
         }
-
         if ($zcard) {
             $tpl = Theme::get_template('profile_vcard_short.tpl');
         } else {
