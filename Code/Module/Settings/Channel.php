@@ -77,6 +77,7 @@ class Channel
         $noindex = ((x($_POST, 'noindex')) ? intval($_POST['noindex']) : 0);
         $channel_menu = ((x($_POST['channel_menu'])) ? htmlspecialchars_decode(trim($_POST['channel_menu']), ENT_QUOTES) : '');
 
+        $nomadic_ids_in_profile = ((x($_POST, 'nomadic_ids_in_profile')) ? intval($_POST['nomadic_ids_in_profile']) : 0);
         $unless_mention_count = ((x($_POST, 'unless_mention_count')) ? intval($_POST['unless_mention_count']) : 0);
         $unless_tag_count = ((x($_POST, 'unless_tag_count')) ? intval($_POST['unless_tag_count']) : 0);
         $preview_outbox = ((x($_POST, 'preview_outbox')) ? intval($_POST['preview_outbox']) : 0);
@@ -182,6 +183,7 @@ class Channel
         set_pconfig(local_channel(), 'system', 'unless_tag_count', $unless_tag_count);
         set_pconfig(local_channel(), 'system', 'noindex', $noindex);
         set_pconfig(local_channel(), 'system', 'preview_outbox', $preview_outbox);
+        set_pconfig(local_channel(), 'system', 'nomadic_ids_in_profile', $nomadic_ids_in_profile);
 
         $r = q(
             "update channel set channel_name = '%s', channel_pageflags = %d, channel_timezone = '%s', channel_location = '%s', 
@@ -498,6 +500,8 @@ class Channel
             '$post_newfriend' => ['post_newfriend', t('accepting a friend request'), $post_newfriend, '', $yes_no],
             '$post_joingroup' => ['post_joingroup', t('joining a group/community'), $post_joingroup, '', $yes_no],
             '$post_profilechange' => ['post_profilechange', t('making an <em>interesting</em> profile change'), $post_profilechange, '', $yes_no],
+            '$nomadic_ids_in_profile' => ['nomadic_ids_in_profile', t('Show nomadic links in profile'), PConfig::Get(local_channel(),'system','nomadic_ids_in_profile',true), '', $yes_no],
+
             '$lbl_not' => t('Send a notification email when:'),
             '$notify1' => ['notify1', t('You receive a connection request'), ($notify & NOTIFY_INTRO), NOTIFY_INTRO, '', $yes_no],
 //          '$notify2'  => array('notify2', t('Your connections are confirmed'), ($notify & NOTIFY_CONFIRM), NOTIFY_CONFIRM, '', $yes_no),

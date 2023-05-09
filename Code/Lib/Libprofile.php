@@ -377,14 +377,16 @@ class Libprofile
             $channel_menu .= $comanche->block($menublock);
         }
 
+        $clones = '';
         $identities = '';
         $pconfigs = PConfig::Get($profile['uid'], 'system','identities', []);
         $ids = q("select * from linkid where ident = '%s' and sigtype = %d",
             dbesc($profile['channel_hash']),
             intval(IDLINK_RELME)
         );
-        $clones = Libzot::encode_locations($profile);
-
+        if (PConfig::Get($profile['uid'],'system','nomadic_ids_in_profile', true)) {
+            $clones = Libzot::encode_locations($profile);
+        }
         if (($ids && $pconfigs) || $clones) {
             $identities .= '<table style="border: 1px solid #ccc; width=100%; display:table;">';
         }
