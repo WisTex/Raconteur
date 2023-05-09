@@ -63,7 +63,7 @@
                         {{include file="field_input.tpl" field=$followed_tags}}
                         {{include file="field_input.tpl" field=$unless_tag_count}}
                         {{include file="field_checkbox.tpl" field=$preview_outbox}}
-
+                        {{include file="field_checkbox.tpl" field=$nomadic_ids_in_profile}}
                         <div id="advanced-perm" style="display:{{if $permissions_set}}none{{else}}block{{/if}};">
                             <div class="form-group">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#apsModal">{{$lbl_p2macro}}</button>
