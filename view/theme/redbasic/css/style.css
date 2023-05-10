@@ -250,6 +250,10 @@ a:focus,
 	position: absolute;
 	width: 100%;
 }
+.identity-url-inner {
+	font-size: 0.7rem;
+}
+
 .identity-name-td {
 	width: 25%;
 }

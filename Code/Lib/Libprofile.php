@@ -402,6 +402,7 @@ class Libprofile
                         $clone['id_url'],
                         'check',
                         t('Verified'),
+                        '_green'
                     ]
                 ]);
             }
@@ -418,6 +419,7 @@ class Libprofile
                                 $pconfig[1],
                                 'check',
                                 t('Verified'),
+                                '_green'
                             ]
                         ]);
                     }
@@ -429,6 +431,7 @@ class Libprofile
                             $pconfig[1],
                             'close',
                             t('Not verified'),
+                            '_red'
                         ]
                     ]);
                 }

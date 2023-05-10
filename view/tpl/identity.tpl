@@ -14,6 +14,6 @@
         </div>
     </td>
     <td class="identity-checked-td" title="{{$identity.3}}">
-        <i class="fa fa-{{$identity.2}}" title="{{$identity.3}}"></i>
+        <i class="fa fa-{{$identity.2}} {{$identity.4}}" title="{{$identity.3}}"></i>
     </td>
 </tr>
