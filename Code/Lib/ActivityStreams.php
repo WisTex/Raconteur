@@ -340,6 +340,7 @@ class ActivityStreams
     {
         if (str_starts_with($url, z_root() . '/item/')) {
             $x = Activity::fetch_local($url, $this->portable_id ?? '');
+    logger('local: ' . print_r($x,true));
         }
         if (!$x) {
             $x = Activity::fetch($url, $channel);
