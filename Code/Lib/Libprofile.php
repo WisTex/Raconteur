@@ -24,7 +24,7 @@ class Libprofile
      * The channel default theme is also selected for use, unless over-riden elsewhere.
      *
      * @param string $nickname
-     * @param string $profile_guid
+     * @param string $profile (guid)
      */
 
     public static function load($nickname, $profile = '')
@@ -112,7 +112,7 @@ class Libprofile
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((Features::enabled(local_channel(), 'advanced_profiles')) ? true : false);
+            $advanced = (bool)Features::enabled(local_channel(), 'advanced_profiles');
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -538,7 +538,7 @@ class Libprofile
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((Features::enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
+            $advanced = (bool)Features::enabled(App::$profile['profile_uid'], 'advanced_profiles');
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -605,7 +605,7 @@ class Libprofile
                 $profile['birthday'] = [t('Birthday:'), $val];
             }
 
-            if ($age = age(App::$profile['dob'], App::$profile['timezone'], '')) {
+            if ($age = age(App::$profile['dob'], App::$profile['timezone'])) {
                 $profile['age'] = [t('Age:'), $age];
             }
 
@@ -732,7 +732,7 @@ class Libprofile
 
             return replace_macros($tpl, [
                 '$title' => t('Profile'),
-                '$canlike' => (($profile['canlike']) ? true : false),
+                '$canlike' => (bool)$profile['canlike'],
                 '$likethis' => t('Like this thing'),
                 '$export' => t('Export'),
                 '$exportlink' => '', // $exportlink,
