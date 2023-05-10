@@ -232,6 +232,35 @@ a:focus,
     color: #FFA500 !important;
 }
 
+.identity-table {
+	border: 1px solid #ccc;
+	width: 100%;
+	display:table;
+}
+
+.identity-table td {
+	border: 1px dotted black;
+	vertical-align: top;
+}
+
+.identity-name-inner, .identity-url-inner {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	position: absolute;
+	width: 100%;
+}
+.identity-name-td {
+	width: 25%;
+}
+
+.identity-name-outer, .identity-url-outer {
+	position: relative;
+}
+.identity-checked-td {
+	width: 10%;
+}
+
 input, optgroup, select, textarea {
 	font-size: 0.9rem !important;
 }
@@ -329,6 +358,11 @@ nav {
 }
 
 .nav-channel-select { margin-left: 8px; }
+
+
+
+
+
 
 /* spinner */
 

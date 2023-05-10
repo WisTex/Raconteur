@@ -24,7 +24,7 @@ class Libprofile
      * The channel default theme is also selected for use, unless over-riden elsewhere.
      *
      * @param string $nickname
-     * @param string $profile_guid
+     * @param string $profile (guid)
      */
 
     public static function load($nickname, $profile = '')
@@ -112,7 +112,7 @@ class Libprofile
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((Features::enabled(local_channel(), 'advanced_profiles')) ? true : false);
+            $advanced = (bool)Features::enabled(local_channel(), 'advanced_profiles');
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -388,18 +388,22 @@ class Libprofile
             $clones = Libzot::encode_locations($profile);
         }
         if (($ids && $pconfigs) || $clones) {
-            $identities .= '<table style="border: 1px solid #ccc; width=100%; display:table;">';
+            $identities .= '<table class="identity-table">';
+            // style="">';
         }
         if ($clones) {
             foreach ($clones as $clone) {
                 if (str_starts_with($clone['id_url'], z_root())) {
                     continue;
                 }
-                $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($clone['host'])
-                    . '</td><td style="border: 1px solid #ccc; padding:3px;">'
-                    . '<a href="' . $clone['id_url'] . '">' . $clone['id_url'] . '</a>'
-                    . '</td><td style="border: 1px solid #ccc; padding:3px;">'
-                    . '<i class="fa fa-check" title="' . t('Verified') . '"></i></td></tr>';
+                $identities .= replace_macros(Theme::get_template('identity.tpl'), [
+                    '$identity' => [
+                        escape_tags($clone['host']),
+                        $clone['id_url'],
+                        'check',
+                        t('Verified'),
+                    ]
+                ]);
             }
         }
         if ($ids && $pconfigs) {
@@ -408,19 +412,25 @@ class Libprofile
                 foreach ($ids as $id) {
                     if ($pconfig[1] === $id['link']) {
                         $matched = true;
-                        $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($pconfig[0])
-                            . '</td><td style="border: 1px solid #ccc; padding:3px;">'
-                            . '<a href="' . $pconfig[1] . '">' . $pconfig[1] . '</a>'
-                            . '</td><td style="border: 1px solid #ccc; padding:3px;">'
-                            . '<i class="fa fa-check" title="' . t('Verified') . '"></i></td></tr>';
+                        $identities .= replace_macros(Theme::get_template('identity.tpl'), [
+                            '$identity' => [
+                                escape_tags($pconfig[0]),
+                                $pconfig[1],
+                                'check',
+                                t('Verified'),
+                            ]
+                        ]);
                     }
                 }
                 if (!$matched) {
-                    $identities .= '<tr><td style="border: 1px solid #ccc; padding:3px;">' . escape_tags($pconfig[0])
-                        . '</td><td style="border: 1px solid #ccc; padding:3px;">'
-                        . '<a href="' . $pconfig[1] . '">' . $pconfig[1] . '</a>'
-                        . '</td><td style="border: 1px solid #ccc; padding:3px;">'
-                        . '<i class="fa fa-close" title="' . t('Not verified') . '"></i></td></tr>';
+                    $identities .= replace_macros(Theme::get_template('identity.tpl'), [
+                        '$identity' => [
+                            escape_tags($pconfig[0]),
+                            $pconfig[1],
+                            'close',
+                            t('Not verified'),
+                        ]
+                    ]);
                 }
             }
 
@@ -538,7 +548,7 @@ class Libprofile
             $profile_fields_basic = Channel::get_profile_fields_basic();
             $profile_fields_advanced = Channel::get_profile_fields_advanced();
 
-            $advanced = ((Features::enabled(App::$profile['profile_uid'], 'advanced_profiles')) ? true : false);
+            $advanced = (bool)Features::enabled(App::$profile['profile_uid'], 'advanced_profiles');
             if ($advanced) {
                 $fields = $profile_fields_advanced;
             } else {
@@ -605,7 +615,7 @@ class Libprofile
                 $profile['birthday'] = [t('Birthday:'), $val];
             }
 
-            if ($age = age(App::$profile['dob'], App::$profile['timezone'], '')) {
+            if ($age = age(App::$profile['dob'], App::$profile['timezone'])) {
                 $profile['age'] = [t('Age:'), $age];
             }
 
@@ -732,7 +742,7 @@ class Libprofile
 
             return replace_macros($tpl, [
                 '$title' => t('Profile'),
-                '$canlike' => (($profile['canlike']) ? true : false),
+                '$canlike' => (bool)$profile['canlike'],
                 '$likethis' => t('Like this thing'),
                 '$export' => t('Export'),
                 '$exportlink' => '', // $exportlink,
