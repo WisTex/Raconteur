@@ -377,7 +377,8 @@ class Libprofile
             $channel_menu .= $comanche->block($menublock);
         }
 
-        $clones = '';
+        $clones = [];
+        $clonelist = '';
         $identities = '';
         $pconfigs = PConfig::Get($profile['uid'], 'system','identities', []);
         $ids = q("select * from linkid where ident = '%s' and sigtype = %d",
@@ -385,17 +386,21 @@ class Libprofile
             intval(IDLINK_RELME)
         );
         if (PConfig::Get($profile['uid'],'system','nomadic_ids_in_profile', true)) {
-            $clones = Libzot::encode_locations($profile);
+            $clonelist = Libzot::encode_locations($profile);
         }
-        if (($ids && $pconfigs) || $clones) {
-            $identities .= '<table class="identity-table">';
-            // style="">';
-        }
-        if ($clones) {
-            foreach ($clones as $clone) {
+        if ($clonelist) {
+            foreach ($clonelist as $clone) {
                 if (str_starts_with($clone['id_url'], z_root())) {
                     continue;
                 }
+                $clones[] = $clone;
+            }
+        }
+        if (($ids && $pconfigs) || $clones) {
+            $identities .= '<table class="identity-table">';
+        }
+        if ($clones) {
+            foreach ($clones as $clone) {
                 $identities .= replace_macros(Theme::get_template('identity.tpl'), [
                     '$identity' => [
                         escape_tags($clone['host']),
