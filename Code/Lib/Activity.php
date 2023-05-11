@@ -3100,14 +3100,22 @@ class Activity
         }
 
         // For the special snowflakes who can't figure out how to use attachments.
-
+        $misskeyquotefound = [];
         foreach ( ['quoteUrl', 'quoteUri', '_misskey_quote'] as $quote) {
             $quote_url = $act->get_property_obj($quote);
             if ($quote_url) {
+                if (in_array($quote_url, $misskeyquotefound)) {
+                    continue;
+                }
                 $s = self::get_quote($quote_url,$s);
+                $misskeyquotefound[] = $quote_url;
             }
             elseif ($act->objprop($quote)) {
+                if (in_array($act->obj[$quote], $misskeyquotefound)) {
+                    continue;
+                }
                 $s = self::get_quote($act->obj[$quote],$s);
+                $misskeyquotefound[] = $act->obj[$quote];
             }
         }
 
