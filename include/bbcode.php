@@ -1413,7 +1413,7 @@ function bb_nakedlinks($Text) {
     $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
 
     if (str_contains($Text, 'http')) {
-        $Text = preg_replace("/([^\]\='" . '"' . "\;\/])(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
+        $Text = preg_replace("/([^\]\='" . '"' . "\;\/]\()(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
     }
 
     $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism', '\red_unescape_codeblock', $Text);
@@ -1743,20 +1743,20 @@ function bbcode($Text, $options = [])
     }
 
     if (str_contains($Text, '[/url]')) {
-        $Text = preg_replace("/\#\^\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
-        $Text = preg_replace("/\#\^\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
-        $Text = preg_replace("/\[url\]([$URLSearchString]*)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
-        $Text = preg_replace("/\@(\!?)\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '@$1<span class="h-card"><a class="u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
-        $Text = preg_replace("/\[url\=([$URLSearchString]*)\](.*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+        $Text = preg_replace("/\#\^\[url\]([$URLSearchString]*?)\[\/url\]/ism", '<a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+        $Text = preg_replace("/\#\^\[url\=([$URLSearchString]*?)\](.*?)\[\/url\]/ism", '<a class="bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+        $Text = preg_replace("/\[url\]([$URLSearchString]*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+        $Text = preg_replace("/\@(\!?)\[url\=([$URLSearchString]*?)\](.*?)\[\/url\]/ism", '@$1<span class="h-card"><a class="u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
+        $Text = preg_replace("/\[url\=([$URLSearchString]*?)\](.*?)\[\/url\]/ism", '<a href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
     }
 
     if (str_contains($Text, '[/zrl]')) {
         // render hubzilla bookmarks as normal links
-        $Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
-        $Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
-        $Text = preg_replace("/\[zrl\]([$URLSearchString]*)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
-        $Text = preg_replace("/\@(\!?)\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '@$1<span class="h-card"><a class="zrl u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
-        $Text = preg_replace("/\[zrl\=([$URLSearchString]*)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+        $Text = preg_replace("/\#\^\[zrl\]([$URLSearchString]*?)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+        $Text = preg_replace("/\#\^\[zrl\=([$URLSearchString]*?)\](.*?)\[\/zrl\]/ism", '<a class="zrl bookmark" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
+        $Text = preg_replace("/\[zrl\]([$URLSearchString]*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$1</a>', $Text);
+        $Text = preg_replace("/\@(\!?)\[zrl\=([$URLSearchString]*?)\](.*?)\[\/zrl\]/ism", '@$1<span class="h-card"><a class="zrl u-url mention" href="$2" ' . $target . ' rel="nofollow noopener" >$3</a></span>', $Text);
+        $Text = preg_replace("/\[zrl\=([$URLSearchString]*?)\](.*?)\[\/zrl\]/ism", '<a class="zrl" href="$1" ' . $target . ' rel="nofollow noopener" >$2</a>', $Text);
     }
 
     // named anchors do not work well in conversational text, as it is often collapsed by a "showmore" script.
