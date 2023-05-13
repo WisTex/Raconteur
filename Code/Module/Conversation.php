@@ -7,7 +7,6 @@ use Code\Lib\ActivityStreams;
 use Code\Lib\Activity as ZlibActivity;
 use Code\Lib\Libzot;
 use Code\Web\HTTPSig;
-use Code\Lib\LDSignatures;
 use Code\Lib\ThreadListener;
 use Code\Lib\Channel;
 use App;
@@ -18,7 +17,7 @@ class Conversation extends Controller
     public function init()
     {
 
-        if (ActivityStreams::is_as_request()) {
+        if (ActivityStreams::is_as_request() || Libzot::is_nomad_request()) {
             $item_id = argv(1);
 
             if (!$item_id) {
