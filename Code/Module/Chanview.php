@@ -137,6 +137,13 @@ class Chanview extends Controller
             $url = zid($url);
         }
 
+        // 2023-05-13
+        // We've been down this road before. We do not need to provide a preview page
+        // of the remote profile. Just go there and let it speak for itself.
+
+        goaway($url);
+
+
         // If we are already connected, just go to the profile.
 
         if ($connected) {
