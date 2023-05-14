@@ -217,9 +217,22 @@ class Embedphotos extends Controller
         if (!$r) {
             return '';
         }
+        $ext = '';
+        if ($r[0]['mimetype'] === 'image/jpeg') {
+            $ext = '.jpg';
+        } elseif ($r[0]['mimetype'] === 'image/png') {
+            $ext = '.png';
+        } elseif ($r[0]['mimetype'] === 'image/gif') {
+            $ext = '.gif';
+        } else {
+            $ext = EMPTY_STR;
+        }
+
+
         $image = $r[1] ?? $r[0];
-        $link = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $attach['hash'] . ']' .
-            '[zmg alt="' . ($image['description'] ?: $image['filename']) . '"]' . z_root() . '/photo/' . $attach['hash'] . '-' . $image['imgscale'] . '[/zmg][/zrl]' . "\n\n";
+        $link = '[zrl=' . z_root() . '/photos/' . $channel['channel_address'] . '/image/' . $attach['hash'] . ']'
+            . '[zmg alt="' . ($image['description'] ?: $image['filename']) . '"]'
+            . z_root() . '/photo/' . $attach['hash'] . '-' . $image['imgscale'] . (($ext) ?: '') . '[/zmg][/zrl]' . "\n\n";
         return $link;
     }
     /**

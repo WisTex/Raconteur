@@ -1374,7 +1374,9 @@ class Activity
                         // We could alternatively supply the correct attachment info when item is saved, but by replacing here we will pick up
                         // any "per-post" or manual changes to the image alt-text before sending.
 
-                        if ((isset($activity['attachment'][$pc]['href']) && str_contains($img[0]['url'], str_replace('/attach/', '/photo/', $activity['attachment'][$pc]['href']))) || (isset($activity['attachment'][$pc]['url']) && $activity['attachment'][$pc]['url'] === $img[0]['url'])) {
+                        if ((isset($activity['attachment'][$pc]['href'])
+                                && str_contains($img[0]['url'], str_replace('/attach/', '/photo/', $activity['attachment'][$pc]['href'])))
+                            || (isset($activity['attachment'][$pc]['url']) && $activity['attachment'][$pc]['url'] === $img[0]['url'])) {
                             // if it's already there, replace it with our alt-text aware version
                             $activity['attachment'][$pc] = $img[0];
                             $already_added = true;
