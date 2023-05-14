@@ -10,7 +10,7 @@ Permissions : Because not everybody wishes to converse with and share intimate f
 
 Cloud storage : Built-in network file storage integrated with federated access control and social networking access/permissions. Available over WebDAV.
 
-Editor : Supports markdown, html, and bbcode. Use any or all of these in any post to create a media rich experience. Post editing and preview are supported. It is somewhat unlikely that in normal use you will exceed the federated post length limits (200Kb typical, up to 24Mb; excluding attachments). There are no arbitrary limits placed on the number of attached photos, files, or poll responses. 
+Editor : Supports markdown, html, and bbcode. Use any or all of these in any post to create a media rich experience. Post editing and preview are supported. It is somewhat unlikely that in normal use you will exceed the federated post length limits (roughly 100 printed pages of text). There are no arbitrary limits placed on the number of attached photos, files, or poll responses. 
 
 Share : Drag-and-drop a number of different things such as files, photos, videos, webpages, maps, fediverse articles, and phone numbers to share them.
 
