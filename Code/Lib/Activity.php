@@ -645,7 +645,7 @@ class Activity
         if (array_key_exists('iconfig', $item) && is_array($item['iconfig'])) {
             foreach ($item['iconfig'] as $att) {
                 if ($att['sharing']) {
-                    $ret[] = ['type' => 'PropertyValue', 'name' => 'nomad.' . $att['cat'] . '.' . $att['k'], 'value' => unserialise($att['v'])];
+                    $ret[] = ['type' => 'Note', 'name' => 'nomad.' . $att['cat'] . '.' . $att['k'], 'content' => unserialise($att['v'])];
                 }
             }
         }
@@ -666,13 +666,13 @@ class Activity
             }
             foreach ($ptr as $att) {
                 $entry = [];
-                if ($att['type'] === 'PropertyValue') {
+                if ($att['type'] === 'Note') {
                     if (array_key_exists('name', $att) && $att['name']) {
                         $key = explode('.', $att['name']);
                         if (count($key) === 3 && in_array($key[0], ['nomad', 'zot'])) {
                             $entry['cat'] = $key[1];
                             $entry['k'] = $key[2];
-                            $entry['v'] = $att['value'];
+                            $entry['v'] = $att['content'];
                             $entry['sharing'] = '1';
                             $ret[] = $entry;
                         }
@@ -1660,14 +1660,14 @@ class Activity
             $ret['location'] = ['type' => 'Place', 'name' => $p['channel_location']];
         }
 
-        $ret['tag'] = [['type' => 'PropertyValue', 'name' => 'Protocol', 'value' => 'zot6']];
-        $ret['tag'][] = ['type' => 'PropertyValue', 'name' => 'Protocol', 'value' => 'nomad'];
+        $ret['tag'] = [['type' => 'Note', 'name' => 'Protocol', 'content' => 'zot6']];
+        $ret['tag'][] = ['type' => 'Note', 'name' => 'Protocol', 'content' => 'nomad'];
 
         if ($activitypub && get_config('system', 'activitypub', ACTIVITYPUB_ENABLED)) {
             if ($c) {
                 if (get_pconfig($c['channel_id'], 'system', 'activitypub', ACTIVITYPUB_ENABLED)) {
                     $ret['inbox'] = z_root() . '/inbox/' . $c['channel_address'];
-                    $ret['tag'][] = ['type' => 'PropertyValue', 'name' => 'Protocol', 'value' => 'activitypub'];
+                    $ret['tag'][] = ['type' => 'Note', 'name' => 'Protocol', 'content' => 'activitypub'];
                 } else {
                     $ret['inbox'] = null;
                 }
@@ -1774,7 +1774,7 @@ class Activity
                                 if ($key === 'dob') {
                                     $key = 'birthday';
                                 }
-                                $ret['attachment'][] = ['type' => 'PropertyValue', 'name' => $key, 'value' => $dp[0][$k]];
+                                $ret['attachment'][] = ['type' => 'Note', 'name' => $key, 'content' => $dp[0][$k]];
                             }
                         }
                         if ($dp[0]['keywords']) {
@@ -2414,9 +2414,9 @@ class Activity
                         }
                     }
                 }
-                if (is_array($t) && isset($t['type']) && $t['type'] === 'PropertyValue') {
-                    if (isset($t['name']) && isset($t['value']) && $t['name'] === 'Protocol') {
-                        self::update_protocols($url, trim($t['value']));
+                if (is_array($t) && isset($t['type']) && $t['type'] === 'Note') {
+                    if (isset($t['name']) && isset($t['content']) && $t['name'] === 'Protocol') {
+                        self::update_protocols($url, trim($t['content']));
                     }
                 }
             }
@@ -4656,7 +4656,6 @@ class Activity
         return [
             'nomad' => z_root() . '/apschema#',
             'toot' => 'http://joinmastodon.org/ns#',
-            'schema' => 'http://schema.org#',
             'litepub' => 'http://litepub.social/ns#',
             'sm' => 'http://smithereen.software/ns#',
          //   'fep' => 'https://codeberg.org/fediverse/fep#',
@@ -4666,8 +4665,6 @@ class Activity
             'movedTo' => 'as:movedTo',
             'alsoKnownAs' => 'as:alsoKnownAs',
             'EmojiReact' => 'as:EmojiReact',
-            'PropertyValue' => 'schema:PropertyValue',
-            'value' => 'schema:value',
             'discoverable' => 'toot:discoverable',
             'wall' => 'sm:wall',
             'capabilities' => 'litepub:capabilities',

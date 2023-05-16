@@ -143,7 +143,6 @@ class Chanview extends Controller
 
         goaway($url);
 
-
         // If we are already connected, just go to the profile.
 
         if ($connected) {
