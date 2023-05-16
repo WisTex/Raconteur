@@ -1968,12 +1968,7 @@ class Activity
 
         $contact = null;
         $their_follow_id = null;
-
-        if (intval($channel['channel_system'])) {
-            // The system channel ignores all follow requests
-            return;
-        }
-
+        
         /*
          *
          * if $act->type === 'Follow', actor is now following $channel
