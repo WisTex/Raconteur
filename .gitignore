@@ -22,6 +22,7 @@ Thumbs.db
 __pycache__
 
 ## Ignore site specific files and folders
+.htaccess
 .htconfig.php
 .htstartup.php
 .lando.local.yml

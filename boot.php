@@ -1,6 +1,7 @@
 <?php
 
 use Code\Lib\Libzot;
+use Code\Storage\Stdio;
 use Code\Web\Session;
 use Code\Web\HttpMeta;
 use Code\Render\SmartyTemplate;
@@ -57,6 +58,7 @@ require_once('include/hubloc.php');
 require_once('include/attach.php');
 require_once('include/bbcode.php');
 require_once('include/items.php');
+require_once('include/dba/dba_driver.php');
 
 function sys_boot() {
 
@@ -65,6 +67,10 @@ function sys_boot() {
     if (file_exists('.htstartup.php')) {
         /** @noinspection PhpIncludeInspection */
         include('.htstartup.php');
+    }
+
+    if(!file_exists('.htaccess')) {
+        Stdio::fcopy('htaccess.dist', '.htaccess');
     }
 
     // our central App object
@@ -89,7 +95,7 @@ function sys_boot() {
      * Try to open the database;
      */
 
-    require_once('include/dba/dba_driver.php');
+
 
     if (! App::$install) {
         DBA::dba_factory($db_host, $db_port, $db_user, $db_pass, $db_data, $db_type, App::$install);

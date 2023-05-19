@@ -81,10 +81,6 @@ web server platforms.
 
 2. Unpack the project files into the root of your web server document area.
 
-    If you copy the directory tree to your webserver, make sure that you
-    also copy .htaccess - as "dot" files are often hidden and aren't normally
-    copied.
-
     - If you are able to do so, we recommend using git to clone the source
     repository rather than to use a packaged tar or zip file.  This makes the
     software much easier to update. The Linux command to clone the repository
@@ -102,6 +98,11 @@ web server platforms.
         git pull
         composer install --no-dev
 
+
+    - If using Apache as your webserver, copy the file "htaccess.dist" to ".htaccess".
+
+        cp htaccess.dist .htaccess
+        
     - make sure the folders "cache/smarty3" and "store" exist and are
     writable by the webserver.
 
