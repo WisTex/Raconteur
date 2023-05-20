@@ -250,6 +250,11 @@ class HTTPSig
                 $hashalg = 'sha512';
             }
 
+            if (!$hashalg) {
+                btlogger('Unsupported digest hash algorithm: ' . $headers['digest']);
+                return $result;
+            }
+
             if (base64_encode(hash($hashalg, $body, true)) === $digest[1]) {
                 $result['content_valid'] = true;
             }
