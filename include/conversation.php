@@ -961,8 +961,8 @@ function builtin_activity_puller($item, &$conv_responses)
         if ((activity_match($item['verb'], $verb)) && ($item['id'] != $item['parent'])) {
             $name = (($item['author']['xchan_name']) ? $item['author']['xchan_name'] : t('Unknown'));
             $url = (($item['author_xchan'] && $item['author']['xchan_photo_s'])
-                ? '<a class="dropdown-item" href="' . chanlink_hash($item['author_xchan']) . '">' . '<img class="menu-img-1" src="' . zid($item['author']['xchan_photo_s'])  . '" alt="' . urlencode($name) . '" /> ' . $name . ' (' . relative_date($item['created']) .')</a>'
-                : '<a class="dropdown-item" href="#" class="disabled">' . $name . ' (' . relative_date($item['created']) . ')</a>'
+                ? '<a class="dropdown-item" href="' . chanlink_hash($item['author_xchan']) . '">' . '<img class="menu-img-1" src="' . zid($item['author']['xchan_photo_s'])  . '" alt="' . urlencode($name) . '" /> ' . $name . ' (' . relative_date($item['received']) .')</a>'
+                : '<a class="dropdown-item" href="#" class="disabled">' . $name . ' (' . relative_date($item['received']) . ')</a>'
             );
 
             if (! $item['thr_parent']) {
