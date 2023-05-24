@@ -105,7 +105,7 @@ class Cover_photo extends Controller
                 $tmp_name = $fname . '-001';
                 $imagesize = getimagesize($fname);
                 if ($imagesize) {
-                    $resizer = new Resizer(get_config('system','imagick_convert_path'), $imageisze);
+                    $resizer = new Resizer(get_config('system','imagick_convert_path'), $imagesize);
                     $resized = $resizer->resize(PROJECT_BASE . '/' . $fname, PROJECT_BASE . '/' . $tmp_name, $max_thumb);
                     if ($resized) {
                         $base_image = $r[0];
