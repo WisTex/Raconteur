@@ -57,7 +57,7 @@ class Display extends Controller
         if (!$item_hash) {
             App::$error = 404;
             notice(t('Item not found.') . EOL);
-            return;
+            return '';
         }
 
         $observer_is_owner = false;
@@ -278,7 +278,7 @@ class Display extends Controller
         $item_normal = item_normal();
         $item_normal_update = item_normal_update();
 
-        $sql_extra = ((local_channel()) ? EMPTY_STR : item_permissions_sql(0, $observer_hash));
+        $sql_extra = item_permissions_sql(0, $observer_hash);
 
         if ($noscript_content || $this->loading) {
             $r = null;
