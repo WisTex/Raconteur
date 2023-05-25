@@ -924,6 +924,7 @@ function collapseHeight() {
 
 	let collapsedContentHeight = Math.ceil($("#region_2").height());
 	contentHeightDiff = liking ? 0 : origContentHeight - collapsedContentHeight;
+//	contentHeightDiff = origContentHeight - collapsedContentHeight;
 
 	console.log('collapseHeight() - contentHeightDiff: ' + contentHeightDiff + 'px');
 

@@ -3841,7 +3841,7 @@ function fetch_post_tags($items) {
         );
     }
 
-    for ($x = 0; $x < count($items); $x ++) {
+    for ($x = 0; $x < count((array)$items); $x ++) {
         if ($tags) {
             foreach ($tags as $t) {
                 if (array_key_exists('item_id',$items[$x])) {
