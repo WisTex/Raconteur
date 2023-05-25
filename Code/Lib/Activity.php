@@ -4002,6 +4002,18 @@ class Activity
                     $item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
                 }
             }
+
+            // private conversation, but this comment went rogue and was published publicly
+            // hide it from everybody except the channel owner
+
+            if (intval($parent_item['item_private'])) {
+                if (!intval($item['item_private'])) {
+                    $item['item_private'] = intval($parent_item['item_private']);
+                    $item['allow_cid'] = '<' . $channel['channel_hash'] . '>';
+                    $item['allow_gid'] = $item['deny_cid'] = $item['deny_gid'] = '';
+                }
+            }
+
         }
 
         self::rewrite_mentions($item);
