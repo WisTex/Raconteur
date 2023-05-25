@@ -336,7 +336,7 @@ class Display extends Controller
                 $items = q(
                     "SELECT item.*, item.id AS item_id 
 					FROM item
-					WHERE ((uid = %d AND parent in ( %s )) OR (parent in ( %s ) $item_normal $sql_extra ))",
+					WHERE ((uid = %d AND parent in ( %s )) OR (parent in ( %s ) $sql_extra )) $item_normal ",
                     intval(local_channel()),
                     dbesc($parents_str),
                     dbesc($parents_str)
