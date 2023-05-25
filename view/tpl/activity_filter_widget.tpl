@@ -21,7 +21,7 @@
 		{{/if}}
 
 	</h3>
-	<div id="{{$content_id}}" style="display: none;">
+	<div id="{{$content_id}}" style="display: {{$display}};">
 	{{if $name}}
 	<div class="notifications-textinput">
 		<form method="get" action="{{$name.url}}" role="search">

@@ -75,6 +75,7 @@ class Activity
 
     public static function fetch_local($url, $portable_id) {
         $sql_extra = item_permissions_sql(0, $portable_id);
+        $item_normal = item_normal();
 
         // Find the original object
         $j = q(
@@ -723,8 +724,6 @@ class Activity
                     $ret[] = $entry;
                 }
             }
-        } elseif (isset($obj['attachment']) && is_string($obj['attachment'])) {
-            btlogger('not an array: ' . $obj['attachment']);
         }
 
         return $ret;

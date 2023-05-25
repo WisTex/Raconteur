@@ -6,6 +6,7 @@ use App;
 use Code\Lib\Apps;
 use Code\Lib\Features;
 use Code\Extend\Hook;
+use Code\Lib\PConfig;
 use Code\Render\Theme;
 
 
@@ -248,7 +249,8 @@ class Activity_filter implements WidgetInterface
     			'$content_id' => 'activity-filter-widget',
                 '$reset' => $reset,
                 '$content' => $content,
-                '$name' => $name
+                '$name' => $name,
+                '$display' => PConfig::Get(local_channel(), 'system', 'filter_menu_open') ? 'block' : 'none',
             ]);
         }
         return '';
