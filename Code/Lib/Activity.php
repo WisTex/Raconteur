@@ -2107,7 +2107,7 @@ class Activity
 
         $closeness = PConfig::Get($channel['channel_id'], 'system', 'new_abook_closeness', 80);
 
-        $r = abook_store_lowlevel(
+        $abook_stored = abook_store_lowlevel(
             [
                 'abook_account' => intval($channel['channel_account_id']),
                 'abook_channel' => intval($channel['channel_id']),
@@ -2130,8 +2130,13 @@ class Activity
             AbConfig::Set($channel['channel_id'], $ret['xchan_hash'], 'system', 'their_perms', $their_perms);
         }
 
+        // not widely used: save an intro message if it's here.
+        $content = self::get_content($act, $false);
+        if  ($content['content']) {
+            XConfig::Set($ret['xchan_hash'], 'system', 'intro_text', $content['content']);
+        }
 
-        if ($r) {
+        if ($abook_stored) {
             logger("New ActivityPub follower for {$channel['channel_name']}");
 
             $new_connection = q(

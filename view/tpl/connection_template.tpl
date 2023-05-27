@@ -64,6 +64,11 @@
 				<span class="contact-info-label">{{$contact.network_label}}:</span> {{$contact.network}} - <a href="{{$contact.recentlink}}">{{$contact.recent_label}}</a>
 			</div>
 			{{/if}}
+			{{if $contact.intro}}
+				<div class="contact-info-element">
+					<span class="contact-info-label">{{$contact.intro_label}}:</span> {{$contact.intro}}
+				</div>
+			{{/if}}
 		</div>
 	</div>
 <hr>

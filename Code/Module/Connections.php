@@ -3,6 +3,7 @@
 namespace Code\Module;
 
 use App;
+use Code\Lib\XConfig;
 use Code\Web\Controller;
 use Code\Lib\LibBlock;
 use Code\Lib\Navbar;
@@ -314,6 +315,8 @@ class Connections extends Controller
                     }
                     $status_str = rtrim($status_str, ', ');
 
+                    $intro = XConfig::Get($rr['xchan_hash'], 'system', 'intro_text');
+
                     $contacts[] = [
                         'img_hover' => sprintf(t('%1$s [%2$s]'), $rr['xchan_name'], $rr['xchan_url']),
                         'edit_hover' => t('Edit connection'),
@@ -326,6 +329,8 @@ class Connections extends Controller
                         'link' => z_root() . '/connedit/' . $rr['abook_id'],
                         'deletelink' => z_root() . '/connedit/' . intval($rr['abook_id']) . '/drop',
                         'delete' => t('Delete'),
+                        'intro' => $intro,
+                        'intro_label' => t('Message'),
                         'author_menu' => thread_author_menu(['author_xchan' => $rr['xchan_hash']]),
                         'large_avatar' => $rr['xchan_photo_l'],
                         'url' => chanlink_hash($rr['xchan_hash']),
@@ -345,7 +350,7 @@ class Connections extends Controller
                         'ignore_hover' => t('Ignore connection'),
                         'ignore' => ((!$rr['abook_ignored']) ? t('Ignore') : false),
                         'recent_label' => t('Recent activity'),
-                        'recentlink' => z_root() . '/stream/?f=&cid=' . intval($rr['abook_id']),
+                        'recentlink' => z_root() . '/stream/?cid=' . intval($rr['abook_id']),
                         'oneway' => $oneway,
                         'allow_delete' => ($rr['abook_pending'] || get_pconfig(local_channel(), 'system', 'connections_quick_delete')),
                     ];
