@@ -1,5 +1,6 @@
 <?php
 
+use Code\Lib\Channel;
 use Code\Photo\PhotoDriver;
 use Code\Photo\PhotoGd;
 use Code\Photo\PhotoImagick;
@@ -225,6 +226,11 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     $photo = z_root() . '/xp/' . $hash . '-4' . (($thing) ? '.obj' : EMPTY_STR);
     $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
     $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
+
+    if (!$url) {
+        $gis = getimagesize(Channel::get_default_profile_photo());
+        return [ $photo, $thumb, $micro, (($gis) ? $gis['mime'] : 'image/png'), true ];
+    }
 
     $result = Url::get($src);
 
