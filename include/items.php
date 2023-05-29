@@ -3053,8 +3053,12 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         if (is_string($merge)) {
             $merge = json_decode($merge, true);
         }
-        $arr['attach'] = array_merge((array)$merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
-
+        if ($merge) {
+            $arr['attach'] = array_merge($merge, [['type' => 'application/activity+json', 'href' => $item['mid']]]);
+        }
+        else {
+            $arr['attach'] = [['type' => 'application/activity+json', 'href' => $item['mid']]];
+        }
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
 
         if ($arr['id']) {
