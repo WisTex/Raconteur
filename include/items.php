@@ -2955,7 +2955,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
 
         // WARNING: the presence of both source_xchan and non-zero item_uplink here will cause a delivery loop
         $arr['item_uplink']  = 0;
-        $arr['source_xchan'] = $item['owner_xchan'];
+        $arr['source_xchan'] = $item['author_xchan'];
 
         $arr['item_private'] = (($channel['channel_allow_cid'] || $channel['channel_allow_gid'] || $channel['channel_deny_cid'] || $channel['channel_deny_gid']) ? 1 : 0);
 
@@ -3053,7 +3053,7 @@ function start_delivery_chain($channel, $item, $item_id, bool|array $parent, $gr
         if (is_string($merge)) {
             $merge = json_decode($merge, true);
         }
-        $arr['attach'] = array_merge($merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
+        $arr['attach'] = array_merge((array)$merge, [[ 'type' => 'application/activity+json', 'href' => $item['mid'] ]] );
 
         $arr['replyto'] = z_root() . '/channel/' . $channel['channel_address'];
 
