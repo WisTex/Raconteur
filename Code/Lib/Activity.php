@@ -3777,11 +3777,16 @@ class Activity
 
                 }
                 else {
-                    logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
-                    logger('rejected: ' . print_r($item, true), LOGGER_DATA);
-                    // let the sender know we received their comment, but we don't permit spam here.
-                    $commentApproval?->Reject();
-                    return;
+                    if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                        $item['item_blocked'] = ITEM_MODERATED;
+                    }
+                    else {
+                        logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+                        logger('rejected: ' . print_r($item, true), LOGGER_DATA);
+                        // let the sender know we received their comment, but we don't permit spam here.
+                        $commentApproval?->Reject();
+                        return;
+                    }
                 }
             }
             else {
@@ -3878,9 +3883,14 @@ class Activity
         }
 
         if (!$allowed && !$force) {
-            logger('no permission: channel ' . $channel['channel_address'] . ', id = ' . $item['mid']);
-            logger('no permission: reason ' . print_r($reason, true));
-            return;
+            if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                $item['item_blocked'] = ITEM_MODERATED;
+            }
+            else {
+                logger('no permission: channel ' . $channel['channel_address'] . ', id = ' . $item['mid']);
+                logger('no permission: reason ' . print_r($reason, true));
+                return;
+            }
         }
 
         $item['aid'] = $channel['channel_account_id'];

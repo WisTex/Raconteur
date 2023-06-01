@@ -1858,15 +1858,20 @@ class Libzot
                 }
 
                 if (!$allowed) {
-                    if ($arr['mid'] !== $arr['parent_mid']) {
-                        if ($commentApproval) {
-                            $commentApproval->Reject();
-                        }
+                    if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                        $arr['item_blocked'] = ITEM_MODERATED;
                     }
-                    logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
-                    $DR->update('permission denied');
-                    $result[] = $DR->get();
-                    continue;
+                    else {
+                        if ($arr['mid'] !== $arr['parent_mid']) {
+                            if ($commentApproval) {
+                                $commentApproval->Reject();
+                            }
+                        }
+                        logger("permission denied for delivery to channel {$channel['channel_id']} {$channel['channel_address']}");
+                        $DR->update('permission denied');
+                        $result[] = $DR->get();
+                        continue;
+                    }
                 }
             }
 
