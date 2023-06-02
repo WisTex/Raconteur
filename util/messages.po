@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.05.14\n"
+"Project-Id-Version: 23.06.03\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-14 13:18-0700\n"
+"POT-Creation-Date: 2023-06-02 15:43-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -483,7 +483,7 @@ msgid "Communities"
 msgstr ""
 
 #: Code/Lib/Apps.php:359 Code/Module/Connedit.php:690
-#: Code/Module/Connections.php:371 Code/Module/Stream.php:150
+#: Code/Module/Connections.php:376 Code/Module/Stream.php:150
 #: Code/Module/Affinity.php:68 Code/Widget/Affinity.php:33
 #: include/connections.php:950
 msgid "Connections"
@@ -506,11 +506,11 @@ msgstr ""
 msgid "Directory"
 msgstr ""
 
-#: Code/Lib/Apps.php:364 Code/Widget/Activity_filter.php:81
+#: Code/Lib/Apps.php:364 Code/Widget/Activity_filter.php:82
 msgid "Drafts"
 msgstr ""
 
-#: Code/Lib/Apps.php:365 Code/Widget/Activity_filter.php:109
+#: Code/Lib/Apps.php:365 Code/Widget/Activity_filter.php:110
 msgid "Events"
 msgstr ""
 
@@ -565,7 +565,7 @@ msgid "Legal"
 msgstr ""
 
 #: Code/Lib/Apps.php:378 Code/Lib/Navbar.php:128 Code/Lib/Navbar.php:131
-#: boot.php:1103
+#: boot.php:1109
 msgid "Login"
 msgstr ""
 
@@ -646,7 +646,7 @@ msgstr ""
 msgid "Probe"
 msgstr ""
 
-#: Code/Lib/Apps.php:398 Code/Lib/Libprofile.php:752 Code/Lib/Activity.php:2975
+#: Code/Lib/Apps.php:398 Code/Lib/Libprofile.php:752 Code/Lib/Activity.php:2974
 #: Code/Module/Profperm.php:131
 msgid "Profile"
 msgstr ""
@@ -681,7 +681,7 @@ msgid "Roles"
 msgstr ""
 
 #: Code/Lib/Apps.php:406 Code/Lib/Navbar.php:169 Code/Lib/Libacl.php:134
-#: Code/Module/Connections.php:378 Code/Module/Search.php:120
+#: Code/Module/Connections.php:383 Code/Module/Search.php:120
 #: Code/Widget/Sitesearch.php:35 include/misc.php:1023 include/misc.php:1035
 msgid "Search"
 msgstr ""
@@ -759,8 +759,8 @@ msgstr ""
 #: Code/Lib/Apps.php:624 Code/Lib/Libprofile.php:203
 #: Code/Lib/ThreadItem.php:149 Code/Lib/Menu.php:142
 #: Code/Module/Admin/Profs.php:192 Code/Module/Layouts.php:209
-#: Code/Module/Connections.php:320 Code/Module/Connections.php:361
-#: Code/Module/Connections.php:382 Code/Module/Editlayout.php:127
+#: Code/Module/Connections.php:323 Code/Module/Connections.php:366
+#: Code/Module/Connections.php:387 Code/Module/Editlayout.php:127
 #: Code/Module/Editwebpage.php:160 Code/Module/Lists.php:343
 #: Code/Module/Card_edit.php:110 Code/Module/Menu.php:182
 #: Code/Module/Settings/Oauth2.php:213 Code/Module/Settings/Oauth.php:166
@@ -775,7 +775,7 @@ msgstr ""
 #: Code/Module/Admin/Profs.php:193 Code/Module/Admin/Accounts.php:192
 #: Code/Module/Admin/Channels.php:147 Code/Module/Connedit.php:632
 #: Code/Module/Connedit.php:868 Code/Module/Cdav.php:1080
-#: Code/Module/Cdav.php:1389 Code/Module/Connections.php:328
+#: Code/Module/Cdav.php:1389 Code/Module/Connections.php:331
 #: Code/Module/Editlayout.php:151 Code/Module/Editwebpage.php:185
 #: Code/Module/Photos.php:1259 Code/Module/Card_edit.php:140
 #: Code/Module/Settings/Oauth2.php:214 Code/Module/Settings/Oauth.php:167
@@ -806,7 +806,7 @@ msgstr ""
 msgid "Unpin from navbar"
 msgstr ""
 
-#: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2282
+#: Code/Lib/Apps.php:1136 Code/Lib/Apps.php:1227 Code/Lib/Activity.php:2281
 #: Code/Module/Cdav.php:878 Code/Module/Cdav.php:879 Code/Module/Cdav.php:885
 #: Code/Module/Embedphotos.php:339 Code/Module/Photos.php:854
 #: Code/Module/Photos.php:1322 Code/Widget/Album.php:100
@@ -899,9 +899,9 @@ msgstr ""
 msgid "Not verified"
 msgstr ""
 
-#: Code/Lib/Libprofile.php:470 Code/Module/Connections.php:64
-#: Code/Module/Connections.php:123 Code/Module/Connections.php:134
-#: Code/Module/Connections.php:294
+#: Code/Lib/Libprofile.php:470 Code/Module/Connections.php:65
+#: Code/Module/Connections.php:124 Code/Module/Connections.php:135
+#: Code/Module/Connections.php:295
 msgid "Active"
 msgstr ""
 
@@ -1087,7 +1087,7 @@ msgstr ""
 #: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
 #: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
 #: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:247
-#: Code/Storage/Browser.php:435 boot.php:1108
+#: Code/Storage/Browser.php:435 boot.php:1114
 #: extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
 #: extend/addon/a/content_import/Mod_content_import.php:151
@@ -1110,7 +1110,7 @@ msgstr ""
 #: Code/Module/Dev/Ap_probe.php:24 Code/Module/Dev/Zot_probe.php:23
 #: Code/Module/Settings/Permcats.php:117 Code/Module/Settings/Display.php:118
 #: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:247
-#: Code/Storage/Browser.php:435 boot.php:1108
+#: Code/Storage/Browser.php:435 boot.php:1114
 #: extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
 #: extend/addon/a/content_import/Mod_content_import.php:151
@@ -1247,7 +1247,7 @@ msgid "Content filtering"
 msgstr ""
 
 #: Code/Lib/Navbar.php:119 Code/Lib/Navbar.php:141 Code/Lib/Navbar.php:159
-#: boot.php:1102
+#: boot.php:1108
 msgid "Logout"
 msgstr ""
 
@@ -1272,7 +1272,7 @@ msgid "Log me out of this site"
 msgstr ""
 
 #: Code/Lib/Navbar.php:164 Code/Module/Register.php:304
-#: Code/Module/Communities.php:83 boot.php:1083
+#: Code/Module/Communities.php:83 boot.php:1089
 msgid "Register"
 msgstr ""
 
@@ -1799,11 +1799,11 @@ msgstr ""
 #: Code/Module/Layouts.php:89 Code/Module/Layouts.php:100
 #: Code/Module/Connedit.php:351 Code/Module/Pdledit.php:37
 #: Code/Module/Channel.php:240 Code/Module/Channel.php:418
-#: Code/Module/Channel.php:456 Code/Module/Display.php:508
+#: Code/Module/Channel.php:456 Code/Module/Display.php:510
 #: Code/Module/Setup.php:220 Code/Module/Inspect.php:17
 #: Code/Module/Profile.php:102 Code/Module/Profile.php:117
 #: Code/Module/Defperms.php:176 Code/Module/Defperms.php:182
-#: Code/Module/Common.php:48 Code/Module/Connections.php:37
+#: Code/Module/Common.php:48 Code/Module/Connections.php:38
 #: Code/Module/Cover_photo.php:336 Code/Module/Cover_photo.php:350
 #: Code/Module/Calendar.php:260 Code/Module/Editlayout.php:77
 #: Code/Module/Editlayout.php:100 Code/Module/Editwebpage.php:82
@@ -2282,58 +2282,58 @@ msgid ""
 "language or topic. Replies are sent back to your main channel"
 msgstr ""
 
-#: Code/Lib/Share.php:123 Code/Lib/Activity.php:3002 Code/Module/Share.php:119
-#: include/items.php:3157
+#: Code/Lib/Share.php:123 Code/Lib/Activity.php:3001 Code/Module/Share.php:119
+#: include/items.php:3161
 #, php-format
 msgid "&#x1f501; Repeated %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:465
+#: Code/Lib/Libzot.php:774
+msgid "Unable to verify channel signature"
+msgstr ""
+
+#: Code/Lib/Activity.php:466
 msgid "Quoted post"
 msgstr ""
 
-#: Code/Lib/Activity.php:2973
+#: Code/Lib/Activity.php:2972
 msgid "Activity"
 msgstr ""
 
-#: Code/Lib/Activity.php:2979
+#: Code/Lib/Activity.php:2978
 #, php-format
 msgid "Likes %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:2982
+#: Code/Lib/Activity.php:2981
 #, php-format
 msgid "Doesn't like %1$s's %2$s"
 msgstr ""
 
-#: Code/Lib/Activity.php:2988
+#: Code/Lib/Activity.php:2987
 #, php-format
 msgid "Will attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2991
+#: Code/Lib/Activity.php:2990
 #, php-format
 msgid "Will not attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2994
+#: Code/Lib/Activity.php:2993
 #, php-format
 msgid "May attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:2997
+#: Code/Lib/Activity.php:2996
 #, php-format
 msgid "May not attend %s's event"
 msgstr ""
 
-#: Code/Lib/Activity.php:3553 include/items.php:2997 include/misc.php:1663
-#: include/misc.php:3115
+#: Code/Lib/Activity.php:3552 include/misc.php:1663 include/misc.php:3115
+#: include/items.php:2997
 #, php-format
 msgid "%1$s (%2$s)"
-msgstr ""
-
-#: Code/Lib/Libzot.php:774
-msgid "Unable to verify channel signature"
 msgstr ""
 
 #: Code/Lib/AccessList.php:31
@@ -2351,7 +2351,7 @@ msgstr ""
 msgid "edit"
 msgstr ""
 
-#: Code/Lib/AccessList.php:387 Code/Widget/Activity_filter.php:146
+#: Code/Lib/AccessList.php:387 Code/Widget/Activity_filter.php:147
 msgid "Lists"
 msgstr ""
 
@@ -2426,7 +2426,7 @@ msgstr ""
 msgid "cover photo"
 msgstr ""
 
-#: Code/Lib/Channel.php:2162 Code/Module/Rmagic.php:88 boot.php:1104
+#: Code/Lib/Channel.php:2162 Code/Module/Rmagic.php:88 boot.php:1110
 msgid "Remote Authentication"
 msgstr ""
 
@@ -2727,7 +2727,7 @@ msgstr ""
 #: Code/Module/Block.php:49 Code/Module/Chanview.php:106
 #: Code/Module/Card_edit.php:56 Code/Module/Page.php:85 Code/Module/Cal.php:65
 #: Code/Module/Wall_upload.php:37 Code/Module/Superblock.php:44
-#: include/items.php:4125
+#: include/items.php:4129
 msgid "Channel not found."
 msgstr ""
 
@@ -2947,7 +2947,7 @@ msgid "No themes found."
 msgstr ""
 
 #: Code/Module/Admin/Themes.php:79 Code/Module/Admin/Addons.php:265
-#: Code/Module/Display.php:59 Code/Module/Display.php:511
+#: Code/Module/Display.php:59 Code/Module/Display.php:513
 #: Code/Module/Admin.php:100 Code/Module/Inspect.php:31
 #: Code/Module/Filestorage.php:41 Code/Module/Search.php:500
 #: Code/Module/Viewsrc.php:29 Code/Module/Thing.php:110 Code/Module/Dev.php:61
@@ -3257,7 +3257,7 @@ msgstr ""
 msgid "No registrations."
 msgstr ""
 
-#: Code/Module/Admin/Accounts.php:190 Code/Module/Connections.php:344
+#: Code/Module/Admin/Accounts.php:190 Code/Module/Connections.php:349
 #: include/conversation.php:548
 msgid "Approve"
 msgstr ""
@@ -3359,11 +3359,11 @@ msgid "UID"
 msgstr ""
 
 #: Code/Module/Admin/Channels.php:155 Code/Module/Connedit.php:851
-#: Code/Module/Cdav.php:1372 Code/Module/Connections.php:237
+#: Code/Module/Cdav.php:1372 Code/Module/Connections.php:238
 #: Code/Module/Lists.php:214 Code/Module/Chat.php:259
 #: Code/Module/Settings/Oauth2.php:117 Code/Module/Settings/Oauth2.php:147
 #: Code/Module/Settings/Oauth.php:100 Code/Module/Settings/Oauth.php:128
-#: Code/Module/Sharedwithme.php:107 Code/Widget/Activity_filter.php:219
+#: Code/Module/Sharedwithme.php:107 Code/Widget/Activity_filter.php:220
 #: Code/Storage/Browser.php:313
 msgid "Name"
 msgstr ""
@@ -4127,7 +4127,7 @@ msgstr ""
 msgid "Layout Description"
 msgstr ""
 
-#: Code/Module/Layouts.php:207 Code/Module/Connections.php:251
+#: Code/Module/Layouts.php:207 Code/Module/Connections.php:252
 #: Code/Module/Menu.php:184 Code/Module/Blocks.php:170
 #: Code/Module/Webpages.php:280
 msgid "Created"
@@ -4234,7 +4234,7 @@ msgstr ""
 msgid "Unignore"
 msgstr ""
 
-#: Code/Module/Connedit.php:600 Code/Module/Connections.php:346
+#: Code/Module/Connedit.php:600 Code/Module/Connections.php:351
 msgid "Ignore"
 msgstr ""
 
@@ -4322,8 +4322,8 @@ msgstr ""
 msgid "Peers"
 msgstr ""
 
-#: Code/Module/Connedit.php:691 Code/Module/Connections.php:89
-#: Code/Module/Connections.php:112 Code/Module/Affinity.php:69
+#: Code/Module/Connedit.php:691 Code/Module/Connections.php:90
+#: Code/Module/Connections.php:113 Code/Module/Affinity.php:69
 #: Code/Widget/Affinity.php:34
 msgid "All"
 msgstr ""
@@ -4378,7 +4378,7 @@ msgstr ""
 msgid "Connection Default Permissions"
 msgstr ""
 
-#: Code/Module/Connedit.php:801 include/items.php:4122
+#: Code/Module/Connedit.php:801 include/items.php:4126
 #, php-format
 msgid "Connection: %s"
 msgstr ""
@@ -4830,7 +4830,7 @@ msgstr ""
 msgid "Reset form"
 msgstr ""
 
-#: Code/Module/Channel.php:565 Code/Module/Display.php:436
+#: Code/Module/Channel.php:565 Code/Module/Display.php:438
 msgid ""
 "You must enable javascript for your browser to be able to view this content."
 msgstr ""
@@ -4840,50 +4840,50 @@ msgstr ""
 msgid "This post was published on the home page of %s."
 msgstr ""
 
-#: Code/Module/Display.php:388
+#: Code/Module/Display.php:390
 #, php-format
 msgid "\"%1$s\", shared by %2$s with %3$s"
 msgstr ""
 
-#: Code/Module/Display.php:389
+#: Code/Module/Display.php:391
 #, php-format
 msgid "%1$s shared this post with %2$s"
 msgstr ""
 
-#: Code/Module/Display.php:393
+#: Code/Module/Display.php:395
 msgid "Not much to read, click to see the post."
 msgstr ""
 
-#: Code/Module/Display.php:397
+#: Code/Module/Display.php:399
 #, php-format
 msgid "%1$s shared a reaction to \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:398
+#: Code/Module/Display.php:400
 #, php-format
 msgid "%s shared a reaction to this post/conversation"
 msgstr ""
 
-#: Code/Module/Display.php:405
+#: Code/Module/Display.php:407
 #, php-format
 msgid "%1$s commented \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:406
+#: Code/Module/Display.php:408
 #, php-format
 msgid "%s shared a comment of this post/conversation"
 msgstr ""
 
-#: Code/Module/Display.php:410
+#: Code/Module/Display.php:412
 #, php-format
 msgid "%1$s wrote this: \"%2$s\""
 msgstr ""
 
-#: Code/Module/Display.php:453
+#: Code/Module/Display.php:455
 msgid "Article"
 msgstr ""
 
-#: Code/Module/Display.php:506
+#: Code/Module/Display.php:508
 msgid "Item has been removed."
 msgstr ""
 
@@ -5420,31 +5420,31 @@ msgstr ""
 msgid "Repository version (dev)"
 msgstr ""
 
-#: Code/Module/Chanview.php:161 Code/Module/Chanview.php:162
+#: Code/Module/Chanview.php:148 Code/Module/Chanview.php:149
 msgid "Not available"
 msgstr ""
 
-#: Code/Module/Chanview.php:181
+#: Code/Module/Chanview.php:168
 msgid "Cover photo for this channel"
 msgstr ""
 
-#: Code/Module/Chanview.php:183
+#: Code/Module/Chanview.php:170
 msgid "Followers"
 msgstr ""
 
-#: Code/Module/Chanview.php:184
+#: Code/Module/Chanview.php:171
 msgid "Following"
 msgstr ""
 
-#: Code/Module/Chanview.php:187 include/conversation.php:826
+#: Code/Module/Chanview.php:174 include/conversation.php:826
 msgid "Visit"
 msgstr ""
 
-#: Code/Module/Chanview.php:189
+#: Code/Module/Chanview.php:176
 msgid "View Recent"
 msgstr ""
 
-#: Code/Module/Chanview.php:191
+#: Code/Module/Chanview.php:178
 msgid "toggle full screen mode"
 msgstr ""
 
@@ -5574,160 +5574,164 @@ msgstr ""
 msgid "View Common Connections"
 msgstr ""
 
-#: Code/Module/Connections.php:69 Code/Module/Connections.php:156
-#: Code/Module/Connections.php:299
+#: Code/Module/Connections.php:70 Code/Module/Connections.php:157
+#: Code/Module/Connections.php:300
 msgid "Blocked"
 msgstr ""
 
-#: Code/Module/Connections.php:74 Code/Module/Connections.php:163
-#: Code/Module/Connections.php:298
+#: Code/Module/Connections.php:75 Code/Module/Connections.php:164
+#: Code/Module/Connections.php:299
 msgid "Ignored"
 msgstr ""
 
-#: Code/Module/Connections.php:79 Code/Module/Connections.php:177
-#: Code/Module/Connections.php:297
+#: Code/Module/Connections.php:80 Code/Module/Connections.php:178
+#: Code/Module/Connections.php:298
 msgid "Hidden"
 msgstr ""
 
-#: Code/Module/Connections.php:84 Code/Module/Connections.php:170
+#: Code/Module/Connections.php:85 Code/Module/Connections.php:171
 msgid "Archived/Unreachable"
 msgstr ""
 
-#: Code/Module/Connections.php:94 Code/Module/Connections.php:108
+#: Code/Module/Connections.php:95 Code/Module/Connections.php:109
 #: Code/Module/Menu.php:186 Code/Module/Notifications.php:66
 msgid "New"
 msgstr ""
 
-#: Code/Module/Connections.php:142
+#: Code/Module/Connections.php:143
 msgid "Active Connections"
 msgstr ""
 
-#: Code/Module/Connections.php:145
+#: Code/Module/Connections.php:146
 msgid "Show active connections"
 msgstr ""
 
-#: Code/Module/Connections.php:149 Code/Widget/Notifications.php:89
+#: Code/Module/Connections.php:150 Code/Widget/Notifications.php:89
 msgid "New Connections"
 msgstr ""
 
-#: Code/Module/Connections.php:152
+#: Code/Module/Connections.php:153
 msgid "Show pending (new) connections"
 msgstr ""
 
-#: Code/Module/Connections.php:159
+#: Code/Module/Connections.php:160
 msgid "Only show blocked connections"
 msgstr ""
 
-#: Code/Module/Connections.php:166
+#: Code/Module/Connections.php:167
 msgid "Only show ignored connections"
 msgstr ""
 
-#: Code/Module/Connections.php:173
+#: Code/Module/Connections.php:174
 msgid "Only show archived/unreachable connections"
 msgstr ""
 
-#: Code/Module/Connections.php:180
+#: Code/Module/Connections.php:181
 msgid "Only show hidden connections"
 msgstr ""
 
-#: Code/Module/Connections.php:184 Code/Module/Profperm.php:158
+#: Code/Module/Connections.php:185 Code/Module/Profperm.php:158
 msgid "All Connections"
 msgstr ""
 
-#: Code/Module/Connections.php:187
+#: Code/Module/Connections.php:188
 msgid "Show all connections"
 msgstr ""
 
-#: Code/Module/Connections.php:240
+#: Code/Module/Connections.php:241
 msgid "Order by name"
 msgstr ""
 
-#: Code/Module/Connections.php:244
+#: Code/Module/Connections.php:245
 msgid "Recent"
 msgstr ""
 
-#: Code/Module/Connections.php:247
+#: Code/Module/Connections.php:248
 msgid "Order by recent"
 msgstr ""
 
-#: Code/Module/Connections.php:254
+#: Code/Module/Connections.php:255
 msgid "Order by date"
 msgstr ""
 
-#: Code/Module/Connections.php:295
+#: Code/Module/Connections.php:296
 msgid "Pending approval"
 msgstr ""
 
-#: Code/Module/Connections.php:296
+#: Code/Module/Connections.php:297
 msgid "Archived"
 msgstr ""
 
-#: Code/Module/Connections.php:300
+#: Code/Module/Connections.php:301
 msgid "Not connected at this location"
 msgstr ""
 
-#: Code/Module/Connections.php:318
+#: Code/Module/Connections.php:321
 #, php-format
 msgid "%1$s [%2$s]"
 msgstr ""
 
-#: Code/Module/Connections.php:319
+#: Code/Module/Connections.php:322
 msgid "Edit connection"
 msgstr ""
 
-#: Code/Module/Connections.php:321
+#: Code/Module/Connections.php:324
 msgid "Delete connection"
 msgstr ""
 
-#: Code/Module/Connections.php:332
-msgid "Channel address"
-msgstr ""
-
-#: Code/Module/Connections.php:334
-msgid "Network"
+#: Code/Module/Connections.php:333
+msgid "Message"
 msgstr ""
 
 #: Code/Module/Connections.php:337
-msgid "Call"
+msgid "Channel address"
 msgstr ""
 
 #: Code/Module/Connections.php:339
+msgid "Network"
+msgstr ""
+
+#: Code/Module/Connections.php:342
+msgid "Call"
+msgstr ""
+
+#: Code/Module/Connections.php:344
 msgid "Status"
 msgstr ""
 
-#: Code/Module/Connections.php:341
+#: Code/Module/Connections.php:346
 msgid "Connected"
 msgstr ""
 
-#: Code/Module/Connections.php:343
+#: Code/Module/Connections.php:348
 msgid "Approve connection"
 msgstr ""
 
-#: Code/Module/Connections.php:345
+#: Code/Module/Connections.php:350
 msgid "Ignore connection"
 msgstr ""
 
-#: Code/Module/Connections.php:347
+#: Code/Module/Connections.php:352
 msgid "Recent activity"
 msgstr ""
 
-#: Code/Module/Connections.php:374
+#: Code/Module/Connections.php:379
 msgid "Filter by"
 msgstr ""
 
-#: Code/Module/Connections.php:375
+#: Code/Module/Connections.php:380
 msgid "Sort by"
 msgstr ""
 
-#: Code/Module/Connections.php:379
+#: Code/Module/Connections.php:384
 msgid "Search your connections"
 msgstr ""
 
-#: Code/Module/Connections.php:380
+#: Code/Module/Connections.php:385
 msgid "Connections search"
 msgstr ""
 
-#: Code/Module/Connections.php:381 Code/Module/Directory.php:522
+#: Code/Module/Connections.php:386 Code/Module/Directory.php:522
 #: Code/Module/Directory.php:527 Code/Widget/Findpeople.php:36
 msgid "Find"
 msgstr ""
@@ -5865,25 +5869,25 @@ msgstr ""
 msgid "Unable to process image"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:281 include/items.php:4475
+#: Code/Module/Cover_photo.php:281 include/items.php:4479
 msgid "female"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:282 include/items.php:4476
+#: Code/Module/Cover_photo.php:282 include/items.php:4480
 #, php-format
 msgid "%1$s updated her %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:283 include/items.php:4477
+#: Code/Module/Cover_photo.php:283 include/items.php:4481
 msgid "male"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:284 include/items.php:4478
+#: Code/Module/Cover_photo.php:284 include/items.php:4482
 #, php-format
 msgid "%1$s updated his %2$s"
 msgstr ""
 
-#: Code/Module/Cover_photo.php:286 include/items.php:4480
+#: Code/Module/Cover_photo.php:286 include/items.php:4484
 #, php-format
 msgid "%1$s updated their %2$s"
 msgstr ""
@@ -6045,7 +6049,7 @@ msgstr ""
 msgid "Access list is empty"
 msgstr ""
 
-#: Code/Module/Stream.php:317 include/items.php:4112
+#: Code/Module/Stream.php:317 include/items.php:4116
 #, php-format
 msgid "Access list: %s"
 msgstr ""
@@ -6526,7 +6530,7 @@ msgstr ""
 msgid "Could not create access list."
 msgstr ""
 
-#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4088
+#: Code/Module/Lists.php:143 Code/Module/Lists.php:285 include/items.php:4092
 msgid "Access list not found."
 msgstr ""
 
@@ -7179,7 +7183,7 @@ msgid ""
 "Password reset failed."
 msgstr ""
 
-#: Code/Module/Lostpass.php:104 boot.php:1112
+#: Code/Module/Lostpass.php:104 boot.php:1118
 msgid "Password Reset"
 msgstr ""
 
@@ -7901,7 +7905,7 @@ msgid ""
 msgstr ""
 
 #: Code/Module/Profile_photo.php:122 Code/Module/Profile_photo.php:291
-#: include/photo_factory.php:413
+#: include/photo_factory.php:419
 msgid "Profile Photos"
 msgstr ""
 
@@ -10164,98 +10168,98 @@ msgctxt "widget"
 msgid "Activity"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:40
+#: Code/Widget/Activity_filter.php:41
 msgid "Direct Messages"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:44
+#: Code/Widget/Activity_filter.php:45
 msgid "Show direct (private) messages"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:54
+#: Code/Widget/Activity_filter.php:55
 msgid "Personal Posts"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:58
+#: Code/Widget/Activity_filter.php:59
 msgid "Show posts that mention or involve me"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:67
+#: Code/Widget/Activity_filter.php:68
 msgid "Saved Posts"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:71
+#: Code/Widget/Activity_filter.php:72
 msgid "Show posts that I have saved"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:85
+#: Code/Widget/Activity_filter.php:86
 msgid "Show drafts that I have saved"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:95
+#: Code/Widget/Activity_filter.php:96
 msgid "Videos"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:99
+#: Code/Widget/Activity_filter.php:100
 msgid "Show posts that include videos"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:113
+#: Code/Widget/Activity_filter.php:114
 msgid "Show posts that include events"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:117
+#: Code/Widget/Activity_filter.php:118
 msgid "Polls"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:121
+#: Code/Widget/Activity_filter.php:122
 msgid "Show posts that include polls"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:141
+#: Code/Widget/Activity_filter.php:142
 #, php-format
 msgid "Show posts related to the %s access list"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:150
+#: Code/Widget/Activity_filter.php:151
 msgid "Show my access lists"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:168
+#: Code/Widget/Activity_filter.php:169
 msgid "Show posts to this group"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:170
+#: Code/Widget/Activity_filter.php:171
 msgid "New post"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:177 Code/Widget/Notifications.php:124
+#: Code/Widget/Activity_filter.php:178 Code/Widget/Notifications.php:124
 #: Code/Widget/Notifications.php:125 Code/Widget/Groups.php:114
 msgid "Groups"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:181
+#: Code/Widget/Activity_filter.php:182
 msgid "Show groups"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:199
+#: Code/Widget/Activity_filter.php:200
 #, php-format
 msgid "Show posts with hashtag %s"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:205
+#: Code/Widget/Activity_filter.php:206
 msgid "Followed Hashtags"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:209
+#: Code/Widget/Activity_filter.php:210
 msgid "Show followed hashtags"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:233
+#: Code/Widget/Activity_filter.php:234
 msgid "Remove active filter"
 msgstr ""
 
-#: Code/Widget/Activity_filter.php:247
+#: Code/Widget/Activity_filter.php:248
 msgid "Stream Filters"
 msgstr ""
 
@@ -10676,45 +10680,45 @@ msgstr ""
 msgid "Added by superblock"
 msgstr ""
 
-#: boot.php:1082
+#: boot.php:1088
 msgid "Create an account to access services and applications"
 msgstr ""
 
-#: boot.php:1106
+#: boot.php:1112
 msgid "Login/Email"
 msgstr ""
 
-#: boot.php:1107
+#: boot.php:1113
 msgid "Password"
 msgstr ""
 
-#: boot.php:1108
+#: boot.php:1114
 msgid "Remember me"
 msgstr ""
 
-#: boot.php:1111
+#: boot.php:1117
 msgid "Forgot your password?"
 msgstr ""
 
-#: boot.php:1837
+#: boot.php:1843
 #, php-format
 msgid "[$Projectname] Website SSL error for %s"
 msgstr ""
 
-#: boot.php:1842
+#: boot.php:1848
 msgid "Website SSL certificate is not valid. Please correct."
 msgstr ""
 
-#: boot.php:1886
+#: boot.php:1892
 #, php-format
 msgid "[$Projectname] Cron tasks not running on %s"
 msgstr ""
 
-#: boot.php:1891
+#: boot.php:1897
 msgid "Cron/Scheduled tasks not running."
 msgstr ""
 
-#: boot.php:1892 include/datetime.php:278
+#: boot.php:1898 include/datetime.php:278
 msgid "never"
 msgstr ""
 
@@ -11261,70 +11265,6 @@ msgstr ""
 msgid "Empty path"
 msgstr ""
 
-#: include/items.php:871
-msgid "(Unknown)"
-msgstr ""
-
-#: include/items.php:1042
-msgid "Visible to anybody on the internet."
-msgstr ""
-
-#: include/items.php:1044
-msgid "Visible to you only."
-msgstr ""
-
-#: include/items.php:1046
-msgid "Visible to anybody in this network."
-msgstr ""
-
-#: include/items.php:1048
-msgid "Visible to anybody authenticated."
-msgstr ""
-
-#: include/items.php:1050
-#, php-format
-msgid "Visible to anybody on %s."
-msgstr ""
-
-#: include/items.php:1052
-msgid "Visible to all connections."
-msgstr ""
-
-#: include/items.php:1054
-msgid "Visible to approved connections."
-msgstr ""
-
-#: include/items.php:1056
-msgid "Visible to specific connections."
-msgstr ""
-
-#: include/items.php:4105
-msgid "Privacy group is empty."
-msgstr ""
-
-#: include/items.php:4482
-msgid "profile photo"
-msgstr ""
-
-#: include/items.php:4698
-#, php-format
-msgid "[Edited %s]"
-msgstr ""
-
-#: include/items.php:4698
-msgctxt "edit_activity"
-msgid "Post"
-msgstr ""
-
-#: include/items.php:4698
-msgctxt "edit_activity"
-msgid "Comment"
-msgstr ""
-
-#: include/api_auth.php:162
-msgid "This API method requires authentication."
-msgstr ""
-
 #: include/conversation.php:110
 #, php-format
 msgid "%1$s repeated %2$s's %3$s"
@@ -11673,6 +11613,10 @@ msgid "Abstain"
 msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
+
+#: include/api_auth.php:162
+msgid "This API method requires authentication."
+msgstr ""
 
 #: include/taxonomy.php:366
 msgid "Popular Tags"
@@ -12104,6 +12048,66 @@ msgstr ""
 
 #: include/misc.php:2863
 msgid "Specify folder"
+msgstr ""
+
+#: include/items.php:871
+msgid "(Unknown)"
+msgstr ""
+
+#: include/items.php:1042
+msgid "Visible to anybody on the internet."
+msgstr ""
+
+#: include/items.php:1044
+msgid "Visible to you only."
+msgstr ""
+
+#: include/items.php:1046
+msgid "Visible to anybody in this network."
+msgstr ""
+
+#: include/items.php:1048
+msgid "Visible to anybody authenticated."
+msgstr ""
+
+#: include/items.php:1050
+#, php-format
+msgid "Visible to anybody on %s."
+msgstr ""
+
+#: include/items.php:1052
+msgid "Visible to all connections."
+msgstr ""
+
+#: include/items.php:1054
+msgid "Visible to approved connections."
+msgstr ""
+
+#: include/items.php:1056
+msgid "Visible to specific connections."
+msgstr ""
+
+#: include/items.php:4109
+msgid "Privacy group is empty."
+msgstr ""
+
+#: include/items.php:4486
+msgid "profile photo"
+msgstr ""
+
+#: include/items.php:4702
+#, php-format
+msgid "[Edited %s]"
+msgstr ""
+
+#: include/items.php:4702
+msgctxt "edit_activity"
+msgid "Post"
+msgstr ""
+
+#: include/items.php:4702
+msgctxt "edit_activity"
+msgid "Comment"
 msgstr ""
 
 #: include/datetime.php:166
