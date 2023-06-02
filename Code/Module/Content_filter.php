@@ -21,10 +21,10 @@ class Content_filter extends Controller
         if ($_POST['content_filter-submit']) {
             $incl = ((x($_POST['message_filter_incl'])) ? htmlspecialchars_decode(trim($_POST['message_filter_incl']), ENT_QUOTES) : '');
             $excl = ((x($_POST['message_filter_excl'])) ? htmlspecialchars_decode(trim($_POST['message_filter_excl']), ENT_QUOTES) : '');
-
+            $filter_moderate = (isset($_POST['filter_moderate']) ? intval($_POST['filter_moderate']) : 0);
             set_pconfig(local_channel(), 'system', 'message_filter_incl', $incl);
             set_pconfig(local_channel(), 'system', 'message_filter_excl', $excl);
-
+            set_pconfig(local_channel(), 'system', 'filter_moderate', $filter_moderate);
             info(t('Content Filter settings updated.') . EOL);
         }
 
@@ -47,6 +47,15 @@ class Content_filter extends Controller
 
         $setting_fields = $text;
 
+        $setting_fields .= replace_macros(Theme::get_template('field_checkbox.tpl'), array(
+            '$field' => [
+                'filter_moderate',
+                t('Moderate filtered content'),
+                get_pconfig(local_channel(), 'system', 'filter_moderate'),
+                t('Default is to ignore or reject filtered content'),
+                [ t('No'), t('Yes') ],
+            ]
+        ));
         $setting_fields .= replace_macros(Theme::get_template('field_textarea.tpl'), array(
             '$field' => [
                 'message_filter_incl',

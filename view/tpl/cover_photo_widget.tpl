@@ -8,7 +8,7 @@
 	$(document).ready(function() {
 		if(! $('#cover-photo').length)
 			return;
-		
+
 		$('#cover-photo').removeClass('d-none');
 		cover_height = calc_height();
 		$('#cover-photo').css('height', cover_height + 'px');

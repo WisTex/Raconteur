@@ -3883,14 +3883,9 @@ class Activity
         }
 
         if (!$allowed && !$force) {
-            if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
-                $item['item_blocked'] = ITEM_MODERATED;
-            }
-            else {
-                logger('no permission: channel ' . $channel['channel_address'] . ', id = ' . $item['mid']);
-                logger('no permission: reason ' . print_r($reason, true));
-                return;
-            }
+            logger('no permission: channel ' . $channel['channel_address'] . ', id = ' . $item['mid']);
+            logger('no permission: reason ' . print_r($reason, true));
+            return;
         }
 
         $item['aid'] = $channel['channel_account_id'];
@@ -3932,10 +3927,16 @@ class Activity
             intval($channel['channel_id'])
         );
 
+        $isFilteredByChannel = !post_is_importable($channel['channel_id'], $item, $abook);
 
-        if (!post_is_importable($channel['channel_id'], $item, $abook)) {
-            logger('post is filtered');
-            return;
+        if ($isFilteredByChannel) {
+            if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                $item['item_blocked'] = ITEM_MODERATED;
+            }
+            else {
+                logger('post is filtered');
+                return;
+            }
         }
 
         $maxlen = get_max_import_size();
