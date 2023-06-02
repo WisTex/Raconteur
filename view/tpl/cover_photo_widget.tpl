@@ -1,20 +1,14 @@
 <script>
-	var aside_padding_top;
-	var section_padding_top;
-	var coverSlid = false;
-	var hide_cover = Boolean({{$hide_cover}});
-	var cover_height;
+	let aside_padding_top;
+	let section_padding_top;
+	let coverSlid = false;
+	let hide_cover = Boolean({{$hide_cover}});
+	let cover_height;
 
 	$(document).ready(function() {
 		if(! $('#cover-photo').length)
 			return;
-
-		if($(window).width() < 755) {
-			$('#cover-photo').remove();
-			coverSlid = true;
-			return;
-		}
-
+		
 		$('#cover-photo').removeClass('d-none');
 		cover_height = calc_height();
 		$('#cover-photo').css('height', cover_height + 'px');
@@ -54,13 +48,6 @@
 	$(window).resize(function () {
 		cover_height = calc_height();
 		$('#cover-photo').css('height', cover_height + 'px');
-		if($(window).width() < 755) {
-			$('#cover-photo').remove();
-			$('.navbar').addClass('fixed-top');
-			$('main').css('opacity', 1);
-			coverSlid = true;
-		}
-
 	});
 
     function calc_height() {
