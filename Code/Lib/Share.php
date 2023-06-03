@@ -73,9 +73,12 @@ class Share
 
         $channel = Channel::from_id($this->item['uid']);
         $observer = App::get_observer();
-
+        
         if ($this->item['attach']) {
-            $this->attach = json_decode($this->item['attach'],true);
+            $tmp = json_decode($this->item['attach'],true);
+        }
+        if ($tmp) {
+            $this->attach = $tmp;
         }
         else {
             $this->attach = [];
