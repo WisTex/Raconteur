@@ -3777,11 +3777,16 @@ class Activity
 
                 }
                 else {
-                    logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
-                    logger('rejected: ' . print_r($item, true), LOGGER_DATA);
-                    // let the sender know we received their comment, but we don't permit spam here.
-                    $commentApproval?->Reject();
-                    return;
+                    if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                        $item['item_blocked'] = ITEM_MODERATED;
+                    }
+                    else {
+                        logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+                        logger('rejected: ' . print_r($item, true), LOGGER_DATA);
+                        // let the sender know we received their comment, but we don't permit spam here.
+                        $commentApproval?->Reject();
+                        return;
+                    }
                 }
             }
             else {
@@ -3922,10 +3927,16 @@ class Activity
             intval($channel['channel_id'])
         );
 
+        $isFilteredByChannel = !post_is_importable($channel['channel_id'], $item, $abook);
 
-        if (!post_is_importable($channel['channel_id'], $item, $abook)) {
-            logger('post is filtered');
-            return;
+        if ($isFilteredByChannel) {
+            if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                $item['item_blocked'] = ITEM_MODERATED;
+            }
+            else {
+                logger('post is filtered');
+                return;
+            }
         }
 
         $maxlen = get_max_import_size();

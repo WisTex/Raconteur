@@ -2005,14 +2005,21 @@ class Libzot
                     $arr['id'] = $r[0]['id'];
                     $arr['uid'] = $channel['channel_id'];
 
-                    if (post_is_importable($channel['channel_id'], $arr, $abook)) {
-                        // IConfig::Set($arr, 'activitypub', 'signed_data', $act->meta['signed_data'], false);
+                    $isFilteredByChannel = !post_is_importable($channel['channel_id'], $arr, $abook);
+
+                    if ($isFilteredByChannel) {
+                        if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                            $arr['item_blocked'] = ITEM_MODERATED;
+                        }
+                        else {
+                            $DR->update('update ignored');
+                            $result[] = $DR->get();
+                        }
+                    }
+                    else {
                         ObjCache::Set($arr['mid'] . '.nomad', $act->meta['signed_data']);
                         $item_result = self::update_imported_item($sender, $arr, $r[0], $channel['channel_id'], $tag_delivery);
                         $DR->update('updated');
-                        $result[] = $DR->get();
-                    } else {
-                        $DR->update('update ignored');
                         $result[] = $DR->get();
                     }
                 } else {
@@ -2057,7 +2064,18 @@ class Libzot
                     logger('message summary length exceeds max_import_size: truncated');
                 }
 
-                if (post_is_importable($arr['uid'], $arr, $abook)) {
+                $isFilteredByChannel = !post_is_importable($arr['uid'], $arr, $abook);
+
+                if ($isFilteredByChannel) {
+                    if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
+                        $arr['item_blocked'] = ITEM_MODERATED;
+                    }
+                    else {
+                        $DR->update('post ignored');
+                        $result[] = $DR->get();
+                    }
+                }
+                else {
                     // Strip old-style hubzilla bookmarks
                     if (str_contains($arr['body'], "#^[")) {
                         $arr['body'] = str_replace("#^[", "[", $arr['body']);
@@ -2084,9 +2102,6 @@ class Libzot
                         Hook::call('activity_received', $parr);
                     }
                     $DR->update(($item_id) ? 'posted' : 'storage failed: ' . $item_result['message']);
-                    $result[] = $DR->get();
-                } else {
-                    $DR->update('post ignored');
                     $result[] = $DR->get();
                 }
             }
