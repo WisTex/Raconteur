@@ -7,6 +7,7 @@ use Code\Lib\Libsync;
 use Code\Lib\Features;
 use Code\Lib\Addon;
 use Code\Extend\Hook;
+use Code\Lib\PConfig;
 use Code\Render\Theme;
 
 
@@ -36,6 +37,7 @@ class Display
         $channel_menu = ((x($_POST, 'channel_menu')) ? intval($_POST['channel_menu']) : 0);
         $user_scalable = ((x($_POST, 'user_scalable')) ? intval($_POST['user_scalable']) : 0);
         $nosmile = ((x($_POST, 'nosmile')) ? intval($_POST['nosmile']) : 0);
+        $filter_menu_open = ((x($_POST, 'filter_menu_open')) ? intval($_POST['filter_menu_open']) : 0);
         $indentpx = ((x($_POST, 'indentpx')) ? intval($_POST['indentpx']) : 0);
 
         $channel_divmore_height = ((x($_POST, 'channel_divmore_height')) ? intval($_POST['channel_divmore_height']) : 400);
@@ -74,6 +76,7 @@ class Display
         set_pconfig(local_channel(), 'system', 'stream_divmore_height', $stream_divmore_height);
         set_pconfig(local_channel(), 'system', 'channel_menu', $channel_menu);
         set_pconfig(local_channel(), 'system', 'thread_indent_px', $indentpx);
+        set_pconfig(local_channel(), 'system', 'filter_menu_open', $filter_menu_open);
 
         $newschema = '';
         if ($theme) {
@@ -212,7 +215,7 @@ class Display
 
             '$theme' => (($themes) ? ['theme', t('Display Theme:'), $theme_selected, '', $themes, 'preview'] : false),
             '$schema' => ['schema', t('Select scheme'), $existing_schema, '', $schemas],
-
+            '$filter_menu_open' => [ 'filter_menu_open', t('Open Activity Filter tool by default'), PConfig::Get(local_channel(), 'system','filter_menu_open'), t('Default is closed'), $yes_no ],
             '$preload_images' => ['preload_images', t("Preload images before rendering the page"), $preload_images, t("The subjective page load time will be longer but the page will be ready when displayed"), $yes_no],
             '$user_scalable' => ['user_scalable', t("Enable user zoom on mobile devices"), $user_scalable, '', $yes_no],
             '$ajaxint' => ['browser_update', t("Update notifications every xx seconds"), $browser_update, t('Minimum of 15 seconds, no maximum')],

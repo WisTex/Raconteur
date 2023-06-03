@@ -40,6 +40,7 @@
 				</div>
 				<div id="custom-settings-content" class="collapse{{if !$theme}} in{{/if}}" role="tabpanel" aria-labelledby="custom-settings" data-bs-parent="#settings" >
 					<div class="section-content-tools-wrapper">
+
 						{{if $theme_config}}
 							{{$theme_config}}
 						{{/if}}
@@ -56,6 +57,7 @@
 				</div>
 				<div id="content-settings-content" class="collapse{{if !$theme && !$theme_config}} in{{/if}}" role="tabpanel" aria-labelledby="content-settings" data-bs-parent="#settings">
 					<div class="section-content-wrapper">
+
 						{{include file="field_input.tpl" field=$ajaxint}}
 						{{include file="field_input.tpl" field=$itemspage}}
 						{{include file="field_input.tpl" field=$indentpx}}
@@ -63,11 +65,12 @@
 						{{include file="field_input.tpl" field=$stream_divmore_height}}
 						{{include file="field_checkbox.tpl" field=$nosmile}}
 						{{include file="field_checkbox.tpl" field=$channel_menu}}
+						{{include file="field_checkbox.tpl" field=$filter_menu_open}}
 						{{include file="field_checkbox.tpl" field=$user_scalable}}
 						{{include file="field_checkbox.tpl" field=$preload_images}}
 						{{if $expert}}
 						<div class="form-group">
-							<a class="btn btn-outline-secondary "href="pdledit">{{$layout_editor}}</a>
+							<a class="btn btn-outline-secondary" href="pdledit">{{$layout_editor}}</a>
 						</div>
 						{{/if}}
 						<div class="settings-submit-wrapper" >

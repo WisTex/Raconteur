@@ -2131,7 +2131,7 @@ class Activity
         }
 
         // not widely used: save an intro message if it's here.
-        $content = self::get_content($act, $false);
+        $content = self::get_content($act, false);
         if  ($content['content']) {
             XConfig::Set($ret['xchan_hash'], 'system', 'intro_text', $content['content']);
         }
