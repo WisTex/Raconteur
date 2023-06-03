@@ -1597,8 +1597,8 @@ class Item extends Controller
         }
 
 
-        if (mb_strlen($datarray['title']) > 191) {
-            $datarray['title'] = mb_substr($datarray['title'], 0, 191);
+        if (mb_strlen($datarray['title']) > 255) {
+            $datarray['title'] = mb_substr($datarray['title'], 0, 255);
         }
 
         if ($webpage) {
@@ -1946,6 +1946,11 @@ class Item extends Controller
     public function item_check_service_class($channel_id, $iswebpage)
     {
         $ret = ['success' => false, 'message' => ''];
+        $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, ($iswebpage) ? 'total_pages' : 'total_items'));
+        if  (!$max) {
+            $ret['success'] = true;
+            return $ret;
+        }
 
         if ($iswebpage) {
             $r = q(
@@ -1969,13 +1974,11 @@ class Item extends Controller
 
 
         if (!$iswebpage) {
-            $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'total_items'));
             if (!ServiceClass::allows($channel_id, 'total_items', $r[0]['total'])) {
                 $ret['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f top level posts.'), $max);
                 return $ret;
             }
         } else {
-            $max = engr_units_to_bytes(ServiceClass::fetch($channel_id, 'total_pages'));
             if (!ServiceClass::allows($channel_id, 'total_pages', $r[0]['total'])) {
                 $ret['message'] .= ServiceClass::upgrade_message() . sprintf(t('You have reached your limit of %1$.0f webpages.'), $max);
                 return $ret;
