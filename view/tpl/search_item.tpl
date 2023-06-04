@@ -92,13 +92,16 @@
 							{{if $item.star}}
 							<a class="dropdown-item" href="#" onclick="dostar({{$item.id}}); return false;"><i id="starred-{{$item.id}}" class="fa fa-fw{{if $item.star.isstarred}} starred fa-star{{else}} unstarred fa-star-o{{/if}} generic-icons-nav" title="{{$item.star.toggle}}"></i>{{$item.star.toggle}}</a>
 							{{/if}}
+							{{if $item.pinnable}}
+							<a class="dropdown-item" href="#" onclick="dopin('{{$item.id}}'); return false;" title="{{$item.pinme}}" id="item-pinned-{{$item.id}}"><i class="generic-icons-nav fa fa-fw fa-thumb-tack"></i>{{$item.pinme}}</a>
+							{{/if}}
 							{{if $item.thread_action_menu}}
 							{{foreach $item.thread_action_menu as $mitem}}
-							<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} ><i class="fa fa-fw fa-{{$mitem.icon}} generic-icons-nav"></i>{{$mitem.title}}</a></li>
+							<a class="dropdown-item" {{if $mitem.href}}href="{{$mitem.href}}"{{/if}} {{if $mitem.action}}onclick="{{$mitem.action}}"{{/if}} {{if $mitem.title}}title="{{$mitem.title}}"{{/if}} ><i class="fa fa-fw fa-{{$mitem.icon}} generic-icons-nav"></i>{{$mitem.title}}</a>
 							{{/foreach}}
 							{{/if}}
 							{{if $item.drop.dropping}}
-							<a class="dropdown-item" href="item/drop/{{$item.id}}" onclick="return confirmDelete();" title="{{$item.drop.delete}}" ><i class="fa fa-fw fa-trash-o generic-icons-nav"></i>{{$item.drop.delete}}</a></li>
+							<a class="dropdown-item" href="item/drop/{{$item.id}}" onclick="return confirmDelete();" title="{{$item.drop.delete}}" ><i class="fa fa-fw fa-trash-o generic-icons-nav"></i>{{$item.drop.delete}}</a>
 							{{/if}}
 						</div>
 					</div>

@@ -1196,7 +1196,6 @@ function doprofilelike(ident, verb) {
 	$.get('plike/' + ident + '?verb=' + verb, function() { window.location.href=window.location.href; });
 }
 
-
 function dopin(id) {
 	id = id.toString();
 	$('#like-rotator-' + id).show();

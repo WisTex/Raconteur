@@ -4,6 +4,7 @@
 
 use Code\Lib\Apps;
 use Code\Lib\LibBlock;
+use Code\Lib\PConfig;
 use Code\Lib\ThreadStream;
 use Code\Lib\ThreadItem;
 use Code\Lib\Channel;
@@ -600,7 +601,7 @@ function conversation($items, $mode, $update, $page_mode = 'traditional', $prepa
                     'dislike' => '',
                     'comment' => '',
                     'pinned'    => ($pinned ? t('Pinned post') : ''),
-                    'pinnable'  => (($item['mid'] === $item['parent_mid'] && local_channel() && $item['owner_xchan'] == $observer['xchan_hash'] && $allowed_type && $item['item_private'] == 0) ? '1' : ''),
+                    'pinnable'  => (in_array($item['mid'], (intval($item['uid']) === local_channel()) ? PConfig::Get(intval($item['uid']), 'pinned', $item['item_type'], []) : [])),
                     'pinme'     => ($pinned ? t('Unpin this post') : t('Pin this post')),
                     'conv' => (($preview) ? '' : ['href' => $conv_link, 'title' => t('View Conversation')]),
                     'previewing' => $previewing,
