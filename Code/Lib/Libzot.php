@@ -1633,6 +1633,10 @@ class Libzot
         }
 
         foreach ($deliveries as $d) {
+
+            $isMyConversation = false;
+
+
             $local_public = $public;
 
             // if any further changes are to be made, change a copy and not the original
@@ -1777,7 +1781,6 @@ class Libzot
                 $arr['item_wall'] = 0;
             }
 
-            $friendofriend = false;
             $isMail = (bool) (intval($arr['item_private']) === 2);
 
             if ((!$tag_delivery) && (!$local_public)) {
@@ -1837,8 +1840,6 @@ class Libzot
                     } else {
                         $allowed = true;
                     }
-
-                    $friendofriend = true;
                 }
 
                 if ($isMail) {

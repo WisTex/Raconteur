@@ -54,7 +54,7 @@ class Pin extends Controller
                 $narr = [];
                 foreach ($pinned as $p) {
                     if ($p !== $r[0]['mid']) {
-                        $narr[] = $r[0]['mid'];
+                        $narr[] = $p;
                     }
                 }
             } else {
