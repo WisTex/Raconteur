@@ -147,27 +147,31 @@
 					</button>
 				</div>
 				<div class="btn-group ">
-					&nbsp;
+					&nbsp;<button type="button" id="location-dropdown" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="{{$locdesc}}">
+						<i id="location-menu-icon" class="fa fa-globe jot-icons"></i>
+					</button>
+					<div class="dropdown-menu">
 					{{if $setloc}}
-					<button id="profile-location-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$setloc}}" onclick="jotGetLocation();return false;">
-						<i id="profile-location" class="fa fa-globe jot-icons"></i>
+					<button id="profile-location-wrapper" class="dropdown-item btn btn-outline-secondary btn-sm" title="{{$setloc}}" onclick="jotGetLocation();return false;">
+						<i id="profile-location" class="fa fa-globe jot-icons"></i> {{$setloc}}
 					</button>
 					{{/if}}
 					{{if $clearloc}}
-					<button id="profile-nolocation-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$clearloc}}" onclick="jotClearLocation();return false;" disabled="disabled">
-						<i id="profile-nolocation" class="fa fa-circle-o jot-icons"></i>
+					<button id="profile-nolocation-wrapper" class="dropdown-item btn btn-outline-secondary btn-sm" title="{{$clearloc}}" onclick="jotClearLocation();return false;" disabled="disabled">
+						<i id="profile-nolocation" class="fa fa-circle-o jot-icons"></i> {{$clearloc}}
 					</button>
 					{{/if}}
 					{{if $feature_checkin}}
-						<button id="profile-checkin-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
-							<i id="profile-checkin" class="fa fa-sign-in jot-icons"></i>
+						<button id="profile-checkin-wrapper" class="dropdown-item btn btn-outline-secondary btn-sm" title="{{$checkin}}" onclick="jotCheckin(); return false;">
+							<i id="profile-checkin" class="fa fa-sign-in jot-icons"></i> {{$checkin}}
 						</button>
 					{{/if}}
 					{{if $feature_checkout}}
-						<button id="profile-checkout-wrapper" class="btn btn-outline-secondary btn-sm" title="{{$checkout}}" onclick="jotCheckout(); return false;">
-							<i id="profile-checkout" class="fa fa-sign-out jot-icons"></i>
+						<button id="profile-checkout-wrapper" class="dropdown-item btn btn-outline-secondary btn-sm" title="{{$checkout}}" onclick="jotCheckout(); return false;">
+							<i id="profile-checkout" class="fa fa-sign-out jot-icons"></i> {{$checkout}}
 						</button>
 					{{/if}}
+					</div>
 				{{else}}
 				<div class="btn-group d-none ">
 				{{/if}}

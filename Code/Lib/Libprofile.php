@@ -499,8 +499,8 @@ class Libprofile
 
         //  logger('gender: ' . $gender);
 
-        // This can easily get throw off if the observer language is different
-        // than the channel owner language.
+        // This can easily get thrown off if the observer language is different
+        // from the channel owner language.
 
         if (str_contains(strtolower($gender), strtolower(t('Female')))) {
             return 'venus';
@@ -528,8 +528,8 @@ class Libprofile
     {
 
 
-        // This can easily get throw off if the observer language is different
-        // than the channel owner language.
+        // This can easily get thrown off if the observer language is different
+        // from the channel owner language.
 
         if (str_contains(strtolower($pronouns), strtolower(t('She')))) {
             return 'venus';
@@ -612,8 +612,9 @@ class Libprofile
                     $val = substr(App::$profile['dob'], 0, 4);
                 }
 
-                $year_bd_format = t('j F, Y');
-                $short_bd_format = t('j F');
+                // translators: 'j F, Y' produces the format '4 May, 2021'
+                $year_bd_format = t('j F, Y', 'birthday_time_format');
+                $short_bd_format = t('j F', 'short_birthday_time_format');
 
                 if (!$val) {
                     $val = ((intval(App::$profile['dob']))

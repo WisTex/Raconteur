@@ -1297,6 +1297,7 @@ function z_status_editor($x, $popup = false)
         '$embedPhotosModalCancel' => t('Cancel'),
         '$embedPhotosModalOK' => t('OK'),
         '$setloc' => $setloc,
+        '$locdesc' => t('Location options'),
         '$poll' => t('Toggle poll'),
         '$poll_option_label' => t('Option'),
         '$poll_add_option_label' => t('Add option'),
