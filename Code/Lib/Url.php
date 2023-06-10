@@ -1,9 +1,6 @@
 <?php
 namespace Code\Lib;
 
-use Code\Lib\Config;
-use Code\Lib\Activity;
-
 class Url {
 
     /**
@@ -32,9 +29,9 @@ class Url {
      *  * \e string \b header => HTTP headers
      *  * \e string \b body => fetched content
      */
-    static public function get(string $url, array $opts = [], int $redirects = 0): array
+    public static function get(string $url, array $opts = [], int $redirects = 0): array
     {
-        $ret = array('return_code' => 0, 'success' => false, 'header' => "", 'body' => "");
+        $ret = ['return_code' => 0, 'success' => false, 'header' => "", 'body' => ""];
         $passthru = false;
 
         $ch = curl_init($url);
@@ -54,7 +51,7 @@ class Url {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_ENCODING, '');
 
-        $ciphers = @get_config('system', 'curl_ssl_ciphers');
+        $ciphers = get_config('system', 'curl_ssl_ciphers');
         if ($ciphers) {
             curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, $ciphers);
         }
@@ -123,7 +120,7 @@ class Url {
         if (x($opts, 'connecttimeout') && intval($opts['connecttimeout'])) {
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
         } else {
-            $curl_contime = intval(@get_config('system', 'curl_connecttimeout', 60));
+            $curl_contime = intval(get_config('system', 'curl_connecttimeout', 60));
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
         }
 
@@ -154,11 +151,11 @@ class Url {
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         }
 
-        $prx = @get_config('system', 'proxy');
+        $prx = get_config('system', 'proxy');
         if (strlen($prx)) {
             curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 1);
             curl_setopt($ch, CURLOPT_PROXY, $prx);
-            $prxusr = @get_config('system', 'proxyuser');
+            $prxusr = get_config('system', 'proxyuser');
             if (strlen($prxusr)) {
                 curl_setopt($ch, CURLOPT_PROXYUSERPWD, $prxusr);
             }
@@ -191,7 +188,7 @@ class Url {
         // Pull out multiple headers, e.g. proxy and continuation headers
         // allow for HTTP/2.x without fixing code
 
-        while (preg_match('/^HTTP\/[1-3][\.0-9]* [1-5][0-9][0-9]/', $base)) {
+        while (preg_match('/^HTTP\/[1-3][.0-9]* [1-5][0-9][0-9]/', $base)) {
             $chunk = substr($base, 0, strpos($base, "\r\n\r\n") + 4);
             $header .= $chunk;
             $base = substr($base, strlen($chunk));
@@ -204,7 +201,7 @@ class Url {
             if (str_starts_with($newurl, '/')) {
                 // We received a redirect to a relative path.
                 // Find the base component of the original url and re-assemble it with the new location
-                $base = @parse_url($url);
+                $base = parse_url($url);
                 if ($base) {
                     unset($base['path']);
                     unset($base['query']);
@@ -263,7 +260,7 @@ class Url {
      *  * \e string \b debug => from curl_info()
      */
 
-    static public function post($url, $params, $opts = [], $redirects = 0)
+    public static function post($url, $params, $opts = [], $redirects = 0)
     {
 
         $ret = ['return_code' => 0, 'success' => false, 'header' => '', 'body' => ''];
@@ -327,14 +324,14 @@ class Url {
         if (x($opts, 'timeout') && intval($opts['timeout'])) {
             curl_setopt($ch, CURLOPT_TIMEOUT, intval($opts['timeout']));
         } else {
-            $curl_time = intval(@get_config('system', 'curl_post_timeout', 90));
+            $curl_time = intval(get_config('system', 'curl_post_timeout', 90));
             curl_setopt($ch, CURLOPT_TIMEOUT, $curl_time);
         }
 
         if (x($opts, 'connecttimeout') && intval($opts['connecttimeout'])) {
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, intval($opts['connecttimeout']));
         } else {
-            $curl_contime = intval(@get_config('system', 'curl_post_connecttimeout', 90));
+            $curl_contime = intval(get_config('system', 'curl_post_connecttimeout', 90));
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $curl_contime);
         }
 
@@ -387,7 +384,7 @@ class Url {
         // Pull out multiple headers, e.g. proxy and continuation headers
         // allow for HTTP/2.x without fixing code
 
-        while (preg_match('/^HTTP\/[1-3][\.0-9]* [1-5][0-9][0-9]/', $base)) {
+        while (preg_match('/^HTTP\/[1-3][.0-9]* [1-5][0-9][0-9]/', $base)) {
             $chunk = substr($base, 0, strpos($base, "\r\n\r\n") + 4);
             $header .= $chunk;
             $base = substr($base, strlen($chunk));
@@ -401,10 +398,10 @@ class Url {
                 if ($opts['headers']) {
                     $opts['headers'][] = 'Expect:';
                 } else {
-                    $opts['headers'] = array('Expect:');
+                    $opts['headers'] = ['Expect:'];
                 }
             } else {
-                $opts = array('headers' => array('Expect:'));
+                $opts = ['headers' => ['Expect:']];
             }
             return self::post($url, $params, $opts, ++$redirects);
         }
@@ -416,7 +413,7 @@ class Url {
             if (str_starts_with($newurl, '/')) {
                 // We received a redirect to a relative path.
                 // Find the base component of the original url and re-assemble it with the new location
-                $base = @parse_url($url);
+                $base = parse_url($url);
                 if ($base) {
                     unset($base['path']);
                     unset($base['query']);
@@ -451,7 +448,7 @@ class Url {
         return($ret);
     }
 
-    static public function ssl_exception($domain) {
+    public static function ssl_exception($domain) {
         $excepts = Config::Get('system', 'ssl_exceptions', []);
         if (!$excepts) {
             return false;
@@ -470,12 +467,12 @@ class Url {
      *
      * @return string
      */
-    static public function get_capath()
+    public static function get_capath()
     {
         return PROJECT_BASE . '/library/cacert.pem';
     }
 
-    static public function format_error($ret, $verbose = false)
+    public static function format_error($ret, $verbose = false)
     {
         $output = EMPTY_STR;
         if (isset($ret['debug'])) {

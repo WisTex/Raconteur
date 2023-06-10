@@ -227,7 +227,7 @@ function import_remote_xchan_photo($src, $xchan, $thing = false)
     $thumb = z_root() . '/xp/' . $hash . '-5' . (($thing) ? '.obj' : EMPTY_STR);
     $micro = z_root() . '/xp/' . $hash . '-6' . (($thing) ? '.obj' : EMPTY_STR);
 
-    if (!$url) {
+    if (!$src) {
         $gis = getimagesize(Channel::get_default_profile_photo());
         return [ $photo, $thumb, $micro, (($gis) ? $gis['mime'] : 'image/png'), true ];
     }
