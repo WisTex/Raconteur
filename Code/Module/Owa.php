@@ -20,13 +20,15 @@ class Owa extends Controller
 
     public function init()
     {
-
         $ret = ['success' => false];
 
         if (array_key_exists('REDIRECT_REMOTE_USER', $_SERVER) && (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))) {
             $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_REMOTE_USER'];
         }
 
+        if (array_key_exists('HTTP_SIGNATURE', $_SERVER) && (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))) {
+            $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['HTTP_SIGNATURE'];
+        }
 
         if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) && str_starts_with(trim($_SERVER['HTTP_AUTHORIZATION']), 'Signature')) {
             $sigblock = HTTPSig::parse_sigheader($_SERVER['HTTP_AUTHORIZATION']);

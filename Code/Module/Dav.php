@@ -36,6 +36,11 @@ class Dav extends Controller
      */
     public function init()
     {
+        if (isset($_SERVER['HTTP_SIGNATURE']) &&
+            !isset($_SERVER['REDIRECT_REMOTE_USER']) &&
+            !isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $_SERVER['HTTP_AUTHORIZATION'] = 'Signature ' . $_SERVER['HTTP_SIGNATURE'];
+        }
 
         foreach (['REDIRECT_REMOTE_USER', 'HTTP_AUTHORIZATION'] as $head) {
             /* Basic authentication */

@@ -562,11 +562,12 @@ class HTTPSig
             }
         }
 
+        $authorisation = '';
+
         if ($auth) {
-            $sighead = 'Authorization: Signature ' . $headerval;
-        } else {
-            $sighead = 'Signature: ' . $headerval;
+            $authorisation = 'Authorization: Signature ' . $headerval;
         }
+        $sighead = 'Signature: ' . $headerval;
 
         if ($head) {
             foreach ($head as $k => $v) {
@@ -578,6 +579,9 @@ class HTTPSig
             }
         }
         $return_headers[] = $sighead;
+        if ($authorisation) {
+            $return_headers[] = $authorisation;
+        }
 
         return $return_headers;
     }
