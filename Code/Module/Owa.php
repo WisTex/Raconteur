@@ -27,7 +27,7 @@ class Owa extends Controller
         }
 
         if (array_key_exists('HTTP_SIGNATURE', $_SERVER) && (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER))) {
-            $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['HTTP_SIGNATURE'];
+            $_SERVER['HTTP_AUTHORIZATION'] = 'Signature ' . $_SERVER['HTTP_SIGNATURE'];
         }
 
         if (array_key_exists('HTTP_AUTHORIZATION', $_SERVER) && str_starts_with(trim($_SERVER['HTTP_AUTHORIZATION']), 'Signature')) {

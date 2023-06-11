@@ -41,7 +41,7 @@ class Magic extends Controller
         }
 
         $basepath = $parsed['scheme'] . '://' . $parsed['host'] . (($parsed['port']) ? ':' . $parsed['port'] : '');
-        $owapath = SConfig::get($basepath, 'system', 'openwebauth', $basepath . '/owa');
+        $owapath = SConfig::Get($basepath, 'system', 'openwebauth', $basepath . '/owa');
 
         // This is ready-made for a plugin that provides a blacklist or "ask me" before blindly authenticating.
         // By default, we'll proceed without asking.
@@ -103,6 +103,7 @@ class Magic extends Controller
                 $headers['(request-target)'] = 'get ' . '/owa';
 
                 $headers = HTTPSig::create_sig($headers, $channel['channel_prvkey'], Channel::url($channel), true, 'sha512');
+
                 $x = Url::get($owapath, ['headers' => $headers]);
                 logger('owa fetch returned: ' . print_r($x, true), LOGGER_DATA);
                 if ($x['success']) {
