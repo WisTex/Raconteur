@@ -219,7 +219,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
         $sql_options .= " and owner_xchan  = '" . dbesc($owner) . "' ";
     }
 
-    $urlFilter = ($type === TERM_CATEGORY) ? " and url like '" . Channel::url($channel) . "%%'" : '';
+    $urlFilter = ($type === TERM_CATEGORY && intval($channel['xchan_type']) === XCHAN_TYPE_GROUP) ? " and url like '" . Channel::url($channel) . "%%'" : '';
 
     // Fetch tags
     $r = q(
