@@ -2475,6 +2475,7 @@ function tag_deliver($uid, $item_id) {
         // and this will be turned into an embedded wall-to-wall post
         if(perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
             logger('group DM delivery for ' . $u['channel_address']);
+            $item = filter_categories($item);
             start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
             q("update item set item_blocked = %d where id = %d",
                 intval(ITEM_HIDDEN),
@@ -2504,6 +2505,7 @@ function tag_deliver($uid, $item_id) {
             if ($id == z_root() . '/outbox/' . $u['channel_address']) {
                 if(perm_is_allowed($uid, $item['author_xchan'], 'post_wall')) {
                     logger('group collection delivery for ' . $u['channel_address']);
+                    $item = filter_categories($item);
                     start_delivery_chain($u, $item, $item_id, false, true, (($item['edited'] != $item['created']) || $item['item_deleted']));
                     q("update item set item_blocked = %d where id = %d",
                         intval(ITEM_HIDDEN),
@@ -2735,6 +2737,21 @@ function tag_deliver($uid, $item_id) {
 
     }
 
+}
+
+function filter_categories($item)
+{
+    $tags = [];
+    if ($item['term'] && is_array($item['term'])) {
+        foreach ($item['term'] as $tag) {
+            if ($tag['ttype'] === TERM_CATEGORY || $tag['ttype'] === TERM_PCATEGORY) {
+                continue;
+            }
+            $tags[] = $tag;
+        }
+        $item['term'] = $tags;
+    }
+    return $item;
 }
 
 
