@@ -2744,10 +2744,9 @@ function filter_categories($item)
     $tags = [];
     if ($item['term'] && is_array($item['term'])) {
         foreach ($item['term'] as $tag) {
-            if ($tag['ttype'] === TERM_CATEGORY || $tag['ttype'] === TERM_PCATEGORY) {
-                continue;
+            if ($tag['ttype'] != TERM_CATEGORY) {
+                $tags[] = $tag;
             }
-            $tags[] = $tag;
         }
         $item['term'] = $tags;
     }
