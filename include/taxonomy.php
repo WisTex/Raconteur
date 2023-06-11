@@ -187,6 +187,10 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
 {
 
     require_once('include/security.php');
+    $channel = Channel::from_id($uid);
+    if (! $channel) {
+        return [];
+    }
 
     if (! perm_is_allowed($uid, get_observer_hash(), 'view_stream')) {
         return [];
@@ -215,12 +219,14 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
         $sql_options .= " and owner_xchan  = '" . dbesc($owner) . "' ";
     }
 
+    $urlFilter = ($type === TERM_CATEGORY) ? " and url like '" . Channel::url($channel) . "%%'" : '';
+
     // Fetch tags
     $r = q(
         "select term, count(term) as total from term left join item on term.oid = item.id
 		where term.uid = %d and term.ttype = %d 
 		and otype = %d and item_type = %d 
-		$sql_options $item_normal
+		$sql_options $item_normal $urlFilter
 		group by term order by total desc %s",
         intval($uid),
         intval($type),
