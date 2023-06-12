@@ -1416,6 +1416,7 @@ function bb_nakedlinks($Text) {
     $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
     $Text = preg_replace_callback('/\[audio(.*?)\[\/(audio)\]/ism', '\red_escape_codeblock', $Text);
     $Text = preg_replace_callback('/\[video(.*?)\[\/(video)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[oembed(.*?)\[\/(oembed)\]/ism', '\red_escape_codeblock', $Text);
 
     if (str_contains($Text, 'http')) {
         $Text = preg_replace("/([^\]\='" . '"' . "\;\/]\()(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
@@ -1427,6 +1428,8 @@ function bb_nakedlinks($Text) {
     $Text = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism', '\red_unescape_codeblock', $Text);
     $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(audio)\]/ism', '\red_unescape_codeblock', $Text);
     $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(video)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(oembed)\]/ism', '\red_unescape_codeblock', $Text);
+
     return $Text;
 }
 

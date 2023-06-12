@@ -3840,6 +3840,7 @@ function cleanup_bbcode($body)
     $body = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[audio.*?)\[\/(audio)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[video(.*?)\[\/(video)\]/ism', '\red_escape_codeblock', $body);
+    $body = preg_replace_callback('/\[oembed(.*?)\[\/(oembed)\]/ism', '\red_escape_codeblock', $body);
 
     $body = preg_replace_callback("/([^\]\[\='" . '"' . "\;\/\{\(]|^|\#\^)(https?\:\/\/[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\@\_\~\#\%\$\!\\+\,\(\)]+)/ismu", '\nakedoembed', $body);
 
@@ -3854,6 +3855,7 @@ function cleanup_bbcode($body)
     $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism', '\red_unescape_codeblock', $body);
     $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(audio)\]/ism', '\red_unescape_codeblock', $body);
     $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(video)\]/ism', '\red_unescape_codeblock', $body);
+    $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(oembed)\]/ism', '\red_unescape_codeblock', $body);
 
     $body = bb_code_unprotect($body);
 
