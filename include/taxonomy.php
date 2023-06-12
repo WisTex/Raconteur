@@ -13,12 +13,12 @@ use Code\Extend\Hook;
 
 function file_tag_encode($s)
 {
-    return str_replace(array('<','>','[',']'), array('%3c','%3e','%5b','%5d'), $s);
+    return str_replace(['<','>','[',']'], ['%3c','%3e','%5b','%5d'], $s);
 }
 
 function file_tag_decode($s)
 {
-    return str_replace(array('%3c','%3e','%5b','%5d'), array('<','>','[',']'), $s);
+    return str_replace(['%3c','%3e','%5b','%5d'], ['<','>','[',']'], $s);
 }
 
 function file_tag_file_query($table, $s, $type = 'file')
@@ -145,7 +145,7 @@ function get_terms_oftype($arr, $type)
     }
 
     if (! is_array($type)) {
-        $type = array($type);
+        $type = [$type];
     }
 
     foreach ($type as $t) {
@@ -209,7 +209,7 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
 
     if ($authors) {
         if (! is_array($authors)) {
-            $authors = array($authors);
+            $authors = [$authors];
         }
 
         $sql_options .= " and author_xchan in (" . stringify_array($authors, true) . ") ";
@@ -218,6 +218,11 @@ function tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0, $re
     if ($owner) {
         $sql_options .= " and owner_xchan  = '" . dbesc($owner) . "' ";
     }
+
+    // This needs fixing so that cloned groups will show categories originating
+    // from other group clone instances - not just  this one. For now, this is needed
+    // to prevent a group from displaying personal categories of the post author;
+    // when posted remotely.
 
     $urlFilter = ($type === TERM_CATEGORY && intval($channel['xchan_type']) === XCHAN_TYPE_GROUP) ? " and url like '" . Channel::url($channel) . "%%'" : '';
 
@@ -268,7 +273,7 @@ function card_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags = 0
 
     if ($authors) {
         if (! is_array($authors)) {
-            $authors = array($authors);
+            $authors = [$authors];
         }
 
         $sql_options .= " and author_xchan in (" . stringify_array($authors, true) . ") ";
@@ -325,7 +330,7 @@ function article_tagadelic($uid, $count = 0, $authors = '', $owner = '', $flags 
 
     if ($authors) {
         if (! is_array($authors)) {
-            $authors = array($authors);
+            $authors = [$authors];
         }
 
         $sql_options .= " and author_xchan in (" . stringify_array($authors, true) . ") ";
@@ -652,14 +657,14 @@ function dir_tagblock($link, $r)
 
 function obj_verbs()
 {
-    $verbs = array(
-        'has' => array( t('have'), t('has')),
-        'wants' => array( t('want'), t('wants')),
-        'likes' => array( t('like'), t('likes')),
-        'dislikes' => array( t('dislike'), t('dislikes')),
-    );
+    $verbs = [
+        'has' => [t('have'), t('has')],
+        'wants' => [t('want'), t('wants')],
+        'likes' => [t('like'), t('likes')],
+        'dislikes' => [t('dislike'), t('dislikes')],
+    ];
 
-    $arr = array('verbs' => $verbs);
+    $arr = ['verbs' => $verbs];
     Hook::call('obj_verbs', $arr);
 
     return  $arr['verbs'];
@@ -746,7 +751,7 @@ function get_things($profile_hash, $uid)
                 $things[$rr['obj_verb']] = [];
             }
 
-            $things[$rr['obj_verb']][] = array('term' => $rr['obj_term'],'url' => $rr['obj_url'],'img' => $rr['obj_imgurl'], 'editurl' => z_root() . '/thing/' . $rr['obj_obj'], 'profile' => $rr['profile_name'],'term_hash' => $rr['obj_obj'], 'likes' => $l,'like_count' => count($l),'like_label' => tt('Like', 'Likes', count($l), 'noun'));
+            $things[$rr['obj_verb']][] = ['term' => $rr['obj_term'],'url' => $rr['obj_url'],'img' => $rr['obj_imgurl'], 'editurl' => z_root() . '/thing/' . $rr['obj_obj'], 'profile' => $rr['profile_name'],'term_hash' => $rr['obj_obj'], 'likes' => $l,'like_count' => count($l),'like_label' => tt('Like', 'Likes', count($l), 'noun')];
         }
         $sorted_things = [];
         if ($things) {

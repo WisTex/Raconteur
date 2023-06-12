@@ -3853,9 +3853,9 @@ function cleanup_bbcode($body)
     $body = preg_replace_callback('/\[\$b64svg(.*?)\[\/(svg)\]/ism', '\red_unescape_codeblock', $body);
     $body = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism', '\red_unescape_codeblock', $body);
     $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism', '\red_unescape_codeblock', $body);
-    $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(audio)\]/ism', '\red_unescape_codeblock', $body);
-    $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(video)\]/ism', '\red_unescape_codeblock', $body);
-    $body = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(oembed)\]/ism', '\red_unescape_codeblock', $body);
+    $body = preg_replace_callback('/\[\$b64audio(.*?)\[\/(audio)\]/ism', '\red_unescape_codeblock', $body);
+    $body = preg_replace_callback('/\[\$b64video(.*?)\[\/(video)\]/ism', '\red_unescape_codeblock', $body);
+    $body = preg_replace_callback('/\[\$b64oembed(.*?)\[\/(oembed)\]/ism', '\red_unescape_codeblock', $body);
 
     $body = bb_code_unprotect($body);
 
