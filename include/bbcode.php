@@ -1409,15 +1409,24 @@ function bb_hltag($matches)
 function bb_nakedlinks($Text) {
     $urlchars = '[a-zA-Z0-9\pL\:\/\-\?\&\;\.\=\_\~\#\%\$\!\+\,\@\(\)]';
 
+    $Text = preg_replace_callback('/\[url(.*?)\[\/(url)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[zrl(.*?)\[\/(zrl)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[svg(.*?)\[\/(svg)\]/ism', '\red_escape_codeblock', $Text);
     $Text = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $Text);
     $Text = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[audio(.*?)\[\/(audio)\]/ism', '\red_escape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[video(.*?)\[\/(video)\]/ism', '\red_escape_codeblock', $Text);
 
     if (str_contains($Text, 'http')) {
         $Text = preg_replace("/([^\]\='" . '"' . "\;\/]\()(https?\:\/\/$urlchars+)/ismu", '$1<a href="$2" target="_blank" rel="nofollow noopener">$2</a>', $Text);
     }
-
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(url)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(zrl)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(svg)\]/ism', '\red_unescape_codeblock', $Text);
     $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(img)\]/ism', '\red_unescape_codeblock', $Text);
     $Text = preg_replace_callback('/\[\$b64zmg(.*?)\[\/(zmg)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(audio)\]/ism', '\red_unescape_codeblock', $Text);
+    $Text = preg_replace_callback('/\[\$b64img(.*?)\[\/(video)\]/ism', '\red_unescape_codeblock', $Text);
     return $Text;
 }
 
