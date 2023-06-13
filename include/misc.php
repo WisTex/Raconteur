@@ -3838,7 +3838,7 @@ function cleanup_bbcode($body)
     $body = preg_replace_callback('/\[svg(.*?)\[\/(svg)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[img(.*?)\[\/(img)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[zmg(.*?)\[\/(zmg)\]/ism', '\red_escape_codeblock', $body);
-    $body = preg_replace_callback('/\[audio.*?)\[\/(audio)\]/ism', '\red_escape_codeblock', $body);
+    $body = preg_replace_callback('/\[audio(.*?)\[\/(audio)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[video(.*?)\[\/(video)\]/ism', '\red_escape_codeblock', $body);
     $body = preg_replace_callback('/\[oembed(.*?)\[\/(oembed)\]/ism', '\red_escape_codeblock', $body);
 
