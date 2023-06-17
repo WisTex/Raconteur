@@ -198,7 +198,7 @@ class Events extends Controller
             if ($share) {
                 $acl->set_from_array($_POST);
             } else {
-                $acl->set(array('allow_cid' => '<' . $channel['channel_hash'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => ''));
+                $acl->set(['allow_cid' => '<' . $channel['channel_hash'] . '>', 'allow_gid' => '', 'deny_cid' => '', 'deny_gid' => '']);
             }
         }
 
@@ -209,13 +209,13 @@ class Events extends Controller
         if (strlen($categories)) {
             $cats = explode(',', $categories);
             foreach ($cats as $cat) {
-                $post_tags[] = array(
+                $post_tags[] = [
                     'uid' => $profile_uid,
                     'ttype' => TERM_CATEGORY,
                     'otype' => TERM_OBJ_POST,
                     'term' => trim($cat),
                     'url' => $channel['xchan_url'] . '?f=&cat=' . urlencode(trim($cat))
-                );
+                ];
             }
         }
 
@@ -299,13 +299,13 @@ class Events extends Controller
                 killme();
             } else {
                 notice(t('Event not found.') . EOL);
-                return;
+                return '';
             }
         }
 
         if (!local_channel()) {
             notice(t('Permission denied.') . EOL);
-            return;
+            return '';
         }
 
         $channel = App::get_channel();
@@ -331,13 +331,13 @@ class Events extends Controller
         $first_day = intval(get_pconfig(local_channel(), 'system', 'cal_first_day', 0));
 
         $htpl = Theme::get_template('event_head.tpl');
-        App::$page['htmlhead'] .= replace_macros($htpl, array(
+        App::$page['htmlhead'] .= replace_macros($htpl, [
             '$baseurl' => z_root(),
             '$module_url' => '/events',
             '$modparams' => 1,
             '$lang' => App::$language,
             '$first_day' => $first_day
-        ));
+        ]);
 
         $o = '';
 
@@ -498,25 +498,25 @@ class Events extends Controller
 
             $tpl = Theme::get_template('event_form.tpl');
 
-            $form = replace_macros($tpl, array(
+            $form = replace_macros($tpl, [
                 '$post' => z_root() . '/events',
                 '$eid' => $eid,
                 '$type' => $type,
                 '$xchan' => $event_xchan,
                 '$mid' => $mid,
                 '$event_hash' => $event_id,
-                '$summary' => array('summary', (($event_id) ? t('Edit event title') : t('Event title')), $t_orig, t('Required'), '*'),
+                '$summary' => ['summary', (($event_id) ? t('Edit event title') : t('Event title')), $t_orig, t('Required'), '*'],
                 '$catsenabled' => $catsenabled,
                 '$placeholdercategory' => t('Categories (comma-separated list)'),
                 '$c_text' => (($event_id) ? t('Edit Category') : t('Category')),
                 '$category' => $category,
                 '$required' => '<span class="required" title="' . t('Required') . '">*</span>',
-                '$s_dsel' => datetimesel($f, new DateTime(), DateTime::createFromFormat('Y', $syear + 5), DateTime::createFromFormat('Y-m-d H:i', "$syear-$smonth-$sday $shour:$sminute"), (($event_id) ? t('Edit start date and time') : t('Start date and time')), 'start_text', true, true, '', '', true, $first_day),
+                '$s_dsel' => datetimesel($f, new DateTime(), DateTime::createFromFormat('Y', (int) $syear + 5), DateTime::createFromFormat('Y-m-d H:i', "$syear-$smonth-$sday $shour:$sminute"), (($event_id) ? t('Edit start date and time') : t('Start date and time')), 'start_text', true, true, '', '', true, $first_day),
                 '$n_text' => t('Finish date and time are not known or not relevant'),
                 '$n_checked' => $n_checked,
-                '$f_dsel' => datetimesel($f, new DateTime(), DateTime::createFromFormat('Y', $fyear + 5), DateTime::createFromFormat('Y-m-d H:i', "$fyear-$fmonth-$fday $fhour:$fminute"), (($event_id) ? t('Edit finish date and time') : t('Finish date and time')), 'finish_text', true, true, 'start_text', '', false, $first_day),
-                '$nofinish' => array('nofinish', t('Finish date and time are not known or not relevant'), $n_checked, '', array(t('No'), t('Yes')), 'onclick="enableDisableFinishDate();"'),
-                '$adjust' => array('adjust', t('Adjust for viewer timezone'), $a_checked, t('Important for events that happen in a particular place. Not practical for global holidays.'), array(t('No'), t('Yes'))),
+                '$f_dsel' => datetimesel($f, new DateTime(), DateTime::createFromFormat('Y', (int) $fyear + 5), DateTime::createFromFormat('Y-m-d H:i', "$fyear-$fmonth-$fday $fhour:$fminute"), (($event_id) ? t('Edit finish date and time') : t('Finish date and time')), 'finish_text', true, true, 'start_text', '', false, $first_day),
+                '$nofinish' => ['nofinish', t('Finish date and time are not known or not relevant'), $n_checked, '', [t('No'), t('Yes')], 'onclick="enableDisableFinishDate();"'],
+                '$adjust' => ['adjust', t('Adjust for viewer timezone'), $a_checked, t('Important for events that happen in a particular place. Not practical for global holidays.'), [t('No'), t('Yes')]],
                 '$a_text' => t('Adjust for viewer timezone'),
                 '$d_text' => (($event_id) ? t('Edit Description') : t('Description')),
                 '$d_orig' => $d_orig,
@@ -534,7 +534,7 @@ class Events extends Controller
                 '$deny_cid' => acl2json($permissions['deny_cid']),
                 '$deny_gid' => acl2json($permissions['deny_gid']),
                 '$tz_choose' => Features::enabled(local_channel(), 'event_tz_select'),
-                '$timezone' => array('timezone_select', t('Timezone:'), date_default_timezone_get(), '', get_timezones()),
+                '$timezone' => ['timezone_select', t('Timezone:'), date_default_timezone_get(), '', get_timezones()],
 
                 '$lockstate' => (($acl->is_private()) ? 'lock' : 'unlock'),
 
@@ -548,7 +548,7 @@ class Events extends Controller
                 '$until' => '',
                 '$byday' => '',
 
-            ));
+            ]);
             /* end edit/create form */
 
             $thisyear = datetime_convert('UTC', date_default_timezone_get(), 'now', 'Y');
@@ -696,9 +696,9 @@ class Events extends Controller
 
                     $last_date = $d;
 
-                    $edit = ((local_channel() && $rr['author_xchan'] == get_observer_hash()) ? array(z_root() . '/events/' . $rr['event_hash'] . '?expandform=1', t('Edit event'), '', '') : false);
+                    $edit = ((local_channel() && $rr['author_xchan'] == get_observer_hash()) ? [z_root() . '/events/' . $rr['event_hash'] . '?expandform=1', t('Edit event'), '', ''] : false);
 
-                    $drop = array(z_root() . '/events/drop/' . $rr['event_hash'], t('Delete event'), '', '');
+                    $drop = [z_root() . '/events/drop/' . $rr['event_hash'], t('Delete event'), '', ''];
 
                     $title = strip_tags(html_entity_decode(zidify_links(bbcode($rr['summary'])), ENT_QUOTES, 'UTF-8'));
                     if (!$title) {
@@ -709,7 +709,7 @@ class Events extends Controller
                     $rr['desc'] = zidify_links(smilies(bbcode($rr['desc'])));
                     $rr['description'] = htmlentities(html2plain(bbcode($rr['description'])), ENT_COMPAT, 'UTF-8', false);
                     $rr['location'] = zidify_links(smilies(bbcode($rr['location'])));
-                    $events[] = array(
+                    $events[] = [
                         'id' => $rr['id'],
                         'hash' => $rr['event_hash'],
                         'start' => $start,
@@ -724,8 +724,8 @@ class Events extends Controller
                         'is_first' => $is_first,
                         'item' => $rr,
                         'html' => $html,
-                        'plink' => array(zid($rr['plink']), t('Link to Source'), '', ''),
-                    );
+                        'plink' => [zid($rr['plink']), t('Link to Source'), '', ''],
+                    ];
                 }
             }
 
@@ -748,12 +748,12 @@ class Events extends Controller
                 $tpl = Theme::get_template("events-js.tpl");
             }
 
-            $o = replace_macros($tpl, array(
+            $o = replace_macros($tpl, [
                 '$baseurl' => z_root(),
-                '$new_event' => array(z_root() . '/events', (($event_id) ? t('Edit Event') : t('Create Event')), '', ''),
-                '$previus' => array(z_root() . "/events/$prevyear/$prevmonth", t('Previous'), '', ''),
-                '$next' => array(z_root() . "/events/$nextyear/$nextmonth", t('Next'), '', ''),
-                '$export' => array(z_root() . "/events/$y/$m/export", t('Export'), '', ''),
+                '$new_event' => [z_root() . '/events', (($event_id) ? t('Edit Event') : t('Create Event')), '', ''],
+                '$previousmonth' => [z_root() . "/events/$prevyear/$prevmonth", t('Previous'), '', ''],
+                '$nextmonth' => [z_root() . "/events/$nextyear/$nextmonth", t('Next'), '', ''],
+                '$export' => [z_root() . "/events/$y/$m/export", t('Export'), '', ''],
                 '$calendar' => cal($y, $m, $links, ' eventcal'),
                 '$events' => $events,
                 '$view_label' => t('View'),
@@ -765,7 +765,7 @@ class Events extends Controller
                 '$today' => t('Today'),
                 '$form' => $form,
                 '$expandform' => ((x($_GET, 'expandform')) ? true : false),
-            ));
+            ]);
 
             if (x($_GET, 'id')) {
                 echo $o;
@@ -838,7 +838,7 @@ class Events extends Controller
                             if ($ii) {
                                 xchan_query($ii);
                                 $sync_item = fetch_post_tags($ii);
-                                Libsync::build_sync_packet($i[0]['uid'], array('item' => array(encode_item($sync_item[0], true))));
+                                Libsync::build_sync_packet($i[0]['uid'], ['item' => [encode_item($sync_item[0], true)]]);
                             }
 
                             if ($complex) {
@@ -856,7 +856,7 @@ class Events extends Controller
                         intval(local_channel())
                     );
                     $sync_event['event_deleted'] = 1;
-                    Libsync::build_sync_packet(0, array('event' => array($sync_event)));
+                    Libsync::build_sync_packet(0, ['event' => [$sync_event]]);
 
                     info(t('Event removed') . EOL);
                 } else {

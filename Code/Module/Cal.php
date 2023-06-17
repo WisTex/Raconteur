@@ -23,8 +23,6 @@ class Cal extends Controller
 
     public function init()
     {
-        $o = '';
-
         if (argc() > 1) {
             $nick = argv(1);
 
@@ -63,14 +61,14 @@ class Cal extends Controller
 
         if (!$channel) {
             notice(t('Channel not found.') . EOL);
-            return;
+            return '';
         }
 
         // since we don't currently have an event permission - use the stream permission
 
         if (!perm_is_allowed($channel['channel_id'], get_observer_hash(), 'view_stream')) {
             notice(t('Permissions denied.') . EOL);
-            return;
+            return '';
         }
 
         Navbar::set_selected('Calendar');
@@ -80,13 +78,13 @@ class Cal extends Controller
         $first_day = intval(get_pconfig($channel['channel_id'], 'system', 'cal_first_day', 0));
 
         $htpl = Theme::get_template('event_head.tpl');
-        App::$page['htmlhead'] .= replace_macros($htpl, array(
+        App::$page['htmlhead'] .= replace_macros($htpl, [
             '$baseurl' => z_root(),
             '$module_url' => '/cal/' . $channel['channel_address'],
             '$modparams' => 2,
             '$lang' => App::$language,
             '$first_day' => $first_day
-        ));
+        ]);
 
         $o = '';
 
@@ -308,7 +306,7 @@ class Cal extends Controller
                     $rr['desc'] = zidify_links(smilies(bbcode($rr['desc'])));
                     $rr['description'] = htmlentities(html2plain(bbcode($rr['description'])), ENT_COMPAT, 'UTF-8', false);
                     $rr['location'] = zidify_links(smilies(bbcode($rr['location'])));
-                    $events[] = array(
+                    $events[] = [
                         'id' => $rr['id'],
                         'hash' => $rr['event_hash'],
                         'start' => $start,
@@ -323,8 +321,8 @@ class Cal extends Controller
                         'is_first' => $is_first,
                         'item' => $rr,
                         'html' => $html,
-                        'plink' => array($rr['plink'], t('Link to Source'), '', ''),
-                    );
+                        'plink' => [zid($rr['plink']), t('Link to Source'), '', ''],
+                    ];
                 }
             }
 
@@ -342,12 +340,12 @@ class Cal extends Controller
 
             $nick = $channel['channel_address'];
 
-            $o = replace_macros($tpl, array(
+            $o = replace_macros($tpl, [
                 '$baseurl' => z_root(),
-                '$new_event' => array(z_root() . '/cal', (($event_id) ? t('Edit Event') : t('Create Event')), '', ''),
-                '$previus' => array(z_root() . "/cal/$nick/$prevyear/$prevmonth", t('Previous'), '', ''),
-                '$next' => array(z_root() . "/cal/$nick/$nextyear/$nextmonth", t('Next'), '', ''),
-                '$export' => array(z_root() . "/cal/$nick/$y/$m/export", t('Export'), '', ''),
+                '$new_event' => [z_root() . '/cal', (($event_id) ? t('Edit Event') : t('Create Event')), '', ''],
+                '$previusmonth' => [z_root() . "/cal/$nick/$prevyear/$prevmonth", t('Previous'), '', ''],
+                '$nextmonth' => [z_root() . "/cal/$nick/$nextyear/$nextmonth", t('Next'), '', ''],
+                '$export' => [z_root() . "/cal/$nick/$y/$m/export", t('Export'), '', ''],
                 '$calendar' => cal($y, $m, $links, ' eventcal'),
                 '$events' => $events,
                 '$upload' => t('Import'),
@@ -357,7 +355,7 @@ class Cal extends Controller
                 '$today' => t('Today'),
                 '$form' => $form,
                 '$expandform' => ((x($_GET, 'expandform')) ? true : false)
-            ));
+            ]);
 
             if (x($_GET, 'id')) {
                 echo $o;
@@ -366,5 +364,6 @@ class Cal extends Controller
 
             return $o;
         }
+        return '';
     }
 }
