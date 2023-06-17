@@ -724,7 +724,7 @@ class Events extends Controller
                         'is_first' => $is_first,
                         'item' => $rr,
                         'html' => $html,
-                        'plink' => array($rr['plink'], t('Link to Source'), '', ''),
+                        'plink' => array(zid($rr['plink']), t('Link to Source'), '', ''),
                     );
                 }
             }
