@@ -523,17 +523,17 @@ function exportDate() {
 			<div class="dropdown">
 				<button id="view_selector" type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown"></button>
 				<div class="dropdown-menu">
-					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'dayGridMonth'); return false;">{{$month}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'timeGridWeek'); return false;">{{$week}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'timeGridDay'); return false;">{{$day}}</a></li>
+					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'dayGridMonth'); return false;">{{$month}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'timeGridWeek'); return false;">{{$week}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'timeGridDay'); return false;">{{$day}}</a>
 					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'listMonth'); return false;">{{$list_month}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'listWeek'); return false;">{{$list_week}}</a></li>
-					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'listDay'); return false;">{{$list_day}}</a></li>
+					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'listMonth'); return false;">{{$list_month}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'listWeek'); return false;">{{$list_week}}</a>
+					<a class="dropdown-item" href="#" onclick="changeView('changeView', 'listDay'); return false;">{{$list_day}}</a>
 				</div>
 				<div class="btn-group">
 					<button id="prev-btn" class="btn btn-outline-secondary btn-sm" title="{{$prev}}"><i class="fa fa-backward"></i></button>
-					<button id="today-btn" class="btn btn-outline-secondary btn-sm" title="{{$today}}"><div id="events-spinner" class="spinner s"></div><i class="fa fa-bullseye" style="display: none; width: 1rem;"></i></button>
+					<button id="today-btn" class="btn btn-outline-secondary btn-sm" title="{{$today}}"><span id="events-spinner" class="spinner s"></span><i class="fa fa-bullseye" style="display: none; width: 1rem;"></i></button>
 					<button id="next-btn" class="btn btn-outline-secondary btn-sm" title="{{$next}}"><i class="fa fa-forward"></i></button>
 				</div>
 				<button id="fullscreen-btn" type="button" class="btn btn-outline-secondary btn-sm" onclick="makeFullScreen();"><i class="fa fa-expand"></i></button>
