@@ -1560,6 +1560,9 @@ $(window).scroll(function () {
 				loadingPage = true;
 				liveUpdate();
 			}
+			else {
+				console.log('has more content: ' + pageHasMoreContent);
+			}
 		}
 	}
 	else {

@@ -373,15 +373,15 @@ class Stream extends Controller
         }
 
         if (!$this->updating) {
-            // The special div is needed for liveUpdate to kick in for this page.
-            // We only launch liveUpdate if you aren't filtering in some incompatible
-            // way, and also you aren't writing a comment (discovered in javascript).
 
             $maxheight = get_pconfig(local_channel(), 'system', 'stream_divmore_height');
             if (!$maxheight) {
                 $maxheight = 400;
             }
 
+            // The special div is needed for liveUpdate to kick in for this page.
+            // We only launch liveUpdate if you aren't filtering in some incompatible
+            // way, and also you aren't writing a comment (discovered in javascript).
 
             $o .= '<div id="live-stream"></div>' . "\r\n";
             $o .= "<script> let profile_uid = " . local_channel()
