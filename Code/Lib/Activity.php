@@ -3777,16 +3777,11 @@ class Activity
 
                 }
                 else {
-                    if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
-                        $item['item_blocked'] = ITEM_MODERATED;
-                    }
-                    else {
-                        logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
-                        logger('rejected: ' . print_r($item, true), LOGGER_DATA);
-                        // let the sender know we received their comment, but we don't permit spam here.
-                        $commentApproval?->Reject();
-                        return;
-                    }
+                    logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+                    logger('rejected: ' . print_r($item, true), LOGGER_DATA);
+                    // let the sender know we received their comment, but we don't permit spam here.
+                    $commentApproval?->Reject();
+                    return;
                 }
             }
             else {

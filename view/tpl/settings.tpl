@@ -53,6 +53,7 @@
                         {{$autoperms}}
                         {{$anymention}}
                         {{include file="field_select.tpl" field=$comment_perms}}
+                        {{include file="field_select.tpl" field=$permit_moderated_comments}}
                         {{include file="field_input.tpl" field=$close_comments}}
                         {{include file="field_select.tpl" field=$mail_perms}}
                         {{include file="field_select.tpl" field=$view_contact_perms}}
