@@ -11,8 +11,8 @@ class Manifest extends Controller
     public function init()
     {
         $ret = [
-            'name' => System::get_platform_name(),
-            'short_name' => System::get_platform_name(),
+            'name' => System::get_project_name(),
+            'short_name' => System::get_project_name(),
             'icons' => [
                 ['src' => '/images/' . System::get_platform_name() . '-64' . '.png', 'sizes' => '64x64'],
                 ['src' => '/images/' . System::get_platform_name() . '-192' . '.png', 'sizes' => '192x192'],
