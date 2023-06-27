@@ -10,6 +10,9 @@ class Manifest extends Controller
 
     public function init()
     {
+        if ($_REQUEST['module_format'] !== 'webmanifest') {
+            http_status_exit(418, "I'm a teapot");
+        }
         $ret = [
             'name' => System::get_project_name(),
             'short_name' => System::get_project_name(),
