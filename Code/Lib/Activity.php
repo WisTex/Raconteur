@@ -3726,7 +3726,7 @@ class Activity
             if ($parent_item) {
                 $parent_item = array_shift($parent_item);
             }
-            if ($parent_item && $parent_item['item_wall']) {
+            if ($parent_item && $parent_item['item_wall'] && intval($parent_item['item_thread_top'])) {
                 // set the owner to the owner of the parent
                 $item['owner_xchan'] = $parent_item['owner_xchan'];
 
