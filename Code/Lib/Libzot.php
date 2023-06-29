@@ -1815,6 +1815,9 @@ class Libzot
                         $allowed = can_comment_on_post($sender, $parent[0]);
                         if (! $allowed) {
                             $allowed = Activity::comment_allowed($channel, $arr, $parent[0]);
+                            if ($allowed === 'moderated') {
+                                $arr['item_blocked'] = ITEM_MODERATED;
+                            }
                         }
                     } elseif ($permit_mentions) {
                         $allowed = true;

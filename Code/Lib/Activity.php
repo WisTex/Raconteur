@@ -3726,7 +3726,7 @@ class Activity
             if ($parent_item) {
                 $parent_item = array_shift($parent_item);
             }
-            if ($parent_item && $parent_item['item_wall']) {
+            if ($parent_item && $parent_item['item_wall'] && intval($parent_item['item_thread_top'])) {
                 // set the owner to the owner of the parent
                 $item['owner_xchan'] = $parent_item['owner_xchan'];
 
@@ -3777,16 +3777,11 @@ class Activity
 
                 }
                 else {
-                    if (PConfig::Get($channel['channel_id'], 'system','filter_moderate')) {
-                        $item['item_blocked'] = ITEM_MODERATED;
-                    }
-                    else {
-                        logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
-                        logger('rejected: ' . print_r($item, true), LOGGER_DATA);
-                        // let the sender know we received their comment, but we don't permit spam here.
-                        $commentApproval?->Reject();
-                        return;
-                    }
+                    logger('rejected comment from ' . $item['author_xchan'] . ' for ' . $channel['channel_address']);
+                    logger('rejected: ' . print_r($item, true), LOGGER_DATA);
+                    // let the sender know we received their comment, but we don't permit spam here.
+                    $commentApproval?->Reject();
+                    return;
                 }
             }
             else {
