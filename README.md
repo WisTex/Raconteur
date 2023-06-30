@@ -37,4 +37,4 @@ This project is licensed under the MIT License (Expat Version). See the `LICENSE
 
 Copyright &copy; 2023 WisTex TechSero Ltd. Co. All rights reserved. Usage subject to MIT license terms.
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and permission notice in the license file shall be included in all copies or substantial portions of the Software.
