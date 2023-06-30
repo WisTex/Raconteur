@@ -6,7 +6,7 @@ Compatible with ActivityPub, Zot, Nomad, and OpenWebAuth (Magic Sign-On).
 
 > Raconteur means "a person who is skilled in relating stories and anecdotes interestingly."
 
-Raconteur, also known as WisTex Raconteur, is a soft fork of Streams, an open source fediverse server with a long history of innovation. The core functionality of Raconteur comes from Streams, and this project is kept in sync with the Streams Repository (one way only).
+Raconteur, also known as WisTex Raconteur, is a soft fork of Streams, an open source fediverse server with a long history of innovation. The core fediverse functionality of Raconteur comes from Streams, and this project is kept in sync with the Streams Repository (one way only).
 
 This fork is specifically modified to cater to content creators and those that want to create a community around content.
 
