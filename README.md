@@ -1,9 +1,29 @@
-An open source fediverse server with a long history of innovation. See [FEATURES](https://codeberg.org/streams/streams/src/branch/dev/FEATURES.md).
+# Raconteur
 
-This software is dedicated to the public domain to the extent permissable by law and is not associated with any consumer brand or product.
+**Build your own website, community, and audience without giving up control. An open source fediverse server designed for content and community websites.**
 
-This repository uses a community-driven model. This means that there are no dedicated developers working on new features or bug fixes or translations or documentation. Instead, it relies on the contributed efforts of those that choose to use it.
+Compatible with ActivityPub, Zot, Nomad, and OpenWebAuth (Magic Sign-On).
 
-A fediverse support group exists at 
-https://unfediverse.com/channel/streams
+> Raconteur means "a person who is skilled in relating stories and anecdotes interestingly."
 
+Raconteur, also known as WisTex Raconteur, is a soft fork of Streams, an open source fediverse server with a long history of innovation. The core functionality of Raconteur comes from Streams, and this project is kept in sync with the Streams Repository (one way only).
+
+This fork is specifically modified to cater to content creators and those that want to create a community around content.
+
+## Current Status
+
+We just created this repository, and at this point, it is mostly just Streams. We will be adding new themes, addons, and widgets to it soon.
+
+## Project
+
+We are still setting everything up, but for the time being, here is the relevant information:
+
+* Website: https://wistex.org (coming soon)
+* Repository: https://github.com/WisTex/Raconteur
+* Support Forum: coming soon
+
+## Credits
+
+The base fediverse functionality of Raconteur comes from Streams, which can be found at: https://codeberg.org/streams/streams
+
+Check the `licenses` folder for additional projects, such as Bootstrap and Neuhub, that were used to build Raconteur.
