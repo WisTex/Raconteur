@@ -20,6 +20,7 @@ We are still setting everything up, but for the time being, here is the relevant
 
 * Website: https://wistex.org (coming soon)
 * Repository: https://github.com/WisTex/Raconteur
+* Documentation: coming soon
 * Support Forum: coming soon
 
 ## Credits
