@@ -30,3 +30,9 @@ We are still setting everything up, but for the time being, here is the relevant
 The base fediverse functionality of Raconteur comes from Streams, which can be found at: https://codeberg.org/streams/streams
 
 Check the `licenses` folder for additional projects, such as Bootstrap and Neuhub, that were used to build Raconteur.
+
+## License
+
+This project is licensed under the MIT License (Expat Version). See the `LICENSE` file for the full text of the license.
+
+Copyright (c) 2023 Wistex TechSero Ltd. Co. All rights reserved. Usage subject to MIT license terms.
