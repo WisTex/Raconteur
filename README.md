@@ -25,6 +25,16 @@ We are still setting everything up, but for the time being, here is the relevant
 * Documentation: `coming soon`
 * Support Forum: `coming soon`
 
+## Federation
+
+### Communications Protocols
+* **ActivityPub** - works with Streams, Mastodon, PeerTube, Pixelfed, WisTex Catalyst, and many other platforms.
+* **Nomad** - works with Streams, WisTex Catalyst, and others.
+* **Zot6** - works with Hubzilla.
+
+### Federated Single Sign-On
+* **OpenWebAuth** - works with Streams, Hubzilla, WisTex Catalyst, and others.
+
 ## Credits
 
 The base fediverse functionality of Raconteur comes from Streams, which can be found at: https://codeberg.org/streams/streams
