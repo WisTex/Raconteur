@@ -6,11 +6,11 @@ Build your own website, community, and audience without giving up control. An op
 
 ## Content & Community Fediverse Server
 
-Raconteur, also known as WisTex Raconteur, is a soft fork of Streams, an open source fediverse server with a long history of innovation. The core fediverse functionality of Raconteur comes from Streams, and this project is kept in sync with the Streams Repository (one way only).
+Raconteur, also known as WisTex Raconteur, is a soft fork of Streams, an open source fediverse server with a long history of innovation. The core fediverse functionality of Raconteur comes from Streams, and this project is kept in sync with the Streams repository (one way only).
 
 This fork is specifically modified to cater to content creators and those that want to create a community around content.
 
-Compatible with ActivityPub, Zot, Nomad, and OpenWebAuth (Magic Sign-On).
+Compatible with ActivityPub, Zot6, Nomad, and OpenWebAuth (Magic Sign-On).
 
 ## Current Status
 
