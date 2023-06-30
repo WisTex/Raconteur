@@ -35,6 +35,6 @@ Check the `licenses` folder for additional projects, such as Bootstrap and Neuhu
 
 This project is licensed under the MIT License (Expat Version). See the `LICENSE` file for the full text of the license.
 
-Copyright &copy; 2023 WisTex TechSero Ltd. Co. All rights reserved. Usage subject to MIT license terms.
+Copyright &copy; 2023 WisTex TechSero Ltd. Co. All rights reserved. Usage subject to license terms.
 
 The above copyright notice and the MIT License permission notice shall be included in all copies or substantial portions of the Software.
