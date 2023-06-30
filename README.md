@@ -18,10 +18,10 @@ We just created this repository, and at this point, it is mostly just Streams. W
 
 We are still setting everything up, but for the time being, here is the relevant information:
 
-* Website: https://wistex.org (coming soon)
+* Website: `coming soon`
 * Repository: https://github.com/WisTex/Raconteur
-* Documentation: coming soon
-* Support Forum: coming soon
+* Documentation: `coming soon`
+* Support Forum: `coming soon`
 
 ## Credits
 
