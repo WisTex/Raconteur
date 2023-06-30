@@ -1,10 +1,10 @@
 # Raconteur
 
-> Raconteur means "a person who is skilled in relating stories and anecdotes interestingly."
-
-## Content & Community Fediverse Server
+> Raconteur: "a person who is skilled in relating stories and anecdotes interestingly."
 
 Build your own website, community, and audience without giving up control. An open source fediverse server designed for content and community websites.
+
+## Content & Community Fediverse Server
 
 Raconteur, also known as WisTex Raconteur, is a soft fork of Streams, an open source fediverse server with a long history of innovation. The core fediverse functionality of Raconteur comes from Streams, and this project is kept in sync with the Streams Repository (one way only).
 
