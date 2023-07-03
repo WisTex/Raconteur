@@ -37,6 +37,12 @@
 			</div>
 			{{/if}}
 
+			{{if $entry.updated}}
+				<div class="contact-info-element">
+					<span class="contact-info-label">{{$entry.updated_label}}</span> {{$entry.updated}}
+				</div>
+			{{/if}}
+
 			{{if $entry.access}}
 			<div class="contact-info-element">
 				<span class="contact-info-label">{{$entry.access_label}}</span> {{$entry.access}}

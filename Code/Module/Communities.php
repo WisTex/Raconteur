@@ -119,6 +119,8 @@ class Communities extends Controller
                     'register' => $register_link,
                     'sellpage' => $rr['site_sellpage'],
                     'location_label' => t('Location:'),
+                    'updated_label' => t('Updated:'),
+                    'updated' => relative_date($rr['site_update']),
                     'location' => $rr['site_location'],
                     'project' => $rr['site_project'],
                     'version' => $rr['site_version'],
