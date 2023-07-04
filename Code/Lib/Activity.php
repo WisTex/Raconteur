@@ -3725,8 +3725,20 @@ class Activity
             );
             if ($parent_item) {
                 $parent_item = array_shift($parent_item);
+                // We've found the inReplyTo. However, if this is not
+                // the top of the conversation, look again.
+                if ($parent_item['parent_mid'] !== $item['parent_mid']) {
+                    $parent_top_item = q(
+                        "select * from item where mid = '%s' and uid = %d",
+                        dbesc($parent_item['parent_mid']),
+                        intval($channel['channel_id'])
+                    );
+                    if ($parent_top_item) {
+                        $parent_item = array_shift($parent_top_item);
+                    }
+                }
             }
-            if ($parent_item && $parent_item['item_wall'] && intval($parent_item['item_thread_top'])) {
+            if ($parent_item && $parent_item['item_wall']) {
                 // set the owner to the owner of the parent
                 $item['owner_xchan'] = $parent_item['owner_xchan'];
 
