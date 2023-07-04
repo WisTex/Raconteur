@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 23.06.18\n"
+"Project-Id-Version: 23.07.01\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-17 14:27-0700\n"
+"POT-Creation-Date: 2023-06-29 22:50-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -574,7 +574,7 @@ msgid "Notes"
 msgstr ""
 
 #: Code/Lib/Apps.php:386 Code/Lib/Navbar.php:300
-#: Code/Module/Settings/Channel.php:498 Code/Widget/Notifications.php:165
+#: Code/Module/Settings/Channel.php:500 Code/Widget/Notifications.php:165
 msgid "Notifications"
 msgstr ""
 
@@ -821,8 +821,8 @@ msgstr ""
 #: Code/Module/Mitem.php:192 Code/Module/Mitem.php:271
 #: Code/Module/Mitem.php:272 Code/Module/Dev/Ap_probe.php:24
 #: Code/Module/Dev/Zot_probe.php:23 Code/Module/Settings/Permcats.php:117
-#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:247
-#: Code/Module/Settings/Display.php:121 Code/Storage/Browser.php:435
+#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Display.php:121
+#: Code/Module/Settings/Channel.php:249 Code/Storage/Browser.php:435
 #: boot.php:1114 extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
 #: extend/addon/a/content_import/Mod_content_import.php:151
@@ -844,8 +844,8 @@ msgstr ""
 #: Code/Module/Mitem.php:192 Code/Module/Mitem.php:271
 #: Code/Module/Mitem.php:272 Code/Module/Dev/Ap_probe.php:24
 #: Code/Module/Dev/Zot_probe.php:23 Code/Module/Settings/Permcats.php:117
-#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Channel.php:247
-#: Code/Module/Settings/Display.php:121 Code/Storage/Browser.php:435
+#: Code/Module/Settings/Multifactor.php:70 Code/Module/Settings/Display.php:121
+#: Code/Module/Settings/Channel.php:249 Code/Storage/Browser.php:435
 #: boot.php:1114 extend/addon/a/content_import/Mod_content_import.php:149
 #: extend/addon/a/content_import/Mod_content_import.php:150
 #: extend/addon/a/content_import/Mod_content_import.php:151
@@ -1128,7 +1128,7 @@ msgid "Permissions"
 msgstr ""
 
 #: Code/Lib/Libacl.php:141 Code/Lib/ThreadItem.php:511
-#: Code/Module/Photos.php:1340 Code/Module/Settings/Channel.php:497
+#: Code/Module/Photos.php:1340 Code/Module/Settings/Channel.php:499
 #: include/conversation.php:1375
 msgid "Close"
 msgstr ""
@@ -1416,7 +1416,7 @@ msgstr ""
 #: Code/Module/Settings/Permcats.php:146 Code/Module/Settings/Tokens.php:315
 #: Code/Module/Settings/Profile_edit.php:588
 #: Code/Module/Settings/Account.php:114 Code/Module/Settings/Multifactor.php:72
-#: Code/Module/Settings/Channel.php:443 Code/Module/Settings/Display.php:212
+#: Code/Module/Settings/Display.php:212 Code/Module/Settings/Channel.php:445
 #: Code/Module/Cal.php:352 Code/Module/Thing.php:364 Code/Module/Thing.php:419
 #: Code/Module/Sources.php:133 Code/Module/Sources.php:172
 #: Code/Module/Superblock.php:282 Code/Widget/Eventstools.php:22
@@ -1891,37 +1891,37 @@ msgstr ""
 msgid "Dec"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:94 Code/Module/Settings/Channel.php:571
+#: Code/Lib/Stringsjs.php:94 Code/Module/Settings/Channel.php:574
 #: include/misc.php:1407
 msgid "Sunday"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:95 Code/Module/Settings/Channel.php:572
+#: Code/Lib/Stringsjs.php:95 Code/Module/Settings/Channel.php:575
 #: include/misc.php:1407
 msgid "Monday"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:96 Code/Module/Settings/Channel.php:573
+#: Code/Lib/Stringsjs.php:96 Code/Module/Settings/Channel.php:576
 #: include/misc.php:1407
 msgid "Tuesday"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:97 Code/Module/Settings/Channel.php:574
+#: Code/Lib/Stringsjs.php:97 Code/Module/Settings/Channel.php:577
 #: include/misc.php:1407
 msgid "Wednesday"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:98 Code/Module/Settings/Channel.php:575
+#: Code/Lib/Stringsjs.php:98 Code/Module/Settings/Channel.php:578
 #: include/misc.php:1407
 msgid "Thursday"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:99 Code/Module/Settings/Channel.php:576
+#: Code/Lib/Stringsjs.php:99 Code/Module/Settings/Channel.php:579
 #: include/misc.php:1407
 msgid "Friday"
 msgstr ""
 
-#: Code/Lib/Stringsjs.php:100 Code/Module/Settings/Channel.php:577
+#: Code/Lib/Stringsjs.php:100 Code/Module/Settings/Channel.php:580
 #: include/misc.php:1407
 msgid "Saturday"
 msgstr ""
@@ -2410,9 +2410,9 @@ msgstr ""
 #: Code/Lib/Channel.php:555 Code/Lib/Channel.php:557
 #: Code/Module/Connedit.php:688 Code/Module/Affinity.php:66
 #: Code/Module/Settings/Profile_edit.php:881
-#: Code/Module/Settings/Channel.php:638 Code/Module/Settings/Channel.php:641
-#: Code/Module/Settings/Channel.php:642 Code/Module/Settings/Channel.php:646
-#: Code/Module/Settings/Channel.php:657 Code/Widget/Affinity.php:31
+#: Code/Module/Settings/Channel.php:641 Code/Module/Settings/Channel.php:644
+#: Code/Module/Settings/Channel.php:645 Code/Module/Settings/Channel.php:649
+#: Code/Module/Settings/Channel.php:660 Code/Widget/Affinity.php:31
 #: Code/Import/Friendica.php:237 Code/Import/Friendica.php:238
 #: Code/Import/Friendica.php:246
 msgid "Friends"
@@ -2472,8 +2472,8 @@ msgstr ""
 msgid "%1$s wrote the following %2$s %3$s"
 msgstr ""
 
-#: Code/Lib/Markdown.php:220 Code/Module/Tagger.php:93
-#: include/conversation.php:90 include/bbcode.php:680 include/misc.php:2349
+#: Code/Lib/Markdown.php:220 Code/Module/Tagger.php:93 include/bbcode.php:680
+#: include/conversation.php:90 include/misc.php:2349
 msgid "post"
 msgstr ""
 
@@ -5503,13 +5503,13 @@ msgstr ""
 msgid "vcard"
 msgstr ""
 
-#: Code/Module/Defperms.php:103 Code/Module/Settings/Channel.php:201
-#: extend/addon/a/faces/faces.php:289 extend/addon/a/logrot/logrot.php:56
+#: Code/Module/Defperms.php:103 Code/Module/Settings/Channel.php:203
+#: extend/addon/a/faces/faces.php:292 extend/addon/a/logrot/logrot.php:56
 #: extend/addon/a/openstreetmap/openstreetmap.php:235
 msgid "Settings updated."
 msgstr ""
 
-#: Code/Module/Defperms.php:245 Code/Module/Settings/Channel.php:399
+#: Code/Module/Defperms.php:245 Code/Module/Settings/Channel.php:401
 msgid ""
 "If enabled, connection requests will be approved without your interaction"
 msgstr ""
@@ -7515,7 +7515,7 @@ msgid "Menu Item Permissions"
 msgstr ""
 
 #: Code/Module/Mitem.php:183 Code/Module/Mitem.php:262
-#: Code/Module/Settings/Channel.php:476
+#: Code/Module/Settings/Channel.php:478
 msgid "(click to open/close)"
 msgstr ""
 
@@ -8127,7 +8127,7 @@ msgstr ""
 msgid "This channel will be completely removed from this server. "
 msgstr ""
 
-#: Code/Module/Removeme.php:77 Code/Module/Settings/Channel.php:560
+#: Code/Module/Removeme.php:77 Code/Module/Settings/Channel.php:563
 msgid "Remove Channel"
 msgstr ""
 
@@ -8496,7 +8496,7 @@ msgid "Gender and Relationship"
 msgstr ""
 
 #: Code/Module/Settings/Profile_edit.php:601
-#: Code/Module/Settings/Channel.php:555 Code/Widget/Newmember.php:55
+#: Code/Module/Settings/Channel.php:558 Code/Widget/Newmember.php:55
 #: include/datetime.php:73
 msgid "Miscellaneous"
 msgstr ""
@@ -8989,478 +8989,6 @@ msgstr ""
 msgid "Submit/Verify"
 msgstr ""
 
-#: Code/Module/Settings/Channel.php:264
-msgid "Restricted - connections only"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:265
-msgid "Semi-public - anybody that can be identified"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:266
-msgid "Public - anybody on the internet"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:329
-msgid "Publish your profile in the network directory"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:334
-msgid "Allow us to suggest you as a potential friend to new members?"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:338 Code/Module/Settings/Channel.php:352
-msgid "or"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:344
-msgid "Your channel address is"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:346
-msgid ""
-"Friends using compatible applications can use this address to connect with "
-"you."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:348
-msgid "Your files/photos are accessible as a network drive at"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:350
-msgid "(Windows)"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:351
-msgid "(other platforms)"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:398
-msgid "Automatic connection approval"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:402
-msgid "Friend-of-friend conversations"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:402
-msgid ""
-"Import public third-party conversations in which your connections "
-"participate."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:406
-msgid "Enable ActivityPub protocol"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:406
-msgid "ActivityPub is an emerging internet standard for social communications"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:442
-msgid "Channel Settings"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:448
-msgid "Basic Settings"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:449
-msgid "Full name"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:450
-msgid "Your timezone"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:450
-msgid "This is important for showing the correct time on shared events"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:451
-msgid "Default post location (place name)"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:451
-msgid "Optional geographical location to display on your posts"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:452
-msgid "Obtain post location from your web browser or device"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:453
-msgid ""
-"Over-ride your web browser or device and use these coordinates (latitude,"
-"longitude)"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:454
-msgid "Adult content"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:454
-msgid ""
-"Enable to indicate if this channel frequently or regularly publishes adult "
-"content. (Please also tag any adult material and/or nudity with #NSFW)"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:456
-msgid "Security and Privacy"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:458
-msgid "Your permissions are already configured. Click to view/adjust"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:460
-msgid "Hide your online presence"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:460
-msgid "Prevents displaying in your profile that you are online"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:461
-msgid ""
-"Preview some public posts from new connections prior to connection approval"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:467
-msgid "Forbid indexing of your public channel content by search engines"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:468
-msgid "Disable acceptance of comments on your posts after this many days"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:468
-msgid "Leave unset or enter 0 to allow comments indefinitely"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:469
-msgid "Allow others to tag your posts"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:469
-msgid ""
-"Often used by the community to retro-actively flag inappropriate content"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:471
-msgid "Channel Permission Limits"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:473
-msgid "Expire conversations you have not participated in after this many days"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:473
-msgid "0 or blank to use the website limit."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:473
-#, php-format
-msgid "This website expires after %d days."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:473
-msgid "This website does not provide an expiration policy."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:473
-msgid "The website limit takes precedence if lower than your limit."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:474
-msgid "Maximum Friend Requests/Day:"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:474
-msgid "May reduce spam activity"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:475
-msgid "Default Access List"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:477
-msgid "Use your default audience setting for the type of object published"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:478
-msgid "Profile to assign new connections"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:489
-msgid "Channel type and privacy"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:490
-msgid "Default Permissions Role"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:499
-msgid "By default post a status message when:"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:500
-msgid "accepting a friend request"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:501
-msgid "joining a group/community"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:502
-msgid "making an <em>interesting</em> profile change"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:503
-msgid "Show nomadic links in profile"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:505
-msgid "Send a notification email when:"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:506
-msgid "You receive a connection request"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:508
-msgid "Someone writes on your profile wall"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:509
-msgid "Someone writes a followup comment"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:510
-msgid "Someone shares a followed conversation"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:511
-msgid "You receive a direct (private) message"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:513
-msgid "You are tagged in a post"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:516
-msgid "Someone likes your post/comment"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:519
-msgid "Show visual notifications including:"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:521
-msgid "Unseen stream activity"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:522
-msgid "Unseen channel activity"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:523
-msgid "Unseen direct messages"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:523 Code/Module/Settings/Channel.php:528
-#: Code/Module/Settings/Channel.php:529 Code/Module/Settings/Channel.php:530
-#: Code/Module/Settings/Channel.php:537
-msgid "Recommended"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:524
-msgid "Upcoming events"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:525
-msgid "Events today"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:526
-msgid "Upcoming birthdays"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:526
-msgid "Not available in all themes"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:527
-msgid "System (personal) notifications"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:528
-msgid "System info messages"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:529
-msgid "System critical alerts"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:530
-msgid "New connections"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:531
-msgid "System Registrations"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:533
-msgid "Unseen public stream activity"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:534
-msgid "Unseen likes and dislikes"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:536
-msgid "Reported content"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:537
-msgid "Moderated Activities"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:538
-msgid ""
-"Desktop notifications are unavailable because the required browser "
-"permission has not been granted"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:539
-msgid "Grant permission"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:540
-msgid "Email notifications sent from (hostname)"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:540
-#, php-format
-msgid ""
-"If your channel is mirrored to multiple locations, set this to your "
-"preferred location. This will prevent duplicate email notifications. "
-"Example: %s"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:541
-msgid "Accept messages from strangers which mention you"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:541 Code/Module/Settings/Channel.php:542
-msgid "This setting bypasses normal permissions"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:542
-msgid "Accept likes from strangers"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:543
-msgid ""
-"Accept messages from strangers which include any of the following hashtags"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:543
-msgid "comma separated, do not include the #"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:544
-msgid "Unless more than this many channels are mentioned"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:544 Code/Module/Settings/Channel.php:545
-msgid "0 for unlimited"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:545
-msgid "Unless more than this many hashtags are used"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:546
-msgid "Notify me of events this many days in advance"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:546
-msgid "Must be greater than 0"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:551
-msgid "Date and Time"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:552
-msgid ""
-"This section is reserved for use by optional addons and apps to provide "
-"additional settings."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:553
-msgid "Advanced Account/Page Type Settings"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:554
-msgid "Change the behaviour of this account for special situations"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:556
-msgid "Default photo upload folder name"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:556 Code/Module/Settings/Channel.php:557
-msgid "%Y - current year, %m -  current month"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:557
-msgid "Default file upload folder name"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:559
-msgid "Personal menu to display in your channel pages"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:561
-msgid "Remove this channel."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:562
-msgid "Mentions should display"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:562
-msgid ""
-"Changes to this setting are applied to new posts/comments only. It is not "
-"retroactive."
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:564
-msgid "the channel display name [example: @Barbara Jenkins]"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:565
-msgid "the channel nickname [example: @barbara1976]"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:566
-msgid "combined [example: @Barbara Jenkins (barbara1976)]"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:567
-msgid "no preference, use the system default"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:570
-msgid "Calendar week begins on"
-msgstr ""
-
-#: Code/Module/Settings/Channel.php:570
-msgid "This varies by country/culture"
-msgstr ""
-
 #: Code/Module/Settings/Display.php:164
 #, php-format
 msgid "%s - (Experimental)"
@@ -9562,6 +9090,486 @@ msgstr ""
 
 #: Code/Module/Settings/Display.php:230
 msgid "0-20"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:266
+msgid "Restricted - connections only"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:267
+msgid "Semi-public - anybody that can be identified"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:268
+msgid "Public - anybody on the internet"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:331
+msgid "Publish your profile in the network directory"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:336
+msgid "Allow us to suggest you as a potential friend to new members?"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:340 Code/Module/Settings/Channel.php:354
+msgid "or"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:346
+msgid "Your channel address is"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:348
+msgid ""
+"Friends using compatible applications can use this address to connect with "
+"you."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:350
+msgid "Your files/photos are accessible as a network drive at"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:352
+msgid "(Windows)"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:353
+msgid "(other platforms)"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:400
+msgid "Automatic connection approval"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:404
+msgid "Friend-of-friend conversations"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:404
+msgid ""
+"Import public third-party conversations in which your connections "
+"participate."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:408
+msgid "Enable ActivityPub protocol"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:408
+msgid "ActivityPub is an emerging internet standard for social communications"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:444
+msgid "Channel Settings"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:450
+msgid "Basic Settings"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:451
+msgid "Full name"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:452
+msgid "Your timezone"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:452
+msgid "This is important for showing the correct time on shared events"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:453
+msgid "Default post location (place name)"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:453
+msgid "Optional geographical location to display on your posts"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:454
+msgid "Obtain post location from your web browser or device"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:455
+msgid ""
+"Over-ride your web browser or device and use these coordinates (latitude,"
+"longitude)"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:456
+msgid "Adult content"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:456
+msgid ""
+"Enable to indicate if this channel frequently or regularly publishes adult "
+"content. (Please also tag any adult material and/or nudity with #NSFW)"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:458
+msgid "Security and Privacy"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:460
+msgid "Your permissions are already configured. Click to view/adjust"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:462
+msgid "Hide your online presence"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:462
+msgid "Prevents displaying in your profile that you are online"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:463
+msgid ""
+"Preview some public posts from new connections prior to connection approval"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:469
+msgid "Forbid indexing of your public channel content by search engines"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:470
+msgid "Disable acceptance of comments on your posts after this many days"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:470
+msgid "Leave unset or enter 0 to allow comments indefinitely"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:471
+msgid "Allow others to tag your posts"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:471
+msgid ""
+"Often used by the community to retro-actively flag inappropriate content"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:473
+msgid "Channel Permission Limits"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:475
+msgid "Expire conversations you have not participated in after this many days"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:475
+msgid "0 or blank to use the website limit."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:475
+#, php-format
+msgid "This website expires after %d days."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:475
+msgid "This website does not provide an expiration policy."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:475
+msgid "The website limit takes precedence if lower than your limit."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:476
+msgid "Maximum Friend Requests/Day:"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:476
+msgid "May reduce spam activity"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:477
+msgid "Default Access List"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:479
+msgid "Use your default audience setting for the type of object published"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:480
+msgid "Profile to assign new connections"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:491
+msgid "Channel type and privacy"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:492
+msgid "Default Permissions Role"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:501
+msgid "By default post a status message when:"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:502
+msgid "accepting a friend request"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:503
+msgid "joining a group/community"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:504
+msgid "making an <em>interesting</em> profile change"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:505
+msgid "Show nomadic links in profile"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:507
+msgid "Send a notification email when:"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:508
+msgid "You receive a connection request"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:510
+msgid "Someone writes on your profile wall"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:511
+msgid "Someone writes a followup comment"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:512
+msgid "Someone shares a followed conversation"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:513
+msgid "You receive a direct (private) message"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:515
+msgid "You are tagged in a post"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:518
+msgid "Someone likes your post/comment"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:521
+msgid "Show visual notifications including:"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:523
+msgid "Unseen stream activity"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:524
+msgid "Unseen channel activity"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:525
+msgid "Unseen direct messages"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:525 Code/Module/Settings/Channel.php:530
+#: Code/Module/Settings/Channel.php:531 Code/Module/Settings/Channel.php:532
+#: Code/Module/Settings/Channel.php:539
+msgid "Recommended"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:526
+msgid "Upcoming events"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:527
+msgid "Events today"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:528
+msgid "Upcoming birthdays"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:528
+msgid "Not available in all themes"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:529
+msgid "System (personal) notifications"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:530
+msgid "System info messages"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:531
+msgid "System critical alerts"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:532
+msgid "New connections"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:533
+msgid "System Registrations"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:535
+msgid "Unseen public stream activity"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:536
+msgid "Unseen likes and dislikes"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:538
+msgid "Reported content"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:539
+msgid "Moderated Activities"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:540
+msgid ""
+"Desktop notifications are unavailable because the required browser "
+"permission has not been granted"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:541
+msgid "Grant permission"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:542
+msgid "Email notifications sent from (hostname)"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:542
+#, php-format
+msgid ""
+"If your channel is mirrored to multiple locations, set this to your "
+"preferred location. This will prevent duplicate email notifications. "
+"Example: %s"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:543
+msgid "Moderate refused comments"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:543
+msgid "Default is to ignore refused comments"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:544
+msgid "Accept messages from strangers which mention you"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:544 Code/Module/Settings/Channel.php:545
+msgid "This setting bypasses normal permissions"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:545
+msgid "Accept likes from strangers"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:546
+msgid ""
+"Accept messages from strangers which include any of the following hashtags"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:546
+msgid "comma separated, do not include the #"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:547
+msgid "Unless more than this many channels are mentioned"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:547 Code/Module/Settings/Channel.php:548
+msgid "0 for unlimited"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:548
+msgid "Unless more than this many hashtags are used"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:549
+msgid "Notify me of events this many days in advance"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:549
+msgid "Must be greater than 0"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:554
+msgid "Date and Time"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:555
+msgid ""
+"This section is reserved for use by optional addons and apps to provide "
+"additional settings."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:556
+msgid "Advanced Account/Page Type Settings"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:557
+msgid "Change the behaviour of this account for special situations"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:559
+msgid "Default photo upload folder name"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:559 Code/Module/Settings/Channel.php:560
+msgid "%Y - current year, %m -  current month"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:560
+msgid "Default file upload folder name"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:562
+msgid "Personal menu to display in your channel pages"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:564
+msgid "Remove this channel."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:565
+msgid "Mentions should display"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:565
+msgid ""
+"Changes to this setting are applied to new posts/comments only. It is not "
+"retroactive."
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:567
+msgid "the channel display name [example: @Barbara Jenkins]"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:568
+msgid "the channel nickname [example: @barbara1976]"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:569
+msgid "combined [example: @Barbara Jenkins (barbara1976)]"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:570
+msgid "no preference, use the system default"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:573
+msgid "Calendar week begins on"
+msgstr ""
+
+#: Code/Module/Settings/Channel.php:573
+msgid "This varies by country/culture"
 msgstr ""
 
 #: Code/Module/Editblock.php:128 Code/Module/Blocks.php:106
@@ -11146,6 +11154,51 @@ msgstr ""
 msgid "Network: %s"
 msgstr ""
 
+#: include/bbcode.php:316
+msgid "Encrypted content"
+msgstr ""
+
+#: include/bbcode.php:358
+#, php-format
+msgid "(Embedded app '%s' could not be displayed)."
+msgstr ""
+
+#: include/bbcode.php:402
+#, php-format
+msgid "Install %1$s element %2$s"
+msgstr ""
+
+#: include/bbcode.php:405
+#, php-format
+msgid ""
+"This post contains an installable %s element, however you lack permissions "
+"to install it on this site."
+msgstr ""
+
+#: include/bbcode.php:676
+msgid "card"
+msgstr ""
+
+#: include/bbcode.php:678
+msgid "article"
+msgstr ""
+
+#: include/bbcode.php:793 include/bbcode.php:802
+msgid "Click to open/close"
+msgstr ""
+
+#: include/bbcode.php:802
+msgid "spoiler"
+msgstr ""
+
+#: include/bbcode.php:1511 include/bbcode.php:1718
+msgid "Different viewers will see this text differently"
+msgstr ""
+
+#: include/bbcode.php:2039
+msgid "$1 wrote:"
+msgstr ""
+
 #: include/dba/dba_driver.php:190
 #, php-format
 msgid "Cannot locate DNS info for database server '%s'"
@@ -11590,55 +11643,6 @@ msgid_plural "Abstains"
 msgstr[0] ""
 msgstr[1] ""
 
-#: include/api_auth.php:162
-msgid "This API method requires authentication."
-msgstr ""
-
-#: include/bbcode.php:316
-msgid "Encrypted content"
-msgstr ""
-
-#: include/bbcode.php:358
-#, php-format
-msgid "(Embedded app '%s' could not be displayed)."
-msgstr ""
-
-#: include/bbcode.php:402
-#, php-format
-msgid "Install %1$s element %2$s"
-msgstr ""
-
-#: include/bbcode.php:405
-#, php-format
-msgid ""
-"This post contains an installable %s element, however you lack permissions "
-"to install it on this site."
-msgstr ""
-
-#: include/bbcode.php:676
-msgid "card"
-msgstr ""
-
-#: include/bbcode.php:678
-msgid "article"
-msgstr ""
-
-#: include/bbcode.php:793 include/bbcode.php:802
-msgid "Click to open/close"
-msgstr ""
-
-#: include/bbcode.php:802
-msgid "spoiler"
-msgstr ""
-
-#: include/bbcode.php:1511 include/bbcode.php:1718
-msgid "Different viewers will see this text differently"
-msgstr ""
-
-#: include/bbcode.php:2039
-msgid "$1 wrote:"
-msgstr ""
-
 #: include/misc.php:531
 msgid "prev"
 msgstr ""
@@ -11966,6 +11970,10 @@ msgstr ""
 
 #: include/misc.php:2863
 msgid "Specify folder"
+msgstr ""
+
+#: include/api_auth.php:162
+msgid "This API method requires authentication."
 msgstr ""
 
 #: include/taxonomy.php:377
