@@ -86,7 +86,7 @@ web server platforms.
     software much easier to update. The Linux command to clone the repository
     into a directory "mywebsite" would be
 
-        git clone https://codeberg.org/streams/streams.git mywebsite
+        git clone https://github.com/WisTex/Raconteur.git mywebsite
 
     - Pull in external libraries with composer. Leave off the --no-dev
     option if you are a developer and wish to install addditional CI/CD tools.
